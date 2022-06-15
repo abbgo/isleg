@@ -59,4 +59,5 @@ func CreateLanguage(c *gin.Context) {
 		"status":  true,
 		"message": "language successfully added",
 	})
+
 }
