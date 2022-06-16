@@ -9,6 +9,11 @@ import (
 	"github.com/google/uuid"
 )
 
+type BrendForHomePage struct {
+	ID    uuid.UUID `json:"id"`
+	Image string    `json:"image"`
+}
+
 func CreateBrend(c *gin.Context) {
 
 	// GET DATA FROM REQUEST
@@ -58,5 +63,27 @@ func CreateBrend(c *gin.Context) {
 		"status":  true,
 		"message": "brend successfully added",
 	})
+
+}
+
+func GetAllBrendForHomePage() ([]BrendForHomePage, error) {
+
+	var brends []BrendForHomePage
+
+	rows, err := config.ConnDB().Query("SELECT id,image_path FROM brends")
+	if err != nil {
+		return []BrendForHomePage{}, err
+	}
+
+	for rows.Next() {
+		var brend BrendForHomePage
+		if err := rows.Scan(&brend.ID, &brend.Image); err != nil {
+			return []BrendForHomePage{}, err
+		}
+
+		brends = append(brends, brend)
+	}
+
+	return brends, nil
 
 }

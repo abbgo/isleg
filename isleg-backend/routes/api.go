@@ -31,6 +31,7 @@ func Routes() *gin.Engine {
 	front := routes.Group("/api/:lang")
 	{
 		front.GET("/header", frontController.GetHeaderData)
+		front.GET("/brends", frontController.GetBrends)
 
 	}
 
