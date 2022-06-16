@@ -8,6 +8,22 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+type TranslationHeaderForHeader struct {
+	Research             string `json:"research"`
+	Phone                string `json:"phone"`
+	Password             string `json:"password"`
+	ForgotPassword       string `json:"forgot_password"`
+	SignIn               string `json:"sign_in"`
+	SignUp               string `json:"sign_up"`
+	Name                 string `json:"name"`
+	PasswordVerification string `json:"password_verification"`
+	VerifySecure         string `json:"verify_secure"`
+	MyInformation        string `json:"my_information"`
+	MyFavorites          string `json:"my_favorites"`
+	MyOrders             string `json:"my_orders"`
+	LogOut               string `json:"log_out"`
+}
+
 func CreateTranslationHeader(c *gin.Context) {
 
 	// GET ALL LANGUAGE
@@ -168,4 +184,22 @@ func CreateTranslationHeader(c *gin.Context) {
 		"message": "translation header successfully added",
 	})
 
+}
+
+func GetTranslationHeaderForHeader(langID string) (TranslationHeaderForHeader, error) {
+
+	var t TranslationHeaderForHeader
+
+	// GET TranslationHeaderForHeader
+	row, err := config.ConnDB().Query("SELECT research,phone,password,forgot_password,sign_in,sign_up,name,password_verification,verify_secure,my_information,my_favorites,my_orders,log_out WHERE lang_id = $1", langID)
+	if err != nil {
+		return TranslationHeaderForHeader{}, err
+	}
+	for row.Next() {
+		if err := row.Scan(&t.Research, &t.Phone, &t.Password, &t.ForgotPassword, &t.SignIn, &t.SignUp, &t.Name, &t.PasswordVerification, &t.VerifySecure, &t.MyInformation, &t.MyFavorites, &t.MyOrders, &t.LogOut); err != nil {
+			return TranslationHeaderForHeader{}, err
+		}
+	}
+
+	return t, nil
 }

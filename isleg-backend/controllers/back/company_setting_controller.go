@@ -10,6 +10,11 @@ import (
 	"github.com/google/uuid"
 )
 
+type LogoFavicon struct {
+	Logo    string `json:"logo"`
+	Favicon string `json:"favicon"`
+}
+
 func CreateCompanySetting(c *gin.Context) {
 
 	// GET DATA FROM REQUEST
@@ -89,5 +94,24 @@ func CreateCompanySetting(c *gin.Context) {
 		"status":  true,
 		"message": "company setting successfully added",
 	})
+
+}
+
+func GetCompanySettingForHeader() (LogoFavicon, error) {
+
+	var logoFavicon LogoFavicon
+
+	// GET LOGO AND FAVICON
+	row, err := config.ConnDB().Query("SELECT logo_path,favicon_path FROM company_setting ORDER BY created_at ASC LIMIT 1")
+	if err != nil {
+		return LogoFavicon{}, err
+	}
+	for row.Next() {
+		if err := row.Scan(&logoFavicon.Logo, &logoFavicon.Favicon); err != nil {
+			return LogoFavicon{}, err
+		}
+	}
+
+	return logoFavicon, nil
 
 }

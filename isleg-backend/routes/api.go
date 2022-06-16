@@ -2,6 +2,7 @@ package routes
 
 import (
 	backController "github/abbgo/isleg/isleg-backend/controllers/back"
+	frontController "github/abbgo/isleg/isleg-backend/controllers/front"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -17,7 +18,7 @@ func Routes() *gin.Engine {
 
 		back.POST("/language", backController.CreateLanguage)
 
-		back.POST("/company-setting", backController.CreateCompanySetting)
+		back.GET("/company-setting", backController.CreateCompanySetting)
 
 		back.POST("/translation-header", backController.CreateTranslationHeader)
 
@@ -27,11 +28,11 @@ func Routes() *gin.Engine {
 
 	}
 
-	// front := routes.Group("/api/:lang")
-	// {
-	// 	front.GET("/header", frontController.GetHeaderData)
+	front := routes.Group("/api/:lang")
+	{
+		front.GET("/header", frontController.GetHeaderData)
 
-	// }
+	}
 
 	return routes
 
