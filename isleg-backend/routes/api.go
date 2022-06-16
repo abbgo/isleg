@@ -22,6 +22,8 @@ func Routes() *gin.Engine {
 
 		back.POST("/translation-header", backController.CreateTranslationHeader)
 
+		back.POST("/translation-footer", backController.CreateTranslationFooter)
+
 		back.POST("/category", backController.CreateCategory)
 
 		back.POST("/brend", backController.CreateBrend)
@@ -31,6 +33,7 @@ func Routes() *gin.Engine {
 	front := routes.Group("/api/:lang")
 	{
 		front.GET("/header", frontController.GetHeaderData)
+		front.GET("/footer", frontController.GetFooterData)
 		front.GET("/brends", frontController.GetBrends)
 
 	}
