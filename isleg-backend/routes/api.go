@@ -23,6 +23,8 @@ func Routes() *gin.Engine {
 
 		back.POST("/category", backController.CreateCategory)
 
+		back.POST("/brend", backController.CreateBrend)
+
 	}
 
 	// front := routes.Group("/api/:lang")
