@@ -8,6 +8,14 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+type TranslationFooterForFooter struct {
+	About   string `json:"about"`
+	Payment string `json:"payment"`
+	Contact string `json:"contact"`
+	Secure  string `json:"secure"`
+	Word    string `json:"word"`
+}
+
 func CreateTranslationFooter(c *gin.Context) {
 
 	// GET ALL LANGUAGE
@@ -94,4 +102,24 @@ func CreateTranslationFooter(c *gin.Context) {
 		"status":  true,
 		"message": "translation footer successfully added",
 	})
+
+}
+
+func GetTranslationFooter(langID string) (TranslationFooterForFooter, error) {
+
+	var t TranslationFooterForFooter
+
+	row, err := config.ConnDB().Query("SELECT about,payment,contact,secure,word FROM translation_footer WHERE lang_id = $1", langID)
+	if err != nil {
+		return TranslationFooterForFooter{}, err
+	}
+
+	for row.Next() {
+		if err := row.Scan(&t.About, &t.Payment, &t.Contact, &t.Secure, &t.Word); err != nil {
+			return TranslationFooterForFooter{}, err
+		}
+	}
+
+	return t, nil
+
 }
