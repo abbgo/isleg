@@ -21,6 +21,8 @@ func Routes() *gin.Engine {
 
 		back.POST("/translation-header", backController.CreateTranslationHeader)
 
+		back.POST("/category", backController.CreateCategory)
+
 	}
 
 	// front := routes.Group("/api/:lang")

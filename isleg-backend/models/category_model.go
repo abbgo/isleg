@@ -6,7 +6,7 @@ type Category struct {
 	ID               uuid.UUID `json:"id"`
 	ParentCategoryID uuid.UUID `json:"parent_category_id"`
 	ImagePath        string    `json:"image_path"`
-	IsHomePage       bool      `json:"is_home_page"`
+	IsHomeCategory   bool      `json:"is_home_category"`
 	CreatedAt        string    `json:"-"`
 	UpdatedAt        string    `json:"-"`
 	DeletedAt        string    `json:"-"`
