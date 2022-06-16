@@ -38,7 +38,6 @@ func CreateCategory(c *gin.Context) {
 		}
 	} else {
 		parentCategoryIDUUID = uuid.Nil
-		// parentCategoryID = "00000000-0000-0000-0000-000000000000"
 	}
 	if parentCategoryIDUUID != uuid.Nil {
 		_, err := config.ConnDB().Query("SELECT id FROM categories WHERE id = $1", parentCategoryID)
@@ -88,7 +87,6 @@ func CreateCategory(c *gin.Context) {
 		}
 		newFileName := "category" + uuid.New().String() + extension
 		fileName = "uploads/" + newFileName
-		c.SaveUploadedFile(file, "./uploads/"+newFileName)
 	}
 
 	// VALIDATE DATA
@@ -123,7 +121,6 @@ func CreateCategory(c *gin.Context) {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
-				// "message": "yalnys",
 			})
 			return
 		}
@@ -133,10 +130,13 @@ func CreateCategory(c *gin.Context) {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
-				// "message": "yalnys",
 			})
 			return
 		}
+	}
+
+	if fileName != "" {
+		c.SaveUploadedFile(file, "./"+fileName)
 	}
 
 	// GET LAST CATEGORY ID
