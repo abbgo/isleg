@@ -55,6 +55,36 @@ func CreateLanguage(c *gin.Context) {
 		return
 	}
 
+	// GET LAST LANGUAGE ID
+	lastLandID, err := config.ConnDB().Query("SELECT id FROM languages ORDER BY created_at DESC LIMIT 1")
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	var langID string
+	for lastLandID.Next() {
+		if err := lastLandID.Scan(&langID); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}
+
+	// CREATE TRANSLATION HEADER
+	_, err = config.ConnDB().Exec("INSERT INTO translation_header (lang_id) VALUES ($1)", langID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
 		"message": "language successfully added",

@@ -19,6 +19,8 @@ func Routes() *gin.Engine {
 
 		back.POST("/company-setting", backController.CreateCompanySetting)
 
+		back.POST("/translation-header", backController.CreateTranslationHeader)
+
 	}
 
 	// front := routes.Group("/api/:lang")
