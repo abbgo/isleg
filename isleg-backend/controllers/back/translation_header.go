@@ -190,8 +190,8 @@ func GetTranslationHeaderForHeader(langID string) (TranslationHeaderForHeader, e
 
 	var t TranslationHeaderForHeader
 
-	// GET TranslationHeaderForHeader
-	row, err := config.ConnDB().Query("SELECT research,phone,password,forgot_password,sign_in,sign_up,name,password_verification,verify_secure,my_information,my_favorites,my_orders,log_out WHERE lang_id = $1", langID)
+	// GET TranslationHeader For Header
+	row, err := config.ConnDB().Query("SELECT research,phone,password,forgot_password,sign_in,sign_up,name,password_verification,verify_secure,my_information,my_favorites,my_orders,log_out FROM translation_header WHERE lang_id = $1", langID)
 	if err != nil {
 		return TranslationHeaderForHeader{}, err
 	}

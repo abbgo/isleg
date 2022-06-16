@@ -11,6 +11,24 @@ import (
 	"github.com/google/uuid"
 )
 
+type ResultCategory struct {
+	ID            string          `json:"id"`
+	Image         string          `json:"image"`
+	Name          string          `json:"name"`
+	ResultCategor []ResultCategor `json:"child_category"`
+}
+
+type ResultCategor struct {
+	ID           string         `json:"id"`
+	Name         string         `json:"name"`
+	ResultCatego []ResultCatego `json:"child_category"`
+}
+
+type ResultCatego struct {
+	ID   string `json:"id"`
+	Name string `json:"name"`
+}
+
 func CreateCategory(c *gin.Context) {
 
 	var languages []models.Language
@@ -175,5 +193,60 @@ func CreateCategory(c *gin.Context) {
 		"status":  true,
 		"message": "category successfully added",
 	})
+
+}
+
+func GetAllCategoryForHeader(langID string) ([]ResultCategory, error) {
+
+	rows, err := config.ConnDB().Query("SELECT categories.id,categories.image_path,translation_category.name FROM categories LEFT JOIN translation_category ON categories.id=translation_category.category_id WHERE translation_category.lang_id = $1 AND categories.parent_category_id IS NULL", langID)
+	if err != nil {
+		return []ResultCategory{}, err
+	}
+
+	var results []ResultCategory
+
+	for rows.Next() {
+		var result ResultCategory
+		if err := rows.Scan(&result.ID, &result.Image, &result.Name); err != nil {
+			return []ResultCategory{}, err
+		}
+
+		rowss, err := config.ConnDB().Query("SELECT categories.id,translation_category.name FROM categories LEFT JOIN translation_category ON categories.id=translation_category.category_id WHERE translation_category.lang_id = $1 AND categories.parent_category_id = $2", langID, result.ID)
+		if err != nil {
+			return []ResultCategory{}, err
+		}
+
+		var resuls []ResultCategor
+
+		for rowss.Next() {
+			var resul ResultCategor
+			if err := rowss.Scan(&resul.ID, &resul.Name); err != nil {
+				return []ResultCategory{}, err
+			}
+
+			rowsss, err := config.ConnDB().Query("SELECT categories.id,translation_category.name FROM categories LEFT JOIN translation_category ON categories.id=translation_category.category_id WHERE translation_category.lang_id = $1 AND categories.parent_category_id =$2", langID, resul.ID)
+			if err != nil {
+				return []ResultCategory{}, err
+			}
+
+			var resus []ResultCatego
+
+			for rowsss.Next() {
+				var resu ResultCatego
+				if err := rowsss.Scan(&resu.ID, &resu.Name); err != nil {
+					return []ResultCategory{}, err
+				}
+
+				resus = append(resus, resu)
+			}
+			resul.ResultCatego = resus
+
+			resuls = append(resuls, resul)
+		}
+		result.ResultCategor = resuls
+
+		results = append(results, result)
+	}
+	return results, nil
 
 }

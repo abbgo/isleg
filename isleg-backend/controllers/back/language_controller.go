@@ -10,6 +10,11 @@ import (
 	"github.com/google/uuid"
 )
 
+type LanguageForHeader struct {
+	NameShort string `json:"name_short"`
+	Flag      string `json:"flag"`
+}
+
 func CreateLanguage(c *gin.Context) {
 
 	// GET DATA FROM REQUEST
@@ -122,5 +127,26 @@ func CreateLanguage(c *gin.Context) {
 		"status":  true,
 		"message": "language successfully added",
 	})
+
+}
+
+func GetAllLanguageForHeader() ([]LanguageForHeader, error) {
+
+	var ls []LanguageForHeader
+
+	// GET Language For Header
+	rows, err := config.ConnDB().Query("SELECT name_short,flag_path FROM languages")
+	if err != nil {
+		return []LanguageForHeader{}, err
+	}
+	for rows.Next() {
+		var l LanguageForHeader
+		if err := rows.Scan(&l.NameShort, &l.Flag); err != nil {
+			return []LanguageForHeader{}, err
+		}
+		ls = append(ls, l)
+	}
+
+	return ls, nil
 
 }

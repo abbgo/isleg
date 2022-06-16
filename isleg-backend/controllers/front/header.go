@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"github/abbgo/isleg/isleg-backend/config"
 	backController "github/abbgo/isleg/isleg-backend/controllers/back"
 	"net/http"
 
@@ -8,10 +9,36 @@ import (
 )
 
 type HeaderData struct {
-	LogoFavicon backController.LogoFavicon
+	LogoFavicon       backController.LogoFavicon                `json:"logo_favicon"`
+	TranslationHeader backController.TranslationHeaderForHeader `json:"translation_header"`
+	Languages         []backController.LanguageForHeader        `json:"languages"`
+	Categories        []backController.ResultCategory           `json:"categories"`
 }
 
 func GetHeaderData(c *gin.Context) {
+
+	// GET DATA FROM ROUTE PARAMETER
+	langShortName := c.Param("lang")
+
+	// GET language id
+	var langID string
+	row, err := config.ConnDB().Query("SELECT id FROM languages WHERE name_short = $1", langShortName)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	for row.Next() {
+		if err := row.Scan(&langID); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}
 
 	logoFavicon, err := backController.GetCompanySettingForHeader()
 	if err != nil {
@@ -22,8 +49,44 @@ func GetHeaderData(c *gin.Context) {
 		return
 	}
 
-	headerData := HeaderData{
-		LogoFavicon: logoFavicon,
+	translationHeader, err := backController.GetTranslationHeaderForHeader(langID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
 	}
+
+	languages, err := backController.GetAllLanguageForHeader()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	categories, err := backController.GetAllCategoryForHeader(langID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+			// "message": "yalnys bar",
+		})
+		return
+	}
+
+	headerData := HeaderData{
+		LogoFavicon:       logoFavicon,
+		TranslationHeader: translationHeader,
+		Languages:         languages,
+		Categories:        categories,
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":      true,
+		"header_data": headerData,
+	})
 
 }
