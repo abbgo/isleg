@@ -28,6 +28,8 @@ func Routes() *gin.Engine {
 
 		back.POST("/brend", backController.CreateBrend)
 
+		back.POST("/product", backController.CreateProduct)
+
 	}
 
 	front := routes.Group("/api/:lang")
