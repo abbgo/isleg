@@ -134,6 +134,40 @@ func CreateLanguage(c *gin.Context) {
 		}
 	}
 
+	// GET ALL product id
+	var productIDs []string
+	productRows, err := config.ConnDB().Query("SELECT id FROM products ORDER BY created_at ASC")
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	for productRows.Next() {
+		var productID string
+		if err := productRows.Scan(&productID); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+		productIDs = append(productIDs, productID)
+	}
+
+	// CREATE TRANSLATION product
+	for _, v := range productIDs {
+		_, err = config.ConnDB().Exec("INSERT INTO translation_product (lang_id,product_id) VALUES ($1,$2)", langID, v)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}
+
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
 		"message": "language successfully added",

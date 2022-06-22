@@ -18,7 +18,7 @@ func main() {
 	os.Mkdir("./uploads", os.ModePerm)
 	r.Static("/image", "./uploads")
 
-	if err := r.Run(); err != nil {
+	if err := r.Run(":2406"); err != nil {
 		log.Fatal(err)
 	}
 
