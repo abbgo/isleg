@@ -35,4 +35,37 @@ func CreateCompanyPhone(c *gin.Context) {
 		"status":  true,
 		"message": "company phone successfully added",
 	})
+
+}
+
+func GetCompanyPhones(c *gin.Context) {
+
+	var companyPhones []string
+
+	rows, err := config.ConnDB().Query("SELECT phone FROM company_phone")
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	for rows.Next() {
+		var companyPhone string
+		if err := rows.Scan(&companyPhone); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+		companyPhones = append(companyPhones, companyPhone)
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":         true,
+		"company_phones": companyPhones,
+	})
+
 }
