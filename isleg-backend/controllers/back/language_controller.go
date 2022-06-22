@@ -100,6 +100,16 @@ func CreateLanguage(c *gin.Context) {
 		return
 	}
 
+	// CREATE company address
+	_, err = config.ConnDB().Exec("INSERT INTO company_address (lang_id) VALUES ($1)", langID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
 	// GET ALL CATEGORY id
 	var categoryIDs []string
 	categoryRows, err := config.ConnDB().Query("SELECT id FROM categories ORDER BY created_at ASC")
