@@ -11,8 +11,11 @@ import (
 func Routes() *gin.Engine {
 
 	routes := gin.Default()
+
+	// cors
 	routes.Use(cors.Default())
 
+	// routes belong to admin panel
 	back := routes.Group("/admin")
 	{
 
@@ -36,6 +39,7 @@ func Routes() *gin.Engine {
 
 	}
 
+	// routes belong to front
 	front := routes.Group("/api/:lang")
 	{
 		front.GET("/header", frontController.GetHeaderData)
@@ -45,7 +49,6 @@ func Routes() *gin.Engine {
 		front.GET("/company-address", backController.GetCompanyAddress)
 		front.GET("/homepage-categories", frontController.GetHomePageCategories)
 		front.GET("/:category_id/:limit/:page", backController.GetOneCategoryWithProducts)
-
 	}
 
 	return routes

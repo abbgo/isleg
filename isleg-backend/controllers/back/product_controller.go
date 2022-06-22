@@ -38,7 +38,6 @@ func CreateProduct(c *gin.Context) {
 	}
 
 	// validate data from request
-
 	priceStr := c.PostForm("price")
 	price, err := strconv.ParseFloat(priceStr, 64)
 	if err != nil {
@@ -160,6 +159,7 @@ func CreateProduct(c *gin.Context) {
 		})
 		return
 	}
+
 	newFileName := "productMain" + uuid.New().String() + extensionFile
 	c.SaveUploadedFile(mainImagePathFile, "./uploads/"+newFileName)
 
@@ -181,6 +181,7 @@ func CreateProduct(c *gin.Context) {
 		imagePaths = append(imagePaths, "uploads/"+fileName)
 	}
 
+	// create product
 	_, err = config.ConnDB().Exec("INSERT INTO products (brend_id,price,old_price,amount,product_code,main_image_path,image_paths) VALUES ($1,$2,$3,$4,$5,$6,$7)", brendIDUUID, price, oldPrice, amount, productCode, "uploads/"+newFileName, pq.StringArray(imagePaths))
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{
@@ -190,6 +191,7 @@ func CreateProduct(c *gin.Context) {
 		return
 	}
 
+	// get the id of the added product
 	lastProductID, err := config.ConnDB().Query("SELECT id FROM products ORDER BY created_at DESC LIMIT 1")
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -200,6 +202,7 @@ func CreateProduct(c *gin.Context) {
 	}
 
 	var productID string
+
 	for lastProductID.Next() {
 		if err := lastProductID.Scan(&productID); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
@@ -210,6 +213,7 @@ func CreateProduct(c *gin.Context) {
 		}
 	}
 
+	// create translation product
 	for _, v := range languages {
 		_, err := config.ConnDB().Exec("INSERT INTO translation_product (lang_id,product_id,name,description) VALUES ($1,$2,$3,$4)", v.ID, productID, c.PostForm("name_"+v.NameShort), c.PostForm("description_"+v.NameShort))
 		if err != nil {
@@ -221,6 +225,7 @@ func CreateProduct(c *gin.Context) {
 		}
 	}
 
+	// get all category id from request
 	categories, _ := c.GetPostFormArray("category_id")
 	if len(categories) == 0 {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -230,6 +235,7 @@ func CreateProduct(c *gin.Context) {
 		return
 	}
 
+	// create category product
 	for _, v := range categories {
 		vUUID, err := uuid.Parse(v)
 		if v != "" {

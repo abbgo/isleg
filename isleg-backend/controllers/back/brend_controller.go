@@ -37,6 +37,7 @@ func CreateBrend(c *gin.Context) {
 		})
 		return
 	}
+
 	extension := filepath.Ext(file.Filename)
 	// VALIDATE IMAGE
 	if extension != ".jpg" && extension != ".jpeg" && extension != ".png" && extension != ".gif" {
@@ -46,6 +47,7 @@ func CreateBrend(c *gin.Context) {
 		})
 		return
 	}
+
 	newFileName := "brend" + uuid.New().String() + extension
 	c.SaveUploadedFile(file, "./uploads/"+newFileName)
 
@@ -70,6 +72,7 @@ func GetAllBrendForHomePage() ([]BrendForHomePage, error) {
 
 	var brends []BrendForHomePage
 
+	// get all brends
 	rows, err := config.ConnDB().Query("SELECT id,image_path FROM brends")
 	if err != nil {
 		return []BrendForHomePage{}, err

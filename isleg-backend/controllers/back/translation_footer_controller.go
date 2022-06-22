@@ -27,7 +27,9 @@ func CreateTranslationFooter(c *gin.Context) {
 		})
 		return
 	}
+
 	var languages []models.Language
+
 	for languageRows.Next() {
 		var language models.Language
 		if err := languageRows.Scan(&language.ID, &language.NameShort); err != nil {
@@ -50,6 +52,7 @@ func CreateTranslationFooter(c *gin.Context) {
 			return
 		}
 	}
+
 	for _, v := range languages {
 		if c.PostForm("payment_"+v.NameShort) == "" {
 			c.JSON(http.StatusBadRequest, gin.H{
@@ -59,6 +62,7 @@ func CreateTranslationFooter(c *gin.Context) {
 			return
 		}
 	}
+
 	for _, v := range languages {
 		if c.PostForm("contact_"+v.NameShort) == "" {
 			c.JSON(http.StatusBadRequest, gin.H{
@@ -68,6 +72,7 @@ func CreateTranslationFooter(c *gin.Context) {
 			return
 		}
 	}
+
 	for _, v := range languages {
 		if c.PostForm("secure_"+v.NameShort) == "" {
 			c.JSON(http.StatusBadRequest, gin.H{
@@ -77,6 +82,7 @@ func CreateTranslationFooter(c *gin.Context) {
 			return
 		}
 	}
+
 	for _, v := range languages {
 		if c.PostForm("word_"+v.NameShort) == "" {
 			c.JSON(http.StatusBadRequest, gin.H{
@@ -87,6 +93,7 @@ func CreateTranslationFooter(c *gin.Context) {
 		}
 	}
 
+	// create translation footer
 	for _, v := range languages {
 		_, err := config.ConnDB().Exec("INSERT INTO translation_footer (lang_id,about,payment,contact,secure,word) VALUES ($1,$2,$3,$4,$5,$6)", v.ID, c.PostForm("about_"+v.NameShort), c.PostForm("payment_"+v.NameShort), c.PostForm("contact_"+v.NameShort), c.PostForm("secure_"+v.NameShort), c.PostForm("word_"+v.NameShort))
 		if err != nil {
@@ -109,6 +116,7 @@ func GetTranslationFooter(langID string) (TranslationFooterForFooter, error) {
 
 	var t TranslationFooterForFooter
 
+	// get translation footer where lang_id equal langID
 	row, err := config.ConnDB().Query("SELECT about,payment,contact,secure,word FROM translation_footer WHERE lang_id = $1", langID)
 	if err != nil {
 		return TranslationFooterForFooter{}, err

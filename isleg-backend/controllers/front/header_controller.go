@@ -22,6 +22,7 @@ func GetHeaderData(c *gin.Context) {
 
 	// GET language id
 	var langID string
+
 	row, err := config.ConnDB().Query("SELECT id FROM languages WHERE name_short = $1", langShortName)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -30,6 +31,7 @@ func GetHeaderData(c *gin.Context) {
 		})
 		return
 	}
+
 	for row.Next() {
 		if err := row.Scan(&langID); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
@@ -40,6 +42,7 @@ func GetHeaderData(c *gin.Context) {
 		}
 	}
 
+	// get logo and favicon from company setting controller
 	logoFavicon, err := backController.GetCompanySettingForHeader()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -49,6 +52,7 @@ func GetHeaderData(c *gin.Context) {
 		return
 	}
 
+	// get translation header from translation header controller
 	translationHeader, err := backController.GetTranslationHeaderForHeader(langID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -58,6 +62,7 @@ func GetHeaderData(c *gin.Context) {
 		return
 	}
 
+	// get all language from language controller
 	languages, err := backController.GetAllLanguageForHeader()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -67,6 +72,7 @@ func GetHeaderData(c *gin.Context) {
 		return
 	}
 
+	// get all category from category controller
 	categories, err := backController.GetAllCategoryForHeader(langID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{

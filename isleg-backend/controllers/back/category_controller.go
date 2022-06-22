@@ -67,6 +67,7 @@ func CreateCategory(c *gin.Context) {
 		})
 		return
 	}
+
 	parentCategoryID := c.PostForm("parent_category_id")
 	parentCategoryIDUUID, err := uuid.Parse(parentCategoryID)
 	if parentCategoryID != "" {
@@ -80,6 +81,7 @@ func CreateCategory(c *gin.Context) {
 	} else {
 		parentCategoryIDUUID = uuid.Nil
 	}
+
 	if parentCategoryIDUUID != uuid.Nil {
 		_, err := config.ConnDB().Query("SELECT id FROM categories WHERE id = $1", parentCategoryID)
 		if err != nil {
@@ -100,6 +102,7 @@ func CreateCategory(c *gin.Context) {
 		})
 		return
 	}
+
 	for languageRows.Next() {
 		var language models.Language
 		if err := languageRows.Scan(&language.ID, &language.NameShort); err != nil {
@@ -126,6 +129,7 @@ func CreateCategory(c *gin.Context) {
 			})
 			return
 		}
+
 		newFileName := "category" + uuid.New().String() + extension
 		fileName = "uploads/" + newFileName
 	}
@@ -140,6 +144,7 @@ func CreateCategory(c *gin.Context) {
 			return
 		}
 	}
+
 	if parentCategoryIDUUID == uuid.Nil && fileName == "" {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -147,6 +152,7 @@ func CreateCategory(c *gin.Context) {
 		})
 		return
 	}
+
 	if parentCategoryIDUUID != uuid.Nil && fileName != "" {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -189,7 +195,9 @@ func CreateCategory(c *gin.Context) {
 		})
 		return
 	}
+
 	var categoryID string
+
 	for lastCategoryID.Next() {
 		if err := lastCategoryID.Scan(&categoryID); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
@@ -221,6 +229,7 @@ func CreateCategory(c *gin.Context) {
 
 func GetAllCategoryForHeader(langID string) ([]ResultCategory, error) {
 
+	// get all category where parent category id is null
 	rows, err := config.ConnDB().Query("SELECT categories.id,categories.image_path,translation_category.name FROM categories LEFT JOIN translation_category ON categories.id=translation_category.category_id WHERE translation_category.lang_id = $1 AND categories.parent_category_id IS NULL", langID)
 	if err != nil {
 		return []ResultCategory{}, err
@@ -234,6 +243,7 @@ func GetAllCategoryForHeader(langID string) ([]ResultCategory, error) {
 			return []ResultCategory{}, err
 		}
 
+		// get all category where parent category id equal category id
 		rowss, err := config.ConnDB().Query("SELECT categories.id,translation_category.name FROM categories LEFT JOIN translation_category ON categories.id=translation_category.category_id WHERE translation_category.lang_id = $1 AND categories.parent_category_id = $2", langID, result.ID)
 		if err != nil {
 			return []ResultCategory{}, err
@@ -247,6 +257,7 @@ func GetAllCategoryForHeader(langID string) ([]ResultCategory, error) {
 				return []ResultCategory{}, err
 			}
 
+			// get all category where parent category id equal category id
 			rowsss, err := config.ConnDB().Query("SELECT categories.id,translation_category.name FROM categories LEFT JOIN translation_category ON categories.id=translation_category.category_id WHERE translation_category.lang_id = $1 AND categories.parent_category_id =$2", langID, resul.ID)
 			if err != nil {
 				return []ResultCategory{}, err
@@ -301,6 +312,7 @@ func GetOneCategoryWithProducts(c *gin.Context) {
 		}
 	}
 
+	// get limit from param
 	limitStr := c.Param("limit")
 	if limitStr == "" {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -318,6 +330,7 @@ func GetOneCategoryWithProducts(c *gin.Context) {
 		return
 	}
 
+	// get page from param
 	pageStr := c.Param("page")
 	if pageStr == "" {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -338,6 +351,8 @@ func GetOneCategoryWithProducts(c *gin.Context) {
 	offset := limit * (page - 1)
 
 	categoryID := c.Param("category_id")
+
+	// get category where id equal categiryID
 	categoryRow, err := config.ConnDB().Query("SELECT c.id,t.name FROM categories c LEFT JOIN translation_category t ON c.id=t.category_id WHERE t.lang_id = $1 AND c.id = $2", langID, categoryID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -358,6 +373,7 @@ func GetOneCategoryWithProducts(c *gin.Context) {
 			return
 		}
 
+		// get count product where product_id equal categoryID
 		productCount, err := config.ConnDB().Query("SELECT COUNT(p.id) FROM products p LEFT JOIN category_product c ON p.id=c.product_id WHERE c.category_id = $1", categoryID)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
@@ -379,6 +395,7 @@ func GetOneCategoryWithProducts(c *gin.Context) {
 			}
 		}
 
+		// get all product where category id equal categoryID
 		productRows, err := config.ConnDB().Query("SELECT p.id,t.name,p.price,p.old_price,p.main_image_path,p.product_code,p.image_paths FROM products p LEFT JOIN category_product c ON p.id=c.product_id LEFT JOIN translation_product t ON p.id=t.product_id WHERE t.lang_id = $1 AND c.category_id = $2 ORDER BY p.created_at ASC LIMIT $3 OFFSET $4", langID, categoryID, limit, offset)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
@@ -400,6 +417,7 @@ func GetOneCategoryWithProducts(c *gin.Context) {
 				return
 			}
 
+			// get brend where id equal brend_id of product
 			brendRows, err := config.ConnDB().Query("SELECT b.id,b.name FROM products p LEFT JOIN brends b ON p.brend_id=b.id WHERE p.id = $1", product.ID)
 			if err != nil {
 				c.JSON(http.StatusBadRequest, gin.H{

@@ -16,6 +16,7 @@ func GetFooterData(c *gin.Context) {
 
 	// GET language id
 	var langID string
+
 	row, err := config.ConnDB().Query("SELECT id FROM languages WHERE name_short = $1", langShortName)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -24,6 +25,7 @@ func GetFooterData(c *gin.Context) {
 		})
 		return
 	}
+
 	for row.Next() {
 		if err := row.Scan(&langID); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
@@ -34,6 +36,7 @@ func GetFooterData(c *gin.Context) {
 		}
 	}
 
+	// get translation footer from translation footer controller
 	translationFooter, err := backController.GetTranslationFooter(langID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{

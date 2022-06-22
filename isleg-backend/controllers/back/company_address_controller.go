@@ -43,6 +43,7 @@ func CreateCompanyAddress(c *gin.Context) {
 		}
 	}
 
+	// create company address
 	for _, v := range languages {
 		config.ConnDB().Exec("INSERT INTO company_address (lang_id,address) VALUES ($1,$2)", v.ID, c.PostForm("address_"+v.NameShort))
 		if err != nil {
@@ -86,6 +87,7 @@ func GetCompanyAddress(c *gin.Context) {
 		}
 	}
 
+	// get company address where lang_id equal langID
 	addressRow, err := config.ConnDB().Query("SELECT address FROM company_address WHERE lang_id = $1", langID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
