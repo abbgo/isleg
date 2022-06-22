@@ -1,19 +1,22 @@
 package models
 
-import "github.com/google/uuid"
+import (
+	"github.com/google/uuid"
+	"github.com/lib/pq"
+)
 
 type Product struct {
-	ID            uuid.UUID `json:"id"`
-	BrendID       uuid.UUID `json:"brend_id"`
-	Price         float64   `json:"price"`
-	OldPrice      float64   `json:"old_price"`
-	Amount        uint      `json:"amount"`
-	ProductCode   string    `json:"product_code"`
-	MainImagePath string    `json:"main_image_path"`
-	ImagePaths    []string  `json:"image_paths"`
-	CreatedAt     string    `json:"-"`
-	UpdatedAt     string    `json:"-"`
-	DeletedAt     string    `json:"-"`
+	ID            uuid.UUID      `json:"id"`
+	BrendID       uuid.UUID      `json:"brend_id"`
+	Price         float64        `json:"price"`
+	OldPrice      float64        `json:"old_price"`
+	Amount        uint           `json:"amount"`
+	ProductCode   string         `json:"product_code"`
+	MainImagePath string         `json:"main_image_path"`
+	ImagePaths    pq.StringArray `json:"image_paths"`
+	CreatedAt     string         `json:"-"`
+	UpdatedAt     string         `json:"-"`
+	DeletedAt     string         `json:"-"`
 }
 
 type TranslationProduct struct {

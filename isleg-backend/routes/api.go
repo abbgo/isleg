@@ -37,6 +37,7 @@ func Routes() *gin.Engine {
 		front.GET("/header", frontController.GetHeaderData)
 		front.GET("/footer", frontController.GetFooterData)
 		front.GET("/brends", frontController.GetBrends)
+		front.GET("/homepage-categories", frontController.GetHomePageCategories)
 
 	}
 

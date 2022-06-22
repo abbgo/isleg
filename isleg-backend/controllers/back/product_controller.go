@@ -50,13 +50,27 @@ func CreateProduct(c *gin.Context) {
 	}
 
 	oldPriceStr := c.PostForm("old_price")
-	oldPrice, err := strconv.ParseFloat(oldPriceStr, 64)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
+	var oldPrice float64
+	if oldPriceStr != "" {
+		oldPrice, err = strconv.ParseFloat(oldPriceStr, 64)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+
+		if oldPrice < price {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": "cannot be less than oldPrice Price",
+			})
+			return
+		}
+
+	} else {
+		oldPrice = 0
 	}
 
 	amountStr := c.PostForm("amount")
@@ -241,4 +255,5 @@ func CreateProduct(c *gin.Context) {
 		"status":  true,
 		"message": "product successfully added",
 	})
+
 }
