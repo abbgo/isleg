@@ -37,6 +37,8 @@ func Routes() *gin.Engine {
 
 		back.POST("/company-address", backController.CreateCompanyAddress)
 
+		back.POST("/afisa", backController.CreateAfisa)
+
 	}
 
 	// routes belong to front

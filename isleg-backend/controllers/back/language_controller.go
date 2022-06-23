@@ -178,6 +178,40 @@ func CreateLanguage(c *gin.Context) {
 		}
 	}
 
+	// GET ALL afisa id
+	var afisaIDs []string
+	afisaRows, err := config.ConnDB().Query("SELECT id FROM afisa ORDER BY created_at ASC")
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	for afisaRows.Next() {
+		var afisaID string
+		if err := afisaRows.Scan(&afisaID); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+		afisaIDs = append(afisaIDs, afisaID)
+	}
+
+	// CREATE TRANSLATION afisa
+	for _, v := range afisaIDs {
+		_, err = config.ConnDB().Exec("INSERT INTO translation_afisa (lang_id,afisa_id) VALUES ($1,$2)", langID, v)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}
+
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
 		"message": "language successfully added",
