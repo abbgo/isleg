@@ -60,7 +60,7 @@ func CreateTranslationPayment(c *gin.Context) {
 		}
 	}
 
-	// create translation secure
+	// create translation payment
 	for _, v := range languages {
 		_, err := config.ConnDB().Exec("INSERT INTO translation_payment (lang_id,title,content) VALUES ($1,$2,$3)", v.ID, c.PostForm("title_"+v.NameShort), c.PostForm("content_"+v.NameShort))
 		if err != nil {
@@ -104,7 +104,7 @@ func GetTranslationPayment(c *gin.Context) {
 		}
 	}
 
-	// get translation secure where lang_id equal langID
+	// get translation payment where lang_id equal langID
 	paymentRow, err := config.ConnDB().Query("SELECT title,content FROM translation_payment WHERE lang_id = $1", langID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
