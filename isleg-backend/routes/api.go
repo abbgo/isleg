@@ -27,6 +27,8 @@ func Routes() *gin.Engine {
 
 		back.POST("/translation-footer", backController.CreateTranslationFooter)
 
+		back.POST("/translation-secure", backController.CreateTranslationSecure)
+
 		back.POST("/category", backController.CreateCategory)
 
 		back.POST("/brend", backController.CreateBrend)
