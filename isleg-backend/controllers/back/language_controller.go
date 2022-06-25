@@ -100,8 +100,18 @@ func CreateLanguage(c *gin.Context) {
 		return
 	}
 
-	// CREATE TRANSLATION FOOTER
+	// CREATE TRANSLATION secure
 	_, err = config.ConnDB().Exec("INSERT INTO translation_secure (lang_id) VALUES ($1)", langID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	// CREATE TRANSLATION payment
+	_, err = config.ConnDB().Exec("INSERT INTO translation_payment (lang_id) VALUES ($1)", langID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
