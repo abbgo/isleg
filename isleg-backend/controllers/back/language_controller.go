@@ -120,6 +120,16 @@ func CreateLanguage(c *gin.Context) {
 		return
 	}
 
+	// CREATE TRANSLATION about
+	_, err = config.ConnDB().Exec("INSERT INTO translation_about (lang_id) VALUES ($1)", langID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
 	// CREATE company address
 	_, err = config.ConnDB().Exec("INSERT INTO company_address (lang_id) VALUES ($1)", langID)
 	if err != nil {
