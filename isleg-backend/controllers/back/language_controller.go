@@ -212,6 +212,40 @@ func CreateLanguage(c *gin.Context) {
 		}
 	}
 
+	// GET ALL district id
+	var districtIDs []string
+	districtRows, err := config.ConnDB().Query("SELECT id FROM district ORDER BY created_at ASC")
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	for districtRows.Next() {
+		var districtID string
+		if err := districtRows.Scan(&districtID); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+		districtIDs = append(districtIDs, districtID)
+	}
+
+	// CREATE TRANSLATION district
+	for _, v := range districtIDs {
+		_, err = config.ConnDB().Exec("INSERT INTO translation_district (lang_id,district_id) VALUES ($1,$2)", langID, v)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}
+
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
 		"message": "language successfully added",

@@ -39,6 +39,8 @@ func Routes() *gin.Engine {
 
 		back.POST("/afisa", backController.CreateAfisa)
 
+		back.POST("/district", backController.CreateDistrict)
+
 	}
 
 	// routes belong to front
