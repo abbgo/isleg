@@ -130,4 +130,5 @@ func GetTranslationSecure(c *gin.Context) {
 		"status":             true,
 		"translation_secure": translationSecure,
 	})
+
 }
