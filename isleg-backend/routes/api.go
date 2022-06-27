@@ -33,6 +33,8 @@ func Routes() *gin.Engine {
 
 		back.POST("/translation-about", backController.CreateTranslationAbout)
 
+		back.POST("/translation-contact", backController.CreateTranslationContact)
+
 		back.POST("/category", backController.CreateCategory)
 
 		back.POST("/brend", backController.CreateBrend)
@@ -60,6 +62,7 @@ func Routes() *gin.Engine {
 		front.GET("/translation-secure", backController.GetTranslationSecure)
 		front.GET("/translation-payment", backController.GetTranslationPayment)
 		front.GET("/translation-about", backController.GetTranslationAbout)
+		front.GET("/translation-contact", backController.GetTranslationContact)
 		front.GET("/homepage-categories", frontController.GetHomePageCategories)
 		front.GET("/:category_id/:limit/:page", backController.GetOneCategoryWithProducts)
 	}
