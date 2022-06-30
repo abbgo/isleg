@@ -11,8 +11,11 @@ import (
 func Routes() *gin.Engine {
 
 	routes := gin.Default()
+
+	// cors
 	routes.Use(cors.Default())
 
+	// routes belong to admin panel
 	back := routes.Group("/admin")
 	{
 
@@ -24,18 +27,44 @@ func Routes() *gin.Engine {
 
 		back.POST("/translation-footer", backController.CreateTranslationFooter)
 
+		back.POST("/translation-secure", backController.CreateTranslationSecure)
+
+		back.POST("/translation-payment", backController.CreateTranslationPayment)
+
+		back.POST("/translation-about", backController.CreateTranslationAbout)
+
+		back.POST("/translation-contact", backController.CreateTranslationContact)
+
 		back.POST("/category", backController.CreateCategory)
 
 		back.POST("/brend", backController.CreateBrend)
 
+		back.POST("/product", backController.CreateProduct)
+
+		back.POST("/company-phone", backController.CreateCompanyPhone)
+
+		back.POST("/company-address", backController.CreateCompanyAddress)
+
+		back.POST("/afisa", backController.CreateAfisa)
+
+		back.POST("/district", backController.CreateDistrict)
+
 	}
 
+	// routes belong to front
 	front := routes.Group("/api/:lang")
 	{
 		front.GET("/header", frontController.GetHeaderData)
 		front.GET("/footer", frontController.GetFooterData)
 		front.GET("/brends", frontController.GetBrends)
-
+		front.GET("/company-phones", backController.GetCompanyPhones)
+		front.GET("/company-address", backController.GetCompanyAddress)
+		front.GET("/translation-secure", backController.GetTranslationSecure)
+		front.GET("/translation-payment", backController.GetTranslationPayment)
+		front.GET("/translation-about", backController.GetTranslationAbout)
+		front.GET("/translation-contact", backController.GetTranslationContact)
+		front.GET("/homepage-categories", frontController.GetHomePageCategories)
+		front.GET("/:category_id/:limit/:page", backController.GetOneCategoryWithProducts)
 	}
 
 	return routes

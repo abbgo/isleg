@@ -35,7 +35,9 @@ func CreateTranslationHeader(c *gin.Context) {
 		})
 		return
 	}
+
 	var languages []models.Language
+
 	for languageRows.Next() {
 		var language models.Language
 		if err := languageRows.Scan(&language.ID, &language.NameShort); err != nil {
@@ -58,6 +60,7 @@ func CreateTranslationHeader(c *gin.Context) {
 			return
 		}
 	}
+
 	for _, v := range languages {
 		if c.PostForm("phone_"+v.NameShort) == "" {
 			c.JSON(http.StatusBadRequest, gin.H{
@@ -67,6 +70,7 @@ func CreateTranslationHeader(c *gin.Context) {
 			return
 		}
 	}
+
 	for _, v := range languages {
 		if c.PostForm("password_"+v.NameShort) == "" {
 			c.JSON(http.StatusBadRequest, gin.H{
@@ -76,6 +80,7 @@ func CreateTranslationHeader(c *gin.Context) {
 			return
 		}
 	}
+
 	for _, v := range languages {
 		if c.PostForm("forgot_password_"+v.NameShort) == "" {
 			c.JSON(http.StatusBadRequest, gin.H{
@@ -85,6 +90,7 @@ func CreateTranslationHeader(c *gin.Context) {
 			return
 		}
 	}
+
 	for _, v := range languages {
 		if c.PostForm("sign_in_"+v.NameShort) == "" {
 			c.JSON(http.StatusBadRequest, gin.H{
@@ -94,6 +100,7 @@ func CreateTranslationHeader(c *gin.Context) {
 			return
 		}
 	}
+
 	for _, v := range languages {
 		if c.PostForm("sign_up_"+v.NameShort) == "" {
 			c.JSON(http.StatusBadRequest, gin.H{
@@ -103,6 +110,7 @@ func CreateTranslationHeader(c *gin.Context) {
 			return
 		}
 	}
+
 	for _, v := range languages {
 		if c.PostForm("name_"+v.NameShort) == "" {
 			c.JSON(http.StatusBadRequest, gin.H{
@@ -112,6 +120,7 @@ func CreateTranslationHeader(c *gin.Context) {
 			return
 		}
 	}
+
 	for _, v := range languages {
 		if c.PostForm("password_verification_"+v.NameShort) == "" {
 			c.JSON(http.StatusBadRequest, gin.H{
@@ -121,6 +130,7 @@ func CreateTranslationHeader(c *gin.Context) {
 			return
 		}
 	}
+
 	for _, v := range languages {
 		if c.PostForm("verify_secure_"+v.NameShort) == "" {
 			c.JSON(http.StatusBadRequest, gin.H{
@@ -130,6 +140,7 @@ func CreateTranslationHeader(c *gin.Context) {
 			return
 		}
 	}
+
 	for _, v := range languages {
 		if c.PostForm("my_information_"+v.NameShort) == "" {
 			c.JSON(http.StatusBadRequest, gin.H{
@@ -139,6 +150,7 @@ func CreateTranslationHeader(c *gin.Context) {
 			return
 		}
 	}
+
 	for _, v := range languages {
 		if c.PostForm("my_favorites_"+v.NameShort) == "" {
 			c.JSON(http.StatusBadRequest, gin.H{
@@ -148,6 +160,7 @@ func CreateTranslationHeader(c *gin.Context) {
 			return
 		}
 	}
+
 	for _, v := range languages {
 		if c.PostForm("my_orders_"+v.NameShort) == "" {
 			c.JSON(http.StatusBadRequest, gin.H{
@@ -157,6 +170,7 @@ func CreateTranslationHeader(c *gin.Context) {
 			return
 		}
 	}
+
 	for _, v := range languages {
 		if c.PostForm("log_out_"+v.NameShort) == "" {
 			c.JSON(http.StatusBadRequest, gin.H{

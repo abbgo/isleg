@@ -1,0 +1,72 @@
+package controllers
+
+import (
+	"github/abbgo/isleg/isleg-backend/config"
+	"net/http"
+
+	"github.com/gin-gonic/gin"
+)
+
+func CreateCompanyPhone(c *gin.Context) {
+
+	// GET DATA FROM REQUEST
+	phone := c.PostForm("phone")
+
+	// validate data
+	if phone == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "phone is required",
+		})
+		return
+	}
+
+	// create company phone
+	_, err := config.ConnDB().Exec("INSERT INTO company_phone (phone) VALUES ($1)", phone)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":  true,
+		"message": "company phone successfully added",
+	})
+
+}
+
+func GetCompanyPhones(c *gin.Context) {
+
+	var companyPhones []string
+
+	// get all company phone number
+	rows, err := config.ConnDB().Query("SELECT phone FROM company_phone")
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	for rows.Next() {
+		var companyPhone string
+		if err := rows.Scan(&companyPhone); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+		companyPhones = append(companyPhones, companyPhone)
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":         true,
+		"company_phones": companyPhones,
+	})
+
+}

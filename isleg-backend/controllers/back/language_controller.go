@@ -100,6 +100,46 @@ func CreateLanguage(c *gin.Context) {
 		return
 	}
 
+	// CREATE TRANSLATION secure
+	_, err = config.ConnDB().Exec("INSERT INTO translation_secure (lang_id) VALUES ($1)", langID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	// CREATE TRANSLATION payment
+	_, err = config.ConnDB().Exec("INSERT INTO translation_payment (lang_id) VALUES ($1)", langID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	// CREATE TRANSLATION about
+	_, err = config.ConnDB().Exec("INSERT INTO translation_about (lang_id) VALUES ($1)", langID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	// CREATE company address
+	_, err = config.ConnDB().Exec("INSERT INTO company_address (lang_id) VALUES ($1)", langID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
 	// GET ALL CATEGORY id
 	var categoryIDs []string
 	categoryRows, err := config.ConnDB().Query("SELECT id FROM categories ORDER BY created_at ASC")
@@ -125,6 +165,108 @@ func CreateLanguage(c *gin.Context) {
 	// CREATE TRANSLATION CATEGORY
 	for _, v := range categoryIDs {
 		_, err = config.ConnDB().Exec("INSERT INTO translation_category (lang_id,category_id) VALUES ($1,$2)", langID, v)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}
+
+	// GET ALL product id
+	var productIDs []string
+	productRows, err := config.ConnDB().Query("SELECT id FROM products ORDER BY created_at ASC")
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	for productRows.Next() {
+		var productID string
+		if err := productRows.Scan(&productID); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+		productIDs = append(productIDs, productID)
+	}
+
+	// CREATE TRANSLATION product
+	for _, v := range productIDs {
+		_, err = config.ConnDB().Exec("INSERT INTO translation_product (lang_id,product_id) VALUES ($1,$2)", langID, v)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}
+
+	// GET ALL afisa id
+	var afisaIDs []string
+	afisaRows, err := config.ConnDB().Query("SELECT id FROM afisa ORDER BY created_at ASC")
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	for afisaRows.Next() {
+		var afisaID string
+		if err := afisaRows.Scan(&afisaID); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+		afisaIDs = append(afisaIDs, afisaID)
+	}
+
+	// CREATE TRANSLATION afisa
+	for _, v := range afisaIDs {
+		_, err = config.ConnDB().Exec("INSERT INTO translation_afisa (lang_id,afisa_id) VALUES ($1,$2)", langID, v)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}
+
+	// GET ALL district id
+	var districtIDs []string
+	districtRows, err := config.ConnDB().Query("SELECT id FROM district ORDER BY created_at ASC")
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	for districtRows.Next() {
+		var districtID string
+		if err := districtRows.Scan(&districtID); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+		districtIDs = append(districtIDs, districtID)
+	}
+
+	// CREATE TRANSLATION district
+	for _, v := range districtIDs {
+		_, err = config.ConnDB().Exec("INSERT INTO translation_district (lang_id,district_id) VALUES ($1,$2)", langID, v)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
