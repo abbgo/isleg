@@ -54,16 +54,37 @@ func Routes() *gin.Engine {
 	// routes belong to front
 	front := routes.Group("/api/:lang")
 	{
+		// get header data
 		front.GET("/header", frontController.GetHeaderData)
+
+		// get footer data
 		front.GET("/footer", frontController.GetFooterData)
+
+		// get all brend
 		front.GET("/brends", frontController.GetBrends)
+
+		// get company phone numbers
 		front.GET("/company-phones", backController.GetCompanyPhones)
+
+		// get company address
 		front.GET("/company-address", backController.GetCompanyAddress)
+
+		// get Terms of Service and Privacy Policy page translation
 		front.GET("/translation-secure", backController.GetTranslationSecure)
+
+		// get Delivery and payment order page translation
 		front.GET("/translation-payment", backController.GetTranslationPayment)
+
+		// get about us page translation
 		front.GET("/translation-about", backController.GetTranslationAbout)
+
+		// get contact us page translation
 		front.GET("/translation-contact", backController.GetTranslationContact)
+
+		// homepage categories
 		front.GET("/homepage-categories", frontController.GetHomePageCategories)
+
+		// get one category with products
 		front.GET("/:category_id/:limit/:page", backController.GetOneCategoryWithProducts)
 	}
 
