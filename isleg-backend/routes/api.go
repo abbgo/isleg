@@ -35,6 +35,8 @@ func Routes() *gin.Engine {
 
 		back.POST("/translation-contact", backController.CreateTranslationContact)
 
+		back.POST("/translation-my-information-page", backController.CreateTranslationMyInformationPage)
+
 		back.POST("/category", backController.CreateCategory)
 
 		back.POST("/brend", backController.CreateBrend)
