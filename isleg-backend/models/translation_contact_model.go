@@ -13,6 +13,7 @@ type TranslationContact struct {
 	Imo          string    `json:"imo"`
 	CompanyEmail string    `json:"company_email"`
 	Instragram   string    `json:"instagram"`
+	ButtonText   string    `json:"button_text"`
 	CreatedAt    string    `json:"-"`
 	UpdatedAt    string    `json:"-"`
 	DeletedAt    string    `json:"-"`
