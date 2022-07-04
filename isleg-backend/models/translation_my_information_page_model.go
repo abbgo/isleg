@@ -5,11 +5,13 @@ import (
 )
 
 type TranslationMyInformationPage struct {
-	ID        uuid.UUID `json:"id"`
-	LangID    uuid.UUID `json:"lang_id"`
-	Birthday  string    `json:"birthday"`
-	Address   string    `json:"address"`
-	CreatedAt string    `json:"-"`
-	UpdatedAt string    `json:"-"`
-	DeletedAt string    `json:"-"`
+	ID             uuid.UUID `json:"id"`
+	LangID         uuid.UUID `json:"lang_id"`
+	Birthday       string    `json:"birthday"`
+	Address        string    `json:"address"`
+	UpdatePassword string    `json:"update_password"`
+	Save           string    `json:"save"`
+	CreatedAt      string    `json:"-"`
+	UpdatedAt      string    `json:"-"`
+	DeletedAt      string    `json:"-"`
 }

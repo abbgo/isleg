@@ -140,6 +140,26 @@ func CreateLanguage(c *gin.Context) {
 		return
 	}
 
+	// CREATE translation_contact
+	_, err = config.ConnDB().Exec("INSERT INTO translation_contact (lang_id) VALUES ($1)", langID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	// CREATE translation_my_information_page
+	_, err = config.ConnDB().Exec("INSERT INTO translation_my_information_page (lang_id) VALUES ($1)", langID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
 	// GET ALL CATEGORY id
 	var categoryIDs []string
 	categoryRows, err := config.ConnDB().Query("SELECT id FROM categories ORDER BY created_at ASC")

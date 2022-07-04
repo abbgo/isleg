@@ -9,8 +9,10 @@ import (
 )
 
 type TrMyInformationPage struct {
-	Birthday string `json:"birthday"`
-	Address  string `json:"address"`
+	Birthday       string `json:"birthday"`
+	Address        string `json:"address"`
+	UpdatePassword string `json:"update_password"`
+	Save           string `json:"save"`
 }
 
 func CreateTranslationMyInformationPage(c *gin.Context) {
@@ -60,9 +62,29 @@ func CreateTranslationMyInformationPage(c *gin.Context) {
 		}
 	}
 
+	for _, v := range languages {
+		if c.PostForm("update_password_"+v.NameShort) == "" {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": "update_password_" + v.NameShort + " is required",
+			})
+			return
+		}
+	}
+
+	for _, v := range languages {
+		if c.PostForm("save_"+v.NameShort) == "" {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": "save_" + v.NameShort + " is required",
+			})
+			return
+		}
+	}
+
 	// create translation_my_information_page
 	for _, v := range languages {
-		_, err := config.ConnDB().Exec("INSERT INTO translation_my_information_page (lang_id,address,birthday) VALUES ($1,$2,$3)", v.ID, c.PostForm("address_"+v.NameShort), c.PostForm("birthday_"+v.NameShort))
+		_, err := config.ConnDB().Exec("INSERT INTO translation_my_information_page (lang_id,address,birthday,update_password,save) VALUES ($1,$2,$3,$4,$5)", v.ID, c.PostForm("address_"+v.NameShort), c.PostForm("birthday_"+v.NameShort), c.PostForm("update_password_"+v.NameShort), c.PostForm("save_"+v.NameShort))
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
@@ -105,7 +127,7 @@ func GetTranslationMyInformationPage(c *gin.Context) {
 	}
 
 	// get translation-my-information-page where lang_id equal langID
-	aboutRow, err := config.ConnDB().Query("SELECT address,birthday FROM translation_my_information_page WHERE lang_id = $1", langID)
+	aboutRow, err := config.ConnDB().Query("SELECT address,birthday,update_password,save FROM translation_my_information_page WHERE lang_id = $1", langID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -117,7 +139,7 @@ func GetTranslationMyInformationPage(c *gin.Context) {
 	var trMyInformationPage TrMyInformationPage
 
 	for aboutRow.Next() {
-		if err := aboutRow.Scan(&trMyInformationPage.Address, &trMyInformationPage.Birthday); err != nil {
+		if err := aboutRow.Scan(&trMyInformationPage.Address, &trMyInformationPage.Birthday, &trMyInformationPage.UpdatePassword, &trMyInformationPage.Save); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
