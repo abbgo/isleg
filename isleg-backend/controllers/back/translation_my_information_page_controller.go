@@ -8,6 +8,11 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+type TrMyInformationPage struct {
+	Birthday string `json:"birthday"`
+	Address  string `json:"address"`
+}
+
 func CreateTranslationMyInformationPage(c *gin.Context) {
 
 	// GET ALL LANGUAGE
@@ -72,4 +77,57 @@ func CreateTranslationMyInformationPage(c *gin.Context) {
 		"message": "translation my information page successfully added",
 	})
 
+}
+
+func GetTranslationMyInformationPage(c *gin.Context) {
+
+	// GET DATA FROM ROUTE PARAMETER
+	langShortName := c.Param("lang")
+
+	// GET language id
+	var langID string
+	row, err := config.ConnDB().Query("SELECT id FROM languages WHERE name_short = $1", langShortName)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	for row.Next() {
+		if err := row.Scan(&langID); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}
+
+	// get translation-my-information-page where lang_id equal langID
+	aboutRow, err := config.ConnDB().Query("SELECT address,birthday FROM translation_my_information_page WHERE lang_id = $1", langID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	var trMyInformationPage TrMyInformationPage
+
+	for aboutRow.Next() {
+		if err := aboutRow.Scan(&trMyInformationPage.Address, &trMyInformationPage.Birthday); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":                          true,
+		"translation_my_information_page": trMyInformationPage,
+	})
 }

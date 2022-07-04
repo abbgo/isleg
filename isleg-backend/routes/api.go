@@ -83,6 +83,9 @@ func Routes() *gin.Engine {
 		// get contact us page translation
 		front.GET("/translation-contact", backController.GetTranslationContact)
 
+		// get translation my information page translation
+		front.GET("/translation-my-information-page", backController.GetTranslationMyInformationPage)
+
 		// homepage categories
 		front.GET("/homepage-categories", frontController.GetHomePageCategories)
 
