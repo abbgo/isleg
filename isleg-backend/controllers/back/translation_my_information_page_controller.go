@@ -152,4 +152,5 @@ func GetTranslationMyInformationPage(c *gin.Context) {
 		"status":                          true,
 		"translation_my_information_page": trMyInformationPage,
 	})
+
 }

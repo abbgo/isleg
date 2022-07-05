@@ -6,6 +6,7 @@ type TranslationUpdatePasswordPage struct {
 	ID             uuid.UUID `json:"id"`
 	LangID         uuid.UUID `json:"lang_id"`
 	Title          string    `json:"title"`
+	Password       string    `json:"password"`
 	VerifyPassword string    `json:"verify_password"`
 	Explanation    string    `json:"explanation"`
 	Save           string    `json:"save"`
