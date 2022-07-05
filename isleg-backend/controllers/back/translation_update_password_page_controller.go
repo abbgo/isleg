@@ -8,6 +8,14 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+type TrUpdatePasswordPage struct {
+	Title          string `json:"title"`
+	Password       string `json:"password"`
+	VerifyPassword string `json:"verify_password"`
+	Explanation    string `json:"explanation"`
+	Save           string `json:"save"`
+}
+
 func CreateTranslationUpdatePasswordPage(c *gin.Context) {
 
 	// GET ALL LANGUAGE
@@ -99,6 +107,60 @@ func CreateTranslationUpdatePasswordPage(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
 		"message": "translation update password page successfully added",
+	})
+
+}
+
+func GetTranslationUpdatePasswordPage(c *gin.Context) {
+
+	// GET DATA FROM ROUTE PARAMETER
+	langShortName := c.Param("lang")
+
+	// GET language id
+	var langID string
+	row, err := config.ConnDB().Query("SELECT id FROM languages WHERE name_short = $1", langShortName)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	for row.Next() {
+		if err := row.Scan(&langID); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}
+
+	// get translation-update-password-page where lang_id equal langID
+	aboutRow, err := config.ConnDB().Query("SELECT title,password,verify_password,explanation,save FROM translation_update_password_page WHERE lang_id = $1", langID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	var trUpdatePasswordPage TrUpdatePasswordPage
+
+	for aboutRow.Next() {
+		if err := aboutRow.Scan(&trUpdatePasswordPage.Title, &trUpdatePasswordPage.Password, &trUpdatePasswordPage.VerifyPassword, &trUpdatePasswordPage.Explanation, &trUpdatePasswordPage.Save); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":                           true,
+		"translation_update_password_page": trUpdatePasswordPage,
 	})
 
 }
