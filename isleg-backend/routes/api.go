@@ -96,6 +96,9 @@ func Routes() *gin.Engine {
 
 		// get one category with products
 		front.GET("/:category_id/:limit/:page", backController.GetOneCategoryWithProducts)
+
+		// customer routes
+		front.POST("/register", frontController.RegisterCustomer)
 	}
 
 	return routes
