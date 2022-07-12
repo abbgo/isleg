@@ -16,7 +16,7 @@ type TrAbout struct {
 func CreateTranslationAbout(c *gin.Context) {
 
 	// GET ALL LANGUAGE
-	languageRows, err := config.ConnDB().Query("SELECT id,name_short FROM languages ORDER BY created_at ASC")
+	languages, err := GetAllLanguageWithIDAndNameShort()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -25,39 +25,15 @@ func CreateTranslationAbout(c *gin.Context) {
 		return
 	}
 
-	var languages []models.Language
-
-	for languageRows.Next() {
-		var language models.Language
-		if err := languageRows.Scan(&language.ID, &language.NameShort); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-		languages = append(languages, language)
-	}
+	dataNames := []string{"title", "content"}
 
 	// VALIDATE DATA
-	for _, v := range languages {
-		if c.PostForm("title_"+v.NameShort) == "" {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": "title_" + v.NameShort + " is required",
-			})
-			return
-		}
-	}
-
-	for _, v := range languages {
-		if c.PostForm("content_"+v.NameShort) == "" {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": "content_" + v.NameShort + " is required",
-			})
-			return
-		}
+	if err = models.ValidateTranslationAboutData(languages, dataNames, c); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
 	}
 
 	// create translation about

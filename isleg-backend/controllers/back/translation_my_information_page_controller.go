@@ -18,7 +18,7 @@ type TrMyInformationPage struct {
 func CreateTranslationMyInformationPage(c *gin.Context) {
 
 	// GET ALL LANGUAGE
-	languageRows, err := config.ConnDB().Query("SELECT id,name_short FROM languages ORDER BY created_at ASC")
+	languages, err := GetAllLanguageWithIDAndNameShort()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -27,59 +27,15 @@ func CreateTranslationMyInformationPage(c *gin.Context) {
 		return
 	}
 
-	var languages []models.Language
-
-	for languageRows.Next() {
-		var language models.Language
-		if err := languageRows.Scan(&language.ID, &language.NameShort); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-		languages = append(languages, language)
-	}
+	dataNames := []string{"address", "birthday", "update_password", "save"}
 
 	// VALIDATE DATA
-	for _, v := range languages {
-		if c.PostForm("address_"+v.NameShort) == "" {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": "address_" + v.NameShort + " is required",
-			})
-			return
-		}
-	}
-
-	for _, v := range languages {
-		if c.PostForm("birthday_"+v.NameShort) == "" {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": "birthday_" + v.NameShort + " is required",
-			})
-			return
-		}
-	}
-
-	for _, v := range languages {
-		if c.PostForm("update_password_"+v.NameShort) == "" {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": "update_password_" + v.NameShort + " is required",
-			})
-			return
-		}
-	}
-
-	for _, v := range languages {
-		if c.PostForm("save_"+v.NameShort) == "" {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": "save_" + v.NameShort + " is required",
-			})
-			return
-		}
+	if err = models.ValidateTranslationMyInformationPageData(languages, dataNames, c); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
 	}
 
 	// create translation_my_information_page

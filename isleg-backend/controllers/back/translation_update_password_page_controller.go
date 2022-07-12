@@ -19,7 +19,7 @@ type TrUpdatePasswordPage struct {
 func CreateTranslationUpdatePasswordPage(c *gin.Context) {
 
 	// GET ALL LANGUAGE
-	languageRows, err := config.ConnDB().Query("SELECT id,name_short FROM languages ORDER BY created_at ASC")
+	languages, err := GetAllLanguageWithIDAndNameShort()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -28,69 +28,15 @@ func CreateTranslationUpdatePasswordPage(c *gin.Context) {
 		return
 	}
 
-	var languages []models.Language
-
-	for languageRows.Next() {
-		var language models.Language
-		if err := languageRows.Scan(&language.ID, &language.NameShort); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-		languages = append(languages, language)
-	}
+	dataNames := []string{"title", "password", "verify_password", "explanation", "save"}
 
 	// VALIDATE DATA
-	for _, v := range languages {
-		if c.PostForm("title_"+v.NameShort) == "" {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": "title_" + v.NameShort + " is required",
-			})
-			return
-		}
-	}
-
-	for _, v := range languages {
-		if c.PostForm("password_"+v.NameShort) == "" {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": "password_" + v.NameShort + " is required",
-			})
-			return
-		}
-	}
-
-	for _, v := range languages {
-		if c.PostForm("verify_password_"+v.NameShort) == "" {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": "verify_password_" + v.NameShort + " is required",
-			})
-			return
-		}
-	}
-
-	for _, v := range languages {
-		if c.PostForm("explanation_"+v.NameShort) == "" {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": "explanation_" + v.NameShort + " is required",
-			})
-			return
-		}
-	}
-
-	for _, v := range languages {
-		if c.PostForm("save_"+v.NameShort) == "" {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": "save_" + v.NameShort + " is required",
-			})
-			return
-		}
+	if err = models.ValidateTranslationUpdatePasswordPageData(languages, dataNames, c); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
 	}
 
 	for _, v := range languages {

@@ -19,7 +19,7 @@ type TranslationFooterForFooter struct {
 func CreateTranslationFooter(c *gin.Context) {
 
 	// GET ALL LANGUAGE
-	languageRows, err := config.ConnDB().Query("SELECT id,name_short FROM languages ORDER BY created_at ASC")
+	languages, err := GetAllLanguageWithIDAndNameShort()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -28,69 +28,16 @@ func CreateTranslationFooter(c *gin.Context) {
 		return
 	}
 
-	var languages []models.Language
-
-	for languageRows.Next() {
-		var language models.Language
-		if err := languageRows.Scan(&language.ID, &language.NameShort); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-		languages = append(languages, language)
-	}
+	dataNames := []string{"about", "payment", "contact", "secure", "word"}
 
 	// VALIDATE DATA
-	for _, v := range languages {
-		if c.PostForm("about_"+v.NameShort) == "" {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": "about_" + v.NameShort + " is required",
-			})
-			return
-		}
-	}
-
-	for _, v := range languages {
-		if c.PostForm("payment_"+v.NameShort) == "" {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": "payment_" + v.NameShort + " is required",
-			})
-			return
-		}
-	}
-
-	for _, v := range languages {
-		if c.PostForm("contact_"+v.NameShort) == "" {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": "contact_" + v.NameShort + " is required",
-			})
-			return
-		}
-	}
-
-	for _, v := range languages {
-		if c.PostForm("secure_"+v.NameShort) == "" {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": "secure_" + v.NameShort + " is required",
-			})
-			return
-		}
-	}
-
-	for _, v := range languages {
-		if c.PostForm("word_"+v.NameShort) == "" {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": "word_" + v.NameShort + " is required",
-			})
-			return
-		}
+	err = models.ValidateTranslationFooterData(languages, dataNames, c)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
 	}
 
 	// create translation footer

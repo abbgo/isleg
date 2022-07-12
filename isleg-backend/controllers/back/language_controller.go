@@ -2,12 +2,12 @@ package controllers
 
 import (
 	"github/abbgo/isleg/isleg-backend/config"
+	"github/abbgo/isleg/isleg-backend/models"
+	"github/abbgo/isleg/isleg-backend/pkg"
 	"net/http"
-	"path/filepath"
 	"strings"
 
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 )
 
 type LanguageForHeader struct {
@@ -30,7 +30,7 @@ func CreateLanguage(c *gin.Context) {
 	}
 
 	// FILE UPLOAD
-	file, err := c.FormFile("flag_path")
+	newFileName, err := pkg.FileUpload("flag_path", "language", c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -38,17 +38,6 @@ func CreateLanguage(c *gin.Context) {
 		})
 		return
 	}
-	extension := filepath.Ext(file.Filename)
-	// VALIDATE IMAGE
-	if extension != ".jpg" && extension != ".jpeg" && extension != ".png" && extension != ".gif" {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": "the file must be an image.",
-		})
-		return
-	}
-	newFileName := "language" + uuid.New().String() + extension
-	c.SaveUploadedFile(file, "./uploads/"+newFileName)
 
 	// CREATE LANGUAGE
 	_, err = config.ConnDB().Exec("INSERT INTO languages (name_short,flag_path) VALUES ($1,$2)", strings.ToLower(nameShort), "uploads/"+newFileName)
@@ -331,6 +320,27 @@ func GetAllLanguageForHeader() ([]LanguageForHeader, error) {
 	}
 
 	return ls, nil
+
+}
+
+func GetAllLanguageWithIDAndNameShort() ([]models.Language, error) {
+
+	languageRows, err := config.ConnDB().Query("SELECT id,name_short FROM languages ORDER BY created_at ASC")
+	if err != nil {
+		return []models.Language{}, err
+	}
+
+	var languages []models.Language
+
+	for languageRows.Next() {
+		var language models.Language
+		if err := languageRows.Scan(&language.ID, &language.NameShort); err != nil {
+			return []models.Language{}, err
+		}
+		languages = append(languages, language)
+	}
+
+	return languages, nil
 
 }
 

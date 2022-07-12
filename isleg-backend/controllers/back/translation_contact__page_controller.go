@@ -23,7 +23,7 @@ type TrContact struct {
 func CreateTranslationContact(c *gin.Context) {
 
 	// GET ALL LANGUAGE
-	languageRows, err := config.ConnDB().Query("SELECT id,name_short FROM languages ORDER BY created_at ASC")
+	languages, err := GetAllLanguageWithIDAndNameShort()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -32,109 +32,15 @@ func CreateTranslationContact(c *gin.Context) {
 		return
 	}
 
-	var languages []models.Language
-
-	for languageRows.Next() {
-		var language models.Language
-		if err := languageRows.Scan(&language.ID, &language.NameShort); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-		languages = append(languages, language)
-	}
+	dataNames := []string{"full_name", "email", "phone", "letter", "company_phone", "imo", "company_email", "instagram", "button_text"}
 
 	// VALIDATE DATA
-	for _, v := range languages {
-		if c.PostForm("full_name_"+v.NameShort) == "" {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": "full_name_" + v.NameShort + " is required",
-			})
-			return
-		}
-	}
-
-	for _, v := range languages {
-		if c.PostForm("email_"+v.NameShort) == "" {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": "email_" + v.NameShort + " is required",
-			})
-			return
-		}
-	}
-
-	for _, v := range languages {
-		if c.PostForm("phone_"+v.NameShort) == "" {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": "phone_" + v.NameShort + " is required",
-			})
-			return
-		}
-	}
-
-	for _, v := range languages {
-		if c.PostForm("letter_"+v.NameShort) == "" {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": "letter_" + v.NameShort + " is required",
-			})
-			return
-		}
-	}
-
-	for _, v := range languages {
-		if c.PostForm("company_phone_"+v.NameShort) == "" {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": "company_phone_" + v.NameShort + " is required",
-			})
-			return
-		}
-	}
-
-	for _, v := range languages {
-		if c.PostForm("imo_"+v.NameShort) == "" {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": "imo_" + v.NameShort + " is required",
-			})
-			return
-		}
-	}
-
-	for _, v := range languages {
-		if c.PostForm("company_email_"+v.NameShort) == "" {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": "company_email_" + v.NameShort + " is required",
-			})
-			return
-		}
-	}
-
-	for _, v := range languages {
-		if c.PostForm("instagram_"+v.NameShort) == "" {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": "instagram_" + v.NameShort + " is required",
-			})
-			return
-		}
-	}
-
-	for _, v := range languages {
-		if c.PostForm("button_text_"+v.NameShort) == "" {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": "button_text_" + v.NameShort + " is required",
-			})
-			return
-		}
+	if err = models.ValidateTranslationContactData(languages, dataNames, c); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
 	}
 
 	// create translation contact
