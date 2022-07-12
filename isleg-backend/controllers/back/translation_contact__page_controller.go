@@ -162,23 +162,13 @@ func GetTranslationContact(c *gin.Context) {
 	langShortName := c.Param("lang")
 
 	// GET language id
-	var langID string
-	row, err := config.ConnDB().Query("SELECT id FROM languages WHERE name_short = $1", langShortName)
+	langID, err := GetLangID(langShortName)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
 			"message": err.Error(),
 		})
 		return
-	}
-	for row.Next() {
-		if err := row.Scan(&langID); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
 	}
 
 	// get translation contact where lang_id equal langID

@@ -333,3 +333,22 @@ func GetAllLanguageForHeader() ([]LanguageForHeader, error) {
 	return ls, nil
 
 }
+
+func GetLangID(langShortName string) (string, error) {
+
+	var langID string
+
+	row, err := config.ConnDB().Query("SELECT id FROM languages WHERE name_short = $1", langShortName)
+	if err != nil {
+		return "", err
+	}
+
+	for row.Next() {
+		if err := row.Scan(&langID); err != nil {
+			return "", err
+		}
+	}
+
+	return langID, nil
+
+}

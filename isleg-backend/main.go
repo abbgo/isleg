@@ -18,7 +18,7 @@ func main() {
 
 	// static file
 	os.Mkdir("./uploads", os.ModePerm)
-	r.Static("/image", "./uploads")
+	r.Static("/uploads", "./uploads")
 
 	// run routes
 	if err := r.Run(":2406"); err != nil {
