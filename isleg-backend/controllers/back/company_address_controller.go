@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"github/abbgo/isleg/isleg-backend/config"
-	"github/abbgo/isleg/isleg-backend/models"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -11,25 +10,13 @@ import (
 func CreateCompanyAddress(c *gin.Context) {
 
 	// GET ALL LANGUAGE
-	languageRows, err := config.ConnDB().Query("SELECT id,name_short FROM languages ORDER BY created_at ASC")
+	languages, err := GetAllLanguageWithIDAndNameShort()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
 			"message": err.Error(),
 		})
 		return
-	}
-	var languages []models.Language
-	for languageRows.Next() {
-		var language models.Language
-		if err := languageRows.Scan(&language.ID, &language.NameShort); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-		languages = append(languages, language)
 	}
 
 	// VALIDATE DATA

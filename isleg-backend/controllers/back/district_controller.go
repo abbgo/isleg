@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"github/abbgo/isleg/isleg-backend/config"
-	"github/abbgo/isleg/isleg-backend/models"
 	"net/http"
 	"strconv"
 
@@ -11,28 +10,14 @@ import (
 
 func CreateDistrict(c *gin.Context) {
 
-	var languages []models.Language
-
 	// GET ALL LANGUAGE
-	languageRows, err := config.ConnDB().Query("SELECT id,name_short FROM languages ORDER BY created_at ASC")
+	languages, err := GetAllLanguageWithIDAndNameShort()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
 			"message": err.Error(),
 		})
 		return
-	}
-
-	for languageRows.Next() {
-		var language models.Language
-		if err := languageRows.Scan(&language.ID, &language.NameShort); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-		languages = append(languages, language)
 	}
 
 	// validate data from request
