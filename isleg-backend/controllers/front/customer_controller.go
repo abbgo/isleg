@@ -1,7 +1,9 @@
 package controllers
 
 import (
+	"github/abbgo/isleg/isleg-backend/auth"
 	"github/abbgo/isleg/isleg-backend/config"
+
 	backController "github/abbgo/isleg/isleg-backend/controllers/back"
 	"github/abbgo/isleg/isleg-backend/models"
 	"net/http"
@@ -59,9 +61,25 @@ func RegisterCustomer(c *gin.Context) {
 		return
 	}
 
+	accessTokenString, err := auth.GenerateAccessToken(phoneNumber)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.Abort()
+		return
+	}
+
+	refreshTokenString, err := auth.GenerateRefreshToken(phoneNumber)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.Abort()
+		return
+	}
+
 	c.JSON(http.StatusOK, gin.H{
-		"status":  true,
-		"message": "customer successfully added",
+		"status":        true,
+		"message":       "customer successfully added",
+		"access_token":  accessTokenString,
+		"refresh_token": refreshTokenString,
 	})
 
 }

@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"github/abbgo/isleg/isleg-backend/config"
+	"github/abbgo/isleg/isleg-backend/models"
 	"net/http"
 	"path/filepath"
 
@@ -42,25 +43,15 @@ func CreateAfisa(c *gin.Context) {
 		fileName = "uploads/" + newFileName
 	}
 
-	// VALIDATE DATA
-	for _, v := range languages {
-		if c.PostForm("title_"+v.NameShort) == "" {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": "title_" + v.NameShort + " is required",
-			})
-			return
-		}
-	}
+	dataNames := []string{"title", "description"}
 
-	for _, v := range languages {
-		if c.PostForm("description_"+v.NameShort) == "" {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": "description_" + v.NameShort + " is required",
-			})
-			return
-		}
+	// VALIDATE DATA
+	if err = models.ValidateAfisaData(languages, dataNames, c); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
 	}
 
 	// create afisa
