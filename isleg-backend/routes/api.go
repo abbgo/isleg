@@ -99,6 +99,8 @@ func Routes() *gin.Engine {
 
 		// customer routes
 		front.POST("/register", frontController.RegisterCustomer)
+		front.POST("/login", frontController.LoginCustomer)
+
 	}
 
 	return routes

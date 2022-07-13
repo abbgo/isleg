@@ -55,8 +55,8 @@ func ValidateCustomerData(fullName, phoneNumber, password, gender string, addres
 		return err
 	}
 
-	if len(phoneNumber) != 7 {
-		return errors.New("the length of the phone number must be 7")
+	if len(phoneNumber) != 8 {
+		return errors.New("the length of the phone number must be 8")
 	}
 
 	if password == "" {
