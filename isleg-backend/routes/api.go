@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"github/abbgo/isleg/isleg-backend/auth"
 	backController "github/abbgo/isleg/isleg-backend/controllers/back"
 	frontController "github/abbgo/isleg/isleg-backend/controllers/front"
 
@@ -100,6 +101,7 @@ func Routes() *gin.Engine {
 		// customer routes
 		front.POST("/register", frontController.RegisterCustomer)
 		front.POST("/login", frontController.LoginCustomer)
+		front.GET("/refresh", auth.Refresh)
 
 	}
 

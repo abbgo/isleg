@@ -5,11 +5,17 @@ import (
 	"github/abbgo/isleg/isleg-backend/routes"
 	"log"
 	"os"
+
+	"github.com/joho/godotenv"
 )
 
 func init() {
 	// initialize database connection
 	config.ConnDB()
+
+	if err := godotenv.Load(); err != nil {
+		log.Fatal(err)
+	}
 }
 
 func main() {

@@ -6,14 +6,10 @@ import (
 	"log"
 	"os"
 
-	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 )
 
 func ConnDB() *sql.DB {
-	if err := godotenv.Load(); err != nil {
-		log.Fatal(err)
-	}
 
 	// get data from .env file
 	db_user := os.Getenv("DB_USER")
