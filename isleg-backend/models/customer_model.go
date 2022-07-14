@@ -2,6 +2,7 @@ package models
 
 import (
 	"errors"
+	"github/abbgo/isleg/isleg-backend/config"
 	"strconv"
 	"time"
 
@@ -57,6 +58,23 @@ func ValidateCustomerData(fullName, phoneNumber, password, gender string, addres
 
 	if len(phoneNumber) != 8 {
 		return errors.New("the length of the phone number must be 8")
+	}
+
+	row, err := config.ConnDB().Query("SELECT phone_number FROM customers WHERE phone_number = $1", "+993"+phoneNumber)
+	if err != nil {
+		return err
+	}
+
+	var phone_number string
+
+	for row.Next() {
+		if err := row.Scan(&phone_number); err != nil {
+			return err
+		}
+	}
+
+	if phone_number != "" {
+		return errors.New("this customer already exists")
 	}
 
 	if password == "" {

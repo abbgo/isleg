@@ -4,6 +4,7 @@ import (
 	"github/abbgo/isleg/isleg-backend/auth"
 	backController "github/abbgo/isleg/isleg-backend/controllers/back"
 	frontController "github/abbgo/isleg/isleg-backend/controllers/front"
+	"github/abbgo/isleg/isleg-backend/middlewares"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -86,9 +87,6 @@ func Routes() *gin.Engine {
 		// get contact us page translation
 		front.GET("/translation-contact", backController.GetTranslationContact)
 
-		// get my information page translation
-		front.GET("/translation-my-information-page", backController.GetTranslationMyInformationPage)
-
 		// get update password page translation
 		front.GET("/translation-update-password-page", backController.GetTranslationUpdatePasswordPage)
 
@@ -102,6 +100,12 @@ func Routes() *gin.Engine {
 		front.POST("/register", frontController.RegisterCustomer)
 		front.POST("/login", frontController.LoginCustomer)
 		front.GET("/refresh", auth.Refresh)
+
+		securedCustomer := front.Group("/").Use(middlewares.Auth())
+		{
+			// get my information page translation
+			securedCustomer.GET("/translation-my-information-page", backController.GetTranslationMyInformationPage)
+		}
 
 	}
 
