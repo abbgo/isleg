@@ -58,6 +58,26 @@ func ValidateCustomerLike(customerID, productID string) error {
 		return errors.New("product does not exist")
 	}
 
+	rows, err := config.ConnDB().Query("SELECT product_id FROM likes WHERE customer_id = $1", customerID)
+	if err != nil {
+		return err
+	}
+
+	var product_ids []string
+
+	for rows.Next() {
+		if err := rows.Scan(&product_id); err != nil {
+			return err
+		}
+		product_ids = append(product_ids, product_id)
+	}
+
+	for _, v := range product_ids {
+		if productID == v {
+			return errors.New("this product already exists")
+		}
+	}
+
 	return nil
 
 }
