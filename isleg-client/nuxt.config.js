@@ -1,7 +1,6 @@
 import tm from './locales/tm'
 import ru from './locales/ru'
 require('dotenv').config()
-
 export default {
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
@@ -23,11 +22,16 @@ export default {
   },
   // Global CSS: https://go.nuxtjs.dev/config-css
   css: ['@/assets/css/style.css'],
+
   loading: {
-    height: '0px',
+    height: '1px',
+    color: '#fd5e29',
   },
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
-  plugins: [{ src: '@/plugins/vue-awesome-swiper.js', mode: 'client' }],
+  plugins: [
+    '@/plugins/toast.js',
+    { src: '@/plugins/vue-awesome-swiper', mode: 'client' },
+  ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
   components: true,
@@ -36,10 +40,15 @@ export default {
   buildModules: [],
 
   // Modules: https://go.nuxtjs.dev/config-modules
+  ssr: true,
+  target: 'server',
+
   modules: [
     // https://go.nuxtjs.dev/axios
     '@nuxtjs/axios',
     '@nuxtjs/auth-next',
+    '@nuxtjs/i18n',
+    'cookie-universal-nuxt',
   ],
   env: {
     baseUrl: process.env.BASE_API,
@@ -48,7 +57,7 @@ export default {
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {
     // Workaround to avoid enforcing hard-coded localhost:3000: https://github.com/nuxt-community/axios-module/issues/308
-    baseURL: `${process.env.BASE_API}`,
+    baseURL: process.env.BASE_API,
   },
   // auth: {
   //   redirect: {
@@ -75,8 +84,60 @@ export default {
   //     },
   //   },
   // },
+  auth: {
+    strategies: {
+      user: {
+        scheme: 'refresh',
+        token: {
+          property: 'access_token',
+          // maxAge: 1800,
+          global: true,
+        },
+        refreshToken: {
+          property: 'refresh_token',
+          data: 'refresh_token',
+          // maxAge: 60 * 60 * 24 * 30,
+        },
+        user: {
+          property: false,
+          // autoFetch: true
+        },
+        endpoints: {
+          login: { url: '/api/auth/login', method: 'post' },
+          refresh: { url: '/api/auth/refresh', method: 'post' },
+          user: { url: '/api/auth/user', method: 'get' },
+          logout: false,
+        },
+        // autoLogout: false
+      },
+      admin: {
+        scheme: 'refresh',
+        token: {
+          property: 'access_token',
+          // maxAge: 1800,
+          global: true,
+        },
+        refreshToken: {
+          property: 'refresh_token',
+          data: 'refresh_token',
+          // maxAge: 60 * 60 * 24 * 30,
+        },
+        user: {
+          property: false,
+          // autoFetch: true
+        },
+        endpoints: {
+          login: { url: '/api/auth/login', method: 'post' },
+          refresh: { url: '/api/auth/refresh', method: 'post' },
+          user: { url: '/api/auth/user', method: 'get' },
+          logout: false,
+        },
+        // autoLogout: false
+      },
+    },
+  },
   i18n: {
-    baseUrl: `${process.env.SITE_URL}`,
+    baseUrl: process.env.SITE_URL,
     locales: [
       {
         code: 'tm',

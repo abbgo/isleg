@@ -1,5 +1,10 @@
-const SET_HEADER = (state, payload) => {}
-
+const SET_CLOSE_ISOPENSIGNUP = (state) => {
+  state.isOpenSignUp = false
+}
+const SET_OPEN_ISOPENSIGNUP = (state) => {
+  state.isOpenSignUp = true
+}
 export default {
-  SET_HEADER,
+  SET_CLOSE_ISOPENSIGNUP,
+  SET_OPEN_ISOPENSIGNUP,
 }

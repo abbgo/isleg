@@ -4,6 +4,7 @@ import getters from './getters'
 
 const state = () => ({
   imgURL: `${process.env.BASE_API}`,
+  isOpenSignUp: false,
 })
 
 export default {

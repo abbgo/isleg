@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 12.11 (Ubuntu 12.11-0ubuntu0.20.04.1)
--- Dumped by pg_dump version 12.11 (Ubuntu 12.11-0ubuntu0.20.04.1)
+-- Dumped from database version 14.3 (Ubuntu 14.3-1.pgdg20.04+1)
+-- Dumped by pg_dump version 14.3 (Ubuntu 14.3-1.pgdg20.04+1)
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -164,6 +164,26 @@ CREATE TABLE public.company_setting (
 ALTER TABLE public.company_setting OWNER TO postgres;
 
 --
+-- Name: customers; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.customers (
+    id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
+    full_name character varying,
+    phone_number character varying,
+    password character varying,
+    birthday date,
+    gender character varying,
+    addresses character varying[],
+    created_at timestamp with time zone DEFAULT now(),
+    updated_at timestamp with time zone DEFAULT now(),
+    deleted_at timestamp with time zone
+);
+
+
+ALTER TABLE public.customers OWNER TO postgres;
+
+--
 -- Name: district; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -284,7 +304,8 @@ CREATE TABLE public.translation_contact (
     instagram character varying DEFAULT 'uytget'::character varying,
     created_at timestamp with time zone DEFAULT now(),
     updated_at timestamp with time zone DEFAULT now(),
-    deleted_at timestamp with time zone
+    deleted_at timestamp with time zone,
+    button_text character varying
 );
 
 
@@ -356,6 +377,25 @@ CREATE TABLE public.translation_header (
 ALTER TABLE public.translation_header OWNER TO postgres;
 
 --
+-- Name: translation_my_information_page; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.translation_my_information_page (
+    id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
+    lang_id uuid,
+    address character varying DEFAULT 'uytget'::character varying,
+    created_at timestamp with time zone DEFAULT now(),
+    updated_at timestamp with time zone DEFAULT now(),
+    deleted_at timestamp with time zone,
+    birthday character varying DEFAULT 'uytget'::character varying,
+    update_password character varying DEFAULT 'uytegt'::character varying,
+    save character varying DEFAULT 'uytegt'::character varying
+);
+
+
+ALTER TABLE public.translation_my_information_page OWNER TO postgres;
+
+--
 -- Name: translation_payment; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -408,6 +448,26 @@ CREATE TABLE public.translation_secure (
 ALTER TABLE public.translation_secure OWNER TO postgres;
 
 --
+-- Name: translation_update_password_page; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.translation_update_password_page (
+    id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
+    lang_id uuid,
+    title character varying DEFAULT 'uytget'::character varying,
+    verify_password character varying DEFAULT 'uytget'::character varying,
+    explanation character varying DEFAULT 'uytget'::character varying,
+    save character varying DEFAULT 'uytget'::character varying,
+    created_at timestamp with time zone DEFAULT now(),
+    updated_at timestamp with time zone DEFAULT now(),
+    deleted_at timestamp with time zone,
+    password character varying DEFAULT 'uytget'::character varying
+);
+
+
+ALTER TABLE public.translation_update_password_page OWNER TO postgres;
+
+--
 -- Data for Name: afisa; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -433,6 +493,9 @@ c2f11fea-8057-4a7c-b290-c97d1d90ac59	Markow	uploads/brend9be78774-985a-4d82-bd2c
 6a31c50a-704f-4b0d-80ae-240ca3094cda	Algida	uploads/brendbf1a1059-508d-48a0-9cab-e9c0ff52ea82.jpg	2022-06-16 14:13:49.98051+05	2022-06-16 14:13:49.98051+05	\N
 214be879-65c3-4710-86b4-3fc3bce2e974	Arcalyk	uploads/brend24badfac-613d-4aa3-881b-952bd14994b5.jpeg	2022-06-16 14:14:05.416191+05	2022-06-16 14:14:05.416191+05	\N
 ddccb2dc-9697-4f4e-acf5-26b8bc2c8b72	Tut	uploads/brend4f68381a-aa73-4168-90b3-66c1a17cd5c5.jpeg	2022-06-16 14:14:25.908903+05	2022-06-16 14:14:25.908903+05	\N
+fdd259c2-794a-42b9-a3ad-9e91502af23e	Koka Kola	uploads/brend75f655c6-bcf5-47b2-ba01-d112cba64e81.jpg	2022-07-12 17:54:39.242004+05	2022-07-12 17:54:39.242004+05	\N
+f53a27b4-7810-4d8f-bd45-edad405d92b9	Maral Koke	uploads/brend7827fcfe-f8a9-4747-8c34-b55af2488b29.jpeg	2022-07-12 17:57:46.472194+05	2022-07-12 17:57:46.472194+05	\N
+46b13f0a-d584-4ad3-b270-437ecdc51449	Taze Ay	uploads/brend993b6484-657d-4662-abe2-922170abe75b.jpeg	2022-07-12 18:16:12.889441+05	2022-07-12 18:16:12.889441+05	\N
 \.
 
 
@@ -592,6 +655,18 @@ COPY public.company_setting (id, logo_path, favicon_path, email, instagram, crea
 
 
 --
+-- Data for Name: customers; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.customers (id, full_name, phone_number, password, birthday, gender, addresses, created_at, updated_at, deleted_at) FROM stdin;
+20b26aa1-2247-4ed8-a6ef-3ec6bb9f64d7	Asyr Berdiyev	+99365453298	$2a$14$xpoVZw3GhVw05cx/iZmYu.0iqiRyMH46x58wcNuIWTxM/rQGjYSDu	1998-06-24	1	{"Mir 2/2 jay 7 oy 36","Mir 3/2 jay 5 oy 4"}	2022-07-12 12:43:16.090985+05	2022-07-12 12:43:16.090985+05	\N
+e53e0ef8-a3a6-485f-8a5f-d0ba8327b3d5	Serdar Bayramow	+99365453294	$2a$14$EqECyFqszVXzcX5q4jwnqOe2ys8uTN.V.GwfIJkXq6ZjlbLOiXU2C	1998-09-03	1	{"Mir 4/2 jay 1 oy 5","Mir 1/2 jay 5 oy 4"}	2022-07-13 11:01:48.284329+05	2022-07-13 11:01:48.284329+05	\N
+e6709e8f-0c1f-48b8-aeb5-c25f890f3c4e	Guljemal Bayramowa	+99363456742	$2a$14$xoBQ1kA5zR8COGnbVQ2mD.DOUmYYgPwRvXewMnJmCoXx7rQFetlc2	1998-09-03	0	{"Mir 4/2 jay 1 oy 5","Mir 1/2 jay 5 oy 4"}	2022-07-13 11:27:02.415977+05	2022-07-13 11:27:02.415977+05	\N
+bc7eb393-92df-470d-a93d-6b1e9aa6027a	Guljemal Bayramowa	+99363456742	$2a$14$yWVX1/4xu39fa9jGkDvXb.6IhUhtML0hAhxvlh52u.Yv22AASQRT.	1998-09-03	0	{"Mir 4/2 jay 1 oy 5","Mir 1/2 jay 5 oy 4"}	2022-07-13 11:27:38.622995+05	2022-07-13 11:27:38.622995+05	\N
+\.
+
+
+--
 -- Data for Name: district; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -729,9 +804,9 @@ e224ecfc-6daa-4df5-8112-74846fc44867	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	338906
 -- Data for Name: translation_contact; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.translation_contact (id, lang_id, full_name, email, phone, letter, company_phone, imo, company_email, instagram, created_at, updated_at, deleted_at) FROM stdin;
-73253999-7355-42b4-8700-94de76f0058a	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	at_tm	rmail_tm	phone_tm	letter_tm	cp tm	imo tm	ce tm	instagram tm	2022-06-27 11:29:47.914891+05	2022-06-27 11:29:47.914891+05	\N
-f1693167-0c68-4a54-9831-56f124d629a3	aea98b93-7bdf-455b-9ad4-a259d69dc76e	at_ru	mail_ru	phone_ru	letter ru	cp ru	imo ru	ce ru	instagram ru	2022-06-27 11:29:48.050553+05	2022-06-27 11:29:48.050553+05	\N
+COPY public.translation_contact (id, lang_id, full_name, email, phone, letter, company_phone, imo, company_email, instagram, created_at, updated_at, deleted_at, button_text) FROM stdin;
+73253999-7355-42b4-8700-94de76f0058a	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	at_tm	rmail_tm	phone_tm	letter_tm	cp tm	imo tm	ce tm	instagram tm	2022-06-27 11:29:47.914891+05	2022-06-27 11:29:47.914891+05	\N	ugrat
+f1693167-0c68-4a54-9831-56f124d629a3	aea98b93-7bdf-455b-9ad4-a259d69dc76e	at_ru	mail_ru	phone_ru	letter ru	cp ru	imo ru	ce ru	instagram ru	2022-06-27 11:29:48.050553+05	2022-06-27 11:29:48.050553+05	\N	Отправить
 \.
 
 
@@ -762,6 +837,16 @@ COPY public.translation_footer (id, lang_id, about, payment, contact, secure, wo
 COPY public.translation_header (id, lang_id, research, phone, password, forgot_password, sign_in, sign_up, name, password_verification, verify_secure, my_information, my_favorites, my_orders, log_out, created_at, updated_at, deleted_at) FROM stdin;
 eaf206e6-d515-4bdb-9323-a047cd0edae5	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	gözleg	telefon	parol	Acar sozumi unutdym	ulgama girmek	agza bolmak	Ady	Acar sozi tassyklamak	Ulanyş Düzgünlerini we Gizlinlik Şertnamasyny okadym we kabul edýärin	maglumatym	halanlarym	sargytlarym	cykmak	2022-06-16 04:48:26.460534+05	2022-06-16 04:48:26.460534+05	\N
 9154e800-2a92-47de-b4ff-1e63b213e5f7	aea98b93-7bdf-455b-9ad4-a259d69dc76e	поиск	tелефон	пароль	забыл пароль	войти	зарегистрироваться	имя	Подтвердить Пароль	Я прочитал и принимаю Условия Обслуживания и Политика Конфиденциальности	моя информация	мои любимые	мои заказы	выйти	2022-06-16 04:48:26.491672+05	2022-06-16 04:48:26.491672+05	\N
+\.
+
+
+--
+-- Data for Name: translation_my_information_page; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.translation_my_information_page (id, lang_id, address, created_at, updated_at, deleted_at, birthday, update_password, save) FROM stdin;
+d294138e-b808-41ae-9ac5-1826751fda3d	aea98b93-7bdf-455b-9ad4-a259d69dc76e	ваш адрес	2022-07-04 19:28:46.603058+05	2022-07-04 19:28:46.603058+05	\N	дата рождения	изменить пароль	запомнить
+11074158-69f2-473a-b4fe-94304ff0d8a7	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	salgyňyz	2022-07-04 19:28:46.529935+05	2022-07-04 19:28:46.529935+05	\N	doglan senäň	açar sözi üýtget	ýatda sakla
 \.
 
 
@@ -864,6 +949,16 @@ COPY public.translation_secure (id, lang_id, title, content, created_at, updated
 
 
 --
+-- Data for Name: translation_update_password_page; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.translation_update_password_page (id, lang_id, title, verify_password, explanation, save, created_at, updated_at, deleted_at, password) FROM stdin;
+de12082b-baab-4b83-ac07-119df09d1230	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	açar sözi üýtgetmek	açar sözi tassykla	siziň açar sözüňiz 5-20 uzynlygynda harp ýa-da sandan ybarat bolmalydyr	ýatda sakla	2022-07-05 10:35:08.867617+05	2022-07-05 10:35:08.867617+05	\N	açar sözi
+5190ca93-7007-4db4-8105-65cc3b1af868	aea98b93-7bdf-455b-9ad4-a259d69dc76e	изменить пароль	Подтвердить Пароль	ключевое слово должно быть буквой или цифрой длиной от 5 до 20	запомнить	2022-07-05 10:35:08.984141+05	2022-07-05 10:35:08.984141+05	\N	ключевое слово
+\.
+
+
+--
 -- Name: afisa afisa_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -925,6 +1020,14 @@ ALTER TABLE ONLY public.company_phone
 
 ALTER TABLE ONLY public.company_setting
     ADD CONSTRAINT company_setting_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: customers customers_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.customers
+    ADD CONSTRAINT customers_pkey PRIMARY KEY (id);
 
 
 --
@@ -1008,6 +1111,14 @@ ALTER TABLE ONLY public.translation_header
 
 
 --
+-- Name: translation_my_information_page translation_my_information_page_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.translation_my_information_page
+    ADD CONSTRAINT translation_my_information_page_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: translation_payment translation_payment_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1029,6 +1140,14 @@ ALTER TABLE ONLY public.translation_product
 
 ALTER TABLE ONLY public.translation_secure
     ADD CONSTRAINT translation_secure_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: translation_update_password_page translation_update_password_page_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.translation_update_password_page
+    ADD CONSTRAINT translation_update_password_page_pkey PRIMARY KEY (id);
 
 
 --
@@ -1136,6 +1255,14 @@ ALTER TABLE ONLY public.translation_header
 
 
 --
+-- Name: translation_my_information_page fk_language_translation_my_information_page; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.translation_my_information_page
+    ADD CONSTRAINT fk_language_translation_my_information_page FOREIGN KEY (lang_id) REFERENCES public.languages(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
 -- Name: translation_payment fk_language_translation_payment; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1157,6 +1284,14 @@ ALTER TABLE ONLY public.translation_product
 
 ALTER TABLE ONLY public.translation_secure
     ADD CONSTRAINT fk_language_translation_secure FOREIGN KEY (lang_id) REFERENCES public.languages(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: translation_update_password_page fk_language_translation_update_password_page; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.translation_update_password_page
+    ADD CONSTRAINT fk_language_translation_update_password_page FOREIGN KEY (lang_id) REFERENCES public.languages(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
