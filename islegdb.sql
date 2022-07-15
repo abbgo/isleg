@@ -2,8 +2,13 @@
 -- PostgreSQL database dump
 --
 
+<<<<<<< HEAD
 -- Dumped from database version 14.3 (Ubuntu 14.3-1.pgdg20.04+1)
 -- Dumped by pg_dump version 14.3 (Ubuntu 14.3-1.pgdg20.04+1)
+=======
+-- Dumped from database version 14.4 (Ubuntu 14.4-1.pgdg20.04+1)
+-- Dumped by pg_dump version 14.4 (Ubuntu 14.4-1.pgdg20.04+1)
+>>>>>>> 144b2ade17c49d23467e1a26f0658ddbf40e4cc9
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -115,6 +120,22 @@ CREATE TABLE public.category_product (
 ALTER TABLE public.category_product OWNER TO postgres;
 
 --
+-- Name: category_shop; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.category_shop (
+    id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
+    category_id uuid,
+    shop_id uuid,
+    created_at timestamp with time zone DEFAULT now(),
+    updated_at timestamp with time zone DEFAULT now(),
+    deleted_at timestamp with time zone
+);
+
+
+ALTER TABLE public.category_shop OWNER TO postgres;
+
+--
 -- Name: company_address; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -215,6 +236,22 @@ CREATE TABLE public.languages (
 ALTER TABLE public.languages OWNER TO postgres;
 
 --
+-- Name: likes; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.likes (
+    id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
+    product_id uuid,
+    customer_id uuid,
+    created_at timestamp with time zone DEFAULT now(),
+    updated_at timestamp with time zone DEFAULT now(),
+    deleted_at timestamp with time zone
+);
+
+
+ALTER TABLE public.likes OWNER TO postgres;
+
+--
 -- Name: products; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -234,6 +271,25 @@ CREATE TABLE public.products (
 
 
 ALTER TABLE public.products OWNER TO postgres;
+
+--
+-- Name: shops; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.shops (
+    id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
+    owner_name character varying,
+    address character varying,
+    phone_number character varying,
+    number_of_goods integer,
+    running_time character varying,
+    created_at timestamp with time zone DEFAULT now(),
+    updated_at timestamp with time zone DEFAULT now(),
+    deleted_at timestamp with time zone
+);
+
+
+ALTER TABLE public.shops OWNER TO postgres;
 
 --
 -- Name: translation_about; Type: TABLE; Schema: public; Owner: postgres
@@ -627,6 +683,14 @@ f79d9cc4-d15d-4b74-956b-e24f5b924354	5d877898-9ef4-4b91-8518-193b431228a8	4ae4d8
 
 
 --
+-- Data for Name: category_shop; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.category_shop (id, category_id, shop_id, created_at, updated_at, deleted_at) FROM stdin;
+\.
+
+
+--
 -- Data for Name: company_address; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -662,7 +726,10 @@ COPY public.customers (id, full_name, phone_number, password, birthday, gender, 
 20b26aa1-2247-4ed8-a6ef-3ec6bb9f64d7	Asyr Berdiyev	+99365453298	$2a$14$xpoVZw3GhVw05cx/iZmYu.0iqiRyMH46x58wcNuIWTxM/rQGjYSDu	1998-06-24	1	{"Mir 2/2 jay 7 oy 36","Mir 3/2 jay 5 oy 4"}	2022-07-12 12:43:16.090985+05	2022-07-12 12:43:16.090985+05	\N
 e53e0ef8-a3a6-485f-8a5f-d0ba8327b3d5	Serdar Bayramow	+99365453294	$2a$14$EqECyFqszVXzcX5q4jwnqOe2ys8uTN.V.GwfIJkXq6ZjlbLOiXU2C	1998-09-03	1	{"Mir 4/2 jay 1 oy 5","Mir 1/2 jay 5 oy 4"}	2022-07-13 11:01:48.284329+05	2022-07-13 11:01:48.284329+05	\N
 e6709e8f-0c1f-48b8-aeb5-c25f890f3c4e	Guljemal Bayramowa	+99363456742	$2a$14$xoBQ1kA5zR8COGnbVQ2mD.DOUmYYgPwRvXewMnJmCoXx7rQFetlc2	1998-09-03	0	{"Mir 4/2 jay 1 oy 5","Mir 1/2 jay 5 oy 4"}	2022-07-13 11:27:02.415977+05	2022-07-13 11:27:02.415977+05	\N
+<<<<<<< HEAD
 bc7eb393-92df-470d-a93d-6b1e9aa6027a	Guljemal Bayramowa	+99363456742	$2a$14$yWVX1/4xu39fa9jGkDvXb.6IhUhtML0hAhxvlh52u.Yv22AASQRT.	1998-09-03	0	{"Mir 4/2 jay 1 oy 5","Mir 1/2 jay 5 oy 4"}	2022-07-13 11:27:38.622995+05	2022-07-13 11:27:38.622995+05	\N
+=======
+>>>>>>> 144b2ade17c49d23467e1a26f0658ddbf40e4cc9
 \.
 
 
@@ -682,6 +749,18 @@ a58294d3-efe5-4cb7-82d3-8df8c37563c5	15	2022-06-25 10:23:25.640364+05	2022-06-25
 COPY public.languages (id, name_short, flag_path, created_at, updated_at, deleted_at) FROM stdin;
 8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	tm	uploads/language17b99bd1-f52d-41db-b4e6-1ecff03e0fd0.jpeg	2022-06-15 19:53:06.041686+05	2022-06-15 19:53:06.041686+05	\N
 aea98b93-7bdf-455b-9ad4-a259d69dc76e	ru	uploads/language92b53cfe-d5a5-4686-9082-86fed42ffac1.jpeg	2022-06-15 19:53:21.29491+05	2022-06-15 19:53:21.29491+05	\N
+\.
+
+
+--
+-- Data for Name: likes; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.likes (id, product_id, customer_id, created_at, updated_at, deleted_at) FROM stdin;
+4df3f9dd-8253-47ee-88bf-9da4934e4ae6	525af569-06b6-440a-ab5a-6ee0b39cf51d	20b26aa1-2247-4ed8-a6ef-3ec6bb9f64d7	2022-07-14 13:12:42.138482+05	2022-07-14 13:12:42.138482+05	\N
+11bca126-ad3c-45d2-8b8b-75198a06747c	0d356bb1-c695-4b29-b199-bdff967abfe2	20b26aa1-2247-4ed8-a6ef-3ec6bb9f64d7	2022-07-15 11:10:50.064022+05	2022-07-15 11:10:50.064022+05	\N
+36d05606-b393-42a8-a83f-d2aa2c77f403	0d356bb1-c695-4b29-b199-bdff967abfe2	e53e0ef8-a3a6-485f-8a5f-d0ba8327b3d5	2022-07-15 11:11:13.357965+05	2022-07-15 11:11:13.357965+05	\N
+5677d729-d3bb-4e59-9acb-7046dd5df438	9a0572df-3006-426e-a623-11c0cbc930ea	e53e0ef8-a3a6-485f-8a5f-d0ba8327b3d5	2022-07-15 11:11:26.052559+05	2022-07-15 11:11:26.052559+05	\N
 \.
 
 
@@ -725,6 +804,14 @@ f3208845-80d9-4ccb-9ad2-07a8ee2832c6	ddccb2dc-9697-4f4e-acf5-26b8bc2c8b72	13.9	1
 7bab1a39-0c66-4c1e-9f9c-7f25e050daa5	ddccb2dc-9697-4f4e-acf5-26b8bc2c8b72	11.5	15.8	72	oeiwfwoefo	uploads/productMain29caf1dd-47cd-470f-a27a-775fe6d1f3ad.jpeg	{uploads/product2b9ca336-235f-4fa5-a00c-cf141503d86d.jpeg,uploads/productc6d63afb-9cd3-4e04-a3f1-b7bc7634ecbe.jpeg}	2022-06-21 11:14:39.128719+05	2022-06-21 11:14:39.128719+05	\N
 c182ee68-2717-4604-b0ab-0e6994e61ff0	6a31c50a-704f-4b0d-80ae-240ca3094cda	31.7	0	72	6ef987e8	uploads/productMaind1c1e62c-af97-4983-92ca-d27044d9b94e.jpeg	{uploads/product14bb0731-ba19-483d-9bf7-e59230364b63.jpeg,uploads/product951f3c30-e33b-4c8f-8e37-273e303edac9.jpeg}	2022-06-21 11:17:33.304681+05	2022-06-21 11:17:33.304681+05	\N
 4ae4d83c-56ad-4d99-9d6f-e0dd77f9c982	6a31c50a-704f-4b0d-80ae-240ca3094cda	35	0	19	j6yukuy	uploads/productMain2ea4ba35-5068-4b76-bd96-41f87ef6ef6d.jpeg	{uploads/product3f3d03da-31a1-4da5-83c2-91ec4f262b31.jpeg,uploads/product9a7162dd-1616-404d-b5c5-2833d7e8febc.jpeg}	2022-06-21 11:18:25.021332+05	2022-06-21 11:18:25.021332+05	\N
+\.
+
+
+--
+-- Data for Name: shops; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.shops (id, owner_name, address, phone_number, number_of_goods, running_time, created_at, updated_at, deleted_at) FROM stdin;
 \.
 
 
@@ -999,6 +1086,14 @@ ALTER TABLE ONLY public.category_product
 
 
 --
+-- Name: category_shop category_shop_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.category_shop
+    ADD CONSTRAINT category_shop_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: company_address company_address_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1047,11 +1142,27 @@ ALTER TABLE ONLY public.languages
 
 
 --
+-- Name: likes likes_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.likes
+    ADD CONSTRAINT likes_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: products product_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.products
     ADD CONSTRAINT product_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: shops shops_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.shops
+    ADD CONSTRAINT shops_pkey PRIMARY KEY (id);
 
 
 --
@@ -1175,6 +1286,14 @@ ALTER TABLE ONLY public.category_product
 
 
 --
+-- Name: category_shop fk_category_category_shop; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.category_shop
+    ADD CONSTRAINT fk_category_category_shop FOREIGN KEY (category_id) REFERENCES public.categories(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
 -- Name: categories fk_category_child_category; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1188,6 +1307,14 @@ ALTER TABLE ONLY public.categories
 
 ALTER TABLE ONLY public.translation_category
     ADD CONSTRAINT fk_category_translation_category FOREIGN KEY (category_id) REFERENCES public.categories(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: likes fk_customer_like; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.likes
+    ADD CONSTRAINT fk_customer_like FOREIGN KEY (customer_id) REFERENCES public.customers(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -1311,11 +1438,27 @@ ALTER TABLE ONLY public.category_product
 
 
 --
+-- Name: likes fk_product_like; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.likes
+    ADD CONSTRAINT fk_product_like FOREIGN KEY (product_id) REFERENCES public.products(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
 -- Name: translation_product fk_product_translation_product; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.translation_product
     ADD CONSTRAINT fk_product_translation_product FOREIGN KEY (product_id) REFERENCES public.products(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: category_shop fk_shop_category_shop; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.category_shop
+    ADD CONSTRAINT fk_shop_category_shop FOREIGN KEY (shop_id) REFERENCES public.shops(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
