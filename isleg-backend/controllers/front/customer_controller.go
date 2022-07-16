@@ -10,7 +10,6 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/lib/pq"
 )
 
 func RegisterCustomer(c *gin.Context) {
@@ -31,11 +30,11 @@ func RegisterCustomer(c *gin.Context) {
 	fullName := c.PostForm("full_name")
 	phoneNumber := c.PostForm("phone_number")
 	password := c.PostForm("password")
-	gender := c.PostForm("gender")
-	birthday := c.PostForm("birthday")
-	addresses := c.PostFormArray("addresses")
+	// gender := c.PostForm("gender")
+	// birthday := c.PostForm("birthday")
+	// addresses := c.PostFormArray("addresses")
 
-	err = models.ValidateCustomerData(fullName, phoneNumber, password, gender, addresses)
+	err = models.ValidateCustomerData(fullName, phoneNumber, password)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -53,7 +52,7 @@ func RegisterCustomer(c *gin.Context) {
 		return
 	}
 
-	_, err = config.ConnDB().Exec("INSERT INTO customers (full_name,phone_number,password,birthday,gender,addresses) VALUES ($1,$2,$3,$4,$5,$6)", fullName, "+993"+phoneNumber, hashPassword, birthday, gender, pq.StringArray(addresses))
+	_, err = config.ConnDB().Exec("INSERT INTO customers (full_name,phone_number,password) VALUES ($1,$2,$3)", fullName, phoneNumber, hashPassword)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{
 			"status":  false,
