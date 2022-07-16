@@ -55,6 +55,8 @@ func Routes() *gin.Engine {
 
 		back.POST("/district", backController.CreateDistrict)
 
+		back.POST("/shop", backController.CreateShop)
+
 	}
 
 	// routes belong to front

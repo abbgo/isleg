@@ -41,7 +41,7 @@ func CheckPassword(providedPassword, oldPassword string) error {
 	return nil
 }
 
-func ValidateCustomerData(fullName, phoneNumber, password, gender string, addresses []string) error {
+func ValidateCustomerData(fullName, phoneNumber, password string) error {
 
 	if fullName == "" {
 		return errors.New("full name is required")
@@ -85,20 +85,23 @@ func ValidateCustomerData(fullName, phoneNumber, password, gender string, addres
 		return errors.New("password length must be between 5 and 25")
 	}
 
-	if gender != "" {
-		if gender != "1" && gender != "0" {
-			return errors.New("gender must be 0 or 1")
-		}
-	}
+	// if gender != "" {
+	// 	if gender != "1" && gender != "0" {
+	// 		return errors.New("gender must be 0 or 1")
+	// 	}
+	// }
 
-	if len(addresses) == 0 {
-		return errors.New("address is required")
-	}
-	for _, v := range addresses {
-		if v == "" {
-			return errors.New("address is required")
-		}
-	}
+	// if len(addresses) == 0 {
+	// 	return errors.New("address is required")
+	// }
+
+	// if len(addresses) != 0 {
+	// 	for _, v := range addresses {
+	// 		if v == "" {
+	// 			return errors.New("address is required")
+	// 		}
+	// 	}
+	// }
 
 	return nil
 
