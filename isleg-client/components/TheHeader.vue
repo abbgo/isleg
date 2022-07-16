@@ -32,18 +32,17 @@
     </div>
     <the-header-nav></the-header-nav>
     <sign-up
-      v-if="isOpenSignUp"
       :signUp="signUp"
       @closeSignUp="closeSignUp"
       @openRegister="openRegister"
       @closeSignUpPopUp="closeSignUp"
     ></sign-up>
     <register
-      v-if="isOpenRegister"
       :register="register"
       @closeRegister="closeRegister"
       @openSignUpPopUp="openSignUpPopUp"
       @closeRegisterPopUp="closeRegister"
+      @registerPost="registerPost"
     ></register>
   </header>
 </template>
@@ -64,7 +63,6 @@ export default {
       register: {
         name: '',
         phone_number: '+993 6',
-        newPhoneNumbers: [],
         password: '',
       },
       isProfile: false,
@@ -121,6 +119,21 @@ export default {
       token
         ? (this.isProfile = !this.isProfile)
         : this.$store.commit('ui/SET_OPEN_ISOPENSIGNUP')
+    },
+    async registerPost() {
+      const formData = new FormData()
+      formData.append('full_name', this.register.name)
+      formData.append('password', this.register.password)
+      formData.append('phone_number', this.register.phone_number)
+      formData.append('gender', '1')
+      formData.append('birthday', '1998-06-23')
+      formData.append('adress', ['wekfdnwejk', 'wejdbkwejb'])
+      try {
+        const res = await this.$axios.post('/tm/register', formData)
+        console.log(res)
+      } catch (e) {
+        console.log(e.response)
+      }
     },
   },
 }

@@ -1,11 +1,6 @@
 <template>
   <div class="products">
-    <product-box></product-box>
-    <product-box></product-box>
-    <product-box></product-box>
-    <product-box></product-box>
-    <product-box></product-box>
-    <product-box></product-box>
+    <product-box @productPopUp="$emit('productPopUpOpen')"></product-box>
   </div>
 </template>
 
@@ -14,6 +9,11 @@ import ProductBox from './ProductBox.vue'
 export default {
   components: {
     ProductBox,
+  },
+  methods: {
+    openPop() {
+      console.log('eee')
+    },
   },
 }
 </script>

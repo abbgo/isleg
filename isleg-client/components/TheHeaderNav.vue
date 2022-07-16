@@ -22,45 +22,9 @@
                   <span>Depder 96 list</span>
                   <span>Depder 12 list </span>
                   <span>Depder 48 list</span>
-                  <span>Depder 96 list</span> <span>Depder 12 list </span>
+                  <span>Depder 96 list</span>
                   <span>Depder 48 list</span>
                   <span>Depder 96 list</span>
-                  <span>Depder 12 list </span>
-                  <span>Depder 48 list</span>
-                  <span>Depder 96 list</span> <span>Depder 12 list </span>
-                  <span>Depder 48 list</span>
-                  <span>Depder 96 list</span>
-                  <span>Depder 12 list </span>
-                  <span>Depder 48 list</span>
-                  <span>Depder 96 list</span> <span>Depder 12 list </span>
-                  <span>Depder 48 list</span>
-                  <span>Depder 96 list</span>
-                  <span>Depder 12 list </span>
-                  <span>Depder 48 list</span>
-                  <span>Depder 96 list</span>
-                </div>
-              </div>
-              <div class="sub__category">
-                <div class="sub__category-title">2Depder</div>
-                <div class="sub__category-items">
-                  <span>Depder 12 list </span>
-                  <span>Depder 48 list</span>
-                  <span>Depder 96 list</span>
-                </div>
-              </div>
-              <div class="sub__category">
-                <div class="sub__category-title">2Depder</div>
-                <div class="sub__category-items">
-                  <span>Depder 12 list </span>
-                  <span>Depder 48 list</span>
-                  <span>Depder 96 list</span>
-                  <span>Depder 12 list </span>
-                  <span>Depder 48 list</span>
-                </div>
-              </div>
-              <div class="sub__category">
-                <div class="sub__category-title">1Depder</div>
-                <div class="sub__category-items">
                   <span>Depder 12 list </span>
                   <span>Depder 48 list</span>
                   <span>Depder 96 list</span>
@@ -69,87 +33,6 @@
                   <span>Depder 12 list </span>
                   <span>Depder 48 list</span>
                   <span>Depder 96 list</span>
-                  <span>Depder 12 list </span>
-                  <span>Depder 48 list</span>
-                  <span>Depder 96 list</span> <span>Depder 12 list </span>
-                  <span>Depder 48 list</span>
-                  <span>Depder 96 list</span>
-                  <span>Depder 12 list </span>
-                  <span>Depder 48 list</span>
-                  <span>Depder 96 list</span> <span>Depder 12 list </span>
-                  <span>Depder 48 list</span>
-                  <span>Depder 96 list</span>
-                  <span>Depder 12 list </span>
-                  <span>Depder 48 list</span>
-                  <span>Depder 96 list</span> <span>Depder 12 list </span>
-                  <span>Depder 48 list</span>
-                  <span>Depder 96 list</span>
-                  <span>Depder 12 list </span>
-                  <span>Depder 48 list</span>
-                  <span>Depder 96 list</span>
-                </div>
-              </div>
-              <div class="sub__category">
-                <div class="sub__category-title">2Depder</div>
-                <div class="sub__category-items">
-                  <span>Depder 12 list </span>
-                  <span>Depder 48 list</span>
-                  <span>Depder 96 list</span>
-                </div>
-              </div>
-              <div class="sub__category">
-                <div class="sub__category-title">2Depder</div>
-                <div class="sub__category-items">
-                  <span>Depder 12 list </span>
-                </div>
-              </div>
-              <div class="sub__category">
-                <div class="sub__category-title">1Depder</div>
-                <div class="sub__category-items">
-                  <span>Depder 12 list </span>
-                  <span>Depder 48 list</span>
-                </div>
-              </div>
-              <div class="sub__category">
-                <div class="sub__category-title">2Depder</div>
-                <div class="sub__category-items">
-                  <span>Depder 12 list </span>
-                </div>
-              </div>
-              <div class="sub__category">
-                <div class="sub__category-title">2Depder</div>
-                <div class="sub__category-items">
-                  <span>Depder 12 list </span>
-                  <span>Depder 48 list</span>
-                  <span>Depder 96 list</span>
-                  <span>Depder 12 list </span>
-                  <span>Depder 48 list</span>
-                </div>
-              </div>
-              <div class="sub__category">
-                <div class="sub__category-title">1Depder</div>
-                <div class="sub__category-items">
-                  <span>Depder 12 list </span>
-                  <span>Depder 48 list</span>
-                  <span>Depder 96 list</span>
-                  <span>Depder 48 list</span>
-                  <span>Depder 96 list</span>
-                  <span>Depder 12 list </span>
-                  <span>Depder 48 list</span>
-                  <span>Depder 96 list</span>
-                  <span>Depder 12 list </span>
-                  <span>Depder 48 list</span>
-                  <span>Depder 96 list</span> <span>Depder 12 list </span>
-                  <span>Depder 48 list</span>
-                  <span>Depder 96 list</span>
-                  <span>Depder 12 list </span>
-                  <span>Depder 48 list</span>
-                  <span>Depder 96 list</span> <span>Depder 12 list </span>
-                  <span>Depder 48 list</span>
-                  <span>Depder 96 list</span>
-                  <span>Depder 12 list </span>
-                  <span>Depder 48 list</span>
-                  <span>Depder 96 list</span> <span>Depder 12 list </span>
                   <span>Depder 48 list</span>
                   <span>Depder 96 list</span>
                   <span>Depder 12 list </span>
@@ -218,8 +101,11 @@
                 <div class="sub__category-title">2Depder</div>
                 <div class="sub__category-items">
                   <span>Depder 12 list </span>
-                  <span>Depder 48 list</span>
-                  <span>Depder 96 list</span>
+                </div>
+              </div>
+              <div class="sub__category">
+                <div class="sub__category-title">1Depder</div>
+                <div class="sub__category-items">
                   <span>Depder 12 list </span>
                   <span>Depder 48 list</span>
                 </div>
@@ -229,48 +115,6 @@
                 <div class="sub__category-items">
                   <span>Depder 12 list </span>
                   <span>Depder 48 list</span>
-                  <span>Depder 96 list</span>
-                  <span>Depder 48 list</span>
-                  <span>Depder 96 list</span>
-                  <span>Depder 12 list </span>
-                  <span>Depder 48 list</span>
-                  <span>Depder 96 list</span>
-                  <span>Depder 12 list </span>
-                  <span>Depder 48 list</span>
-                  <span>Depder 96 list</span> <span>Depder 12 list </span>
-                  <span>Depder 48 list</span>
-                  <span>Depder 96 list</span>
-                  <span>Depder 12 list </span>
-                  <span>Depder 48 list</span>
-                  <span>Depder 96 list</span> <span>Depder 12 list </span>
-                  <span>Depder 48 list</span>
-                  <span>Depder 96 list</span>
-                  <span>Depder 12 list </span>
-                  <span>Depder 48 list</span>
-                  <span>Depder 96 list</span> <span>Depder 12 list </span>
-                  <span>Depder 48 list</span>
-                  <span>Depder 96 list</span>
-                  <span>Depder 12 list </span>
-                  <span>Depder 48 list</span>
-                  <span>Depder 96 list</span>
-                </div>
-              </div>
-              <div class="sub__category">
-                <div class="sub__category-title">2Depder</div>
-                <div class="sub__category-items">
-                  <span>Depder 12 list </span>
-                  <span>Depder 48 list</span>
-                  <span>Depder 96 list</span>
-                </div>
-              </div>
-              <div class="sub__category">
-                <div class="sub__category-title">2Depder</div>
-                <div class="sub__category-items">
-                  <span>Depder 12 list </span>
-                  <span>Depder 48 list</span>
-                  <span>Depder 96 list</span>
-                  <span>Depder 12 list </span>
-                  <span>Depder 48 list</span>
                 </div>
               </div>
               <div class="sub__category">
@@ -278,46 +122,11 @@
                 <div class="sub__category-items">
                   <span>Depder 12 list </span>
                   <span>Depder 48 list</span>
-                  <span>Depder 96 list</span>
-                  <span>Depder 48 list</span>
-                  <span>Depder 96 list</span>
-                  <span>Depder 12 list </span>
-                  <span>Depder 48 list</span>
-                  <span>Depder 96 list</span>
-                  <span>Depder 12 list </span>
-                  <span>Depder 48 list</span>
-                  <span>Depder 96 list</span> <span>Depder 12 list </span>
-                  <span>Depder 48 list</span>
-                  <span>Depder 96 list</span>
-                  <span>Depder 12 list </span>
-                  <span>Depder 48 list</span>
-                  <span>Depder 96 list</span> <span>Depder 12 list </span>
-                  <span>Depder 48 list</span>
-                  <span>Depder 96 list</span>
-                  <span>Depder 12 list </span>
-                  <span>Depder 48 list</span>
-                  <span>Depder 96 list</span> <span>Depder 12 list </span>
-                  <span>Depder 48 list</span>
-                  <span>Depder 96 list</span>
-                  <span>Depder 12 list </span>
-                  <span>Depder 48 list</span>
-                  <span>Depder 96 list</span>
                 </div>
               </div>
               <div class="sub__category">
-                <div class="sub__category-title">2Depder</div>
+                <div class="sub__category-title">1Depder</div>
                 <div class="sub__category-items">
-                  <span>Depder 12 list </span>
-                  <span>Depder 48 list</span>
-                  <span>Depder 96 list</span>
-                </div>
-              </div>
-              <div class="sub__category">
-                <div class="sub__category-title">2Depder</div>
-                <div class="sub__category-items">
-                  <span>Depder 12 list </span>
-                  <span>Depder 48 list</span>
-                  <span>Depder 96 list</span>
                   <span>Depder 12 list </span>
                   <span>Depder 48 list</span>
                 </div>

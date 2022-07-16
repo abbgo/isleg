@@ -41,6 +41,7 @@
           fill="#8D98A9"
         />
       </svg>
+      <span class="shop__count">1</span>
       <span class="shop__span">Sebet</span>
     </button>
   </div>

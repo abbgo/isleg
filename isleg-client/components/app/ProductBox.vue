@@ -1,5 +1,5 @@
 <template>
-  <div class="product__box">
+  <div class="product__box" @click.stop="$emit('productPopUp')">
     <div class="product__img">
       <img src="@/assets/img/products/product1.jpg" alt="" />
     </div>
@@ -43,7 +43,7 @@
       </svg>
       <svg
         v-else
-        @click="productLike"
+        @click.stop="productLike"
         width="26"
         height="25"
         viewBox="0 0 26 25"

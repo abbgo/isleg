@@ -1,7 +1,7 @@
 <template>
   <div class="category__section">
     <product-title></product-title>
-    <products></products>
+    <products @productPopUpOpen="$emit('productPopUpOpen')"></products>
   </div>
 </template>
 

@@ -119,9 +119,22 @@ h6 {
 
 body {
   background: #f5f5f5;
+  height: 100%;
 }
-.lock {
+._lock {
   overflow: hidden;
+}
+#__nuxt {
+  height: 100%;
+}
+#__layout {
+  height: 100%;
+}
+.main {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 [class*='__container'] {
   max-width: 1400px;
@@ -193,6 +206,21 @@ body {
   padding: 5px;
   border-radius: 4px;
   transition: 0.5s ease;
+  position: relative;
+}
+.shop__count {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  top: 1px;
+  left: 21px;
+  height: 18px;
+  width: 18px;
+  color: #fff;
+  font-size: 12px;
+  background: #798393;
+  border-radius: 50%;
 }
 .shop__span {
   opacity: 0;
@@ -201,10 +229,14 @@ body {
 .shop:hover .shop__span {
   opacity: 1;
   visibility: visible;
+  color: #f45e29;
 }
 .shop:hover {
   border: 1px dashed #8d98a9;
   width: 130px;
+}
+.shop:hover .shop__count {
+  background: #f45e29;
 }
 
 .shop__svg path {
@@ -350,7 +382,7 @@ body {
   width: 100%;
   left: 0;
   height: 0px;
-  background: rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.9);
   box-shadow: 0px 9px 14px rgba(0, 0, 0, 0.28);
   backdrop-filter: blur(9px);
   margin: 0 auto;
@@ -359,7 +391,7 @@ body {
   opacity: 0;
   visibility: hidden;
   display: flex;
-  z-index: 10;
+  z-index: 12;
 }
 
 .header__sub-scroll-content {
@@ -520,12 +552,28 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+  z-index: 10;
+}
+.arrow:hover {
+  background: #8d98a9;
 }
 .arrow__left {
   left: 10%;
 }
 .arrow__right {
   right: 10%;
+}
+.swiper-pagination {
+  bottom: 22px;
+  left: 46%;
+}
+.slider .swiper-pagination-bullet {
+  height: 20px;
+  width: 20px;
+  margin: 0 5px;
+}
+.slider .swiper-pagination-bullet-active {
+  background: #fd5e29;
 }
 .product__categoty {
   display: flex;
@@ -574,7 +622,7 @@ body {
   padding: 20px;
   overflow: hidden;
   transition: 0.4s ease;
-  margin-bottom: 60px;
+  margin-bottom: 30px;
 }
 .product__box:hover {
   transform: scale(1.05);
@@ -1078,7 +1126,7 @@ body {
   border-radius: 5px;
   background: #fff;
 }
-.swiper-slide {
+.brends .swiper-slide {
   height: 150px !important;
 }
 .brends__animation-slide img {
@@ -1129,7 +1177,15 @@ body {
   padding-top: 120px;
   display: flex;
   justify-content: center;
+  z-index: 0;
+  opacity: 0;
+  visibility: hidden;
+  transition: 0.3s ease;
+}
+.pop-up.active {
+  opacity: 1;
   z-index: 1000;
+  visibility: visible;
 }
 .pop-up_product {
   padding-top: 20px;
@@ -1140,7 +1196,12 @@ body {
   padding: 28px;
   width: 524px;
   height: max-content;
+  transition: 0.3s ease;
+  transform: scale(0);
   position: relative;
+}
+.pop-up.active .pop-up__body {
+  transform: scale(1);
 }
 .pop-up__wrapper {
   display: flex;
@@ -1241,8 +1302,9 @@ body {
   width: 50%;
 }
 .product__slider-big {
-  width: 376px;
-  height: 376px;
+  max-width: 376px;
+  height: auto;
+  position: relative;
 }
 .product__slider-big img {
   width: 100%;

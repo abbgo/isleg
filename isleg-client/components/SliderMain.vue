@@ -1,11 +1,20 @@
 <template>
   <section class="slider __container">
-    <div class="big__slider">
-      <!-- <img src="@/assets/img/bigslider.jpg" alt="" />
-      <img src="@/assets/img/bigslider.jpg" alt="" />
-      <img src="@/assets/img/bigslider.jpg" alt="" />
-      <img src="@/assets/img/bigslider.jpg" alt="" /> -->
-    </div>
+    <swiper ref="mySwiper" :options="swiperOptions" class="big__slider">
+      <swiper-slide style="height: 100%">
+        <img src="@/assets/img/bigslider.jpg" alt="" />
+      </swiper-slide>
+      <swiper-slide>
+        <img src="@/assets/img/bigslider.jpg" alt="" />
+      </swiper-slide>
+      <swiper-slide>
+        <img src="@/assets/img/bigslider.jpg" alt="" />
+      </swiper-slide>
+      <swiper-slide>
+        <img src="@/assets/img/bigslider.jpg" alt="" />
+      </swiper-slide>
+    </swiper>
+    <div class="swiper-pagination"></div>
     <button class="arrow arrow__left">
       <svg
         width="12"
@@ -40,5 +49,43 @@
 </template>
 
 <script>
-export default {}
+import { Swiper, SwiperSlide } from 'vue-awesome-swiper'
+
+export default {
+  components: {
+    Swiper,
+    SwiperSlide,
+  },
+  data() {
+    return {
+      swiperOptions: {
+        autoplay: {
+          delay: 3000,
+          disableOnInteraction: false,
+        },
+        loop: true,
+        speed: 1500,
+        autoplayStopOnLast: false,
+        navigation: {
+          nextEl: '.arrow__right',
+          prevEl: '.arrow__left',
+        },
+        pagination: {
+          el: '.swiper-pagination',
+          clickable: true,
+        },
+        keyboard: {
+          enabled: true,
+          onlyInViewport: true,
+          pageUpDown: true,
+        },
+      },
+    }
+  },
+  computed: {
+    swiper() {
+      return this.$refs?.mySwiper?.$swiper
+    },
+  },
+}
 </script>

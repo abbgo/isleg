@@ -1,6 +1,6 @@
 <template>
   <div class="pop-up" @click="$emit('closeRegisterPopUp')">
-    <div class="pop-up__body">
+    <div class="pop-up__body" @click.stop>
       <div class="pop-up__wrapper">
         <div class="pop-up__close">
           <img
@@ -34,7 +34,9 @@
             <button class="left_btn" @click="$emit('openSignUpPopUp')">
               Ulgama girmek
             </button>
-            <button class="right__btn">Agza bolmak</button>
+            <button @click="$emit('registerPost')" class="right__btn">
+              Agza bolmak
+            </button>
           </div>
         </div>
       </div>
