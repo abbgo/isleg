@@ -2,13 +2,8 @@
 -- PostgreSQL database dump
 --
 
-<<<<<<< HEAD
--- Dumped from database version 14.3 (Ubuntu 14.3-1.pgdg20.04+1)
--- Dumped by pg_dump version 14.3 (Ubuntu 14.3-1.pgdg20.04+1)
-=======
 -- Dumped from database version 14.4 (Ubuntu 14.4-1.pgdg20.04+1)
 -- Dumped by pg_dump version 14.4 (Ubuntu 14.4-1.pgdg20.04+1)
->>>>>>> 144b2ade17c49d23467e1a26f0658ddbf40e4cc9
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -723,13 +718,7 @@ COPY public.company_setting (id, logo_path, favicon_path, email, instagram, crea
 --
 
 COPY public.customers (id, full_name, phone_number, password, birthday, gender, addresses, created_at, updated_at, deleted_at) FROM stdin;
-20b26aa1-2247-4ed8-a6ef-3ec6bb9f64d7	Asyr Berdiyev	+99365453298	$2a$14$xpoVZw3GhVw05cx/iZmYu.0iqiRyMH46x58wcNuIWTxM/rQGjYSDu	1998-06-24	1	{"Mir 2/2 jay 7 oy 36","Mir 3/2 jay 5 oy 4"}	2022-07-12 12:43:16.090985+05	2022-07-12 12:43:16.090985+05	\N
-e53e0ef8-a3a6-485f-8a5f-d0ba8327b3d5	Serdar Bayramow	+99365453294	$2a$14$EqECyFqszVXzcX5q4jwnqOe2ys8uTN.V.GwfIJkXq6ZjlbLOiXU2C	1998-09-03	1	{"Mir 4/2 jay 1 oy 5","Mir 1/2 jay 5 oy 4"}	2022-07-13 11:01:48.284329+05	2022-07-13 11:01:48.284329+05	\N
-e6709e8f-0c1f-48b8-aeb5-c25f890f3c4e	Guljemal Bayramowa	+99363456742	$2a$14$xoBQ1kA5zR8COGnbVQ2mD.DOUmYYgPwRvXewMnJmCoXx7rQFetlc2	1998-09-03	0	{"Mir 4/2 jay 1 oy 5","Mir 1/2 jay 5 oy 4"}	2022-07-13 11:27:02.415977+05	2022-07-13 11:27:02.415977+05	\N
-<<<<<<< HEAD
-bc7eb393-92df-470d-a93d-6b1e9aa6027a	Guljemal Bayramowa	+99363456742	$2a$14$yWVX1/4xu39fa9jGkDvXb.6IhUhtML0hAhxvlh52u.Yv22AASQRT.	1998-09-03	0	{"Mir 4/2 jay 1 oy 5","Mir 1/2 jay 5 oy 4"}	2022-07-13 11:27:38.622995+05	2022-07-13 11:27:38.622995+05	\N
-=======
->>>>>>> 144b2ade17c49d23467e1a26f0658ddbf40e4cc9
+cdc7569b-8445-467c-80dd-1384bb12158b	Guljemal Bayramowa	63456742	$2a$14$zg6k4RzVS.I85daxEKU.uuzelKr23NKI7Az4N8gz.zlS.Dz95IDua	\N	\N	\N	2022-07-16 19:26:58.811066+05	2022-07-16 19:26:58.811066+05	\N
 \.
 
 
@@ -757,10 +746,6 @@ aea98b93-7bdf-455b-9ad4-a259d69dc76e	ru	uploads/language92b53cfe-d5a5-4686-9082-
 --
 
 COPY public.likes (id, product_id, customer_id, created_at, updated_at, deleted_at) FROM stdin;
-4df3f9dd-8253-47ee-88bf-9da4934e4ae6	525af569-06b6-440a-ab5a-6ee0b39cf51d	20b26aa1-2247-4ed8-a6ef-3ec6bb9f64d7	2022-07-14 13:12:42.138482+05	2022-07-14 13:12:42.138482+05	\N
-11bca126-ad3c-45d2-8b8b-75198a06747c	0d356bb1-c695-4b29-b199-bdff967abfe2	20b26aa1-2247-4ed8-a6ef-3ec6bb9f64d7	2022-07-15 11:10:50.064022+05	2022-07-15 11:10:50.064022+05	\N
-36d05606-b393-42a8-a83f-d2aa2c77f403	0d356bb1-c695-4b29-b199-bdff967abfe2	e53e0ef8-a3a6-485f-8a5f-d0ba8327b3d5	2022-07-15 11:11:13.357965+05	2022-07-15 11:11:13.357965+05	\N
-5677d729-d3bb-4e59-9acb-7046dd5df438	9a0572df-3006-426e-a623-11c0cbc930ea	e53e0ef8-a3a6-485f-8a5f-d0ba8327b3d5	2022-07-15 11:11:26.052559+05	2022-07-15 11:11:26.052559+05	\N
 \.
 
 
