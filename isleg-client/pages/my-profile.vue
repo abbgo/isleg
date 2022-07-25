@@ -15,24 +15,40 @@
         <input type="text" placeholder="+993" />
       </div>
       <div class="form__box">
-        <span>Hatynyz</span>
-        <input type="text" placeholder="Hatynyz" />
-      </div>
-      <div class="form__box">
         <span>Açar sözi</span>
-        <input type="text" placeholder="123456" />
+        <input type="text" placeholder="Açar sözi" />
       </div>
       <div class="form__box">
         <span>Salgyňyz</span>
-        <input type="text" placeholder="Mir 2" />
+        <input type="text" placeholder="Salgyňyz" />
+      </div>
+      <div class="form__box">
+        <span>Hatynyz</span>
+        <textarea type="text" placeholder="Hatynyz" />
+      </div>
+      <div class="form__box born__date">
+        <span>Doglan senäňiz</span>
+        <label class="born__lable" for="born">{{ born }}</label>
+        <input v-model="born" id="born" type="date" />
+      </div>
+      <div class="form__box sex__input">
+        <span>Jynsy</span>
+        <div>
+          <input class="custom" id="male" name="sex" type="radio" />
+          <label for="male">Erkek</label>
+        </div>
+        <div>
+          <input class="custom" id="woman" name="sex" type="radio" />
+          <label for="woman"> Aýal</label>
+        </div>
       </div>
     </div>
     <div class="profile__btns">
       <div class="datas__left">
         <button class="product__add-btn confirim__btn">
           <svg
-            width="21"
-            height="28"
+            width="18"
+            height="18"
             viewBox="0 0 21 28"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
@@ -56,5 +72,24 @@
 </template>
 
 <script>
-export default {}
+export default {
+  data() {
+    return {
+      myProfileDatas: {
+        fillName: '',
+        phone_number: '+993 6',
+        password: '',
+        email: '',
+        address: '',
+        text: '',
+        male: {
+          boy: false,
+          girl: false,
+        },
+        birthday: '',
+      },
+      born: '',
+    }
+  },
+}
 </script>

@@ -2,17 +2,18 @@
   <main>
     <slider-main></slider-main>
     <section class="product__categoty __container">
-      <product-column @productPopUpOpen="isProduct = true"></product-column>
-      <product-column @productPopUpOpen="isProduct = true"></product-column>
-      <product-column @productPopUpOpen="isProduct = true"></product-column>
+      <product-column @productPopUpOpen="productPopUpOpen"></product-column>
+      <product-column @productPopUpOpen="productPopUpOpen"></product-column>
+      <product-column @productPopUpOpen="productPopUpOpen"></product-column>
     </section>
     <slider-brends></slider-brends>
     <pop-up-product
+      :isProduct="isProduct"
       :images="images"
       :bigSlider="bigSlider"
       @changeImagePath="changeImagePath"
       @currentImagePath="currentImagePath"
-      @close="isProduct = false"
+      @close="closeProductPopUp"
     ></pop-up-product>
   </main>
 </template>
@@ -38,11 +39,19 @@ export default {
     }
   },
   methods: {
+    productPopUpOpen() {
+      this.isProduct = true
+      document.body.classList.add('_lock')
+    },
     changeImagePath(imagePath) {
       this.bigSlider = imagePath
     },
     currentImagePath() {
       this.bigSlider = 'bigSlider.jpg'
+    },
+    closeProductPopUp() {
+      this.isProduct = false
+      document.body.classList.remove('_lock')
     },
   },
 }

@@ -1,6 +1,11 @@
 <template>
   <div class="products">
     <product-box @productPopUp="$emit('productPopUpOpen')"></product-box>
+    <product-box @productPopUp="$emit('productPopUpOpen')"></product-box>
+    <product-box @productPopUp="$emit('productPopUpOpen')"></product-box>
+    <product-box @productPopUp="$emit('productPopUpOpen')"></product-box>
+    <product-box @productPopUp="$emit('productPopUpOpen')"></product-box>
+    <product-box @productPopUp="$emit('productPopUpOpen')"></product-box>
   </div>
 </template>
 

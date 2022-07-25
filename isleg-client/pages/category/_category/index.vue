@@ -1,7 +1,7 @@
 <template>
-  <div>
+  <div class="pages__container">
     <section class="menu__filter __container">
-      <span @click="isOrdering = true"
+      <span @click="openOrdering"
         ><svg
           width="18"
           height="30"
@@ -89,7 +89,7 @@
         </svg>
         Ýazuw</span
       >
-      <span @click="isFilter = true"
+      <span @click="openFilter"
         >Filter
         <svg
           width="22"
@@ -178,13 +178,13 @@
       </div>
     </section>
     <pop-up-ordering
-      v-if="isOrdering"
-      @close="isOrdering = false"
+      :isOrdering="isOrdering"
+      @close="closeOrdering"
     ></pop-up-ordering>
     <pop-up-filter
-      v-show="isFilter"
+      :isFilter="isFilter"
       @filterPost="filterPost"
-      @close="isFilter = false"
+      @close="closeFilter"
     ></pop-up-filter>
   </div>
 </template>
@@ -224,6 +224,22 @@ export default {
     }
   },
   methods: {
+    openOrdering() {
+      this.isOrdering = true
+      document.body.classList.add('_lock')
+    },
+    openFilter() {
+      this.isFilter = true
+      document.body.classList.add('_lock')
+    },
+    closeOrdering() {
+      this.isOrdering = false
+      document.body.classList.remove('_lock')
+    },
+    closeFilter() {
+      this.isFilter = false
+      document.body.classList.remove('_lock')
+    },
     filterPost() {
       let input0 = document.getElementById('input0')
       let input1 = document.getElementById('input1')

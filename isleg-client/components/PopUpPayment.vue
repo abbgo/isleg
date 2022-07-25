@@ -1,5 +1,5 @@
 <template>
-  <div class="pop-up pop-up_product">
+  <div :class="['pop-up', 'pt-20', { active: isPayment }]">
     <div class="pop-up__product-body" style="width: 900px">
       <div class="pop-up__wrapper">
         <div class="pop-up__close" @click="$emit('close')">
@@ -46,11 +46,11 @@
                 <div class="payment__chekbox-title">
                   <h3>Toleg sekili</h3>
                 </div>
-                <div class="payment__chekbox-input">
+                <!-- <div class="payment__chekbox-input">
                   <input class="top__input" name="top" id="nagt" type="radio" />
                   <label for="nagt">Nagt</label>
-                </div>
-                <div class="payment__chekbox-input">
+                </div> -->
+                <!-- <div class="payment__chekbox-input">
                   <input
                     class="top__input"
                     name="top"
@@ -58,30 +58,65 @@
                     type="radio"
                   />
                   <label for="toleg">Toleg terminaly</label>
-                </div>
-                <div class="payment__chekbox-input">
+                </div> -->
+                <!-- <div class="payment__chekbox-input">
                   <input class="top__input" name="top" id="qr" type="radio" />
                   <label for="qr">QR kod (rysgal pay)</label>
+                </div> -->
+                <div
+                  class="payment__chekbox-input"
+                  v-for="item in payment.paymentForm"
+                  :key="item.id"
+                >
+                  <input
+                    :checked="item.checked"
+                    class="top__input"
+                    name="top"
+                    :id="item.depends"
+                    type="radio"
+                    @change="paymentChecked(item)"
+                  />
+                  <label :for="item.depends">{{ item.name }}</label>
                 </div>
+                <span class="error" v-if="isPaymentForm">
+                  {{ $t('payment.paymentForm') }}
+                </span>
               </div>
               <div class="payment__chekbox">
                 <div class="payment__chekbox-title">
-                  <h3>Eltip berme wagtyny saylan</h3>
+                  <h3>Eltip bermek wagtyny saylan</h3>
                 </div>
                 <div class="payment__chekbox-subtitle">
                   <h4>Ertir(19.06.2022)</h4>
                 </div>
-                <div class="payment__chekbox-input">
+                <div
+                  class="payment__chekbox-input"
+                  v-for="item in payment.theDeliveryTime"
+                  :key="item.id"
+                >
                   <input
-                    checked
+                    :checked="item.checked"
+                    class="bottom__input"
+                    name="bottom"
+                    :id="item.depends"
+                    type="radio"
+                    @change="theDeliveryTimeChecked(item)"
+                  />
+                  <label :for="item.depends">{{ item.time }}</label>
+                </div>
+                <span class="error" v-if="isTheDeliveryTime">
+                  {{ $t('payment.theDeliveryTime') }}
+                </span>
+                <!-- <div class="payment__chekbox-input">
+                  <input
                     class="bottom__input"
                     name="bottom"
                     id="afternoon"
                     type="radio"
                   />
                   <label for="afternoon">12.00-15.00</label>
-                </div>
-                <div class="payment__chekbox-input">
+                </div> -->
+                <!-- <div class="payment__chekbox-input">
                   <input
                     class="bottom__input"
                     name="bottom"
@@ -89,8 +124,8 @@
                     type="radio"
                   />
                   <label for="after">15.00-18.00</label>
-                </div>
-                <div class="payment__chekbox-input">
+                </div> -->
+                <!-- <div class="payment__chekbox-input">
                   <input
                     class="bottom__input"
                     name="bottom"
@@ -98,29 +133,63 @@
                     type="radio"
                   />
                   <label for="evening">18.00-21.00</label>
-                </div>
+                </div> -->
               </div>
             </div>
             <div class="payment__form">
               <div class="payment__form-box">
                 <label for="">Doly Adynyz <span>*</span></label>
-                <input checked type="text" placeholder="Doly Adynyz" />
+                <input
+                  type="text"
+                  v-model.trim="$v.payment.fullName.$model"
+                  placeholder="Doly Adynyz"
+                />
+                <span
+                  class="error"
+                  v-if="
+                    $v.payment.fullName.$error && !$v.payment.fullName.required
+                  "
+                >
+                  {{ $t('register.nameIsRequired') }}
+                </span>
+                <span class="error" v-if="!$v.payment.fullName.minLength">
+                  {{ $t('register.nameMustHavetletters') }}</span
+                >
               </div>
               <div class="payment__form-box">
                 <label for="">Telefon <span>*</span></label>
-                <input type="number" placeholder="+993" />
+                <input
+                  type="tel"
+                  v-model="$v.payment.phone_number.$model"
+                  @input="enforcePhoneFormat"
+                />
+                <span class="error" v-if="isPhoneNumber">
+                  {{ $t('register.phoneNumberIsRequired') }}
+                </span>
               </div>
               <div class="payment__form-box">
                 <label for="">Salgynyz <span>*</span></label>
-                <input type="text" placeholder="Salgynyz" />
+                <input
+                  type="text"
+                  v-model.trim="$v.payment.address.$model"
+                  placeholder="Salgynyz"
+                />
+                <span
+                  class="error"
+                  v-if="
+                    $v.payment.address.$error && !$v.payment.address.required
+                  "
+                >
+                  {{ $t('payment.address') }}
+                </span>
               </div>
               <div class="payment__form-box">
-                <label for="">Bellik <span>*</span></label>
+                <label for="">Bellik</label>
                 <input type="text" placeholder="Bellik" />
               </div>
               <div class="payment__form-btn">
                 <button class="disable__btn" disabled>Sayta agza bol</button>
-                <button class="order__btn">Sargyt et</button>
+                <button class="order__btn" @click="order">Sargyt et</button>
               </div>
             </div>
           </div>
@@ -131,7 +200,134 @@
 </template>
 
 <script>
-export default {}
+import { required, minLength } from 'vuelidate/lib/validators'
+export default {
+  props: {
+    isPayment: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  data() {
+    return {
+      isPhoneNumber: false,
+      isPaymentForm: false,
+      isTheDeliveryTime: false,
+      payment: {
+        fullName: '',
+        phone_number: '+993 6',
+        address: '',
+        note: '',
+        paymentForm: [
+          { id: 1, checked: false, depends: 'nagt', name: 'Nagt' },
+          { id: 2, checked: false, depends: 'toleg', name: 'Toleg terminaly' },
+          { id: 3, checked: false, depends: 'qr', name: 'QR kod (rysgal pay)' },
+        ],
+        theDeliveryTime: [
+          { id: 4, checked: false, depends: 'afternoon', time: '12.00-15.00' },
+          { id: 5, checked: false, depends: 'after', time: '15.00-18.00' },
+          { id: 6, checked: false, depends: 'evening', time: '18.00-21.00' },
+        ],
+      },
+    }
+  },
+  validations: {
+    payment: {
+      fullName: {
+        required,
+        minLength: minLength(4),
+      },
+      phone_number: {
+        required,
+      },
+      address: {
+        required,
+      },
+      note: {
+        required,
+      },
+    },
+  },
+  mounted() {
+    console.log(this.$v)
+  },
+  methods: {
+    enforcePhoneFormat() {
+      this.isPhoneNumber = false
+      let x = this.payment.phone_number
+        .replace(/\D/g, '')
+        .match(/(\d{0,3})(\d{0,1})(\d{0,1})(\d{0,2})(\d{0,2})(\d{0,2})/)
+      if (!x[2]) {
+        this.payment.phone_number = '+993 6'
+      } else {
+        this.payment.phone_number =
+          '+993 6' +
+          (x[3] ? x[3] : '') +
+          (x[4] ? ' ' + x[4] : '') +
+          (x[5] ? '-' + x[5] : '') +
+          (x[6] ? '-' + x[6] : '')
+      }
+    },
+    paymentChecked(payload) {
+      payload.checked = !payload.checked
+      this.isPaymentForm = false
+      console.log(this.payment.paymentForm)
+    },
+    theDeliveryTimeChecked(payload) {
+      payload.checked = !payload.checked
+      this.isTheDeliveryTime = false
+      console.log(this.payment.theDeliveryTime)
+    },
+    order: async function () {
+      this.$v.$touch()
+      console.log(this.payment.paymentForm)
+      const paymentForm = this.payment.paymentForm.filter(
+        (pay) => pay.checked == true
+      )
+      const theDeliveryTime = this.payment.theDeliveryTime.filter(
+        (pay) => pay.checked == true
+      )
+      console.log('paymentForm', paymentForm)
+      console.log('theDeliveryTime', theDeliveryTime)
+      if (paymentForm.length == 0) {
+        this.isPaymentForm = true
+      }
+      if (theDeliveryTime.length == 0) {
+        this.isTheDeliveryTime = true
+      }
+      if (this.$v.$invalid) {
+        if (this.payment.phone_number.length < 16) {
+          this.isPhoneNumber = true
+        } else {
+          this.isPhoneNumber = false
+        }
+      } else {
+        if (this.payment.phone_number.length >= 16) {
+          // try {
+          //   const res = await this.$axios.$post('/api/login/user/register', {
+          //     username: this.$v.userRegister.fullName.$model,
+          //     email: this.$v.userRegister.email.$model,
+          //     password: this.$v.userRegister.password.$model,
+          //   })
+          //   if (res.status === 201) {
+          //     await this.$auth.loginWith('userLogin', {
+          //       data: {
+          //         email: this.$v.userRegister.email.$model,
+          //         password: this.$v.userRegister.password.$model,
+          //       },
+          //     })
+          //     this.$router.push(this.localeLocation('/user-profile/trades'))
+          //   }
+          // } catch (e) {
+          //   this.$toast(this.$t('register.error'))
+          // }
+        } else {
+          if (this.payment.phone_number.length < 16) {
+            this.isPhoneNumber = true
+          }
+        }
+      }
+    },
+  },
+}
 </script>
-
-<style lang="scss" scoped></style>

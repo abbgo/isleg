@@ -1,13 +1,18 @@
 <template>
   <a
     @click.prevent="$router.push(localeLocation('/'))"
+    @mouseenter="shadowLogo"
     href="#"
     class="header__logo"
   >
-    <img src="@/assets/img/logo.svg" alt="" />
+    <img src="/img/logo.svg" alt="" />
   </a>
 </template>
 
 <script>
-export default {}
+export default {
+  methods: {
+    shadowLogo() {},
+  },
+}
 </script>

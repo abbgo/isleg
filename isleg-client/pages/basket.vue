@@ -1,10 +1,10 @@
 <template>
   <section class="basket __container">
     <basket-products></basket-products>
-    <basket-prices @openPayment="isPayment = true"></basket-prices>
+    <basket-prices @openPayment="openPayment"></basket-prices>
     <pop-up-payment
-      v-if="isPayment"
-      @close="isPayment = false"
+      :isPayment="isPayment"
+      @close="closePaymentPopup"
     ></pop-up-payment>
   </section>
 </template>
@@ -19,6 +19,16 @@ export default {
     return {
       isPayment: false,
     }
+  },
+  methods: {
+    openPayment() {
+      this.isPayment = true
+      document.body.classList.add('_lock')
+    },
+    closePaymentPopup() {
+      this.isPayment = false
+      document.body.classList.remove('_lock')
+    },
   },
 }
 </script>

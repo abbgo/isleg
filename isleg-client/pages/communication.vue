@@ -29,7 +29,7 @@
       </div>
       <div class="form__box">
         <span>Hatynyz</span>
-        <input
+        <textarea
           type="text"
           v-model="communicationForm.text"
           placeholder="Hatynyz"

@@ -1,5 +1,5 @@
 <template>
-  <div class="pop-up pop-up_product">
+  <div :class="['pop-up', 'pop-up_product', { active: isProduct }]">
     <div class="pop-up__product-body">
       <div class="pop-up__wrapper">
         <div class="pop-up__close" @click="$emit('close')">
@@ -115,6 +115,10 @@
 <script>
 export default {
   props: {
+    isProduct: {
+      type: Boolean,
+      default: false,
+    },
     bigSlider: {
       type: String,
       default: () => '',
@@ -130,8 +134,8 @@ export default {
       let offsetX, offsetY
       e.offsetX ? (offsetX = e.offsetX) : (offsetX = e.pageX)
       e.offsetY ? (offsetY = e.offsetY) : (offsetX = e.pageX)
-      let x = (offsetX / zoomer.offsetWidth) * 150
-      let y = (offsetY / zoomer.offsetHeight) * 150
+      let x = (offsetX / zoomer.offsetWidth) * 100
+      let y = (offsetY / zoomer.offsetHeight) * 100
       zoomer.style.backgroundPosition = x + '% ' + y + '%'
     },
   },
@@ -152,7 +156,7 @@ figure.zoom img:hover {
   opacity: 0;
 }
 figure.zoom img {
-  transition: opacity 0.5s;
+  transition: opacity 0.3s;
   display: block;
   width: inherit;
 }

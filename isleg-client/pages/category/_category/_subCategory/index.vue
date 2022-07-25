@@ -1,7 +1,7 @@
 <template>
-  <div>
+  <div class="pages__container">
     <section class="menu__filter __container">
-      <span
+      <span @click="openOrdering"
         ><svg
           width="18"
           height="30"
@@ -89,7 +89,7 @@
         </svg>
         Ýazuw</span
       >
-      <span
+      <span @click="openFilter"
         >Filter
         <svg
           width="22"
@@ -177,14 +177,75 @@
         </div>
       </div>
     </section>
+    <pop-up-ordering
+      :isOrdering="isOrdering"
+      @close="closeOrdering"
+    ></pop-up-ordering>
+    <pop-up-filter
+      :isFilter="isFilter"
+      @filterPost="filterPost"
+      @close="closeFilter"
+    ></pop-up-filter>
   </div>
 </template>
 
 <script>
 import Products from '@/components/app/Products.vue'
+import noUiSlider from '@/plugins/nouislider.min'
 export default {
   components: {
     Products,
+  },
+  data() {
+    return {
+      isOrdering: false,
+      isFilter: false,
+    }
+  },
+  mounted() {
+    let rangeSlider = document.querySelector('.range__slider')
+    if (rangeSlider) {
+      noUiSlider.create(rangeSlider, {
+        start: [0, 3000],
+        connect: true,
+        step: 1,
+        range: {
+          min: 0,
+          max: 3000,
+        },
+      })
+      let input0 = document.getElementById('input0')
+      let input1 = document.getElementById('input1')
+      let inputs = [input0, input1]
+
+      rangeSlider.noUiSlider.on('update', function (value, handle) {
+        inputs[handle].value = Math.round(value[handle])
+      })
+    }
+  },
+  methods: {
+    openOrdering() {
+      this.isOrdering = true
+      document.body.classList.add('_lock')
+    },
+    openFilter() {
+      this.isFilter = true
+      document.body.classList.add('_lock')
+    },
+    closeOrdering() {
+      this.isOrdering = false
+      document.body.classList.remove('_lock')
+    },
+    closeFilter() {
+      this.isFilter = false
+      document.body.classList.remove('_lock')
+    },
+    filterPost() {
+      let input0 = document.getElementById('input0')
+      let input1 = document.getElementById('input1')
+      console.log('input0', input0.value)
+      console.log('input1', input1.value)
+    },
   },
 }
 </script>

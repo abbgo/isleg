@@ -1,5 +1,5 @@
 <template>
-  <div class="pop-up pop-up_product">
+  <div :class="['pop-up', { active: isFilter }]">
     <div class="filter__body">
       <div class="arriving__header">
         <div class="filter__title">
@@ -72,10 +72,26 @@
         <label>Diňe arzanladyşdaky</label>
       </div>
       <div class="range__title">Brendlar</div>
-      <div class="range__company">
-        <button>&#x2039;&#x2039;</button>
-        <span>Dolhin</span>
-        <button>&#x203A;&#x203A;</button>
+      <div class="range__company" :class="{ active: brend }">
+        <span @click="brend = !brend" class="brend__active"
+          ><h4>Dolhin</h4>
+          <img src="/img/select.svg" alt="" />
+        </span>
+        <div class="brend__items">
+          <span class="brend__search"
+            ><input type="text" placeholder="Gozle" />
+            <img src="/img/search.svg" alt="" />
+          </span>
+          <div class="brend__container">
+            <span class="brend">Dolhin</span>
+            <span class="brend">Dolhin</span>
+            <span class="brend">Dolhin</span>
+            <span class="brend">Dolhin</span>
+            <span class="brend">Dolhin</span>
+            <span class="brend">Dolhin</span>
+            <span class="brend">Dolhin</span>
+          </div>
+        </div>
       </div>
       <div class="filter__btn" @click="$emit('filterPost')">
         <button>Filter etmek</button>
@@ -85,5 +101,17 @@
 </template>
 
 <script>
-export default {}
+export default {
+  props: {
+    isFilter: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  data() {
+    return {
+      brend: false,
+    }
+  },
+}
 </script>

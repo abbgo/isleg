@@ -1,5 +1,5 @@
 <template>
-  <div class="pop-up pop-up_product">
+  <div :class="['pop-up', 'pop-up_product', { active: isOrdering }]">
     <div class="arriving__body">
       <div class="arriving__header">
         <span
@@ -120,5 +120,12 @@
 </template>
 
 <script>
-export default {}
+export default {
+  props: {
+    type: {
+      isOrdering: Boolean,
+      default: false,
+    },
+  },
+}
 </script>
