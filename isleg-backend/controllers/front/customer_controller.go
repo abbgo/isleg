@@ -30,11 +30,13 @@ func RegisterCustomer(c *gin.Context) {
 	fullName := c.PostForm("full_name")
 	phoneNumber := c.PostForm("phone_number")
 	password := c.PostForm("password")
+	email := c.PostForm("email")
+
 	// gender := c.PostForm("gender")
 	// birthday := c.PostForm("birthday")
 	// addresses := c.PostFormArray("addresses")
 
-	err = models.ValidateCustomerData(fullName, phoneNumber, password)
+	err = models.ValidateCustomerData(fullName, phoneNumber, password, email)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -52,7 +54,7 @@ func RegisterCustomer(c *gin.Context) {
 		return
 	}
 
-	_, err = config.ConnDB().Exec("INSERT INTO customers (full_name,phone_number,password) VALUES ($1,$2,$3)", fullName, phoneNumber, hashPassword)
+	_, err = config.ConnDB().Exec("INSERT INTO customers (full_name,phone_number,password,email) VALUES ($1,$2,$3,$4)", fullName, phoneNumber, hashPassword, email)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{
 			"status":  false,
