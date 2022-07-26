@@ -221,6 +221,10 @@ func CreateProduct(c *gin.Context) {
 		return
 	}
 
+	for _, v := range categories {
+		rawCategory, err := config.ConnDB().Query("SELECT id FROM ")
+	}
+
 	// create category product
 	for _, v := range categories {
 		vUUID, err := uuid.Parse(v)
