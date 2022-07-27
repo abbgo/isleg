@@ -30,7 +30,7 @@ func CreateLanguage(c *gin.Context) {
 	}
 
 	// FILE UPLOAD
-	newFileName, err := pkg.FileUpload("flag_path", "language", c)
+	newFileName, err := pkg.FileUpload("flag", "language", c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -40,7 +40,7 @@ func CreateLanguage(c *gin.Context) {
 	}
 
 	// CREATE LANGUAGE
-	_, err = config.ConnDB().Exec("INSERT INTO languages (name_short,flag_path) VALUES ($1,$2)", strings.ToLower(nameShort), "uploads/"+newFileName)
+	_, err = config.ConnDB().Exec("INSERT INTO languages (name_short,flag) VALUES ($1,$2)", strings.ToLower(nameShort), "uploads/"+newFileName)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -307,7 +307,7 @@ func GetAllLanguageForHeader() ([]LanguageForHeader, error) {
 	var ls []LanguageForHeader
 
 	// GET Language For Header
-	rows, err := config.ConnDB().Query("SELECT name_short,flag_path FROM languages")
+	rows, err := config.ConnDB().Query("SELECT name_short,flag FROM languages")
 	if err != nil {
 		return []LanguageForHeader{}, err
 	}
