@@ -12,8 +12,8 @@ type Product struct {
 	OldPrice      float64        `json:"old_price"`
 	Amount        uint           `json:"amount"`
 	ProductCode   string         `json:"product_code"`
-	MainImagePath string         `json:"main_image_path"`
-	ImagePaths    pq.StringArray `json:"image_paths"`
+	MainImagePath string         `json:"main_image"`
+	ImagePaths    pq.StringArray `json:"images"`
 	CreatedAt     string         `json:"-"`
 	UpdatedAt     string         `json:"-"`
 	DeletedAt     string         `json:"-"`
