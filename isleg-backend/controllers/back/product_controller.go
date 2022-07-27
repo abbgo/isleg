@@ -222,7 +222,34 @@ func CreateProduct(c *gin.Context) {
 	}
 
 	for _, v := range categories {
-		rawCategory, err := config.ConnDB().Query("SELECT id FROM ")
+		rawCategory, err := config.ConnDB().Query("SELECT id FROM categories WHERE id = $1", v)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+
+		var categoryID string
+
+		for rawCategory.Next() {
+			if err := rawCategory.Scan(&categoryID); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}
+
+		if categoryID == "" {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": "category not found",
+			})
+			return
+		}
 	}
 
 	// create category product
