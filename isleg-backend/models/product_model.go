@@ -6,17 +6,17 @@ import (
 )
 
 type Product struct {
-	ID            uuid.UUID      `json:"id"`
-	BrendID       uuid.UUID      `json:"brend_id"`
-	Price         float64        `json:"price"`
-	OldPrice      float64        `json:"old_price"`
-	Amount        uint           `json:"amount"`
-	ProductCode   string         `json:"product_code"`
-	MainImagePath string         `json:"main_image"`
-	ImagePaths    pq.StringArray `json:"images"`
-	CreatedAt     string         `json:"-"`
-	UpdatedAt     string         `json:"-"`
-	DeletedAt     string         `json:"-"`
+	ID          uuid.UUID      `json:"id"`
+	BrendID     uuid.UUID      `json:"brend_id"`
+	Price       float64        `json:"price"`
+	OldPrice    float64        `json:"old_price"`
+	Amount      uint           `json:"amount"`
+	ProductCode string         `json:"product_code"`
+	MainImage   string         `json:"main_image"`
+	Images      pq.StringArray `json:"images"`
+	CreatedAt   string         `json:"-"`
+	UpdatedAt   string         `json:"-"`
+	DeletedAt   string         `json:"-"`
 }
 
 type TranslationProduct struct {

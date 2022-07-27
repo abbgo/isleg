@@ -8,14 +8,14 @@ import (
 )
 
 type CompanySetting struct {
-	ID          uuid.UUID `json:"id"`
-	LogoPath    string    `json:"logo"`
-	FaviconPath string    `json:"favicon"`
-	Email       string    `json:"email"`
-	Instagram   string    `json:"instagram"`
-	CreatedAt   string    `json:"-"`
-	UpdatedAt   string    `json:"-"`
-	DeletedAt   string    `json:"-"`
+	ID        uuid.UUID `json:"id"`
+	Logo      string    `json:"logo"`
+	Favicon   string    `json:"favicon"`
+	Email     string    `json:"email"`
+	Instagram string    `json:"instagram"`
+	CreatedAt string    `json:"-"`
+	UpdatedAt string    `json:"-"`
+	DeletedAt string    `json:"-"`
 }
 
 func ValidateCompanySettingData(email, instagram string) error {
