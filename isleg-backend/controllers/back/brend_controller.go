@@ -29,7 +29,7 @@ func CreateBrend(c *gin.Context) {
 	}
 
 	// FILE UPLOAD
-	newFileName, err := pkg.FileUpload("image_path", "brend", c)
+	newFileName, err := pkg.FileUpload("image", "brend", c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -39,7 +39,7 @@ func CreateBrend(c *gin.Context) {
 	}
 
 	// CREATE BREND
-	_, err = config.ConnDB().Exec("INSERT INTO brends (name,image_path) VALUES ($1,$2)", name, "uploads/"+newFileName)
+	_, err = config.ConnDB().Exec("INSERT INTO brends (name,image) VALUES ($1,$2)", name, "uploads/"+newFileName)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -60,7 +60,7 @@ func GetAllBrendForHomePage() ([]BrendForHomePage, error) {
 	var brends []BrendForHomePage
 
 	// get all brends
-	rows, err := config.ConnDB().Query("SELECT id,image_path FROM brends")
+	rows, err := config.ConnDB().Query("SELECT id,image FROM brends")
 	if err != nil {
 		return []BrendForHomePage{}, err
 	}
