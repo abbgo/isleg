@@ -102,7 +102,7 @@ func CreateCategory(c *gin.Context) {
 	}
 
 	// FILE UPLOAD
-	file, errFile := c.FormFile("image_path")
+	file, errFile := c.FormFile("image")
 	if errFile != nil {
 		fileName = ""
 	} else {
@@ -149,7 +149,7 @@ func CreateCategory(c *gin.Context) {
 
 	// CREATE CATEGORY
 	if parentCategoryIDUUID != uuid.Nil {
-		_, err = config.ConnDB().Exec("INSERT INTO categories (parent_category_id,image_path,is_home_category) VALUES ($1,$2,$3)", parentCategoryIDUUID, fileName, isHomeCategory)
+		_, err = config.ConnDB().Exec("INSERT INTO categories (parent_category_id,image,is_home_category) VALUES ($1,$2,$3)", parentCategoryIDUUID, fileName, isHomeCategory)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
@@ -158,7 +158,7 @@ func CreateCategory(c *gin.Context) {
 			return
 		}
 	} else {
-		_, err = config.ConnDB().Exec("INSERT INTO categories (image_path,is_home_category) VALUES ($1,$2)", fileName, isHomeCategory)
+		_, err = config.ConnDB().Exec("INSERT INTO categories (image,is_home_category) VALUES ($1,$2)", fileName, isHomeCategory)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
@@ -216,7 +216,7 @@ func CreateCategory(c *gin.Context) {
 func GetAllCategoryForHeader(langID string) ([]ResultCategory, error) {
 
 	// get all category where parent category id is null
-	rows, err := config.ConnDB().Query("SELECT categories.id,categories.image_path,translation_category.name FROM categories LEFT JOIN translation_category ON categories.id=translation_category.category_id WHERE translation_category.lang_id = $1 AND categories.parent_category_id IS NULL", langID)
+	rows, err := config.ConnDB().Query("SELECT categories.id,categories.image,translation_category.name FROM categories LEFT JOIN translation_category ON categories.id=translation_category.category_id WHERE translation_category.lang_id = $1 AND categories.parent_category_id IS NULL", langID)
 	if err != nil {
 		return []ResultCategory{}, err
 	}

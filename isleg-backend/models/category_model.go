@@ -5,7 +5,7 @@ import "github.com/google/uuid"
 type Category struct {
 	ID               uuid.UUID `json:"id"`
 	ParentCategoryID uuid.UUID `json:"parent_category_id"`
-	ImagePath        string    `json:"image_path"`
+	Image            string    `json:"image"`
 	IsHomeCategory   bool      `json:"is_home_category"`
 	CreatedAt        string    `json:"-"`
 	UpdatedAt        string    `json:"-"`
