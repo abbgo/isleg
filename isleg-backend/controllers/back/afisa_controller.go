@@ -25,7 +25,7 @@ func CreateAfisa(c *gin.Context) {
 	}
 
 	// FILE UPLOAD
-	file, errFile := c.FormFile("image_path")
+	file, errFile := c.FormFile("image")
 	if errFile != nil {
 		fileName = ""
 	} else {
@@ -55,7 +55,7 @@ func CreateAfisa(c *gin.Context) {
 	}
 
 	// create afisa
-	_, err = config.ConnDB().Exec("INSERT INTO afisa (image_path) VALUES ($1)", fileName)
+	_, err = config.ConnDB().Exec("INSERT INTO afisa (image) VALUES ($1)", fileName)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
