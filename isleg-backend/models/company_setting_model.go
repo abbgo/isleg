@@ -9,8 +9,8 @@ import (
 
 type CompanySetting struct {
 	ID          uuid.UUID `json:"id"`
-	LogoPath    string    `json:"logo_path"`
-	FaviconPath string    `json:"favicon_path"`
+	LogoPath    string    `json:"logo"`
+	FaviconPath string    `json:"favicon"`
 	Email       string    `json:"email"`
 	Instagram   string    `json:"instagram"`
 	CreatedAt   string    `json:"-"`

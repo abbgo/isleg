@@ -32,7 +32,7 @@ func CreateCompanySetting(c *gin.Context) {
 
 	// FILE UPLOAD
 	// LOGO
-	newFileNameLogo, err := pkg.FileUpload("logo_path", "logo", c)
+	newFileNameLogo, err := pkg.FileUpload("logo", "logo", c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -43,7 +43,7 @@ func CreateCompanySetting(c *gin.Context) {
 
 	// FAVICON
 
-	newFileNameFavicon, err := pkg.FileUpload("favicon_path", "favicon", c)
+	newFileNameFavicon, err := pkg.FileUpload("favicon", "favicon", c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -53,7 +53,7 @@ func CreateCompanySetting(c *gin.Context) {
 	}
 
 	// CREATE COMPANY SETTING
-	_, err = config.ConnDB().Exec("INSERT INTO company_setting (logo_path,favicon_path,email,instagram) VALUES ($1,$2,$3,$4)", "uploads/"+newFileNameLogo, "uploads/"+newFileNameFavicon, email, instagram)
+	_, err = config.ConnDB().Exec("INSERT INTO company_setting (logo,favicon,email,instagram) VALUES ($1,$2,$3,$4)", "uploads/"+newFileNameLogo, "uploads/"+newFileNameFavicon, email, instagram)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -74,7 +74,7 @@ func GetCompanySettingForHeader() (LogoFavicon, error) {
 	var logoFavicon LogoFavicon
 
 	// GET LOGO AND FAVICON
-	row, err := config.ConnDB().Query("SELECT logo_path,favicon_path FROM company_setting ORDER BY created_at ASC LIMIT 1")
+	row, err := config.ConnDB().Query("SELECT logo,favicon FROM company_setting ORDER BY created_at ASC LIMIT 1")
 	if err != nil {
 		return LogoFavicon{}, err
 	}
