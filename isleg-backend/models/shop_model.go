@@ -59,7 +59,7 @@ func ValidateShopData(ownerName, address, phoneNumber, runningTime string, categ
 		return errors.New("shop category is required")
 	} else {
 		for _, v := range categories {
-			rawCategory, err := config.ConnDB().Query("SELECT id FROM categories WHERE id = $1", v)
+			rawCategory, err := config.ConnDB().Query("SELECT id FROM categories WHERE id = $1 AND deleted_at IS NULL", v)
 			if err != nil {
 				return err
 			}

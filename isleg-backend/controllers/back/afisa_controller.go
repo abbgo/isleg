@@ -68,8 +68,8 @@ func CreateAfisa(c *gin.Context) {
 		c.SaveUploadedFile(file, "./"+fileName)
 	}
 
-	// get last afisa id
-	lastAfisaID, err := config.ConnDB().Query("SELECT id FROM afisa ORDER BY created_at DESC LIMIT 1")
+	// get id of added afisa
+	lastAfisaID, err := config.ConnDB().Query("SELECT id FROM afisa WHERE deleted_at IS NULL ORDER BY created_at DESC LIMIT 1")
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,

@@ -81,7 +81,7 @@ func CreateCategory(c *gin.Context) {
 	}
 
 	if parentCategoryIDUUID != uuid.Nil {
-		_, err := config.ConnDB().Query("SELECT id FROM categories WHERE id = $1", parentCategoryID)
+		_, err := config.ConnDB().Query("SELECT id FROM categories WHERE id = $1 AND deleted_at IS NULL", parentCategoryID)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
@@ -172,8 +172,8 @@ func CreateCategory(c *gin.Context) {
 		c.SaveUploadedFile(file, "./"+fileName)
 	}
 
-	// GET LAST CATEGORY ID
-	lastCategoryID, err := config.ConnDB().Query("SELECT id FROM categories ORDER BY created_at DESC LIMIT 1")
+	// GET ID OFF ADDED CATEGORY
+	lastCategoryID, err := config.ConnDB().Query("SELECT id FROM categories WHERE deleted_at IS NULL ORDER BY created_at DESC LIMIT 1")
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,

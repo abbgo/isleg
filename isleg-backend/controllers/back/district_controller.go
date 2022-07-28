@@ -51,7 +51,7 @@ func CreateDistrict(c *gin.Context) {
 		return
 	}
 
-	// get last district id
+	// get id off added district
 	lastDistrictID, err := config.ConnDB().Query("SELECT id FROM district ORDER BY created_at DESC LIMIT 1")
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{

@@ -31,6 +31,7 @@ func CreateCompanySetting(c *gin.Context) {
 	}
 
 	// FILE UPLOAD
+
 	// LOGO
 	newFileNameLogo, err := pkg.FileUpload("logo", "logo", c)
 	if err != nil {
@@ -42,7 +43,6 @@ func CreateCompanySetting(c *gin.Context) {
 	}
 
 	// FAVICON
-
 	newFileNameFavicon, err := pkg.FileUpload("favicon", "favicon", c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{

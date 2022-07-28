@@ -49,8 +49,8 @@ func CreateLanguage(c *gin.Context) {
 		return
 	}
 
-	// GET LAST LANGUAGE ID
-	lastLandID, err := config.ConnDB().Query("SELECT id FROM languages ORDER BY created_at DESC LIMIT 1")
+	// GET ID OF ADDED LANGUAGE
+	lastLandID, err := config.ConnDB().Query("SELECT id FROM languages WHERE deleted_at IS NULL ORDER BY created_at DESC LIMIT 1")
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -159,7 +159,7 @@ func CreateLanguage(c *gin.Context) {
 		return
 	}
 
-	// GET ALL CATEGORY id
+	// GET ID OF ALL CATEGORIES
 	var categoryIDs []string
 	categoryRows, err := config.ConnDB().Query("SELECT id FROM categories ORDER BY created_at ASC")
 	if err != nil {
@@ -193,7 +193,7 @@ func CreateLanguage(c *gin.Context) {
 		}
 	}
 
-	// GET ALL product id
+	// GET ID OF ALL PRODUCTS
 	var productIDs []string
 	productRows, err := config.ConnDB().Query("SELECT id FROM products ORDER BY created_at ASC")
 	if err != nil {
@@ -227,7 +227,7 @@ func CreateLanguage(c *gin.Context) {
 		}
 	}
 
-	// GET ALL afisa id
+	// GET ID OF ALL AFISAS
 	var afisaIDs []string
 	afisaRows, err := config.ConnDB().Query("SELECT id FROM afisa ORDER BY created_at ASC")
 	if err != nil {
@@ -261,7 +261,7 @@ func CreateLanguage(c *gin.Context) {
 		}
 	}
 
-	// GET ALL district id
+	// GET ID  OF ALL DISTRICTS
 	var districtIDs []string
 	districtRows, err := config.ConnDB().Query("SELECT id FROM district ORDER BY created_at ASC")
 	if err != nil {
@@ -325,7 +325,7 @@ func GetAllLanguageForHeader() ([]LanguageForHeader, error) {
 
 func GetAllLanguageWithIDAndNameShort() ([]models.Language, error) {
 
-	languageRows, err := config.ConnDB().Query("SELECT id,name_short FROM languages ORDER BY created_at ASC")
+	languageRows, err := config.ConnDB().Query("SELECT id,name_short FROM languages WHERE deleted_at IS NULL ORDER BY created_at ASC")
 	if err != nil {
 		return []models.Language{}, err
 	}

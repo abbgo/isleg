@@ -25,7 +25,7 @@ func CreateProduct(c *gin.Context) {
 			return
 		}
 	}
-	_, err = config.ConnDB().Query("SELECT id FROM brends WHERE id = $1", brendID)
+	_, err = config.ConnDB().Query("SELECT id FROM brends WHERE id = $1 AND deleted_at IS NULL", brendID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -178,7 +178,7 @@ func CreateProduct(c *gin.Context) {
 	}
 
 	// get the id of the added product
-	lastProductID, err := config.ConnDB().Query("SELECT id FROM products ORDER BY created_at DESC LIMIT 1")
+	lastProductID, err := config.ConnDB().Query("SELECT id FROM products WHERE deleted_at IS NULL ORDER BY created_at DESC LIMIT 1")
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -222,7 +222,7 @@ func CreateProduct(c *gin.Context) {
 	}
 
 	for _, v := range categories {
-		rawCategory, err := config.ConnDB().Query("SELECT id FROM categories WHERE id = $1", v)
+		rawCategory, err := config.ConnDB().Query("SELECT id FROM categories WHERE id = $1 AND deleted_at IS NULL", v)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
