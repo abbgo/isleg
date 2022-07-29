@@ -60,7 +60,7 @@ func GetAllBrendForHomePage() ([]BrendForHomePage, error) {
 	var brends []BrendForHomePage
 
 	// get all brends
-	rows, err := config.ConnDB().Query("SELECT id,image FROM brends")
+	rows, err := config.ConnDB().Query("SELECT id,image FROM brends WHERE deleted_at IS NULL")
 	if err != nil {
 		return []BrendForHomePage{}, err
 	}

@@ -64,7 +64,7 @@ func GetTranslationFooter(langID string) (TranslationFooterForFooter, error) {
 	var t TranslationFooterForFooter
 
 	// get translation footer where lang_id equal langID
-	row, err := config.ConnDB().Query("SELECT about,payment,contact,secure,word FROM translation_footer WHERE lang_id = $1", langID)
+	row, err := config.ConnDB().Query("SELECT about,payment,contact,secure,word FROM translation_footer WHERE lang_id = $1 AND deleted_at IS NULL", langID)
 	if err != nil {
 		return TranslationFooterForFooter{}, err
 	}

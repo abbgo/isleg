@@ -71,7 +71,7 @@ func GetTranslationSecure(c *gin.Context) {
 	}
 
 	// get translation secure where lang_id equal langID
-	secureRow, err := config.ConnDB().Query("SELECT title,content FROM translation_secure WHERE lang_id = $1", langID)
+	secureRow, err := config.ConnDB().Query("SELECT title,content FROM translation_secure WHERE lang_id = $1 AND deleted_at IS NULL", langID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,

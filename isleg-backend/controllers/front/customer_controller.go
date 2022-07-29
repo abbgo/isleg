@@ -132,7 +132,7 @@ func LoginCustomer(c *gin.Context) {
 	}
 
 	// check if email exists and password is correct
-	row, err := config.ConnDB().Query("SELECT password FROM customers WHERE phone_number = $1", "+993"+phoneNumber)
+	row, err := config.ConnDB().Query("SELECT password FROM customers WHERE phone_number = $1 AND deleted_at IS NULL", phoneNumber)
 	if err != nil {
 		c.AbortWithStatusJSON(500, gin.H{"message": err.Error()})
 		return

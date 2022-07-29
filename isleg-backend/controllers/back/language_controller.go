@@ -307,7 +307,7 @@ func GetAllLanguageForHeader() ([]LanguageForHeader, error) {
 	var ls []LanguageForHeader
 
 	// GET Language For Header
-	rows, err := config.ConnDB().Query("SELECT name_short,flag FROM languages")
+	rows, err := config.ConnDB().Query("SELECT name_short,flag FROM languages WHERE deleted_at IS NULL")
 	if err != nil {
 		return []LanguageForHeader{}, err
 	}
@@ -348,7 +348,7 @@ func GetLangID(langShortName string) (string, error) {
 
 	var langID string
 
-	row, err := config.ConnDB().Query("SELECT id FROM languages WHERE name_short = $1", langShortName)
+	row, err := config.ConnDB().Query("SELECT id FROM languages WHERE name_short = $1 AND deleted_at IS NULL", langShortName)
 	if err != nil {
 		return "", err
 	}

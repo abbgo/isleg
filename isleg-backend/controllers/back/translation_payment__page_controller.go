@@ -71,7 +71,7 @@ func GetTranslationPayment(c *gin.Context) {
 	}
 
 	// get translation payment where lang_id equal langID
-	paymentRow, err := config.ConnDB().Query("SELECT title,content FROM translation_payment WHERE lang_id = $1", langID)
+	paymentRow, err := config.ConnDB().Query("SELECT title,content FROM translation_payment WHERE lang_id = $1 AND deleted_at IS NULL", langID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,

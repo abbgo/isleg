@@ -74,7 +74,7 @@ func GetCompanySettingForHeader() (LogoFavicon, error) {
 	var logoFavicon LogoFavicon
 
 	// GET LOGO AND FAVICON
-	row, err := config.ConnDB().Query("SELECT logo,favicon FROM company_setting ORDER BY created_at ASC LIMIT 1")
+	row, err := config.ConnDB().Query("SELECT logo,favicon FROM company_setting WHERE deleted_at IS NULL ORDER BY created_at ASC LIMIT 1")
 	if err != nil {
 		return LogoFavicon{}, err
 	}

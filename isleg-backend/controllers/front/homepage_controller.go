@@ -67,7 +67,7 @@ func GetHomePageCategories(c *gin.Context) {
 	}
 
 	// get all homepage category where translation category id equal langID
-	categoryRows, err := config.ConnDB().Query("SELECT c.id,t.name FROM categories c LEFT JOIN translation_category t ON c.id=t.category_id WHERE t.lang_id = $1 AND c.is_home_category = true", langID)
+	categoryRows, err := config.ConnDB().Query("SELECT c.id,t.name FROM categories c LEFT JOIN translation_category t ON c.id=t.category_id WHERE t.lang_id = $1 AND c.is_home_category = true AND translation_category.deleted_at IS NULL AND categories.deleted_at IS NULL", langID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -89,7 +89,7 @@ func GetHomePageCategories(c *gin.Context) {
 		}
 
 		// get all product where category id equal homePageCategory.ID and lang_id equal langID
-		productRows, err := config.ConnDB().Query("SELECT p.id,t.name,p.price,p.old_price,p.main_image,p.product_code,p.images FROM products p LEFT JOIN category_product c ON p.id=c.product_id LEFT JOIN translation_product t ON p.id=t.product_id WHERE t.lang_id = $1 AND c.category_id = $2 ORDER BY p.created_at DESC LIMIT 4", langID, homePageCategory.ID)
+		productRows, err := config.ConnDB().Query("SELECT p.id,t.name,p.price,p.old_price,p.main_image,p.product_code,p.images FROM products p LEFT JOIN category_product c ON p.id=c.product_id LEFT JOIN translation_product t ON p.id=t.product_id WHERE t.lang_id = $1 AND c.category_id = $2 AND products.deleted_at IS NULL AND category_product.deleted_at IS NULL AND translation_product.deleted_at IS NULL ORDER BY p.created_at DESC LIMIT 4", langID, homePageCategory.ID)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
@@ -110,7 +110,7 @@ func GetHomePageCategories(c *gin.Context) {
 			}
 
 			// get brend where id of product brend_id
-			brendRows, err := config.ConnDB().Query("SELECT b.id,b.name FROM products p LEFT JOIN brends b ON p.brend_id=b.id WHERE p.id = $1", product.ID)
+			brendRows, err := config.ConnDB().Query("SELECT b.id,b.name FROM products p LEFT JOIN brends b ON p.brend_id=b.id WHERE p.id = $1 AND products.deleted_at IS NULL AND brends.deleted_at IS NULL", product.ID)
 			if err != nil {
 				c.JSON(http.StatusBadRequest, gin.H{
 					"status":  false,

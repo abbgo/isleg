@@ -52,7 +52,7 @@ func ValidateCustomerData(fullName, phoneNumber, password, email string) error {
 	if phoneNumber == "" {
 		return errors.New("phone number is required")
 	} else {
-		row, err := config.ConnDB().Query("SELECT phone_number FROM customers WHERE phone_number = $1", phoneNumber)
+		row, err := config.ConnDB().Query("SELECT phone_number FROM customers WHERE phone_number = $1 AND deleted_at IS NULL", phoneNumber)
 		if err != nil {
 			return err
 		}
@@ -92,7 +92,7 @@ func ValidateCustomerData(fullName, phoneNumber, password, email string) error {
 			return errors.New("email it doesn't match")
 		}
 
-		rowEmail, err := config.ConnDB().Query("SELECT email FROM customers WHERE email = $1", email)
+		rowEmail, err := config.ConnDB().Query("SELECT email FROM customers WHERE email = $1 AND deleted_at IS NULL", email)
 		if err != nil {
 			return err
 		}

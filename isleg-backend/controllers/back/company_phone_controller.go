@@ -61,7 +61,7 @@ func GetCompanyPhones(c *gin.Context) {
 	var companyPhones []string
 
 	// get all company phone number
-	rows, err := config.ConnDB().Query("SELECT phone FROM company_phone")
+	rows, err := config.ConnDB().Query("SELECT phone FROM company_phone WHERE deleted_at IS NULL")
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
