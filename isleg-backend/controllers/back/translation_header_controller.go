@@ -22,6 +22,7 @@ type TranslationHeaderForHeader struct {
 	MyFavorites          string `json:"my_favorites"`
 	MyOrders             string `json:"my_orders"`
 	LogOut               string `json:"log_out"`
+	Basket               string `json:"basket"`
 }
 
 func CreateTranslationHeader(c *gin.Context) {
@@ -36,7 +37,7 @@ func CreateTranslationHeader(c *gin.Context) {
 		return
 	}
 
-	dataNames := []string{"research", "phone", "password", "forgot_password", "sign_in", "sign_up", "name", "password_verification", "verify_secure", "my_information", "my_favorites", "my_orders", "log_out"}
+	dataNames := []string{"research", "phone", "password", "forgot_password", "sign_in", "sign_up", "name", "password_verification", "verify_secure", "my_information", "my_favorites", "my_orders", "log_out", "basket"}
 
 	// VALIDATE DATA
 	err = models.ValidateTranslationHeaderData(languages, dataNames, c)
@@ -50,7 +51,7 @@ func CreateTranslationHeader(c *gin.Context) {
 
 	// CREATE TRANSLATION HEADER
 	for _, v := range languages {
-		_, err := config.ConnDB().Exec("INSERT INTO translation_header (lang_id,research,phone,password,forgot_password,sign_in,sign_up,name,password_verification,verify_secure,my_information,my_favorites,my_orders,log_out) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14)", v.ID, c.PostForm("research_"+v.NameShort), c.PostForm("phone_"+v.NameShort), c.PostForm("password_"+v.NameShort), c.PostForm("forgot_password_"+v.NameShort), c.PostForm("sign_in_"+v.NameShort), c.PostForm("sign_up_"+v.NameShort), c.PostForm("name_"+v.NameShort), c.PostForm("password_verification_"+v.NameShort), c.PostForm("verify_secure_"+v.NameShort), c.PostForm("my_information_"+v.NameShort), c.PostForm("my_favorites_"+v.NameShort), c.PostForm("my_orders_"+v.NameShort), c.PostForm("log_out_"+v.NameShort))
+		_, err := config.ConnDB().Exec("INSERT INTO translation_header (lang_id,research,phone,password,forgot_password,sign_in,sign_up,name,password_verification,verify_secure,my_information,my_favorites,my_orders,log_out,basket) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15)", v.ID, c.PostForm("research_"+v.NameShort), c.PostForm("phone_"+v.NameShort), c.PostForm("password_"+v.NameShort), c.PostForm("forgot_password_"+v.NameShort), c.PostForm("sign_in_"+v.NameShort), c.PostForm("sign_up_"+v.NameShort), c.PostForm("name_"+v.NameShort), c.PostForm("password_verification_"+v.NameShort), c.PostForm("verify_secure_"+v.NameShort), c.PostForm("my_information_"+v.NameShort), c.PostForm("my_favorites_"+v.NameShort), c.PostForm("my_orders_"+v.NameShort), c.PostForm("log_out_"+v.NameShort), c.PostForm("basket"+v.NameShort))
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
@@ -72,12 +73,12 @@ func GetTranslationHeaderForHeader(langID string) (TranslationHeaderForHeader, e
 	var t TranslationHeaderForHeader
 
 	// GET TranslationHeader For Header
-	row, err := config.ConnDB().Query("SELECT research,phone,password,forgot_password,sign_in,sign_up,name,password_verification,verify_secure,my_information,my_favorites,my_orders,log_out FROM translation_header WHERE lang_id = $1 AND deleted_at IS NULL", langID)
+	row, err := config.ConnDB().Query("SELECT research,phone,password,forgot_password,sign_in,sign_up,name,password_verification,verify_secure,my_information,my_favorites,my_orders,log_out,basket FROM translation_header WHERE lang_id = $1 AND deleted_at IS NULL", langID)
 	if err != nil {
 		return TranslationHeaderForHeader{}, err
 	}
 	for row.Next() {
-		if err := row.Scan(&t.Research, &t.Phone, &t.Password, &t.ForgotPassword, &t.SignIn, &t.SignUp, &t.Name, &t.PasswordVerification, &t.VerifySecure, &t.MyInformation, &t.MyFavorites, &t.MyOrders, &t.LogOut); err != nil {
+		if err := row.Scan(&t.Research, &t.Phone, &t.Password, &t.ForgotPassword, &t.SignIn, &t.SignUp, &t.Name, &t.PasswordVerification, &t.VerifySecure, &t.MyInformation, &t.MyFavorites, &t.MyOrders, &t.LogOut, &t.Basket); err != nil {
 			return TranslationHeaderForHeader{}, err
 		}
 	}
