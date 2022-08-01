@@ -5,9 +5,12 @@ import (
 	"github/abbgo/isleg/isleg-backend/models"
 	"github/abbgo/isleg/isleg-backend/pkg"
 	"net/http"
+	"os"
+	"path/filepath"
 	"strings"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 )
 
 type LanguageForHeader struct {
@@ -298,6 +301,93 @@ func CreateLanguage(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
 		"message": "language successfully added",
+	})
+
+}
+
+func UpdateLanguage(c *gin.Context) {
+
+	langID := c.Param("id")
+	nameShort := c.PostForm("name_short")
+	var fileName string
+
+	rowID, err := config.ConnDB().Query("SELECT flag FROM languages WHERE id = $1 AND deleted_at IS NULL", langID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	var flag string
+
+	for rowID.Next() {
+		if err := rowID.Scan(&flag); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}
+
+	if flag == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "language not found",
+		})
+		return
+	}
+
+	if nameShort == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "language name_short is required",
+		})
+		return
+	}
+
+	file, err := c.FormFile("flag")
+	if err != nil {
+		fileName = flag
+	} else {
+		extensionFile := filepath.Ext(file.Filename)
+
+		if extensionFile != ".jpg" && extensionFile != ".jpeg" && extensionFile != ".png" && extensionFile != ".gif" {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": "the file must be an image",
+			})
+			return
+		}
+
+		newFileName := "language" + uuid.New().String() + extensionFile
+		c.SaveUploadedFile(file, "./uploads/"+newFileName)
+
+		if err := os.Remove("./" + flag); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+
+		fileName = newFileName
+	}
+
+	_, err = config.ConnDB().Exec("UPDATE languages SET name_short = $1 , flag = $2 WHERE id = $3", nameShort, "uploads/"+fileName, langID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":  true,
+		"message": "language successfully updated",
 	})
 
 }
