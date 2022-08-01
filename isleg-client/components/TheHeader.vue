@@ -2,6 +2,7 @@
   <header class="header">
     <div class="header__wrapper __container">
       <div class="header__container">
+        <div class="mobile__false"></div>
         <the-header-logo></the-header-logo>
         <div class="serach">
           <span class="search__icon">

@@ -29,7 +29,12 @@
       <div class="form__box born__date">
         <span>Doglan senäňiz</span>
         <label class="born__lable" for="born">{{ born }}</label>
-        <input v-model="born" id="born" type="date" />
+        <input
+          v-model="born"
+          id="born"
+          type="date"
+          placeholder="Doglan senäňiz"
+        />
       </div>
       <div class="form__box sex__input">
         <span>Jynsy</span>
@@ -45,7 +50,10 @@
     </div>
     <div class="profile__btns">
       <div class="datas__left">
-        <button class="product__add-btn confirim__btn">
+        <button
+          class="product__add-btn confirim__btn"
+          @click="openChangePassword"
+        >
           <svg
             width="18"
             height="18"
@@ -67,7 +75,10 @@
         </button>
       </div>
     </div>
-    <change-password></change-password>
+    <pop-up-change-password
+      :isChangePassword="isChangePassword"
+      @closeChangePassword="closeChangePassword"
+    ></pop-up-change-password>
   </section>
 </template>
 
@@ -75,6 +86,7 @@
 export default {
   data() {
     return {
+      isChangePassword: false,
       myProfileDatas: {
         fillName: '',
         phone_number: '+993 6',
@@ -90,6 +102,16 @@ export default {
       },
       born: '',
     }
+  },
+  methods: {
+    openChangePassword() {
+      this.isChangePassword = true
+      document.body.classList.add('_lock')
+    },
+    closeChangePassword() {
+      this.isChangePassword = false
+      document.body.classList.remove('_lock')
+    },
   },
 }
 </script>
