@@ -5,9 +5,13 @@ import (
 	"github/abbgo/isleg/isleg-backend/models"
 	"github/abbgo/isleg/isleg-backend/pkg"
 	"net/http"
+	"os"
+	"path/filepath"
 	"strings"
+	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 )
 
 type LanguageForHeader struct {
@@ -30,7 +34,7 @@ func CreateLanguage(c *gin.Context) {
 	}
 
 	// FILE UPLOAD
-	newFileName, err := pkg.FileUpload("flag_path", "language", c)
+	newFileName, err := pkg.FileUpload("flag", "language", c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -40,7 +44,7 @@ func CreateLanguage(c *gin.Context) {
 	}
 
 	// CREATE LANGUAGE
-	_, err = config.ConnDB().Exec("INSERT INTO languages (name_short,flag_path) VALUES ($1,$2)", strings.ToLower(nameShort), "uploads/"+newFileName)
+	_, err = config.ConnDB().Exec("INSERT INTO languages (name_short,flag) VALUES ($1,$2)", strings.ToLower(nameShort), "uploads/"+newFileName)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -49,8 +53,8 @@ func CreateLanguage(c *gin.Context) {
 		return
 	}
 
-	// GET LAST LANGUAGE ID
-	lastLandID, err := config.ConnDB().Query("SELECT id FROM languages ORDER BY created_at DESC LIMIT 1")
+	// GET ID OF ADDED LANGUAGE
+	lastLandID, err := config.ConnDB().Query("SELECT id FROM languages WHERE deleted_at IS NULL ORDER BY created_at DESC LIMIT 1")
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -159,7 +163,7 @@ func CreateLanguage(c *gin.Context) {
 		return
 	}
 
-	// GET ALL CATEGORY id
+	// GET ID OF ALL CATEGORIES
 	var categoryIDs []string
 	categoryRows, err := config.ConnDB().Query("SELECT id FROM categories ORDER BY created_at ASC")
 	if err != nil {
@@ -193,7 +197,7 @@ func CreateLanguage(c *gin.Context) {
 		}
 	}
 
-	// GET ALL product id
+	// GET ID OF ALL PRODUCTS
 	var productIDs []string
 	productRows, err := config.ConnDB().Query("SELECT id FROM products ORDER BY created_at ASC")
 	if err != nil {
@@ -227,7 +231,7 @@ func CreateLanguage(c *gin.Context) {
 		}
 	}
 
-	// GET ALL afisa id
+	// GET ID OF ALL AFISAS
 	var afisaIDs []string
 	afisaRows, err := config.ConnDB().Query("SELECT id FROM afisa ORDER BY created_at ASC")
 	if err != nil {
@@ -261,7 +265,7 @@ func CreateLanguage(c *gin.Context) {
 		}
 	}
 
-	// GET ALL district id
+	// GET ID  OF ALL DISTRICTS
 	var districtIDs []string
 	districtRows, err := config.ConnDB().Query("SELECT id FROM district ORDER BY created_at ASC")
 	if err != nil {
@@ -302,12 +306,546 @@ func CreateLanguage(c *gin.Context) {
 
 }
 
+func UpdateLanguage(c *gin.Context) {
+
+	langID := c.Param("id")
+	nameShort := c.PostForm("name_short")
+	var fileName string
+
+	rowFlag, err := config.ConnDB().Query("SELECT flag FROM languages WHERE id = $1 AND deleted_at IS NULL", langID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	var flag string
+
+	for rowFlag.Next() {
+		if err := rowFlag.Scan(&flag); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}
+
+	if flag == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "language not found",
+		})
+		return
+	}
+
+	if nameShort == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "language name_short is required",
+		})
+		return
+	}
+
+	file, err := c.FormFile("flag")
+	if err != nil {
+		fileName = flag
+	} else {
+		extensionFile := filepath.Ext(file.Filename)
+
+		if extensionFile != ".jpg" && extensionFile != ".jpeg" && extensionFile != ".png" && extensionFile != ".gif" {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": "the file must be an image",
+			})
+			return
+		}
+
+		newFileName := "language" + uuid.New().String() + extensionFile
+		c.SaveUploadedFile(file, "./uploads/"+newFileName)
+
+		if err := os.Remove("./" + flag); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+
+		fileName = newFileName
+	}
+
+	_, err = config.ConnDB().Exec("UPDATE languages SET name_short = $1 , flag = $2 WHERE id = $3", nameShort, "uploads/"+fileName, langID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":  true,
+		"message": "language successfully updated",
+	})
+
+}
+
+func GetOneLanguage(c *gin.Context) {
+
+	langID := c.Param("id")
+
+	rowLanguage, err := config.ConnDB().Query("SELECT name_short,flag FROM languages WHERE id = $1 AND deleted_at IS NULL", langID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	var lang LanguageForHeader
+
+	for rowLanguage.Next() {
+		if err := rowLanguage.Scan(&lang.NameShort, &lang.Flag); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}
+
+	if lang.NameShort == "" || lang.Flag == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "language not found",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":   true,
+		"language": lang,
+	})
+
+}
+
+func GetAllLanguage(c *gin.Context) {
+	languages, err := GetAllLanguageForHeader()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":   true,
+		"language": languages,
+	})
+
+}
+
+func DeleteLanguage(c *gin.Context) {
+
+	langID := c.Param("id")
+
+	rowFlag, err := config.ConnDB().Query("SELECT flag FROM languages WHERE id = $1 AND deleted_at IS NULL", langID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	var flag string
+
+	for rowFlag.Next() {
+		if err := rowFlag.Scan(&flag); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}
+
+	if flag == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "language not found",
+		})
+		return
+	}
+
+	currentTime := time.Now()
+
+	_, err = config.ConnDB().Exec("UPDATE languages SET deleted_at = $1 WHERE id = $2", currentTime, langID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	_, err = config.ConnDB().Exec("UPDATE translation_header SET deleted_at = $1 WHERE lang_id = $2", currentTime, langID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	_, err = config.ConnDB().Exec("UPDATE translation_footer SET deleted_at = $1 WHERE lang_id = $2", currentTime, langID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	_, err = config.ConnDB().Exec("UPDATE translation_secure SET deleted_at = $1 WHERE lang_id = $2", currentTime, langID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	_, err = config.ConnDB().Exec("UPDATE translation_payment SET deleted_at = $1 WHERE lang_id = $2", currentTime, langID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	_, err = config.ConnDB().Exec("UPDATE translation_about SET deleted_at = $1 WHERE lang_id = $2", currentTime, langID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	_, err = config.ConnDB().Exec("UPDATE company_address SET deleted_at = $1 WHERE lang_id = $2", currentTime, langID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	_, err = config.ConnDB().Exec("UPDATE translation_contact SET deleted_at = $1 WHERE lang_id = $2", currentTime, langID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	_, err = config.ConnDB().Exec("UPDATE translation_my_information_page SET deleted_at = $1 WHERE lang_id = $2", currentTime, langID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	_, err = config.ConnDB().Exec("UPDATE translation_update_password_page SET deleted_at = $1 WHERE lang_id = $2", currentTime, langID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	_, err = config.ConnDB().Exec("UPDATE translation_category SET deleted_at = $1 WHERE lang_id = $2", currentTime, langID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	_, err = config.ConnDB().Exec("UPDATE translation_product SET deleted_at = $1 WHERE lang_id = $2", currentTime, langID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	_, err = config.ConnDB().Exec("UPDATE translation_afisa SET deleted_at = $1 WHERE lang_id = $2", currentTime, langID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	_, err = config.ConnDB().Exec("UPDATE translation_district SET deleted_at = $1 WHERE lang_id = $2", currentTime, langID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":  true,
+		"message": "language successfully deleted",
+	})
+
+}
+
+func RestoreLanguage(c *gin.Context) {
+
+	langID := c.Param("id")
+
+	rowFlag, err := config.ConnDB().Query("SELECT flag FROM languages WHERE id = $1 AND deleted_at IS NOT NULL", langID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	var flag string
+
+	for rowFlag.Next() {
+		if err := rowFlag.Scan(&flag); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}
+
+	if flag == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "language not found",
+		})
+		return
+	}
+
+	_, err = config.ConnDB().Exec("UPDATE languages SET deleted_at = NULL WHERE id = $1", langID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	_, err = config.ConnDB().Exec("UPDATE translation_header SET deleted_at = NULL WHERE lang_id = $1", langID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	_, err = config.ConnDB().Exec("UPDATE translation_footer SET deleted_at = NULL WHERE lang_id = $1", langID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	_, err = config.ConnDB().Exec("UPDATE translation_secure SET deleted_at = NULL WHERE lang_id = $1", langID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	_, err = config.ConnDB().Exec("UPDATE translation_payment SET deleted_at = NULL WHERE lang_id = $1", langID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	_, err = config.ConnDB().Exec("UPDATE translation_about SET deleted_at = NULL WHERE lang_id = $1", langID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	_, err = config.ConnDB().Exec("UPDATE company_address SET deleted_at = NULL WHERE lang_id = $1", langID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	_, err = config.ConnDB().Exec("UPDATE translation_contact SET deleted_at = NULL WHERE lang_id = $1", langID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	_, err = config.ConnDB().Exec("UPDATE translation_my_information_page SET deleted_at = NULL WHERE lang_id = $1", langID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	_, err = config.ConnDB().Exec("UPDATE translation_update_password_page SET deleted_at = NULL WHERE lang_id = $1", langID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	_, err = config.ConnDB().Exec("UPDATE translation_category SET deleted_at = NULL WHERE lang_id = $1", langID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	_, err = config.ConnDB().Exec("UPDATE translation_product SET deleted_at = NULL WHERE lang_id = $1", langID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	_, err = config.ConnDB().Exec("UPDATE translation_afisa SET deleted_at = NULL WHERE lang_id = $1", langID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	_, err = config.ConnDB().Exec("UPDATE translation_district SET deleted_at = NULL WHERE lang_id = $1", langID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":  true,
+		"message": "language successfully restored",
+	})
+
+}
+
+func DeletePermanentlyLanguage(c *gin.Context) {
+
+	langID := c.Param("id")
+
+	rowFlag, err := config.ConnDB().Query("SELECT flag FROM languages WHERE id = $1 AND deleted_at IS NOT NULL", langID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	var flag string
+
+	for rowFlag.Next() {
+		if err := rowFlag.Scan(&flag); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}
+
+	if flag == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "language not found",
+		})
+		return
+	}
+
+	if err := os.Remove("./" + flag); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	_, err = config.ConnDB().Exec("DELETE FROM languages WHERE id = $1", langID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"status":  true,
+		"message": "language successfully deleted",
+	})
+
+}
+
 func GetAllLanguageForHeader() ([]LanguageForHeader, error) {
 
 	var ls []LanguageForHeader
 
 	// GET Language For Header
-	rows, err := config.ConnDB().Query("SELECT name_short,flag_path FROM languages")
+	rows, err := config.ConnDB().Query("SELECT name_short,flag FROM languages WHERE deleted_at IS NULL")
 	if err != nil {
 		return []LanguageForHeader{}, err
 	}
@@ -325,7 +863,7 @@ func GetAllLanguageForHeader() ([]LanguageForHeader, error) {
 
 func GetAllLanguageWithIDAndNameShort() ([]models.Language, error) {
 
-	languageRows, err := config.ConnDB().Query("SELECT id,name_short FROM languages ORDER BY created_at ASC")
+	languageRows, err := config.ConnDB().Query("SELECT id,name_short FROM languages WHERE deleted_at IS NULL ORDER BY created_at ASC")
 	if err != nil {
 		return []models.Language{}, err
 	}
@@ -348,7 +886,7 @@ func GetLangID(langShortName string) (string, error) {
 
 	var langID string
 
-	row, err := config.ConnDB().Query("SELECT id FROM languages WHERE name_short = $1", langShortName)
+	row, err := config.ConnDB().Query("SELECT id FROM languages WHERE name_short = $1 AND deleted_at IS NULL", langShortName)
 	if err != nil {
 		return "", err
 	}

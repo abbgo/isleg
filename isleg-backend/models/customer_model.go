@@ -3,6 +3,7 @@ package models
 import (
 	"errors"
 	"github/abbgo/isleg/isleg-backend/config"
+	"github/abbgo/isleg/isleg-backend/pkg"
 	"strconv"
 	"time"
 
@@ -19,6 +20,7 @@ type Customer struct {
 	Birthday    time.Time      `json:"birthday"`
 	Gender      string         `json:"gender"`
 	Addresses   pq.StringArray `json:"addresses"`
+	Email       string         `json:"email"`
 	CreatedAt   string         `json:"-"`
 	UpdatedAt   string         `json:"-"`
 	DeletedAt   string         `json:"-"`
@@ -41,7 +43,7 @@ func CheckPassword(providedPassword, oldPassword string) error {
 	return nil
 }
 
-func ValidateCustomerData(fullName, phoneNumber, password string) error {
+func ValidateCustomerData(fullName, phoneNumber, password, email string) error {
 
 	if fullName == "" {
 		return errors.New("full name is required")
@@ -49,6 +51,23 @@ func ValidateCustomerData(fullName, phoneNumber, password string) error {
 
 	if phoneNumber == "" {
 		return errors.New("phone number is required")
+	} else {
+		row, err := config.ConnDB().Query("SELECT phone_number FROM customers WHERE phone_number = $1 AND deleted_at IS NULL", phoneNumber)
+		if err != nil {
+			return err
+		}
+
+		var phone_number string
+
+		for row.Next() {
+			if err := row.Scan(&phone_number); err != nil {
+				return err
+			}
+		}
+
+		if phone_number != "" {
+			return errors.New("this customer already exists")
+		}
 	}
 
 	_, err := strconv.Atoi(phoneNumber)
@@ -60,29 +79,35 @@ func ValidateCustomerData(fullName, phoneNumber, password string) error {
 		return errors.New("the length of the phone number must be 8")
 	}
 
-	row, err := config.ConnDB().Query("SELECT phone_number FROM customers WHERE phone_number = $1", "+993"+phoneNumber)
-	if err != nil {
-		return err
-	}
-
-	var phone_number string
-
-	for row.Next() {
-		if err := row.Scan(&phone_number); err != nil {
-			return err
-		}
-	}
-
-	if phone_number != "" {
-		return errors.New("this customer already exists")
-	}
-
 	if password == "" {
 		return errors.New("password is required")
 	}
 
 	if len(password) < 5 || len(password) > 25 {
 		return errors.New("password length must be between 5 and 25")
+	}
+
+	if email != "" {
+		if !pkg.IsEmailValid(email) {
+			return errors.New("email it doesn't match")
+		}
+
+		rowEmail, err := config.ConnDB().Query("SELECT email FROM customers WHERE email = $1 AND deleted_at IS NULL", email)
+		if err != nil {
+			return err
+		}
+
+		var email_address string
+
+		for rowEmail.Next() {
+			if err := rowEmail.Scan(&email_address); err != nil {
+				return err
+			}
+		}
+
+		if email_address != "" {
+			return errors.New("this customer already exists")
+		}
 	}
 
 	// if gender != "" {

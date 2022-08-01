@@ -25,7 +25,7 @@ func CreateAfisa(c *gin.Context) {
 	}
 
 	// FILE UPLOAD
-	file, errFile := c.FormFile("image_path")
+	file, errFile := c.FormFile("image")
 	if errFile != nil {
 		fileName = ""
 	} else {
@@ -55,7 +55,7 @@ func CreateAfisa(c *gin.Context) {
 	}
 
 	// create afisa
-	_, err = config.ConnDB().Exec("INSERT INTO afisa (image_path) VALUES ($1)", fileName)
+	_, err = config.ConnDB().Exec("INSERT INTO afisa (image) VALUES ($1)", fileName)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -68,8 +68,8 @@ func CreateAfisa(c *gin.Context) {
 		c.SaveUploadedFile(file, "./"+fileName)
 	}
 
-	// get last afisa id
-	lastAfisaID, err := config.ConnDB().Query("SELECT id FROM afisa ORDER BY created_at DESC LIMIT 1")
+	// get id of added afisa
+	lastAfisaID, err := config.ConnDB().Query("SELECT id FROM afisa WHERE deleted_at IS NULL ORDER BY created_at DESC LIMIT 1")
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,

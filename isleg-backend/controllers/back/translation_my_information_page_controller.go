@@ -73,7 +73,7 @@ func GetTranslationMyInformationPage(c *gin.Context) {
 	}
 
 	// get translation-my-information-page where lang_id equal langID
-	aboutRow, err := config.ConnDB().Query("SELECT address,birthday,update_password,save FROM translation_my_information_page WHERE lang_id = $1", langID)
+	aboutRow, err := config.ConnDB().Query("SELECT address,birthday,update_password,save FROM translation_my_information_page WHERE lang_id = $1 AND deleted_at IS NULL", langID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,

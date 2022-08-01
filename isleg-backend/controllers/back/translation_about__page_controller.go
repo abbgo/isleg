@@ -71,7 +71,7 @@ func GetTranslationAbout(c *gin.Context) {
 	}
 
 	// get translation about where lang_id equal langID
-	aboutRow, err := config.ConnDB().Query("SELECT title,content FROM translation_about WHERE lang_id = $1", langID)
+	aboutRow, err := config.ConnDB().Query("SELECT title,content FROM translation_about WHERE lang_id = $1 AND deleted_at IS NULL", langID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,

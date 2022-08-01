@@ -65,7 +65,7 @@ func GetCompanyAddress(c *gin.Context) {
 	}
 
 	// get company address where lang_id equal langID
-	addressRow, err := config.ConnDB().Query("SELECT address FROM company_address WHERE lang_id = $1", langID)
+	addressRow, err := config.ConnDB().Query("SELECT address FROM company_address WHERE lang_id = $1 AND deleted_at IS NULL", langID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,

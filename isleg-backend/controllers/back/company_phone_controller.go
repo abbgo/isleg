@@ -3,6 +3,7 @@ package controllers
 import (
 	"github/abbgo/isleg/isleg-backend/config"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -21,8 +22,25 @@ func CreateCompanyPhone(c *gin.Context) {
 		return
 	}
 
+	_, err := strconv.Atoi(phone)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	if len(phone) != 8 {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "the length of the phone number must be 8",
+		})
+		return
+	}
+
 	// create company phone
-	_, err := config.ConnDB().Exec("INSERT INTO company_phone (phone) VALUES ($1)", phone)
+	_, err = config.ConnDB().Exec("INSERT INTO company_phone (phone) VALUES ($1)", phone)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -43,7 +61,7 @@ func GetCompanyPhones(c *gin.Context) {
 	var companyPhones []string
 
 	// get all company phone number
-	rows, err := config.ConnDB().Query("SELECT phone FROM company_phone")
+	rows, err := config.ConnDB().Query("SELECT phone FROM company_phone WHERE deleted_at IS NULL")
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,

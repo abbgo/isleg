@@ -4,7 +4,7 @@ import "github.com/google/uuid"
 
 type Banner struct {
 	ID        uuid.UUID `json:"id"`
-	ImagePath string    `json:"image_path"`
+	Image     string    `json:"image"`
 	Url       string    `json:"url"`
 	CreatedAt string    `json:"-"`
 	UpdatedAt string    `json:"-"`

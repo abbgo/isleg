@@ -5,7 +5,7 @@ import "github.com/google/uuid"
 type Language struct {
 	ID        uuid.UUID `json:"id"`
 	NameShort string    `json:"name_short"`
-	FlagPath  string    `json:"flag_path"`
+	Flag      string    `json:"flag"`
 	CreatedAt string    `json:"-"`
 	UpdatedAt string    `json:"-"`
 	DeletedAt string    `json:"-"`

@@ -19,7 +19,7 @@ func GetHeaderData(c *gin.Context) {
 	// GET DATA FROM ROUTE PARAMETER
 	langShortName := c.Param("lang")
 
-	// GET language id
+	// GET ID OFF LANGUAGE
 	langID, err := backController.GetLangID(langShortName)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{

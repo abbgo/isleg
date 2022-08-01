@@ -25,7 +25,7 @@ func CreateProduct(c *gin.Context) {
 			return
 		}
 	}
-	_, err = config.ConnDB().Query("SELECT id FROM brends WHERE id = $1", brendID)
+	_, err = config.ConnDB().Query("SELECT id FROM brends WHERE id = $1 AND deleted_at IS NULL", brendID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -127,8 +127,8 @@ func CreateProduct(c *gin.Context) {
 		return
 	}
 
-	// upload main_image_path
-	mainImagePathFile, err := c.FormFile("main_image_path")
+	// upload main_image
+	mainImagePathFile, err := c.FormFile("main_image")
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -149,8 +149,8 @@ func CreateProduct(c *gin.Context) {
 	newFileName := "productMain" + uuid.New().String() + extensionFile
 	c.SaveUploadedFile(mainImagePathFile, "./uploads/"+newFileName)
 
-	// upload image_paths
-	files := c.Request.MultipartForm.File["image_paths"]
+	// upload images
+	files := c.Request.MultipartForm.File["images"]
 	var imagePaths []string
 	for _, v := range files {
 		extension := filepath.Ext(v.Filename)
@@ -168,7 +168,7 @@ func CreateProduct(c *gin.Context) {
 	}
 
 	// create product
-	_, err = config.ConnDB().Exec("INSERT INTO products (brend_id,price,old_price,amount,product_code,main_image_path,image_paths) VALUES ($1,$2,$3,$4,$5,$6,$7)", brendIDUUID, price, oldPrice, amount, productCode, "uploads/"+newFileName, pq.StringArray(imagePaths))
+	_, err = config.ConnDB().Exec("INSERT INTO products (brend_id,price,old_price,amount,product_code,main_image,images) VALUES ($1,$2,$3,$4,$5,$6,$7)", brendIDUUID, price, oldPrice, amount, productCode, "uploads/"+newFileName, pq.StringArray(imagePaths))
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{
 			"status":  false,
@@ -178,7 +178,7 @@ func CreateProduct(c *gin.Context) {
 	}
 
 	// get the id of the added product
-	lastProductID, err := config.ConnDB().Query("SELECT id FROM products ORDER BY created_at DESC LIMIT 1")
+	lastProductID, err := config.ConnDB().Query("SELECT id FROM products WHERE deleted_at IS NULL ORDER BY created_at DESC LIMIT 1")
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -219,6 +219,37 @@ func CreateProduct(c *gin.Context) {
 			"message": "product category is required",
 		})
 		return
+	}
+
+	for _, v := range categories {
+		rawCategory, err := config.ConnDB().Query("SELECT id FROM categories WHERE id = $1 AND deleted_at IS NULL", v)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+
+		var categoryID string
+
+		for rawCategory.Next() {
+			if err := rawCategory.Scan(&categoryID); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}
+
+		if categoryID == "" {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": "category not found",
+			})
+			return
+		}
 	}
 
 	// create category product

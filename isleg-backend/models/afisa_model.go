@@ -9,7 +9,7 @@ import (
 
 type Afisa struct {
 	ID        uuid.UUID `json:"id"`
-	ImagePath string    `json:"image_path"`
+	Image     string    `json:"image"`
 	CreatedAt string    `json:"-"`
 	UpdatedAt string    `json:"-"`
 	DeletedAt string    `json:"-"`
