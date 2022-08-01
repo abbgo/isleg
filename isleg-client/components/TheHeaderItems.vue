@@ -6,8 +6,6 @@
       </span>
       <span class="item__dropdown">
         <img src="@/assets/img/flag.png" alt="" />
-        <img src="@/assets/img/flag.png" alt="" />
-        <img src="@/assets/img/flag.png" alt="" />
       </span>
     </span>
     <span class="item__border"></span>
