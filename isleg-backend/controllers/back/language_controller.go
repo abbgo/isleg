@@ -784,6 +784,62 @@ func RestoreLanguage(c *gin.Context) {
 
 }
 
+func DeletePermanentlyLanguage(c *gin.Context) {
+
+	langID := c.Param("id")
+
+	rowFlag, err := config.ConnDB().Query("SELECT flag FROM languages WHERE id = $1 AND deleted_at IS NOT NULL", langID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	var flag string
+
+	for rowFlag.Next() {
+		if err := rowFlag.Scan(&flag); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}
+
+	if flag == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "language not found",
+		})
+		return
+	}
+
+	if err := os.Remove("./" + flag); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	_, err = config.ConnDB().Exec("DELETE FROM languages WHERE id = $1", langID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"status":  true,
+		"message": "language successfully deleted",
+	})
+
+}
+
 func GetAllLanguageForHeader() ([]LanguageForHeader, error) {
 
 	var ls []LanguageForHeader
