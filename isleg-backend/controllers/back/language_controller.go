@@ -392,6 +392,46 @@ func UpdateLanguage(c *gin.Context) {
 
 }
 
+func GetOneLanguage(c *gin.Context) {
+
+	langID := c.Param("id")
+
+	rowLanguage, err := config.ConnDB().Query("SELECT name_short,flag FROM languages WHERE id = $1 AND deleted_at IS NULL", langID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	var lang LanguageForHeader
+
+	for rowLanguage.Next() {
+		if err := rowLanguage.Scan(&lang.NameShort, &lang.Flag); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}
+
+	if lang.NameShort == "" || lang.Flag == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "language not found",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":   true,
+		"language": lang,
+	})
+
+}
+
 func GetAllLanguageForHeader() ([]LanguageForHeader, error) {
 
 	var ls []LanguageForHeader

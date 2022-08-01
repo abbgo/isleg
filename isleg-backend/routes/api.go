@@ -23,6 +23,7 @@ func Routes() *gin.Engine {
 
 		back.POST("/language", backController.CreateLanguage)
 		back.PUT("/language/:id", backController.UpdateLanguage)
+		back.GET("/language/:id", backController.GetOneLanguage)
 
 		back.GET("/company-setting", backController.CreateCompanySetting)
 
