@@ -1,11 +1,11 @@
 package controllers
 
 import (
+	"fmt"
 	"github/abbgo/isleg/isleg-backend/auth"
 	"github/abbgo/isleg/isleg-backend/config"
 	"strconv"
 
-	backController "github/abbgo/isleg/isleg-backend/controllers/back"
 	"github/abbgo/isleg/isleg-backend/models"
 	"net/http"
 
@@ -14,36 +14,41 @@ import (
 
 func RegisterCustomer(c *gin.Context) {
 
-	// GET DATA FROM ROUTE PARAMETER
-	langShortName := c.Param("lang")
+	// // GET DATA FROM ROUTE PARAMETER
+	// langShortName := c.Param("lang")
 
-	// GET language id
-	_, err := backController.GetLangID(langShortName)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
+	// // GET language id
+	// _, err := backController.GetLangID(langShortName)
+	// if err != nil {
+	// 	c.JSON(http.StatusBadRequest, gin.H{
+	// 		"status":  false,
+	// 		"message": err.Error(),
+	// 	})
+	// 	return
+	// }
 
 	fullName := c.PostForm("full_name")
 	phoneNumber := c.PostForm("phone_number")
 	password := c.PostForm("password")
 	email := c.PostForm("email")
 
+	fmt.Println("full_name: ", fullName)
+	fmt.Println("phone_number: ", phoneNumber)
+	fmt.Println("password: ", password)
+	fmt.Println("email: ", email)
+
 	// gender := c.PostForm("gender")
 	// birthday := c.PostForm("birthday")
 	// addresses := c.PostFormArray("addresses")
 
-	err = models.ValidateCustomerData(fullName, phoneNumber, password, email)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
+	// err = models.ValidateCustomerData(fullName, phoneNumber, password, email)
+	// if err != nil {
+	// 	c.JSON(http.StatusBadRequest, gin.H{
+	// 		"status":  false,
+	// 		"message": err.Error(),
+	// 	})
+	// 	return
+	// }
 
 	hashPassword, err := models.HashPassword(password)
 	if err != nil {

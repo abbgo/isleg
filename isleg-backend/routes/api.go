@@ -104,11 +104,6 @@ func Routes() *gin.Engine {
 		// get one category with products
 		front.GET("/:category_id/:limit/:page", backController.GetOneCategoryWithProducts)
 
-		// customer routes
-		front.POST("/register", frontController.RegisterCustomer)
-		front.POST("/login", frontController.LoginCustomer)
-		front.GET("/refresh", auth.Refresh)
-
 		securedCustomer := front.Group("/").Use(middlewares.Auth())
 		{
 			// get my information page translation
@@ -118,6 +113,14 @@ func Routes() *gin.Engine {
 			securedCustomer.POST("/like", frontController.AddLike)
 		}
 
+	}
+
+	// customer routes
+	customer := routes.Group("/api")
+	{
+		customer.POST("/auth/register", frontController.RegisterCustomer)
+		customer.POST("/auth/login", frontController.LoginCustomer)
+		customer.POST("/auth/refresh", auth.Refresh)
 	}
 
 	return routes

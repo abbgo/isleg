@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"github/abbgo/isleg/isleg-backend/config"
 	"net/http"
 	"strconv"
@@ -12,6 +13,8 @@ func CreateCompanyPhone(c *gin.Context) {
 
 	// GET DATA FROM REQUEST
 	phone := c.PostForm("phone")
+
+	fmt.Println(phone)
 
 	// validate data
 	if phone == "" {
