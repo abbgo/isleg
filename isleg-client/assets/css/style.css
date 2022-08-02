@@ -292,9 +292,9 @@ main {
 }
 
 .item__border {
-  height: 43px;
+  height: 35px;
   width: 0px;
-  border-left: 2px dashed #8d98a9;
+  border-left: 1px dashed #8d98a9;
   padding-left: 15px;
   transition: 0.1s;
 }
@@ -681,7 +681,6 @@ main {
   align-items: center;
   flex-direction: column;
   width: 100%;
-  padding: 0 10px;
 }
 .product__title {
   display: flex;
@@ -701,7 +700,7 @@ main {
   width: 100%;
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr;
-  grid-gap: 22px;
+  grid-gap: 15px;
 }
 .product__box {
   position: relative;

@@ -46,23 +46,6 @@
                 <div class="payment__chekbox-title">
                   <h3>Toleg sekili</h3>
                 </div>
-                <!-- <div class="payment__chekbox-input">
-                  <input class="top__input" name="top" id="nagt" type="radio" />
-                  <label for="nagt">Nagt</label>
-                </div> -->
-                <!-- <div class="payment__chekbox-input">
-                  <input
-                    class="top__input"
-                    name="top"
-                    id="toleg"
-                    type="radio"
-                  />
-                  <label for="toleg">Toleg terminaly</label>
-                </div> -->
-                <!-- <div class="payment__chekbox-input">
-                  <input class="top__input" name="top" id="qr" type="radio" />
-                  <label for="qr">QR kod (rysgal pay)</label>
-                </div> -->
                 <div
                   class="payment__chekbox-input"
                   v-for="item in payment.paymentForm"
@@ -107,33 +90,6 @@
                 <span class="error" v-if="isTheDeliveryTime">
                   {{ $t('payment.theDeliveryTime') }}
                 </span>
-                <!-- <div class="payment__chekbox-input">
-                  <input
-                    class="bottom__input"
-                    name="bottom"
-                    id="afternoon"
-                    type="radio"
-                  />
-                  <label for="afternoon">12.00-15.00</label>
-                </div> -->
-                <!-- <div class="payment__chekbox-input">
-                  <input
-                    class="bottom__input"
-                    name="bottom"
-                    id="after"
-                    type="radio"
-                  />
-                  <label for="after">15.00-18.00</label>
-                </div> -->
-                <!-- <div class="payment__chekbox-input">
-                  <input
-                    class="bottom__input"
-                    name="bottom"
-                    id="evening"
-                    type="radio"
-                  />
-                  <label for="evening">18.00-21.00</label>
-                </div> -->
               </div>
             </div>
             <div class="payment__form">
@@ -269,12 +225,24 @@ export default {
       }
     },
     paymentChecked(payload) {
-      payload.checked = !payload.checked
+      const findItem = this.payment.paymentForm.find(
+        (item) => item.checked == true
+      )
+      if (findItem) {
+        findItem.checked = false
+      }
+      payload.checked = true
       this.isPaymentForm = false
       console.log(this.payment.paymentForm)
     },
     theDeliveryTimeChecked(payload) {
-      payload.checked = !payload.checked
+      const findItem = this.payment.paymentForm.find(
+        (item) => item.checked == true
+      )
+      if (findItem) {
+        findItem.checked = false
+      }
+      payload.checked = true
       this.isTheDeliveryTime = false
       console.log(this.payment.theDeliveryTime)
     },

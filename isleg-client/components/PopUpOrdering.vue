@@ -122,8 +122,8 @@
 <script>
 export default {
   props: {
-    type: {
-      isOrdering: Boolean,
+    isOrdering: {
+      type: Boolean,
       default: false,
     },
   },
