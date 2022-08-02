@@ -17,6 +17,13 @@ type LogoFavicon struct {
 	Favicon string `json:"favicon"`
 }
 
+type ComSet struct {
+	Logo      string `json:"logo"`
+	Favicon   string `json:"favicon"`
+	Email     string `json:"email"`
+	Instagram string `json:"instagram"`
+}
+
 func CreateCompanySetting(c *gin.Context) {
 
 	// GET DATA FROM REQUEST
@@ -186,6 +193,45 @@ func UpdateCompanySetting(c *gin.Context) {
 		"status":  true,
 		"message": "company setting successfully updated",
 	})
+
+}
+
+func GetOneCompanySetting(c *gin.Context) {
+
+	rowComSet, err := config.ConnDB().Query("SELECT logo,favicon,email,instagram FROM company_setting WHERE deleted_at IS NULL ORDER BY created_at ASC LIMIT 1")
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	var comSet ComSet
+
+	for rowComSet.Next() {
+		if err := rowComSet.Scan(&comSet.Logo, &comSet.Favicon, &comSet.Email, &comSet.Instagram); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}
+
+	if comSet.Logo == "" || comSet.Favicon == "" || comSet.Email == "" || comSet.Instagram == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "record not found",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":          true,
+		"company_setting": comSet,
+	})
+
 }
 
 func GetCompanySettingForHeader() (LogoFavicon, error) {
