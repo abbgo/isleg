@@ -5,6 +5,7 @@ import (
 	backController "github/abbgo/isleg/isleg-backend/controllers/back"
 	frontController "github/abbgo/isleg/isleg-backend/controllers/front"
 	"github/abbgo/isleg/isleg-backend/middlewares"
+	"time"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -15,7 +16,16 @@ func Routes() *gin.Engine {
 	routes := gin.Default()
 
 	// cors
-	routes.Use(cors.Default())
+	// routes.Use(cors.Default())
+
+	routes.Use(cors.New(cors.Config{
+		// AllowOrigins:     []string{"https://foo.com"},
+		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "HEAD"},
+		AllowHeaders:     []string{"Origin", "Content-Length", "Content-Type"},
+		AllowCredentials: true,
+		AllowAllOrigins:  true,
+		MaxAge:           12 * time.Hour,
+	}))
 
 	// routes belong to admin panel
 	back := routes.Group("/admin")
@@ -65,6 +75,14 @@ func Routes() *gin.Engine {
 
 	}
 
+	// customer routes
+	customer := routes.Group("/api/auth")
+	{
+		customer.POST("/register", frontController.RegisterCustomer)
+		customer.POST("/login", frontController.LoginCustomer)
+		customer.POST("/refresh", auth.Refresh)
+	}
+
 	// routes belong to front
 	front := routes.Group("/api/:lang")
 	{
@@ -103,11 +121,6 @@ func Routes() *gin.Engine {
 
 		// get one category with products
 		front.GET("/:category_id/:limit/:page", backController.GetOneCategoryWithProducts)
-
-		// customer routes
-		front.POST("/register", frontController.RegisterCustomer)
-		front.POST("/login", frontController.LoginCustomer)
-		front.GET("/refresh", auth.Refresh)
 
 		securedCustomer := front.Group("/").Use(middlewares.Auth())
 		{

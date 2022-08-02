@@ -5,7 +5,6 @@ import (
 	"github/abbgo/isleg/isleg-backend/config"
 	"strconv"
 
-	backController "github/abbgo/isleg/isleg-backend/controllers/back"
 	"github/abbgo/isleg/isleg-backend/models"
 	"net/http"
 
@@ -14,11 +13,14 @@ import (
 
 func RegisterCustomer(c *gin.Context) {
 
-	// GET DATA FROM ROUTE PARAMETER
-	langShortName := c.Param("lang")
+	var customer models.Customer
 
-	// GET language id
-	_, err := backController.GetLangID(langShortName)
+	if err := c.BindJSON(&customer); err != nil {
+		c.JSON(http.StatusBadRequest, err.Error())
+		return
+	}
+
+	err := models.ValidateCustomerData(customer.PhoneNumber, customer.Email)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -27,16 +29,7 @@ func RegisterCustomer(c *gin.Context) {
 		return
 	}
 
-	fullName := c.PostForm("full_name")
-	phoneNumber := c.PostForm("phone_number")
-	password := c.PostForm("password")
-	email := c.PostForm("email")
-
-	// gender := c.PostForm("gender")
-	// birthday := c.PostForm("birthday")
-	// addresses := c.PostFormArray("addresses")
-
-	err = models.ValidateCustomerData(fullName, phoneNumber, password, email)
+	hashPassword, err := models.HashPassword(customer.Password)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -45,16 +38,7 @@ func RegisterCustomer(c *gin.Context) {
 		return
 	}
 
-	hashPassword, err := models.HashPassword(password)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-
-	_, err = config.ConnDB().Exec("INSERT INTO customers (full_name,phone_number,password,email) VALUES ($1,$2,$3,$4)", fullName, phoneNumber, hashPassword, email)
+	_, err = config.ConnDB().Exec("INSERT INTO customers (full_name,phone_number,password,email) VALUES ($1,$2,$3,$4)", customer.FullName, customer.PhoneNumber, hashPassword, customer.Email)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{
 			"status":  false,
@@ -63,14 +47,14 @@ func RegisterCustomer(c *gin.Context) {
 		return
 	}
 
-	accessTokenString, err := auth.GenerateAccessToken(phoneNumber)
+	accessTokenString, err := auth.GenerateAccessToken(customer.PhoneNumber)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
 		c.Abort()
 		return
 	}
 
-	refreshTokenString, err := auth.GenerateRefreshToken(phoneNumber)
+	refreshTokenString, err := auth.GenerateRefreshToken(customer.PhoneNumber)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
 		c.Abort()
@@ -85,6 +69,67 @@ func RegisterCustomer(c *gin.Context) {
 	})
 
 }
+
+// func RegisterCustomer(c *gin.Context) {
+
+// 	fullName := c.PostForm("full_name")
+// 	phoneNumber := c.PostForm("phone_number")
+// 	password := c.PostForm("password")
+// 	email := c.PostForm("email")
+
+// 	// gender := c.PostForm("gender")
+// 	// birthday := c.PostForm("birthday")
+// 	// addresses := c.PostFormArray("addresses")
+
+// 	err := models.ValidateCustomerData(fullName, phoneNumber, password, email)
+// 	if err != nil {
+// 		c.JSON(http.StatusBadRequest, gin.H{
+// 			"status":  false,
+// 			"message": err.Error(),
+// 		})
+// 		return
+// 	}
+
+// 	hashPassword, err := models.HashPassword(password)
+// 	if err != nil {
+// 		c.JSON(http.StatusBadRequest, gin.H{
+// 			"status":  false,
+// 			"message": err.Error(),
+// 		})
+// 		return
+// 	}
+
+// 	_, err = config.ConnDB().Exec("INSERT INTO customers (full_name,phone_number,password,email) VALUES ($1,$2,$3,$4)", fullName, phoneNumber, hashPassword, email)
+// 	if err != nil {
+// 		c.JSON(http.StatusNotFound, gin.H{
+// 			"status":  false,
+// 			"message": err.Error(),
+// 		})
+// 		return
+// 	}
+
+// 	accessTokenString, err := auth.GenerateAccessToken(phoneNumber)
+// 	if err != nil {
+// 		c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
+// 		c.Abort()
+// 		return
+// 	}
+
+// 	refreshTokenString, err := auth.GenerateRefreshToken(phoneNumber)
+// 	if err != nil {
+// 		c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
+// 		c.Abort()
+// 		return
+// 	}
+
+// 	c.JSON(http.StatusOK, gin.H{
+// 		"status":        true,
+// 		"message":       "customer successfully added",
+// 		"access_token":  accessTokenString,
+// 		"refresh_token": refreshTokenString,
+// 	})
+
+// }
 
 func LoginCustomer(c *gin.Context) {
 
