@@ -21,7 +21,7 @@ func Routes() *gin.Engine {
 	routes.Use(cors.New(cors.Config{
 		// AllowOrigins:     []string{"https://foo.com"},
 		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "HEAD"},
-		AllowHeaders:     []string{"Origin", "Content-Length", "Content-Type"},
+		AllowHeaders:     []string{"Origin", "Content-Length", "Content-Type", "RefershToken", "Authorization"},
 		AllowCredentials: true,
 		AllowAllOrigins:  true,
 		MaxAge:           12 * time.Hour,
@@ -39,7 +39,8 @@ func Routes() *gin.Engine {
 		back.GET("/restore-language/:id", backController.RestoreLanguage)
 		back.DELETE("/delete-language/:id", backController.DeletePermanentlyLanguage)
 
-		back.GET("/company-setting", backController.CreateCompanySetting)
+		back.POST("/company-setting", backController.CreateCompanySetting)
+		back.PUT("/company-setting/:id", backController.UpdateCompanySetting)
 
 		back.POST("/translation-header", backController.CreateTranslationHeader)
 

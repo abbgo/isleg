@@ -5,8 +5,11 @@ import (
 	"github/abbgo/isleg/isleg-backend/models"
 	"github/abbgo/isleg/isleg-backend/pkg"
 	"net/http"
+	"os"
+	"path/filepath"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 )
 
 type LogoFavicon struct {
@@ -67,6 +70,122 @@ func CreateCompanySetting(c *gin.Context) {
 		"message": "company setting successfully added",
 	})
 
+}
+
+func UpdateCompanySetting(c *gin.Context) {
+
+	id := c.Param("id")
+	email := c.PostForm("email")
+	instagram := c.PostForm("instagram")
+	var logoName, faviconName string
+
+	rowComSet, err := config.ConnDB().Query("SELECT logo,favicon FROM company_setting WHERE deleted_at IS NULL AND id = $1", id)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	var logo, favicon string
+
+	for rowComSet.Next() {
+		if err := rowComSet.Scan(&logo, &favicon); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}
+
+	if logo == "" || favicon == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "record not found",
+		})
+		return
+	}
+
+	err = models.ValidateCompanySettingData(email, instagram)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	fileLogo, err := c.FormFile("logo")
+	if err != nil {
+		logoName = logo
+	} else {
+		extensionFile := filepath.Ext(fileLogo.Filename)
+
+		if extensionFile != ".jpg" && extensionFile != ".jpeg" && extensionFile != ".png" && extensionFile != ".gif" {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": "the file must be an image",
+			})
+			return
+		}
+
+		newFileName := "logo" + uuid.New().String() + extensionFile
+		c.SaveUploadedFile(fileLogo, "./uploads/"+newFileName)
+
+		if err := os.Remove("./" + logo); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+
+		logoName = "uploads/" + newFileName
+	}
+
+	fileFavicon, err := c.FormFile("favicon")
+	if err != nil {
+		faviconName = favicon
+	} else {
+		extensionFile := filepath.Ext(fileFavicon.Filename)
+
+		if extensionFile != ".jpg" && extensionFile != ".jpeg" && extensionFile != ".png" && extensionFile != ".gif" {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": "the file must be an image",
+			})
+			return
+		}
+
+		newFileName := "favicon" + uuid.New().String() + extensionFile
+		c.SaveUploadedFile(fileFavicon, "./uploads/"+newFileName)
+
+		if err := os.Remove("./" + favicon); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+
+		faviconName = "uploads/" + newFileName
+	}
+
+	_, err = config.ConnDB().Exec("UPDATE company_setting SET logo = $1,favicon=$2,email=$3,instagram=$4 WHERE id = $5", logoName, faviconName, email, instagram, id)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":  true,
+		"message": "company setting successfully updated",
+	})
 }
 
 func GetCompanySettingForHeader() (LogoFavicon, error) {
