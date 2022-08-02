@@ -5,6 +5,7 @@ import (
 	backController "github/abbgo/isleg/isleg-backend/controllers/back"
 	frontController "github/abbgo/isleg/isleg-backend/controllers/front"
 	"github/abbgo/isleg/isleg-backend/middlewares"
+	"time"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -15,7 +16,16 @@ func Routes() *gin.Engine {
 	routes := gin.Default()
 
 	// cors
-	routes.Use(cors.Default())
+	// routes.Use(cors.Default())
+
+	routes.Use(cors.New(cors.Config{
+		// AllowOrigins:     []string{"https://foo.com"},
+		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "HEAD"},
+		AllowHeaders:     []string{"Origin", "Content-Length", "Content-Type", "RefershToken", "Authorization"},
+		AllowCredentials: true,
+		AllowAllOrigins:  true,
+		MaxAge:           12 * time.Hour,
+	}))
 
 	// routes belong to admin panel
 	back := routes.Group("/admin")
@@ -29,7 +39,12 @@ func Routes() *gin.Engine {
 		back.GET("/restore-language/:id", backController.RestoreLanguage)
 		back.DELETE("/delete-language/:id", backController.DeletePermanentlyLanguage)
 
-		back.GET("/company-setting", backController.CreateCompanySetting)
+		back.POST("/company-setting", backController.CreateCompanySetting)
+		back.PUT("/company-setting", backController.UpdateCompanySetting)
+		back.GET("/company-setting", backController.GetOneCompanySetting)
+		// back.DELETE("/company-setting", backController.DeleteCompanySetting)
+		// back.GET("/restore-company-setting/:id", backController.RestoreCompanySetting)
+		// back.DELETE("/delete-company-setting/:id", backController.DeletePermanentlyCompanySetting)
 
 		back.POST("/translation-header", backController.CreateTranslationHeader)
 
@@ -63,6 +78,14 @@ func Routes() *gin.Engine {
 
 		back.POST("/shop", backController.CreateShop)
 
+	}
+
+	// customer routes
+	customer := routes.Group("/api/auth")
+	{
+		customer.POST("/register", frontController.RegisterCustomer)
+		customer.POST("/login", frontController.LoginCustomer)
+		customer.POST("/refresh", auth.Refresh)
 	}
 
 	// routes belong to front
@@ -113,14 +136,6 @@ func Routes() *gin.Engine {
 			securedCustomer.POST("/like", frontController.AddLike)
 		}
 
-	}
-
-	// customer routes
-	customer := routes.Group("/api")
-	{
-		customer.POST("/auth/register", frontController.RegisterCustomer)
-		customer.POST("/auth/login", frontController.LoginCustomer)
-		customer.POST("/auth/refresh", auth.Refresh)
 	}
 
 	return routes
