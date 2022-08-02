@@ -81,12 +81,11 @@ func CreateCompanySetting(c *gin.Context) {
 
 func UpdateCompanySetting(c *gin.Context) {
 
-	id := c.Param("id")
 	email := c.PostForm("email")
 	instagram := c.PostForm("instagram")
 	var logoName, faviconName string
 
-	rowComSet, err := config.ConnDB().Query("SELECT logo,favicon FROM company_setting WHERE deleted_at IS NULL AND id = $1", id)
+	rowComSet, err := config.ConnDB().Query("SELECT logo,favicon FROM company_setting WHERE deleted_at IS NULL ORDER BY created_at ASC LIMIT 1")
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -180,7 +179,7 @@ func UpdateCompanySetting(c *gin.Context) {
 		faviconName = "uploads/" + newFileName
 	}
 
-	_, err = config.ConnDB().Exec("UPDATE company_setting SET logo = $1,favicon=$2,email=$3,instagram=$4 WHERE id = $5", logoName, faviconName, email, instagram, id)
+	_, err = config.ConnDB().Exec("UPDATE company_setting SET logo = $1,favicon=$2,email=$3,instagram=$4", logoName, faviconName, email, instagram)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
