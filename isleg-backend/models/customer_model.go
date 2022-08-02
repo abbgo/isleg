@@ -42,7 +42,7 @@ func CheckPassword(providedPassword, oldPassword string) error {
 	return nil
 }
 
-func ValidateCustomerData(phoneNumber, email string) error {
+func ValidateCustomerRegister(phoneNumber, email string) error {
 
 	if phoneNumber != "" {
 		if !strings.HasPrefix(phoneNumber, "+993") {
@@ -103,6 +103,18 @@ func ValidateCustomerData(phoneNumber, email string) error {
 	// 		}
 	// 	}
 	// }
+
+	return nil
+
+}
+
+func ValidateCustomerLogin(phoneNumber string) error {
+
+	if phoneNumber != "" {
+		if !strings.HasPrefix(phoneNumber, "+993") {
+			return errors.New("phone number must start with +993")
+		}
+	}
 
 	return nil
 

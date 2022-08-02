@@ -3,13 +3,17 @@ package controllers
 import (
 	"github/abbgo/isleg/isleg-backend/auth"
 	"github/abbgo/isleg/isleg-backend/config"
-	"strconv"
 
 	"github/abbgo/isleg/isleg-backend/models"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
+
+type Login struct {
+	PhoneNumber string `json:"phone_number" binding:"required,e164,len=12"`
+	Password    string `json:"password" binding:"required,min=5,max=25"`
+}
 
 func RegisterCustomer(c *gin.Context) {
 
@@ -20,7 +24,7 @@ func RegisterCustomer(c *gin.Context) {
 		return
 	}
 
-	err := models.ValidateCustomerData(customer.PhoneNumber, customer.Email)
+	err := models.ValidateCustomerRegister(customer.PhoneNumber, customer.Email)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -133,51 +137,21 @@ func RegisterCustomer(c *gin.Context) {
 
 func LoginCustomer(c *gin.Context) {
 
-	phoneNumber := c.PostForm("phone_number")
-	if phoneNumber == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": "phone number is required",
-		})
+	var customer Login
+
+	if err := c.BindJSON(&customer); err != nil {
+		c.JSON(http.StatusBadRequest, err.Error())
 		return
 	}
 
-	_, err := strconv.Atoi(phoneNumber)
+	err := models.ValidateCustomerLogin(customer.PhoneNumber)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-
-	if len(phoneNumber) != 8 {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": "the length of the phone number must be 8",
-		})
-		return
-	}
-
-	password := c.PostForm("password")
-	if password == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": "password is required",
-		})
-		return
-	}
-
-	if len(password) < 5 || len(password) > 25 {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": "password length must be between 5 and 25",
-		})
+		c.AbortWithStatusJSON(500, gin.H{"message": err.Error()})
 		return
 	}
 
 	// check if email exists and password is correct
-	row, err := config.ConnDB().Query("SELECT password FROM customers WHERE phone_number = $1 AND deleted_at IS NULL", phoneNumber)
+	row, err := config.ConnDB().Query("SELECT password FROM customers WHERE phone_number = $1 AND deleted_at IS NULL", customer.PhoneNumber)
 	if err != nil {
 		c.AbortWithStatusJSON(500, gin.H{"message": err.Error()})
 		return
@@ -197,20 +171,20 @@ func LoginCustomer(c *gin.Context) {
 		return
 	}
 
-	credentialError := models.CheckPassword(password, oldPassword)
+	credentialError := models.CheckPassword(customer.Password, oldPassword)
 	if credentialError != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"message": "invalid credentials"})
 		return
 	}
 
-	accessTokenString, err := auth.GenerateAccessToken(phoneNumber)
+	accessTokenString, err := auth.GenerateAccessToken(customer.Password)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		c.Abort()
 		return
 	}
 
-	refreshTokenString, err := auth.GenerateRefreshToken(phoneNumber)
+	refreshTokenString, err := auth.GenerateRefreshToken(customer.PhoneNumber)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		c.Abort()
