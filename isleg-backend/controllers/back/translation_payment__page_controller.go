@@ -55,6 +55,66 @@ func CreateTranslationPayment(c *gin.Context) {
 
 }
 
+func UpdateTranslationPayment(c *gin.Context) {
+
+	ID := c.Param("id")
+
+	rowFlag, err := config.ConnDB().Query("SELECT id FROM translation_payment WHERE id = $1 AND deleted_at IS NULL", ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	var id string
+
+	for rowFlag.Next() {
+		if err := rowFlag.Scan(&id); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}
+
+	if id == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "record not found",
+		})
+		return
+	}
+
+	dataNames := []string{"title", "content"}
+
+	// VALIDATE DATA
+	err = models.ValidateTranslationPaymentUpdate(dataNames, c)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	_, err = config.ConnDB().Exec("UPDATE translation_payment SET title = $1, content = $2  WHERE id = $3", c.PostForm("title"), c.PostForm("content"), id)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":  true,
+		"message": "translation payment successfully updated",
+	})
+}
+
 func GetTranslationPayment(c *gin.Context) {
 
 	// GET DATA FROM ROUTE PARAMETER
