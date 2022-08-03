@@ -55,6 +55,107 @@ func CreateTranslationAbout(c *gin.Context) {
 
 }
 
+func UpdateTranslationAbout(c *gin.Context) {
+
+	ID := c.Param("id")
+
+	rowFlag, err := config.ConnDB().Query("SELECT id FROM translation_about WHERE id = $1 AND deleted_at IS NULL", ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	var id string
+
+	for rowFlag.Next() {
+		if err := rowFlag.Scan(&id); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}
+
+	if id == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "record not found",
+		})
+		return
+	}
+
+	dataNames := []string{"title", "content"}
+
+	// VALIDATE DATA
+	err = models.ValidateTranslationAboutUpdate(dataNames, c)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	_, err = config.ConnDB().Exec("UPDATE translation_about SET title = $1, content = $2  WHERE id = $3", c.PostForm("title"), c.PostForm("content"), id)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":  true,
+		"message": "translation about successfully updated",
+	})
+
+}
+
+func GetOneTranslationAbout(c *gin.Context) {
+
+	ID := c.Param("id")
+
+	rowFlag, err := config.ConnDB().Query("SELECT title,content FROM translation_about WHERE id = $1 AND deleted_at IS NULL", ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	var t TrAbout
+
+	for rowFlag.Next() {
+		if err := rowFlag.Scan(&t.Title, &t.Content); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}
+
+	if t.Title == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "record not found",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":            true,
+		"translation_about": t,
+	})
+
+}
+
 func GetTranslationAbout(c *gin.Context) {
 
 	// GET DATA FROM ROUTE PARAMETER
