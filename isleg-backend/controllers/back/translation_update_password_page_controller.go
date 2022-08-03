@@ -118,6 +118,46 @@ func UpdateTranslationUpdatePasswordPage(c *gin.Context) {
 
 }
 
+func GetOneTranslationUpdatePasswordPage(c *gin.Context) {
+
+	ID := c.Param("id")
+
+	rowFlag, err := config.ConnDB().Query("SELECT title,verify_password,explanation,save,password FROM translation_update_password_page WHERE id = $1 AND deleted_at IS NULL", ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	var t TrUpdatePasswordPage
+
+	for rowFlag.Next() {
+		if err := rowFlag.Scan(&t.Title, &t.VerifyPassword, &t.Explanation, &t.Save, &t.Password); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}
+
+	if t.Title == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "record not found",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":                           true,
+		"translation_update_password_page": t,
+	})
+
+}
+
 func GetTranslationUpdatePasswordPage(c *gin.Context) {
 
 	// GET DATA FROM ROUTE PARAMETER
