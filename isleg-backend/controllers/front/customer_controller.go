@@ -104,67 +104,6 @@ func RegisterCustomer(c *gin.Context) {
 
 }
 
-// func RegisterCustomer(c *gin.Context) {
-
-// 	fullName := c.PostForm("full_name")
-// 	phoneNumber := c.PostForm("phone_number")
-// 	password := c.PostForm("password")
-// 	email := c.PostForm("email")
-
-// 	// gender := c.PostForm("gender")
-// 	// birthday := c.PostForm("birthday")
-// 	// addresses := c.PostFormArray("addresses")
-
-// 	err := models.ValidateCustomerData(fullName, phoneNumber, password, email)
-// 	if err != nil {
-// 		c.JSON(http.StatusBadRequest, gin.H{
-// 			"status":  false,
-// 			"message": err.Error(),
-// 		})
-// 		return
-// 	}
-
-// 	hashPassword, err := models.HashPassword(password)
-// 	if err != nil {
-// 		c.JSON(http.StatusBadRequest, gin.H{
-// 			"status":  false,
-// 			"message": err.Error(),
-// 		})
-// 		return
-// 	}
-
-// 	_, err = config.ConnDB().Exec("INSERT INTO customers (full_name,phone_number,password,email) VALUES ($1,$2,$3,$4)", fullName, phoneNumber, hashPassword, email)
-// 	if err != nil {
-// 		c.JSON(http.StatusNotFound, gin.H{
-// 			"status":  false,
-// 			"message": err.Error(),
-// 		})
-// 		return
-// 	}
-
-// 	accessTokenString, err := auth.GenerateAccessToken(phoneNumber)
-// 	if err != nil {
-// 		c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
-// 		c.Abort()
-// 		return
-// 	}
-
-// 	refreshTokenString, err := auth.GenerateRefreshToken(phoneNumber)
-// 	if err != nil {
-// 		c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
-// 		c.Abort()
-// 		return
-// 	}
-
-// 	c.JSON(http.StatusOK, gin.H{
-// 		"status":        true,
-// 		"message":       "customer successfully added",
-// 		"access_token":  accessTokenString,
-// 		"refresh_token": refreshTokenString,
-// 	})
-
-// }
-
 func LoginCustomer(c *gin.Context) {
 
 	var customer Login

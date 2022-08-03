@@ -42,11 +42,9 @@ func Routes() *gin.Engine {
 		back.POST("/company-setting", backController.CreateCompanySetting)
 		back.PUT("/company-setting", backController.UpdateCompanySetting)
 		back.GET("/company-setting", backController.GetOneCompanySetting)
-		// back.DELETE("/company-setting", backController.DeleteCompanySetting)
-		// back.GET("/restore-company-setting/:id", backController.RestoreCompanySetting)
-		// back.DELETE("/delete-company-setting/:id", backController.DeletePermanentlyCompanySetting)
 
 		back.POST("/translation-header", backController.CreateTranslationHeader)
+		back.PUT("/translation-header/:id", backController.UpdateTranslationHeader)
 
 		back.POST("/translation-footer", backController.CreateTranslationFooter)
 
