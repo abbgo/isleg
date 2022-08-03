@@ -116,6 +116,46 @@ func UpdateTranslationSecure(c *gin.Context) {
 
 }
 
+func GetOneTranslationSecure(c *gin.Context) {
+
+	ID := c.Param("id")
+
+	rowFlag, err := config.ConnDB().Query("SELECT title,content FROM translation_secure WHERE id = $1 AND deleted_at IS NULL", ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	var t TrSecure
+
+	for rowFlag.Next() {
+		if err := rowFlag.Scan(&t.Title, &t.Content); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}
+
+	if t.Title == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "record not found",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":             true,
+		"translation_secure": t,
+	})
+
+}
+
 func GetTranslationSecure(c *gin.Context) {
 
 	// GET DATA FROM ROUTE PARAMETER

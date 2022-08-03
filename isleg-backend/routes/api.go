@@ -53,7 +53,7 @@ func Routes() *gin.Engine {
 
 		back.POST("/translation-secure", backController.CreateTranslationSecure)
 		back.PUT("/translation-secure/:id", backController.UpdateTranslationSecure)
-		// back.GET("/translation-secure/:id", backController.GetOneTranslationSecure)
+		back.GET("/translation-secure/:id", backController.GetOneTranslationSecure)
 
 		back.POST("/translation-payment", backController.CreateTranslationPayment)
 
