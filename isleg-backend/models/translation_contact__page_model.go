@@ -37,3 +37,15 @@ func ValidateTranslationContactData(languages []Language, dataNames []string, co
 	return nil
 
 }
+
+func ValidateTranslationContactUpdate(dataNames []string, context *gin.Context) error {
+
+	for _, dataName := range dataNames {
+		if context.PostForm(dataName) == "" {
+			return errors.New(dataName + " is required")
+		}
+	}
+
+	return nil
+
+}
