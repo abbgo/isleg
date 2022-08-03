@@ -123,6 +123,46 @@ func UpdateTranslationContact(c *gin.Context) {
 
 }
 
+func GetOneTranslationContact(c *gin.Context) {
+
+	ID := c.Param("id")
+
+	rowFlag, err := config.ConnDB().Query("SELECT full_name,email,phone,letter,company_phone,imo,company_email,instagram,button_text FROM translation_contact WHERE id = $1 AND deleted_at IS NULL", ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	var t TrContact
+
+	for rowFlag.Next() {
+		if err := rowFlag.Scan(&t.FullName, &t.Email, &t.Phone, &t.Letter, &t.CompanyPhone, &t.Imo, &t.CompanyEmail, &t.Instragram, &t.ButtonText); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}
+
+	if t.FullName == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "record not found",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":              true,
+		"translation_contact": t,
+	})
+
+}
+
 func GetTranslationContact(c *gin.Context) {
 
 	// GET DATA FROM ROUTE PARAMETER
