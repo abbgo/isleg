@@ -57,6 +57,107 @@ func CreateTranslationMyInformationPage(c *gin.Context) {
 
 }
 
+func UpdateTranslationMyInformationPage(c *gin.Context) {
+
+	ID := c.Param("id")
+
+	rowFlag, err := config.ConnDB().Query("SELECT id FROM translation_my_information_page WHERE id = $1 AND deleted_at IS NULL", ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	var id string
+
+	for rowFlag.Next() {
+		if err := rowFlag.Scan(&id); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}
+
+	if id == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "record not found",
+		})
+		return
+	}
+
+	dataNames := []string{"address", "birthday", "update_password", "save"}
+
+	// VALIDATE DATA
+	err = models.ValidateTranslationMyInformationPageUpdate(dataNames, c)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	_, err = config.ConnDB().Exec("UPDATE translation_my_information_page SET address = $1, birthday = $2 , update_password = $3, save = $4 WHERE id = $5", c.PostForm("address"), c.PostForm("birthday"), c.PostForm("update_password"), c.PostForm("save"), id)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":  true,
+		"message": "translation_my_information_page successfully updated",
+	})
+
+}
+
+func GetOneTranslationMyInformationPage(c *gin.Context) {
+
+	ID := c.Param("id")
+
+	rowFlag, err := config.ConnDB().Query("SELECT address,birthday,update_password,save FROM translation_my_information_page WHERE id = $1 AND deleted_at IS NULL", ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	var t TrMyInformationPage
+
+	for rowFlag.Next() {
+		if err := rowFlag.Scan(&t.Address, &t.Birthday, &t.UpdatePassword, &t.Save); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}
+
+	if t.Address == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "record not found",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":                          true,
+		"translation_my_information_page": t,
+	})
+
+}
+
 func GetTranslationMyInformationPage(c *gin.Context) {
 
 	// GET DATA FROM ROUTE PARAMETER
