@@ -40,7 +40,7 @@ SET default_table_access_method = heap;
 
 CREATE TABLE public.afisa (
     id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
-    image_path character varying,
+    image character varying,
     created_at timestamp with time zone DEFAULT now(),
     updated_at timestamp with time zone DEFAULT now(),
     deleted_at timestamp with time zone
@@ -55,7 +55,7 @@ ALTER TABLE public.afisa OWNER TO postgres;
 
 CREATE TABLE public.banner (
     id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
-    image_path character varying,
+    image character varying,
     url text,
     created_at timestamp with time zone DEFAULT now(),
     updated_at timestamp with time zone DEFAULT now(),
@@ -72,7 +72,7 @@ ALTER TABLE public.banner OWNER TO postgres;
 CREATE TABLE public.brends (
     id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
     name character varying,
-    image_path character varying,
+    image character varying,
     created_at timestamp with time zone DEFAULT now(),
     updated_at timestamp with time zone DEFAULT now(),
     deleted_at timestamp with time zone
@@ -88,7 +88,7 @@ ALTER TABLE public.brends OWNER TO postgres;
 CREATE TABLE public.categories (
     id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
     parent_category_id uuid,
-    image_path character varying,
+    image character varying,
     is_home_category boolean,
     created_at timestamp with time zone DEFAULT now(),
     updated_at timestamp with time zone DEFAULT now(),
@@ -167,8 +167,8 @@ ALTER TABLE public.company_phone OWNER TO postgres;
 
 CREATE TABLE public.company_setting (
     id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
-    logo_path character varying,
-    favicon_path character varying,
+    logo character varying,
+    favicon character varying,
     email character varying,
     instagram character varying,
     created_at timestamp with time zone DEFAULT now(),
@@ -193,7 +193,8 @@ CREATE TABLE public.customers (
     addresses character varying[],
     created_at timestamp with time zone DEFAULT now(),
     updated_at timestamp with time zone DEFAULT now(),
-    deleted_at timestamp with time zone
+    deleted_at timestamp with time zone,
+    email character varying
 );
 
 
@@ -221,7 +222,7 @@ ALTER TABLE public.district OWNER TO postgres;
 CREATE TABLE public.languages (
     id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
     name_short character varying(5),
-    flag_path character varying,
+    flag character varying,
     created_at timestamp with time zone DEFAULT now(),
     updated_at timestamp with time zone DEFAULT now(),
     deleted_at timestamp with time zone
@@ -257,8 +258,8 @@ CREATE TABLE public.products (
     old_price numeric,
     amount bigint,
     product_code character varying,
-    main_image_path character varying,
-    image_paths character varying[],
+    main_image character varying,
+    images character varying[],
     created_at timestamp with time zone DEFAULT now(),
     updated_at timestamp with time zone DEFAULT now(),
     deleted_at timestamp with time zone
@@ -276,7 +277,6 @@ CREATE TABLE public.shops (
     owner_name character varying,
     address character varying,
     phone_number character varying,
-    number_of_goods integer,
     running_time character varying,
     created_at timestamp with time zone DEFAULT now(),
     updated_at timestamp with time zone DEFAULT now(),
@@ -421,7 +421,8 @@ CREATE TABLE public.translation_header (
     log_out character varying DEFAULT 'uytget'::character varying,
     created_at timestamp with time zone DEFAULT now(),
     updated_at timestamp with time zone DEFAULT now(),
-    deleted_at timestamp with time zone
+    deleted_at timestamp with time zone,
+    basket character varying DEFAULT 'uytget'::character varying
 );
 
 
@@ -522,7 +523,7 @@ ALTER TABLE public.translation_update_password_page OWNER TO postgres;
 -- Data for Name: afisa; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.afisa (id, image_path, created_at, updated_at, deleted_at) FROM stdin;
+COPY public.afisa (id, image, created_at, updated_at, deleted_at) FROM stdin;
 cb670531-8ca3-4d74-8ea4-f7853aae4132		2022-06-23 18:04:26.258751+05	2022-06-23 18:04:26.258751+05	\N
 \.
 
@@ -531,7 +532,7 @@ cb670531-8ca3-4d74-8ea4-f7853aae4132		2022-06-23 18:04:26.258751+05	2022-06-23 1
 -- Data for Name: banner; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.banner (id, image_path, url, created_at, updated_at, deleted_at) FROM stdin;
+COPY public.banner (id, image, url, created_at, updated_at, deleted_at) FROM stdin;
 \.
 
 
@@ -539,7 +540,7 @@ COPY public.banner (id, image_path, url, created_at, updated_at, deleted_at) FRO
 -- Data for Name: brends; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.brends (id, name, image_path, created_at, updated_at, deleted_at) FROM stdin;
+COPY public.brends (id, name, image, created_at, updated_at, deleted_at) FROM stdin;
 c2f11fea-8057-4a7c-b290-c97d1d90ac59	Markow	uploads/brend9be78774-985a-4d82-bd2c-e73fd7605c2e.jpeg	2022-06-16 14:13:06.09796+05	2022-06-16 14:13:06.09796+05	\N
 6a31c50a-704f-4b0d-80ae-240ca3094cda	Algida	uploads/brendbf1a1059-508d-48a0-9cab-e9c0ff52ea82.jpg	2022-06-16 14:13:49.98051+05	2022-06-16 14:13:49.98051+05	\N
 214be879-65c3-4710-86b4-3fc3bce2e974	Arcalyk	uploads/brend24badfac-613d-4aa3-881b-952bd14994b5.jpeg	2022-06-16 14:14:05.416191+05	2022-06-16 14:14:05.416191+05	\N
@@ -554,7 +555,7 @@ f53a27b4-7810-4d8f-bd45-edad405d92b9	Maral Koke	uploads/brend7827fcfe-f8a9-4747-
 -- Data for Name: categories; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.categories (id, parent_category_id, image_path, is_home_category, created_at, updated_at, deleted_at) FROM stdin;
+COPY public.categories (id, parent_category_id, image, is_home_category, created_at, updated_at, deleted_at) FROM stdin;
 3d0851a3-45cf-4662-b315-67a98b9273c2	\N	uploads/category302c94f3-d485-4cb9-8bbb-2dca8eefb87a.jpeg	f	2022-06-16 12:59:15.624996+05	2022-06-16 12:59:15.624996+05	\N
 1b94e399-f0f1-435f-92c5-f855889c1683	3d0851a3-45cf-4662-b315-67a98b9273c2		f	2022-06-16 13:32:50.82101+05	2022-06-16 13:32:50.82101+05	\N
 02bd4413-8586-49ab-802e-16304e756a8b	\N	uploads/category8329e720-4169-4564-8abc-82ef79fbcbfe.jpeg	f	2022-06-16 13:43:22.644619+05	2022-06-16 13:43:22.644619+05	\N
@@ -682,6 +683,8 @@ f79d9cc4-d15d-4b74-956b-e24f5b924354	5d877898-9ef4-4b91-8518-193b431228a8	4ae4d8
 --
 
 COPY public.category_shop (id, category_id, shop_id, created_at, updated_at, deleted_at) FROM stdin;
+39c78084-c2e3-4942-96f8-b0cf139483a4	3d0851a3-45cf-4662-b315-67a98b9273c2	31703625-968b-4e23-817a-42f2dac9c757	2022-07-27 11:58:06.564538+05	2022-07-27 11:58:06.564538+05	\N
+e6087ab9-ab0b-42bc-88ee-4e609d64f148	1b94e399-f0f1-435f-92c5-f855889c1683	31703625-968b-4e23-817a-42f2dac9c757	2022-07-27 11:58:06.581212+05	2022-07-27 11:58:06.581212+05	\N
 \.
 
 
@@ -700,7 +703,7 @@ d2c66808-e5fe-435f-ba01-cb717f80d9e0	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	Aşgab
 --
 
 COPY public.company_phone (id, phone, created_at, updated_at, deleted_at) FROM stdin;
-3060bc25-2a55-4ee0-894d-f87f887e1fc4	+99361899737	2022-06-22 18:21:06.98191+05	2022-06-22 18:21:06.98191+05	\N
+3060bc25-2a55-4ee0-894d-f87f887e1fc4	+99365324587	2022-06-22 18:21:06.98191+05	2022-06-22 18:21:06.98191+05	\N
 \.
 
 
@@ -708,8 +711,8 @@ COPY public.company_phone (id, phone, created_at, updated_at, deleted_at) FROM s
 -- Data for Name: company_setting; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.company_setting (id, logo_path, favicon_path, email, instagram, created_at, updated_at, deleted_at) FROM stdin;
-7d193677-e0b1-4df0-be88-dc6e16a47ca7	uploads/logo6e25c0ce-5f6f-45c0-9a52-1eab10edb892.jpg	uploads/favicona3dd02ae-759a-4ca4-8869-0c62ea6a14aa.jpg	isleg@gmail.com	@isleginstagram	2022-06-15 19:57:04.54457+05	2022-06-15 19:57:04.54457+05	\N
+COPY public.company_setting (id, logo, favicon, email, instagram, created_at, updated_at, deleted_at) FROM stdin;
+7d193677-e0b1-4df0-be88-dc6e16a47ca7	uploads/logode9c4f45-acba-42ce-b435-e744631a98ba.jpeg	uploads/favicon8a413c02-108d-4d2f-8e92-d24a18cea1d3.jpeg	isleg-bazar@gmail.com	@islegbazarinstagram	2022-06-15 19:57:04.54457+05	2022-06-15 19:57:04.54457+05	\N
 \.
 
 
@@ -717,8 +720,9 @@ COPY public.company_setting (id, logo_path, favicon_path, email, instagram, crea
 -- Data for Name: customers; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.customers (id, full_name, phone_number, password, birthday, gender, addresses, created_at, updated_at, deleted_at) FROM stdin;
-cdc7569b-8445-467c-80dd-1384bb12158b	Guljemal Bayramowa	63456742	$2a$14$zg6k4RzVS.I85daxEKU.uuzelKr23NKI7Az4N8gz.zlS.Dz95IDua	\N	\N	\N	2022-07-16 19:26:58.811066+05	2022-07-16 19:26:58.811066+05	\N
+COPY public.customers (id, full_name, phone_number, password, birthday, gender, addresses, created_at, updated_at, deleted_at, email) FROM stdin;
+7e872c52-0d23-4086-8c45-43000b57332e	Muhammetmyrat	+99363747155	$2a$14$1uOYIcXK4lzyBnhm.L/dW.TD8c9ZqTzAiCsOMCCRRzxiKnDAU2gFK	\N	\N	\N	2022-08-02 23:41:59.869254+05	2022-08-02 23:41:59.869254+05	\N	m.bayramov@salam.tm
+7fafe6f8-c6b6-4bcc-9063-e98c113902c5	jjednkjwedjed	+99363747156	$2a$14$WPTcXE1j871GQ/n2i2CX9.RjyRIyR4bBqCj6b/vchJB1TjYC6v0XK	\N	\N	\N	2022-08-02 23:52:46.544849+05	2022-08-02 23:52:46.544849+05	\N	ewkdnewj@gmail.com
 \.
 
 
@@ -735,9 +739,9 @@ a58294d3-efe5-4cb7-82d3-8df8c37563c5	15	2022-06-25 10:23:25.640364+05	2022-06-25
 -- Data for Name: languages; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.languages (id, name_short, flag_path, created_at, updated_at, deleted_at) FROM stdin;
+COPY public.languages (id, name_short, flag, created_at, updated_at, deleted_at) FROM stdin;
 8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	tm	uploads/language17b99bd1-f52d-41db-b4e6-1ecff03e0fd0.jpeg	2022-06-15 19:53:06.041686+05	2022-06-15 19:53:06.041686+05	\N
-aea98b93-7bdf-455b-9ad4-a259d69dc76e	ru	uploads/language92b53cfe-d5a5-4686-9082-86fed42ffac1.jpeg	2022-06-15 19:53:21.29491+05	2022-06-15 19:53:21.29491+05	\N
+aea98b93-7bdf-455b-9ad4-a259d69dc76e	ru	uploads/language1c24e3a6-173e-4264-a631-f099d15495dd.jpeg	2022-06-15 19:53:21.29491+05	2022-06-15 19:53:21.29491+05	\N
 \.
 
 
@@ -753,7 +757,7 @@ COPY public.likes (id, product_id, customer_id, created_at, updated_at, deleted_
 -- Data for Name: products; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.products (id, brend_id, price, old_price, amount, product_code, main_image_path, image_paths, created_at, updated_at, deleted_at) FROM stdin;
+COPY public.products (id, brend_id, price, old_price, amount, product_code, main_image, images, created_at, updated_at, deleted_at) FROM stdin;
 525af569-06b6-440a-ab5a-6ee0b39cf51d	c2f11fea-8057-4a7c-b290-c97d1d90ac59	46	48.6	23	we6dew6	uploads/productMain710f2792-d815-4606-9811-7bad5fb2c12e.jpeg	{uploads/product12b0eb77-8b58-4c01-944e-25ca0257dbd6.jpeg,uploads/product72235745-3db8-46bd-923b-b0a7294180dd.jpeg}	2022-06-20 12:37:45.259547+05	2022-06-20 12:37:45.259547+05	\N
 0d356bb1-c695-4b29-b199-bdff967abfe2	c2f11fea-8057-4a7c-b290-c97d1d90ac59	23	22.5	45	s6fs6	uploads/productMain4dee470a-7301-4bfd-9d90-4bdf4fdfbccf.jpeg	\N	2022-06-20 12:40:33.161026+05	2022-06-20 12:40:33.161026+05	\N
 e3f8aebb-1451-43a3-9e9b-582da01c8d08	6a31c50a-704f-4b0d-80ae-240ca3094cda	85	80.5	12	s6fs6	uploads/productMain32fed5d0-1542-4f92-86d4-d52beb535494.jpeg	{uploads/productac6abc8b-1f29-4c6a-9e6d-640a5c0612e4.jpg}	2022-06-20 12:41:56.290535+05	2022-06-20 12:41:56.290535+05	\N
@@ -789,6 +793,9 @@ f3208845-80d9-4ccb-9ad2-07a8ee2832c6	ddccb2dc-9697-4f4e-acf5-26b8bc2c8b72	13.9	1
 7bab1a39-0c66-4c1e-9f9c-7f25e050daa5	ddccb2dc-9697-4f4e-acf5-26b8bc2c8b72	11.5	15.8	72	oeiwfwoefo	uploads/productMain29caf1dd-47cd-470f-a27a-775fe6d1f3ad.jpeg	{uploads/product2b9ca336-235f-4fa5-a00c-cf141503d86d.jpeg,uploads/productc6d63afb-9cd3-4e04-a3f1-b7bc7634ecbe.jpeg}	2022-06-21 11:14:39.128719+05	2022-06-21 11:14:39.128719+05	\N
 c182ee68-2717-4604-b0ab-0e6994e61ff0	6a31c50a-704f-4b0d-80ae-240ca3094cda	31.7	0	72	6ef987e8	uploads/productMaind1c1e62c-af97-4983-92ca-d27044d9b94e.jpeg	{uploads/product14bb0731-ba19-483d-9bf7-e59230364b63.jpeg,uploads/product951f3c30-e33b-4c8f-8e37-273e303edac9.jpeg}	2022-06-21 11:17:33.304681+05	2022-06-21 11:17:33.304681+05	\N
 4ae4d83c-56ad-4d99-9d6f-e0dd77f9c982	6a31c50a-704f-4b0d-80ae-240ca3094cda	35	0	19	j6yukuy	uploads/productMain2ea4ba35-5068-4b76-bd96-41f87ef6ef6d.jpeg	{uploads/product3f3d03da-31a1-4da5-83c2-91ec4f262b31.jpeg,uploads/product9a7162dd-1616-404d-b5c5-2833d7e8febc.jpeg}	2022-06-21 11:18:25.021332+05	2022-06-21 11:18:25.021332+05	\N
+029f6bde-9ead-43e0-88b7-214b1dd831ee	6a31c50a-704f-4b0d-80ae-240ca3094cda	35	37	19	j6yukuy	uploads/productMain2b06bd3a-3199-4d99-a78f-1a1ea8e07e0f.jpeg	\N	2022-07-27 11:33:11.781445+05	2022-07-27 11:33:11.781445+05	\N
+f7000691-bc1a-4f98-9c2c-73963b87dbe0	6a31c50a-704f-4b0d-80ae-240ca3094cda	35	37	19	j6yukuy	uploads/productMain65284881-70f5-4a38-9e0e-355fefc4c6be.jpeg	\N	2022-07-27 11:33:24.524502+05	2022-07-27 11:33:24.524502+05	\N
+c9100c0c-0e40-4c00-b987-79872f751cbb	6a31c50a-704f-4b0d-80ae-240ca3094cda	35	37	19	j6yukuy	uploads/productMainf8e885f2-75a4-4ffe-a610-f733cbdf30de.jpeg	\N	2022-07-27 11:33:31.236459+05	2022-07-27 11:33:31.236459+05	\N
 \.
 
 
@@ -796,7 +803,8 @@ c182ee68-2717-4604-b0ab-0e6994e61ff0	6a31c50a-704f-4b0d-80ae-240ca3094cda	31.7	0
 -- Data for Name: shops; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.shops (id, owner_name, address, phone_number, number_of_goods, running_time, created_at, updated_at, deleted_at) FROM stdin;
+COPY public.shops (id, owner_name, address, phone_number, running_time, created_at, updated_at, deleted_at) FROM stdin;
+31703625-968b-4e23-817a-42f2dac9c757	Owez Myradow	Asgabat saher Mir 2/2 jay 2 magazyn 23	62420387	7:00-21:00	2022-07-27 11:58:06.501346+05	2022-07-27 11:58:06.501346+05	\N
 \.
 
 
@@ -826,48 +834,48 @@ ff6ce1a2-0cdf-440f-9175-35bda6750e42	cb670531-8ca3-4d74-8ea4-f7853aae4132	aea98b
 
 COPY public.translation_category (id, lang_id, category_id, name, created_at, updated_at, deleted_at) FROM stdin;
 97c675b2-a2a5-459d-b785-27bd9b65f976	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	3d0851a3-45cf-4662-b315-67a98b9273c2	Gök we bakja önümler	2022-06-16 12:59:15.640472+05	2022-06-16 12:59:15.640472+05	\N
-33525d63-123e-45e0-bbab-34b09ebf22a2	aea98b93-7bdf-455b-9ad4-a259d69dc76e	3d0851a3-45cf-4662-b315-67a98b9273c2	Фрукты и овощи	2022-06-16 12:59:15.65105+05	2022-06-16 12:59:15.65105+05	\N
 f66de70c-bfa5-458e-921d-94810fa573cd	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	1b94e399-f0f1-435f-92c5-f855889c1683	Miweler	2022-06-16 13:32:50.889423+05	2022-06-16 13:32:50.889423+05	\N
-e96a4f88-818a-4285-ab39-d0f4dacc1115	aea98b93-7bdf-455b-9ad4-a259d69dc76e	1b94e399-f0f1-435f-92c5-f855889c1683	Фрукты	2022-06-16 13:32:50.90619+05	2022-06-16 13:32:50.90619+05	\N
 bff34c21-04c1-4cea-bfaf-c8f9ce7e2bfe	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	02bd4413-8586-49ab-802e-16304e756a8b	Iýmit önümleri	2022-06-16 13:43:22.674562+05	2022-06-16 13:43:22.674562+05	\N
-0e400414-a80c-449d-8842-dd6667b45c73	aea98b93-7bdf-455b-9ad4-a259d69dc76e	02bd4413-8586-49ab-802e-16304e756a8b	Продовольственная продукция	2022-06-16 13:43:22.681932+05	2022-06-16 13:43:22.681932+05	\N
 4eef5d40-9aad-4101-b36b-9026dd3dfb51	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	b982bd86-0a0f-4950-baad-5a131e9b728e	Kofe we Kakao	2022-06-16 13:44:16.499713+05	2022-06-16 13:44:16.499713+05	\N
-10a8b5ec-a3ca-448d-975b-83b3a7a8c0d2	aea98b93-7bdf-455b-9ad4-a259d69dc76e	b982bd86-0a0f-4950-baad-5a131e9b728e	Кофе и Какао	2022-06-16 13:44:16.515874+05	2022-06-16 13:44:16.515874+05	\N
 d8a96324-9b81-4b09-914f-f77a0915e35b	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	33cf0893-ff6e-40b3-b50f-2a3e926eca70	Tebigy ereýän kofeler	2022-06-16 13:44:51.233713+05	2022-06-16 13:44:51.233713+05	\N
-b88bb26f-942f-4638-b189-02bad933b730	aea98b93-7bdf-455b-9ad4-a259d69dc76e	33cf0893-ff6e-40b3-b50f-2a3e926eca70	Натуральный растворимый Кофе	2022-06-16 13:44:51.250133+05	2022-06-16 13:44:51.250133+05	\N
 21520180-13e2-4c2b-a5f9-866c2e59ba87	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	f745d171-68e6-42e2-b339-cb3c210cda55	Kiçi paket kofeler	2022-06-16 13:45:48.889727+05	2022-06-16 13:45:48.889727+05	\N
-ab35a97a-dfd1-4100-8e84-d34e74e9a02e	aea98b93-7bdf-455b-9ad4-a259d69dc76e	f745d171-68e6-42e2-b339-cb3c210cda55	Кофе в пакетиках	2022-06-16 13:45:48.906024+05	2022-06-16 13:45:48.906024+05	\N
 e099e7f6-1b97-4f70-8f29-f586ab6697d0	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	5bb9a4e7-9992-418f-b551-537844d371da	Şokolad we Keksler	2022-06-16 13:46:44.657849+05	2022-06-16 13:46:44.657849+05	\N
-415a0711-2482-44b3-8f03-923dca28bd5d	aea98b93-7bdf-455b-9ad4-a259d69dc76e	5bb9a4e7-9992-418f-b551-537844d371da	Шоколады и Кексы	2022-06-16 13:46:44.673892+05	2022-06-16 13:46:44.673892+05	\N
 4eb6bcbf-91f2-4505-a27e-cc3f96f2b829	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	fdc10d33-043b-4ee0-9d6e-e2a12a3e150a	Plitkalar	2022-06-16 13:47:18.888998+05	2022-06-16 13:47:18.888998+05	\N
-53fb44c7-45fb-49f0-a433-aaed23b2dfc0	aea98b93-7bdf-455b-9ad4-a259d69dc76e	fdc10d33-043b-4ee0-9d6e-e2a12a3e150a	Плитки	2022-06-16 13:47:18.942159+05	2022-06-16 13:47:18.942159+05	\N
 ee2f97fb-8c6c-4e38-bdb3-bf769bc95d3b	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	d4cb1359-6c23-4194-8e3c-21ed8cec8373	Batonçikler	2022-06-16 13:48:04.581888+05	2022-06-16 13:48:04.581888+05	\N
-ea104eaf-c3fd-4f2d-88bf-dffc14d48dc5	aea98b93-7bdf-455b-9ad4-a259d69dc76e	d4cb1359-6c23-4194-8e3c-21ed8cec8373	Батончики	2022-06-16 13:48:04.597499+05	2022-06-16 13:48:04.597499+05	\N
 0e6d1662-02bf-49e7-913f-0b3ff19102e8	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	f2e02bbb-c554-4989-b315-8d6aa0575bfa	Gök önümler	2022-06-16 13:48:59.304183+05	2022-06-16 13:48:59.304183+05	\N
-7bde654c-6ae2-4de8-be40-7379a84e66ea	aea98b93-7bdf-455b-9ad4-a259d69dc76e	f2e02bbb-c554-4989-b315-8d6aa0575bfa	Овощи	2022-06-16 13:48:59.365879+05	2022-06-16 13:48:59.365879+05	\N
 5cfeab53-7e44-4001-8310-ddbf1779d4c6	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	4af3388b-2738-4ff6-b42e-927cb0ff897f	Arassaçylyk we Hojalyk	2022-06-16 13:49:43.658705+05	2022-06-16 13:49:43.658705+05	\N
-2b31f071-4d17-49a6-96b1-ca7bf2121083	aea98b93-7bdf-455b-9ad4-a259d69dc76e	4af3388b-2738-4ff6-b42e-927cb0ff897f	Уборка и Дом	2022-06-16 13:49:43.665449+05	2022-06-16 13:49:43.665449+05	\N
 9d79f031-a5d1-4827-8547-ff44e8ee9ec7	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	56b86071-1c45-490b-a683-a8898546f179	Kir ýuwujy serişdeler	2022-06-16 13:50:35.361634+05	2022-06-16 13:50:35.361634+05	\N
-c4dc2d27-8966-460d-9992-f9fcf2ca6c0c	aea98b93-7bdf-455b-9ad4-a259d69dc76e	56b86071-1c45-490b-a683-a8898546f179	Моющие cредства	2022-06-16 13:50:35.378397+05	2022-06-16 13:50:35.378397+05	\N
 edf0966a-559e-4b49-a3f7-9ad28f5d26cb	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	ec0b10ac-bf81-4ae3-881e-ef616ea13d7f	Awtomat üçin	2022-06-16 13:51:05.861192+05	2022-06-16 13:51:05.861192+05	\N
-d0b77bd5-7bcf-4f05-a04d-299eedaba57d	aea98b93-7bdf-455b-9ad4-a259d69dc76e	ec0b10ac-bf81-4ae3-881e-ef616ea13d7f	Для автоматической стирки	2022-06-16 13:51:05.877721+05	2022-06-16 13:51:05.877721+05	\N
 5098490c-af17-49ce-8fb4-2742c152b25d	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	0a1963a2-4084-403e-871d-763ae4825fab	Elde ýuwmak üçin	2022-06-16 13:51:56.030185+05	2022-06-16 13:51:56.030185+05	\N
-266b5dfd-e894-48d0-9b28-8a905f631cc2	aea98b93-7bdf-455b-9ad4-a259d69dc76e	0a1963a2-4084-403e-871d-763ae4825fab	Для ручной стирки	2022-06-16 13:51:56.046414+05	2022-06-16 13:51:56.046414+05	\N
 250873f0-eb5e-4484-8e83-421c83f571a2	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	5d877898-9ef4-4b91-8518-193b431228a8	Sabynlar	2022-06-16 13:52:45.186062+05	2022-06-16 13:52:45.186062+05	\N
-c670fa26-0df8-4eaf-937a-30e1eab17846	aea98b93-7bdf-455b-9ad4-a259d69dc76e	5d877898-9ef4-4b91-8518-193b431228a8	Мыла	2022-06-16 13:52:45.202046+05	2022-06-16 13:52:45.202046+05	\N
 2f99f616-59dd-4499-8ad2-6efe92a2928a	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	fc87c4c5-d7cb-4def-a0e0-11cd5751e04b	Adaty Sabynlar	2022-06-16 13:53:34.342238+05	2022-06-16 13:53:34.342238+05	\N
-49752597-6eb4-44c3-8714-92ad883fca65	aea98b93-7bdf-455b-9ad4-a259d69dc76e	fc87c4c5-d7cb-4def-a0e0-11cd5751e04b	Обычные мыла	2022-06-16 13:53:34.359039+05	2022-06-16 13:53:34.359039+05	\N
 4c11f4ea-46f4-43e8-9359-7c34118109bd	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	38d92a87-4a9c-4860-94e6-e568f21ecd8e	Suwuk Sabynlar	2022-06-16 13:54:05.397857+05	2022-06-16 13:54:05.397857+05	\N
-093e32f6-c04e-42a2-b446-413982903718	aea98b93-7bdf-455b-9ad4-a259d69dc76e	38d92a87-4a9c-4860-94e6-e568f21ecd8e	Жидкие мыла	2022-06-16 13:54:05.41627+05	2022-06-16 13:54:05.41627+05	\N
 85469cf2-f48a-4e73-800d-ebf599aaeaba	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	29ed85bb-11eb-4458-bbf3-5a5644d167d6	Arzanladyş we Aksiýalar	2022-06-20 09:41:17.756928+05	2022-06-20 09:41:17.756928+05	\N
-bbdd06a4-2dce-4c99-bf05-cf4e911776c7	aea98b93-7bdf-455b-9ad4-a259d69dc76e	29ed85bb-11eb-4458-bbf3-5a5644d167d6	Распродажи и Акции	2022-06-20 09:41:17.941489+05	2022-06-20 09:41:17.941489+05	\N
 8a91bcb0-fcce-4a4f-80ff-a2896c0cc36a	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	7f453dd0-7b2e-480d-a8be-fcfa23bd863e	Arzanladyşdaky harytlar	2022-06-20 09:43:07.368782+05	2022-06-20 09:43:07.368782+05	\N
-ce573dfd-6af8-4e64-8260-8746a090acd7	aea98b93-7bdf-455b-9ad4-a259d69dc76e	7f453dd0-7b2e-480d-a8be-fcfa23bd863e	Продукция со скидкой	2022-06-20 09:43:07.377729+05	2022-06-20 09:43:07.377729+05	\N
 34f4cdb5-04b9-48c0-b5b0-0045a02aa094	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	66772380-c161-4c45-9350-a45e765193e2	Aksiýadaky harytlar	2022-06-20 09:45:34.450534+05	2022-06-20 09:45:34.450534+05	\N
-713cc05f-6a9d-4dae-88b5-dde2e564480c	aea98b93-7bdf-455b-9ad4-a259d69dc76e	66772380-c161-4c45-9350-a45e765193e2	Продукция в категории Акции	2022-06-20 09:45:34.466904+05	2022-06-20 09:45:34.466904+05	\N
 e224ecfc-6daa-4df5-8112-74846fc44867	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	338906f1-dbe2-4ba7-84fc-fe7a4d7856ec	Sowgatlyk toplumlar	2022-06-20 09:46:01.148565+05	2022-06-20 09:46:01.148565+05	\N
-53959762-0b63-4100-ae13-4bbf8c015fec	aea98b93-7bdf-455b-9ad4-a259d69dc76e	338906f1-dbe2-4ba7-84fc-fe7a4d7856ec	Подарочные наборы	2022-06-20 09:46:01.408239+05	2022-06-20 09:46:01.408239+05	\N
 3b756a33-bf2c-4d04-af57-962a3226d00b	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	45765130-7f97-4f0c-b886-f70b75e02610	Täze harytlar	2022-06-20 10:11:06.719528+05	2022-06-20 10:11:06.719528+05	\N
+33525d63-123e-45e0-bbab-34b09ebf22a2	aea98b93-7bdf-455b-9ad4-a259d69dc76e	3d0851a3-45cf-4662-b315-67a98b9273c2	Фрукты и овощи	2022-06-16 12:59:15.65105+05	2022-06-16 12:59:15.65105+05	\N
+e96a4f88-818a-4285-ab39-d0f4dacc1115	aea98b93-7bdf-455b-9ad4-a259d69dc76e	1b94e399-f0f1-435f-92c5-f855889c1683	Фрукты	2022-06-16 13:32:50.90619+05	2022-06-16 13:32:50.90619+05	\N
+0e400414-a80c-449d-8842-dd6667b45c73	aea98b93-7bdf-455b-9ad4-a259d69dc76e	02bd4413-8586-49ab-802e-16304e756a8b	Продовольственная продукция	2022-06-16 13:43:22.681932+05	2022-06-16 13:43:22.681932+05	\N
+10a8b5ec-a3ca-448d-975b-83b3a7a8c0d2	aea98b93-7bdf-455b-9ad4-a259d69dc76e	b982bd86-0a0f-4950-baad-5a131e9b728e	Кофе и Какао	2022-06-16 13:44:16.515874+05	2022-06-16 13:44:16.515874+05	\N
+b88bb26f-942f-4638-b189-02bad933b730	aea98b93-7bdf-455b-9ad4-a259d69dc76e	33cf0893-ff6e-40b3-b50f-2a3e926eca70	Натуральный растворимый Кофе	2022-06-16 13:44:51.250133+05	2022-06-16 13:44:51.250133+05	\N
+ab35a97a-dfd1-4100-8e84-d34e74e9a02e	aea98b93-7bdf-455b-9ad4-a259d69dc76e	f745d171-68e6-42e2-b339-cb3c210cda55	Кофе в пакетиках	2022-06-16 13:45:48.906024+05	2022-06-16 13:45:48.906024+05	\N
+415a0711-2482-44b3-8f03-923dca28bd5d	aea98b93-7bdf-455b-9ad4-a259d69dc76e	5bb9a4e7-9992-418f-b551-537844d371da	Шоколады и Кексы	2022-06-16 13:46:44.673892+05	2022-06-16 13:46:44.673892+05	\N
+53fb44c7-45fb-49f0-a433-aaed23b2dfc0	aea98b93-7bdf-455b-9ad4-a259d69dc76e	fdc10d33-043b-4ee0-9d6e-e2a12a3e150a	Плитки	2022-06-16 13:47:18.942159+05	2022-06-16 13:47:18.942159+05	\N
+ea104eaf-c3fd-4f2d-88bf-dffc14d48dc5	aea98b93-7bdf-455b-9ad4-a259d69dc76e	d4cb1359-6c23-4194-8e3c-21ed8cec8373	Батончики	2022-06-16 13:48:04.597499+05	2022-06-16 13:48:04.597499+05	\N
+7bde654c-6ae2-4de8-be40-7379a84e66ea	aea98b93-7bdf-455b-9ad4-a259d69dc76e	f2e02bbb-c554-4989-b315-8d6aa0575bfa	Овощи	2022-06-16 13:48:59.365879+05	2022-06-16 13:48:59.365879+05	\N
+2b31f071-4d17-49a6-96b1-ca7bf2121083	aea98b93-7bdf-455b-9ad4-a259d69dc76e	4af3388b-2738-4ff6-b42e-927cb0ff897f	Уборка и Дом	2022-06-16 13:49:43.665449+05	2022-06-16 13:49:43.665449+05	\N
+c4dc2d27-8966-460d-9992-f9fcf2ca6c0c	aea98b93-7bdf-455b-9ad4-a259d69dc76e	56b86071-1c45-490b-a683-a8898546f179	Моющие cредства	2022-06-16 13:50:35.378397+05	2022-06-16 13:50:35.378397+05	\N
+d0b77bd5-7bcf-4f05-a04d-299eedaba57d	aea98b93-7bdf-455b-9ad4-a259d69dc76e	ec0b10ac-bf81-4ae3-881e-ef616ea13d7f	Для автоматической стирки	2022-06-16 13:51:05.877721+05	2022-06-16 13:51:05.877721+05	\N
+266b5dfd-e894-48d0-9b28-8a905f631cc2	aea98b93-7bdf-455b-9ad4-a259d69dc76e	0a1963a2-4084-403e-871d-763ae4825fab	Для ручной стирки	2022-06-16 13:51:56.046414+05	2022-06-16 13:51:56.046414+05	\N
+c670fa26-0df8-4eaf-937a-30e1eab17846	aea98b93-7bdf-455b-9ad4-a259d69dc76e	5d877898-9ef4-4b91-8518-193b431228a8	Мыла	2022-06-16 13:52:45.202046+05	2022-06-16 13:52:45.202046+05	\N
+49752597-6eb4-44c3-8714-92ad883fca65	aea98b93-7bdf-455b-9ad4-a259d69dc76e	fc87c4c5-d7cb-4def-a0e0-11cd5751e04b	Обычные мыла	2022-06-16 13:53:34.359039+05	2022-06-16 13:53:34.359039+05	\N
+093e32f6-c04e-42a2-b446-413982903718	aea98b93-7bdf-455b-9ad4-a259d69dc76e	38d92a87-4a9c-4860-94e6-e568f21ecd8e	Жидкие мыла	2022-06-16 13:54:05.41627+05	2022-06-16 13:54:05.41627+05	\N
+bbdd06a4-2dce-4c99-bf05-cf4e911776c7	aea98b93-7bdf-455b-9ad4-a259d69dc76e	29ed85bb-11eb-4458-bbf3-5a5644d167d6	Распродажи и Акции	2022-06-20 09:41:17.941489+05	2022-06-20 09:41:17.941489+05	\N
+ce573dfd-6af8-4e64-8260-8746a090acd7	aea98b93-7bdf-455b-9ad4-a259d69dc76e	7f453dd0-7b2e-480d-a8be-fcfa23bd863e	Продукция со скидкой	2022-06-20 09:43:07.377729+05	2022-06-20 09:43:07.377729+05	\N
+713cc05f-6a9d-4dae-88b5-dde2e564480c	aea98b93-7bdf-455b-9ad4-a259d69dc76e	66772380-c161-4c45-9350-a45e765193e2	Продукция в категории Акции	2022-06-20 09:45:34.466904+05	2022-06-20 09:45:34.466904+05	\N
+53959762-0b63-4100-ae13-4bbf8c015fec	aea98b93-7bdf-455b-9ad4-a259d69dc76e	338906f1-dbe2-4ba7-84fc-fe7a4d7856ec	Подарочные наборы	2022-06-20 09:46:01.408239+05	2022-06-20 09:46:01.408239+05	\N
 2d22961c-ef08-4238-ae54-c00593c0073c	aea98b93-7bdf-455b-9ad4-a259d69dc76e	45765130-7f97-4f0c-b886-f70b75e02610	Новые продукты	2022-06-20 10:11:06.735056+05	2022-06-20 10:11:06.735056+05	\N
 \.
 
@@ -906,9 +914,9 @@ COPY public.translation_footer (id, lang_id, about, payment, contact, secure, wo
 -- Data for Name: translation_header; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.translation_header (id, lang_id, research, phone, password, forgot_password, sign_in, sign_up, name, password_verification, verify_secure, my_information, my_favorites, my_orders, log_out, created_at, updated_at, deleted_at) FROM stdin;
-eaf206e6-d515-4bdb-9323-a047cd0edae5	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	gözleg	telefon	parol	Acar sozumi unutdym	ulgama girmek	agza bolmak	Ady	Acar sozi tassyklamak	Ulanyş Düzgünlerini we Gizlinlik Şertnamasyny okadym we kabul edýärin	maglumatym	halanlarym	sargytlarym	cykmak	2022-06-16 04:48:26.460534+05	2022-06-16 04:48:26.460534+05	\N
-9154e800-2a92-47de-b4ff-1e63b213e5f7	aea98b93-7bdf-455b-9ad4-a259d69dc76e	поиск	tелефон	пароль	забыл пароль	войти	зарегистрироваться	имя	Подтвердить Пароль	Я прочитал и принимаю Условия Обслуживания и Политика Конфиденциальности	моя информация	мои любимые	мои заказы	выйти	2022-06-16 04:48:26.491672+05	2022-06-16 04:48:26.491672+05	\N
+COPY public.translation_header (id, lang_id, research, phone, password, forgot_password, sign_in, sign_up, name, password_verification, verify_secure, my_information, my_favorites, my_orders, log_out, created_at, updated_at, deleted_at, basket) FROM stdin;
+eaf206e6-d515-4bdb-9323-a047cd0edae5	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	gözleg	telefon	parol	Acar sozumi unutdym	ulgama girmek	agza bolmak	Ady	Acar sozi tassyklamak	Ulanyş Düzgünlerini we Gizlinlik Şertnamasyny okadym we kabul edýärin	maglumatym	halanlarym	sargytlarym	cykmak	2022-06-16 04:48:26.460534+05	2022-06-16 04:48:26.460534+05	\N	sebet
+9154e800-2a92-47de-b4ff-1e63b213e5f7	aea98b93-7bdf-455b-9ad4-a259d69dc76e	поиск	tелефон	пароль	забыл пароль	войти	зарегистрироваться	имя	Подтвердить Пароль	Я прочитал и принимаю Условия Обслуживания и Политика Конфиденциальности	моя информация	мои любимые	мои заказы	выйти	2022-06-16 04:48:26.491672+05	2022-06-16 04:48:26.491672+05	\N	корзина
 \.
 
 
@@ -917,8 +925,8 @@ eaf206e6-d515-4bdb-9323-a047cd0edae5	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	gözle
 --
 
 COPY public.translation_my_information_page (id, lang_id, address, created_at, updated_at, deleted_at, birthday, update_password, save) FROM stdin;
-d294138e-b808-41ae-9ac5-1826751fda3d	aea98b93-7bdf-455b-9ad4-a259d69dc76e	ваш адрес	2022-07-04 19:28:46.603058+05	2022-07-04 19:28:46.603058+05	\N	дата рождения	изменить пароль	запомнить
 11074158-69f2-473a-b4fe-94304ff0d8a7	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	salgyňyz	2022-07-04 19:28:46.529935+05	2022-07-04 19:28:46.529935+05	\N	doglan senäň	açar sözi üýtget	ýatda sakla
+d294138e-b808-41ae-9ac5-1826751fda3d	aea98b93-7bdf-455b-9ad4-a259d69dc76e	ваш адрес	2022-07-04 19:28:46.603058+05	2022-07-04 19:28:46.603058+05	\N	дата рождения	изменить пароль	запомнить
 \.
 
 
@@ -938,75 +946,81 @@ ea7f4c0c-4b1a-41d3-94eb-e058aba9c99f	aea98b93-7bdf-455b-9ad4-a259d69dc76e	Пор
 
 COPY public.translation_product (id, lang_id, product_id, name, description, created_at, updated_at, deleted_at) FROM stdin;
 e7a616fc-650e-429c-a201-a513d7efe8d1	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	525af569-06b6-440a-ab5a-6ee0b39cf51d	Agardyjy we tegmil aýryjy serişde "G-OXI spray white" 600 ml	Agardyjy we tegmil aýryjy serişde "G-OXI spray white" 600 ml	2022-06-20 12:37:45.296265+05	2022-06-20 12:37:45.296265+05	\N
-ce316f6c-cd44-4cfd-a8ed-a49f84198b81	aea98b93-7bdf-455b-9ad4-a259d69dc76e	525af569-06b6-440a-ab5a-6ee0b39cf51d	Пятновыводитель -отбеливатель "G-OXI spray white" 600 мл	Пятновыводитель -отбеливатель "G-OXI spray white" 600 мл	2022-06-20 12:37:45.31285+05	2022-06-20 12:37:45.31285+05	\N
 5c0af669-683a-41d1-a301-fbd5c811d6a4	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	0d356bb1-c695-4b29-b199-bdff967abfe2	Tegmil aýryjy serişde reňkli eşikler üçin"G-OXI spray white"600 ml	Tegmil aýryjy serişde reňkli eşikler üçin"G-OXI spray white"600 ml	2022-06-20 12:40:33.2306+05	2022-06-20 12:40:33.2306+05	\N
-aa4f3f0a-0f35-4ef5-81d3-843a8e18e529	aea98b93-7bdf-455b-9ad4-a259d69dc76e	0d356bb1-c695-4b29-b199-bdff967abfe2	Пятновыводитель для цветных вещей "G-OXI spray color" 600 мл	Пятновыводитель для цветных вещей "G-OXI spray color" 600 мл	2022-06-20 12:40:33.294199+05	2022-06-20 12:40:33.294199+05	\N
 bebf6d07-edfc-4c1b-99bd-5fc8524c3269	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	e3f8aebb-1451-43a3-9e9b-582da01c8d08	Duş geli Nivea Men "Ekstrim serginlik" 250 ml	Duş geli Nivea Men "Ekstrim serginlik" 250 ml	2022-06-20 12:41:56.355507+05	2022-06-20 12:41:56.355507+05	\N
-cd875a75-f302-42ae-9529-4a939b732907	aea98b93-7bdf-455b-9ad4-a259d69dc76e	e3f8aebb-1451-43a3-9e9b-582da01c8d08	Гель для душа Nivea Men "Эксремальная свежесть" 250 мл	Гель для душа Nivea Men "Эксремальная свежесть" 250 мл	2022-06-20 12:41:56.372671+05	2022-06-20 12:41:56.372671+05	\N
 1ee48372-6d39-4baa-86d5-a5092dc11dcf	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	3b6d2d59-7ad4-4392-b7de-5a1d6bd003e1	(2+1) Süýt kremli sandwiç köke Ülker "Saklıköy" 100 gr (3 sany)	(2+1) Süýt kremli sandwiç köke Ülker "Saklıköy" 100 gr (3 sany)	2022-06-20 12:43:47.824085+05	2022-06-20 12:43:47.824085+05	\N
-7aa7eb37-c2d9-4379-a715-0b96cf81acbf	aea98b93-7bdf-455b-9ad4-a259d69dc76e	3b6d2d59-7ad4-4392-b7de-5a1d6bd003e1	(2+1) Печенье сэндвич с молочным кремом Ülker "Saklıköy" 100 г (3 шт)	(2+1) Печенье сэндвич с молочным кремом Ülker "Saklıköy" 100 г (3 шт)	2022-06-20 12:43:47.840415+05	2022-06-20 12:43:47.840415+05	\N
 c2d4374e-7e61-49f8-8220-fa07320fc59e	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	4a6b57e1-18d2-4aac-8346-576d3897967e	Naharhana üçin mikrofiber süpürgiç Parex (mämişi) + Gap-gaç ýuwmak üçin gubka "Viomax" (5 sany)	Naharhana üçin mikrofiber süpürgiç Parex (mämişi) + Gap-gaç ýuwmak üçin gubka "Viomax" (5 sany)	2022-06-20 12:47:56.984846+05	2022-06-20 12:47:56.984846+05	\N
-d5682400-52be-4703-94c4-0865ad136dc1	aea98b93-7bdf-455b-9ad4-a259d69dc76e	4a6b57e1-18d2-4aac-8346-576d3897967e	Тряпка для кухни из микрофибры Parex (оранжевый) + Губки для посуды "Viomax" (5 шт)	Тряпка для кухни из микрофибры Parex (оранжевый) + Губки для посуды "Viomax" (5 шт)	2022-06-20 12:47:57.000678+05	2022-06-20 12:47:57.000678+05	\N
 33685f9d-3701-42e2-9505-359c8dc5e81f	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	9a0572df-3006-426e-a623-11c0cbc930ea	Agyz boşlugyny çaýkamak üçin serişde Listerine Expert "Gijeki dikeltme" 400 ml + "Narpyzyň serginligi" 250 ml	Agyz boşlugyny çaýkamak üçin serişde Listerine Expert "Gijeki dikeltme" 400 ml + "Narpyzyň serginligi" 250 ml	2022-06-20 12:49:20.527635+05	2022-06-20 12:49:20.527635+05	\N
-7bab00a3-b19f-4be9-88c3-267790830662	aea98b93-7bdf-455b-9ad4-a259d69dc76e	9a0572df-3006-426e-a623-11c0cbc930ea	Ополаскиватель для полости рта Listerine® Expert "Ночное Восстановление" 400 мл + "Свежая Мята" 250 мл	Ополаскиватель для полости рта Listerine® Expert "Ночное Восстановление" 400 мл + "Свежая Мята" 250 мл	2022-06-20 12:49:20.546448+05	2022-06-20 12:49:20.546448+05	\N
 6a052dc2-9999-4052-a083-89a03cc84b6a	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	1a8935fd-c6ab-4656-b173-826c487a2274	Sowgatlyk toplum çagalar üçin duş geli Johnson's 300 ml + çagalaryň agyzyny çaýkamak üçin serişde Listerine 250 ml	Sowgatlyk toplum çagalar üçin duş geli Johnson's 300 ml + çagalaryň agyzyny çaýkamak üçin serişde Listerine 250 ml	2022-06-21 10:15:31.585324+05	2022-06-21 10:15:31.585324+05	\N
-16a440c8-d3e2-4dc9-8d48-9f3a733bb18c	aea98b93-7bdf-455b-9ad4-a259d69dc76e	1a8935fd-c6ab-4656-b173-826c487a2274	Подарочный набор Johnson's детский гель для душа Johnson's 300 мл + детский ополаскиватель полости рта Listerine 250 мл	Подарочный набор Johnson's детский гель для душа Johnson's 300 мл + детский ополаскиватель полости рта Listerine 250 мл	2022-06-21 10:15:31.626337+05	2022-06-21 10:15:31.626337+05	\N
 a62656f5-de15-4463-95e7-8a608c7f8469	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	b4499063-096e-4fa6-9e21-a47185afd829	Sowgatlyk toplumy Head & Shoulders "Saç üçin balzam 275 ml + Goňaga garşy şampun 400 ml	Sowgatlyk toplumy Head & Shoulders "Saç üçin balzam 275 ml + Goňaga garşy şampun 400 ml	2022-06-21 10:17:07.70902+05	2022-06-21 10:17:07.70902+05	\N
-f1d0c111-921c-4420-9460-7a64562500ce	aea98b93-7bdf-455b-9ad4-a259d69dc76e	b4499063-096e-4fa6-9e21-a47185afd829	Подарочный Набор Head & Shoulders "Бальзам-ополаскиватель для волос 275 мл + Шампунь против перхоти 400 мл	Подарочный Набор Head & Shoulders "Бальзам-ополаскиватель для волос 275 мл + Шампунь против перхоти 400 мл	2022-06-21 10:17:07.718729+05	2022-06-21 10:17:07.718729+05	\N
 7ed42c42-e90a-44c1-a079-44628ff773ab	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	538f0688-30ce-497b-9a0e-cd53d0d5239d	Duş üçin şampun-gel Faberlic "Calming Peak" 3x1, 380 ml	Duş üçin şampun-gel Faberlic "Calming Peak" 3x1, 380 ml	2022-06-21 10:21:35.539288+05	2022-06-21 10:21:35.539288+05	\N
-c8163361-10c7-4402-9dfd-bc66277fcc8e	aea98b93-7bdf-455b-9ad4-a259d69dc76e	538f0688-30ce-497b-9a0e-cd53d0d5239d	Шампунь-гель для душ "Calming Peak" 3в1, 380 мл	Шампунь-гель для душ "Calming Peak" 3в1, 380 мл	2022-06-21 10:21:35.556254+05	2022-06-21 10:21:35.556254+05	\N
 a028180a-939c-4c4b-9c65-41f3e071a696	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	0dc06a1f-e25a-4c3d-8310-09985e905262	Mikrofiber süpürgiç Mikrosan "Güderi" 40x50 sm (1 sany)	Mikrofiber süpürgiç Mikrosan "Güderi" 40x50 sm (1 sany)	2022-06-21 10:23:26.461681+05	2022-06-21 10:23:26.461681+05	\N
-15acb070-ded8-4b88-9278-8026e2db07a4	aea98b93-7bdf-455b-9ad4-a259d69dc76e	0dc06a1f-e25a-4c3d-8310-09985e905262	Салфетка из микрофибры Mikrosan "Güderi" 40x50 см (1 шт)	Салфетка из микрофибры Mikrosan "Güderi" 40x50 см (1 шт)	2022-06-21 10:23:26.470717+05	2022-06-21 10:23:26.470717+05	\N
 50f78e2b-e84f-4c20-be2d-01189e0d3dea	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	ec4963db-c429-4135-9790-d3860c350bc5	Kiwi (500 gr)	Kiwi (500 gr)	2022-06-21 10:28:00.487529+05	2022-06-21 10:28:00.487529+05	\N
-a7be771a-2f53-4ad7-878b-ca54fd302f2a	aea98b93-7bdf-455b-9ad4-a259d69dc76e	ec4963db-c429-4135-9790-d3860c350bc5	Киви (500 г)	Киви (500 г)	2022-06-21 10:28:00.49526+05	2022-06-21 10:28:00.49526+05	\N
 0856032c-b195-4f2d-a267-aabb59696d02	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	1fa25151-9c63-4554-a79d-faf6cc78ef69	Kofe Carte Noire, paket gapda 75 gr	Kofe Carte Noire, paket gapda 75 gr	2022-06-21 10:33:58.984686+05	2022-06-21 10:33:58.984686+05	\N
-1dd4e733-0808-4aae-a477-991b52e2fd6d	aea98b93-7bdf-455b-9ad4-a259d69dc76e	1fa25151-9c63-4554-a79d-faf6cc78ef69	Кофе Carte Noire, пакет 75 г	Кофе Carte Noire, пакет 75 г	2022-06-21 10:33:59.001019+05	2022-06-21 10:33:59.001019+05	\N
 684f9b9e-3258-48ae-bb1e-2e3974a9924f	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	d95aabd1-5a3a-47cc-aab5-9c6025e12280	Kofe Jacobs Monarch, çüýşe gapda 47.5 gr	Kofe Jacobs Monarch, çüýşe gapda 47.5 gr	2022-06-21 10:35:13.14977+05	2022-06-21 10:35:13.14977+05	\N
-6c8e92ac-6a8a-48c0-ae3d-7719ba8cb142	aea98b93-7bdf-455b-9ad4-a259d69dc76e	d95aabd1-5a3a-47cc-aab5-9c6025e12280	Кофе Jacobs Monarch, стеклянная банка 47.5 г	Кофе Jacobs Monarch, стеклянная банка 47.5 г	2022-06-21 10:35:13.159508+05	2022-06-21 10:35:13.159508+05	\N
 78ae3973-8e6c-4fbf-a7c4-b3d79ac5d893	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	d59506eb-aa84-4127-a411-5c5f95350d15	Kofe Jacobs Monarch, paket gapda 190 gr	Kofe Jacobs Monarch, paket gapda 190 gr	2022-06-21 10:37:39.655615+05	2022-06-21 10:37:39.655615+05	\N
-f35164cc-3f9e-40fa-8bc3-ceab0c83f0d5	aea98b93-7bdf-455b-9ad4-a259d69dc76e	d59506eb-aa84-4127-a411-5c5f95350d15	Кофе Jacobs Monarch, пакет 190 г	Кофе Jacobs Monarch, пакет 190 г	2022-06-21 10:37:39.67119+05	2022-06-21 10:37:39.67119+05	\N
 cbc5b906-39d0-4a33-aa8f-52c9e59d18a7	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	ab6ba3a4-0d3a-4510-acd0-feb4fe48fc19	Kofe Jacobs Hazelnut (tokaý hozy), 3x1 kiçi paket 15 gr	Kofe Jacobs Hazelnut (tokaý hozy), 3x1 kiçi paket 15 gr	2022-06-21 10:39:18.399267+05	2022-06-21 10:39:18.399267+05	\N
-58d42832-041a-46e7-9872-4a7d31bb447c	aea98b93-7bdf-455b-9ad4-a259d69dc76e	ab6ba3a4-0d3a-4510-acd0-feb4fe48fc19	Кофе Jacobs Hazelnut (лесной орех) 3в1, стик 15 г	Кофе Jacobs Hazelnut (лесной орех) 3в1, стик 15 г	2022-06-21 10:39:18.406658+05	2022-06-21 10:39:18.406658+05	\N
 c25c372b-2802-4977-a8e3-333d5a364a16	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	ce76ca4c-0ffb-4dd7-a252-3d3eaa6da732	Kofe Nescafe Classic, kiçi paket 2 gr	Kofe Nescafe Classic, kiçi paket 2 gr	2022-06-21 10:40:32.422306+05	2022-06-21 10:40:32.422306+05	\N
-cd29576b-3cd2-4661-8060-bb14619ea840	aea98b93-7bdf-455b-9ad4-a259d69dc76e	ce76ca4c-0ffb-4dd7-a252-3d3eaa6da732	Кофе Nescafe Classic, стик 2 гр	Кофе Nescafe Classic, стик 2 гр	2022-06-21 10:40:32.431712+05	2022-06-21 10:40:32.431712+05	\N
 6feb3554-183c-4f16-a675-441da66eac95	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	2072a0fb-bbc4-4231-a7a4-dad00bb0a892	Gyzgyn şokolad "Kentcafe" karamelli 19 gr	Gyzgyn şokolad "Kentcafe" karamelli 19 gr	2022-06-21 10:41:30.458042+05	2022-06-21 10:41:30.458042+05	\N
-83996676-1a1f-47aa-9e9c-25609fb714e7	aea98b93-7bdf-455b-9ad4-a259d69dc76e	2072a0fb-bbc4-4231-a7a4-dad00bb0a892	Горячий шоколад "Kentcafe" карамель 19 г	Горячий шоколад "Kentcafe" карамель 19 г	2022-06-21 10:41:30.476604+05	2022-06-21 10:41:30.476604+05	\N
 c8ad04e9-946b-4a9a-95ed-b940970635fb	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	86f78ca3-177d-4c89-8693-7678066d7389	Şokolad Alpen Gold Oreo 90 gr	Şokolad Alpen Gold Oreo 90 gr	2022-06-21 10:47:21.563876+05	2022-06-21 10:47:21.563876+05	\N
-a478458c-c871-4dae-9b6f-fc3add7b1686	aea98b93-7bdf-455b-9ad4-a259d69dc76e	86f78ca3-177d-4c89-8693-7678066d7389	Шоколад Alpen Gold Oreo 90 гр	Шоколад Alpen Gold Oreo 90 гр	2022-06-21 10:47:21.572369+05	2022-06-21 10:47:21.572369+05	\N
 15744a2b-52c6-4d43-aa7a-b07d6a4313f2	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	0a6863e2-7ed9-4fcd-9875-270fb778b33e	Süýtli şokolad Eti "Adicto" 70 gr	Süýtli şokolad Eti "Adicto" 70 gr	2022-06-21 10:48:09.320471+05	2022-06-21 10:48:09.320471+05	\N
-503036b8-f987-4dd3-be4e-6a877f81c3f2	aea98b93-7bdf-455b-9ad4-a259d69dc76e	0a6863e2-7ed9-4fcd-9875-270fb778b33e	Молочный шоколад Eti "Adicto" 70 гр	Молочный шоколад Eti "Adicto" 70 гр	2022-06-21 10:48:09.33918+05	2022-06-21 10:48:09.33918+05	\N
 c26e5272-6bec-44da-9e51-40fd85339369	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	49381c4e-298d-43b7-8ae4-8dbe6e7da581	Şokolad Alpen Gold, Ajy 70% kakaoly 80 gr	Şokolad Alpen Gold, Ajy 70% kakaoly 80 gr	2022-06-21 10:49:08.688678+05	2022-06-21 10:49:08.688678+05	\N
-c584d84a-ff88-4dc9-92d1-ec3e1199db3f	aea98b93-7bdf-455b-9ad4-a259d69dc76e	49381c4e-298d-43b7-8ae4-8dbe6e7da581	Шоколад Alpen Gold горький, 70% какао 80 гр	Шоколад Alpen Gold горький, 70% какао 80 гр	2022-06-21 10:49:08.696641+05	2022-06-21 10:49:08.696641+05	\N
 96c55330-426e-46b5-ad5f-6767257c5a11	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	c1f8c7cb-081e-4f99-aeb3-0bc84153295e	Garaňky şokoladly wafli KitKat Senses "Double Chocolate" 112 gr	Garaňky şokoladly wafli KitKat Senses "Double Chocolate" 112 gr	2022-06-21 10:49:54.757512+05	2022-06-21 10:49:54.757512+05	\N
-c23b169b-90db-4185-bca6-3efef801d817	aea98b93-7bdf-455b-9ad4-a259d69dc76e	c1f8c7cb-081e-4f99-aeb3-0bc84153295e	Шоколад KitKat Senses "Double Chocolate" 112 gr	Шоколад KitKat Senses "Double Chocolate" 112 gr	2022-06-21 10:49:54.775079+05	2022-06-21 10:49:54.775079+05	\N
 913898de-64da-4b84-b161-1354d9df0708	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	0cbe2487-c709-403f-a6c4-4f1a73fd3f78	Gara gözenekli şokolad Alpen Gold "Aerated" 80 gr	Gara gözenekli şokolad Alpen Gold "Aerated" 80 gr	2022-06-21 10:50:40.624338+05	2022-06-21 10:50:40.624338+05	\N
-852ec6e7-4492-4bf9-af62-e32b4813774c	aea98b93-7bdf-455b-9ad4-a259d69dc76e	0cbe2487-c709-403f-a6c4-4f1a73fd3f78	Темный пористый шоколад Alpen Gold "Aerated" 80 г	Темный пористый шоколад Alpen Gold "Aerated" 80 г	2022-06-21 10:50:40.63247+05	2022-06-21 10:50:40.63247+05	\N
 df9b6ed6-6cae-4f39-9dd4-2c4397c6f034	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	cbb0047a-e543-41a8-845b-8439d11638f4	Gara gözenekli şokolad Alpen Gold "Aerated" 80 gr	Gara gözenekli şokolad Alpen Gold "Aerated" 80 gr	2022-06-21 10:54:40.595161+05	2022-06-21 10:54:40.595161+05	\N
-0c355cb3-3f46-4a0c-81b2-fa995dc3b371	aea98b93-7bdf-455b-9ad4-a259d69dc76e	cbb0047a-e543-41a8-845b-8439d11638f4	Темный пористый шоколад Alpen Gold "Aerated" 80 г	Темный пористый шоколад Alpen Gold "Aerated" 80 г	2022-06-21 10:54:40.602784+05	2022-06-21 10:54:40.602784+05	\N
 828d8dc4-88eb-4104-9b15-e7b3a840be3d	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	c5520db8-19de-4209-b99c-826a342210c3	Şokoladly wafli Kinder "Bueno" 43 gr	Şokoladly wafli Kinder "Bueno" 43 gr	2022-06-21 10:59:22.800629+05	2022-06-21 10:59:22.800629+05	\N
-5cd26037-b4e0-45b3-8fcc-60b11ff48499	aea98b93-7bdf-455b-9ad4-a259d69dc76e	c5520db8-19de-4209-b99c-826a342210c3	Вафли Kinder "Bueno" 43 г	Вафли Kinder "Bueno" 43 г	2022-06-21 10:59:22.818116+05	2022-06-21 10:59:22.818116+05	\N
 d2f44cce-f945-45bf-8519-8de6034775e6	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	ebc34352-64f7-4ad5-aa00-b1777efb3e56	Şokoladly wafli KitKat "Duo" 58 gr	Şokoladly wafli KitKat "Duo" 58 gr	2022-06-21 11:01:08.167983+05	2022-06-21 11:01:08.167983+05	\N
-fd0acb7b-9fe2-4d15-896f-2309b337e241	aea98b93-7bdf-455b-9ad4-a259d69dc76e	ebc34352-64f7-4ad5-aa00-b1777efb3e56	Батончик KitKat "Duo" 58 гр	Батончик KitKat "Duo" 58 гр	2022-06-21 11:01:08.175943+05	2022-06-21 11:01:08.175943+05	\N
 942b30a8-13e5-446e-a8a7-dfbcdcb93b45	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	88753f91-4e73-4478-91c5-37b278984294	Hyýar Arzuw (1 kg)	Hyýar Arzuw (1 kg)	2022-06-21 11:03:19.559717+05	2022-06-21 11:03:19.559717+05	\N
-e34d1c47-665c-40a0-a51d-a01e3054a6e7	aea98b93-7bdf-455b-9ad4-a259d69dc76e	88753f91-4e73-4478-91c5-37b278984294	Огурцы арзув (1 кг)	Огурцы арзув (1 кг)	2022-06-21 11:03:19.577287+05	2022-06-21 11:03:19.577287+05	\N
 5b77f25f-4a51-446e-b48d-20d1d786549b	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	93096765-14be-4093-8e53-81caba6de3aa	Kelem (1-1.5 kg)	Kelem (1-1.5 kg)	2022-06-21 11:04:41.859527+05	2022-06-21 11:04:41.859527+05	\N
-7c01aea8-6a81-49f5-8604-35116a74fb7b	aea98b93-7bdf-455b-9ad4-a259d69dc76e	93096765-14be-4093-8e53-81caba6de3aa	Капуста ( 1-1.5 кг)	Капуста ( 1-1.5 кг)	2022-06-21 11:04:41.868596+05	2022-06-21 11:04:41.868596+05	\N
 77b14c86-9ae2-445d-a6b5-c8d6e00d4c99	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	070d7096-2fdd-4327-b0b6-99b13af1570f	Kir ýuwujy serişde Persil "Premium" Color Gel 1.17 lt	Kir ýuwujy serişde Persil "Premium" Color Gel 1.17 lt	2022-06-21 11:06:35.18451+05	2022-06-21 11:06:35.18451+05	\N
-6bffd071-c3bb-4bb5-b89f-8c1354abe2bf	aea98b93-7bdf-455b-9ad4-a259d69dc76e	070d7096-2fdd-4327-b0b6-99b13af1570f	Моющее средство Persil "Премиум" Color Gel 1.17 л	Моющее средство Persil "Премиум" Color Gel 1.17 л	2022-06-21 11:06:35.191806+05	2022-06-21 11:06:35.191806+05	\N
 e1c575a4-fe91-4dec-86e6-ac3ccae7cf99	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	aee7abe3-c6cc-4562-bf67-3f87e952611b	Kir ýuwujy serişde Persil "Color" 1.5 kg	Kir ýuwujy serişde Persil "Color" 1.5 kg	2022-06-21 11:07:41.763048+05	2022-06-21 11:07:41.763048+05	\N
-2fbed026-477a-4ac7-935c-3236611f645c	aea98b93-7bdf-455b-9ad4-a259d69dc76e	aee7abe3-c6cc-4562-bf67-3f87e952611b	Моющее средство Persil "Color" 1.5 кг	Моющее средство Persil "Color" 1.5 кг	2022-06-21 11:07:41.770219+05	2022-06-21 11:07:41.770219+05	\N
 facdee6c-25cb-4189-a172-c61f8f8fc406	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	205b50c5-da4b-4edf-adac-54f93dc99253	Kir ýuwujy serişde Persil "Свежесть от Vernel" elde ýuwmak üçin, 410 gr	Kir ýuwujy serişde Persil "Свежесть от Vernel" elde ýuwmak üçin, 410 gr	2022-06-21 11:10:49.543198+05	2022-06-21 11:10:49.543198+05	\N
-efb37f46-e0b6-4edf-a8e0-75cd07d9e9d4	aea98b93-7bdf-455b-9ad4-a259d69dc76e	205b50c5-da4b-4edf-adac-54f93dc99253	Моющее средство Persil для ручной стирки "360° Свежесть от Vernel" 410 г	Моющее средство Persil для ручной стирки "360° Свежесть от Vernel" 410 г	2022-06-21 11:10:49.551943+05	2022-06-21 11:10:49.551943+05	\N
 89168c0e-971d-415a-b3f4-f01fb7096c14	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	c9307e74-88a2-4d96-96ec-6f04e42ad0cb	Eşik ýuwmak üçin gel Qualita uniwersal 1000 ml (doy-pack)	Eşik ýuwmak üçin gel Qualita uniwersal 1000 ml (doy-pack)	2022-06-21 11:11:48.000826+05	2022-06-21 11:11:48.000826+05	\N
-985569b5-a0cc-4690-9c88-301718afe3f5	aea98b93-7bdf-455b-9ad4-a259d69dc76e	c9307e74-88a2-4d96-96ec-6f04e42ad0cb	Гель для стирки Qualita универсальный 1000 мл (дойпак)	Гель для стирки Qualita универсальный 1000 мл (дойпак)	2022-06-21 11:11:48.008194+05	2022-06-21 11:11:48.008194+05	\N
 6db83240-5656-47cd-a482-a7dca34edc3d	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	f3208845-80d9-4ccb-9ad2-07a8ee2832c6	Sabyn Nivea "Ýertudana we süýt" 90 gr	Sabyn Nivea "Ýertudana we süýt" 90 gr	2022-06-21 11:13:34.458623+05	2022-06-21 11:13:34.458623+05	\N
-1a2d4b3e-5845-4fc7-9474-fd7f5d2105c0	aea98b93-7bdf-455b-9ad4-a259d69dc76e	f3208845-80d9-4ccb-9ad2-07a8ee2832c6	Мыло Nivea "Клубника и молоко" 90 гр	Мыло Nivea "Клубника и молоко" 90 гр	2022-06-21 11:13:34.476113+05	2022-06-21 11:13:34.476113+05	\N
 8db4cde0-bef7-4a5b-8917-fc5086bc2b84	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	7bab1a39-0c66-4c1e-9f9c-7f25e050daa5	Antibakterial sabyn Protex "Aloe" 90 g	Antibakterial sabyn Protex "Aloe" 90 g	2022-06-21 11:14:39.149524+05	2022-06-21 11:14:39.149524+05	\N
-08c3c457-9fc4-43a6-83da-b6baa82fc56c	aea98b93-7bdf-455b-9ad4-a259d69dc76e	7bab1a39-0c66-4c1e-9f9c-7f25e050daa5	Антибактериальное туалетое мыло Protex "Aloe" 90 г	Антибактериальное туалетое мыло Protex "Aloe" 90 г	2022-06-21 11:14:39.166369+05	2022-06-21 11:14:39.166369+05	\N
 f8d6e850-d989-4682-905e-b84878685f03	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	c182ee68-2717-4604-b0ab-0e6994e61ff0	Suwuk sabyn Fa "Laým aromaty" 250 ml	Suwuk sabyn Fa "Laým aromaty" 250 ml	2022-06-21 11:17:33.339828+05	2022-06-21 11:17:33.339828+05	\N
-80c8a381-1180-433d-acdc-c1ba48f14605	aea98b93-7bdf-455b-9ad4-a259d69dc76e	c182ee68-2717-4604-b0ab-0e6994e61ff0	Жидкое мыло Fa "Аромат лайма" 250 мл	Жидкое мыло Fa "Аромат лайма" 250 мл	2022-06-21 11:17:33.349547+05	2022-06-21 11:17:33.349547+05	\N
 6d25b5b4-def9-4d2a-83bf-cb5e786075f6	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	4ae4d83c-56ad-4d99-9d6f-e0dd77f9c982	Nemlendiriji suwuk sabyn Aura Clean "Черничный йогурт" 1 ltr	Nemlendiriji suwuk sabyn Aura Clean "Черничный йогурт" 1 ltr	2022-06-21 11:18:25.053667+05	2022-06-21 11:18:25.053667+05	\N
+3e78a827-378d-4afd-8134-8c9d75dad324	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	029f6bde-9ead-43e0-88b7-214b1dd831ee	Nemlendiriji suwuk sabyn Aura Clean "Черничный йогурт" 1 ltr	Nemlendiriji suwuk sabyn Aura Clean "Черничный йогурт" 1 ltr	2022-07-27 11:33:12.046559+05	2022-07-27 11:33:12.046559+05	\N
+a478458c-c871-4dae-9b6f-fc3add7b1686	aea98b93-7bdf-455b-9ad4-a259d69dc76e	86f78ca3-177d-4c89-8693-7678066d7389	Шоколад Alpen Gold Oreo 90 гр	Шоколад Alpen Gold Oreo 90 гр	2022-06-21 10:47:21.572369+05	2022-06-21 10:47:21.572369+05	\N
+fd0acb7b-9fe2-4d15-896f-2309b337e241	aea98b93-7bdf-455b-9ad4-a259d69dc76e	ebc34352-64f7-4ad5-aa00-b1777efb3e56	Батончик KitKat "Duo" 58 гр	Батончик KitKat "Duo" 58 гр	2022-06-21 11:01:08.175943+05	2022-06-21 11:01:08.175943+05	\N
+e34d1c47-665c-40a0-a51d-a01e3054a6e7	aea98b93-7bdf-455b-9ad4-a259d69dc76e	88753f91-4e73-4478-91c5-37b278984294	Огурцы арзув (1 кг)	Огурцы арзув (1 кг)	2022-06-21 11:03:19.577287+05	2022-06-21 11:03:19.577287+05	\N
+7c01aea8-6a81-49f5-8604-35116a74fb7b	aea98b93-7bdf-455b-9ad4-a259d69dc76e	93096765-14be-4093-8e53-81caba6de3aa	Капуста ( 1-1.5 кг)	Капуста ( 1-1.5 кг)	2022-06-21 11:04:41.868596+05	2022-06-21 11:04:41.868596+05	\N
+6bffd071-c3bb-4bb5-b89f-8c1354abe2bf	aea98b93-7bdf-455b-9ad4-a259d69dc76e	070d7096-2fdd-4327-b0b6-99b13af1570f	Моющее средство Persil "Премиум" Color Gel 1.17 л	Моющее средство Persil "Премиум" Color Gel 1.17 л	2022-06-21 11:06:35.191806+05	2022-06-21 11:06:35.191806+05	\N
+2fbed026-477a-4ac7-935c-3236611f645c	aea98b93-7bdf-455b-9ad4-a259d69dc76e	aee7abe3-c6cc-4562-bf67-3f87e952611b	Моющее средство Persil "Color" 1.5 кг	Моющее средство Persil "Color" 1.5 кг	2022-06-21 11:07:41.770219+05	2022-06-21 11:07:41.770219+05	\N
+efb37f46-e0b6-4edf-a8e0-75cd07d9e9d4	aea98b93-7bdf-455b-9ad4-a259d69dc76e	205b50c5-da4b-4edf-adac-54f93dc99253	Моющее средство Persil для ручной стирки "360° Свежесть от Vernel" 410 г	Моющее средство Persil для ручной стирки "360° Свежесть от Vernel" 410 г	2022-06-21 11:10:49.551943+05	2022-06-21 11:10:49.551943+05	\N
+985569b5-a0cc-4690-9c88-301718afe3f5	aea98b93-7bdf-455b-9ad4-a259d69dc76e	c9307e74-88a2-4d96-96ec-6f04e42ad0cb	Гель для стирки Qualita универсальный 1000 мл (дойпак)	Гель для стирки Qualita универсальный 1000 мл (дойпак)	2022-06-21 11:11:48.008194+05	2022-06-21 11:11:48.008194+05	\N
+1a2d4b3e-5845-4fc7-9474-fd7f5d2105c0	aea98b93-7bdf-455b-9ad4-a259d69dc76e	f3208845-80d9-4ccb-9ad2-07a8ee2832c6	Мыло Nivea "Клубника и молоко" 90 гр	Мыло Nivea "Клубника и молоко" 90 гр	2022-06-21 11:13:34.476113+05	2022-06-21 11:13:34.476113+05	\N
+08c3c457-9fc4-43a6-83da-b6baa82fc56c	aea98b93-7bdf-455b-9ad4-a259d69dc76e	7bab1a39-0c66-4c1e-9f9c-7f25e050daa5	Антибактериальное туалетое мыло Protex "Aloe" 90 г	Антибактериальное туалетое мыло Protex "Aloe" 90 г	2022-06-21 11:14:39.166369+05	2022-06-21 11:14:39.166369+05	\N
+80c8a381-1180-433d-acdc-c1ba48f14605	aea98b93-7bdf-455b-9ad4-a259d69dc76e	c182ee68-2717-4604-b0ab-0e6994e61ff0	Жидкое мыло Fa "Аромат лайма" 250 мл	Жидкое мыло Fa "Аромат лайма" 250 мл	2022-06-21 11:17:33.349547+05	2022-06-21 11:17:33.349547+05	\N
 397aea3c-6e37-43d8-b254-c780c2f8d248	aea98b93-7bdf-455b-9ad4-a259d69dc76e	4ae4d83c-56ad-4d99-9d6f-e0dd77f9c982	Жидкое крем-мыло увлажняющее Aura Clean "Черничный йогурт" 1 л	Жидкое крем-мыло увлажняющее Aura Clean "Черничный йогурт" 1 л	2022-06-21 11:18:25.061144+05	2022-06-21 11:18:25.061144+05	\N
+3c2982cb-96dd-4a8a-83d5-f434ba8924e3	aea98b93-7bdf-455b-9ad4-a259d69dc76e	029f6bde-9ead-43e0-88b7-214b1dd831ee	Жидкое крем-мыло увлажняющее Aura Clean "Черничный йогурт" 1 л	Жидкое крем-мыло увлажняющее Aura Clean "Черничный йогурт" 1 л	2022-07-27 11:33:12.125939+05	2022-07-27 11:33:12.125939+05	\N
+2ef32865-445c-4ee3-9187-033732891a8e	aea98b93-7bdf-455b-9ad4-a259d69dc76e	f7000691-bc1a-4f98-9c2c-73963b87dbe0	Жидкое крем-мыло увлажняющее Aura Clean "Черничный йогурт" 1 л	Жидкое крем-мыло увлажняющее Aura Clean "Черничный йогурт" 1 л	2022-07-27 11:33:24.693864+05	2022-07-27 11:33:24.693864+05	\N
+85c0312d-8e52-4ca4-acfc-a892ba1ae98b	aea98b93-7bdf-455b-9ad4-a259d69dc76e	c9100c0c-0e40-4c00-b987-79872f751cbb	Жидкое крем-мыло увлажняющее Aura Clean "Черничный йогурт" 1 л	Жидкое крем-мыло увлажняющее Aura Clean "Черничный йогурт" 1 л	2022-07-27 11:33:31.404753+05	2022-07-27 11:33:31.404753+05	\N
+ee776393-79b2-4561-8095-b8bfc58c916e	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	f7000691-bc1a-4f98-9c2c-73963b87dbe0	Nemlendiriji suwuk sabyn Aura Clean "Черничный йогурт" 1 ltr	Nemlendiriji suwuk sabyn Aura Clean "Черничный йогурт" 1 ltr	2022-07-27 11:33:24.586402+05	2022-07-27 11:33:24.586402+05	\N
+4e9092c1-b5b2-491b-ac3e-db2385d967ae	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	c9100c0c-0e40-4c00-b987-79872f751cbb	Nemlendiriji suwuk sabyn Aura Clean "Черничный йогурт" 1 ltr	Nemlendiriji suwuk sabyn Aura Clean "Черничный йогурт" 1 ltr	2022-07-27 11:33:31.319045+05	2022-07-27 11:33:31.319045+05	\N
+ce316f6c-cd44-4cfd-a8ed-a49f84198b81	aea98b93-7bdf-455b-9ad4-a259d69dc76e	525af569-06b6-440a-ab5a-6ee0b39cf51d	Пятновыводитель -отбеливатель "G-OXI spray white" 600 мл	Пятновыводитель -отбеливатель "G-OXI spray white" 600 мл	2022-06-20 12:37:45.31285+05	2022-06-20 12:37:45.31285+05	\N
+aa4f3f0a-0f35-4ef5-81d3-843a8e18e529	aea98b93-7bdf-455b-9ad4-a259d69dc76e	0d356bb1-c695-4b29-b199-bdff967abfe2	Пятновыводитель для цветных вещей "G-OXI spray color" 600 мл	Пятновыводитель для цветных вещей "G-OXI spray color" 600 мл	2022-06-20 12:40:33.294199+05	2022-06-20 12:40:33.294199+05	\N
+cd875a75-f302-42ae-9529-4a939b732907	aea98b93-7bdf-455b-9ad4-a259d69dc76e	e3f8aebb-1451-43a3-9e9b-582da01c8d08	Гель для душа Nivea Men "Эксремальная свежесть" 250 мл	Гель для душа Nivea Men "Эксремальная свежесть" 250 мл	2022-06-20 12:41:56.372671+05	2022-06-20 12:41:56.372671+05	\N
+a7be771a-2f53-4ad7-878b-ca54fd302f2a	aea98b93-7bdf-455b-9ad4-a259d69dc76e	ec4963db-c429-4135-9790-d3860c350bc5	Киви (500 г)	Киви (500 г)	2022-06-21 10:28:00.49526+05	2022-06-21 10:28:00.49526+05	\N
+7aa7eb37-c2d9-4379-a715-0b96cf81acbf	aea98b93-7bdf-455b-9ad4-a259d69dc76e	3b6d2d59-7ad4-4392-b7de-5a1d6bd003e1	(2+1) Печенье сэндвич с молочным кремом Ülker "Saklıköy" 100 г (3 шт)	(2+1) Печенье сэндвич с молочным кремом Ülker "Saklıköy" 100 г (3 шт)	2022-06-20 12:43:47.840415+05	2022-06-20 12:43:47.840415+05	\N
+d5682400-52be-4703-94c4-0865ad136dc1	aea98b93-7bdf-455b-9ad4-a259d69dc76e	4a6b57e1-18d2-4aac-8346-576d3897967e	Тряпка для кухни из микрофибры Parex (оранжевый) + Губки для посуды "Viomax" (5 шт)	Тряпка для кухни из микрофибры Parex (оранжевый) + Губки для посуды "Viomax" (5 шт)	2022-06-20 12:47:57.000678+05	2022-06-20 12:47:57.000678+05	\N
+7bab00a3-b19f-4be9-88c3-267790830662	aea98b93-7bdf-455b-9ad4-a259d69dc76e	9a0572df-3006-426e-a623-11c0cbc930ea	Ополаскиватель для полости рта Listerine® Expert "Ночное Восстановление" 400 мл + "Свежая Мята" 250 мл	Ополаскиватель для полости рта Listerine® Expert "Ночное Восстановление" 400 мл + "Свежая Мята" 250 мл	2022-06-20 12:49:20.546448+05	2022-06-20 12:49:20.546448+05	\N
+16a440c8-d3e2-4dc9-8d48-9f3a733bb18c	aea98b93-7bdf-455b-9ad4-a259d69dc76e	1a8935fd-c6ab-4656-b173-826c487a2274	Подарочный набор Johnson's детский гель для душа Johnson's 300 мл + детский ополаскиватель полости рта Listerine 250 мл	Подарочный набор Johnson's детский гель для душа Johnson's 300 мл + детский ополаскиватель полости рта Listerine 250 мл	2022-06-21 10:15:31.626337+05	2022-06-21 10:15:31.626337+05	\N
+f1d0c111-921c-4420-9460-7a64562500ce	aea98b93-7bdf-455b-9ad4-a259d69dc76e	b4499063-096e-4fa6-9e21-a47185afd829	Подарочный Набор Head & Shoulders "Бальзам-ополаскиватель для волос 275 мл + Шампунь против перхоти 400 мл	Подарочный Набор Head & Shoulders "Бальзам-ополаскиватель для волос 275 мл + Шампунь против перхоти 400 мл	2022-06-21 10:17:07.718729+05	2022-06-21 10:17:07.718729+05	\N
+c8163361-10c7-4402-9dfd-bc66277fcc8e	aea98b93-7bdf-455b-9ad4-a259d69dc76e	538f0688-30ce-497b-9a0e-cd53d0d5239d	Шампунь-гель для душ "Calming Peak" 3в1, 380 мл	Шампунь-гель для душ "Calming Peak" 3в1, 380 мл	2022-06-21 10:21:35.556254+05	2022-06-21 10:21:35.556254+05	\N
+15acb070-ded8-4b88-9278-8026e2db07a4	aea98b93-7bdf-455b-9ad4-a259d69dc76e	0dc06a1f-e25a-4c3d-8310-09985e905262	Салфетка из микрофибры Mikrosan "Güderi" 40x50 см (1 шт)	Салфетка из микрофибры Mikrosan "Güderi" 40x50 см (1 шт)	2022-06-21 10:23:26.470717+05	2022-06-21 10:23:26.470717+05	\N
+1dd4e733-0808-4aae-a477-991b52e2fd6d	aea98b93-7bdf-455b-9ad4-a259d69dc76e	1fa25151-9c63-4554-a79d-faf6cc78ef69	Кофе Carte Noire, пакет 75 г	Кофе Carte Noire, пакет 75 г	2022-06-21 10:33:59.001019+05	2022-06-21 10:33:59.001019+05	\N
+6c8e92ac-6a8a-48c0-ae3d-7719ba8cb142	aea98b93-7bdf-455b-9ad4-a259d69dc76e	d95aabd1-5a3a-47cc-aab5-9c6025e12280	Кофе Jacobs Monarch, стеклянная банка 47.5 г	Кофе Jacobs Monarch, стеклянная банка 47.5 г	2022-06-21 10:35:13.159508+05	2022-06-21 10:35:13.159508+05	\N
+f35164cc-3f9e-40fa-8bc3-ceab0c83f0d5	aea98b93-7bdf-455b-9ad4-a259d69dc76e	d59506eb-aa84-4127-a411-5c5f95350d15	Кофе Jacobs Monarch, пакет 190 г	Кофе Jacobs Monarch, пакет 190 г	2022-06-21 10:37:39.67119+05	2022-06-21 10:37:39.67119+05	\N
+58d42832-041a-46e7-9872-4a7d31bb447c	aea98b93-7bdf-455b-9ad4-a259d69dc76e	ab6ba3a4-0d3a-4510-acd0-feb4fe48fc19	Кофе Jacobs Hazelnut (лесной орех) 3в1, стик 15 г	Кофе Jacobs Hazelnut (лесной орех) 3в1, стик 15 г	2022-06-21 10:39:18.406658+05	2022-06-21 10:39:18.406658+05	\N
+cd29576b-3cd2-4661-8060-bb14619ea840	aea98b93-7bdf-455b-9ad4-a259d69dc76e	ce76ca4c-0ffb-4dd7-a252-3d3eaa6da732	Кофе Nescafe Classic, стик 2 гр	Кофе Nescafe Classic, стик 2 гр	2022-06-21 10:40:32.431712+05	2022-06-21 10:40:32.431712+05	\N
+83996676-1a1f-47aa-9e9c-25609fb714e7	aea98b93-7bdf-455b-9ad4-a259d69dc76e	2072a0fb-bbc4-4231-a7a4-dad00bb0a892	Горячий шоколад "Kentcafe" карамель 19 г	Горячий шоколад "Kentcafe" карамель 19 г	2022-06-21 10:41:30.476604+05	2022-06-21 10:41:30.476604+05	\N
+503036b8-f987-4dd3-be4e-6a877f81c3f2	aea98b93-7bdf-455b-9ad4-a259d69dc76e	0a6863e2-7ed9-4fcd-9875-270fb778b33e	Молочный шоколад Eti "Adicto" 70 гр	Молочный шоколад Eti "Adicto" 70 гр	2022-06-21 10:48:09.33918+05	2022-06-21 10:48:09.33918+05	\N
+c584d84a-ff88-4dc9-92d1-ec3e1199db3f	aea98b93-7bdf-455b-9ad4-a259d69dc76e	49381c4e-298d-43b7-8ae4-8dbe6e7da581	Шоколад Alpen Gold горький, 70% какао 80 гр	Шоколад Alpen Gold горький, 70% какао 80 гр	2022-06-21 10:49:08.696641+05	2022-06-21 10:49:08.696641+05	\N
+c23b169b-90db-4185-bca6-3efef801d817	aea98b93-7bdf-455b-9ad4-a259d69dc76e	c1f8c7cb-081e-4f99-aeb3-0bc84153295e	Шоколад KitKat Senses "Double Chocolate" 112 gr	Шоколад KitKat Senses "Double Chocolate" 112 gr	2022-06-21 10:49:54.775079+05	2022-06-21 10:49:54.775079+05	\N
+852ec6e7-4492-4bf9-af62-e32b4813774c	aea98b93-7bdf-455b-9ad4-a259d69dc76e	0cbe2487-c709-403f-a6c4-4f1a73fd3f78	Темный пористый шоколад Alpen Gold "Aerated" 80 г	Темный пористый шоколад Alpen Gold "Aerated" 80 г	2022-06-21 10:50:40.63247+05	2022-06-21 10:50:40.63247+05	\N
+0c355cb3-3f46-4a0c-81b2-fa995dc3b371	aea98b93-7bdf-455b-9ad4-a259d69dc76e	cbb0047a-e543-41a8-845b-8439d11638f4	Темный пористый шоколад Alpen Gold "Aerated" 80 г	Темный пористый шоколад Alpen Gold "Aerated" 80 г	2022-06-21 10:54:40.602784+05	2022-06-21 10:54:40.602784+05	\N
+5cd26037-b4e0-45b3-8fcc-60b11ff48499	aea98b93-7bdf-455b-9ad4-a259d69dc76e	c5520db8-19de-4209-b99c-826a342210c3	Вафли Kinder "Bueno" 43 г	Вафли Kinder "Bueno" 43 г	2022-06-21 10:59:22.818116+05	2022-06-21 10:59:22.818116+05	\N
 \.
 
 
