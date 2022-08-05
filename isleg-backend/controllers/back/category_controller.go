@@ -3,6 +3,7 @@ package controllers
 import (
 	"github/abbgo/isleg/isleg-backend/config"
 	"net/http"
+	"os"
 	"path/filepath"
 	"strconv"
 
@@ -67,8 +68,9 @@ func CreateCategory(c *gin.Context) {
 	}
 
 	parentCategoryID := c.PostForm("parent_category_id")
-	parentCategoryIDUUID, err := uuid.Parse(parentCategoryID)
+
 	if parentCategoryID != "" {
+		rowCategory, err := config.ConnDB().Query("SELECT id FROM categories WHERE id = $1 AND deleted_at IS NULL", parentCategoryID)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
@@ -76,16 +78,23 @@ func CreateCategory(c *gin.Context) {
 			})
 			return
 		}
-	} else {
-		parentCategoryIDUUID = uuid.Nil
-	}
 
-	if parentCategoryIDUUID != uuid.Nil {
-		_, err := config.ConnDB().Query("SELECT id FROM categories WHERE id = $1 AND deleted_at IS NULL", parentCategoryID)
-		if err != nil {
+		var parentCategory string
+
+		for rowCategory.Next() {
+			if err := rowCategory.Scan(&parentCategory); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}
+
+		if parentCategory == "" {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
-				"message": err.Error(),
+				"message": "parent category not found",
 			})
 			return
 		}
@@ -131,7 +140,7 @@ func CreateCategory(c *gin.Context) {
 		}
 	}
 
-	if parentCategoryIDUUID == uuid.Nil && fileName == "" {
+	if parentCategoryID == "" && fileName == "" {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
 			"message": "parent category image is required",
@@ -139,7 +148,7 @@ func CreateCategory(c *gin.Context) {
 		return
 	}
 
-	if parentCategoryIDUUID != uuid.Nil && fileName != "" {
+	if parentCategoryID != "" && fileName != "" {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
 			"message": "child cannot be an image of the category",
@@ -148,8 +157,8 @@ func CreateCategory(c *gin.Context) {
 	}
 
 	// CREATE CATEGORY
-	if parentCategoryIDUUID != uuid.Nil {
-		_, err = config.ConnDB().Exec("INSERT INTO categories (parent_category_id,image,is_home_category) VALUES ($1,$2,$3)", parentCategoryIDUUID, fileName, isHomeCategory)
+	if parentCategoryID != "" {
+		_, err = config.ConnDB().Exec("INSERT INTO categories (parent_category_id,image,is_home_category) VALUES ($1,$2,$3)", parentCategoryID, fileName, isHomeCategory)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
@@ -209,6 +218,216 @@ func CreateCategory(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
 		"message": "category successfully added",
+	})
+
+}
+
+func UpdateCategory(c *gin.Context) {
+
+	ID := c.Param("id")
+	var fileName string
+
+	isHomeCategoryStr := c.PostForm("is_home_category")
+	isHomeCategory, err := strconv.ParseBool(isHomeCategoryStr)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	rowCategor, err := config.ConnDB().Query("SELECT id,image FROM categories WHERE id = $1 AND deleted_at IS NULL", ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	var category_id, image string
+
+	for rowCategor.Next() {
+		if err := rowCategor.Scan(&category_id, &image); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}
+
+	if category_id == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "category not found",
+		})
+		return
+	}
+
+	parentCategoryID := c.PostForm("parent_category_id")
+
+	if parentCategoryID != "" {
+		rowCategory, err := config.ConnDB().Query("SELECT id FROM categories WHERE id = $1 AND deleted_at IS NULL", parentCategoryID)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+
+		var parentCategory string
+
+		for rowCategory.Next() {
+			if err := rowCategory.Scan(&parentCategory); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}
+
+		if parentCategory == "" {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": "parent category not found",
+			})
+			return
+		}
+	}
+
+	// GET ALL LANGUAGE
+	languages, err := GetAllLanguageWithIDAndNameShort()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	// FILE UPLOAD
+	file, errFile := c.FormFile("image")
+	if errFile != nil {
+		fileName = image
+	} else {
+		extension := filepath.Ext(file.Filename)
+		// VALIDATE IMAGE
+		if extension != ".jpg" && extension != ".jpeg" && extension != ".png" && extension != ".gif" {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": "the file must be an image.",
+			})
+			return
+		}
+
+		newFileName := "category" + uuid.New().String() + extension
+		fileName = "uploads/" + newFileName
+
+		if err := os.Remove("./" + image); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}
+
+	// VALIDATE DATA
+	for _, v := range languages {
+		if c.PostForm("name_"+v.NameShort) == "" {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": "name_" + v.NameShort + " is required",
+			})
+			return
+		}
+	}
+
+	if parentCategoryID == "" && fileName == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "parent category image is required",
+		})
+		return
+	}
+
+	if parentCategoryID != "" && fileName != "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "child cannot be an image of the category",
+		})
+		return
+	}
+
+	// UPDATE CATEGORY
+	if parentCategoryID != "" {
+		// _, err = config.ConnDB().Exec("INSERT INTO categories (parent_category_id,image,is_home_category) VALUES ($1,$2,$3)", parentCategoryID, fileName, isHomeCategory)
+		_, err = config.ConnDB().Exec("UPDATE categories SET parent_category_id = $1, image = $2, is_home_category = $3 WHERE id = $4", parentCategoryID, fileName, isHomeCategory, ID)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	} else {
+		// _, err = config.ConnDB().Exec("INSERT INTO categories (image,is_home_category) VALUES ($1,$2)", fileName, isHomeCategory)
+		_, err = config.ConnDB().Exec("UPDATE categories SET image = $1, is_home_category = $2 WHERE id = $3", fileName, isHomeCategory, ID)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}
+
+	if fileName != "" {
+		c.SaveUploadedFile(file, "./"+fileName)
+	}
+
+	// GET ID OFF ADDED CATEGORY
+	// lastCategoryID, err := config.ConnDB().Query("SELECT id FROM categories WHERE deleted_at IS NULL ORDER BY created_at DESC LIMIT 1")
+	// if err != nil {
+	// 	c.JSON(http.StatusBadRequest, gin.H{
+	// 		"status":  false,
+	// 		"message": err.Error(),
+	// 	})
+	// 	return
+	// }
+
+	// var categoryID string
+
+	// for lastCategoryID.Next() {
+	// 	if err := lastCategoryID.Scan(&categoryID); err != nil {
+	// 		c.JSON(http.StatusBadRequest, gin.H{
+	// 			"status":  false,
+	// 			"message": err.Error(),
+	// 		})
+	// 		return
+	// 	}
+	// }
+
+	// CREATE TRANSLATION CATEGORY
+	for _, v := range languages {
+		// _, err := config.ConnDB().Exec("INSERT INTO translation_category (lang_id,category_id,name) VALUES ($1,$2,$3)", v.ID, ID, c.PostForm("name_"+v.NameShort))
+		_, err := config.ConnDB().Exec("UPDATE translation_category SET name = $1 WHERE lang_id = $2 AND category_id = $3", c.PostForm("name_"+v.NameShort), v.ID, ID)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":  true,
+		"message": "category successfully updated",
 	})
 
 }
