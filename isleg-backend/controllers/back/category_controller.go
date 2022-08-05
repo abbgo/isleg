@@ -454,6 +454,40 @@ func GetOneCategory(c *gin.Context) {
 
 }
 
+func GetAllCategory(c *gin.Context) {
+
+	rowCategor, err := config.ConnDB().Query("SELECT id,parent_category_id,image,is_home_category FROM categories WHERE deleted_at IS NULL")
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	var categories []OneCategory
+
+	for rowCategor.Next() {
+		var category OneCategory
+
+		if err := rowCategor.Scan(&category.ID, &category.ParentCategoryID, &category.Image, &category.Image); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+
+		categories = append(categories, category)
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":     true,
+		"categories": categories,
+	})
+
+}
+
 func GetAllCategoryForHeader(langID string) ([]ResultCategory, error) {
 
 	// get all category where parent category id is null
