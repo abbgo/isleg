@@ -591,6 +591,15 @@ func DeleteCategory(c *gin.Context) {
 		return
 	}
 
+	_, err = config.ConnDB().Exec("UPDATE translation_category SET deleted_at = $1 WHERE category_id = $2", currentTime, ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
 	_, err = config.ConnDB().Exec("UPDATE categories SET deleted_at = $1 WHERE parent_category_id = $2", currentTime, ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -600,13 +609,39 @@ func DeleteCategory(c *gin.Context) {
 		return
 	}
 
-	_, err = config.ConnDB().Exec("UPDATE translation_category SET deleted_at = $1 WHERE category_id = $2", currentTime, ID)
+	rowChildCategory, err := config.ConnDB().Query("SELECT id FROM categories WHERE parent_category_id = $1", ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
 			"message": err.Error(),
 		})
 		return
+	}
+
+	var childCategoryIDS []string
+
+	for rowChildCategory.Next() {
+		var childCategoryID string
+		if err := rowChildCategory.Scan(&childCategoryID); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+
+		childCategoryIDS = append(childCategoryIDS, childCategoryID)
+	}
+
+	for _, v := range childCategoryIDS {
+		_, err = config.ConnDB().Exec("UPDATE translation_category SET deleted_at = $1 WHERE category_id = $2", currentTime, v)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
 	}
 
 	_, err = config.ConnDB().Exec("UPDATE category_product SET deleted_at = $1 WHERE category_id = $2", currentTime, ID)
@@ -619,6 +654,15 @@ func DeleteCategory(c *gin.Context) {
 	}
 
 	_, err = config.ConnDB().Exec("UPDATE products SET deleted_at = $1 FROM category_product WHERE category_product.product_id = products.id AND category_product.category_id = $2", currentTime, ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	_, err = config.ConnDB().Exec("UPDATE translation_product SET deleted_at = $1 FROM products,category_product WHERE translation_product.product_id = products.id AND category_product.product_id = products.id  AND category_product.category_id = $2", currentTime, ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -694,6 +738,15 @@ func RestoreCategory(c *gin.Context) {
 		return
 	}
 
+	_, err = config.ConnDB().Exec("UPDATE translation_category SET deleted_at = NULL WHERE category_id = $1", ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
 	_, err = config.ConnDB().Exec("UPDATE categories SET deleted_at = NULL WHERE parent_category_id = $1", ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -703,13 +756,39 @@ func RestoreCategory(c *gin.Context) {
 		return
 	}
 
-	_, err = config.ConnDB().Exec("UPDATE translation_category SET deleted_at = NULL WHERE category_id = $1", ID)
+	rowChildCategory, err := config.ConnDB().Query("SELECT id FROM categories WHERE parent_category_id = $1", ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
 			"message": err.Error(),
 		})
 		return
+	}
+
+	var childCategoryIDS []string
+
+	for rowChildCategory.Next() {
+		var childCategoryID string
+		if err := rowChildCategory.Scan(&childCategoryID); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+
+		childCategoryIDS = append(childCategoryIDS, childCategoryID)
+	}
+
+	for _, v := range childCategoryIDS {
+		_, err = config.ConnDB().Exec("UPDATE translation_category SET deleted_at = NULL WHERE category_id = $1", v)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
 	}
 
 	_, err = config.ConnDB().Exec("UPDATE category_product SET deleted_at = NULL WHERE category_id = $1", ID)
@@ -722,6 +801,15 @@ func RestoreCategory(c *gin.Context) {
 	}
 
 	_, err = config.ConnDB().Exec("UPDATE products SET deleted_at = NULL FROM category_product WHERE category_product.product_id = products.id AND category_product.category_id = $1", ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	_, err = config.ConnDB().Exec("UPDATE translation_product SET deleted_at = NULL FROM products,category_product WHERE translation_product.product_id = products.id AND category_product.product_id = products.id  AND category_product.category_id = $1", ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -752,6 +840,41 @@ func RestoreCategory(c *gin.Context) {
 		"status":  true,
 		"message": "category successfully restored",
 	})
+
+}
+
+func DeletePermanentlyCategory(c *gin.Context) {
+
+	ID := c.Param("id")
+
+	rowCategor, err := config.ConnDB().Query("SELECT id FROM categories WHERE id = $1 AND deleted_at IS NOT NULL", ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	var category_id string
+
+	for rowCategor.Next() {
+		if err := rowCategor.Scan(&category_id); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}
+
+	if category_id == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "category not found",
+		})
+		return
+	}
 
 }
 
