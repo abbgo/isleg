@@ -138,8 +138,8 @@ func CreateCategory(c *gin.Context) {
 			return
 		}
 
-		newFileName := "category" + uuid.New().String() + extension
-		fileName = "uploads/" + newFileName
+		newFileName := uuid.New().String() + extension
+		fileName = "uploads/category/" + newFileName
 	}
 
 	// VALIDATE DATA
@@ -337,8 +337,8 @@ func UpdateCategory(c *gin.Context) {
 			return
 		}
 
-		newFileName := "category" + uuid.New().String() + extension
-		fileName = "uploads/" + newFileName
+		newFileName := uuid.New().String() + extension
+		fileName = "uploads/category/" + newFileName
 
 		if err := os.Remove("./" + image); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{

@@ -44,7 +44,7 @@ func CreateLanguage(c *gin.Context) {
 	}
 
 	// CREATE LANGUAGE
-	_, err = config.ConnDB().Exec("INSERT INTO languages (name_short,flag) VALUES ($1,$2)", strings.ToLower(nameShort), "uploads/"+newFileName)
+	_, err = config.ConnDB().Exec("INSERT INTO languages (name_short,flag) VALUES ($1,$2)", strings.ToLower(nameShort), "uploads/language/"+newFileName)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -363,8 +363,8 @@ func UpdateLanguage(c *gin.Context) {
 			return
 		}
 
-		newFileName := "language" + uuid.New().String() + extensionFile
-		c.SaveUploadedFile(file, "./uploads/"+newFileName)
+		newFileName := uuid.New().String() + extensionFile
+		c.SaveUploadedFile(file, "./uploads/language/"+newFileName)
 
 		if err := os.Remove("./" + flag); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
@@ -374,7 +374,7 @@ func UpdateLanguage(c *gin.Context) {
 			return
 		}
 
-		fileName = "uploads/" + newFileName
+		fileName = "uploads/language/" + newFileName
 	}
 
 	_, err = config.ConnDB().Exec("UPDATE languages SET name_short = $1 , flag = $2 WHERE id = $3", nameShort, fileName, langID)

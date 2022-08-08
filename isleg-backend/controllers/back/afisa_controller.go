@@ -39,8 +39,8 @@ func CreateAfisa(c *gin.Context) {
 			return
 		}
 
-		newFileName := "afisa" + uuid.New().String() + extension
-		fileName = "uploads/" + newFileName
+		newFileName := uuid.New().String() + extension
+		fileName = "uploads/afisa/" + newFileName
 	}
 
 	dataNames := []string{"title", "description"}

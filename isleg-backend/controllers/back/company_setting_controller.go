@@ -43,7 +43,7 @@ func CreateCompanySetting(c *gin.Context) {
 	// FILE UPLOAD
 
 	// LOGO
-	newFileNameLogo, err := pkg.FileUpload("logo", "logo", c)
+	newFileNameLogo, err := pkg.FileUpload("logo", "setting", c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -53,7 +53,7 @@ func CreateCompanySetting(c *gin.Context) {
 	}
 
 	// FAVICON
-	newFileNameFavicon, err := pkg.FileUpload("favicon", "favicon", c)
+	newFileNameFavicon, err := pkg.FileUpload("favicon", "setting", c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -63,7 +63,7 @@ func CreateCompanySetting(c *gin.Context) {
 	}
 
 	// CREATE COMPANY SETTING
-	_, err = config.ConnDB().Exec("INSERT INTO company_setting (logo,favicon,email,instagram) VALUES ($1,$2,$3,$4)", "uploads/"+newFileNameLogo, "uploads/"+newFileNameFavicon, email, instagram)
+	_, err = config.ConnDB().Exec("INSERT INTO company_setting (logo,favicon,email,instagram) VALUES ($1,$2,$3,$4)", "uploads/setting/"+newFileNameLogo, "uploads/setting/"+newFileNameFavicon, email, instagram)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -137,8 +137,8 @@ func UpdateCompanySetting(c *gin.Context) {
 			return
 		}
 
-		newFileName := "logo" + uuid.New().String() + extensionFile
-		c.SaveUploadedFile(fileLogo, "./uploads/"+newFileName)
+		newFileName := uuid.New().String() + extensionFile
+		c.SaveUploadedFile(fileLogo, "./uploads/setting/"+newFileName)
 
 		if err := os.Remove("./" + logo); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
@@ -148,7 +148,7 @@ func UpdateCompanySetting(c *gin.Context) {
 			return
 		}
 
-		logoName = "uploads/" + newFileName
+		logoName = "uploads/setting/" + newFileName
 	}
 
 	fileFavicon, err := c.FormFile("favicon")
@@ -165,8 +165,8 @@ func UpdateCompanySetting(c *gin.Context) {
 			return
 		}
 
-		newFileName := "favicon" + uuid.New().String() + extensionFile
-		c.SaveUploadedFile(fileFavicon, "./uploads/"+newFileName)
+		newFileName := uuid.New().String() + extensionFile
+		c.SaveUploadedFile(fileFavicon, "./uploads/setting/"+newFileName)
 
 		if err := os.Remove("./" + favicon); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
@@ -176,7 +176,7 @@ func UpdateCompanySetting(c *gin.Context) {
 			return
 		}
 
-		faviconName = "uploads/" + newFileName
+		faviconName = "uploads/setting/" + newFileName
 	}
 
 	_, err = config.ConnDB().Exec("UPDATE company_setting SET logo = $1,favicon=$2,email=$3,instagram=$4", logoName, faviconName, email, instagram)

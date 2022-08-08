@@ -146,8 +146,8 @@ func CreateProduct(c *gin.Context) {
 		return
 	}
 
-	newFileName := "productMain" + uuid.New().String() + extensionFile
-	c.SaveUploadedFile(mainImagePathFile, "./uploads/"+newFileName)
+	newFileName := uuid.New().String() + extensionFile
+	c.SaveUploadedFile(mainImagePathFile, "./uploads/product/"+newFileName)
 
 	// upload images
 	files := c.Request.MultipartForm.File["images"]
@@ -162,13 +162,13 @@ func CreateProduct(c *gin.Context) {
 			})
 			return
 		}
-		fileName := "product" + uuid.New().String() + extension
-		c.SaveUploadedFile(v, "./uploads/"+fileName)
-		imagePaths = append(imagePaths, "uploads/"+fileName)
+		fileName := uuid.New().String() + extension
+		c.SaveUploadedFile(v, "./uploads/product/"+fileName)
+		imagePaths = append(imagePaths, "uploads/product/"+fileName)
 	}
 
 	// create product
-	_, err = config.ConnDB().Exec("INSERT INTO products (brend_id,price,old_price,amount,product_code,main_image,images) VALUES ($1,$2,$3,$4,$5,$6,$7)", brendIDUUID, price, oldPrice, amount, productCode, "uploads/"+newFileName, pq.StringArray(imagePaths))
+	_, err = config.ConnDB().Exec("INSERT INTO products (brend_id,price,old_price,amount,product_code,main_image,images) VALUES ($1,$2,$3,$4,$5,$6,$7)", brendIDUUID, price, oldPrice, amount, productCode, "uploads/product/"+newFileName, pq.StringArray(imagePaths))
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{
 			"status":  false,
