@@ -158,11 +158,7 @@ func GetOneTranslationPayment(c *gin.Context) {
 
 func GetTranslationPayment(c *gin.Context) {
 
-	// GET DATA FROM ROUTE PARAMETER
-	langShortName := c.Param("lang")
-
-	// GET language id
-	langID, err := GetLangID(langShortName)
+	langID, err := CheckLanguage(c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,

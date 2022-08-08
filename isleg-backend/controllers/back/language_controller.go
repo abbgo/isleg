@@ -900,3 +900,18 @@ func GetLangID(langShortName string) (string, error) {
 	return langID, nil
 
 }
+
+func CheckLanguage(c *gin.Context) (string, error) {
+
+	// GET DATA FROM ROUTE PARAMETER
+	langShortName := c.Param("lang")
+
+	// GET ID OFF LANGUAGE
+	langID, err := GetLangID(langShortName)
+	if err != nil {
+		return "", err
+	}
+
+	return langID, nil
+
+}
