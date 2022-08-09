@@ -4,6 +4,7 @@ import (
 	"github/abbgo/isleg/isleg-backend/config"
 	"github/abbgo/isleg/isleg-backend/models"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -113,7 +114,9 @@ func UpdateTranslationHeaderByID(c *gin.Context) {
 		return
 	}
 
-	_, err = config.ConnDB().Exec("UPDATE translation_header SET research = $1 , phone = $2, password = $3,forgot_password = $4,sign_in = $5,sign_up = $6,name = $7,password_verification = $8,verify_secure = $9, my_information = $10, my_favorites = $11, my_orders = $12, log_out = $13, basket = $14 WHERE id = $15", c.PostForm("research"), c.PostForm("phone"), c.PostForm("password"), c.PostForm("forgot_password"), c.PostForm("sign_in"), c.PostForm("sign_up"), c.PostForm("name"), c.PostForm("password_verification"), c.PostForm("verify_secure"), c.PostForm("my_information"), c.PostForm("my_favorites"), c.PostForm("my_orders"), c.PostForm("log_out"), c.PostForm("basket"), id)
+	currentTime := time.Now()
+
+	_, err = config.ConnDB().Exec("UPDATE translation_header SET research = $1 , phone = $2, password = $3,forgot_password = $4,sign_in = $5,sign_up = $6,name = $7,password_verification = $8,verify_secure = $9, my_information = $10, my_favorites = $11, my_orders = $12, log_out = $13, basket = $14 , updated_at = $16 WHERE id = $15", c.PostForm("research"), c.PostForm("phone"), c.PostForm("password"), c.PostForm("forgot_password"), c.PostForm("sign_in"), c.PostForm("sign_up"), c.PostForm("name"), c.PostForm("password_verification"), c.PostForm("verify_secure"), c.PostForm("my_information"), c.PostForm("my_favorites"), c.PostForm("my_orders"), c.PostForm("log_out"), c.PostForm("basket"), id, currentTime)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,

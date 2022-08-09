@@ -376,9 +376,11 @@ func UpdateCategoryByID(c *gin.Context) {
 		return
 	}
 
+	currentTime := time.Now()
+
 	// UPDATE CATEGORY
 	if parentCategoryID != "" {
-		_, err = config.ConnDB().Exec("UPDATE categories SET parent_category_id = $1, image = $2, is_home_category = $3 WHERE id = $4", parentCategoryID, fileName, isHomeCategory, ID)
+		_, err = config.ConnDB().Exec("UPDATE categories SET parent_category_id = $1, image = $2, is_home_category = $3 , updated_at = $5 WHERE id = $4", parentCategoryID, fileName, isHomeCategory, ID, currentTime)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
@@ -387,7 +389,7 @@ func UpdateCategoryByID(c *gin.Context) {
 			return
 		}
 	} else {
-		_, err = config.ConnDB().Exec("UPDATE categories SET image = $1, is_home_category = $2 WHERE id = $3", fileName, isHomeCategory, ID)
+		_, err = config.ConnDB().Exec("UPDATE categories SET image = $1, is_home_category = $2 , updated_at = $4 WHERE id = $3", fileName, isHomeCategory, ID, currentTime)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
@@ -403,7 +405,7 @@ func UpdateCategoryByID(c *gin.Context) {
 
 	// UPDATE TRANSLATION CATEGORY
 	for _, v := range languages {
-		_, err := config.ConnDB().Exec("UPDATE translation_category SET name = $1 WHERE lang_id = $2 AND category_id = $3", c.PostForm("name_"+v.NameShort), v.ID, ID)
+		_, err := config.ConnDB().Exec("UPDATE translation_category SET name = $1 , updated_at = $4 WHERE lang_id = $2 AND category_id = $3", c.PostForm("name_"+v.NameShort), v.ID, ID, currentTime)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,

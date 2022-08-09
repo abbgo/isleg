@@ -134,7 +134,9 @@ func UpdateBrendByID(c *gin.Context) {
 		fileName = "uploads/brend/" + newFileName
 	}
 
-	_, err = config.ConnDB().Exec("UPDATE brends SET name = $1 , image = $2 WHERE id = $3", name, fileName, ID)
+	currentTime := time.Now()
+
+	_, err = config.ConnDB().Exec("UPDATE brends SET name = $1 , image = $2 , updated_at = $4 WHERE id = $3", name, fileName, ID, currentTime)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,

@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -179,7 +180,9 @@ func UpdateCompanySetting(c *gin.Context) {
 		faviconName = "uploads/setting/" + newFileName
 	}
 
-	_, err = config.ConnDB().Exec("UPDATE company_setting SET logo = $1,favicon=$2,email=$3,instagram=$4", logoName, faviconName, email, instagram)
+	currentTime := time.Now()
+
+	_, err = config.ConnDB().Exec("UPDATE company_setting SET logo = $1,favicon=$2,email=$3,instagram=$4,updated_at=$5", logoName, faviconName, email, instagram, currentTime)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,

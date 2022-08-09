@@ -4,6 +4,7 @@ import (
 	"github/abbgo/isleg/isleg-backend/config"
 	"github/abbgo/isleg/isleg-backend/models"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -107,7 +108,9 @@ func UpdateTranslationContactByID(c *gin.Context) {
 		return
 	}
 
-	_, err = config.ConnDB().Exec("UPDATE translation_contact SET full_name = $1, email = $2 , phone = $3 , letter = $4 , company_phone = $5 , imo = $6, company_email = $7, instagram = $8, button_text = $9  WHERE id = $10", c.PostForm("full_name"), c.PostForm("email"), c.PostForm("phone"), c.PostForm("letter"), c.PostForm("company_phone"), c.PostForm("imo"), c.PostForm("company_email"), c.PostForm("instagram"), c.PostForm("button_text"), id)
+	currentTime := time.Now()
+
+	_, err = config.ConnDB().Exec("UPDATE translation_contact SET full_name = $1, email = $2 , phone = $3 , letter = $4 , company_phone = $5 , imo = $6, company_email = $7, instagram = $8, button_text = $9 , updated_at = $11 WHERE id = $10", c.PostForm("full_name"), c.PostForm("email"), c.PostForm("phone"), c.PostForm("letter"), c.PostForm("company_phone"), c.PostForm("imo"), c.PostForm("company_email"), c.PostForm("instagram"), c.PostForm("button_text"), id, currentTime)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,

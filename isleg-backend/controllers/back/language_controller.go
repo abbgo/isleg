@@ -377,7 +377,9 @@ func UpdateLanguageByID(c *gin.Context) {
 		fileName = "uploads/language/" + newFileName
 	}
 
-	_, err = config.ConnDB().Exec("UPDATE languages SET name_short = $1 , flag = $2 WHERE id = $3", nameShort, fileName, langID)
+	currentTime := time.Now()
+
+	_, err = config.ConnDB().Exec("UPDATE languages SET name_short = $1 , flag = $2 , updated_at = $4 WHERE id = $3", nameShort, fileName, langID, currentTime)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
