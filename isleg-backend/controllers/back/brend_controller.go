@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -14,6 +15,11 @@ import (
 type BrendForHomePage struct {
 	ID    uuid.UUID `json:"id"`
 	Image string    `json:"image"`
+}
+
+type OneBrend struct {
+	Name  string `json:"name"`
+	Image string `json:"image"`
 }
 
 func CreateBrend(c *gin.Context) {
@@ -140,6 +146,149 @@ func UpdateBrend(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
 		"message": "brend successfully updated",
+	})
+
+}
+
+func GetBrend(c *gin.Context) {
+
+	ID := c.Param("id")
+
+	rowBrend, err := config.ConnDB().Query("SELECT name,image FROM brends WHERE id = $1 AND deleted_at IS NULL", ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	var brend OneBrend
+
+	for rowBrend.Next() {
+		if err := rowBrend.Scan(&brend.Name, &brend.Image); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}
+
+	if brend.Name == "" || brend.Image == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "record not found",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status": true,
+		"brend":  brend,
+	})
+
+}
+
+func GetBrends(c *gin.Context) {
+
+	rowBrends, err := config.ConnDB().Query("SELECT name,image FROM brends WHERE deleted_at IS NULL")
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	var brends []OneBrend
+
+	for rowBrends.Next() {
+		var brend OneBrend
+
+		if err := rowBrends.Scan(&brend.Name, &brend.Image); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+
+		brends = append(brends, brend)
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status": true,
+		"brends": brends,
+	})
+
+}
+
+func DeleteBrend(c *gin.Context) {
+
+	ID := c.Param("id")
+
+	rowBrend, err := config.ConnDB().Query("SELECT image FROM brends WHERE id = $1 AND deleted_at IS NULL", ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	var image string
+
+	for rowBrend.Next() {
+		if err := rowBrend.Scan(&image); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}
+
+	if image == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "record not found",
+		})
+		return
+	}
+
+	currentTime := time.Now()
+
+	_, err = config.ConnDB().Exec("UPDATE brends SET deleted_at = $1 WHERE id = $2", currentTime, ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	_, err = config.ConnDB().Exec("UPDATE products SET deleted_at = $1 WHERE brend_id = $2", currentTime, ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	_, err = config.ConnDB().Exec("UPDATE translation_product SET deleted_at = $1 FROM products WHERE translation_product.product_id=products.id AND products.brend_id = $2", currentTime, ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":  true,
+		"message": "brend successfully deleted",
 	})
 
 }
