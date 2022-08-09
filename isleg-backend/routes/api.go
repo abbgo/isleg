@@ -42,7 +42,6 @@ func Routes() *gin.Engine {
 		back.POST("/company-setting", backController.CreateCompanySetting)
 		back.PUT("/company-setting", backController.UpdateCompanySetting)
 		back.GET("/company-setting", backController.GetOneCompanySetting)
-		// delete restore permanently delete yazmalymy ???
 
 		back.POST("/translation-header", backController.CreateTranslationHeader)
 		back.PUT("/translation-header/:id", backController.UpdateTranslationHeader)
@@ -85,6 +84,7 @@ func Routes() *gin.Engine {
 		back.DELETE("/delete-category/:id", backController.DeletePermanentlyCategory)
 
 		back.POST("/brend", backController.CreateBrend)
+		back.PUT("/brend/:id", backController.UpdateBrend)
 
 		back.POST("/product", backController.CreateProduct)
 
