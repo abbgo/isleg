@@ -306,7 +306,7 @@ func CreateLanguage(c *gin.Context) {
 
 }
 
-func UpdateLanguage(c *gin.Context) {
+func UpdateLanguageByID(c *gin.Context) {
 
 	langID := c.Param("id")
 	nameShort := c.PostForm("name_short")
@@ -393,7 +393,7 @@ func UpdateLanguage(c *gin.Context) {
 
 }
 
-func GetOneLanguage(c *gin.Context) {
+func GetLanguageByID(c *gin.Context) {
 
 	langID := c.Param("id")
 
@@ -433,7 +433,7 @@ func GetOneLanguage(c *gin.Context) {
 
 }
 
-func GetAllLanguage(c *gin.Context) {
+func GetLanguages(c *gin.Context) {
 	languages, err := GetAllLanguageForHeader()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -450,7 +450,7 @@ func GetAllLanguage(c *gin.Context) {
 
 }
 
-func DeleteLanguage(c *gin.Context) {
+func DeleteLanguageByID(c *gin.Context) {
 
 	langID := c.Param("id")
 
@@ -618,7 +618,7 @@ func DeleteLanguage(c *gin.Context) {
 
 }
 
-func RestoreLanguage(c *gin.Context) {
+func RestoreLanguageByID(c *gin.Context) {
 
 	langID := c.Param("id")
 
@@ -784,7 +784,7 @@ func RestoreLanguage(c *gin.Context) {
 
 }
 
-func DeletePermanentlyLanguage(c *gin.Context) {
+func DeletePermanentlyLanguageByID(c *gin.Context) {
 
 	langID := c.Param("id")
 

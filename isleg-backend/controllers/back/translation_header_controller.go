@@ -68,7 +68,7 @@ func CreateTranslationHeader(c *gin.Context) {
 
 }
 
-func UpdateTranslationHeader(c *gin.Context) {
+func UpdateTranslationHeaderByID(c *gin.Context) {
 
 	trHead := c.Param("id")
 
@@ -129,7 +129,7 @@ func UpdateTranslationHeader(c *gin.Context) {
 
 }
 
-func GetOneTranslationHeader(c *gin.Context) {
+func GetTranslationHeaderByID(c *gin.Context) {
 
 	trHead := c.Param("id")
 

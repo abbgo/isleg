@@ -235,7 +235,7 @@ func CreateCategory(c *gin.Context) {
 
 }
 
-func UpdateCategory(c *gin.Context) {
+func UpdateCategoryByID(c *gin.Context) {
 
 	ID := c.Param("id")
 	var fileName string
@@ -420,7 +420,7 @@ func UpdateCategory(c *gin.Context) {
 
 }
 
-func GetOneCategory(c *gin.Context) {
+func GetCategoryByID(c *gin.Context) {
 
 	ID := c.Param("id")
 
@@ -460,7 +460,7 @@ func GetOneCategory(c *gin.Context) {
 
 }
 
-func GetAllCategory(c *gin.Context) {
+func GetCategories(c *gin.Context) {
 
 	rowCategor, err := config.ConnDB().Query("SELECT id,parent_category_id,image,is_home_category FROM categories WHERE deleted_at IS NULL")
 	if err != nil {
@@ -552,7 +552,7 @@ func GetAllCategoryForHeader(langID string) ([]ResultCategory, error) {
 
 }
 
-func DeleteCategory(c *gin.Context) {
+func DeleteCategoryByID(c *gin.Context) {
 
 	ID := c.Param("id")
 
@@ -746,7 +746,7 @@ func DeleteCategory(c *gin.Context) {
 
 }
 
-func RestoreCategory(c *gin.Context) {
+func RestoreCategoryByID(c *gin.Context) {
 
 	ID := c.Param("id")
 
@@ -938,7 +938,7 @@ func RestoreCategory(c *gin.Context) {
 
 }
 
-func DeletePermanentlyCategory(c *gin.Context) {
+func DeletePermanentlyCategoryByID(c *gin.Context) {
 
 	ID := c.Param("id")
 

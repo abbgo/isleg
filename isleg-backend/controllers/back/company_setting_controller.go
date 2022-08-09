@@ -195,7 +195,7 @@ func UpdateCompanySetting(c *gin.Context) {
 
 }
 
-func GetOneCompanySetting(c *gin.Context) {
+func GetCompanySetting(c *gin.Context) {
 
 	rowComSet, err := config.ConnDB().Query("SELECT logo,favicon,email,instagram FROM company_setting WHERE deleted_at IS NULL ORDER BY created_at ASC LIMIT 1")
 	if err != nil {

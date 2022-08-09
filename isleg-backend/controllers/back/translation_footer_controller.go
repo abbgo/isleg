@@ -59,7 +59,7 @@ func CreateTranslationFooter(c *gin.Context) {
 
 }
 
-func UpdateTranslationFooter(c *gin.Context) {
+func UpdateTranslationFooterByID(c *gin.Context) {
 
 	trFootID := c.Param("id")
 
@@ -120,7 +120,7 @@ func UpdateTranslationFooter(c *gin.Context) {
 
 }
 
-func GetOneTranslationFooter(c *gin.Context) {
+func GetTranslationFooterByID(c *gin.Context) {
 
 	trFootID := c.Param("id")
 

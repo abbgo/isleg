@@ -62,7 +62,7 @@ func CreateTranslationContact(c *gin.Context) {
 
 }
 
-func UpdateTranslationContact(c *gin.Context) {
+func UpdateTranslationContactByID(c *gin.Context) {
 
 	ID := c.Param("id")
 
@@ -123,7 +123,7 @@ func UpdateTranslationContact(c *gin.Context) {
 
 }
 
-func GetOneTranslationContact(c *gin.Context) {
+func GetTranslationContactByID(c *gin.Context) {
 
 	ID := c.Param("id")
 
@@ -163,7 +163,7 @@ func GetOneTranslationContact(c *gin.Context) {
 
 }
 
-func GetTranslationContact(c *gin.Context) {
+func GetTranslationContactByLangID(c *gin.Context) {
 
 	langID, err := CheckLanguage(c)
 	if err != nil {

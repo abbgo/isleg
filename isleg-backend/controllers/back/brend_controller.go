@@ -63,7 +63,7 @@ func CreateBrend(c *gin.Context) {
 
 }
 
-func UpdateBrend(c *gin.Context) {
+func UpdateBrendByID(c *gin.Context) {
 
 	ID := c.Param("id")
 	name := c.PostForm("name")
@@ -150,7 +150,7 @@ func UpdateBrend(c *gin.Context) {
 
 }
 
-func GetBrend(c *gin.Context) {
+func GetBrendByID(c *gin.Context) {
 
 	ID := c.Param("id")
 
@@ -224,7 +224,7 @@ func GetBrends(c *gin.Context) {
 
 }
 
-func DeleteBrend(c *gin.Context) {
+func DeleteBrendByID(c *gin.Context) {
 
 	ID := c.Param("id")
 
@@ -293,7 +293,7 @@ func DeleteBrend(c *gin.Context) {
 
 }
 
-func RestoreBrend(c *gin.Context) {
+func RestoreBrendByID(c *gin.Context) {
 
 	ID := c.Param("id")
 
@@ -360,7 +360,7 @@ func RestoreBrend(c *gin.Context) {
 
 }
 
-func DeletePermanentlyBrend(c *gin.Context) {
+func DeletePermanentlyBrendByID(c *gin.Context) {
 
 	ID := c.Param("id")
 

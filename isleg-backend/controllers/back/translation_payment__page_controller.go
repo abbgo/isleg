@@ -55,7 +55,7 @@ func CreateTranslationPayment(c *gin.Context) {
 
 }
 
-func UpdateTranslationPayment(c *gin.Context) {
+func UpdateTranslationPaymentByID(c *gin.Context) {
 
 	ID := c.Param("id")
 
@@ -116,7 +116,7 @@ func UpdateTranslationPayment(c *gin.Context) {
 
 }
 
-func GetOneTranslationPayment(c *gin.Context) {
+func GetTranslationPaymentByID(c *gin.Context) {
 
 	ID := c.Param("id")
 
@@ -156,7 +156,7 @@ func GetOneTranslationPayment(c *gin.Context) {
 
 }
 
-func GetTranslationPayment(c *gin.Context) {
+func GetTranslationPaymentByLangID(c *gin.Context) {
 
 	langID, err := CheckLanguage(c)
 	if err != nil {

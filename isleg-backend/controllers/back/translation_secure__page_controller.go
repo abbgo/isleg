@@ -55,7 +55,7 @@ func CreateTranslationSecure(c *gin.Context) {
 
 }
 
-func UpdateTranslationSecure(c *gin.Context) {
+func UpdateTranslationSecureByID(c *gin.Context) {
 
 	ID := c.Param("id")
 
@@ -116,7 +116,7 @@ func UpdateTranslationSecure(c *gin.Context) {
 
 }
 
-func GetOneTranslationSecure(c *gin.Context) {
+func GetTranslationSecureByID(c *gin.Context) {
 
 	ID := c.Param("id")
 
@@ -156,7 +156,7 @@ func GetOneTranslationSecure(c *gin.Context) {
 
 }
 
-func GetTranslationSecure(c *gin.Context) {
+func GetTranslationSecureByLangID(c *gin.Context) {
 
 	langID, err := CheckLanguage(c)
 	if err != nil {

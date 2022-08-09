@@ -55,7 +55,7 @@ func CreateTranslationAbout(c *gin.Context) {
 
 }
 
-func UpdateTranslationAbout(c *gin.Context) {
+func UpdateTranslationAboutByID(c *gin.Context) {
 
 	ID := c.Param("id")
 
@@ -116,7 +116,7 @@ func UpdateTranslationAbout(c *gin.Context) {
 
 }
 
-func GetOneTranslationAbout(c *gin.Context) {
+func GetTranslationAboutByID(c *gin.Context) {
 
 	ID := c.Param("id")
 
@@ -156,7 +156,7 @@ func GetOneTranslationAbout(c *gin.Context) {
 
 }
 
-func GetTranslationAbout(c *gin.Context) {
+func GetTranslationAboutByLangID(c *gin.Context) {
 
 	langID, err := CheckLanguage(c)
 	if err != nil {

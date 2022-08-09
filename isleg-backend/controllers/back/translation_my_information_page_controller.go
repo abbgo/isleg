@@ -57,7 +57,7 @@ func CreateTranslationMyInformationPage(c *gin.Context) {
 
 }
 
-func UpdateTranslationMyInformationPage(c *gin.Context) {
+func UpdateTranslationMyInformationPageByID(c *gin.Context) {
 
 	ID := c.Param("id")
 
@@ -118,7 +118,7 @@ func UpdateTranslationMyInformationPage(c *gin.Context) {
 
 }
 
-func GetOneTranslationMyInformationPage(c *gin.Context) {
+func GetTranslationMyInformationPageByID(c *gin.Context) {
 
 	ID := c.Param("id")
 
@@ -158,7 +158,7 @@ func GetOneTranslationMyInformationPage(c *gin.Context) {
 
 }
 
-func GetTranslationMyInformationPage(c *gin.Context) {
+func GetTranslationMyInformationPageByLangID(c *gin.Context) {
 
 	// GET DATA FROM ROUTE PARAMETER
 	langShortName := c.Param("lang")

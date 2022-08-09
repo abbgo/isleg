@@ -57,7 +57,7 @@ func CreateTranslationUpdatePasswordPage(c *gin.Context) {
 
 }
 
-func UpdateTranslationUpdatePasswordPage(c *gin.Context) {
+func UpdateTranslationUpdatePasswordPageByID(c *gin.Context) {
 
 	ID := c.Param("id")
 
@@ -118,7 +118,7 @@ func UpdateTranslationUpdatePasswordPage(c *gin.Context) {
 
 }
 
-func GetOneTranslationUpdatePasswordPage(c *gin.Context) {
+func GetTranslationUpdatePasswordPageByID(c *gin.Context) {
 
 	ID := c.Param("id")
 
@@ -158,7 +158,7 @@ func GetOneTranslationUpdatePasswordPage(c *gin.Context) {
 
 }
 
-func GetTranslationUpdatePasswordPage(c *gin.Context) {
+func GetTranslationUpdatePasswordPageByLangID(c *gin.Context) {
 
 	langID, err := CheckLanguage(c)
 	if err != nil {
