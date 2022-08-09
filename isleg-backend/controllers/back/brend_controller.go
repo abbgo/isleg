@@ -293,6 +293,177 @@ func DeleteBrend(c *gin.Context) {
 
 }
 
+func RestoreBrend(c *gin.Context) {
+
+	ID := c.Param("id")
+
+	rowBrend, err := config.ConnDB().Query("SELECT image FROM brends WHERE id = $1 AND deleted_at IS NOT NULL", ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	var image string
+
+	for rowBrend.Next() {
+		if err := rowBrend.Scan(&image); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}
+
+	if image == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "record not found",
+		})
+		return
+	}
+
+	_, err = config.ConnDB().Exec("UPDATE brends SET deleted_at = NULL WHERE id = $1", ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	_, err = config.ConnDB().Exec("UPDATE products SET deleted_at = NULL WHERE brend_id = $1", ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	_, err = config.ConnDB().Exec("UPDATE translation_product SET deleted_at = NULL FROM products WHERE translation_product.product_id=products.id AND products.brend_id = $1", ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":  true,
+		"message": "brend successfully restored",
+	})
+
+}
+
+func DeletePermanentlyBrend(c *gin.Context) {
+
+	ID := c.Param("id")
+
+	rowBrend, err := config.ConnDB().Query("SELECT image FROM brends WHERE id = $1 AND deleted_at IS NOT NULL", ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	var image string
+
+	for rowBrend.Next() {
+		if err := rowBrend.Scan(&image); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}
+
+	if image == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "record not found",
+		})
+		return
+	}
+
+	if err := os.Remove("./" + image); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	rowProducts, err := config.ConnDB().Query("SELECT main_image,images FROM products WHERE brend_id = $1", ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	var products []ProductImages
+
+	for rowProducts.Next() {
+		var product ProductImages
+
+		if err := rowProducts.Scan(&product.MainImage, &product.Images); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+
+		products = append(products, product)
+	}
+
+	for _, v := range products {
+		if err := os.Remove("./" + v.MainImage); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+
+		if len(v.Images) != 0 {
+			for _, img := range v.Images {
+				if err := os.Remove("./" + img); err != nil {
+					c.JSON(http.StatusBadRequest, gin.H{
+						"status":  false,
+						"message": err.Error(),
+					})
+					return
+				}
+			}
+		}
+	}
+
+	_, err = config.ConnDB().Exec("DELETE FROM brends WHERE id = $1", ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":  true,
+		"message": "brend successfully deleted",
+	})
+
+}
+
 func GetAllBrendForHomePage() ([]BrendForHomePage, error) {
 
 	var brends []BrendForHomePage
