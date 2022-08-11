@@ -3,21 +3,38 @@ package controllers
 import (
 	"github/abbgo/isleg/isleg-backend/config"
 	"net/http"
+	"os"
 	"path/filepath"
 	"strconv"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/lib/pq"
 )
 
+type ProductImage struct {
+	MainImage string         `json:"main_image"`
+	Images    pq.StringArray `json:"images"`
+}
+
 func CreateProduct(c *gin.Context) {
 
 	// validate brend id
 	brendID := c.PostForm("brend_id")
-	brendIDUUID, err := uuid.Parse(brendID)
-	if brendID != "" {
-		if err != nil {
+	rowBrend, err := config.ConnDB().Query("SELECT id FROM brends WHERE id = $1 AND deleted_at IS NULL", brendID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	var brend_id string
+
+	for rowBrend.Next() {
+		if err := rowBrend.Scan(&brend_id); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
@@ -25,11 +42,11 @@ func CreateProduct(c *gin.Context) {
 			return
 		}
 	}
-	_, err = config.ConnDB().Query("SELECT id FROM brends WHERE id = $1 AND deleted_at IS NULL", brendID)
-	if err != nil {
+
+	if brend_id == "" {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
-			"message": err.Error(),
+			"message": "brend not found",
 		})
 		return
 	}
@@ -168,7 +185,7 @@ func CreateProduct(c *gin.Context) {
 	}
 
 	// create product
-	_, err = config.ConnDB().Exec("INSERT INTO products (brend_id,price,old_price,amount,product_code,main_image,images) VALUES ($1,$2,$3,$4,$5,$6,$7)", brendIDUUID, price, oldPrice, amount, productCode, "uploads/product/"+newFileName, pq.StringArray(imagePaths))
+	_, err = config.ConnDB().Exec("INSERT INTO products (brend_id,price,old_price,amount,product_code,main_image,images) VALUES ($1,$2,$3,$4,$5,$6,$7)", brendID, price, oldPrice, amount, productCode, "uploads/product/"+newFileName, pq.StringArray(imagePaths))
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{
 			"status":  false,
@@ -254,17 +271,7 @@ func CreateProduct(c *gin.Context) {
 
 	// create category product
 	for _, v := range categories {
-		vUUID, err := uuid.Parse(v)
-		if v != "" {
-			if err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
-				return
-			}
-		}
-		_, err = config.ConnDB().Exec("INSERT INTO category_product (category_id,product_id) VALUES ($1,$2)", vUUID, productID)
+		_, err = config.ConnDB().Exec("INSERT INTO category_product (category_id,product_id) VALUES ($1,$2)", v, productID)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
@@ -277,6 +284,319 @@ func CreateProduct(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
 		"message": "product successfully added",
+	})
+
+}
+
+func UpdateProductByID(c *gin.Context) {
+
+	ID := c.Param("id")
+	var mainImageName string
+
+	rowProduct, err := config.ConnDB().Query("SELECT main_image,images FROM products WHERE id = $1 AND deleted_at IS NULL", ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	var product ProductImage
+
+	for rowProduct.Next() {
+		if err := rowProduct.Scan(&product.MainImage, &product.Images); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}
+
+	if product.MainImage == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "record not found",
+		})
+		return
+	}
+
+	// validate brend id
+	brendID := c.PostForm("brend_id")
+	rowBrend, err := config.ConnDB().Query("SELECT id FROM brends WHERE id = $1 AND deleted_at IS NULL", brendID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	var brend_id string
+
+	for rowBrend.Next() {
+		if err := rowBrend.Scan(&brend_id); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}
+
+	if brend_id == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "brend not found",
+		})
+		return
+	}
+
+	// validate data from request
+	priceStr := c.PostForm("price")
+	price, err := strconv.ParseFloat(priceStr, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	oldPriceStr := c.PostForm("old_price")
+	var oldPrice float64
+	if oldPriceStr != "" {
+		oldPrice, err = strconv.ParseFloat(oldPriceStr, 64)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+
+		if oldPrice < price {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": "cannot be less than oldPrice Price",
+			})
+			return
+		}
+
+	} else {
+		oldPrice = 0
+	}
+
+	amountStr := c.PostForm("amount")
+	amount, err := strconv.ParseUint(amountStr, 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	productCode := c.PostForm("product_code")
+	if productCode == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "product code is required",
+		})
+		return
+	}
+
+	// GET ALL LANGUAGE
+	languages, err := GetAllLanguageWithIDAndNameShort()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	// validate name and description
+	for _, v := range languages {
+		if c.PostForm("name_"+v.NameShort) == "" {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": "name_" + v.NameShort + " is required",
+			})
+			return
+		}
+	}
+	for _, v := range languages {
+		if c.PostForm("description_"+v.NameShort) == "" {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": "description_" + v.NameShort + " is required",
+			})
+			return
+		}
+	}
+
+	// file upload
+	if err := c.Request.ParseMultipartForm(2000000); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	// upload main_image
+	mainImagePathFile, err := c.FormFile("main_image")
+	if err != nil {
+		mainImageName = product.MainImage
+	} else {
+		// validate image
+		extensionFile := filepath.Ext(mainImagePathFile.Filename)
+		if extensionFile != ".jpg" && extensionFile != ".jpeg" && extensionFile != ".png" && extensionFile != ".gif" {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": "the file must be an image.",
+			})
+			return
+		}
+
+		newFileName := uuid.New().String() + extensionFile
+		c.SaveUploadedFile(mainImagePathFile, "./uploads/product/"+newFileName)
+
+		if err := os.Remove("./" + product.MainImage); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+
+		mainImageName = "uploads/product/" + newFileName
+	}
+
+	// upload images
+	files := c.Request.MultipartForm.File["images"]
+	var imagePaths []string
+	if len(files) == 0 {
+		imagePaths = product.Images
+	} else {
+		for _, v := range files {
+			extension := filepath.Ext(v.Filename)
+			//validate image
+			if extension != ".jpg" && extension != ".jpeg" && extension != ".png" && extension != ".gif" {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": "the file must be an image.",
+				})
+				return
+			}
+			fileName := uuid.New().String() + extension
+			c.SaveUploadedFile(v, "./uploads/product/"+fileName)
+			imagePaths = append(imagePaths, "uploads/product/"+fileName)
+		}
+
+		if len(product.Images) != 0 {
+			for _, v := range product.Images {
+				if err := os.Remove("./" + v); err != nil {
+					c.JSON(http.StatusBadRequest, gin.H{
+						"status":  false,
+						"message": err.Error(),
+					})
+					return
+				}
+			}
+		}
+	}
+
+	currentTime := time.Now()
+
+	_, err = config.ConnDB().Exec("UPDATE products SET brend_id = $1 , price = $2 , old_price = $3, amount = $4, product_code = $5, main_image = $6, images = $7, updated_at = $8 WHERE id = $9", brendID, price, oldPrice, amount, productCode, mainImageName, pq.StringArray(imagePaths), currentTime, ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	// update translation product
+	for _, v := range languages {
+		_, err := config.ConnDB().Exec("UPDATE translation_product SET name = $1, description = $2, updated_at = $3 WHERE product_id = $4 AND lang_id = $5", c.PostForm("name_"+v.NameShort), c.PostForm("description_"+v.NameShort), currentTime, ID, v.ID)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}
+
+	// get all category id from request
+	categories, _ := c.GetPostFormArray("category_id")
+	if len(categories) == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "product category is required",
+		})
+		return
+	}
+
+	for _, v := range categories {
+		rawCategory, err := config.ConnDB().Query("SELECT id FROM categories WHERE id = $1 AND deleted_at IS NULL", v)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+
+		var categoryID string
+
+		for rawCategory.Next() {
+			if err := rawCategory.Scan(&categoryID); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}
+
+		if categoryID == "" {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": "category not found",
+			})
+			return
+		}
+	}
+
+	// update category product
+	_, err = config.ConnDB().Exec("DELETE FROM category_product WHERE product_id = $1", ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	for _, v := range categories {
+		_, err = config.ConnDB().Exec("INSERT INTO category_product (category_id,product_id,updated_at) VALUES ($1,$2,$3)", v, ID, currentTime)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":  true,
+		"message": "product successfully updated",
 	})
 
 }
