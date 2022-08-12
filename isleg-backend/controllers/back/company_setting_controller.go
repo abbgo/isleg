@@ -64,7 +64,7 @@ func CreateCompanySetting(c *gin.Context) {
 	}
 
 	// CREATE COMPANY SETTING
-	_, err = config.ConnDB().Exec("INSERT INTO company_setting (logo,favicon,email,instagram) VALUES ($1,$2,$3,$4)", "uploads/setting/"+newFileNameLogo, "uploads/setting/"+newFileNameFavicon, email, instagram)
+	resultComSetting, err := config.ConnDB().Query("INSERT INTO company_setting (logo,favicon,email,instagram) VALUES ($1,$2,$3,$4)", "uploads/setting/"+newFileNameLogo, "uploads/setting/"+newFileNameFavicon, email, instagram)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -72,6 +72,7 @@ func CreateCompanySetting(c *gin.Context) {
 		})
 		return
 	}
+	defer resultComSetting.Close()
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
@@ -94,6 +95,7 @@ func UpdateCompanySetting(c *gin.Context) {
 		})
 		return
 	}
+	defer rowComSet.Close()
 
 	var logo, favicon string
 
@@ -182,7 +184,7 @@ func UpdateCompanySetting(c *gin.Context) {
 
 	currentTime := time.Now()
 
-	_, err = config.ConnDB().Exec("UPDATE company_setting SET logo = $1,favicon=$2,email=$3,instagram=$4,updated_at=$5", logoName, faviconName, email, instagram, currentTime)
+	resultComPSETTING, err := config.ConnDB().Query("UPDATE company_setting SET logo = $1,favicon=$2,email=$3,instagram=$4,updated_at=$5", logoName, faviconName, email, instagram, currentTime)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -190,6 +192,7 @@ func UpdateCompanySetting(c *gin.Context) {
 		})
 		return
 	}
+	defer resultComPSETTING.Close()
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
@@ -208,6 +211,7 @@ func GetCompanySetting(c *gin.Context) {
 		})
 		return
 	}
+	defer rowComSet.Close()
 
 	var comSet ComSet
 
@@ -245,6 +249,8 @@ func GetCompanySettingForHeader() (LogoFavicon, error) {
 	if err != nil {
 		return LogoFavicon{}, err
 	}
+	defer row.Close()
+
 	for row.Next() {
 		if err := row.Scan(&logoFavicon.Logo, &logoFavicon.Favicon); err != nil {
 			return LogoFavicon{}, err

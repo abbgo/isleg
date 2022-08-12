@@ -49,6 +49,7 @@ func CreateProduct(c *gin.Context) {
 		})
 		return
 	}
+	defer rowBrend.Close()
 
 	var brend_id string
 
@@ -204,7 +205,7 @@ func CreateProduct(c *gin.Context) {
 	}
 
 	// create product
-	_, err = config.ConnDB().Exec("INSERT INTO products (brend_id,price,old_price,amount,product_code,main_image,images) VALUES ($1,$2,$3,$4,$5,$6,$7)", brendID, price, oldPrice, amount, productCode, "uploads/product/"+newFileName, pq.StringArray(imagePaths))
+	resultProducts, err := config.ConnDB().Query("INSERT INTO products (brend_id,price,old_price,amount,product_code,main_image,images) VALUES ($1,$2,$3,$4,$5,$6,$7)", brendID, price, oldPrice, amount, productCode, "uploads/product/"+newFileName, pq.StringArray(imagePaths))
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{
 			"status":  false,
@@ -212,6 +213,7 @@ func CreateProduct(c *gin.Context) {
 		})
 		return
 	}
+	defer resultProducts.Close()
 
 	// get the id of the added product
 	lastProductID, err := config.ConnDB().Query("SELECT id FROM products WHERE deleted_at IS NULL ORDER BY created_at DESC LIMIT 1")
@@ -222,6 +224,7 @@ func CreateProduct(c *gin.Context) {
 		})
 		return
 	}
+	defer lastProductID.Close()
 
 	var productID string
 
@@ -237,7 +240,7 @@ func CreateProduct(c *gin.Context) {
 
 	// create translation product
 	for _, v := range languages {
-		_, err := config.ConnDB().Exec("INSERT INTO translation_product (lang_id,product_id,name,description) VALUES ($1,$2,$3,$4)", v.ID, productID, c.PostForm("name_"+v.NameShort), c.PostForm("description_"+v.NameShort))
+		resultTrProducts, err := config.ConnDB().Query("INSERT INTO translation_product (lang_id,product_id,name,description) VALUES ($1,$2,$3,$4)", v.ID, productID, c.PostForm("name_"+v.NameShort), c.PostForm("description_"+v.NameShort))
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
@@ -245,6 +248,7 @@ func CreateProduct(c *gin.Context) {
 			})
 			return
 		}
+		defer resultTrProducts.Close()
 	}
 
 	// get all category id from request
@@ -266,6 +270,7 @@ func CreateProduct(c *gin.Context) {
 			})
 			return
 		}
+		defer rawCategory.Close()
 
 		var categoryID string
 
@@ -290,7 +295,7 @@ func CreateProduct(c *gin.Context) {
 
 	// create category product
 	for _, v := range categories {
-		_, err = config.ConnDB().Exec("INSERT INTO category_product (category_id,product_id) VALUES ($1,$2)", v, productID)
+		resultCategoryProduct, err := config.ConnDB().Query("INSERT INTO category_product (category_id,product_id) VALUES ($1,$2)", v, productID)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
@@ -298,6 +303,7 @@ func CreateProduct(c *gin.Context) {
 			})
 			return
 		}
+		defer resultCategoryProduct.Close()
 	}
 
 	c.JSON(http.StatusOK, gin.H{
@@ -320,6 +326,7 @@ func UpdateProductByID(c *gin.Context) {
 		})
 		return
 	}
+	defer rowProduct.Close()
 
 	var product ProductImage
 
@@ -351,6 +358,7 @@ func UpdateProductByID(c *gin.Context) {
 		})
 		return
 	}
+	defer rowBrend.Close()
 
 	var brend_id string
 
@@ -530,7 +538,7 @@ func UpdateProductByID(c *gin.Context) {
 
 	currentTime := time.Now()
 
-	_, err = config.ConnDB().Exec("UPDATE products SET brend_id = $1 , price = $2 , old_price = $3, amount = $4, product_code = $5, main_image = $6, images = $7, updated_at = $8 WHERE id = $9", brendID, price, oldPrice, amount, productCode, mainImageName, pq.StringArray(imagePaths), currentTime, ID)
+	resultProducts, err := config.ConnDB().Query("UPDATE products SET brend_id = $1 , price = $2 , old_price = $3, amount = $4, product_code = $5, main_image = $6, images = $7, updated_at = $8 WHERE id = $9", brendID, price, oldPrice, amount, productCode, mainImageName, pq.StringArray(imagePaths), currentTime, ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -538,10 +546,11 @@ func UpdateProductByID(c *gin.Context) {
 		})
 		return
 	}
+	defer resultProducts.Close()
 
 	// update translation product
 	for _, v := range languages {
-		_, err := config.ConnDB().Exec("UPDATE translation_product SET name = $1, description = $2, updated_at = $3 WHERE product_id = $4 AND lang_id = $5", c.PostForm("name_"+v.NameShort), c.PostForm("description_"+v.NameShort), currentTime, ID, v.ID)
+		resultTrProduct, err := config.ConnDB().Query("UPDATE translation_product SET name = $1, description = $2, updated_at = $3 WHERE product_id = $4 AND lang_id = $5", c.PostForm("name_"+v.NameShort), c.PostForm("description_"+v.NameShort), currentTime, ID, v.ID)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
@@ -549,6 +558,7 @@ func UpdateProductByID(c *gin.Context) {
 			})
 			return
 		}
+		defer resultTrProduct.Close()
 	}
 
 	// get all category id from request
@@ -570,6 +580,7 @@ func UpdateProductByID(c *gin.Context) {
 			})
 			return
 		}
+		defer rawCategory.Close()
 
 		var categoryID string
 
@@ -593,7 +604,7 @@ func UpdateProductByID(c *gin.Context) {
 	}
 
 	// update category product
-	_, err = config.ConnDB().Exec("DELETE FROM category_product WHERE product_id = $1", ID)
+	resultCategoryProduct, err := config.ConnDB().Query("DELETE FROM category_product WHERE product_id = $1", ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -601,9 +612,10 @@ func UpdateProductByID(c *gin.Context) {
 		})
 		return
 	}
+	defer resultCategoryProduct.Close()
 
 	for _, v := range categories {
-		_, err = config.ConnDB().Exec("INSERT INTO category_product (category_id,product_id,updated_at) VALUES ($1,$2,$3)", v, ID, currentTime)
+		resultCategProduct, err := config.ConnDB().Query("INSERT INTO category_product (category_id,product_id,updated_at) VALUES ($1,$2,$3)", v, ID, currentTime)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
@@ -611,6 +623,7 @@ func UpdateProductByID(c *gin.Context) {
 			})
 			return
 		}
+		defer resultCategProduct.Close()
 	}
 
 	c.JSON(http.StatusOK, gin.H{
@@ -632,6 +645,7 @@ func GetProductByID(c *gin.Context) {
 		})
 		return
 	}
+	defer rowProduct.Close()
 
 	var product OneProduct
 
@@ -661,6 +675,7 @@ func GetProductByID(c *gin.Context) {
 		})
 		return
 	}
+	defer rowsCategoryProduct.Close()
 
 	var categories []string
 
@@ -696,6 +711,7 @@ func GetProductByID(c *gin.Context) {
 		})
 		return
 	}
+	defer rowTranslationProduct.Close()
 
 	var translation TranslationProduct
 
@@ -722,6 +738,99 @@ func GetProductByID(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
 		"product": product,
+	})
+
+}
+
+func GetProducts(c *gin.Context) {
+
+	rowsProduct, err := config.ConnDB().Query("SELECT id,brend_id,price,old_price,amount,product_code,main_image,images FROM products WHERE deleted_at IS NULL")
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer rowsProduct.Close()
+
+	var products []OneProduct
+	var ids []string
+	var categories []string
+	var translation TranslationProduct
+
+	for rowsProduct.Next() {
+		var product OneProduct
+		var id string
+
+		if err := rowsProduct.Scan(&id, &product.BrendID, &product.Price, &product.OldPrice, &product.Amount, &product.ProductCode, &product.MainImage, &product.Images); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+
+		ids = append(ids, id)
+
+		for _, ID := range ids {
+			rowsCategoryProduct, err := config.ConnDB().Query("SELECT category_id FROM category_product WHERE product_id = $1 AND deleted_at IS NULL", ID)
+			if err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+			defer rowsCategoryProduct.Close()
+
+			for rowsCategoryProduct.Next() {
+				var category string
+
+				if err := rowsCategoryProduct.Scan(&category); err != nil {
+					c.JSON(http.StatusBadRequest, gin.H{
+						"status":  false,
+						"message": err.Error(),
+					})
+					return
+				}
+
+				categories = append(categories, category)
+			}
+		}
+
+		product.Categories = categories
+
+		for _, ID := range ids {
+			rowTranslationProduct, err := config.ConnDB().Query("SELECT lang_id,name,description FROM translation_product WHERE product_id = $1 AND deleted_at IS NULL", ID)
+			if err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+			defer rowTranslationProduct.Close()
+
+			for rowTranslationProduct.Next() {
+				if err := rowTranslationProduct.Scan(&translation.LanguageID, &translation.Name, &translation.Description); err != nil {
+					c.JSON(http.StatusBadRequest, gin.H{
+						"status":  false,
+						"message": err.Error(),
+					})
+					return
+				}
+			}
+		}
+
+		product.Translation = translation
+
+		products = append(products, product)
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":   true,
+		"products": products,
 	})
 
 }

@@ -41,7 +41,7 @@ func CreateTranslationUpdatePasswordPage(c *gin.Context) {
 	}
 
 	for _, v := range languages {
-		_, err := config.ConnDB().Exec("INSERT INTO translation_update_password_page (lang_id,title,password,verify_password,explanation,save) VALUES ($1,$2,$3,$4,$5,$6)", v.ID, c.PostForm("title_"+v.NameShort), c.PostForm("password_"+v.NameShort), c.PostForm("verify_password_"+v.NameShort), c.PostForm("explanation_"+v.NameShort), c.PostForm("save_"+v.NameShort))
+		result, err := config.ConnDB().Query("INSERT INTO translation_update_password_page (lang_id,title,password,verify_password,explanation,save) VALUES ($1,$2,$3,$4,$5,$6)", v.ID, c.PostForm("title_"+v.NameShort), c.PostForm("password_"+v.NameShort), c.PostForm("verify_password_"+v.NameShort), c.PostForm("explanation_"+v.NameShort), c.PostForm("save_"+v.NameShort))
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
@@ -49,6 +49,7 @@ func CreateTranslationUpdatePasswordPage(c *gin.Context) {
 			})
 			return
 		}
+		defer result.Close()
 	}
 
 	c.JSON(http.StatusOK, gin.H{
@@ -70,6 +71,7 @@ func UpdateTranslationUpdatePasswordPageByID(c *gin.Context) {
 		})
 		return
 	}
+	defer rowFlag.Close()
 
 	var id string
 
@@ -105,7 +107,7 @@ func UpdateTranslationUpdatePasswordPageByID(c *gin.Context) {
 
 	currentTime := time.Now()
 
-	_, err = config.ConnDB().Exec("UPDATE translation_update_password_page SET title = $1, verify_password = $2 , explanation = $3 , save = $4 , password = $5 , updated_at = $7 WHERE id = $6", c.PostForm("title"), c.PostForm("verify_password"), c.PostForm("explanation"), c.PostForm("save"), c.PostForm("password"), id, currentTime)
+	result, err := config.ConnDB().Query("UPDATE translation_update_password_page SET title = $1, verify_password = $2 , explanation = $3 , save = $4 , password = $5 , updated_at = $7 WHERE id = $6", c.PostForm("title"), c.PostForm("verify_password"), c.PostForm("explanation"), c.PostForm("save"), c.PostForm("password"), id, currentTime)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -113,6 +115,7 @@ func UpdateTranslationUpdatePasswordPageByID(c *gin.Context) {
 		})
 		return
 	}
+	defer result.Close()
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
@@ -133,6 +136,7 @@ func GetTranslationUpdatePasswordPageByID(c *gin.Context) {
 		})
 		return
 	}
+	defer rowFlag.Close()
 
 	var t TrUpdatePasswordPage
 
@@ -181,6 +185,7 @@ func GetTranslationUpdatePasswordPageByLangID(c *gin.Context) {
 		})
 		return
 	}
+	defer aboutRow.Close()
 
 	var trUpdatePasswordPage TrUpdatePasswordPage
 

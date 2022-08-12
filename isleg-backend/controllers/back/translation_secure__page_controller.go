@@ -39,7 +39,7 @@ func CreateTranslationSecure(c *gin.Context) {
 
 	// create translation secure
 	for _, v := range languages {
-		_, err := config.ConnDB().Exec("INSERT INTO translation_secure (lang_id,title,content) VALUES ($1,$2,$3)", v.ID, c.PostForm("title_"+v.NameShort), c.PostForm("content_"+v.NameShort))
+		rsultTRSEcure, err := config.ConnDB().Query("INSERT INTO translation_secure (lang_id,title,content) VALUES ($1,$2,$3)", v.ID, c.PostForm("title_"+v.NameShort), c.PostForm("content_"+v.NameShort))
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
@@ -47,6 +47,7 @@ func CreateTranslationSecure(c *gin.Context) {
 			})
 			return
 		}
+		defer rsultTRSEcure.Close()
 	}
 
 	c.JSON(http.StatusOK, gin.H{
@@ -68,6 +69,7 @@ func UpdateTranslationSecureByID(c *gin.Context) {
 		})
 		return
 	}
+	defer rowFlag.Close()
 
 	var id string
 
@@ -103,7 +105,7 @@ func UpdateTranslationSecureByID(c *gin.Context) {
 
 	currentTime := time.Now()
 
-	_, err = config.ConnDB().Exec("UPDATE translation_secure SET title = $1, content = $2 , updated_at = $4  WHERE id = $3", c.PostForm("title"), c.PostForm("content"), id, currentTime)
+	resultTRSecure, err := config.ConnDB().Query("UPDATE translation_secure SET title = $1, content = $2 , updated_at = $4  WHERE id = $3", c.PostForm("title"), c.PostForm("content"), id, currentTime)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -111,6 +113,7 @@ func UpdateTranslationSecureByID(c *gin.Context) {
 		})
 		return
 	}
+	defer resultTRSecure.Close()
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
@@ -131,6 +134,7 @@ func GetTranslationSecureByID(c *gin.Context) {
 		})
 		return
 	}
+	defer rowFlag.Close()
 
 	var t TrSecure
 
@@ -179,6 +183,7 @@ func GetTranslationSecureByLangID(c *gin.Context) {
 		})
 		return
 	}
+	defer secureRow.Close()
 
 	var translationSecure TrSecure
 

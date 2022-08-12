@@ -42,7 +42,7 @@ func RegisterCustomer(c *gin.Context) {
 		return
 	}
 
-	_, err = config.ConnDB().Exec("INSERT INTO customers (full_name,phone_number,password,email) VALUES ($1,$2,$3,$4)", customer.FullName, customer.PhoneNumber, hashPassword, customer.Email)
+	resultCustomers, err := config.ConnDB().Query("INSERT INTO customers (full_name,phone_number,password,email) VALUES ($1,$2,$3,$4)", customer.FullName, customer.PhoneNumber, hashPassword, customer.Email)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{
 			"status":  false,
@@ -50,6 +50,7 @@ func RegisterCustomer(c *gin.Context) {
 		})
 		return
 	}
+	defer resultCustomers.Close()
 
 	row, err := config.ConnDB().Query("SELECT id FROM customers WHERE deleted_at IS NULL ORDER BY created_at ASC LIMIT 1")
 	if err != nil {
@@ -59,6 +60,7 @@ func RegisterCustomer(c *gin.Context) {
 		})
 		return
 	}
+	defer row.Close()
 
 	var customerID string
 
@@ -125,6 +127,7 @@ func LoginCustomer(c *gin.Context) {
 		c.AbortWithStatusJSON(500, gin.H{"message": err.Error()})
 		return
 	}
+	defer row.Close()
 
 	var customerID, oldPassword string
 

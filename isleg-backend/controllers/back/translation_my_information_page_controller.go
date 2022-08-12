@@ -41,7 +41,7 @@ func CreateTranslationMyInformationPage(c *gin.Context) {
 
 	// create translation_my_information_page
 	for _, v := range languages {
-		_, err := config.ConnDB().Exec("INSERT INTO translation_my_information_page (lang_id,address,birthday,update_password,save) VALUES ($1,$2,$3,$4,$5)", v.ID, c.PostForm("address_"+v.NameShort), c.PostForm("birthday_"+v.NameShort), c.PostForm("update_password_"+v.NameShort), c.PostForm("save_"+v.NameShort))
+		resutlTRMyInfPage, err := config.ConnDB().Query("INSERT INTO translation_my_information_page (lang_id,address,birthday,update_password,save) VALUES ($1,$2,$3,$4,$5)", v.ID, c.PostForm("address_"+v.NameShort), c.PostForm("birthday_"+v.NameShort), c.PostForm("update_password_"+v.NameShort), c.PostForm("save_"+v.NameShort))
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
@@ -49,6 +49,7 @@ func CreateTranslationMyInformationPage(c *gin.Context) {
 			})
 			return
 		}
+		defer resutlTRMyInfPage.Close()
 	}
 
 	c.JSON(http.StatusOK, gin.H{
@@ -70,6 +71,7 @@ func UpdateTranslationMyInformationPageByID(c *gin.Context) {
 		})
 		return
 	}
+	defer rowFlag.Close()
 
 	var id string
 
@@ -105,7 +107,7 @@ func UpdateTranslationMyInformationPageByID(c *gin.Context) {
 
 	currentTime := time.Now()
 
-	_, err = config.ConnDB().Exec("UPDATE translation_my_information_page SET address = $1, birthday = $2 , update_password = $3, save = $4 , updated_at = $6 WHERE id = $5", c.PostForm("address"), c.PostForm("birthday"), c.PostForm("update_password"), c.PostForm("save"), id, currentTime)
+	resultTRMyInfPage, err := config.ConnDB().Query("UPDATE translation_my_information_page SET address = $1, birthday = $2 , update_password = $3, save = $4 , updated_at = $6 WHERE id = $5", c.PostForm("address"), c.PostForm("birthday"), c.PostForm("update_password"), c.PostForm("save"), id, currentTime)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -113,6 +115,7 @@ func UpdateTranslationMyInformationPageByID(c *gin.Context) {
 		})
 		return
 	}
+	defer resultTRMyInfPage.Close()
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
@@ -133,6 +136,7 @@ func GetTranslationMyInformationPageByID(c *gin.Context) {
 		})
 		return
 	}
+	defer rowFlag.Close()
 
 	var t TrMyInformationPage
 
@@ -185,6 +189,7 @@ func GetTranslationMyInformationPageByLangID(c *gin.Context) {
 		})
 		return
 	}
+	defer aboutRow.Close()
 
 	var trMyInformationPage TrMyInformationPage
 

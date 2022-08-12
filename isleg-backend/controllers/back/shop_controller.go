@@ -25,7 +25,7 @@ func CreateShop(c *gin.Context) {
 		return
 	}
 
-	_, err := config.ConnDB().Exec("INSERT INTO shops (owner_name,address,phone_number,running_time) VALUES ($1,$2,$3,$4)", ownerName, address, phoneNumber, runningTime)
+	resultShops, err := config.ConnDB().Query("INSERT INTO shops (owner_name,address,phone_number,running_time) VALUES ($1,$2,$3,$4)", ownerName, address, phoneNumber, runningTime)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -33,6 +33,7 @@ func CreateShop(c *gin.Context) {
 		})
 		return
 	}
+	defer resultShops.Close()
 
 	// get the id of the added shop
 	lastShopID, err := config.ConnDB().Query("SELECT id FROM shops ORDER BY created_at DESC LIMIT 1")
@@ -43,6 +44,7 @@ func CreateShop(c *gin.Context) {
 		})
 		return
 	}
+	defer lastShopID.Close()
 
 	var shopID string
 
@@ -68,7 +70,7 @@ func CreateShop(c *gin.Context) {
 				return
 			}
 		}
-		_, err = config.ConnDB().Exec("INSERT INTO category_shop (category_id,shop_id) VALUES ($1,$2)", vUUID, shopID)
+		resultCategorySHop, err := config.ConnDB().Query("INSERT INTO category_shop (category_id,shop_id) VALUES ($1,$2)", vUUID, shopID)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
@@ -76,6 +78,7 @@ func CreateShop(c *gin.Context) {
 			})
 			return
 		}
+		defer resultCategorySHop.Close()
 	}
 
 	c.JSON(http.StatusOK, gin.H{

@@ -55,7 +55,7 @@ func CreateAfisa(c *gin.Context) {
 	}
 
 	// create afisa
-	_, err = config.ConnDB().Exec("INSERT INTO afisa (image) VALUES ($1)", fileName)
+	resultAFisa, err := config.ConnDB().Query("INSERT INTO afisa (image) VALUES ($1)", fileName)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -63,6 +63,7 @@ func CreateAfisa(c *gin.Context) {
 		})
 		return
 	}
+	defer resultAFisa.Close()
 
 	if fileName != "" {
 		c.SaveUploadedFile(file, "./"+fileName)
@@ -77,6 +78,7 @@ func CreateAfisa(c *gin.Context) {
 		})
 		return
 	}
+	defer lastAfisaID.Close()
 
 	var afisaID string
 
@@ -92,7 +94,7 @@ func CreateAfisa(c *gin.Context) {
 
 	// create translation afisa
 	for _, v := range languages {
-		_, err := config.ConnDB().Exec("INSERT INTO translation_afisa (afisa_id,lang_id,title,description) VALUES ($1,$2,$3,$4)", afisaID, v.ID, c.PostForm("title_"+v.NameShort), c.PostForm("description"+v.NameShort))
+		resultTRAfisa, err := config.ConnDB().Query("INSERT INTO translation_afisa (afisa_id,lang_id,title,description) VALUES ($1,$2,$3,$4)", afisaID, v.ID, c.PostForm("title_"+v.NameShort), c.PostForm("description"+v.NameShort))
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
@@ -100,6 +102,7 @@ func CreateAfisa(c *gin.Context) {
 			})
 			return
 		}
+		defer resultTRAfisa.Close()
 	}
 
 	c.JSON(http.StatusOK, gin.H{

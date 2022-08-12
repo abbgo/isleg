@@ -43,7 +43,7 @@ func CreateCompanyPhone(c *gin.Context) {
 	}
 
 	// create company phone
-	_, err = config.ConnDB().Exec("INSERT INTO company_phone (phone) VALUES ($1)", phone)
+	resultComPhone, err := config.ConnDB().Query("INSERT INTO company_phone (phone) VALUES ($1)", phone)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -51,6 +51,7 @@ func CreateCompanyPhone(c *gin.Context) {
 		})
 		return
 	}
+	defer resultComPhone.Close()
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
@@ -72,6 +73,7 @@ func GetCompanyPhones(c *gin.Context) {
 		})
 		return
 	}
+	defer rows.Close()
 
 	for rows.Next() {
 		var companyPhone string

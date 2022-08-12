@@ -42,7 +42,7 @@ func CreateDistrict(c *gin.Context) {
 	}
 
 	// create district
-	_, err = config.ConnDB().Exec("INSERT INTO district (price) VALUES ($1)", price)
+	resultDistrict, err := config.ConnDB().Query("INSERT INTO district (price) VALUES ($1)", price)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -50,6 +50,7 @@ func CreateDistrict(c *gin.Context) {
 		})
 		return
 	}
+	defer resultDistrict.Close()
 
 	// get id off added district
 	lastDistrictID, err := config.ConnDB().Query("SELECT id FROM district ORDER BY created_at DESC LIMIT 1")
@@ -60,6 +61,7 @@ func CreateDistrict(c *gin.Context) {
 		})
 		return
 	}
+	defer lastDistrictID.Close()
 
 	var districtID string
 
@@ -75,7 +77,7 @@ func CreateDistrict(c *gin.Context) {
 
 	// create translation afisa
 	for _, v := range languages {
-		_, err := config.ConnDB().Exec("INSERT INTO translation_district (lang_id,district_id,name) VALUES ($1,$2,$3)", v.ID, districtID, c.PostForm("name_"+v.NameShort))
+		resultTRDistrict, err := config.ConnDB().Query("INSERT INTO translation_district (lang_id,district_id,name) VALUES ($1,$2,$3)", v.ID, districtID, c.PostForm("name_"+v.NameShort))
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
@@ -83,6 +85,7 @@ func CreateDistrict(c *gin.Context) {
 			})
 			return
 		}
+		defer resultTRDistrict.Close()
 	}
 
 	c.JSON(http.StatusOK, gin.H{

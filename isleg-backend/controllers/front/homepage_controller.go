@@ -71,6 +71,7 @@ func GetHomePageCategories(c *gin.Context) {
 		})
 		return
 	}
+	defer categoryRows.Close()
 
 	var homePageCategories []HomePageCategory
 
@@ -93,6 +94,7 @@ func GetHomePageCategories(c *gin.Context) {
 			})
 			return
 		}
+		defer productRows.Close()
 
 		var products []Product
 		for productRows.Next() {
@@ -114,6 +116,7 @@ func GetHomePageCategories(c *gin.Context) {
 				})
 				return
 			}
+			defer brendRows.Close()
 
 			var brend Brend
 			for brendRows.Next() {

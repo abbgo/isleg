@@ -43,7 +43,7 @@ func CreateTranslationFooter(c *gin.Context) {
 
 	// create translation footer
 	for _, v := range languages {
-		_, err := config.ConnDB().Exec("INSERT INTO translation_footer (lang_id,about,payment,contact,secure,word) VALUES ($1,$2,$3,$4,$5,$6)", v.ID, c.PostForm("about_"+v.NameShort), c.PostForm("payment_"+v.NameShort), c.PostForm("contact_"+v.NameShort), c.PostForm("secure_"+v.NameShort), c.PostForm("word_"+v.NameShort))
+		resultTRFooter, err := config.ConnDB().Query("INSERT INTO translation_footer (lang_id,about,payment,contact,secure,word) VALUES ($1,$2,$3,$4,$5,$6)", v.ID, c.PostForm("about_"+v.NameShort), c.PostForm("payment_"+v.NameShort), c.PostForm("contact_"+v.NameShort), c.PostForm("secure_"+v.NameShort), c.PostForm("word_"+v.NameShort))
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
@@ -51,6 +51,7 @@ func CreateTranslationFooter(c *gin.Context) {
 			})
 			return
 		}
+		defer resultTRFooter.Close()
 	}
 
 	c.JSON(http.StatusOK, gin.H{
@@ -72,6 +73,7 @@ func UpdateTranslationFooterByID(c *gin.Context) {
 		})
 		return
 	}
+	defer rowFlag.Close()
 
 	var id string
 
@@ -107,7 +109,7 @@ func UpdateTranslationFooterByID(c *gin.Context) {
 
 	currentTime := time.Now()
 
-	_, err = config.ConnDB().Exec("UPDATE translation_footer SET about = $1, payment = $2, contact = $3, secure = $4, word = $5 , updated_at = $7 WHERE id = $6", c.PostForm("about"), c.PostForm("payment"), c.PostForm("contact"), c.PostForm("secure"), c.PostForm("word"), id, currentTime)
+	rsultTRFooter, err := config.ConnDB().Query("UPDATE translation_footer SET about = $1, payment = $2, contact = $3, secure = $4, word = $5 , updated_at = $7 WHERE id = $6", c.PostForm("about"), c.PostForm("payment"), c.PostForm("contact"), c.PostForm("secure"), c.PostForm("word"), id, currentTime)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -115,6 +117,7 @@ func UpdateTranslationFooterByID(c *gin.Context) {
 		})
 		return
 	}
+	defer rsultTRFooter.Close()
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
@@ -135,6 +138,7 @@ func GetTranslationFooterByID(c *gin.Context) {
 		})
 		return
 	}
+	defer rowFlag.Close()
 
 	var t TranslationFooterForFooter
 
@@ -172,6 +176,7 @@ func GetTranslationFooter(langID string) (TranslationFooterForFooter, error) {
 	if err != nil {
 		return TranslationFooterForFooter{}, err
 	}
+	defer row.Close()
 
 	for row.Next() {
 		if err := row.Scan(&t.About, &t.Payment, &t.Contact, &t.Secure, &t.Word); err != nil {
