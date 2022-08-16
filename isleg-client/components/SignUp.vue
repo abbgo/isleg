@@ -74,7 +74,7 @@ export default {
       showPass: true,
       isPhoneNumber: false,
       signUp: {
-        phone_number: '+993 6',
+        phone_number: '+9936',
         password: '',
       },
     }
@@ -97,34 +97,40 @@ export default {
         .replace(/\D/g, '')
         .match(/(\d{0,3})(\d{0,1})(\d{0,1})(\d{0,2})(\d{0,2})(\d{0,2})/)
       this.signUp.phone_number = !x[2]
-        ? '+993 6'
-        : '+993 6' +
+        ? '+9936'
+        : '+9936' +
           (x[3] ? x[3] : '') +
-          (x[4] ? ' ' + x[4] : '') +
-          (x[5] ? '-' + x[5] : '') +
-          (x[6] ? '-' + x[6] : '')
+          (x[4] ? x[4] : '') +
+          (x[5] ? x[5] : '') +
+          (x[6] ? x[6] : '')
     },
     logIn: async function () {
       this.$v.$touch()
-      if (this.signUp.phone_number.length >= 16) {
-        // try {
-        //   const res = await this.$axios.$post('/api/login/user/register', {
-        //     username: this.$v.userRegister.fullName.$model,
-        //     email: this.$v.userRegister.email.$model,
-        //     password: this.$v.userRegister.password.$model,
-        //   })
-        //   if (res.status === 201) {
-        //     await this.$auth.loginWith('userLogin', {
-        //       data: {
-        //         email: this.$v.userRegister.email.$model,
-        //         password: this.$v.userRegister.password.$model,
-        //       },
-        //     })
-        //     this.$router.push(this.localeLocation('/user-profile/trades'))
-        //   }
-        // } catch (e) {
-        //   this.$toast(this.$t('register.error'))
-        // }
+      if (this.signUp.phone_number.length >= 12) {
+        try {
+          let response = await this.$auth.loginWith('userLogin', {
+            data: {
+              phone_number: this.signUp.phone_number,
+              password: this.signUp.password,
+            },
+          })
+          console.log('response', response)
+          console.log('$auth.loggedIn', this.$auth.loggedIn)
+          if (this.$auth.loggedIn) {
+            const { access_token, customer_id, refresh_token } = response.data
+            this.$cookies.set('access_token', access_token)
+            this.$cookies.set('customer_id', customer_id)
+            this.$cookies.set('refresh_token', refresh_token)
+            this.closeRegister()
+          }
+        } catch (err) {
+          console.log(err.response)
+          if (err?.response?.status == 401) {
+            this.$toast(this.$t('register.phoneNumberOrPassValid'))
+          } else {
+            this.$toast(this.$t('register.error'))
+          }
+        }
       } else {
         this.isPhoneNumber = true
       }
@@ -138,7 +144,7 @@ export default {
       this.$emit('closeSignUpPopUp')
     },
     clear() {
-      this.signUp.phone_number = '+993 6'
+      this.signUp.phone_number = '+9936'
       this.signUp.password = ''
       this.isPhoneNumber = false
       this.$v.$reset()

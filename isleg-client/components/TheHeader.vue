@@ -67,20 +67,20 @@ export default {
       isProfile: false,
     }
   },
-  watch: {
-    '$i18n.locale': async function () {
-      await this.fetchHeader({
-        url: `${this.$i18n.locale}/header/${this.calculateHeaderApiPath}`,
-        $nuxt: this.$nuxt,
-      })
-    },
-  },
-  async fetch() {
-    await this.$store.dispatch('ui/fetchHeader', {
-      url: `${this.$i18n.locale}/header/${this.calculateHeaderApiPath}`,
-      $nuxt: this.$nuxt,
-    })
-  },
+  // watch: {
+  //   '$i18n.locale': async function () {
+  //     await this.fetchHeader({
+  //       url: `${this.$i18n.locale}/header/${this.calculateHeaderApiPath}`,
+  //       $nuxt: this.$nuxt,
+  //     })
+  //   },
+  // },
+  // async fetch() {
+  //   await this.$store.dispatch('ui/fetchHeader', {
+  //     url: `${this.$i18n.locale}/header/${this.calculateHeaderApiPath}`,
+  //     $nuxt: this.$nuxt,
+  //   })
+  // },
   computed: {
     ...mapGetters('ui', ['isOpenSignUp']),
   },
@@ -112,7 +112,7 @@ export default {
       document.body.classList.add('_lock')
     },
     openPopUp() {
-      let token = this.$cookies.get('token')
+      let token = this.$auth.loggedIn
       console.log(token)
       if (token) {
         this.isProfile = !this.isProfile

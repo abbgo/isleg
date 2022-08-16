@@ -173,7 +173,7 @@ export default {
       isTearmsOfServices: false,
       register: {
         name: '',
-        phone_number: '+993 6',
+        phone_number: '+9936',
         email: '',
         password: '',
         repeatPassword: '',
@@ -185,7 +185,7 @@ export default {
     register: {
       name: {
         required,
-        minLength: minLength(4),
+        minLength: minLength(2),
       },
       phone_number: {
         required,
@@ -195,7 +195,7 @@ export default {
       },
       password: {
         required,
-        minLength: minLength(6),
+        minLength: minLength(5),
       },
       repeatPassword: {
         required,
@@ -257,14 +257,14 @@ export default {
         .replace(/\D/g, '')
         .match(/(\d{0,3})(\d{0,1})(\d{0,1})(\d{0,2})(\d{0,2})(\d{0,2})/)
       if (!x[2]) {
-        this.register.phone_number = '+993 6'
+        this.register.phone_number = '+9936'
       } else {
         this.register.phone_number =
-          '+993 6' +
+          '+9936' +
           (x[3] ? x[3] : '') +
-          (x[4] ? ' ' + x[4] : '') +
-          (x[5] ? '-' + x[5] : '') +
-          (x[6] ? '-' + x[6] : '')
+          (x[4] ? x[4] : '') +
+          (x[5] ? x[5] : '') +
+          (x[6] ? x[6] : '')
       }
     },
     termsOfService(e, val) {
@@ -283,7 +283,7 @@ export default {
       } else {
         this.isTearmsOfServices = false
       }
-      if (this.register.phone_number.length < 16) {
+      if (this.register.phone_number.length < 12) {
         this.isPhoneNumber = true
       } else {
         this.isPhoneNumber = false
@@ -307,33 +307,46 @@ export default {
       } else {
         if (
           this.checkValidate == true &&
-          this.register.phone_number.length >= 16 &&
+          this.register.phone_number.length >= 12 &&
           this.$v.register.password.$model ==
             this.$v.register.repeatPassword.$model
         ) {
-          // try {
-          //   const res = await this.$axios.$post('/api/login/user/register', {
-          //     username: this.$v.userRegister.fullName.$model,
-          //     email: this.$v.userRegister.email.$model,
-          //     password: this.$v.userRegister.password.$model,
-          //   })
-          //   if (res.status === 201) {
-          //     await this.$auth.loginWith('userLogin', {
-          //       data: {
-          //         email: this.$v.userRegister.email.$model,
-          //         password: this.$v.userRegister.password.$model,
-          //       },
-          //     })
-          //     this.$router.push(this.localeLocation('/user-profile/trades'))
-          //   }
-          // } catch (e) {
-          //   this.$toast(this.$t('register.error'))
-          // }
+          const formData = new FormData()
+          formData.append('full_name', this.register.name)
+          formData.append('phone_number', this.register.phone_number)
+          formData.append('password', this.register.password)
+          formData.append('email', this.register.email)
+          try {
+            let response = await this.$auth.loginWith('userRegister', {
+              data: {
+                full_name: this.register.name,
+                phone_number: this.register.phone_number,
+                password: this.register.password,
+                email: this.register.email,
+              },
+            })
+            console.log('response', response)
+            console.log('$auth.loggedIn', this.$auth.loggedIn)
+            if (response.status == 200) {
+              const { access_token, customer_id, refresh_token } = response.data
+              this.$cookies.set('access_token', access_token)
+              this.$cookies.set('customer_id', customer_id)
+              this.$cookies.set('refresh_token', refresh_token)
+              this.closeRegister()
+            }
+          } catch (err) {
+            console.log(err.response)
+            if (err.response.status == 400) {
+              this.$toast(this.$t('register.customerExists'))
+            } else {
+              this.$toast(this.$t('register.error'))
+            }
+          }
         } else {
           if (this.checkValidate == false) {
             this.inValidEmail = true
           }
-          if (this.register.phone_number.length < 16) {
+          if (this.register.phone_number.length < 12) {
             this.isPhoneNumber = true
           }
         }
@@ -349,7 +362,7 @@ export default {
     },
     clear() {
       this.register.name = ''
-      this.register.phone_number = '+993 6'
+      this.register.phone_number = '+9936'
       this.register.email = ''
       this.register.password = ''
       this.register.repeatPassword = ''

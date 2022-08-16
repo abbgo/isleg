@@ -631,11 +631,11 @@ export default {
   methods: {
     scrollLeft() {
       let scrollContainer = document.querySelector('.menu-header__wrapper')
-      scrollContainer.scrollLeft += 150
+      scrollContainer.scrollLeft -= 150
     },
     scrollRight() {
       let scrollContainer = document.querySelector('.menu-header__wrapper')
-      scrollContainer.scrollLeft -= 150
+      scrollContainer.scrollLeft += 150
     },
   },
 }

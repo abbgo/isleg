@@ -1,6 +1,6 @@
 <template>
   <div :class="['pop-up', 'pt-20', { active: isPayment }]">
-    <div class="pop-up__product-body" style="width: 900px">
+    <div class="pop-up__body pop-up__product-body" style="width: 900px">
       <div class="pop-up__wrapper">
         <div class="pop-up__close" @click="$emit('close')">
           <svg

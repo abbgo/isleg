@@ -1,6 +1,6 @@
 <template>
   <div :class="['pop-up', { active: isFilter }]">
-    <div class="filter__body">
+    <div class="pop-up__body filter__body">
       <div class="arriving__header">
         <div class="filter__title">
           <span>

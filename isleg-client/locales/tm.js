@@ -10,10 +10,12 @@ export default {
     phoneNumberIsRequired: 'Tel nädogry, mysal üçin: +993 6x xx-xx-xx !',
     isRepeatPassword: 'Açar sözüni tassyklamak nädogry !',
     checkedIsRequired: 'Bu meýdan hökmany !',
-    nameMustHavetletters: 'Adyňyz azyndan 4 harp bolmaly !',
+    nameMustHavetletters: 'Adyňyz azyndan 2 harp bolmaly !',
     confirmPasswordIsRequired: 'Açar sözini tassyklamak hökmany !',
     confirmPasswordMustHavetletters:
       'Açar sözi we Açar sözüni tassyklamak birmeňzeş bolmaly !',
+    customerExists: 'Bu müşderi eýýäm bar !',
+    phoneNumberOrPassValid: 'Telefon belgiňiz ýa-da gizlin sözüňiz ýalnyş !',
   },
   payment: {
     address: 'Salgyňyz hökmany !',

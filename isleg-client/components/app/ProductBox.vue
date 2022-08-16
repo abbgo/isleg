@@ -73,7 +73,7 @@ export default {
   },
   methods: {
     productLike() {
-      let token = this.$cookies.get('token')
+      let token = this.$auth.loggedIn
       if (token) {
         this.num++
         console.log(this.num)

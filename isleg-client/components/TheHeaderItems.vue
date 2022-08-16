@@ -71,7 +71,7 @@ export default {
       item__border.classList.remove('active__item-border')
     },
     goFavoritesPage() {
-      let token = this.$cookies.get('token')
+      let token = this.$auth.loggedIn
       token
         ? this.$router.push(this.localeLocation('/favorites'))
         : this.$emit('openSignUp')

@@ -70,7 +70,7 @@
         </button>
       </div>
       <div class="datas__right">
-        <button class="product__add-btn send__btn">
+        <button class="product__add-btn send__btn" @click="post">
           <h4>Ýatda sakla</h4>
         </button>
       </div>
@@ -104,6 +104,15 @@ export default {
     }
   },
   methods: {
+    async post() {
+      const access_token = this.$cookies.set('access_token', access_token)
+      const customer_id = this.$cookies.set('customer_id', customer_id)
+      const refresh_token = this.$cookies.set('refresh_token', refresh_token)
+      try {
+        const res = await this.$axios.$post('/admin/company-phone', formData)
+        console.log(res)
+      } catch (e) {}
+    },
     openChangePassword() {
       this.isChangePassword = true
       document.body.classList.add('_lock')
