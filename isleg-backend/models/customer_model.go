@@ -3,8 +3,7 @@ package models
 import (
 	"errors"
 	"github/abbgo/isleg/isleg-backend/config"
-	"github/abbgo/isleg/isleg-backend/pkg"
-	"strconv"
+	"strings"
 	"time"
 
 	"github.com/google/uuid"
@@ -14,13 +13,13 @@ import (
 
 type Customer struct {
 	ID          uuid.UUID      `json:"id"`
-	FullName    string         `json:"full_name"`
-	PhoneNumber string         `json:"phone_number"`
-	Password    string         `json:"password"`
+	FullName    string         `json:"full_name" binding:"required,min=3"`
+	PhoneNumber string         `json:"phone_number" binding:"required,e164,len=12"`
+	Password    string         `json:"password" binding:"required,min=5,max=25"`
 	Birthday    time.Time      `json:"birthday"`
 	Gender      string         `json:"gender"`
 	Addresses   pq.StringArray `json:"addresses"`
-	Email       string         `json:"email"`
+	Email       string         `json:"email" binding:"email"`
 	CreatedAt   string         `json:"-"`
 	UpdatedAt   string         `json:"-"`
 	DeletedAt   string         `json:"-"`
@@ -43,15 +42,13 @@ func CheckPassword(providedPassword, oldPassword string) error {
 	return nil
 }
 
-func ValidateCustomerData(fullName, phoneNumber, password, email string) error {
+func ValidateCustomerRegister(phoneNumber, email string) error {
 
-	if fullName == "" {
-		return errors.New("full name is required")
-	}
+	if phoneNumber != "" {
+		if !strings.HasPrefix(phoneNumber, "+993") {
+			return errors.New("phone number must start with +993")
+		}
 
-	if phoneNumber == "" {
-		return errors.New("phone number is required")
-	} else {
 		row, err := config.ConnDB().Query("SELECT phone_number FROM customers WHERE phone_number = $1 AND deleted_at IS NULL", phoneNumber)
 		if err != nil {
 			return err
@@ -70,28 +67,7 @@ func ValidateCustomerData(fullName, phoneNumber, password, email string) error {
 		}
 	}
 
-	_, err := strconv.Atoi(phoneNumber)
-	if err != nil {
-		return err
-	}
-
-	if len(phoneNumber) != 8 {
-		return errors.New("the length of the phone number must be 8")
-	}
-
-	if password == "" {
-		return errors.New("password is required")
-	}
-
-	if len(password) < 5 || len(password) > 25 {
-		return errors.New("password length must be between 5 and 25")
-	}
-
 	if email != "" {
-		if !pkg.IsEmailValid(email) {
-			return errors.New("email it doesn't match")
-		}
-
 		rowEmail, err := config.ConnDB().Query("SELECT email FROM customers WHERE email = $1 AND deleted_at IS NULL", email)
 		if err != nil {
 			return err
@@ -127,6 +103,18 @@ func ValidateCustomerData(fullName, phoneNumber, password, email string) error {
 	// 		}
 	// 	}
 	// }
+
+	return nil
+
+}
+
+func ValidateCustomerLogin(phoneNumber string) error {
+
+	if phoneNumber != "" {
+		if !strings.HasPrefix(phoneNumber, "+993") {
+			return errors.New("phone number must start with +993")
+		}
+	}
 
 	return nil
 

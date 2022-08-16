@@ -32,7 +32,7 @@ func CreateCompanyAddress(c *gin.Context) {
 
 	// create company address
 	for _, v := range languages {
-		config.ConnDB().Exec("INSERT INTO company_address (lang_id,address) VALUES ($1,$2)", v.ID, c.PostForm("address_"+v.NameShort))
+		resultComAddres, err := config.ConnDB().Query("INSERT INTO company_address (lang_id,address) VALUES ($1,$2)", v.ID, c.PostForm("address_"+v.NameShort))
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
@@ -40,6 +40,7 @@ func CreateCompanyAddress(c *gin.Context) {
 			})
 			return
 		}
+		defer resultComAddres.Close()
 	}
 
 	c.JSON(http.StatusOK, gin.H{
@@ -51,11 +52,7 @@ func CreateCompanyAddress(c *gin.Context) {
 
 func GetCompanyAddress(c *gin.Context) {
 
-	// GET DATA FROM ROUTE PARAMETER
-	langShortName := c.Param("lang")
-
-	// GET language id
-	langID, err := GetLangID(langShortName)
+	langID, err := CheckLanguage(c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -73,6 +70,7 @@ func GetCompanyAddress(c *gin.Context) {
 		})
 		return
 	}
+	defer addressRow.Close()
 
 	var address string
 

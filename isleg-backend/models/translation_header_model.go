@@ -29,13 +29,25 @@ type TranslationHeader struct {
 	DeletedAt            string    `json:"-"`
 }
 
-func ValidateTranslationHeaderData(languages []Language, dataNames []string, context *gin.Context) error {
+func ValidateTranslationHeaderCreate(languages []Language, dataNames []string, context *gin.Context) error {
 
 	for _, dataName := range dataNames {
 		for _, v := range languages {
 			if context.PostForm(dataName+"_"+v.NameShort) == "" {
 				return errors.New(dataName + "_" + v.NameShort + " is required")
 			}
+		}
+	}
+
+	return nil
+
+}
+
+func ValidateTranslationHeaderUpdate(dataNames []string, context *gin.Context) error {
+
+	for _, dataName := range dataNames {
+		if context.PostForm(dataName) == "" {
+			return errors.New(dataName + " is required")
 		}
 	}
 

@@ -3,8 +3,10 @@ package controllers
 import (
 	"github/abbgo/isleg/isleg-backend/config"
 	"net/http"
+	"os"
 	"path/filepath"
 	"strconv"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -51,6 +53,18 @@ type Brend struct {
 	Name string `json:"name"`
 }
 
+type OneCategory struct {
+	ID               string    `json:"id"`
+	ParentCategoryID uuid.UUID `json:"parent_category_id"`
+	Image            string    `json:"image"`
+	IsHomeCategory   bool      `json:"is_home_category"`
+}
+
+type ProductImages struct {
+	MainImage string         `json:"main_image"`
+	Images    pq.StringArray `json:"images"`
+}
+
 func CreateCategory(c *gin.Context) {
 
 	var fileName string
@@ -67,8 +81,9 @@ func CreateCategory(c *gin.Context) {
 	}
 
 	parentCategoryID := c.PostForm("parent_category_id")
-	parentCategoryIDUUID, err := uuid.Parse(parentCategoryID)
+
 	if parentCategoryID != "" {
+		rowCategory, err := config.ConnDB().Query("SELECT id FROM categories WHERE id = $1 AND deleted_at IS NULL", parentCategoryID)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
@@ -76,16 +91,24 @@ func CreateCategory(c *gin.Context) {
 			})
 			return
 		}
-	} else {
-		parentCategoryIDUUID = uuid.Nil
-	}
+		defer rowCategory.Close()
 
-	if parentCategoryIDUUID != uuid.Nil {
-		_, err := config.ConnDB().Query("SELECT id FROM categories WHERE id = $1 AND deleted_at IS NULL", parentCategoryID)
-		if err != nil {
+		var parentCategory string
+
+		for rowCategory.Next() {
+			if err := rowCategory.Scan(&parentCategory); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}
+
+		if parentCategory == "" {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
-				"message": err.Error(),
+				"message": "parent category not found",
 			})
 			return
 		}
@@ -116,8 +139,8 @@ func CreateCategory(c *gin.Context) {
 			return
 		}
 
-		newFileName := "category" + uuid.New().String() + extension
-		fileName = "uploads/" + newFileName
+		newFileName := uuid.New().String() + extension
+		fileName = "uploads/category/" + newFileName
 	}
 
 	// VALIDATE DATA
@@ -131,7 +154,7 @@ func CreateCategory(c *gin.Context) {
 		}
 	}
 
-	if parentCategoryIDUUID == uuid.Nil && fileName == "" {
+	if parentCategoryID == "" && fileName == "" {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
 			"message": "parent category image is required",
@@ -139,7 +162,7 @@ func CreateCategory(c *gin.Context) {
 		return
 	}
 
-	if parentCategoryIDUUID != uuid.Nil && fileName != "" {
+	if parentCategoryID != "" && fileName != "" {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
 			"message": "child cannot be an image of the category",
@@ -148,8 +171,8 @@ func CreateCategory(c *gin.Context) {
 	}
 
 	// CREATE CATEGORY
-	if parentCategoryIDUUID != uuid.Nil {
-		_, err = config.ConnDB().Exec("INSERT INTO categories (parent_category_id,image,is_home_category) VALUES ($1,$2,$3)", parentCategoryIDUUID, fileName, isHomeCategory)
+	if parentCategoryID != "" {
+		resultCateor, err := config.ConnDB().Query("INSERT INTO categories (parent_category_id,image,is_home_category) VALUES ($1,$2,$3)", parentCategoryID, fileName, isHomeCategory)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
@@ -157,8 +180,9 @@ func CreateCategory(c *gin.Context) {
 			})
 			return
 		}
+		defer resultCateor.Close()
 	} else {
-		_, err = config.ConnDB().Exec("INSERT INTO categories (image,is_home_category) VALUES ($1,$2)", fileName, isHomeCategory)
+		result, err := config.ConnDB().Query("INSERT INTO categories (image,is_home_category) VALUES ($1,$2)", fileName, isHomeCategory)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
@@ -166,6 +190,7 @@ func CreateCategory(c *gin.Context) {
 			})
 			return
 		}
+		defer result.Close()
 	}
 
 	if fileName != "" {
@@ -181,6 +206,7 @@ func CreateCategory(c *gin.Context) {
 		})
 		return
 	}
+	defer lastCategoryID.Close()
 
 	var categoryID string
 
@@ -196,8 +222,53 @@ func CreateCategory(c *gin.Context) {
 
 	// CREATE TRANSLATION CATEGORY
 	for _, v := range languages {
-		_, err := config.ConnDB().Exec("INSERT INTO translation_category (lang_id,category_id,name) VALUES ($1,$2,$3)", v.ID, categoryID, c.PostForm("name_"+v.NameShort))
+		result, err := config.ConnDB().Query("INSERT INTO translation_category (lang_id,category_id,name) VALUES ($1,$2,$3)", v.ID, categoryID, c.PostForm("name_"+v.NameShort))
 		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+		defer result.Close()
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":  true,
+		"message": "category successfully added",
+	})
+
+}
+
+func UpdateCategoryByID(c *gin.Context) {
+
+	ID := c.Param("id")
+	var fileName string
+
+	isHomeCategoryStr := c.PostForm("is_home_category")
+	isHomeCategory, err := strconv.ParseBool(isHomeCategoryStr)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	rowCategor, err := config.ConnDB().Query("SELECT id,image FROM categories WHERE id = $1 AND deleted_at IS NULL", ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer rowCategor.Close()
+
+	var category_id, image string
+
+	for rowCategor.Next() {
+		if err := rowCategor.Scan(&category_id, &image); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
@@ -206,9 +277,233 @@ func CreateCategory(c *gin.Context) {
 		}
 	}
 
+	if category_id == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "category not found",
+		})
+		return
+	}
+
+	parentCategoryID := c.PostForm("parent_category_id")
+
+	if parentCategoryID != "" {
+		rowCategory, err := config.ConnDB().Query("SELECT id FROM categories WHERE id = $1 AND deleted_at IS NULL", parentCategoryID)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+		defer rowCategory.Close()
+
+		var parentCategory string
+
+		for rowCategory.Next() {
+			if err := rowCategory.Scan(&parentCategory); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}
+
+		if parentCategory == "" {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": "parent category not found",
+			})
+			return
+		}
+	}
+
+	// GET ALL LANGUAGE
+	languages, err := GetAllLanguageWithIDAndNameShort()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	// FILE UPLOAD
+	file, errFile := c.FormFile("image")
+	if errFile != nil {
+		fileName = image
+	} else {
+		extension := filepath.Ext(file.Filename)
+		// VALIDATE IMAGE
+		if extension != ".jpg" && extension != ".jpeg" && extension != ".png" && extension != ".gif" {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": "the file must be an image.",
+			})
+			return
+		}
+
+		newFileName := uuid.New().String() + extension
+		fileName = "uploads/category/" + newFileName
+
+		if err := os.Remove("./" + image); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}
+
+	// VALIDATE DATA
+	for _, v := range languages {
+		if c.PostForm("name_"+v.NameShort) == "" {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": "name_" + v.NameShort + " is required",
+			})
+			return
+		}
+	}
+
+	if parentCategoryID == "" && fileName == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "parent category image is required",
+		})
+		return
+	}
+
+	if parentCategoryID != "" && fileName != "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "child cannot be an image of the category",
+		})
+		return
+	}
+
+	currentTime := time.Now()
+
+	// UPDATE CATEGORY
+	if parentCategoryID != "" {
+		result, err := config.ConnDB().Query("UPDATE categories SET parent_category_id = $1, image = $2, is_home_category = $3 , updated_at = $5 WHERE id = $4", parentCategoryID, fileName, isHomeCategory, ID, currentTime)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+		defer result.Close()
+	} else {
+		resultCat, err := config.ConnDB().Query("UPDATE categories SET image = $1, is_home_category = $2 , updated_at = $4 WHERE id = $3", fileName, isHomeCategory, ID, currentTime)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+		defer resultCat.Close()
+	}
+
+	if fileName != "" {
+		c.SaveUploadedFile(file, "./"+fileName)
+	}
+
+	// UPDATE TRANSLATION CATEGORY
+	for _, v := range languages {
+		resultTRCate, err := config.ConnDB().Query("UPDATE translation_category SET name = $1 , updated_at = $4 WHERE lang_id = $2 AND category_id = $3", c.PostForm("name_"+v.NameShort), v.ID, ID, currentTime)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+		defer resultTRCate.Close()
+	}
+
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
-		"message": "category successfully added",
+		"message": "category successfully updated",
+	})
+
+}
+
+func GetCategoryByID(c *gin.Context) {
+
+	ID := c.Param("id")
+
+	rowCategor, err := config.ConnDB().Query("SELECT id,parent_category_id,image,is_home_category FROM categories WHERE id = $1 AND deleted_at IS NULL", ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer rowCategor.Close()
+
+	var category OneCategory
+
+	for rowCategor.Next() {
+		if err := rowCategor.Scan(&category.ID, &category.ParentCategoryID, &category.Image, &category.Image); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}
+
+	if category.ID == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "category not found",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":   true,
+		"category": category,
+	})
+
+}
+
+func GetCategories(c *gin.Context) {
+
+	rowCategor, err := config.ConnDB().Query("SELECT id,parent_category_id,image,is_home_category FROM categories WHERE deleted_at IS NULL")
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer rowCategor.Close()
+
+	var categories []OneCategory
+
+	for rowCategor.Next() {
+		var category OneCategory
+
+		if err := rowCategor.Scan(&category.ID, &category.ParentCategoryID, &category.Image, &category.Image); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+
+		categories = append(categories, category)
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":     true,
+		"categories": categories,
 	})
 
 }
@@ -220,6 +515,7 @@ func GetAllCategoryForHeader(langID string) ([]ResultCategory, error) {
 	if err != nil {
 		return []ResultCategory{}, err
 	}
+	defer rows.Close()
 
 	var results []ResultCategory
 
@@ -234,6 +530,7 @@ func GetAllCategoryForHeader(langID string) ([]ResultCategory, error) {
 		if err != nil {
 			return []ResultCategory{}, err
 		}
+		defer rowss.Close()
 
 		var resuls []ResultCategor
 
@@ -248,6 +545,7 @@ func GetAllCategoryForHeader(langID string) ([]ResultCategory, error) {
 			if err != nil {
 				return []ResultCategory{}, err
 			}
+			defer rowsss.Close()
 
 			var resus []ResultCatego
 
@@ -271,16 +569,608 @@ func GetAllCategoryForHeader(langID string) ([]ResultCategory, error) {
 
 }
 
+func DeleteCategoryByID(c *gin.Context) {
+
+	ID := c.Param("id")
+
+	rowCategor, err := config.ConnDB().Query("SELECT id FROM categories WHERE id = $1 AND deleted_at IS NULL", ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer rowCategor.Close()
+
+	var category_id string
+
+	for rowCategor.Next() {
+		if err := rowCategor.Scan(&category_id); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}
+
+	if category_id == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "category not found",
+		})
+		return
+	}
+
+	currentTime := time.Now()
+
+	resultCate, err := config.ConnDB().Query("UPDATE categories SET deleted_at = $1 WHERE id = $2", currentTime, ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer resultCate.Close()
+
+	resultTRCate, err := config.ConnDB().Query("UPDATE translation_category SET deleted_at = $1 WHERE category_id = $2", currentTime, ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer resultTRCate.Close()
+
+	resultCateg, err := config.ConnDB().Query("UPDATE categories SET deleted_at = $1 WHERE parent_category_id = $2", currentTime, ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer resultCateg.Close()
+
+	rowChildCategory, err := config.ConnDB().Query("SELECT id FROM categories WHERE parent_category_id = $1", ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer rowChildCategory.Close()
+
+	var childCategoryIDS []string
+
+	for rowChildCategory.Next() {
+		var childCategoryID string
+		if err := rowChildCategory.Scan(&childCategoryID); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+
+		childCategoryIDS = append(childCategoryIDS, childCategoryID)
+	}
+
+	for _, v := range childCategoryIDS {
+		resultTRCate, err := config.ConnDB().Query("UPDATE translation_category SET deleted_at = $1 WHERE category_id = $2", currentTime, v)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+		defer resultTRCate.Close()
+
+		resultCaetProd, err := config.ConnDB().Query("UPDATE category_product SET deleted_at = $1 WHERE category_id = $2", currentTime, v)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+		defer resultCaetProd.Close()
+
+		resultProd, err := config.ConnDB().Query("UPDATE products SET deleted_at = $1 FROM category_product WHERE category_product.product_id = products.id AND category_product.category_id = $2", currentTime, v)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+		defer resultProd.Close()
+
+		resultTRPr, err := config.ConnDB().Query("UPDATE translation_product SET deleted_at = $1 FROM products,category_product WHERE translation_product.product_id = products.id AND category_product.product_id = products.id  AND category_product.category_id = $2", currentTime, v)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+		defer resultTRPr.Close()
+
+		resultCateSho, err := config.ConnDB().Query("UPDATE category_shop SET deleted_at = $1 WHERE category_id = $2", currentTime, v)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+		defer resultCateSho.Close()
+
+		resultSHop, err := config.ConnDB().Query("UPDATE shops SET deleted_at = $1 FROM category_shop WHERE category_shop.shop_id = shops.id AND category_shop.category_id = $2", currentTime, v)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+		defer resultSHop.Close()
+	}
+
+	resultCategProd, err := config.ConnDB().Query("UPDATE category_product SET deleted_at = $1 WHERE category_id = $2", currentTime, ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer resultCategProd.Close()
+
+	resultProduct, err := config.ConnDB().Query("UPDATE products SET deleted_at = $1 FROM category_product WHERE category_product.product_id = products.id AND category_product.category_id = $2", currentTime, ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer resultProduct.Close()
+
+	resultTRPRD, err := config.ConnDB().Query("UPDATE translation_product SET deleted_at = $1 FROM products,category_product WHERE translation_product.product_id = products.id AND category_product.product_id = products.id  AND category_product.category_id = $2", currentTime, ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer resultTRPRD.Close()
+
+	resultCateShop, err := config.ConnDB().Query("UPDATE category_shop SET deleted_at = $1 WHERE category_id = $2", currentTime, ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer resultCateShop.Close()
+
+	resultsHI, err := config.ConnDB().Query("UPDATE shops SET deleted_at = $1 FROM category_shop WHERE category_shop.shop_id = shops.id AND category_shop.category_id = $2", currentTime, ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer resultsHI.Close()
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":  true,
+		"message": "category successfully deleted",
+	})
+
+}
+
+func RestoreCategoryByID(c *gin.Context) {
+
+	ID := c.Param("id")
+
+	rowCategor, err := config.ConnDB().Query("SELECT id FROM categories WHERE id = $1 AND deleted_at IS NOT NULL", ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer rowCategor.Close()
+
+	var category_id string
+
+	for rowCategor.Next() {
+		if err := rowCategor.Scan(&category_id); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}
+
+	if category_id == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "category not found",
+		})
+		return
+	}
+
+	rESUTCate, err := config.ConnDB().Query("UPDATE categories SET deleted_at = NULL WHERE id = $1", ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer rESUTCate.Close()
+
+	resultTrCateg, err := config.ConnDB().Query("UPDATE translation_category SET deleted_at = NULL WHERE category_id = $1", ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer resultTrCateg.Close()
+
+	resultCt, err := config.ConnDB().Query("UPDATE categories SET deleted_at = NULL WHERE parent_category_id = $1", ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer resultCt.Close()
+
+	rowChildCategory, err := config.ConnDB().Query("SELECT id FROM categories WHERE parent_category_id = $1", ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer rowChildCategory.Close()
+
+	var childCategoryIDS []string
+
+	for rowChildCategory.Next() {
+		var childCategoryID string
+		if err := rowChildCategory.Scan(&childCategoryID); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+
+		childCategoryIDS = append(childCategoryIDS, childCategoryID)
+	}
+
+	for _, v := range childCategoryIDS {
+		resultTRCategory, err := config.ConnDB().Query("UPDATE translation_category SET deleted_at = NULL WHERE category_id = $1", v)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+		defer resultTRCategory.Close()
+
+		resultCateProd, err := config.ConnDB().Query("UPDATE category_product SET deleted_at = NULL WHERE category_id = $1", v)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+		defer resultCateProd.Close()
+
+		resultProd, err := config.ConnDB().Query("UPDATE products SET deleted_at = NULL FROM category_product WHERE category_product.product_id = products.id AND category_product.category_id = $1", v)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+		defer resultProd.Close()
+
+		resultTRProduct, err := config.ConnDB().Query("UPDATE translation_product SET deleted_at = NULL FROM products,category_product WHERE translation_product.product_id = products.id AND category_product.product_id = products.id  AND category_product.category_id = $1", v)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+		defer resultTRProduct.Close()
+
+		resultCateShop, err := config.ConnDB().Query("UPDATE category_shop SET deleted_at = NULL WHERE category_id = $1", v)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+		defer resultCateShop.Close()
+
+		resultSHops, err := config.ConnDB().Query("UPDATE shops SET deleted_at = NULL FROM category_shop WHERE category_shop.shop_id = shops.id AND category_shop.category_id = $1", v)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+		defer resultSHops.Close()
+	}
+
+	resutlCategPro, err := config.ConnDB().Query("UPDATE category_product SET deleted_at = NULL WHERE category_id = $1", ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer resutlCategPro.Close()
+
+	resultProd, err := config.ConnDB().Query("UPDATE products SET deleted_at = NULL FROM category_product WHERE category_product.product_id = products.id AND category_product.category_id = $1", ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer resultProd.Close()
+
+	resultTRProd, err := config.ConnDB().Query("UPDATE translation_product SET deleted_at = NULL FROM products,category_product WHERE translation_product.product_id = products.id AND category_product.product_id = products.id  AND category_product.category_id = $1", ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer resultTRProd.Close()
+
+	resultCategShop, err := config.ConnDB().Query("UPDATE category_shop SET deleted_at = NULL WHERE category_id = $1", ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer resultCategShop.Close()
+
+	resutShops, err := config.ConnDB().Query("UPDATE shops SET deleted_at = NULL FROM category_shop WHERE category_shop.shop_id = shops.id AND category_shop.category_id = $1", ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer resutShops.Close()
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":  true,
+		"message": "category successfully restored",
+	})
+
+}
+
+func DeletePermanentlyCategoryByID(c *gin.Context) {
+
+	ID := c.Param("id")
+
+	rowCategor, err := config.ConnDB().Query("SELECT id,image FROM categories WHERE id = $1 AND deleted_at IS NOT NULL", ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer rowCategor.Close()
+
+	var category_id, image string
+
+	for rowCategor.Next() {
+		if err := rowCategor.Scan(&category_id, &image); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}
+
+	if category_id == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "category not found",
+		})
+		return
+	}
+
+	if image != "" {
+		if err := os.Remove("./" + image); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}
+
+	rowProducts, err := config.ConnDB().Query("SELECT p.main_image,p.images FROM products p INNER JOIN category_product c ON c.product_id=p.id WHERE c.category_id = $1", ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer rowProducts.Close()
+
+	var products []ProductImages
+
+	for rowProducts.Next() {
+		var product ProductImages
+
+		if err := rowProducts.Scan(&product.MainImage, &product.Images); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+
+		products = append(products, product)
+	}
+
+	for _, v := range products {
+		if err := os.Remove("./" + v.MainImage); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+
+		if len(v.Images) != 0 {
+			for _, img := range v.Images {
+				if err := os.Remove("./" + img); err != nil {
+					c.JSON(http.StatusBadRequest, gin.H{
+						"status":  false,
+						"message": err.Error(),
+					})
+					return
+				}
+			}
+		}
+	}
+
+	rowChildCategory, err := config.ConnDB().Query("SELECT id FROM categories WHERE parent_category_id = $1", ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer rowChildCategory.Close()
+
+	var childCategoryIDS []string
+
+	for rowChildCategory.Next() {
+		var childCategoryID string
+		if err := rowChildCategory.Scan(&childCategoryID); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+
+		childCategoryIDS = append(childCategoryIDS, childCategoryID)
+	}
+
+	for _, v := range childCategoryIDS {
+		rowPrdcs, err := config.ConnDB().Query("SELECT p.main_image,p.images FROM products p INNER JOIN category_product c ON c.product_id=p.id WHERE c.category_id = $1", v)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+		defer rowPrdcs.Close()
+
+		var prdcts []ProductImages
+
+		for rowPrdcs.Next() {
+			var product ProductImages
+
+			if err := rowPrdcs.Scan(&product.MainImage, &product.Images); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+
+			prdcts = append(prdcts, product)
+		}
+
+		for _, v := range prdcts {
+			if err := os.Remove("./" + v.MainImage); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+
+			if len(v.Images) != 0 {
+				for _, img := range v.Images {
+					if err := os.Remove("./" + img); err != nil {
+						c.JSON(http.StatusBadRequest, gin.H{
+							"status":  false,
+							"message": err.Error(),
+						})
+						return
+					}
+				}
+			}
+		}
+	}
+
+	resutCateg, err := config.ConnDB().Query("DELETE FROM categories WHERE id = $1", ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer resutCateg.Close()
+
+}
+
 func GetOneCategoryWithProducts(c *gin.Context) {
 
 	var countOfProducts uint64
 
-	// GET DATA FROM ROUTE PARAMETER
-	langShortName := c.Param("lang")
-
-	// GET language id
-	var langID string
-	langID, err := GetLangID(langShortName)
+	langID, err := CheckLanguage(c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -330,7 +1220,7 @@ func GetOneCategoryWithProducts(c *gin.Context) {
 	categoryID := c.Param("category_id")
 
 	// get category where id equal categiryID
-	categoryRow, err := config.ConnDB().Query("SELECT c.id,t.name FROM categories c LEFT JOIN translation_category t ON c.id=t.category_id WHERE t.lang_id = $1 AND c.id = $2 AND categories.deleted_at IS NULL AND translation_category.deleted_at IS NULL", langID, categoryID)
+	categoryRow, err := config.ConnDB().Query("SELECT c.id,t.name FROM categories c LEFT JOIN translation_category t ON c.id=t.category_id WHERE t.lang_id = $1 AND c.id = $2 AND c.deleted_at IS NULL AND t.deleted_at IS NULL", langID, categoryID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -338,6 +1228,7 @@ func GetOneCategoryWithProducts(c *gin.Context) {
 		})
 		return
 	}
+	defer categoryRow.Close()
 
 	var category Category
 
@@ -351,7 +1242,7 @@ func GetOneCategoryWithProducts(c *gin.Context) {
 		}
 
 		// get count product where product_id equal categoryID
-		productCount, err := config.ConnDB().Query("SELECT COUNT(p.id) FROM products p LEFT JOIN category_product c ON p.id=c.product_id WHERE c.category_id = $1 AND products.deleted_at IS NULL AND category_product.deleted_at IS NULL", categoryID)
+		productCount, err := config.ConnDB().Query("SELECT COUNT(p.id) FROM products p LEFT JOIN category_product c ON p.id=c.product_id WHERE c.category_id = $1 AND p.deleted_at IS NULL AND c.deleted_at IS NULL", categoryID)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
@@ -359,6 +1250,7 @@ func GetOneCategoryWithProducts(c *gin.Context) {
 			})
 			return
 		}
+		defer productCount.Close()
 
 		for productCount.Next() {
 			if err := productCount.Scan(&countOfProducts); err != nil {
@@ -373,7 +1265,7 @@ func GetOneCategoryWithProducts(c *gin.Context) {
 		}
 
 		// get all product where category id equal categoryID
-		productRows, err := config.ConnDB().Query("SELECT p.id,t.name,p.price,p.old_price,p.main_image,p.product_code,p.images FROM products p LEFT JOIN category_product c ON p.id=c.product_id LEFT JOIN translation_product t ON p.id=t.product_id WHERE t.lang_id = $1 AND c.category_id = $2 AND products.deleted_at IS NULL AND category_product.deleted_at IS NULL AND translation_product.deleted_at IS NULL ORDER BY p.created_at ASC LIMIT $3 OFFSET $4", langID, categoryID, limit, offset)
+		productRows, err := config.ConnDB().Query("SELECT p.id,t.name,p.price,p.old_price,p.main_image,p.product_code,p.images FROM products p LEFT JOIN category_product c ON p.id=c.product_id LEFT JOIN translation_product t ON p.id=t.product_id WHERE t.lang_id = $1 AND c.category_id = $2 AND p.deleted_at IS NULL AND c.deleted_at IS NULL AND t.deleted_at IS NULL ORDER BY p.created_at ASC LIMIT $3 OFFSET $4", langID, categoryID, limit, offset)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
@@ -381,6 +1273,7 @@ func GetOneCategoryWithProducts(c *gin.Context) {
 			})
 			return
 		}
+		defer productRows.Close()
 
 		var products []Product
 
@@ -395,7 +1288,7 @@ func GetOneCategoryWithProducts(c *gin.Context) {
 			}
 
 			// get brend where id equal brend_id of product
-			brendRows, err := config.ConnDB().Query("SELECT b.id,b.name FROM products p LEFT JOIN brends b ON p.brend_id=b.id WHERE p.id = $1 AND products.deleted_at IS NULL AND brends.deleted_at IS NULL", product.ID)
+			brendRows, err := config.ConnDB().Query("SELECT b.id,b.name FROM products p LEFT JOIN brends b ON p.brend_id=b.id WHERE p.id = $1 AND p.deleted_at IS NULL AND b.deleted_at IS NULL", product.ID)
 			if err != nil {
 				c.JSON(http.StatusBadRequest, gin.H{
 					"status":  false,
@@ -403,6 +1296,7 @@ func GetOneCategoryWithProducts(c *gin.Context) {
 				})
 				return
 			}
+			defer brendRows.Close()
 
 			var brend Brend
 

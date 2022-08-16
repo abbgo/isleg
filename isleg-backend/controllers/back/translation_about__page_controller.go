@@ -4,6 +4,7 @@ import (
 	"github/abbgo/isleg/isleg-backend/config"
 	"github/abbgo/isleg/isleg-backend/models"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -38,7 +39,7 @@ func CreateTranslationAbout(c *gin.Context) {
 
 	// create translation about
 	for _, v := range languages {
-		_, err := config.ConnDB().Exec("INSERT INTO translation_about (lang_id,title,content) VALUES ($1,$2,$3)", v.ID, c.PostForm("title_"+v.NameShort), c.PostForm("content_"+v.NameShort))
+		resultTRAbout, err := config.ConnDB().Query("INSERT INTO translation_about (lang_id,title,content) VALUES ($1,$2,$3)", v.ID, c.PostForm("title_"+v.NameShort), c.PostForm("content_"+v.NameShort))
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
@@ -46,6 +47,7 @@ func CreateTranslationAbout(c *gin.Context) {
 			})
 			return
 		}
+		defer resultTRAbout.Close()
 	}
 
 	c.JSON(http.StatusOK, gin.H{
@@ -55,13 +57,115 @@ func CreateTranslationAbout(c *gin.Context) {
 
 }
 
-func GetTranslationAbout(c *gin.Context) {
+func UpdateTranslationAboutByID(c *gin.Context) {
 
-	// GET DATA FROM ROUTE PARAMETER
-	langShortName := c.Param("lang")
+	ID := c.Param("id")
 
-	// GET language id
-	langID, err := GetLangID(langShortName)
+	rowFlag, err := config.ConnDB().Query("SELECT id FROM translation_about WHERE id = $1 AND deleted_at IS NULL", ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer rowFlag.Close()
+
+	var id string
+
+	for rowFlag.Next() {
+		if err := rowFlag.Scan(&id); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}
+
+	if id == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "record not found",
+		})
+		return
+	}
+
+	dataNames := []string{"title", "content"}
+
+	// VALIDATE DATA
+	err = models.ValidateTranslationAboutUpdate(dataNames, c)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	currentTime := time.Now()
+
+	resultTRABout, err := config.ConnDB().Query("UPDATE translation_about SET title = $1, content = $2 , updated_at = $4 WHERE id = $3", c.PostForm("title"), c.PostForm("content"), id, currentTime)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer resultTRABout.Close()
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":  true,
+		"message": "translation about successfully updated",
+	})
+
+}
+
+func GetTranslationAboutByID(c *gin.Context) {
+
+	ID := c.Param("id")
+
+	rowFlag, err := config.ConnDB().Query("SELECT title,content FROM translation_about WHERE id = $1 AND deleted_at IS NULL", ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer rowFlag.Close()
+
+	var t TrAbout
+
+	for rowFlag.Next() {
+		if err := rowFlag.Scan(&t.Title, &t.Content); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}
+
+	if t.Title == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "record not found",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":            true,
+		"translation_about": t,
+	})
+
+}
+
+func GetTranslationAboutByLangID(c *gin.Context) {
+
+	langID, err := CheckLanguage(c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -79,6 +183,7 @@ func GetTranslationAbout(c *gin.Context) {
 		})
 		return
 	}
+	defer aboutRow.Close()
 
 	var translationAbout TrAbout
 

@@ -5,6 +5,7 @@ import (
 	backController "github/abbgo/isleg/isleg-backend/controllers/back"
 	frontController "github/abbgo/isleg/isleg-backend/controllers/front"
 	"github/abbgo/isleg/isleg-backend/middlewares"
+	"time"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -15,43 +16,84 @@ func Routes() *gin.Engine {
 	routes := gin.Default()
 
 	// cors
-	routes.Use(cors.Default())
+	// routes.Use(cors.Default())
+
+	routes.Use(cors.New(cors.Config{
+		// AllowOrigins:     []string{"https://foo.com"},
+		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "HEAD"},
+		AllowHeaders:     []string{"Origin", "Content-Length", "Content-Type", "RefershToken", "Authorization"},
+		AllowCredentials: true,
+		AllowAllOrigins:  true,
+		MaxAge:           12 * time.Hour,
+	}))
 
 	// routes belong to admin panel
 	back := routes.Group("/admin")
 	{
-
 		back.POST("/language", backController.CreateLanguage)
-		back.PUT("/language/:id", backController.UpdateLanguage)
-		back.GET("/language/:id", backController.GetOneLanguage)
-		back.GET("/languages", backController.GetAllLanguage)
-		back.DELETE("/language/:id", backController.DeleteLanguage)
-		back.GET("/restore-language/:id", backController.RestoreLanguage)
-		back.DELETE("/delete-language/:id", backController.DeletePermanentlyLanguage)
+		back.PUT("/language/:id", backController.UpdateLanguageByID)
+		back.GET("/language/:id", backController.GetLanguageByID)
+		back.GET("/languages", backController.GetLanguages)
+		back.DELETE("/language/:id", backController.DeleteLanguageByID)
+		back.GET("/restore-language/:id", backController.RestoreLanguageByID)
+		back.DELETE("/delete-language/:id", backController.DeletePermanentlyLanguageByID)
 
-		back.GET("/company-setting", backController.CreateCompanySetting)
+		back.POST("/company-setting", backController.CreateCompanySetting)
+		back.PUT("/company-setting", backController.UpdateCompanySetting)
+		back.GET("/company-setting", backController.GetCompanySetting)
 
 		back.POST("/translation-header", backController.CreateTranslationHeader)
+		back.PUT("/translation-header/:id", backController.UpdateTranslationHeaderByID)
+		back.GET("/translation-header/:id", backController.GetTranslationHeaderByID)
 
 		back.POST("/translation-footer", backController.CreateTranslationFooter)
+		back.PUT("/translation-footer/:id", backController.UpdateTranslationFooterByID)
+		back.GET("/translation-footer/:id", backController.GetTranslationFooterByID)
 
 		back.POST("/translation-secure", backController.CreateTranslationSecure)
+		back.PUT("/translation-secure/:id", backController.UpdateTranslationSecureByID)
+		back.GET("/translation-secure/:id", backController.GetTranslationSecureByID)
 
 		back.POST("/translation-payment", backController.CreateTranslationPayment)
+		back.PUT("/translation-payment/:id", backController.UpdateTranslationPaymentByID)
+		back.GET("/translation-payment/:id", backController.GetTranslationPaymentByID)
 
 		back.POST("/translation-about", backController.CreateTranslationAbout)
+		back.PUT("/translation-about/:id", backController.UpdateTranslationAboutByID)
+		back.GET("/translation-about/:id", backController.GetTranslationAboutByID)
 
 		back.POST("/translation-contact", backController.CreateTranslationContact)
+		back.PUT("/translation-contact/:id", backController.UpdateTranslationContactByID)
+		back.GET("/translation-contact/:id", backController.GetTranslationContactByID)
 
 		back.POST("/translation-my-information-page", backController.CreateTranslationMyInformationPage)
+		back.PUT("/translation-my-information-page/:id", backController.UpdateTranslationMyInformationPageByID)
+		back.GET("/translation-my-information-page/:id", backController.GetTranslationMyInformationPageByID)
 
 		back.POST("/translation-update-password-page", backController.CreateTranslationUpdatePasswordPage)
+		back.PUT("/translation-update-password-page/:id", backController.UpdateTranslationUpdatePasswordPageByID)
+		back.GET("/translation-update-password-page/:id", backController.GetTranslationUpdatePasswordPageByID)
 
 		back.POST("/category", backController.CreateCategory)
+		back.PUT("/category/:id", backController.UpdateCategoryByID)
+		back.GET("/category/:id", backController.GetCategoryByID)
+		back.GET("/categories", backController.GetCategories)
+		back.DELETE("/category/:id", backController.DeleteCategoryByID)
+		back.GET("/restore-category/:id", backController.RestoreCategoryByID)
+		back.DELETE("/delete-category/:id", backController.DeletePermanentlyCategoryByID)
 
 		back.POST("/brend", backController.CreateBrend)
+		back.PUT("/brend/:id", backController.UpdateBrendByID)
+		back.GET("/brend/:id", backController.GetBrendByID)
+		back.GET("/brends", backController.GetBrends)
+		back.DELETE("/brend/:id", backController.DeleteBrendByID)
+		back.GET("/restore-brend/:id", backController.RestoreBrendByID)
+		back.DELETE("/delete-brend/:id", backController.DeletePermanentlyBrendByID)
 
 		back.POST("/product", backController.CreateProduct)
+		back.PUT("/product/:id", backController.UpdateProductByID)
+		back.GET("/product/:id", backController.GetProductByID)
+		back.GET("/products", backController.GetProducts)
 
 		back.POST("/company-phone", backController.CreateCompanyPhone)
 
@@ -62,7 +104,14 @@ func Routes() *gin.Engine {
 		back.POST("/district", backController.CreateDistrict)
 
 		back.POST("/shop", backController.CreateShop)
+	}
 
+	// customer routes
+	customer := routes.Group("/api/auth")
+	{
+		customer.POST("/register", frontController.RegisterCustomer)
+		customer.POST("/login", frontController.LoginCustomer)
+		customer.POST("/refresh", auth.Refresh)
 	}
 
 	// routes belong to front
@@ -84,19 +133,19 @@ func Routes() *gin.Engine {
 		front.GET("/company-address", backController.GetCompanyAddress)
 
 		// get Terms of Service and Privacy Policy page translation
-		front.GET("/translation-secure", backController.GetTranslationSecure)
+		front.GET("/translation-secure", backController.GetTranslationSecureByLangID)
 
 		// get Delivery and payment order page translation
-		front.GET("/translation-payment", backController.GetTranslationPayment)
+		front.GET("/translation-payment", backController.GetTranslationPaymentByLangID)
 
 		// get about us page translation
-		front.GET("/translation-about", backController.GetTranslationAbout)
+		front.GET("/translation-about", backController.GetTranslationAboutByLangID)
 
 		// get contact us page translation
-		front.GET("/translation-contact", backController.GetTranslationContact)
+		front.GET("/translation-contact", backController.GetTranslationContactByLangID)
 
 		// get update password page translation
-		front.GET("/translation-update-password-page", backController.GetTranslationUpdatePasswordPage)
+		front.GET("/translation-update-password-page", backController.GetTranslationUpdatePasswordPageByLangID)
 
 		// homepage categories
 		front.GET("/homepage-categories", frontController.GetHomePageCategories)
@@ -104,15 +153,10 @@ func Routes() *gin.Engine {
 		// get one category with products
 		front.GET("/:category_id/:limit/:page", backController.GetOneCategoryWithProducts)
 
-		// customer routes
-		front.POST("/register", frontController.RegisterCustomer)
-		front.POST("/login", frontController.LoginCustomer)
-		front.GET("/refresh", auth.Refresh)
-
 		securedCustomer := front.Group("/").Use(middlewares.Auth())
 		{
 			// get my information page translation
-			securedCustomer.GET("/translation-my-information-page", backController.GetTranslationMyInformationPage)
+			securedCustomer.GET("/translation-my-information-page", backController.GetTranslationMyInformationPageByLangID)
 
 			// get all favourite products of customer
 			securedCustomer.POST("/like", frontController.AddLike)

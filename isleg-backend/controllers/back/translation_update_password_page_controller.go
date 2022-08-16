@@ -4,6 +4,7 @@ import (
 	"github/abbgo/isleg/isleg-backend/config"
 	"github/abbgo/isleg/isleg-backend/models"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -40,7 +41,7 @@ func CreateTranslationUpdatePasswordPage(c *gin.Context) {
 	}
 
 	for _, v := range languages {
-		_, err := config.ConnDB().Exec("INSERT INTO translation_update_password_page (lang_id,title,password,verify_password,explanation,save) VALUES ($1,$2,$3,$4,$5,$6)", v.ID, c.PostForm("title_"+v.NameShort), c.PostForm("password_"+v.NameShort), c.PostForm("verify_password_"+v.NameShort), c.PostForm("explanation_"+v.NameShort), c.PostForm("save_"+v.NameShort))
+		result, err := config.ConnDB().Query("INSERT INTO translation_update_password_page (lang_id,title,password,verify_password,explanation,save) VALUES ($1,$2,$3,$4,$5,$6)", v.ID, c.PostForm("title_"+v.NameShort), c.PostForm("password_"+v.NameShort), c.PostForm("verify_password_"+v.NameShort), c.PostForm("explanation_"+v.NameShort), c.PostForm("save_"+v.NameShort))
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
@@ -48,6 +49,7 @@ func CreateTranslationUpdatePasswordPage(c *gin.Context) {
 			})
 			return
 		}
+		defer result.Close()
 	}
 
 	c.JSON(http.StatusOK, gin.H{
@@ -57,13 +59,115 @@ func CreateTranslationUpdatePasswordPage(c *gin.Context) {
 
 }
 
-func GetTranslationUpdatePasswordPage(c *gin.Context) {
+func UpdateTranslationUpdatePasswordPageByID(c *gin.Context) {
 
-	// GET DATA FROM ROUTE PARAMETER
-	langShortName := c.Param("lang")
+	ID := c.Param("id")
 
-	// GET language id
-	langID, err := GetLangID(langShortName)
+	rowFlag, err := config.ConnDB().Query("SELECT id FROM translation_update_password_page WHERE id = $1 AND deleted_at IS NULL", ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer rowFlag.Close()
+
+	var id string
+
+	for rowFlag.Next() {
+		if err := rowFlag.Scan(&id); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}
+
+	if id == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "record not found",
+		})
+		return
+	}
+
+	dataNames := []string{"title", "password", "verify_password", "explanation", "save"}
+
+	// VALIDATE DATA
+	err = models.ValidateTranslationUpdatePasswordPageUpdate(dataNames, c)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	currentTime := time.Now()
+
+	result, err := config.ConnDB().Query("UPDATE translation_update_password_page SET title = $1, verify_password = $2 , explanation = $3 , save = $4 , password = $5 , updated_at = $7 WHERE id = $6", c.PostForm("title"), c.PostForm("verify_password"), c.PostForm("explanation"), c.PostForm("save"), c.PostForm("password"), id, currentTime)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer result.Close()
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":  true,
+		"message": "translation_update_password_page successfully updated",
+	})
+
+}
+
+func GetTranslationUpdatePasswordPageByID(c *gin.Context) {
+
+	ID := c.Param("id")
+
+	rowFlag, err := config.ConnDB().Query("SELECT title,verify_password,explanation,save,password FROM translation_update_password_page WHERE id = $1 AND deleted_at IS NULL", ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer rowFlag.Close()
+
+	var t TrUpdatePasswordPage
+
+	for rowFlag.Next() {
+		if err := rowFlag.Scan(&t.Title, &t.VerifyPassword, &t.Explanation, &t.Save, &t.Password); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}
+
+	if t.Title == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "record not found",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":                           true,
+		"translation_update_password_page": t,
+	})
+
+}
+
+func GetTranslationUpdatePasswordPageByLangID(c *gin.Context) {
+
+	langID, err := CheckLanguage(c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -81,6 +185,7 @@ func GetTranslationUpdatePasswordPage(c *gin.Context) {
 		})
 		return
 	}
+	defer aboutRow.Close()
 
 	var trUpdatePasswordPage TrUpdatePasswordPage
 

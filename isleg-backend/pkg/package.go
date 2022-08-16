@@ -15,7 +15,7 @@ func IsEmailValid(e string) bool {
 	return emailRegex.MatchString(e)
 }
 
-func FileUpload(fileName, mainNameOfTheFile string, context *gin.Context) (string, error) {
+func FileUpload(fileName, path string, context *gin.Context) (string, error) {
 
 	file, err := context.FormFile(fileName)
 	if err != nil {
@@ -29,8 +29,8 @@ func FileUpload(fileName, mainNameOfTheFile string, context *gin.Context) (strin
 		return "", errors.New("the file must be an image")
 	}
 
-	newFileName := mainNameOfTheFile + uuid.New().String() + extensionFile
-	context.SaveUploadedFile(file, "./uploads/"+newFileName)
+	newFileName := uuid.New().String() + extensionFile
+	context.SaveUploadedFile(file, "./uploads/"+path+"/"+newFileName)
 
 	return newFileName, nil
 

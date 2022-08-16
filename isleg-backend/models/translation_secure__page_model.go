@@ -30,3 +30,15 @@ func ValidateTranslationSecureData(languages []Language, dataNames []string, con
 	return nil
 
 }
+
+func ValidateTranslationSecureUpdate(dataNames []string, context *gin.Context) error {
+
+	for _, dataName := range dataNames {
+		if context.PostForm(dataName) == "" {
+			return errors.New(dataName + " is required")
+		}
+	}
+
+	return nil
+
+}

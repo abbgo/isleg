@@ -4,6 +4,7 @@ import (
 	"github/abbgo/isleg/isleg-backend/config"
 	"github/abbgo/isleg/isleg-backend/models"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -38,7 +39,7 @@ func CreateTranslationPayment(c *gin.Context) {
 
 	// create translation payment
 	for _, v := range languages {
-		_, err := config.ConnDB().Exec("INSERT INTO translation_payment (lang_id,title,content) VALUES ($1,$2,$3)", v.ID, c.PostForm("title_"+v.NameShort), c.PostForm("content_"+v.NameShort))
+		resultTRPayment, err := config.ConnDB().Query("INSERT INTO translation_payment (lang_id,title,content) VALUES ($1,$2,$3)", v.ID, c.PostForm("title_"+v.NameShort), c.PostForm("content_"+v.NameShort))
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
@@ -46,6 +47,7 @@ func CreateTranslationPayment(c *gin.Context) {
 			})
 			return
 		}
+		defer resultTRPayment.Close()
 	}
 
 	c.JSON(http.StatusOK, gin.H{
@@ -55,13 +57,115 @@ func CreateTranslationPayment(c *gin.Context) {
 
 }
 
-func GetTranslationPayment(c *gin.Context) {
+func UpdateTranslationPaymentByID(c *gin.Context) {
 
-	// GET DATA FROM ROUTE PARAMETER
-	langShortName := c.Param("lang")
+	ID := c.Param("id")
 
-	// GET language id
-	langID, err := GetLangID(langShortName)
+	rowFlag, err := config.ConnDB().Query("SELECT id FROM translation_payment WHERE id = $1 AND deleted_at IS NULL", ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer rowFlag.Close()
+
+	var id string
+
+	for rowFlag.Next() {
+		if err := rowFlag.Scan(&id); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}
+
+	if id == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "record not found",
+		})
+		return
+	}
+
+	dataNames := []string{"title", "content"}
+
+	// VALIDATE DATA
+	err = models.ValidateTranslationPaymentUpdate(dataNames, c)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	currentTime := time.Now()
+
+	resutlTRPayment, err := config.ConnDB().Query("UPDATE translation_payment SET title = $1, content = $2 , updated_at = $4 WHERE id = $3", c.PostForm("title"), c.PostForm("content"), id, currentTime)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer resutlTRPayment.Close()
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":  true,
+		"message": "translation payment successfully updated",
+	})
+
+}
+
+func GetTranslationPaymentByID(c *gin.Context) {
+
+	ID := c.Param("id")
+
+	rowFlag, err := config.ConnDB().Query("SELECT title,content FROM translation_payment WHERE id = $1 AND deleted_at IS NULL", ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer rowFlag.Close()
+
+	var t TrPayment
+
+	for rowFlag.Next() {
+		if err := rowFlag.Scan(&t.Title, &t.Content); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}
+
+	if t.Title == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "record not found",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":              true,
+		"translation_payment": t,
+	})
+
+}
+
+func GetTranslationPaymentByLangID(c *gin.Context) {
+
+	langID, err := CheckLanguage(c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -79,6 +183,7 @@ func GetTranslationPayment(c *gin.Context) {
 		})
 		return
 	}
+	defer paymentRow.Close()
 
 	var translationPayment TrPayment
 
