@@ -3,7 +3,7 @@
     <div class="header__wrapper __container">
       <div class="header__container">
         <div class="mobile__false"></div>
-        <the-header-logo></the-header-logo>
+        <the-header-logo :imgURL="imgURL" :logo="logo"></the-header-logo>
         <div class="serach">
           <span class="search__icon">
             <svg
@@ -37,7 +37,6 @@
 
     <sign-up
       :isOpenSignUp="isOpenSignUp"
-      :signUp="signUp"
       @closeSignUp="closeSignUp"
       @openRegisterPopUp="openRegisterPopUp"
       @closeSignUpPopUp="closeSignUp"
@@ -60,29 +59,25 @@ export default {
   data() {
     return {
       isOpenRegister: false,
-      signUp: {
-        phone_number: '+993 6',
-        password: '',
-      },
       isProfile: false,
     }
   },
-  // watch: {
-  //   '$i18n.locale': async function () {
-  //     await this.fetchHeader({
-  //       url: `${this.$i18n.locale}/header/${this.calculateHeaderApiPath}`,
-  //       $nuxt: this.$nuxt,
-  //     })
-  //   },
-  // },
-  // async fetch() {
-  //   await this.$store.dispatch('ui/fetchHeader', {
-  //     url: `${this.$i18n.locale}/header/${this.calculateHeaderApiPath}`,
-  //     $nuxt: this.$nuxt,
-  //   })
-  // },
+  watch: {
+    '$i18n.locale': async function () {
+      await this.$store.dispatch('ui/fetchHeader', {
+        url: `${this.$i18n.locale}/header`,
+        $nuxt: this.$nuxt,
+      })
+    },
+  },
+  async fetch() {
+    await this.$store.dispatch('ui/fetchHeader', {
+      url: `${this.$i18n.locale}/header`,
+      $nuxt: this.$nuxt,
+    })
+  },
   computed: {
-    ...mapGetters('ui', ['isOpenSignUp']),
+    ...mapGetters('ui', ['imgURL', 'isOpenSignUp', 'logo']),
   },
   methods: {
     focused() {

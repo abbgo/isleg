@@ -1,14 +1,22 @@
-// import request from '@/api/apiRequest'
+import axios from 'axios'
 
 const fetchHeader = async ({ commit }, { url, $nuxt }) => {
-  // try {
-  //   const { data } = await request(url)
-  //   commit('SET_HEADER', data)
-  // } catch (e) {
-  //   if (e && e.response && e.response.status === 404) {
-  //     return $nuxt.error({ statusCode: 404, message: e.message })
-  //   }
-  // }
+  console.log(`${process.env.BASE_API}/${url}`)
+  try {
+    const { data } = await axios.get(`${process.env.BASE_API}/${url}`)
+    console.log('headerData', data.header_data)
+    if (data?.status) {
+      commit('SET_HEADER', data?.header_data)
+    }
+  } catch (e) {
+    console.log(e.response)
+    if (e) {
+      return $nuxt.error({
+        statusCode: e?.response?.status,
+        message: e?.message,
+      })
+    }
+  }
 }
 
 export default {

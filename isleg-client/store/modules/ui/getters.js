@@ -1,9 +1,79 @@
 const imgURL = (state) => {
   return state.imgURL
 }
-const isOpenSignUp = (state) => state.isOpenSignUp
+const logo = (state) => {
+  return state.logoFavicon?.logo
+}
+const research = (state) => {
+  return state.translationHeader?.research
+}
+const phone = (state) => {
+  return state.translationHeader?.phone
+}
+const password = (state) => {
+  return state.translationHeader?.password
+}
+const forgotPassword = (state) => {
+  return state.translationHeader?.forgot_password
+}
+const signIn = (state) => {
+  return state.translationHeader?.sign_in
+}
+const name = (state) => {
+  return state.translationHeader?.name
+}
+const passwordVerification = (state) => {
+  return state.translationHeader?.password_verification
+}
+const verifySecure = (state) => {
+  return state.translationHeader?.verify_secure
+}
+const myInformation = (state) => {
+  return state.translationHeader?.myInformation
+}
+const myFavorites = (state) => {
+  return state.translationHeader?.my_favorites
+}
+const myOrders = (state) => {
+  return state.translationHeader?.my_orders
+}
+const logOut = (state) => {
+  return state.translationHeader?.log_out
+}
+const signUp = (state) => {
+  return state.translationHeader?.sign_up
+}
+const basket = (state) => {
+  return state.translationHeader?.basket
+}
+const languages = (state) => {
+  return state.languages
+}
+const categories = (state) => {
+  return state.categories
+}
+const isOpenSignUp = (state) => {
+  return state.isOpenSignUp
+}
 
 export default {
   imgURL,
+  logo,
+  research,
+  phone,
+  password,
+  forgotPassword,
+  signIn,
+  signUp,
+  name,
+  passwordVerification,
+  verifySecure,
+  myInformation,
+  myFavorites,
+  myOrders,
+  logOut,
+  basket,
+  languages,
+  categories,
   isOpenSignUp,
 }
