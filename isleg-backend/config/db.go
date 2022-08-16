@@ -11,6 +11,8 @@ import (
 
 func ConnDB() *sql.DB {
 
+	var DB *sql.DB
+
 	// get data from .env file
 	db_user := os.Getenv("DB_USER")
 	db_pass := os.Getenv("DB_PASS")
@@ -26,4 +28,9 @@ func ConnDB() *sql.DB {
 	}
 
 	return DB
+
+	// DB.SetMaxOpenConns(25)
+	// DB.SetMaxIdleConns(25)
+	// DB.SetConnMaxLifetime(5 * time.Minute)
+
 }
