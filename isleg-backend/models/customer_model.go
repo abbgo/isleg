@@ -44,12 +44,18 @@ func CheckPassword(providedPassword, oldPassword string) error {
 
 func ValidateCustomerRegister(phoneNumber, email string) error {
 
+	db, err := config.ConnDB()
+	if err != nil {
+		return err
+	}
+	defer db.Close()
+
 	if phoneNumber != "" {
 		if !strings.HasPrefix(phoneNumber, "+993") {
 			return errors.New("phone number must start with +993")
 		}
 
-		row, err := config.ConnDB().Query("SELECT phone_number FROM customers WHERE phone_number = $1 AND deleted_at IS NULL", phoneNumber)
+		row, err := db.Query("SELECT phone_number FROM customers WHERE phone_number = $1 AND deleted_at IS NULL", phoneNumber)
 		if err != nil {
 			return err
 		}
@@ -68,7 +74,7 @@ func ValidateCustomerRegister(phoneNumber, email string) error {
 	}
 
 	if email != "" {
-		rowEmail, err := config.ConnDB().Query("SELECT email FROM customers WHERE email = $1 AND deleted_at IS NULL", email)
+		rowEmail, err := db.Query("SELECT email FROM customers WHERE email = $1 AND deleted_at IS NULL", email)
 		if err != nil {
 			return err
 		}

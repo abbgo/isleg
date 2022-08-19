@@ -24,6 +24,16 @@ type OneBrend struct {
 
 func CreateBrend(c *gin.Context) {
 
+	db, err := config.ConnDB()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer db.Close()
+
 	// GET DATA FROM REQUEST
 	name := c.PostForm("name")
 
@@ -47,7 +57,7 @@ func CreateBrend(c *gin.Context) {
 	}
 
 	// CREATE BREND
-	result, err := config.ConnDB().Query("INSERT INTO brends (name,image) VALUES ($1,$2)", name, "uploads/brend/"+newFileName)
+	result, err := db.Query("INSERT INTO brends (name,image) VALUES ($1,$2)", name, "uploads/brend/"+newFileName)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -66,11 +76,21 @@ func CreateBrend(c *gin.Context) {
 
 func UpdateBrendByID(c *gin.Context) {
 
+	db, err := config.ConnDB()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer db.Close()
+
 	ID := c.Param("id")
 	name := c.PostForm("name")
 	var fileName string
 
-	rowBrend, err := config.ConnDB().Query("SELECT image FROM brends WHERE id = $1 AND deleted_at IS NULL", ID)
+	rowBrend, err := db.Query("SELECT image FROM brends WHERE id = $1 AND deleted_at IS NULL", ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -138,7 +158,7 @@ func UpdateBrendByID(c *gin.Context) {
 
 	currentTime := time.Now()
 
-	resultBrend, err := config.ConnDB().Query("UPDATE brends SET name = $1 , image = $2 , updated_at = $4 WHERE id = $3", name, fileName, ID, currentTime)
+	resultBrend, err := db.Query("UPDATE brends SET name = $1 , image = $2 , updated_at = $4 WHERE id = $3", name, fileName, ID, currentTime)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -157,9 +177,19 @@ func UpdateBrendByID(c *gin.Context) {
 
 func GetBrendByID(c *gin.Context) {
 
+	db, err := config.ConnDB()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer db.Close()
+
 	ID := c.Param("id")
 
-	rowBrend, err := config.ConnDB().Query("SELECT name,image FROM brends WHERE id = $1 AND deleted_at IS NULL", ID)
+	rowBrend, err := db.Query("SELECT name,image FROM brends WHERE id = $1 AND deleted_at IS NULL", ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -198,7 +228,17 @@ func GetBrendByID(c *gin.Context) {
 
 func GetBrends(c *gin.Context) {
 
-	rowBrends, err := config.ConnDB().Query("SELECT name,image FROM brends WHERE deleted_at IS NULL")
+	db, err := config.ConnDB()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer db.Close()
+
+	rowBrends, err := db.Query("SELECT name,image FROM brends WHERE deleted_at IS NULL")
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -233,9 +273,19 @@ func GetBrends(c *gin.Context) {
 
 func DeleteBrendByID(c *gin.Context) {
 
+	db, err := config.ConnDB()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer db.Close()
+
 	ID := c.Param("id")
 
-	rowBrend, err := config.ConnDB().Query("SELECT image FROM brends WHERE id = $1 AND deleted_at IS NULL", ID)
+	rowBrend, err := db.Query("SELECT image FROM brends WHERE id = $1 AND deleted_at IS NULL", ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -267,7 +317,7 @@ func DeleteBrendByID(c *gin.Context) {
 
 	currentTime := time.Now()
 
-	resultBrends, err := config.ConnDB().Query("UPDATE brends SET deleted_at = $1 WHERE id = $2", currentTime, ID)
+	resultBrends, err := db.Query("UPDATE brends SET deleted_at = $1 WHERE id = $2", currentTime, ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -277,7 +327,7 @@ func DeleteBrendByID(c *gin.Context) {
 	}
 	defer resultBrends.Close()
 
-	resultProducts, err := config.ConnDB().Query("UPDATE products SET deleted_at = $1 WHERE brend_id = $2", currentTime, ID)
+	resultProducts, err := db.Query("UPDATE products SET deleted_at = $1 WHERE brend_id = $2", currentTime, ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -287,7 +337,7 @@ func DeleteBrendByID(c *gin.Context) {
 	}
 	defer resultProducts.Close()
 
-	resultTRProduct, err := config.ConnDB().Query("UPDATE translation_product SET deleted_at = $1 FROM products WHERE translation_product.product_id=products.id AND products.brend_id = $2", currentTime, ID)
+	resultTRProduct, err := db.Query("UPDATE translation_product SET deleted_at = $1 FROM products WHERE translation_product.product_id=products.id AND products.brend_id = $2", currentTime, ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -306,9 +356,19 @@ func DeleteBrendByID(c *gin.Context) {
 
 func RestoreBrendByID(c *gin.Context) {
 
+	db, err := config.ConnDB()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer db.Close()
+
 	ID := c.Param("id")
 
-	rowBrend, err := config.ConnDB().Query("SELECT image FROM brends WHERE id = $1 AND deleted_at IS NOT NULL", ID)
+	rowBrend, err := db.Query("SELECT image FROM brends WHERE id = $1 AND deleted_at IS NOT NULL", ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -338,7 +398,7 @@ func RestoreBrendByID(c *gin.Context) {
 		return
 	}
 
-	resultBrends, err := config.ConnDB().Query("UPDATE brends SET deleted_at = NULL WHERE id = $1", ID)
+	resultBrends, err := db.Query("UPDATE brends SET deleted_at = NULL WHERE id = $1", ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -348,7 +408,7 @@ func RestoreBrendByID(c *gin.Context) {
 	}
 	defer resultBrends.Close()
 
-	resultProducts, err := config.ConnDB().Query("UPDATE products SET deleted_at = NULL WHERE brend_id = $1", ID)
+	resultProducts, err := db.Query("UPDATE products SET deleted_at = NULL WHERE brend_id = $1", ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -358,7 +418,7 @@ func RestoreBrendByID(c *gin.Context) {
 	}
 	defer resultProducts.Close()
 
-	resultTRProduct, err := config.ConnDB().Query("UPDATE translation_product SET deleted_at = NULL FROM products WHERE translation_product.product_id=products.id AND products.brend_id = $1", ID)
+	resultTRProduct, err := db.Query("UPDATE translation_product SET deleted_at = NULL FROM products WHERE translation_product.product_id=products.id AND products.brend_id = $1", ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -377,9 +437,19 @@ func RestoreBrendByID(c *gin.Context) {
 
 func DeletePermanentlyBrendByID(c *gin.Context) {
 
+	db, err := config.ConnDB()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer db.Close()
+
 	ID := c.Param("id")
 
-	rowBrend, err := config.ConnDB().Query("SELECT image FROM brends WHERE id = $1 AND deleted_at IS NOT NULL", ID)
+	rowBrend, err := db.Query("SELECT image FROM brends WHERE id = $1 AND deleted_at IS NOT NULL", ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -417,7 +487,7 @@ func DeletePermanentlyBrendByID(c *gin.Context) {
 		return
 	}
 
-	rowProducts, err := config.ConnDB().Query("SELECT main_image,images FROM products WHERE brend_id = $1", ID)
+	rowProducts, err := db.Query("SELECT main_image,images FROM products WHERE brend_id = $1", ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -465,7 +535,7 @@ func DeletePermanentlyBrendByID(c *gin.Context) {
 		}
 	}
 
-	resultBrends, err := config.ConnDB().Query("DELETE FROM brends WHERE id = $1", ID)
+	resultBrends, err := db.Query("DELETE FROM brends WHERE id = $1", ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -484,10 +554,16 @@ func DeletePermanentlyBrendByID(c *gin.Context) {
 
 func GetAllBrendForHomePage() ([]BrendForHomePage, error) {
 
+	db, err := config.ConnDB()
+	if err != nil {
+		return []BrendForHomePage{}, nil
+	}
+	defer db.Close()
+
 	var brends []BrendForHomePage
 
 	// get all brends
-	rows, err := config.ConnDB().Query("SELECT id,image FROM brends WHERE deleted_at IS NULL")
+	rows, err := db.Query("SELECT id,image FROM brends WHERE deleted_at IS NULL")
 	if err != nil {
 		return []BrendForHomePage{}, err
 	}

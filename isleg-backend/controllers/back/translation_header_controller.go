@@ -28,6 +28,16 @@ type TranslationHeaderForHeader struct {
 
 func CreateTranslationHeader(c *gin.Context) {
 
+	db, err := config.ConnDB()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer db.Close()
+
 	// GET ALL LANGUAGE
 	languages, err := GetAllLanguageWithIDAndNameShort()
 	if err != nil {
@@ -52,7 +62,7 @@ func CreateTranslationHeader(c *gin.Context) {
 
 	// CREATE TRANSLATION HEADER
 	for _, v := range languages {
-		resultTrHedaer, err := config.ConnDB().Query("INSERT INTO translation_header (lang_id,research,phone,password,forgot_password,sign_in,sign_up,name,password_verification,verify_secure,my_information,my_favorites,my_orders,log_out,basket) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15)", v.ID, c.PostForm("research_"+v.NameShort), c.PostForm("phone_"+v.NameShort), c.PostForm("password_"+v.NameShort), c.PostForm("forgot_password_"+v.NameShort), c.PostForm("sign_in_"+v.NameShort), c.PostForm("sign_up_"+v.NameShort), c.PostForm("name_"+v.NameShort), c.PostForm("password_verification_"+v.NameShort), c.PostForm("verify_secure_"+v.NameShort), c.PostForm("my_information_"+v.NameShort), c.PostForm("my_favorites_"+v.NameShort), c.PostForm("my_orders_"+v.NameShort), c.PostForm("log_out_"+v.NameShort), c.PostForm("basket_"+v.NameShort))
+		resultTrHedaer, err := db.Query("INSERT INTO translation_header (lang_id,research,phone,password,forgot_password,sign_in,sign_up,name,password_verification,verify_secure,my_information,my_favorites,my_orders,log_out,basket) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15)", v.ID, c.PostForm("research_"+v.NameShort), c.PostForm("phone_"+v.NameShort), c.PostForm("password_"+v.NameShort), c.PostForm("forgot_password_"+v.NameShort), c.PostForm("sign_in_"+v.NameShort), c.PostForm("sign_up_"+v.NameShort), c.PostForm("name_"+v.NameShort), c.PostForm("password_verification_"+v.NameShort), c.PostForm("verify_secure_"+v.NameShort), c.PostForm("my_information_"+v.NameShort), c.PostForm("my_favorites_"+v.NameShort), c.PostForm("my_orders_"+v.NameShort), c.PostForm("log_out_"+v.NameShort), c.PostForm("basket_"+v.NameShort))
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
@@ -72,9 +82,19 @@ func CreateTranslationHeader(c *gin.Context) {
 
 func UpdateTranslationHeaderByID(c *gin.Context) {
 
+	db, err := config.ConnDB()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer db.Close()
+
 	trHead := c.Param("id")
 
-	rowFlag, err := config.ConnDB().Query("SELECT id FROM translation_header WHERE id = $1 AND deleted_at IS NULL", trHead)
+	rowFlag, err := db.Query("SELECT id FROM translation_header WHERE id = $1 AND deleted_at IS NULL", trHead)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -118,7 +138,7 @@ func UpdateTranslationHeaderByID(c *gin.Context) {
 
 	currentTime := time.Now()
 
-	resultTrHedaer, err := config.ConnDB().Query("UPDATE translation_header SET research = $1 , phone = $2, password = $3,forgot_password = $4,sign_in = $5,sign_up = $6,name = $7,password_verification = $8,verify_secure = $9, my_information = $10, my_favorites = $11, my_orders = $12, log_out = $13, basket = $14 , updated_at = $16 WHERE id = $15", c.PostForm("research"), c.PostForm("phone"), c.PostForm("password"), c.PostForm("forgot_password"), c.PostForm("sign_in"), c.PostForm("sign_up"), c.PostForm("name"), c.PostForm("password_verification"), c.PostForm("verify_secure"), c.PostForm("my_information"), c.PostForm("my_favorites"), c.PostForm("my_orders"), c.PostForm("log_out"), c.PostForm("basket"), id, currentTime)
+	resultTrHedaer, err := db.Query("UPDATE translation_header SET research = $1 , phone = $2, password = $3,forgot_password = $4,sign_in = $5,sign_up = $6,name = $7,password_verification = $8,verify_secure = $9, my_information = $10, my_favorites = $11, my_orders = $12, log_out = $13, basket = $14 , updated_at = $16 WHERE id = $15", c.PostForm("research"), c.PostForm("phone"), c.PostForm("password"), c.PostForm("forgot_password"), c.PostForm("sign_in"), c.PostForm("sign_up"), c.PostForm("name"), c.PostForm("password_verification"), c.PostForm("verify_secure"), c.PostForm("my_information"), c.PostForm("my_favorites"), c.PostForm("my_orders"), c.PostForm("log_out"), c.PostForm("basket"), id, currentTime)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -137,9 +157,19 @@ func UpdateTranslationHeaderByID(c *gin.Context) {
 
 func GetTranslationHeaderByID(c *gin.Context) {
 
+	db, err := config.ConnDB()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer db.Close()
+
 	trHead := c.Param("id")
 
-	rowFlag, err := config.ConnDB().Query("SELECT research,phone,password,forgot_password,sign_in,sign_up,name,password_verification,verify_secure,my_information,my_favorites,my_orders,log_out,basket FROM translation_header WHERE id = $1 AND deleted_at IS NULL", trHead)
+	rowFlag, err := db.Query("SELECT research,phone,password,forgot_password,sign_in,sign_up,name,password_verification,verify_secure,my_information,my_favorites,my_orders,log_out,basket FROM translation_header WHERE id = $1 AND deleted_at IS NULL", trHead)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -178,10 +208,16 @@ func GetTranslationHeaderByID(c *gin.Context) {
 
 func GetTranslationHeaderForHeader(langID string) (TranslationHeaderForHeader, error) {
 
+	db, err := config.ConnDB()
+	if err != nil {
+		return TranslationHeaderForHeader{}, nil
+	}
+	defer db.Close()
+
 	var t TranslationHeaderForHeader
 
 	// GET TranslationHeader For Header
-	row, err := config.ConnDB().Query("SELECT research,phone,password,forgot_password,sign_in,sign_up,name,password_verification,verify_secure,my_information,my_favorites,my_orders,log_out,basket FROM translation_header WHERE lang_id = $1 AND deleted_at IS NULL", langID)
+	row, err := db.Query("SELECT research,phone,password,forgot_password,sign_in,sign_up,name,password_verification,verify_secure,my_information,my_favorites,my_orders,log_out,basket FROM translation_header WHERE lang_id = $1 AND deleted_at IS NULL", langID)
 	if err != nil {
 		return TranslationHeaderForHeader{}, err
 	}

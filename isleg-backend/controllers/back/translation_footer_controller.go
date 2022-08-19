@@ -19,6 +19,16 @@ type TranslationFooterForFooter struct {
 
 func CreateTranslationFooter(c *gin.Context) {
 
+	db, err := config.ConnDB()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer db.Close()
+
 	// GET ALL LANGUAGE
 	languages, err := GetAllLanguageWithIDAndNameShort()
 	if err != nil {
@@ -43,7 +53,7 @@ func CreateTranslationFooter(c *gin.Context) {
 
 	// create translation footer
 	for _, v := range languages {
-		resultTRFooter, err := config.ConnDB().Query("INSERT INTO translation_footer (lang_id,about,payment,contact,secure,word) VALUES ($1,$2,$3,$4,$5,$6)", v.ID, c.PostForm("about_"+v.NameShort), c.PostForm("payment_"+v.NameShort), c.PostForm("contact_"+v.NameShort), c.PostForm("secure_"+v.NameShort), c.PostForm("word_"+v.NameShort))
+		resultTRFooter, err := db.Query("INSERT INTO translation_footer (lang_id,about,payment,contact,secure,word) VALUES ($1,$2,$3,$4,$5,$6)", v.ID, c.PostForm("about_"+v.NameShort), c.PostForm("payment_"+v.NameShort), c.PostForm("contact_"+v.NameShort), c.PostForm("secure_"+v.NameShort), c.PostForm("word_"+v.NameShort))
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
@@ -63,9 +73,19 @@ func CreateTranslationFooter(c *gin.Context) {
 
 func UpdateTranslationFooterByID(c *gin.Context) {
 
+	db, err := config.ConnDB()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer db.Close()
+
 	trFootID := c.Param("id")
 
-	rowFlag, err := config.ConnDB().Query("SELECT id FROM translation_footer WHERE id = $1 AND deleted_at IS NULL", trFootID)
+	rowFlag, err := db.Query("SELECT id FROM translation_footer WHERE id = $1 AND deleted_at IS NULL", trFootID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -109,7 +129,7 @@ func UpdateTranslationFooterByID(c *gin.Context) {
 
 	currentTime := time.Now()
 
-	rsultTRFooter, err := config.ConnDB().Query("UPDATE translation_footer SET about = $1, payment = $2, contact = $3, secure = $4, word = $5 , updated_at = $7 WHERE id = $6", c.PostForm("about"), c.PostForm("payment"), c.PostForm("contact"), c.PostForm("secure"), c.PostForm("word"), id, currentTime)
+	rsultTRFooter, err := db.Query("UPDATE translation_footer SET about = $1, payment = $2, contact = $3, secure = $4, word = $5 , updated_at = $7 WHERE id = $6", c.PostForm("about"), c.PostForm("payment"), c.PostForm("contact"), c.PostForm("secure"), c.PostForm("word"), id, currentTime)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -128,9 +148,19 @@ func UpdateTranslationFooterByID(c *gin.Context) {
 
 func GetTranslationFooterByID(c *gin.Context) {
 
+	db, err := config.ConnDB()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer db.Close()
+
 	trFootID := c.Param("id")
 
-	rowFlag, err := config.ConnDB().Query("SELECT about,payment,contact,secure,word FROM translation_footer WHERE id = $1 AND deleted_at IS NULL", trFootID)
+	rowFlag, err := db.Query("SELECT about,payment,contact,secure,word FROM translation_footer WHERE id = $1 AND deleted_at IS NULL", trFootID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -169,10 +199,16 @@ func GetTranslationFooterByID(c *gin.Context) {
 
 func GetTranslationFooter(langID string) (TranslationFooterForFooter, error) {
 
+	db, err := config.ConnDB()
+	if err != nil {
+		return TranslationFooterForFooter{}, nil
+	}
+	defer db.Close()
+
 	var t TranslationFooterForFooter
 
 	// get translation footer where lang_id equal langID
-	row, err := config.ConnDB().Query("SELECT about,payment,contact,secure,word FROM translation_footer WHERE lang_id = $1 AND deleted_at IS NULL", langID)
+	row, err := db.Query("SELECT about,payment,contact,secure,word FROM translation_footer WHERE lang_id = $1 AND deleted_at IS NULL", langID)
 	if err != nil {
 		return TranslationFooterForFooter{}, err
 	}

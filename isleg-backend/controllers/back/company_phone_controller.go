@@ -11,6 +11,16 @@ import (
 
 func CreateCompanyPhone(c *gin.Context) {
 
+	db, err := config.ConnDB()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer db.Close()
+
 	// GET DATA FROM REQUEST
 	phone := c.PostForm("phone")
 
@@ -25,7 +35,7 @@ func CreateCompanyPhone(c *gin.Context) {
 		return
 	}
 
-	_, err := strconv.Atoi(phone)
+	_, err = strconv.Atoi(phone)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -43,7 +53,7 @@ func CreateCompanyPhone(c *gin.Context) {
 	}
 
 	// create company phone
-	resultComPhone, err := config.ConnDB().Query("INSERT INTO company_phone (phone) VALUES ($1)", phone)
+	resultComPhone, err := db.Query("INSERT INTO company_phone (phone) VALUES ($1)", phone)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -62,10 +72,20 @@ func CreateCompanyPhone(c *gin.Context) {
 
 func GetCompanyPhones(c *gin.Context) {
 
+	db, err := config.ConnDB()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer db.Close()
+
 	var companyPhones []string
 
 	// get all company phone number
-	rows, err := config.ConnDB().Query("SELECT phone FROM company_phone WHERE deleted_at IS NULL")
+	rows, err := db.Query("SELECT phone FROM company_phone WHERE deleted_at IS NULL")
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,

@@ -11,6 +11,16 @@ import (
 
 func CreateShop(c *gin.Context) {
 
+	db, err := config.ConnDB()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer db.Close()
+
 	ownerName := c.PostForm("owner_name")
 	address := c.PostForm("address")
 	phoneNumber := c.PostForm("phone_number")
@@ -25,7 +35,7 @@ func CreateShop(c *gin.Context) {
 		return
 	}
 
-	resultShops, err := config.ConnDB().Query("INSERT INTO shops (owner_name,address,phone_number,running_time) VALUES ($1,$2,$3,$4)", ownerName, address, phoneNumber, runningTime)
+	resultShops, err := db.Query("INSERT INTO shops (owner_name,address,phone_number,running_time) VALUES ($1,$2,$3,$4)", ownerName, address, phoneNumber, runningTime)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -36,7 +46,7 @@ func CreateShop(c *gin.Context) {
 	defer resultShops.Close()
 
 	// get the id of the added shop
-	lastShopID, err := config.ConnDB().Query("SELECT id FROM shops ORDER BY created_at DESC LIMIT 1")
+	lastShopID, err := db.Query("SELECT id FROM shops ORDER BY created_at DESC LIMIT 1")
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -70,7 +80,7 @@ func CreateShop(c *gin.Context) {
 				return
 			}
 		}
-		resultCategorySHop, err := config.ConnDB().Query("INSERT INTO category_shop (category_id,shop_id) VALUES ($1,$2)", vUUID, shopID)
+		resultCategorySHop, err := db.Query("INSERT INTO category_shop (category_id,shop_id) VALUES ($1,$2)", vUUID, shopID)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,

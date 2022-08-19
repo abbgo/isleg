@@ -23,6 +23,16 @@ type TrContact struct {
 
 func CreateTranslationContact(c *gin.Context) {
 
+	db, err := config.ConnDB()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer db.Close()
+
 	// GET ALL LANGUAGE
 	languages, err := GetAllLanguageWithIDAndNameShort()
 	if err != nil {
@@ -46,7 +56,7 @@ func CreateTranslationContact(c *gin.Context) {
 
 	// create translation contact
 	for _, v := range languages {
-		resultTRConact, err := config.ConnDB().Query("INSERT INTO translation_contact (lang_id,full_name,email,phone,letter,company_phone,imo,company_email,instagram,button_text) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)", v.ID, c.PostForm("full_name_"+v.NameShort), c.PostForm("email_"+v.NameShort), c.PostForm("phone_"+v.NameShort), c.PostForm("letter_"+v.NameShort), c.PostForm("company_phone_"+v.NameShort), c.PostForm("imo_"+v.NameShort), c.PostForm("company_email_"+v.NameShort), c.PostForm("instagram_"+v.NameShort), c.PostForm("button_text_"+v.NameShort))
+		resultTRConact, err := db.Query("INSERT INTO translation_contact (lang_id,full_name,email,phone,letter,company_phone,imo,company_email,instagram,button_text) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)", v.ID, c.PostForm("full_name_"+v.NameShort), c.PostForm("email_"+v.NameShort), c.PostForm("phone_"+v.NameShort), c.PostForm("letter_"+v.NameShort), c.PostForm("company_phone_"+v.NameShort), c.PostForm("imo_"+v.NameShort), c.PostForm("company_email_"+v.NameShort), c.PostForm("instagram_"+v.NameShort), c.PostForm("button_text_"+v.NameShort))
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
@@ -66,9 +76,19 @@ func CreateTranslationContact(c *gin.Context) {
 
 func UpdateTranslationContactByID(c *gin.Context) {
 
+	db, err := config.ConnDB()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer db.Close()
+
 	ID := c.Param("id")
 
-	rowFlag, err := config.ConnDB().Query("SELECT id FROM translation_contact WHERE id = $1 AND deleted_at IS NULL", ID)
+	rowFlag, err := db.Query("SELECT id FROM translation_contact WHERE id = $1 AND deleted_at IS NULL", ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -112,7 +132,7 @@ func UpdateTranslationContactByID(c *gin.Context) {
 
 	currentTime := time.Now()
 
-	resultTRComtact, err := config.ConnDB().Query("UPDATE translation_contact SET full_name = $1, email = $2 , phone = $3 , letter = $4 , company_phone = $5 , imo = $6, company_email = $7, instagram = $8, button_text = $9 , updated_at = $11 WHERE id = $10", c.PostForm("full_name"), c.PostForm("email"), c.PostForm("phone"), c.PostForm("letter"), c.PostForm("company_phone"), c.PostForm("imo"), c.PostForm("company_email"), c.PostForm("instagram"), c.PostForm("button_text"), id, currentTime)
+	resultTRComtact, err := db.Query("UPDATE translation_contact SET full_name = $1, email = $2 , phone = $3 , letter = $4 , company_phone = $5 , imo = $6, company_email = $7, instagram = $8, button_text = $9 , updated_at = $11 WHERE id = $10", c.PostForm("full_name"), c.PostForm("email"), c.PostForm("phone"), c.PostForm("letter"), c.PostForm("company_phone"), c.PostForm("imo"), c.PostForm("company_email"), c.PostForm("instagram"), c.PostForm("button_text"), id, currentTime)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -131,9 +151,19 @@ func UpdateTranslationContactByID(c *gin.Context) {
 
 func GetTranslationContactByID(c *gin.Context) {
 
+	db, err := config.ConnDB()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer db.Close()
+
 	ID := c.Param("id")
 
-	rowFlag, err := config.ConnDB().Query("SELECT full_name,email,phone,letter,company_phone,imo,company_email,instagram,button_text FROM translation_contact WHERE id = $1 AND deleted_at IS NULL", ID)
+	rowFlag, err := db.Query("SELECT full_name,email,phone,letter,company_phone,imo,company_email,instagram,button_text FROM translation_contact WHERE id = $1 AND deleted_at IS NULL", ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -172,6 +202,16 @@ func GetTranslationContactByID(c *gin.Context) {
 
 func GetTranslationContactByLangID(c *gin.Context) {
 
+	db, err := config.ConnDB()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer db.Close()
+
 	langID, err := CheckLanguage(c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -182,7 +222,7 @@ func GetTranslationContactByLangID(c *gin.Context) {
 	}
 
 	// get translation contact where lang_id equal langID
-	aboutRow, err := config.ConnDB().Query("SELECT full_name,email,phone,letter,company_phone,imo,company_email,instagram,button_text FROM translation_contact WHERE lang_id = $1 AND deleted_at IS NULL", langID)
+	aboutRow, err := db.Query("SELECT full_name,email,phone,letter,company_phone,imo,company_email,instagram,button_text FROM translation_contact WHERE lang_id = $1 AND deleted_at IS NULL", langID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,

@@ -17,6 +17,16 @@ type Login struct {
 
 func RegisterCustomer(c *gin.Context) {
 
+	db, err := config.ConnDB()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer db.Close()
+
 	var customer models.Customer
 
 	if err := c.BindJSON(&customer); err != nil {
@@ -24,7 +34,7 @@ func RegisterCustomer(c *gin.Context) {
 		return
 	}
 
-	err := models.ValidateCustomerRegister(customer.PhoneNumber, customer.Email)
+	err = models.ValidateCustomerRegister(customer.PhoneNumber, customer.Email)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -42,7 +52,7 @@ func RegisterCustomer(c *gin.Context) {
 		return
 	}
 
-	resultCustomers, err := config.ConnDB().Query("INSERT INTO customers (full_name,phone_number,password,email) VALUES ($1,$2,$3,$4)", customer.FullName, customer.PhoneNumber, hashPassword, customer.Email)
+	resultCustomers, err := db.Query("INSERT INTO customers (full_name,phone_number,password,email) VALUES ($1,$2,$3,$4)", customer.FullName, customer.PhoneNumber, hashPassword, customer.Email)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{
 			"status":  false,
@@ -52,7 +62,7 @@ func RegisterCustomer(c *gin.Context) {
 	}
 	defer resultCustomers.Close()
 
-	row, err := config.ConnDB().Query("SELECT id FROM customers WHERE deleted_at IS NULL ORDER BY created_at ASC LIMIT 1")
+	row, err := db.Query("SELECT id FROM customers WHERE deleted_at IS NULL ORDER BY created_at ASC LIMIT 1")
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{
 			"status":  false,
@@ -108,6 +118,16 @@ func RegisterCustomer(c *gin.Context) {
 
 func LoginCustomer(c *gin.Context) {
 
+	db, err := config.ConnDB()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer db.Close()
+
 	var customer Login
 
 	if err := c.BindJSON(&customer); err != nil {
@@ -115,14 +135,14 @@ func LoginCustomer(c *gin.Context) {
 		return
 	}
 
-	err := models.ValidateCustomerLogin(customer.PhoneNumber)
+	err = models.ValidateCustomerLogin(customer.PhoneNumber)
 	if err != nil {
 		c.AbortWithStatusJSON(500, gin.H{"message": err.Error()})
 		return
 	}
 
 	// check if email exists and password is correct
-	row, err := config.ConnDB().Query("SELECT id,password FROM customers WHERE phone_number = $1 AND deleted_at IS NULL", customer.PhoneNumber)
+	row, err := db.Query("SELECT id,password FROM customers WHERE phone_number = $1 AND deleted_at IS NULL", customer.PhoneNumber)
 	if err != nil {
 		c.AbortWithStatusJSON(500, gin.H{"message": err.Error()})
 		return

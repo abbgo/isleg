@@ -30,6 +30,12 @@ type CategoryShop struct {
 
 func ValidateShopData(ownerName, address, phoneNumber, runningTime string, categories []string) error {
 
+	db, err := config.ConnDB()
+	if err != nil {
+		return nil
+	}
+	defer db.Close()
+
 	if ownerName == "" {
 		return errors.New("owner name is required")
 	}
@@ -42,7 +48,7 @@ func ValidateShopData(ownerName, address, phoneNumber, runningTime string, categ
 		return errors.New("phoneNumber is required")
 	}
 
-	_, err := strconv.Atoi(phoneNumber)
+	_, err = strconv.Atoi(phoneNumber)
 	if err != nil {
 		return err
 	}
@@ -59,7 +65,7 @@ func ValidateShopData(ownerName, address, phoneNumber, runningTime string, categ
 		return errors.New("shop category is required")
 	} else {
 		for _, v := range categories {
-			rawCategory, err := config.ConnDB().Query("SELECT id FROM categories WHERE id = $1 AND deleted_at IS NULL", v)
+			rawCategory, err := db.Query("SELECT id FROM categories WHERE id = $1 AND deleted_at IS NULL", v)
 			if err != nil {
 				return err
 			}

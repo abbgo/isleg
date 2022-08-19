@@ -12,6 +12,16 @@ import (
 
 func CreateAfisa(c *gin.Context) {
 
+	db, err := config.ConnDB()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer db.Close()
+
 	var fileName string
 
 	// GET ALL LANGUAGE
@@ -55,7 +65,7 @@ func CreateAfisa(c *gin.Context) {
 	}
 
 	// create afisa
-	resultAFisa, err := config.ConnDB().Query("INSERT INTO afisa (image) VALUES ($1)", fileName)
+	resultAFisa, err := db.Query("INSERT INTO afisa (image) VALUES ($1)", fileName)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -70,7 +80,7 @@ func CreateAfisa(c *gin.Context) {
 	}
 
 	// get id of added afisa
-	lastAfisaID, err := config.ConnDB().Query("SELECT id FROM afisa WHERE deleted_at IS NULL ORDER BY created_at DESC LIMIT 1")
+	lastAfisaID, err := db.Query("SELECT id FROM afisa WHERE deleted_at IS NULL ORDER BY created_at DESC LIMIT 1")
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -94,7 +104,7 @@ func CreateAfisa(c *gin.Context) {
 
 	// create translation afisa
 	for _, v := range languages {
-		resultTRAfisa, err := config.ConnDB().Query("INSERT INTO translation_afisa (afisa_id,lang_id,title,description) VALUES ($1,$2,$3,$4)", afisaID, v.ID, c.PostForm("title_"+v.NameShort), c.PostForm("description"+v.NameShort))
+		resultTRAfisa, err := db.Query("INSERT INTO translation_afisa (afisa_id,lang_id,title,description) VALUES ($1,$2,$3,$4)", afisaID, v.ID, c.PostForm("title_"+v.NameShort), c.PostForm("description"+v.NameShort))
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,

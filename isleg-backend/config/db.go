@@ -3,15 +3,12 @@ package config
 import (
 	"database/sql"
 	"fmt"
-	"log"
 	"os"
 
 	_ "github.com/lib/pq"
 )
 
-func ConnDB() *sql.DB {
-
-	var DB *sql.DB
+func ConnDB() (*sql.DB, error) {
 
 	// get data from .env file
 	db_user := os.Getenv("DB_USER")
@@ -24,13 +21,9 @@ func ConnDB() *sql.DB {
 	connStr := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable", db_host, db_port, db_user, db_pass, db_name)
 	DB, err := sql.Open("postgres", connStr)
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
 
-	return DB
-
-	// DB.SetMaxOpenConns(25)
-	// DB.SetMaxIdleConns(25)
-	// DB.SetConnMaxLifetime(5 * time.Minute)
+	return DB, nil
 
 }

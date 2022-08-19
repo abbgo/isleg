@@ -20,7 +20,7 @@ func Routes() *gin.Engine {
 
 	routes.Use(cors.New(cors.Config{
 		// AllowOrigins:     []string{"https://foo.com"},
-		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "HEAD"},
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE"},
 		AllowHeaders:     []string{"Origin", "Content-Length", "Content-Type", "RefershToken", "Authorization"},
 		AllowCredentials: true,
 		AllowAllOrigins:  true,
