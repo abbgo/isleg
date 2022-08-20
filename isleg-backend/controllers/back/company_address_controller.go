@@ -9,6 +9,16 @@ import (
 
 func CreateCompanyAddress(c *gin.Context) {
 
+	db, err := config.ConnDB()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer db.Close()
+
 	// GET ALL LANGUAGE
 	languages, err := GetAllLanguageWithIDAndNameShort()
 	if err != nil {
@@ -32,7 +42,7 @@ func CreateCompanyAddress(c *gin.Context) {
 
 	// create company address
 	for _, v := range languages {
-		resultComAddres, err := config.ConnDB().Query("INSERT INTO company_address (lang_id,address) VALUES ($1,$2)", v.ID, c.PostForm("address_"+v.NameShort))
+		resultComAddres, err := db.Query("INSERT INTO company_address (lang_id,address) VALUES ($1,$2)", v.ID, c.PostForm("address_"+v.NameShort))
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
@@ -52,6 +62,16 @@ func CreateCompanyAddress(c *gin.Context) {
 
 func GetCompanyAddress(c *gin.Context) {
 
+	db, err := config.ConnDB()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer db.Close()
+
 	langID, err := CheckLanguage(c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -62,7 +82,7 @@ func GetCompanyAddress(c *gin.Context) {
 	}
 
 	// get company address where lang_id equal langID
-	addressRow, err := config.ConnDB().Query("SELECT address FROM company_address WHERE lang_id = $1 AND deleted_at IS NULL", langID)
+	addressRow, err := db.Query("SELECT address FROM company_address WHERE lang_id = $1 AND deleted_at IS NULL", langID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,

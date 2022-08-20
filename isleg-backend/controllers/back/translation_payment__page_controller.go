@@ -16,6 +16,16 @@ type TrPayment struct {
 
 func CreateTranslationPayment(c *gin.Context) {
 
+	db, err := config.ConnDB()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer db.Close()
+
 	// GET ALL LANGUAGE
 	languages, err := GetAllLanguageWithIDAndNameShort()
 	if err != nil {
@@ -39,7 +49,7 @@ func CreateTranslationPayment(c *gin.Context) {
 
 	// create translation payment
 	for _, v := range languages {
-		resultTRPayment, err := config.ConnDB().Query("INSERT INTO translation_payment (lang_id,title,content) VALUES ($1,$2,$3)", v.ID, c.PostForm("title_"+v.NameShort), c.PostForm("content_"+v.NameShort))
+		resultTRPayment, err := db.Query("INSERT INTO translation_payment (lang_id,title,content) VALUES ($1,$2,$3)", v.ID, c.PostForm("title_"+v.NameShort), c.PostForm("content_"+v.NameShort))
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
@@ -59,9 +69,19 @@ func CreateTranslationPayment(c *gin.Context) {
 
 func UpdateTranslationPaymentByID(c *gin.Context) {
 
+	db, err := config.ConnDB()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer db.Close()
+
 	ID := c.Param("id")
 
-	rowFlag, err := config.ConnDB().Query("SELECT id FROM translation_payment WHERE id = $1 AND deleted_at IS NULL", ID)
+	rowFlag, err := db.Query("SELECT id FROM translation_payment WHERE id = $1 AND deleted_at IS NULL", ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -105,7 +125,7 @@ func UpdateTranslationPaymentByID(c *gin.Context) {
 
 	currentTime := time.Now()
 
-	resutlTRPayment, err := config.ConnDB().Query("UPDATE translation_payment SET title = $1, content = $2 , updated_at = $4 WHERE id = $3", c.PostForm("title"), c.PostForm("content"), id, currentTime)
+	resutlTRPayment, err := db.Query("UPDATE translation_payment SET title = $1, content = $2 , updated_at = $4 WHERE id = $3", c.PostForm("title"), c.PostForm("content"), id, currentTime)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -124,9 +144,19 @@ func UpdateTranslationPaymentByID(c *gin.Context) {
 
 func GetTranslationPaymentByID(c *gin.Context) {
 
+	db, err := config.ConnDB()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer db.Close()
+
 	ID := c.Param("id")
 
-	rowFlag, err := config.ConnDB().Query("SELECT title,content FROM translation_payment WHERE id = $1 AND deleted_at IS NULL", ID)
+	rowFlag, err := db.Query("SELECT title,content FROM translation_payment WHERE id = $1 AND deleted_at IS NULL", ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -165,6 +195,16 @@ func GetTranslationPaymentByID(c *gin.Context) {
 
 func GetTranslationPaymentByLangID(c *gin.Context) {
 
+	db, err := config.ConnDB()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer db.Close()
+
 	langID, err := CheckLanguage(c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -175,7 +215,7 @@ func GetTranslationPaymentByLangID(c *gin.Context) {
 	}
 
 	// get translation payment where lang_id equal langID
-	paymentRow, err := config.ConnDB().Query("SELECT title,content FROM translation_payment WHERE lang_id = $1 AND deleted_at IS NULL", langID)
+	paymentRow, err := db.Query("SELECT title,content FROM translation_payment WHERE lang_id = $1 AND deleted_at IS NULL", langID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,

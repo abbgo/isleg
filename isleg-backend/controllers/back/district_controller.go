@@ -10,6 +10,16 @@ import (
 
 func CreateDistrict(c *gin.Context) {
 
+	db, err := config.ConnDB()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer db.Close()
+
 	// GET ALL LANGUAGE
 	languages, err := GetAllLanguageWithIDAndNameShort()
 	if err != nil {
@@ -42,7 +52,7 @@ func CreateDistrict(c *gin.Context) {
 	}
 
 	// create district
-	resultDistrict, err := config.ConnDB().Query("INSERT INTO district (price) VALUES ($1)", price)
+	resultDistrict, err := db.Query("INSERT INTO district (price) VALUES ($1)", price)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -53,7 +63,7 @@ func CreateDistrict(c *gin.Context) {
 	defer resultDistrict.Close()
 
 	// get id off added district
-	lastDistrictID, err := config.ConnDB().Query("SELECT id FROM district ORDER BY created_at DESC LIMIT 1")
+	lastDistrictID, err := db.Query("SELECT id FROM district ORDER BY created_at DESC LIMIT 1")
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -77,7 +87,7 @@ func CreateDistrict(c *gin.Context) {
 
 	// create translation afisa
 	for _, v := range languages {
-		resultTRDistrict, err := config.ConnDB().Query("INSERT INTO translation_district (lang_id,district_id,name) VALUES ($1,$2,$3)", v.ID, districtID, c.PostForm("name_"+v.NameShort))
+		resultTRDistrict, err := db.Query("INSERT INTO translation_district (lang_id,district_id,name) VALUES ($1,$2,$3)", v.ID, districtID, c.PostForm("name_"+v.NameShort))
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,

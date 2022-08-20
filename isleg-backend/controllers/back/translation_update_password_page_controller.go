@@ -19,6 +19,16 @@ type TrUpdatePasswordPage struct {
 
 func CreateTranslationUpdatePasswordPage(c *gin.Context) {
 
+	db, err := config.ConnDB()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer db.Close()
+
 	// GET ALL LANGUAGE
 	languages, err := GetAllLanguageWithIDAndNameShort()
 	if err != nil {
@@ -41,7 +51,7 @@ func CreateTranslationUpdatePasswordPage(c *gin.Context) {
 	}
 
 	for _, v := range languages {
-		result, err := config.ConnDB().Query("INSERT INTO translation_update_password_page (lang_id,title,password,verify_password,explanation,save) VALUES ($1,$2,$3,$4,$5,$6)", v.ID, c.PostForm("title_"+v.NameShort), c.PostForm("password_"+v.NameShort), c.PostForm("verify_password_"+v.NameShort), c.PostForm("explanation_"+v.NameShort), c.PostForm("save_"+v.NameShort))
+		result, err := db.Query("INSERT INTO translation_update_password_page (lang_id,title,password,verify_password,explanation,save) VALUES ($1,$2,$3,$4,$5,$6)", v.ID, c.PostForm("title_"+v.NameShort), c.PostForm("password_"+v.NameShort), c.PostForm("verify_password_"+v.NameShort), c.PostForm("explanation_"+v.NameShort), c.PostForm("save_"+v.NameShort))
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
@@ -61,9 +71,19 @@ func CreateTranslationUpdatePasswordPage(c *gin.Context) {
 
 func UpdateTranslationUpdatePasswordPageByID(c *gin.Context) {
 
+	db, err := config.ConnDB()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer db.Close()
+
 	ID := c.Param("id")
 
-	rowFlag, err := config.ConnDB().Query("SELECT id FROM translation_update_password_page WHERE id = $1 AND deleted_at IS NULL", ID)
+	rowFlag, err := db.Query("SELECT id FROM translation_update_password_page WHERE id = $1 AND deleted_at IS NULL", ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -107,7 +127,7 @@ func UpdateTranslationUpdatePasswordPageByID(c *gin.Context) {
 
 	currentTime := time.Now()
 
-	result, err := config.ConnDB().Query("UPDATE translation_update_password_page SET title = $1, verify_password = $2 , explanation = $3 , save = $4 , password = $5 , updated_at = $7 WHERE id = $6", c.PostForm("title"), c.PostForm("verify_password"), c.PostForm("explanation"), c.PostForm("save"), c.PostForm("password"), id, currentTime)
+	result, err := db.Query("UPDATE translation_update_password_page SET title = $1, verify_password = $2 , explanation = $3 , save = $4 , password = $5 , updated_at = $7 WHERE id = $6", c.PostForm("title"), c.PostForm("verify_password"), c.PostForm("explanation"), c.PostForm("save"), c.PostForm("password"), id, currentTime)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -126,9 +146,19 @@ func UpdateTranslationUpdatePasswordPageByID(c *gin.Context) {
 
 func GetTranslationUpdatePasswordPageByID(c *gin.Context) {
 
+	db, err := config.ConnDB()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer db.Close()
+
 	ID := c.Param("id")
 
-	rowFlag, err := config.ConnDB().Query("SELECT title,verify_password,explanation,save,password FROM translation_update_password_page WHERE id = $1 AND deleted_at IS NULL", ID)
+	rowFlag, err := db.Query("SELECT title,verify_password,explanation,save,password FROM translation_update_password_page WHERE id = $1 AND deleted_at IS NULL", ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -167,6 +197,16 @@ func GetTranslationUpdatePasswordPageByID(c *gin.Context) {
 
 func GetTranslationUpdatePasswordPageByLangID(c *gin.Context) {
 
+	db, err := config.ConnDB()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer db.Close()
+
 	langID, err := CheckLanguage(c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -177,7 +217,7 @@ func GetTranslationUpdatePasswordPageByLangID(c *gin.Context) {
 	}
 
 	// get translation-update-password-page where lang_id equal langID
-	aboutRow, err := config.ConnDB().Query("SELECT title,password,verify_password,explanation,save FROM translation_update_password_page WHERE lang_id = $1 AND deleted_at IS NULL", langID)
+	aboutRow, err := db.Query("SELECT title,password,verify_password,explanation,save FROM translation_update_password_page WHERE lang_id = $1 AND deleted_at IS NULL", langID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,

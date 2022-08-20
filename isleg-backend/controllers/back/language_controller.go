@@ -21,6 +21,16 @@ type LanguageForHeader struct {
 
 func CreateLanguage(c *gin.Context) {
 
+	db, err := config.ConnDB()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer db.Close()
+
 	// GET DATA FROM REQUEST
 	nameShort := c.PostForm("name_short")
 
@@ -44,7 +54,7 @@ func CreateLanguage(c *gin.Context) {
 	}
 
 	// CREATE LANGUAGE
-	resultLang, err := config.ConnDB().Query("INSERT INTO languages (name_short,flag) VALUES ($1,$2)", strings.ToLower(nameShort), "uploads/language/"+newFileName)
+	resultLang, err := db.Query("INSERT INTO languages (name_short,flag) VALUES ($1,$2)", strings.ToLower(nameShort), "uploads/language/"+newFileName)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -55,7 +65,7 @@ func CreateLanguage(c *gin.Context) {
 	defer resultLang.Close()
 
 	// GET ID OF ADDED LANGUAGE
-	lastLandID, err := config.ConnDB().Query("SELECT id FROM languages WHERE deleted_at IS NULL ORDER BY created_at DESC LIMIT 1")
+	lastLandID, err := db.Query("SELECT id FROM languages WHERE deleted_at IS NULL ORDER BY created_at DESC LIMIT 1")
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -77,7 +87,7 @@ func CreateLanguage(c *gin.Context) {
 	}
 
 	// CREATE TRANSLATION HEADER
-	resultTrHeader, err := config.ConnDB().Query("INSERT INTO translation_header (lang_id) VALUES ($1)", langID)
+	resultTrHeader, err := db.Query("INSERT INTO translation_header (lang_id) VALUES ($1)", langID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -88,7 +98,7 @@ func CreateLanguage(c *gin.Context) {
 	defer resultTrHeader.Close()
 
 	// CREATE TRANSLATION FOOTER
-	resultTrFooter, err := config.ConnDB().Query("INSERT INTO translation_footer (lang_id) VALUES ($1)", langID)
+	resultTrFooter, err := db.Query("INSERT INTO translation_footer (lang_id) VALUES ($1)", langID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -99,7 +109,7 @@ func CreateLanguage(c *gin.Context) {
 	defer resultTrFooter.Close()
 
 	// CREATE TRANSLATION secure
-	resultTRSecure, err := config.ConnDB().Query("INSERT INTO translation_secure (lang_id) VALUES ($1)", langID)
+	resultTRSecure, err := db.Query("INSERT INTO translation_secure (lang_id) VALUES ($1)", langID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -110,7 +120,7 @@ func CreateLanguage(c *gin.Context) {
 	defer resultTRSecure.Close()
 
 	// CREATE TRANSLATION payment
-	resultTRPayment, err := config.ConnDB().Query("INSERT INTO translation_payment (lang_id) VALUES ($1)", langID)
+	resultTRPayment, err := db.Query("INSERT INTO translation_payment (lang_id) VALUES ($1)", langID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -121,7 +131,7 @@ func CreateLanguage(c *gin.Context) {
 	defer resultTRPayment.Close()
 
 	// CREATE TRANSLATION about
-	resultTRABout, err := config.ConnDB().Query("INSERT INTO translation_about (lang_id) VALUES ($1)", langID)
+	resultTRABout, err := db.Query("INSERT INTO translation_about (lang_id) VALUES ($1)", langID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -132,7 +142,7 @@ func CreateLanguage(c *gin.Context) {
 	defer resultTRABout.Close()
 
 	// CREATE company address
-	resultComAddress, err := config.ConnDB().Query("INSERT INTO company_address (lang_id) VALUES ($1)", langID)
+	resultComAddress, err := db.Query("INSERT INTO company_address (lang_id) VALUES ($1)", langID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -143,7 +153,7 @@ func CreateLanguage(c *gin.Context) {
 	defer resultComAddress.Close()
 
 	// CREATE translation_contact
-	resultTRContact, err := config.ConnDB().Query("INSERT INTO translation_contact (lang_id) VALUES ($1)", langID)
+	resultTRContact, err := db.Query("INSERT INTO translation_contact (lang_id) VALUES ($1)", langID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -154,7 +164,7 @@ func CreateLanguage(c *gin.Context) {
 	defer resultTRContact.Close()
 
 	// CREATE translation_my_information_page
-	resultTRMyInfPage, err := config.ConnDB().Query("INSERT INTO translation_my_information_page (lang_id) VALUES ($1)", langID)
+	resultTRMyInfPage, err := db.Query("INSERT INTO translation_my_information_page (lang_id) VALUES ($1)", langID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -165,7 +175,7 @@ func CreateLanguage(c *gin.Context) {
 	defer resultTRMyInfPage.Close()
 
 	// CREATE translation_update_password_page
-	resultUpdMyPass, err := config.ConnDB().Query("INSERT INTO translation_update_password_page (lang_id) VALUES ($1)", langID)
+	resultUpdMyPass, err := db.Query("INSERT INTO translation_update_password_page (lang_id) VALUES ($1)", langID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -177,7 +187,7 @@ func CreateLanguage(c *gin.Context) {
 
 	// GET ID OF ALL CATEGORIES
 	var categoryIDs []string
-	categoryRows, err := config.ConnDB().Query("SELECT id FROM categories ORDER BY created_at ASC")
+	categoryRows, err := db.Query("SELECT id FROM categories ORDER BY created_at ASC")
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -201,7 +211,7 @@ func CreateLanguage(c *gin.Context) {
 
 	// CREATE TRANSLATION CATEGORY
 	for _, v := range categoryIDs {
-		resultTRCategory, err := config.ConnDB().Query("INSERT INTO translation_category (lang_id,category_id) VALUES ($1,$2)", langID, v)
+		resultTRCategory, err := db.Query("INSERT INTO translation_category (lang_id,category_id) VALUES ($1,$2)", langID, v)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
@@ -214,7 +224,7 @@ func CreateLanguage(c *gin.Context) {
 
 	// GET ID OF ALL PRODUCTS
 	var productIDs []string
-	productRows, err := config.ConnDB().Query("SELECT id FROM products ORDER BY created_at ASC")
+	productRows, err := db.Query("SELECT id FROM products ORDER BY created_at ASC")
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -238,7 +248,7 @@ func CreateLanguage(c *gin.Context) {
 
 	// CREATE TRANSLATION product
 	for _, v := range productIDs {
-		resultTRProduct, err := config.ConnDB().Query("INSERT INTO translation_product (lang_id,product_id) VALUES ($1,$2)", langID, v)
+		resultTRProduct, err := db.Query("INSERT INTO translation_product (lang_id,product_id) VALUES ($1,$2)", langID, v)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
@@ -251,7 +261,7 @@ func CreateLanguage(c *gin.Context) {
 
 	// GET ID OF ALL AFISAS
 	var afisaIDs []string
-	afisaRows, err := config.ConnDB().Query("SELECT id FROM afisa ORDER BY created_at ASC")
+	afisaRows, err := db.Query("SELECT id FROM afisa ORDER BY created_at ASC")
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -275,7 +285,7 @@ func CreateLanguage(c *gin.Context) {
 
 	// CREATE TRANSLATION afisa
 	for _, v := range afisaIDs {
-		resultTRAfisa, err := config.ConnDB().Query("INSERT INTO translation_afisa (lang_id,afisa_id) VALUES ($1,$2)", langID, v)
+		resultTRAfisa, err := db.Query("INSERT INTO translation_afisa (lang_id,afisa_id) VALUES ($1,$2)", langID, v)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
@@ -288,7 +298,7 @@ func CreateLanguage(c *gin.Context) {
 
 	// GET ID  OF ALL DISTRICTS
 	var districtIDs []string
-	districtRows, err := config.ConnDB().Query("SELECT id FROM district ORDER BY created_at ASC")
+	districtRows, err := db.Query("SELECT id FROM district ORDER BY created_at ASC")
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -312,7 +322,7 @@ func CreateLanguage(c *gin.Context) {
 
 	// CREATE TRANSLATION district
 	for _, v := range districtIDs {
-		resultTRDistrict, err := config.ConnDB().Query("INSERT INTO translation_district (lang_id,district_id) VALUES ($1,$2)", langID, v)
+		resultTRDistrict, err := db.Query("INSERT INTO translation_district (lang_id,district_id) VALUES ($1,$2)", langID, v)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
@@ -332,11 +342,21 @@ func CreateLanguage(c *gin.Context) {
 
 func UpdateLanguageByID(c *gin.Context) {
 
+	db, err := config.ConnDB()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer db.Close()
+
 	langID := c.Param("id")
 	nameShort := c.PostForm("name_short")
 	var fileName string
 
-	rowFlag, err := config.ConnDB().Query("SELECT flag FROM languages WHERE id = $1 AND deleted_at IS NULL", langID)
+	rowFlag, err := db.Query("SELECT flag FROM languages WHERE id = $1 AND deleted_at IS NULL", langID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -404,7 +424,7 @@ func UpdateLanguageByID(c *gin.Context) {
 
 	currentTime := time.Now()
 
-	resultLang, err := config.ConnDB().Query("UPDATE languages SET name_short = $1 , flag = $2 , updated_at = $4 WHERE id = $3", nameShort, fileName, langID, currentTime)
+	resultLang, err := db.Query("UPDATE languages SET name_short = $1 , flag = $2 , updated_at = $4 WHERE id = $3", nameShort, fileName, langID, currentTime)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -423,9 +443,19 @@ func UpdateLanguageByID(c *gin.Context) {
 
 func GetLanguageByID(c *gin.Context) {
 
+	db, err := config.ConnDB()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer db.Close()
+
 	langID := c.Param("id")
 
-	rowLanguage, err := config.ConnDB().Query("SELECT name_short,flag FROM languages WHERE id = $1 AND deleted_at IS NULL", langID)
+	rowLanguage, err := db.Query("SELECT name_short,flag FROM languages WHERE id = $1 AND deleted_at IS NULL", langID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -481,9 +511,19 @@ func GetLanguages(c *gin.Context) {
 
 func DeleteLanguageByID(c *gin.Context) {
 
+	db, err := config.ConnDB()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer db.Close()
+
 	langID := c.Param("id")
 
-	rowFlag, err := config.ConnDB().Query("SELECT flag FROM languages WHERE id = $1 AND deleted_at IS NULL", langID)
+	rowFlag, err := db.Query("SELECT flag FROM languages WHERE id = $1 AND deleted_at IS NULL", langID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -515,7 +555,7 @@ func DeleteLanguageByID(c *gin.Context) {
 
 	currentTime := time.Now()
 
-	resutlTRLand, err := config.ConnDB().Query("UPDATE languages SET deleted_at = $1 WHERE id = $2", currentTime, langID)
+	resutlTRLand, err := db.Query("UPDATE languages SET deleted_at = $1 WHERE id = $2", currentTime, langID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -525,7 +565,7 @@ func DeleteLanguageByID(c *gin.Context) {
 	}
 	defer resutlTRLand.Close()
 
-	resultTRHeader, err := config.ConnDB().Query("UPDATE translation_header SET deleted_at = $1 WHERE lang_id = $2", currentTime, langID)
+	resultTRHeader, err := db.Query("UPDATE translation_header SET deleted_at = $1 WHERE lang_id = $2", currentTime, langID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -535,7 +575,7 @@ func DeleteLanguageByID(c *gin.Context) {
 	}
 	defer resultTRHeader.Close()
 
-	resultTRFooter, err := config.ConnDB().Query("UPDATE translation_footer SET deleted_at = $1 WHERE lang_id = $2", currentTime, langID)
+	resultTRFooter, err := db.Query("UPDATE translation_footer SET deleted_at = $1 WHERE lang_id = $2", currentTime, langID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -545,7 +585,7 @@ func DeleteLanguageByID(c *gin.Context) {
 	}
 	defer resultTRFooter.Close()
 
-	resulttTrSECURE, err := config.ConnDB().Query("UPDATE translation_secure SET deleted_at = $1 WHERE lang_id = $2", currentTime, langID)
+	resulttTrSECURE, err := db.Query("UPDATE translation_secure SET deleted_at = $1 WHERE lang_id = $2", currentTime, langID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -555,7 +595,7 @@ func DeleteLanguageByID(c *gin.Context) {
 	}
 	defer resulttTrSECURE.Close()
 
-	resultTRPayment, err := config.ConnDB().Query("UPDATE translation_payment SET deleted_at = $1 WHERE lang_id = $2", currentTime, langID)
+	resultTRPayment, err := db.Query("UPDATE translation_payment SET deleted_at = $1 WHERE lang_id = $2", currentTime, langID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -565,7 +605,7 @@ func DeleteLanguageByID(c *gin.Context) {
 	}
 	defer resultTRPayment.Close()
 
-	resultTRABout, err := config.ConnDB().Query("UPDATE translation_about SET deleted_at = $1 WHERE lang_id = $2", currentTime, langID)
+	resultTRABout, err := db.Query("UPDATE translation_about SET deleted_at = $1 WHERE lang_id = $2", currentTime, langID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -575,7 +615,7 @@ func DeleteLanguageByID(c *gin.Context) {
 	}
 	defer resultTRABout.Close()
 
-	resultComAdddres, err := config.ConnDB().Query("UPDATE company_address SET deleted_at = $1 WHERE lang_id = $2", currentTime, langID)
+	resultComAdddres, err := db.Query("UPDATE company_address SET deleted_at = $1 WHERE lang_id = $2", currentTime, langID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -585,7 +625,7 @@ func DeleteLanguageByID(c *gin.Context) {
 	}
 	defer resultComAdddres.Close()
 
-	resultTRContact, err := config.ConnDB().Query("UPDATE translation_contact SET deleted_at = $1 WHERE lang_id = $2", currentTime, langID)
+	resultTRContact, err := db.Query("UPDATE translation_contact SET deleted_at = $1 WHERE lang_id = $2", currentTime, langID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -595,7 +635,7 @@ func DeleteLanguageByID(c *gin.Context) {
 	}
 	defer resultTRContact.Close()
 
-	resultMyInfPage, err := config.ConnDB().Query("UPDATE translation_my_information_page SET deleted_at = $1 WHERE lang_id = $2", currentTime, langID)
+	resultMyInfPage, err := db.Query("UPDATE translation_my_information_page SET deleted_at = $1 WHERE lang_id = $2", currentTime, langID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -605,7 +645,7 @@ func DeleteLanguageByID(c *gin.Context) {
 	}
 	defer resultMyInfPage.Close()
 
-	resultTraUpdatePassPage, err := config.ConnDB().Query("UPDATE translation_update_password_page SET deleted_at = $1 WHERE lang_id = $2", currentTime, langID)
+	resultTraUpdatePassPage, err := db.Query("UPDATE translation_update_password_page SET deleted_at = $1 WHERE lang_id = $2", currentTime, langID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -615,7 +655,7 @@ func DeleteLanguageByID(c *gin.Context) {
 	}
 	defer resultTraUpdatePassPage.Close()
 
-	resultTRCategory, err := config.ConnDB().Query("UPDATE translation_category SET deleted_at = $1 WHERE lang_id = $2", currentTime, langID)
+	resultTRCategory, err := db.Query("UPDATE translation_category SET deleted_at = $1 WHERE lang_id = $2", currentTime, langID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -625,7 +665,7 @@ func DeleteLanguageByID(c *gin.Context) {
 	}
 	defer resultTRCategory.Close()
 
-	resultTRProduct, err := config.ConnDB().Query("UPDATE translation_product SET deleted_at = $1 WHERE lang_id = $2", currentTime, langID)
+	resultTRProduct, err := db.Query("UPDATE translation_product SET deleted_at = $1 WHERE lang_id = $2", currentTime, langID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -635,7 +675,7 @@ func DeleteLanguageByID(c *gin.Context) {
 	}
 	defer resultTRProduct.Close()
 
-	resultTRAfisa, err := config.ConnDB().Query("UPDATE translation_afisa SET deleted_at = $1 WHERE lang_id = $2", currentTime, langID)
+	resultTRAfisa, err := db.Query("UPDATE translation_afisa SET deleted_at = $1 WHERE lang_id = $2", currentTime, langID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -645,7 +685,7 @@ func DeleteLanguageByID(c *gin.Context) {
 	}
 	defer resultTRAfisa.Close()
 
-	resultTrDistrict, err := config.ConnDB().Query("UPDATE translation_district SET deleted_at = $1 WHERE lang_id = $2", currentTime, langID)
+	resultTrDistrict, err := db.Query("UPDATE translation_district SET deleted_at = $1 WHERE lang_id = $2", currentTime, langID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -664,9 +704,19 @@ func DeleteLanguageByID(c *gin.Context) {
 
 func RestoreLanguageByID(c *gin.Context) {
 
+	db, err := config.ConnDB()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer db.Close()
+
 	langID := c.Param("id")
 
-	rowFlag, err := config.ConnDB().Query("SELECT flag FROM languages WHERE id = $1 AND deleted_at IS NOT NULL", langID)
+	rowFlag, err := db.Query("SELECT flag FROM languages WHERE id = $1 AND deleted_at IS NOT NULL", langID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -696,7 +746,7 @@ func RestoreLanguageByID(c *gin.Context) {
 		return
 	}
 
-	resultLang, err := config.ConnDB().Query("UPDATE languages SET deleted_at = NULL WHERE id = $1", langID)
+	resultLang, err := db.Query("UPDATE languages SET deleted_at = NULL WHERE id = $1", langID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -706,7 +756,7 @@ func RestoreLanguageByID(c *gin.Context) {
 	}
 	defer resultLang.Close()
 
-	resultTRHeader, err := config.ConnDB().Query("UPDATE translation_header SET deleted_at = NULL WHERE lang_id = $1", langID)
+	resultTRHeader, err := db.Query("UPDATE translation_header SET deleted_at = NULL WHERE lang_id = $1", langID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -716,7 +766,7 @@ func RestoreLanguageByID(c *gin.Context) {
 	}
 	defer resultTRHeader.Close()
 
-	resultTRFooter, err := config.ConnDB().Query("UPDATE translation_footer SET deleted_at = NULL WHERE lang_id = $1", langID)
+	resultTRFooter, err := db.Query("UPDATE translation_footer SET deleted_at = NULL WHERE lang_id = $1", langID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -726,7 +776,7 @@ func RestoreLanguageByID(c *gin.Context) {
 	}
 	defer resultTRFooter.Close()
 
-	resultTRSecure, err := config.ConnDB().Query("UPDATE translation_secure SET deleted_at = NULL WHERE lang_id = $1", langID)
+	resultTRSecure, err := db.Query("UPDATE translation_secure SET deleted_at = NULL WHERE lang_id = $1", langID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -736,7 +786,7 @@ func RestoreLanguageByID(c *gin.Context) {
 	}
 	defer resultTRSecure.Close()
 
-	resultTrPayment, err := config.ConnDB().Query("UPDATE translation_payment SET deleted_at = NULL WHERE lang_id = $1", langID)
+	resultTrPayment, err := db.Query("UPDATE translation_payment SET deleted_at = NULL WHERE lang_id = $1", langID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -746,7 +796,7 @@ func RestoreLanguageByID(c *gin.Context) {
 	}
 	defer resultTrPayment.Close()
 
-	resultTRABut, err := config.ConnDB().Query("UPDATE translation_about SET deleted_at = NULL WHERE lang_id = $1", langID)
+	resultTRABut, err := db.Query("UPDATE translation_about SET deleted_at = NULL WHERE lang_id = $1", langID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -756,7 +806,7 @@ func RestoreLanguageByID(c *gin.Context) {
 	}
 	defer resultTRABut.Close()
 
-	resultComAddres, err := config.ConnDB().Query("UPDATE company_address SET deleted_at = NULL WHERE lang_id = $1", langID)
+	resultComAddres, err := db.Query("UPDATE company_address SET deleted_at = NULL WHERE lang_id = $1", langID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -766,7 +816,7 @@ func RestoreLanguageByID(c *gin.Context) {
 	}
 	defer resultComAddres.Close()
 
-	resultTRContact, err := config.ConnDB().Query("UPDATE translation_contact SET deleted_at = NULL WHERE lang_id = $1", langID)
+	resultTRContact, err := db.Query("UPDATE translation_contact SET deleted_at = NULL WHERE lang_id = $1", langID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -776,7 +826,7 @@ func RestoreLanguageByID(c *gin.Context) {
 	}
 	defer resultTRContact.Close()
 
-	resultMyInfPage, err := config.ConnDB().Query("UPDATE translation_my_information_page SET deleted_at = NULL WHERE lang_id = $1", langID)
+	resultMyInfPage, err := db.Query("UPDATE translation_my_information_page SET deleted_at = NULL WHERE lang_id = $1", langID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -786,7 +836,7 @@ func RestoreLanguageByID(c *gin.Context) {
 	}
 	defer resultMyInfPage.Close()
 
-	resultUpPassPage, err := config.ConnDB().Query("UPDATE translation_update_password_page SET deleted_at = NULL WHERE lang_id = $1", langID)
+	resultUpPassPage, err := db.Query("UPDATE translation_update_password_page SET deleted_at = NULL WHERE lang_id = $1", langID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -796,7 +846,7 @@ func RestoreLanguageByID(c *gin.Context) {
 	}
 	defer resultUpPassPage.Close()
 
-	resultTrCategory, err := config.ConnDB().Query("UPDATE translation_category SET deleted_at = NULL WHERE lang_id = $1", langID)
+	resultTrCategory, err := db.Query("UPDATE translation_category SET deleted_at = NULL WHERE lang_id = $1", langID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -806,7 +856,7 @@ func RestoreLanguageByID(c *gin.Context) {
 	}
 	defer resultTrCategory.Close()
 
-	resultTRProduct, err := config.ConnDB().Query("UPDATE translation_product SET deleted_at = NULL WHERE lang_id = $1", langID)
+	resultTRProduct, err := db.Query("UPDATE translation_product SET deleted_at = NULL WHERE lang_id = $1", langID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -816,7 +866,7 @@ func RestoreLanguageByID(c *gin.Context) {
 	}
 	defer resultTRProduct.Close()
 
-	resultTRAfisa, err := config.ConnDB().Query("UPDATE translation_afisa SET deleted_at = NULL WHERE lang_id = $1", langID)
+	resultTRAfisa, err := db.Query("UPDATE translation_afisa SET deleted_at = NULL WHERE lang_id = $1", langID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -826,7 +876,7 @@ func RestoreLanguageByID(c *gin.Context) {
 	}
 	defer resultTRAfisa.Close()
 
-	resultTrDistrcit, err := config.ConnDB().Query("UPDATE translation_district SET deleted_at = NULL WHERE lang_id = $1", langID)
+	resultTrDistrcit, err := db.Query("UPDATE translation_district SET deleted_at = NULL WHERE lang_id = $1", langID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -845,9 +895,19 @@ func RestoreLanguageByID(c *gin.Context) {
 
 func DeletePermanentlyLanguageByID(c *gin.Context) {
 
+	db, err := config.ConnDB()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer db.Close()
+
 	langID := c.Param("id")
 
-	rowFlag, err := config.ConnDB().Query("SELECT flag FROM languages WHERE id = $1 AND deleted_at IS NOT NULL", langID)
+	rowFlag, err := db.Query("SELECT flag FROM languages WHERE id = $1 AND deleted_at IS NOT NULL", langID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -885,7 +945,7 @@ func DeletePermanentlyLanguageByID(c *gin.Context) {
 		return
 	}
 
-	resultLang, err := config.ConnDB().Query("DELETE FROM languages WHERE id = $1", langID)
+	resultLang, err := db.Query("DELETE FROM languages WHERE id = $1", langID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -904,10 +964,16 @@ func DeletePermanentlyLanguageByID(c *gin.Context) {
 
 func GetAllLanguageForHeader() ([]LanguageForHeader, error) {
 
+	db, err := config.ConnDB()
+	if err != nil {
+		return []LanguageForHeader{}, nil
+	}
+	defer db.Close()
+
 	var ls []LanguageForHeader
 
 	// GET Language For Header
-	rows, err := config.ConnDB().Query("SELECT name_short,flag FROM languages WHERE deleted_at IS NULL")
+	rows, err := db.Query("SELECT name_short,flag FROM languages WHERE deleted_at IS NULL")
 	if err != nil {
 		return []LanguageForHeader{}, err
 	}
@@ -927,7 +993,13 @@ func GetAllLanguageForHeader() ([]LanguageForHeader, error) {
 
 func GetAllLanguageWithIDAndNameShort() ([]models.Language, error) {
 
-	languageRows, err := config.ConnDB().Query("SELECT id,name_short FROM languages WHERE deleted_at IS NULL ORDER BY created_at ASC")
+	db, err := config.ConnDB()
+	if err != nil {
+		return []models.Language{}, nil
+	}
+	defer db.Close()
+
+	languageRows, err := db.Query("SELECT id,name_short FROM languages WHERE deleted_at IS NULL ORDER BY created_at ASC")
 	if err != nil {
 		return []models.Language{}, err
 	}
@@ -949,9 +1021,15 @@ func GetAllLanguageWithIDAndNameShort() ([]models.Language, error) {
 
 func GetLangID(langShortName string) (string, error) {
 
+	db, err := config.ConnDB()
+	if err != nil {
+		return "", nil
+	}
+	defer db.Close()
+
 	var langID string
 
-	row, err := config.ConnDB().Query("SELECT id FROM languages WHERE name_short = $1 AND deleted_at IS NULL", langShortName)
+	row, err := db.Query("SELECT id FROM languages WHERE name_short = $1 AND deleted_at IS NULL", langShortName)
 	if err != nil {
 		return "", err
 	}
