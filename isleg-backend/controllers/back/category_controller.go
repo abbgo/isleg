@@ -54,10 +54,16 @@ type Brend struct {
 }
 
 type OneCategory struct {
-	ID               string    `json:"id"`
-	ParentCategoryID uuid.UUID `json:"parent_category_id"`
-	Image            string    `json:"image"`
-	IsHomeCategory   bool      `json:"is_home_category"`
+	ID               string                `json:"id"`
+	ParentCategoryID uuid.UUID             `json:"parent_category_id"`
+	Image            string                `json:"image"`
+	IsHomeCategory   bool                  `json:"is_home_category"`
+	Translations     []TranslationCategory `json:"translations"`
+}
+
+type TranslationCategory struct {
+	LangID string `json:"lang_id"`
+	Name   string `json:"name"`
 }
 
 type ProductImages struct {
@@ -479,7 +485,7 @@ func GetCategoryByID(c *gin.Context) {
 	var category OneCategory
 
 	for rowCategor.Next() {
-		if err := rowCategor.Scan(&category.ID, &category.ParentCategoryID, &category.Image, &category.Image); err != nil {
+		if err := rowCategor.Scan(&category.ID, &category.ParentCategoryID, &category.Image, &category.IsHomeCategory); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
@@ -495,6 +501,32 @@ func GetCategoryByID(c *gin.Context) {
 		})
 		return
 	}
+
+	rowsTrCategory, err := db.Query("SELECT lang_id,name FROM translation_category WHERE category_id = $1 AND deleted_at IS NULL", ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer rowsTrCategory.Close()
+
+	var translations []TranslationCategory
+
+	for rowsTrCategory.Next() {
+		var translation TranslationCategory
+		if err := rowsTrCategory.Scan(&translation.LangID, &translation.Name); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+		translations = append(translations, translation)
+	}
+
+	category.Translations = translations
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":   true,
