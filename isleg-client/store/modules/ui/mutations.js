@@ -4,6 +4,9 @@ const SET_HEADER = (state, payload) => {
   state.languages = payload.languages
   state.categories = payload.categories
 }
+const SET_FOOTER = (state, payload) => {
+  state.footerDatas = payload
+}
 const SET_CLOSE_ISOPENSIGNUP = (state) => {
   state.isOpenSignUp = false
 }
@@ -12,6 +15,7 @@ const SET_OPEN_ISOPENSIGNUP = (state) => {
 }
 export default {
   SET_HEADER,
+  SET_FOOTER,
   SET_CLOSE_ISOPENSIGNUP,
   SET_OPEN_ISOPENSIGNUP,
 }

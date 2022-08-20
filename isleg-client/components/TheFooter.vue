@@ -37,3 +37,22 @@
     </div>
   </footer>
 </template>
+
+<script>
+export default {
+  watch: {
+    '$i18n.locale': async function () {
+      await this.$store.dispatch('ui/fetchFooter', {
+        url: `${process.env.BASE_API}/${this.$i18n.locale}/footer`,
+        $nuxt: this.$nuxt,
+      })
+    },
+  },
+  async fetch() {
+    await this.$store.dispatch('ui/fetchFooter', {
+      url: `${process.env.BASE_API}/${this.$i18n.locale}/footer`,
+      $nuxt: this.$nuxt,
+    })
+  },
+}
+</script>

@@ -10,12 +10,12 @@
         </div>
         <div class="pop-up_form">
           <div class="form__input">
-            <h4>Adyňyz</h4>
+            <h4>{{ name }}</h4>
             <div class="form__input-container">
               <img src="@/assets/img/account.svg" alt="" />
               <input
                 type="text"
-                placeholder="Adyňyz"
+                :placeholder="name"
                 v-model.trim="$v.register.name.$model"
               />
             </div>
@@ -50,11 +50,12 @@
             </span>
           </div>
           <div class="form__input">
-            <h4>Telefon</h4>
+            <h4>{{ phone }}</h4>
             <div class="form__input-container">
               <img src="@/assets/img/tel.svg" alt="" />
               <input
                 type="tel"
+                :placeholder="phone"
                 v-model="$v.register.phone_number.$model"
                 @input="enforcePhoneFormat"
               />
@@ -64,12 +65,12 @@
             </span>
           </div>
           <div class="form__input">
-            <h4>Açar sözi</h4>
+            <h4>{{ password }}</h4>
             <div class="form__input-container">
               <img src="@/assets/img/lock.svg" alt="" />
               <input
                 :type="showPass ? 'password' : 'text'"
-                placeholder="Açar sözi"
+                :placeholder="password"
                 v-model="$v.register.password.$model"
               />
               <img
@@ -91,12 +92,12 @@
             </span>
           </div>
           <div class="form__input">
-            <h4>Açar sözini tassykla</h4>
+            <h4>{{ passwordVerification }}</h4>
             <div class="form__input-container">
               <img src="@/assets/img/lock.svg" alt="" />
               <input
                 :type="showConfirmPass ? 'password' : 'text'"
-                placeholder="Açar sözini tassykla"
+                :placeholder="passwordVerification"
                 v-model="$v.register.repeatPassword.$model"
               />
               <img
@@ -133,18 +134,19 @@
               v-model="$v.register.checked.$model"
               @change="termsOfService($event, $v.register.checked.$model)"
             />
-            <label for="confirm" class="confirm__chekbox-label"
-              >Ulanyş Düzgünlerini we Gizlinlik Şertnamasyny okadym we kabul
-              edýärin!</label
-            >
+            <label for="confirm" class="confirm__chekbox-label">{{
+              verifySecure
+            }}</label>
           </div>
           <span class="error" v-if="isTearmsOfServices">
             {{ $t('register.checkedIsRequired') }}
           </span>
           <div class="pop-up__btns">
-            <button class="left_btn" @click="openSignUp">Ulgama girmek</button>
-            <button type="button" @click="signUp" class="right__btn">
-              Agza bolmak
+            <button class="right__btn" @click="signUp">
+              {{ userSignUp }}
+            </button>
+            <button type="button" @click="openSignUp" class="left_btn">
+              {{ signIn }}
             </button>
           </div>
         </div>
@@ -160,6 +162,34 @@ export default {
     isOpenRegister: {
       type: Boolean,
       default: () => false,
+    },
+    name: {
+      type: String,
+      default: () => '',
+    },
+    passwordVerification: {
+      type: String,
+      default: () => '',
+    },
+    verifySecure: {
+      type: String,
+      default: () => '',
+    },
+    phone: {
+      type: String,
+      default: () => '',
+    },
+    password: {
+      type: String,
+      default: () => '',
+    },
+    signIn: {
+      type: String,
+      default: () => '',
+    },
+    userSignUp: {
+      type: String,
+      default: () => '',
     },
   },
   data() {

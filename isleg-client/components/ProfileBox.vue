@@ -19,7 +19,7 @@
             />
           </svg>
         </span>
-        <h4>Maglumatym</h4>
+        <h4>{{ information }}</h4>
       </div>
       <div
         class="profile__item"
@@ -39,7 +39,7 @@
             />
           </svg>
         </span>
-        <h4>Halanlarym</h4>
+        <h4>{{ favorites }}</h4>
       </div>
       <div
         class="profile__item"
@@ -59,9 +59,12 @@
             />
           </svg>
         </span>
-        <h4>Sargytlarym</h4>
+        <h4>{{ orders }}</h4>
       </div>
-      <div class="profile__item profile__item-active">
+      <div
+        class="profile__item profile__item-active"
+        @click.stop="logOutInSystem"
+      >
         <span>
           <svg
             width="23"
@@ -80,7 +83,7 @@
             />
           </svg>
         </span>
-        <h4>Çyk</h4>
+        <h4>{{ logOut }}</h4>
       </div>
     </div>
   </div>
@@ -92,6 +95,32 @@ export default {
     isProfileProps: {
       type: Boolean,
       default: false,
+    },
+    information: {
+      type: String,
+      default: () => '',
+    },
+    favorites: {
+      type: String,
+      default: () => '',
+    },
+    orders: {
+      type: String,
+      default: () => '',
+    },
+    logOut: {
+      type: String,
+      default: () => '',
+    },
+  },
+  methods: {
+    logOutInSystem() {
+      this.$auth.logout()
+      this.$cookies.remove('access_token')
+      this.$cookies.remove('customer_id')
+      this.$cookies.remove('refresh_token')
+      this.$emit('close')
+      this.$router.push(this.localeLocation('/'))
     },
   },
 }

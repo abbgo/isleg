@@ -7,11 +7,12 @@
         </div>
         <div class="pop-up_form">
           <div class="form__input">
-            <h4>Telefon</h4>
+            <h4>{{ phone }}</h4>
             <div class="form__input-container">
               <img src="@/assets/img/tel.svg" alt="" />
               <input
                 type="tel"
+                :placeholder="phone"
                 v-model="$v.signUp.phone_number.$model"
                 @input="enforcePhoneFormat"
               />
@@ -21,12 +22,12 @@
             </span>
           </div>
           <div class="form__input">
-            <h4>Açar sözi</h4>
+            <h4>{{ password }}</h4>
             <div class="form__input-container">
               <img src="@/assets/img/lock.svg" alt="" />
               <input
                 :type="showPass ? 'password' : 'text'"
-                placeholder="Açar sözi"
+                :placeholder="password"
                 v-model="$v.signUp.password.$model"
               />
               <img
@@ -46,12 +47,14 @@
             </span>
           </div>
           <div class="form-chek__password">
-            <p>Açar sözini unutdym</p>
+            <p>{{ forgotPassword }}</p>
           </div>
           <div class="pop-up__btns">
-            <button class="left_btn" @click="openRegister">Agza bolmak</button>
+            <button class="left_btn" @click="openRegister">
+              {{ userSignUp }}
+            </button>
             <button type="button" class="right__btn" @click="logIn">
-              Ulgama girmek
+              {{ signIn }}
             </button>
           </div>
         </div>
@@ -67,6 +70,26 @@ export default {
     isOpenSignUp: {
       type: Boolean,
       default: () => false,
+    },
+    phone: {
+      type: String,
+      default: () => '',
+    },
+    password: {
+      type: String,
+      default: () => '',
+    },
+    forgotPassword: {
+      type: String,
+      default: () => '',
+    },
+    signIn: {
+      type: String,
+      default: () => '',
+    },
+    userSignUp: {
+      type: String,
+      default: () => '',
     },
   },
   data() {
@@ -104,7 +127,7 @@ export default {
           (x[5] ? x[5] : '') +
           (x[6] ? x[6] : '')
     },
-    logIn: async function () {
+    async logIn() {
       this.$v.$touch()
       if (this.signUp.phone_number.length >= 12) {
         try {
@@ -121,14 +144,18 @@ export default {
             this.$cookies.set('access_token', access_token)
             this.$cookies.set('customer_id', customer_id)
             this.$cookies.set('refresh_token', refresh_token)
-            this.closeRegister()
+            this.$router.push({ name: this.$route.name })
+            this.closeSignUp()
+            this.$toast(this.$t('register.success.logIn'))
           }
         } catch (err) {
-          console.log(err.response)
-          if (err?.response?.status == 401) {
-            this.$toast(this.$t('register.phoneNumberOrPassValid'))
-          } else {
-            this.$toast(this.$t('register.error'))
+          console.log('err', err)
+          if (err) {
+            if (err?.response?.status == 401) {
+              this.$toast(this.$t('register.phoneNumberOrPassValid'))
+            } else {
+              this.$toast(this.$t('register.error'))
+            }
           }
         }
       } else {

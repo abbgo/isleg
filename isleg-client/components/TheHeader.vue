@@ -24,25 +24,48 @@
             @blur="focusRemove"
             class="input__border"
             type="text"
-            placeholder="Gözleg"
+            :placeholder="research"
           />
         </div>
         <the-header-items
           @openSignUp="openPopUp"
           :isProfile="isProfile"
+          :myInformation="myInformation"
+          :myFavorites="myFavorites"
+          :myOrders="myOrders"
+          :logOut="logOut"
+          :activeLang="activeLang"
+          :withOutLocaleLang="withOutLocaleLang"
+          :imgURL="imgURL"
+          @closeProfilePopUp="isProfile = false"
         ></the-header-items>
       </div>
-      <the-header-nav></the-header-nav>
+      <the-header-nav
+        :categories="categories"
+        :imgURL="imgURL"
+      ></the-header-nav>
     </div>
 
     <sign-up
       :isOpenSignUp="isOpenSignUp"
+      :phone="phone"
+      :password="password"
+      :signIn="signIn"
+      :userSignUp="userSignUp"
+      :forgotPassword="forgotPassword"
       @closeSignUp="closeSignUp"
       @openRegisterPopUp="openRegisterPopUp"
       @closeSignUpPopUp="closeSignUp"
     ></sign-up>
     <register
       :isOpenRegister="isOpenRegister"
+      :name="name"
+      :passwordVerification="passwordVerification"
+      :verifySecure="verifySecure"
+      :phone="phone"
+      :password="password"
+      :signIn="signIn"
+      :userSignUp="userSignUp"
       @closeRegister="closeRegister"
       @openSignUpPopUp="openSignUpPopUp"
       @closeRegisterPopUp="closeRegister"
@@ -65,19 +88,60 @@ export default {
   watch: {
     '$i18n.locale': async function () {
       await this.$store.dispatch('ui/fetchHeader', {
-        url: `${this.$i18n.locale}/header`,
+        url: `${process.env.BASE_API}/${this.$i18n.locale}/header`,
         $nuxt: this.$nuxt,
       })
     },
   },
   async fetch() {
     await this.$store.dispatch('ui/fetchHeader', {
-      url: `${this.$i18n.locale}/header`,
+      url: `${process.env.BASE_API}/${this.$i18n.locale}/header`,
       $nuxt: this.$nuxt,
     })
   },
   computed: {
-    ...mapGetters('ui', ['imgURL', 'isOpenSignUp', 'logo']),
+    ...mapGetters('ui', [
+      'imgURL',
+      'isOpenSignUp',
+      'logo',
+      'research',
+      'phone',
+      'password',
+      'forgotPassword',
+      'signIn',
+      'userSignUp',
+      'name',
+      'passwordVerification',
+      'verifySecure',
+      'myInformation',
+      'myFavorites',
+      'myOrders',
+      'logOut',
+      'languages',
+      'categories',
+    ]),
+    withOutLocaleLang() {
+      return this.languages.filter(
+        (lang) => lang.name_short != this.$i18n.locale
+      )
+    },
+    activeLang() {
+      const find = this.languages.find(
+        (lang) => lang.name_short == this.$i18n.locale
+      )
+      return find
+    },
+  },
+  mounted() {
+    document.addEventListener('click', (event) => {
+      const account = document.querySelector('.account')
+      const profileBox = document.querySelector('.profile__box')
+      const isAccount = account.contains(event.target)
+      const isProfileBox = profileBox.contains(event.target)
+      if (!isAccount && !isProfileBox) {
+        this.isProfile = false
+      }
+    })
   },
   methods: {
     focused() {
@@ -107,9 +171,7 @@ export default {
       document.body.classList.add('_lock')
     },
     openPopUp() {
-      let token = this.$auth.loggedIn
-      console.log(token)
-      if (token) {
+      if (this.$auth.loggedIn) {
         this.isProfile = !this.isProfile
       } else {
         document.body.classList.add('_lock')

@@ -2,14 +2,20 @@
   <div class="header__items">
     <span class="item___box dropdown">
       <span class="item__active">
-        <img src="@/assets/img/flag.png" alt="" />
+        <img :src="`${imgURL}/${activeLang.flag}`" alt="" />
       </span>
       <span class="item__dropdown">
-        <img src="@/assets/img/flag.png" alt="" />
+        <img
+          v-for="(item, i) in withOutLocaleLang"
+          :key="i"
+          :src="`${imgURL}/${item.flag}`"
+          @click="$i18n.setLocale(item.name_short)"
+          alt=""
+        />
       </span>
     </span>
     <span class="item__border"></span>
-    <span class="item___box" @click="$emit('openSignUp')">
+    <span class="item___box account" @click.stop="$emit('openSignUp')">
       <svg
         class="sign__up"
         width="30"
@@ -24,7 +30,14 @@
           d="M11.313 11.3121C10.2928 11.3121 9.29557 11.0096 8.44734 10.4428C7.59911 9.87605 6.938 9.07048 6.5476 8.12798C6.1572 7.18548 6.05506 6.14837 6.25408 5.14782C6.4531 4.14727 6.94436 3.2282 7.66571 2.50684C8.38707 1.78548 9.30614 1.29423 10.3067 1.09521C11.3073 0.896183 12.3444 0.998329 13.2869 1.38873C14.2294 1.77912 15.0349 2.44024 15.6017 3.28846C16.1685 4.13669 16.471 5.13394 16.471 6.1541C16.4711 6.83149 16.3378 7.50228 16.0786 8.12813C15.8194 8.75399 15.4395 9.32266 14.9605 9.80165C14.4815 10.2806 13.9129 10.6606 13.287 10.9197C12.6612 11.1789 11.9904 11.3122 11.313 11.3121ZM22.919 8.7331V4.8641H25.496V8.7331H29.365V11.3121H25.496V15.1811H22.919V11.3121H19.05V8.7321L22.919 8.7331ZM11.313 13.8951C14.756 13.8951 21.63 15.6231 21.63 19.0531V21.6321H0.995972V19.0491C0.995972 15.6191 7.86897 13.8951 11.313 13.8951Z"
         />
       </svg>
-      <profile-box :isProfileProps="isProfile"></profile-box>
+      <profile-box
+        :isProfileProps="isProfile"
+        :information="myInformation"
+        :favorites="myFavorites"
+        :orders="myOrders"
+        :logOut="logOut"
+        @close="$emit('closeProfilePopUp')"
+      ></profile-box>
     </span>
     <span id="oppacity" class="item__border"></span>
     <button
@@ -59,8 +72,35 @@ export default {
       type: Boolean,
       default: false,
     },
+    myInformation: {
+      type: String,
+      default: () => '',
+    },
+    myFavorites: {
+      type: String,
+      default: () => '',
+    },
+    myOrders: {
+      type: String,
+      default: () => '',
+    },
+    logOut: {
+      type: String,
+      default: () => '',
+    },
+    withOutLocaleLang: {
+      type: Array,
+      default: () => [],
+    },
+    activeLang: {
+      type: Object,
+      default: () => {},
+    },
+    imgURL: {
+      type: String,
+      default: () => '',
+    },
   },
-  mounted() {},
   methods: {
     mouseEnter() {
       let item__border = document.getElementById('oppacity')
@@ -71,8 +111,7 @@ export default {
       item__border.classList.remove('active__item-border')
     },
     goFavoritesPage() {
-      let token = this.$auth.loggedIn
-      token
+      this.$auth.loggedIn
         ? this.$router.push(this.localeLocation('/favorites'))
         : this.$emit('openSignUp')
     },
