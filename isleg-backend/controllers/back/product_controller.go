@@ -21,6 +21,7 @@ type ProductImage struct {
 
 // struct used in function GetProductByID
 type OneProduct struct {
+	ID           uuid.UUID            `json:"id"`
 	BrendID      uuid.UUID            `json:"brend_id"`
 	Price        float64              `json:"price"`
 	OldPrice     float64              `json:"old_price"`
@@ -667,7 +668,7 @@ func GetProductByID(c *gin.Context) {
 
 	ID := c.Param("id")
 
-	rowProduct, err := db.Query("SELECT brend_id,price,old_price,amount,product_code,main_image,images FROM products WHERE id = $1 AND deleted_at IS NULL", ID)
+	rowProduct, err := db.Query("SELECT id,brend_id,price,old_price,amount,product_code,main_image,images FROM products WHERE id = $1 AND deleted_at IS NULL", ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -680,7 +681,7 @@ func GetProductByID(c *gin.Context) {
 	var product OneProduct
 
 	for rowProduct.Next() {
-		if err := rowProduct.Scan(&product.BrendID, &product.Price, &product.OldPrice, &product.Amount, &product.ProductCode, &product.MainImage, &product.Images); err != nil {
+		if err := rowProduct.Scan(&product.ID, &product.BrendID, &product.Price, &product.OldPrice, &product.Amount, &product.ProductCode, &product.MainImage, &product.Images); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
@@ -800,9 +801,8 @@ func GetProducts(c *gin.Context) {
 
 	for rowsProduct.Next() {
 		var product OneProduct
-		var id string
 
-		if err := rowsProduct.Scan(&id, &product.BrendID, &product.Price, &product.OldPrice, &product.Amount, &product.ProductCode, &product.MainImage, &product.Images); err != nil {
+		if err := rowsProduct.Scan(&product.ID, &product.BrendID, &product.Price, &product.OldPrice, &product.Amount, &product.ProductCode, &product.MainImage, &product.Images); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
@@ -812,7 +812,7 @@ func GetProducts(c *gin.Context) {
 
 		// ids = append(ids, id)
 
-		rowsCategoryProduct, err := db.Query("SELECT category_id FROM category_product WHERE product_id = $1 AND deleted_at IS NULL", id)
+		rowsCategoryProduct, err := db.Query("SELECT category_id FROM category_product WHERE product_id = $1 AND deleted_at IS NULL", product.ID)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
@@ -839,7 +839,7 @@ func GetProducts(c *gin.Context) {
 
 		product.Categories = categories
 
-		rowTranslationProduct, err := db.Query("SELECT lang_id,name,description FROM translation_product WHERE product_id = $1 AND deleted_at IS NULL", id)
+		rowTranslationProduct, err := db.Query("SELECT lang_id,name,description FROM translation_product WHERE product_id = $1 AND deleted_at IS NULL", product.ID)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
