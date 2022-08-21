@@ -6,7 +6,7 @@
           href="#"
           @click.prevent="$router.push(localeLocation('/about-us'))"
           class="footer__item"
-          >Biz barada</a
+          >{{ about }}</a
         >
         <a
           href="#"
@@ -14,13 +14,13 @@
             $router.push(localeLocation('/delivery-and-payment-order'))
           "
           class="footer__item"
-          >Eltip bermek we töleg tertibi</a
+          >{{ payment }}</a
         >
         <a
           href="#"
           @click.prevent="$router.push(localeLocation('/communication'))"
           class="footer__item"
-          >Aragatnaşyk</a
+          >{{ contact }}</a
         >
         <a
           href="#"
@@ -28,17 +28,18 @@
             $router.push(localeLocation('/terms-of-service-and-privacy-policy'))
           "
           class="footer__item"
-          >Ulanyş düzgünleri we gizlinlik şertnamasy</a
+          >{{ secure }}</a
         >
       </div>
       <div class="footer__bootom">
-        <h4>© 2022-2023 isleg.com. Ähli hukuklary goraglydyr.</h4>
+        <h4>© {{ new Date().getFullYear() }} {{ word }}.</h4>
       </div>
     </div>
   </footer>
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 export default {
   watch: {
     '$i18n.locale': async function () {
@@ -53,6 +54,9 @@ export default {
       url: `${process.env.BASE_API}/${this.$i18n.locale}/footer`,
       $nuxt: this.$nuxt,
     })
+  },
+  computed: {
+    ...mapGetters('ui', ['about', 'payment', 'contact', 'secure', 'word']),
   },
 }
 </script>

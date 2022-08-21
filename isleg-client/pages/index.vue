@@ -1,6 +1,6 @@
 <template>
-  <main>
-    <slider-main></slider-main>
+  <div>
+    <slider-main :imgURL="imgURL" :brends="brends"></slider-main>
     <section class="product__categoty __container">
       <product-column @productPopUpOpen="productPopUpOpen"></product-column>
       <product-column @productPopUpOpen="productPopUpOpen"></product-column>
@@ -15,12 +15,13 @@
       @currentImagePath="currentImagePath"
       @close="closeProductPopUp"
     ></pop-up-product>
-  </main>
+  </div>
 </template>
 
 <script>
 import ProductColumn from '~/components/app/ProductColumn.vue'
 import SliderBrends from '~/components/SliderBrends.vue'
+import { mapGetters } from 'vuex'
 export default {
   name: 'IndexPage',
   components: { ProductColumn, SliderBrends },
@@ -37,6 +38,15 @@ export default {
         { id: 6, src: '3.jpg' },
       ],
     }
+  },
+  async fetch() {
+    await this.$store.dispatch('ui/fetchBrends', {
+      url: `${process.env.BASE_API}/${this.$i18n.locale}/brends`,
+      $nuxt: this.$nuxt,
+    })
+  },
+  computed: {
+    ...mapGetters('ui', ['imgURL', 'brends']),
   },
   methods: {
     productPopUpOpen() {

@@ -1,17 +1,8 @@
 <template>
   <section class="slider __container">
     <swiper ref="mySwiper" :options="swiperOptions" class="big__slider">
-      <swiper-slide style="height: 100%">
-        <img src="@/assets/img/bigslider.jpg" alt="" />
-      </swiper-slide>
-      <swiper-slide>
-        <img src="@/assets/img/bigslider.jpg" alt="" />
-      </swiper-slide>
-      <swiper-slide>
-        <img src="@/assets/img/bigslider.jpg" alt="" />
-      </swiper-slide>
-      <swiper-slide>
-        <img src="@/assets/img/bigslider.jpg" alt="" />
+      <swiper-slide v-for="brend in brends" :key="brend.id">
+        <img :src="`${imgURL}/${brend.image}`" alt="" />
       </swiper-slide>
     </swiper>
     <div class="swiper-pagination"></div>
@@ -55,6 +46,16 @@ export default {
   components: {
     Swiper,
     SwiperSlide,
+  },
+  props: {
+    imgURL: {
+      type: String,
+      default: () => '',
+    },
+    brends: {
+      type: Array,
+      default: () => [],
+    },
   },
   data() {
     return {

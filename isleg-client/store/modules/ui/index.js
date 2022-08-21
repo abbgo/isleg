@@ -10,6 +10,7 @@ const state = () => ({
   languages: null,
   categories: null,
   footerDatas: null,
+  brends: null,
 })
 
 export default {

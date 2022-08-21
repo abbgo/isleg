@@ -4,7 +4,7 @@
     href="#"
     class="header__logo"
   >
-    <img :src="`${imgURL}/${logo}`" alt="" />
+    <img src="@/assets/img/logo.svg" alt="isleg" />
   </a>
 </template>
 

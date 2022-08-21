@@ -1,6 +1,6 @@
 <template>
-  <div :class="['pop-up', 'pop-up_product', { active: isOrdering }]">
-    <div class="pop-up__body arriving__body">
+  <div :class="['pop-up', { active: isOrdering }]">
+    <div class="arriving__body">
       <div class="arriving__header">
         <span
           ><svg

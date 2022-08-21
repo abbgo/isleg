@@ -1,6 +1,6 @@
 <template>
-  <div :class="['pop-up', { active: isFilter }]">
-    <div class="pop-up__body filter__body">
+  <div :class="['pop-up', { active: isFilter }]" @click="closeFilter">
+    <div class="filter__body" @click.stop>
       <div class="arriving__header">
         <div class="filter__title">
           <span>
@@ -30,7 +30,7 @@
         <div
           style="cursor: pointer"
           class="arriving__close"
-          @click="$emit('close')"
+          @click="closeFilter"
         >
           <svg
             width="40"
@@ -74,7 +74,7 @@
       <div class="range__title">Brendlar</div>
       <div class="range__company" :class="{ active: brend }">
         <span @click="brend = !brend" class="brend__active"
-          ><h4>Dolhin</h4>
+          ><h4>Brends</h4>
           <img src="/img/select.svg" alt="" />
         </span>
         <div class="brend__items">
@@ -112,6 +112,12 @@ export default {
     return {
       brend: false,
     }
+  },
+  methods: {
+    closeFilter() {
+      this.brend = false
+      this.$emit('close')
+    },
   },
 }
 </script>

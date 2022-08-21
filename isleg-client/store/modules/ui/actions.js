@@ -3,7 +3,6 @@ import axios from 'axios'
 const fetchHeader = async ({ commit }, { url, $nuxt }) => {
   try {
     const { data } = await axios.get(url)
-    console.log('headerData', data.header_data)
     if (data?.status) {
       commit('SET_HEADER', data?.header_data)
     }
@@ -20,9 +19,25 @@ const fetchHeader = async ({ commit }, { url, $nuxt }) => {
 const fetchFooter = async ({ commit }, { url, $nuxt }) => {
   try {
     const { data } = await axios.get(url)
-    console.log('footerData', data.footer_data)
     if (data?.status) {
       commit('SET_FOOTER', data?.footer_data)
+    }
+  } catch (e) {
+    console.log(e.response)
+    if (e) {
+      return $nuxt.error({
+        statusCode: e?.response?.status,
+        message: e?.message,
+      })
+    }
+  }
+}
+const fetchBrends = async ({ commit }, { url, $nuxt }) => {
+  try {
+    const { data } = await axios.get(url)
+    console.log('brends', data.brends)
+    if (data?.status) {
+      commit('SET_BRENDS', data.brends)
     }
   } catch (e) {
     console.log(e.response)
@@ -38,4 +53,5 @@ const fetchFooter = async ({ commit }, { url, $nuxt }) => {
 export default {
   fetchHeader,
   fetchFooter,
+  fetchBrends,
 }

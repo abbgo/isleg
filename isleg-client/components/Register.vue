@@ -1,8 +1,5 @@
 <template>
-  <div
-    :class="['pop-up', 'pb-50', { active: isOpenRegister }]"
-    @click="closeRegister"
-  >
+  <div :class="['pop-up', { active: isOpenRegister }]" @click="closeRegister">
     <div class="pop-up__body" @click.stop>
       <div class="pop-up__wrapper">
         <div class="pop-up__close">

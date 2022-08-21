@@ -1,5 +1,5 @@
 <template>
-  <div class="pages__container">
+  <div>
     <section class="menu__filter __container">
       <span @click="openOrdering"
         ><svg

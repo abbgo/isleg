@@ -10,7 +10,12 @@
           v-for="category in categories"
           :key="category.id"
         >
-          <a href="#" class="menu-header__link"
+          <a
+            href="#"
+            @click.prevent="
+              $router.push(localeLocation(`/category/${category.id}`))
+            "
+            class="menu-header__link"
             ><span><img :src="`${imgURL}/${category.image}`" alt="" /> </span>
             <h4 class="nav__item">{{ category.name }}</h4></a
           >
@@ -22,11 +27,27 @@
                   v-for="subCategory in category.child_category"
                   :key="subCategory.id"
                 >
-                  <div class="sub__category-title">{{ subCategory.name }}</div>
+                  <div
+                    class="sub__category-title"
+                    @click="
+                      $router.push(
+                        localeLocation(`/category/${subCategory.id}`)
+                      )
+                    "
+                  >
+                    {{ subCategory.name }}
+                  </div>
                   <div class="sub__category-items">
                     <span
                       v-for="nestedSubCategory in subCategory.child_category"
                       :key="nestedSubCategory.id"
+                      @click="
+                        $router.push(
+                          localeLocation(
+                            `/category/${category.id}/${nestedSubCategory.id}`
+                          )
+                        )
+                      "
                       >{{ nestedSubCategory.name }}</span
                     >
                   </div>
