@@ -100,6 +100,7 @@ func Routes() *gin.Engine {
 
 		back.POST("/company-phone", backController.CreateCompanyPhone)
 		back.PUT("/company-phone/:id", backController.UpdateCompanyPhoneByID)
+		back.GET("/company-phone/:id", backController.GetCompanyPhoneByID)
 
 		back.POST("/company-address", backController.CreateCompanyAddress)
 

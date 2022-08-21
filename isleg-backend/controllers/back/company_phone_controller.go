@@ -159,6 +159,57 @@ func UpdateCompanyPhoneByID(c *gin.Context) {
 
 }
 
+func GetCompanyPhoneByID(c *gin.Context) {
+
+	db, err := config.ConnDB()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer db.Close()
+
+	ID := c.Param("id")
+
+	rowComPhone, err := db.Query("SELECT phone FROM company_phone WHERE id = $1 AND deleted_at IS NULL", ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer rowComPhone.Close()
+
+	var phoneNumber string
+
+	for rowComPhone.Next() {
+		if err := rowComPhone.Scan(&phoneNumber); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}
+
+	if phoneNumber == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "record not found",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":        true,
+		"company_phone": phoneNumber,
+	})
+
+}
+
 func GetCompanyPhones(c *gin.Context) {
 
 	db, err := config.ConnDB()
