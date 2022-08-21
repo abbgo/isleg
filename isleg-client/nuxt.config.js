@@ -54,6 +54,7 @@ export default {
   env: {
     BASE_API: process.env.BASE_API,
     SITE_URL: process.env.SITE_URL,
+    IMAGE_URL: process.env.IMAGE_URL,
   },
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {
@@ -75,7 +76,7 @@ export default {
           maxAge: 60,
         },
         user: {
-          property: false,
+          property: 'user',
           // autoFetch: true
         },
         endpoints: {
@@ -99,7 +100,7 @@ export default {
           maxAge: 60,
         },
         user: {
-          property: false,
+          property: 'user',
           // autoFetch: true
         },
         endpoints: {

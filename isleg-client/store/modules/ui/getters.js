@@ -29,7 +29,7 @@ const verifySecure = (state) => {
   return state.translationHeader?.verify_secure
 }
 const myInformation = (state) => {
-  return state.translationHeader?.myInformation
+  return state.translationHeader?.my_information
 }
 const myFavorites = (state) => {
   return state.translationHeader?.my_favorites
@@ -40,7 +40,7 @@ const myOrders = (state) => {
 const logOut = (state) => {
   return state.translationHeader?.log_out
 }
-const signUp = (state) => {
+const userSignUp = (state) => {
   return state.translationHeader?.sign_up
 }
 const basket = (state) => {
@@ -51,6 +51,21 @@ const languages = (state) => {
 }
 const categories = (state) => {
   return state.categories
+}
+const about = (state) => {
+  return state.footerDatas?.about
+}
+const payment = (state) => {
+  return state.footerDatas?.payment
+}
+const contact = (state) => {
+  return state.footerDatas?.contact
+}
+const secure = (state) => {
+  return state.footerDatas?.secure
+}
+const word = (state) => {
+  return state.footerDatas?.word
 }
 const isOpenSignUp = (state) => {
   return state.isOpenSignUp
@@ -64,7 +79,7 @@ export default {
   password,
   forgotPassword,
   signIn,
-  signUp,
+  userSignUp,
   name,
   passwordVerification,
   verifySecure,
@@ -75,5 +90,10 @@ export default {
   basket,
   languages,
   categories,
+  about,
+  payment,
+  contact,
+  secure,
+  word,
   isOpenSignUp,
 }

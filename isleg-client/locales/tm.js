@@ -16,6 +16,7 @@ export default {
       'Açar sözi we Açar sözüni tassyklamak birmeňzeş bolmaly !',
     customerExists: 'Bu müşderi eýýäm bar !',
     phoneNumberOrPassValid: 'Telefon belgiňiz ýa-da gizlin sözüňiz ýalnyş !',
+    success: { logIn: 'Üstünlikli ulgama girdiňiz ! ' },
   },
   payment: {
     address: 'Salgyňyz hökmany !',

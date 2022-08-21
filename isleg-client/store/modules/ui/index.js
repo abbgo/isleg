@@ -9,6 +9,7 @@ const state = () => ({
   translationHeader: null,
   languages: null,
   categories: null,
+  footerDatas: null,
 })
 
 export default {
