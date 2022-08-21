@@ -210,6 +210,50 @@ func GetCompanyPhoneByID(c *gin.Context) {
 
 }
 
+func GetCompanyPhones(c *gin.Context) {
+
+	db, err := config.ConnDB()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer db.Close()
+
+	var companyPhones []string
+
+	// get all company phone number
+	rows, err := db.Query("SELECT phone FROM company_phone WHERE deleted_at IS NULL")
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var companyPhone string
+		if err := rows.Scan(&companyPhone); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+		companyPhones = append(companyPhones, companyPhone)
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":         true,
+		"company_phones": companyPhones,
+	})
+
+}
+
 func DeleteCompanyPhoneByID(c *gin.Context) {
 
 	db, err := config.ConnDB()
@@ -273,7 +317,7 @@ func DeleteCompanyPhoneByID(c *gin.Context) {
 
 }
 
-func GetCompanyPhones(c *gin.Context) {
+func RestoreCompanyPhoneByID(c *gin.Context) {
 
 	db, err := config.ConnDB()
 	if err != nil {
@@ -285,10 +329,9 @@ func GetCompanyPhones(c *gin.Context) {
 	}
 	defer db.Close()
 
-	var companyPhones []string
+	ID := c.Param("id")
 
-	// get all company phone number
-	rows, err := db.Query("SELECT phone FROM company_phone WHERE deleted_at IS NULL")
+	rowComPhone, err := db.Query("SELECT id FROM company_phone WHERE id = $1 AND deleted_at IS NOT NULL", ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -296,23 +339,41 @@ func GetCompanyPhones(c *gin.Context) {
 		})
 		return
 	}
-	defer rows.Close()
+	defer rowComPhone.Close()
 
-	for rows.Next() {
-		var companyPhone string
-		if err := rows.Scan(&companyPhone); err != nil {
+	var comPhoneID string
+
+	for rowComPhone.Next() {
+		if err := rowComPhone.Scan(&comPhoneID); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
 			})
 			return
 		}
-		companyPhones = append(companyPhones, companyPhone)
 	}
 
+	if comPhoneID == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "record not found",
+		})
+		return
+	}
+
+	resultComPhone, err := db.Query("UPDATE company_phone SET deleted_at = NULL WHERE id = $1", ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer resultComPhone.Close()
+
 	c.JSON(http.StatusOK, gin.H{
-		"status":         true,
-		"company_phones": companyPhones,
+		"status":  true,
+		"message": "company phone successfully restored",
 	})
 
 }
