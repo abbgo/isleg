@@ -1,10 +1,10 @@
 package controllers
 
 import (
-	"fmt"
 	"github/abbgo/isleg/isleg-backend/config"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -23,8 +23,6 @@ func CreateCompanyPhone(c *gin.Context) {
 
 	// GET DATA FROM REQUEST
 	phone := c.PostForm("phone")
-
-	fmt.Println(phone)
 
 	// validate data
 	if phone == "" {
@@ -66,6 +64,97 @@ func CreateCompanyPhone(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
 		"message": "company phone successfully added",
+	})
+
+}
+
+func UpdateCompanyPhoneByID(c *gin.Context) {
+
+	db, err := config.ConnDB()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer db.Close()
+
+	ID := c.Param("id")
+
+	rowCompanyPhone, err := db.Query("SELECT id FROM company_phone WHERE id = $1 AND deleted_at IS NULL", ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer rowCompanyPhone.Close()
+
+	var comPhoneID string
+
+	for rowCompanyPhone.Next() {
+		if err := rowCompanyPhone.Scan(&comPhoneID); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}
+
+	if comPhoneID == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "record not found",
+		})
+		return
+	}
+
+	phone := c.PostForm("phone")
+
+	// validate data
+	if phone == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "phone is required",
+		})
+		return
+	}
+
+	_, err = strconv.Atoi(phone)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	if len(phone) != 8 {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "the length of the phone number must be 8",
+		})
+		return
+	}
+
+	currentTime := time.Now()
+
+	resultComPhone, err := db.Query("UPDATE company_phone SET phone = $1 , updated_at = $3 WHERE id = $2", phone, ID, currentTime)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer resultComPhone.Close()
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":  true,
+		"message": "company phone successfully updated",
 	})
 
 }
