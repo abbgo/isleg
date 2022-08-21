@@ -931,3 +931,86 @@ func GetProducts(c *gin.Context) {
 	})
 
 }
+
+func DeleteProductByID(c *gin.Context) {
+
+	db, err := config.ConnDB()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer db.Close()
+
+	ID := c.Param("id")
+
+	rowProduct, err := db.Query("SELECT id FROM products WHERE id = $1 AND deleted_at IS NULL", ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer rowProduct.Close()
+
+	var productID string
+
+	for rowProduct.Next() {
+		if err := rowProduct.Scan(&productID); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}
+
+	if productID == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "record not found",
+		})
+		return
+	}
+
+	currentTime := time.Now()
+
+	resultProduct, err := db.Query("UPDATE products SET deleted_at = $1 WHERE id = $2", currentTime, ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer resultProduct.Close()
+
+	resultCategoryProduct, err := db.Query("UPDATE category_product SET deleted_at = $1 WHERE product_id = $2", currentTime, ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer resultCategoryProduct.Close()
+
+	resultTRProduct, err := db.Query("UPDATE translation_product SET deleted_at = $1 WHERE product_id = $2", currentTime, ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer resultTRProduct.Close()
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":  true,
+		"message": "product successfully deleted",
+	})
+
+}
