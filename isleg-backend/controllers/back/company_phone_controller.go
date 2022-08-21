@@ -377,3 +377,64 @@ func RestoreCompanyPhoneByID(c *gin.Context) {
 	})
 
 }
+
+func DeletePermanentlyCompanyPhoneByID(c *gin.Context) {
+
+	db, err := config.ConnDB()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer db.Close()
+
+	ID := c.Param("id")
+
+	rowCompanyPhone, err := db.Query("SELECT id FROM company_phone WHERE id = $1 AND deleted_at IS NOT NULL", ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer rowCompanyPhone.Close()
+
+	var comPhoneID string
+
+	for rowCompanyPhone.Next() {
+		if err := rowCompanyPhone.Scan(&comPhoneID); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}
+
+	if comPhoneID == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "record not found",
+		})
+		return
+	}
+
+	resultComPhone, err := db.Query("DELETE FROM company_phone WHERE id = $1", ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer resultComPhone.Close()
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":  true,
+		"message": "company phone successfully deleted",
+	})
+
+}
