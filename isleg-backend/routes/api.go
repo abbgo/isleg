@@ -96,6 +96,7 @@ func Routes() *gin.Engine {
 		back.GET("/products", backController.GetProducts)
 		back.DELETE("/product/:id", backController.DeleteProductByID)
 		back.GET("/restore-product/:id", backController.RestoreProductByID)
+		back.DELETE("/delete-product/:id", backController.DeletePermanentlyProductByID)
 
 		back.POST("/company-phone", backController.CreateCompanyPhone)
 

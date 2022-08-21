@@ -1095,3 +1095,85 @@ func RestoreProductByID(c *gin.Context) {
 	})
 
 }
+
+func DeletePermanentlyProductByID(c *gin.Context) {
+
+	db, err := config.ConnDB()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer db.Close()
+
+	ID := c.Param("id")
+
+	rowProduct, err := db.Query("SELECT id,main_image,images FROM products WHERE id = $1 AND deleted_at IS NOT NULL", ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer rowProduct.Close()
+
+	var product ProductImage
+	var productID string
+
+	for rowProduct.Next() {
+		if err := rowProduct.Scan(&productID, &product.MainImage, &product.Images); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}
+
+	if productID == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "record not found",
+		})
+		return
+	}
+
+	if err := os.Remove("./" + product.MainImage); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	if len(product.Images) != 0 {
+		for _, v := range product.Images {
+			if err := os.Remove("./" + v); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}
+	}
+
+	resultProduct, err := db.Query("DELETE FROM products WHERE id = $1", ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer resultProduct.Close()
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":  true,
+		"message": "product successfully deleted",
+	})
+
+}
