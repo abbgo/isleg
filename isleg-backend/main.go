@@ -9,7 +9,20 @@ import (
 	"github.com/joho/godotenv"
 )
 
-func init() {
+// func init() {
+// 	// initialize database connection
+// 	db, err := config.ConnDB()
+// 	if err != nil {
+// 		db.Close()
+// 		log.Fatal(err)
+// 	}
+
+// 	if err := godotenv.Load(); err != nil {
+// 		log.Fatal(err)
+// 	}
+// }
+
+func main() {
 	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
@@ -20,9 +33,9 @@ func init() {
 	if err := godotenv.Load(); err != nil {
 		log.Fatal(err)
 	}
-}
 
-func main() {
+	defer db.Close()
+
 	r := routes.Routes()
 
 	// static file
