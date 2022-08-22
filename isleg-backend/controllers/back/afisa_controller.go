@@ -412,3 +412,76 @@ func GetAfisas(c *gin.Context) {
 	})
 
 }
+
+func DeleteAfisaByID(c *gin.Context) {
+
+	db, err := config.ConnDB()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer db.Close()
+
+	ID := c.Param("id")
+
+	rowAfisa, err := db.Query("SELECT id FROM afisa WHERE id = $1 AND deleted_at IS NULL", ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer rowAfisa.Close()
+
+	var afisaID string
+
+	for rowAfisa.Next() {
+		if err := rowAfisa.Scan(&afisaID); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}
+
+	if afisaID == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "record not found",
+		})
+		return
+	}
+
+	currentTime := time.Now()
+
+	resultAfisa, err := db.Query("UPDATE afisa SET deleted_at = $1 WHERE id = $2", currentTime, ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer resultAfisa.Close()
+
+	resultTrAfisa, err := db.Query("UPDATE translation_afisa SET deleted_at = $1 WHERE afisa_id = $2", currentTime, ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer resultTrAfisa.Close()
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":  true,
+		"message": "afisa successfully deleted",
+	})
+
+}
