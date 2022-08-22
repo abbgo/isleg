@@ -106,6 +106,7 @@ func Routes() *gin.Engine {
 		back.DELETE("/delete-company-phone/:id", backController.DeletePermanentlyCompanyPhoneByID)
 
 		back.POST("/company-address", backController.CreateCompanyAddress)
+		back.PUT("/company-address/:id", backController.UpdateCompanyAddressByID)
 
 		back.POST("/afisa", backController.CreateAfisa)
 
