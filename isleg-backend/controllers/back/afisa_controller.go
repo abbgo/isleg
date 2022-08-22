@@ -265,7 +265,7 @@ func UpdateAfisaByID(c *gin.Context) {
 
 }
 
-func GetsAfisaByID(c *gin.Context) {
+func GetAfisaByID(c *gin.Context) {
 
 	db, err := config.ConnDB()
 	if err != nil {
@@ -338,6 +338,77 @@ func GetsAfisaByID(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"status": true,
 		"afisa":  afisa,
+	})
+
+}
+
+func GetAfisas(c *gin.Context) {
+
+	db, err := config.ConnDB()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer db.Close()
+
+	rowsAfisa, err := db.Query("SELECT id,image FROM afisa WHERE deleted_at IS NULL")
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer rowsAfisa.Close()
+
+	var afisas []OneAfisa
+
+	for rowsAfisa.Next() {
+		var afisa OneAfisa
+		if err := rowsAfisa.Scan(&afisa.ID, &afisa.Image); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+
+		rowsTrAfisa, err := db.Query("SELECT lang_id,title,description FROM translation_afisa WHERE deleted_at IS NULL AND afisa_id = $1", afisa.ID)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+		defer rowsTrAfisa.Close()
+
+		var translations []TranslationAfisa
+
+		for rowsTrAfisa.Next() {
+			var translation TranslationAfisa
+			if err := rowsTrAfisa.Scan(&translation.LangID, &translation.Title, &translation.Description); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+			translations = append(translations, translation)
+		}
+
+		afisa.Translations = translations
+
+		afisas = append(afisas, afisa)
+
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status": true,
+		"afisas": afisas,
 	})
 
 }
