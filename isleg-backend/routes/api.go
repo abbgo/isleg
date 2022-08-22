@@ -106,12 +106,27 @@ func Routes() *gin.Engine {
 		back.DELETE("/delete-company-phone/:id", backController.DeletePermanentlyCompanyPhoneByID)
 
 		back.POST("/company-address", backController.CreateCompanyAddress)
+		back.PUT("/company-address/:id", backController.UpdateCompanyAddressByID)
+		back.GET("/company-address/:id", backController.GetCompanyAddressByID)
 
 		back.POST("/afisa", backController.CreateAfisa)
+		back.PUT("/afisa/:id", backController.UpdateAfisaByID)
+		back.GET("/afisa/:id", backController.GetAfisaByID)
+		back.GET("/afisas", backController.GetAfisas)
+		back.DELETE("/afisa/:id", backController.DeleteAfisaByID)
+		back.GET("/restore-afisa/:id", backController.RestoreAfisaByID)
+		back.DELETE("/delete-afisa/:id", backController.DeletePermanentlyAfisaByID)
 
 		back.POST("/district", backController.CreateDistrict)
 
 		back.POST("/shop", backController.CreateShop)
+		back.PUT("/shop/:id", backController.UpdateShopByID)
+		back.GET("/shop/:id", backController.GetShopByID)
+		back.GET("/shops", backController.GetShops)
+		back.DELETE("/shop/:id", backController.DeleteShopByID)
+		back.GET("/restore-shop/:id", backController.RestoreShopByID)
+		back.DELETE("/delete-shop/:id", backController.DeletePermanentlyShopByID)
+
 	}
 
 	// customer routes

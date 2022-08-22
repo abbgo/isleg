@@ -868,63 +868,6 @@ func GetProducts(c *gin.Context) {
 		products = append(products, product)
 	}
 
-	// 	for _, ID := range ids {
-	// 		rowsCategoryProduct, err := db.Query("SELECT category_id FROM category_product WHERE product_id = $1 AND deleted_at IS NULL", ID)
-	// 		if err != nil {
-	// 			c.JSON(http.StatusBadRequest, gin.H{
-	// 				"status":  false,
-	// 				"message": err.Error(),
-	// 			})
-	// 			return
-	// 		}
-	// 		defer rowsCategoryProduct.Close()
-
-	// 		for rowsCategoryProduct.Next() {
-	// 			var category string
-
-	// 			if err := rowsCategoryProduct.Scan(&category); err != nil {
-	// 				c.JSON(http.StatusBadRequest, gin.H{
-	// 					"status":  false,
-	// 					"message": err.Error(),
-	// 				})
-	// 				return
-	// 			}
-
-	// 			categories = append(categories, category)
-	// 		}
-	// 	}
-
-	// 	product.Categories = categories
-	// 	categories = []string{}
-
-	// 	for _, ID := range ids {
-	// 		rowTranslationProduct, err := db.Query("SELECT lang_id,name,description FROM translation_product WHERE product_id = $1 AND deleted_at IS NULL", ID)
-	// 		if err != nil {
-	// 			c.JSON(http.StatusBadRequest, gin.H{
-	// 				"status":  false,
-	// 				"message": err.Error(),
-	// 			})
-	// 			return
-	// 		}
-	// 		defer rowTranslationProduct.Close()
-
-	// 		for rowTranslationProduct.Next() {
-	// 			var translation TranslationProduct
-	// 			if err := rowTranslationProduct.Scan(&translation.LanguageID, &translation.Name, &translation.Description); err != nil {
-	// 				c.JSON(http.StatusBadRequest, gin.H{
-	// 					"status":  false,
-	// 					"message": err.Error(),
-	// 				})
-	// 				return
-	// 			}
-	// 		}
-	// 	}
-
-	// 	product.Translation = translations
-
-	// 	products = append(products, product)
-	// }
-
 	c.JSON(http.StatusOK, gin.H{
 		"status":   true,
 		"products": products,
