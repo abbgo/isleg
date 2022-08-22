@@ -293,3 +293,74 @@ func GetShopByID(c *gin.Context) {
 	})
 
 }
+
+func GetShops(c *gin.Context) {
+
+	db, err := config.ConnDB()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer db.Close()
+
+	rowsShop, err := db.Query("SELECT id,owner_name,address,phone_number,running_time FROM shops WHERE deleted_at IS NULL")
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer rowsShop.Close()
+
+	var shops []OneShop
+
+	for rowsShop.Next() {
+		var shop OneShop
+		if err := rowsShop.Scan(&shop.ID, &shop.OwnerName, &shop.Address, &shop.PhoneNumber, &shop.RunningTime); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+
+		rowsCategoryShop, err := db.Query("SELECT category_id FROM category_shop WHERE shop_id = $1 AND deleted_at IS NULL", shop.ID)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+		defer rowsCategoryShop.Close()
+
+		var categories []string
+
+		for rowsCategoryShop.Next() {
+			var category string
+			if err := rowsCategoryShop.Scan(&category); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+
+			categories = append(categories, category)
+		}
+
+		shop.Categories = categories
+
+		shops = append(shops, shop)
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status": true,
+		"shops":  shops,
+	})
+
+}

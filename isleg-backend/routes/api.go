@@ -122,6 +122,7 @@ func Routes() *gin.Engine {
 		back.POST("/shop", backController.CreateShop)
 		back.PUT("/shop/:id", backController.UpdateShopByID)
 		back.GET("/shop/:id", backController.GetShopByID)
+		back.GET("/shops", backController.GetShops)
 
 	}
 
