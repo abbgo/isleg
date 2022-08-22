@@ -115,6 +115,7 @@ func Routes() *gin.Engine {
 		back.GET("/afisas", backController.GetAfisas)
 		back.DELETE("/afisa/:id", backController.DeleteAfisaByID)
 		back.GET("/restore-afisa/:id", backController.RestoreAfisaByID)
+		back.DELETE("/delete-afisa/:id", backController.DeletePermanentlyAfisaByID)
 
 		back.POST("/district", backController.CreateDistrict)
 

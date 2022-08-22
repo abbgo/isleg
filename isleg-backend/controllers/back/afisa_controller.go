@@ -556,3 +556,74 @@ func RestoreAfisaByID(c *gin.Context) {
 	})
 
 }
+
+func DeletePermanentlyAfisaByID(c *gin.Context) {
+
+	db, err := config.ConnDB()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer db.Close()
+
+	ID := c.Param("id")
+
+	rowAfisa, err := db.Query("SELECT id,image FROM afisa WHERE id = $1 AND deleted_at IS NOT NULL", ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer rowAfisa.Close()
+
+	var afisaID, image string
+
+	for rowAfisa.Next() {
+		if err := rowAfisa.Scan(&afisaID, &image); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}
+
+	if afisaID == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "record not found",
+		})
+		return
+	}
+
+	if image != "" {
+		if err := os.Remove("./" + image); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}
+
+	resultAfisa, err := db.Query("DELETE FROM afisa WHERE id = $1", ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer resultAfisa.Close()
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":  true,
+		"message": "afisa successfully deleted",
+	})
+
+}
