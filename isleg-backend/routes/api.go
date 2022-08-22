@@ -125,6 +125,7 @@ func Routes() *gin.Engine {
 		back.GET("/shops", backController.GetShops)
 		back.DELETE("/shop/:id", backController.DeleteShopByID)
 		back.GET("/restore-shop/:id", backController.RestoreShopByID)
+		back.DELETE("/delete-shop/:id", backController.DeletePermanentlyShopByID)
 
 	}
 

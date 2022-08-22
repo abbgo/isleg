@@ -508,3 +508,64 @@ func RestoreShopByID(c *gin.Context) {
 	})
 
 }
+
+func DeletePermanentlyShopByID(c *gin.Context) {
+
+	db, err := config.ConnDB()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer db.Close()
+
+	ID := c.Param("id")
+
+	rowShop, err := db.Query("SELECT id FROM shops WHERE id = $1 AND deleted_at IS NOT NULL", ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer rowShop.Close()
+
+	var shopID string
+
+	for rowShop.Next() {
+		if err := rowShop.Scan(&shopID); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}
+
+	if shopID == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "record not found",
+		})
+		return
+	}
+
+	resultShop, err := db.Query("DELETE FROM shops WHERE id = $1", ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer resultShop.Close()
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":  true,
+		"message": "shop successfully deleted",
+	})
+
+}
