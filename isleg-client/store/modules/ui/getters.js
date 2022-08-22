@@ -67,6 +67,9 @@ const secure = (state) => {
 const word = (state) => {
   return state.footerDatas?.word
 }
+const brends = (state) => {
+  return state.brends
+}
 const isOpenSignUp = (state) => {
   return state.isOpenSignUp
 }
@@ -95,5 +98,6 @@ export default {
   contact,
   secure,
   word,
+  brends,
   isOpenSignUp,
 }

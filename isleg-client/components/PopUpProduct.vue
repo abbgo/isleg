@@ -1,6 +1,6 @@
 <template>
-  <div :class="['pop-up', 'pop-up_product', { active: isProduct }]">
-    <div class="pop-up__body pop-up__product-body">
+  <div :class="['pop-up', { active: isProduct }]" @click="$emit('close')">
+    <div class="pop-up__product-body" @click.stop>
       <div class="pop-up__wrapper">
         <div class="pop-up__close" @click="$emit('close')">
           <svg
