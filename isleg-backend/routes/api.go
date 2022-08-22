@@ -120,6 +120,8 @@ func Routes() *gin.Engine {
 		back.POST("/district", backController.CreateDistrict)
 
 		back.POST("/shop", backController.CreateShop)
+		back.PUT("/shop/:id", backController.UpdateShopByID)
+
 	}
 
 	// customer routes
