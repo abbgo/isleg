@@ -123,6 +123,7 @@ func Routes() *gin.Engine {
 		back.PUT("/shop/:id", backController.UpdateShopByID)
 		back.GET("/shop/:id", backController.GetShopByID)
 		back.GET("/shops", backController.GetShops)
+		back.DELETE("/shop/:id", backController.DeleteShopByID)
 
 	}
 
