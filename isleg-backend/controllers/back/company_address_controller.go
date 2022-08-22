@@ -133,6 +133,57 @@ func UpdateCompanyAddressByID(c *gin.Context) {
 
 }
 
+func GetCompanyAddressByID(c *gin.Context) {
+
+	db, err := config.ConnDB()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer db.Close()
+
+	ID := c.Param("id")
+
+	rowComAddress, err := db.Query("SELECT address FROM company_address WHERE id = $1 AND deleted_at IS NULL", ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer rowComAddress.Close()
+
+	var adress string
+
+	for rowComAddress.Next() {
+		if err := rowComAddress.Scan(&adress); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}
+
+	if adress == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "record not found",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":          true,
+		"company_address": adress,
+	})
+
+}
+
 func GetCompanyAddress(c *gin.Context) {
 
 	db, err := config.ConnDB()
