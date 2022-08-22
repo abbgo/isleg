@@ -12,6 +12,18 @@ import (
 	"github.com/google/uuid"
 )
 
+type OneAfisa struct {
+	ID           string             `json:"id"`
+	Image        string             `json:"image"`
+	Translations []TranslationAfisa `json:"translations"`
+}
+
+type TranslationAfisa struct {
+	LangID      string `json:"lang_id"`
+	Title       string `json:"title"`
+	Description string `json:"description"`
+}
+
 func CreateAfisa(c *gin.Context) {
 
 	db, err := config.ConnDB()
@@ -249,6 +261,83 @@ func UpdateAfisaByID(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
 		"message": "afisa successfully updated",
+	})
+
+}
+
+func GetsAfisaByID(c *gin.Context) {
+
+	db, err := config.ConnDB()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer db.Close()
+
+	ID := c.Param("id")
+
+	rowAfisa, err := db.Query("SELECT id,image FROM afisa WHERE id = $1 AND deleted_at IS NULL", ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer rowAfisa.Close()
+
+	var afisa OneAfisa
+
+	for rowAfisa.Next() {
+		if err := rowAfisa.Scan(&afisa.ID, &afisa.Image); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}
+
+	if afisa.ID == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "record not found",
+		})
+		return
+	}
+
+	rowsTrAfisa, err := db.Query("SELECT lang_id,title,description FROM translation_afisa WHERE afisa_id = $1 AND deleted_at IS NULL", ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer rowsTrAfisa.Close()
+
+	var translations []TranslationAfisa
+
+	for rowsTrAfisa.Next() {
+		var translation TranslationAfisa
+		if err := rowsTrAfisa.Scan(&translation.LangID, &translation.Title, &translation.Description); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+		translations = append(translations, translation)
+	}
+
+	afisa.Translations = translations
+
+	c.JSON(http.StatusOK, gin.H{
+		"status": true,
+		"afisa":  afisa,
 	})
 
 }

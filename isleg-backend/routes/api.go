@@ -111,6 +111,7 @@ func Routes() *gin.Engine {
 
 		back.POST("/afisa", backController.CreateAfisa)
 		back.PUT("/afisa/:id", backController.UpdateAfisaByID)
+		back.GET("/afisa/:id", backController.GetsAfisaByID)
 
 		back.POST("/district", backController.CreateDistrict)
 
