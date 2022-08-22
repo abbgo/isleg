@@ -10,6 +10,15 @@ import (
 	"github.com/google/uuid"
 )
 
+type OneShop struct {
+	ID          string   `json:"id"`
+	OwnerName   string   `json:"owner_name"`
+	Address     string   `json:"address"`
+	PhoneNumber string   `json:"phone_number"`
+	RunningTime string   `json:"running_time"`
+	Categories  []string `json:"categories"`
+}
+
 func CreateShop(c *gin.Context) {
 
 	db, err := config.ConnDB()
@@ -194,6 +203,93 @@ func UpdateShopByID(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
 		"message": "shop successfully updated",
+	})
+
+}
+
+func GetShopByID(c *gin.Context) {
+
+	db, err := config.ConnDB()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer db.Close()
+
+	ID := c.Param("id")
+
+	rowShop, err := db.Query("SELECT id,owner_name,address,phone_number,running_time FROM shops WHERE id = $1 AND deleted_at IS NULL", ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer rowShop.Close()
+
+	var shop OneShop
+
+	for rowShop.Next() {
+		if err := rowShop.Scan(&shop.ID, &shop.OwnerName, &shop.Address, &shop.PhoneNumber, &shop.RunningTime); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}
+
+	if shop.ID == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "record not found",
+		})
+		return
+	}
+
+	rowsCategoryShop, err := db.Query("SELECT category_id FROM category_shop WHERE shop_id = $1 AND deleted_at IS NULL", ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer rowsCategoryShop.Close()
+
+	var categories []string
+
+	for rowsCategoryShop.Next() {
+		var category string
+
+		if err := rowsCategoryShop.Scan(&category); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+
+		categories = append(categories, category)
+	}
+
+	if len(categories) == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "record not found",
+		})
+		return
+	}
+
+	shop.Categories = categories
+
+	c.JSON(http.StatusOK, gin.H{
+		"status": true,
+		"shop":   shop,
 	})
 
 }
