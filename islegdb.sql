@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 12.11 (Ubuntu 12.11-0ubuntu0.20.04.1)
--- Dumped by pg_dump version 12.11 (Ubuntu 12.11-0ubuntu0.20.04.1)
+-- Dumped from database version 12.12 (Ubuntu 12.12-0ubuntu0.20.04.1)
+-- Dumped by pg_dump version 12.12 (Ubuntu 12.12-0ubuntu0.20.04.1)
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -524,7 +524,6 @@ ALTER TABLE public.translation_update_password_page OWNER TO postgres;
 --
 
 COPY public.afisa (id, image, created_at, updated_at, deleted_at) FROM stdin;
-cb670531-8ca3-4d74-8ea4-f7853aae4132		2022-06-23 18:04:26.258751+05	2022-06-23 18:04:26.258751+05	\N
 \.
 
 
@@ -584,8 +583,6 @@ fdc10d33-043b-4ee0-9d6e-e2a12a3e150a	5bb9a4e7-9992-418f-b551-537844d371da		f	202
 
 COPY public.category_product (id, category_id, product_id, created_at, updated_at, deleted_at) FROM stdin;
 f8ceabcd-f944-41d3-92d1-2b8ba4fb068c	5bb9a4e7-9992-418f-b551-537844d371da	1a8935fd-c6ab-4656-b173-826c487a2274	2022-08-11 11:08:02.314782+05	2022-08-11 11:08:02.236346+05	\N
-c69ef881-0203-4fb4-9ec7-c53ed3a5be1c	29ed85bb-11eb-4458-bbf3-5a5644d167d6	e3f8aebb-1451-43a3-9e9b-582da01c8d08	2022-06-20 12:41:56.383576+05	2022-06-20 12:41:56.383576+05	\N
-86e4b4d6-33e8-44a5-8aad-d9a53bbe9652	7f453dd0-7b2e-480d-a8be-fcfa23bd863e	e3f8aebb-1451-43a3-9e9b-582da01c8d08	2022-06-20 12:41:56.396734+05	2022-06-20 12:41:56.396734+05	\N
 bc954fab-1cfc-4a14-a2b2-62c8d6c68084	29ed85bb-11eb-4458-bbf3-5a5644d167d6	3b6d2d59-7ad4-4392-b7de-5a1d6bd003e1	2022-06-20 12:43:47.851536+05	2022-06-20 12:43:47.851536+05	\N
 5fc165c1-018a-480c-b95d-8124df70d549	66772380-c161-4c45-9350-a45e765193e2	3b6d2d59-7ad4-4392-b7de-5a1d6bd003e1	2022-06-20 12:43:47.86481+05	2022-06-20 12:43:47.86481+05	\N
 a9181fa3-4fdc-4e26-a59a-9c07db3b22df	29ed85bb-11eb-4458-bbf3-5a5644d167d6	b4499063-096e-4fa6-9e21-a47185afd829	2022-06-21 10:17:07.728294+05	2022-06-21 10:17:07.728294+05	\N
@@ -659,8 +656,8 @@ COPY public.category_shop (id, category_id, shop_id, created_at, updated_at, del
 --
 
 COPY public.company_address (id, lang_id, address, created_at, updated_at, deleted_at) FROM stdin;
-d2c66808-e5fe-435f-ba01-cb717f80d9e0	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	Aşgabat şäheri Azady köçesiniň 23-nji jaýy	2022-06-22 18:44:50.21776+05	2022-06-22 18:44:50.21776+05	\N
 75706251-06ea-41c1-905f-95ed8b4132f8	aea98b93-7bdf-455b-9ad4-a259d69dc76e	Улица Азади 23, Ашхабад	2022-06-22 18:44:50.239558+05	2022-06-22 18:44:50.239558+05	\N
+d2c66808-e5fe-435f-ba01-cb717f80d9e0	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	adres_tm	2022-06-22 18:44:50.21776+05	2022-08-22 09:33:42.14835+05	\N
 \.
 
 
@@ -669,7 +666,6 @@ d2c66808-e5fe-435f-ba01-cb717f80d9e0	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	Aşgab
 --
 
 COPY public.company_phone (id, phone, created_at, updated_at, deleted_at) FROM stdin;
-3060bc25-2a55-4ee0-894d-f87f887e1fc4	+99365324587	2022-06-22 18:21:06.98191+05	2022-06-22 18:21:06.98191+05	\N
 \.
 
 
@@ -724,7 +720,6 @@ COPY public.likes (id, product_id, customer_id, created_at, updated_at, deleted_
 --
 
 COPY public.products (id, brend_id, price, old_price, amount, product_code, main_image, images, created_at, updated_at, deleted_at) FROM stdin;
-e3f8aebb-1451-43a3-9e9b-582da01c8d08	6a31c50a-704f-4b0d-80ae-240ca3094cda	85	80.5	12	s6fs6	uploads/productMain32fed5d0-1542-4f92-86d4-d52beb535494.jpeg	{uploads/productac6abc8b-1f29-4c6a-9e6d-640a5c0612e4.jpg}	2022-06-20 12:41:56.290535+05	2022-06-20 12:41:56.290535+05	\N
 3b6d2d59-7ad4-4392-b7de-5a1d6bd003e1	6a31c50a-704f-4b0d-80ae-240ca3094cda	24	23.5	128	s6fs66	uploads/productMaind1d6a321-1d10-4355-be39-7ff7001578c5.jpeg	{uploads/productc0fb523c-0ff7-45fc-b37b-18bfd82f0156.jpeg}	2022-06-20 12:43:47.742025+05	2022-06-20 12:43:47.742025+05	\N
 b4499063-096e-4fa6-9e21-a47185afd829	214be879-65c3-4710-86b4-3fc3bce2e974	28	25.5	45	s6fs66	uploads/productMain07c5ce1d-b8b1-4893-9825-17d218832484.jpeg	{uploads/product4c118ed9-2986-484c-86c6-7540c11d5351.jpeg}	2022-06-21 10:17:07.683256+05	2022-06-21 10:17:07.683256+05	\N
 538f0688-30ce-497b-9a0e-cd53d0d5239d	214be879-65c3-4710-86b4-3fc3bce2e974	23.5	25	45	s6fs66	uploads/productMain7377551a-91b3-4996-a5ae-f03ddf5530ac.jpeg	{uploads/product8b43004a-ad22-4241-8ad5-bd12e644351e.jpeg}	2022-06-21 10:21:35.476766+05	2022-06-21 10:21:35.476766+05	\N
@@ -760,7 +755,6 @@ cbb0047a-e543-41a8-845b-8439d11638f4	214be879-65c3-4710-86b4-3fc3bce2e974	13.9	0
 --
 
 COPY public.shops (id, owner_name, address, phone_number, running_time, created_at, updated_at, deleted_at) FROM stdin;
-31703625-968b-4e23-817a-42f2dac9c757	Owez Myradow	Asgabat saher Mir 2/2 jay 2 magazyn 23	62420387	7:00-21:00	2022-07-27 11:58:06.501346+05	2022-07-27 11:58:06.501346+05	2022-08-08 11:31:58.974112+05
 \.
 
 
@@ -779,8 +773,6 @@ e50bb3d1-14a1-400e-83d9-8bc15969b914	aea98b93-7bdf-455b-9ad4-a259d69dc76e	Рад
 --
 
 COPY public.translation_afisa (id, afisa_id, lang_id, title, description, created_at, updated_at, deleted_at) FROM stdin;
-5b00d76a-a295-4ded-b0ed-a8e29d6ea113	cb670531-8ca3-4d74-8ea4-f7853aae4132	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	Aksiya		2022-06-23 18:04:26.357443+05	2022-06-23 18:04:26.357443+05	\N
-ff6ce1a2-0cdf-440f-9175-35bda6750e42	cb670531-8ca3-4d74-8ea4-f7853aae4132	aea98b93-7bdf-455b-9ad4-a259d69dc76e	Действие		2022-06-23 18:04:26.419551+05	2022-06-23 18:04:26.419551+05	\N
 \.
 
 
@@ -895,7 +887,6 @@ ea7f4c0c-4b1a-41d3-94eb-e058aba9c99f	aea98b93-7bdf-455b-9ad4-a259d69dc76e	Пор
 --
 
 COPY public.translation_product (id, lang_id, product_id, name, description, created_at, updated_at, deleted_at) FROM stdin;
-bebf6d07-edfc-4c1b-99bd-5fc8524c3269	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	e3f8aebb-1451-43a3-9e9b-582da01c8d08	Duş geli Nivea Men "Ekstrim serginlik" 250 ml	Duş geli Nivea Men "Ekstrim serginlik" 250 ml	2022-06-20 12:41:56.355507+05	2022-06-20 12:41:56.355507+05	\N
 1ee48372-6d39-4baa-86d5-a5092dc11dcf	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	3b6d2d59-7ad4-4392-b7de-5a1d6bd003e1	(2+1) Süýt kremli sandwiç köke Ülker "Saklıköy" 100 gr (3 sany)	(2+1) Süýt kremli sandwiç köke Ülker "Saklıköy" 100 gr (3 sany)	2022-06-20 12:43:47.824085+05	2022-06-20 12:43:47.824085+05	\N
 a62656f5-de15-4463-95e7-8a608c7f8469	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	b4499063-096e-4fa6-9e21-a47185afd829	Sowgatlyk toplumy Head & Shoulders "Saç üçin balzam 275 ml + Goňaga garşy şampun 400 ml	Sowgatlyk toplumy Head & Shoulders "Saç üçin balzam 275 ml + Goňaga garşy şampun 400 ml	2022-06-21 10:17:07.70902+05	2022-06-21 10:17:07.70902+05	\N
 7ed42c42-e90a-44c1-a079-44628ff773ab	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	538f0688-30ce-497b-9a0e-cd53d0d5239d	Duş üçin şampun-gel Faberlic "Calming Peak" 3x1, 380 ml	Duş üçin şampun-gel Faberlic "Calming Peak" 3x1, 380 ml	2022-06-21 10:21:35.539288+05	2022-06-21 10:21:35.539288+05	\N
@@ -933,7 +924,6 @@ efb37f46-e0b6-4edf-a8e0-75cd07d9e9d4	aea98b93-7bdf-455b-9ad4-a259d69dc76e	205b50
 85c0312d-8e52-4ca4-acfc-a892ba1ae98b	aea98b93-7bdf-455b-9ad4-a259d69dc76e	c9100c0c-0e40-4c00-b987-79872f751cbb	Жидкое крем-мыло увлажняющее Aura Clean "Черничный йогурт" 1 л	Жидкое крем-мыло увлажняющее Aura Clean "Черничный йогурт" 1 л	2022-07-27 11:33:31.404753+05	2022-07-27 11:33:31.404753+05	\N
 ee776393-79b2-4561-8095-b8bfc58c916e	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	f7000691-bc1a-4f98-9c2c-73963b87dbe0	Nemlendiriji suwuk sabyn Aura Clean "Черничный йогурт" 1 ltr	Nemlendiriji suwuk sabyn Aura Clean "Черничный йогурт" 1 ltr	2022-07-27 11:33:24.586402+05	2022-07-27 11:33:24.586402+05	\N
 4e9092c1-b5b2-491b-ac3e-db2385d967ae	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	c9100c0c-0e40-4c00-b987-79872f751cbb	Nemlendiriji suwuk sabyn Aura Clean "Черничный йогурт" 1 ltr	Nemlendiriji suwuk sabyn Aura Clean "Черничный йогурт" 1 ltr	2022-07-27 11:33:31.319045+05	2022-07-27 11:33:31.319045+05	\N
-cd875a75-f302-42ae-9529-4a939b732907	aea98b93-7bdf-455b-9ad4-a259d69dc76e	e3f8aebb-1451-43a3-9e9b-582da01c8d08	Гель для душа Nivea Men "Эксремальная свежесть" 250 мл	Гель для душа Nivea Men "Эксремальная свежесть" 250 мл	2022-06-20 12:41:56.372671+05	2022-06-20 12:41:56.372671+05	\N
 7aa7eb37-c2d9-4379-a715-0b96cf81acbf	aea98b93-7bdf-455b-9ad4-a259d69dc76e	3b6d2d59-7ad4-4392-b7de-5a1d6bd003e1	(2+1) Печенье сэндвич с молочным кремом Ülker "Saklıköy" 100 г (3 шт)	(2+1) Печенье сэндвич с молочным кремом Ülker "Saklıköy" 100 г (3 шт)	2022-06-20 12:43:47.840415+05	2022-06-20 12:43:47.840415+05	\N
 f1d0c111-921c-4420-9460-7a64562500ce	aea98b93-7bdf-455b-9ad4-a259d69dc76e	b4499063-096e-4fa6-9e21-a47185afd829	Подарочный Набор Head & Shoulders "Бальзам-ополаскиватель для волос 275 мл + Шампунь против перхоти 400 мл	Подарочный Набор Head & Shoulders "Бальзам-ополаскиватель для волос 275 мл + Шампунь против перхоти 400 мл	2022-06-21 10:17:07.718729+05	2022-06-21 10:17:07.718729+05	\N
 c8163361-10c7-4402-9dfd-bc66277fcc8e	aea98b93-7bdf-455b-9ad4-a259d69dc76e	538f0688-30ce-497b-9a0e-cd53d0d5239d	Шампунь-гель для душ "Calming Peak" 3в1, 380 мл	Шампунь-гель для душ "Calming Peak" 3в1, 380 мл	2022-06-21 10:21:35.556254+05	2022-06-21 10:21:35.556254+05	\N
