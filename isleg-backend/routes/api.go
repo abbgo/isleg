@@ -181,8 +181,11 @@ func Routes() *gin.Engine {
 			// get my information page translation
 			securedCustomer.GET("/translation-my-information-page", backController.GetTranslationMyInformationPageByLangID)
 
-			// get all favourite products of customer
+			// add favourite products of customer
 			securedCustomer.POST("/like", frontController.AddLike)
+
+			// get all favourite products of customer
+			securedCustomer.GET("/customer-likes/:customer_id", frontController.GetLikes)
 		}
 
 	}
