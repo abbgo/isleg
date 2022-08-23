@@ -65,7 +65,7 @@ func AddLike(c *gin.Context) {
 
 }
 
-func GetLikes(c *gin.Context) {
+func GetCustomerLikes(c *gin.Context) {
 
 	db, err := config.ConnDB()
 	if err != nil {
