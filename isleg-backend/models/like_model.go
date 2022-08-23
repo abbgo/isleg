@@ -28,7 +28,7 @@ func ValidateCustomerLike(customerID, productID string) error {
 		return errors.New("customer_id is required")
 	}
 
-	rowCustomer, err := db.Query("SELECT id FROM customers WHERE id = $1", customerID)
+	rowCustomer, err := db.Query("SELECT id FROM customers WHERE id = $1 AND deleted_at IS NULL", customerID)
 	if err != nil {
 		return err
 	}
@@ -48,7 +48,7 @@ func ValidateCustomerLike(customerID, productID string) error {
 		return errors.New("product_id is required")
 	}
 
-	rowProduct, err := db.Query("SELECT id FROM products WHERE id = $1", productID)
+	rowProduct, err := db.Query("SELECT id FROM products WHERE id = $1 AND deleted_at IS NULL", productID)
 	if err != nil {
 		return err
 	}
@@ -64,7 +64,7 @@ func ValidateCustomerLike(customerID, productID string) error {
 		return errors.New("product does not exist")
 	}
 
-	rows, err := db.Query("SELECT product_id FROM likes WHERE customer_id = $1", customerID)
+	rows, err := db.Query("SELECT product_id FROM likes WHERE customer_id = $1 AND deleted_at IS NULL", customerID)
 	if err != nil {
 		return err
 	}
