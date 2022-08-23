@@ -32,7 +32,7 @@ func AddLike(c *gin.Context) {
 		return
 	}
 
-	_, err = db.Exec("INSERT INTO likes (product_id,customer_id) VALUES ($1,$2)", productID, customerID)
+	resultLike, err := db.Query("INSERT INTO likes (product_id,customer_id) VALUES ($1,$2)", productID, customerID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -40,6 +40,7 @@ func AddLike(c *gin.Context) {
 		})
 		return
 	}
+	defer resultLike.Close()
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
