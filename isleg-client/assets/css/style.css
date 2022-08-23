@@ -687,7 +687,7 @@ main {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding-bottom: 30px;
+  padding-bottom: 25px;
   font-family: TTNormsPro-ExtraBold;
   color: #1b3254;
 }
@@ -706,7 +706,7 @@ main {
 .product__box {
   position: relative;
   cursor: pointer;
-  height: 440px;
+  height: 420px;
   /* width: 330px; */
   background: #fff;
   border-radius: 4px;
@@ -717,7 +717,7 @@ main {
   padding: 20px;
   overflow: hidden;
   transition: 0.4s ease;
-  margin-bottom: 30px;
+  margin-bottom: 25px;
 }
 .product__box:hover {
   transform: scale(1.05);
@@ -2842,12 +2842,13 @@ input::-webkit-inner-spin-button {
     padding-bottom: 5px;
   }
   .product__description p {
-    font-size: 10px;
+    font-size: 12px;
   }
   .product__box {
-    height: 220px;
+    height: 250px;
     border-radius: 8px;
     padding: 10px 8px 10px 8px;
+    margin-bottom: 15px;
   }
   .new__price {
     font-size: 14px;
@@ -2879,12 +2880,15 @@ input::-webkit-inner-spin-button {
   }
   .product__title {
     font-family: TTNormsPro;
-    padding: 5px 15px;
+    padding-top: 5px;
+    padding-bottom: 15px;
+    padding-left: 15px;
+    padding-right: 15px;
     width: 100%;
     justify-content: space-between;
   }
   .product__title h3 {
-    font-size: 16px;
+    font-size: 18px;
     color: #1b3254;
   }
   .product__title svg {
