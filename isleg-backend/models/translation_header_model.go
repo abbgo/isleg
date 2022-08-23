@@ -24,6 +24,7 @@ type TranslationHeader struct {
 	MyOrders             string    `json:"my_orders"`
 	LogOut               string    `json:"log_out"`
 	Basket               string    `json:"basket"`
+	Email                string    `json:"email"`
 	CreatedAt            string    `json:"-"`
 	UpdatedAt            string    `json:"-"`
 	DeletedAt            string    `json:"-"`
