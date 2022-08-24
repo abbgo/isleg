@@ -3033,7 +3033,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"full_name\":\"Aly Muhammedow\",\n    \"phone_number\":\"+99362458725\",\n    \"password\":\"12345\",\n    \"email\":\"aly@gmail.com\"\n}",
+							"raw": "{\n    \"full_name\":\"Berdi\",\n    \"phone_number\":\"+99361235698\",\n    \"password\":\"12345\",\n    \"email\":\"berdi@gmail.com\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -3062,7 +3062,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"phone_number\":\"+99362458725\",\n    \"password\":\"12345\"\n}",
+							"raw": "{\n    \"phone_number\":\"+99361235698\",\n    \"password\":\"12345\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -3122,7 +3122,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiI2NTQ1MzI5NCIsImV4cCI6MTY1Nzc4ODAzNn0.n0u_4K8mQWiv1mKqTfgx6jdpjcBkiuqrInIYAi-DYUg",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIrOTkzNjMyMzQ1ODciLCJleHAiOjE2NjEyNjg1NDd9.qwScJcw21yRJElOMhoxdiRzH0IRGzOtG1iXcyEDtl3w",
 								"type": "default"
 							}
 						],
@@ -3131,12 +3131,12 @@
 							"formdata": [
 								{
 									"key": "customer_id",
-									"value": "20b26aa1-2247-4ed8-a6ef-3ec6bb9f64d7",
+									"value": "7e872c52-0d23-4086-8c45-43000b57332e",
 									"type": "default"
 								},
 								{
 									"key": "product_id",
-									"value": "525af569-06b6-440a-ab5a-6ee0b39cf51d",
+									"value": "3b6d2d59-7ad4-4392-b7de-5a1d6bd003e1",
 									"type": "default"
 								}
 							]
@@ -3151,6 +3151,61 @@
 								"api",
 								"tm",
 								"like"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetLikes",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIrOTkzNjEyMzU2OTgiLCJleHAiOjE2NjEyNzA0ODh9.TqVT9wanz4pG9818hKjYl8laygW7BltRqHFQzCb14vM",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "localhost:2406/api/tm/likes/7e872c52-0d23-4086-8c45-43000b57332e",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"api",
+								"tm",
+								"likes",
+								"7e872c52-0d23-4086-8c45-43000b57332e"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "RemoveLike",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NSIsImV4cCI6MTY2MTMxNzI5MH0.MJHNJP67wLeP-_SfK4_C2eCGVe9QijOqQdPog1BsRxI",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "localhost:2406/api/tm/like/7e872c52-0d23-4086-8c45-43000b57332e/3b6d2d59-7ad4-4392-b7de-5a1d6bd003e1",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"api",
+								"tm",
+								"like",
+								"7e872c52-0d23-4086-8c45-43000b57332e",
+								"3b6d2d59-7ad4-4392-b7de-5a1d6bd003e1"
 							]
 						}
 					},
@@ -3364,6 +3419,57 @@
 								"admin",
 								"delete-shop",
 								"0d4f9096-9cd7-4d72-afa5-e460de11e77e"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Basket",
+			"item": [
+				{
+					"name": "AddProductToBasket",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NSIsImV4cCI6MTY2MTMyNjM2NX0.qS_y_xBb-7uhr0YmZS2-J7401tfIY99a5HU_w1v2KiU",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "customer_id",
+									"value": "9b1a0831-9943-4aa9-aa2a-3507743a5de4",
+									"type": "default"
+								},
+								{
+									"key": "product_id",
+									"value": "3b6d2d59-7ad4-4392-b7de-5a1d6bd003e1",
+									"type": "default"
+								},
+								{
+									"key": "quantity_of_product",
+									"value": "2",
+									"type": "default"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:2406/api/tm/basket",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"api",
+								"tm",
+								"basket"
 							]
 						}
 					},

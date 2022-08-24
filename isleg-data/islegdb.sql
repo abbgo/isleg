@@ -66,6 +66,23 @@ CREATE TABLE public.banner (
 ALTER TABLE public.banner OWNER TO postgres;
 
 --
+-- Name: basket; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.basket (
+    id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
+    product_id uuid,
+    customer_id uuid,
+    quantity_of_product bigint,
+    created_at timestamp with time zone DEFAULT now(),
+    updated_at timestamp with time zone DEFAULT now(),
+    deleted_at timestamp with time zone
+);
+
+
+ALTER TABLE public.basket OWNER TO postgres;
+
+--
 -- Name: brends; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -537,6 +554,15 @@ COPY public.banner (id, image, url, created_at, updated_at, deleted_at) FROM std
 
 
 --
+-- Data for Name: basket; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.basket (id, product_id, customer_id, quantity_of_product, created_at, updated_at, deleted_at) FROM stdin;
+c551a95a-da1b-4e9f-a7dc-59a564199e18	3b6d2d59-7ad4-4392-b7de-5a1d6bd003e1	9b1a0831-9943-4aa9-aa2a-3507743a5de4	2	2022-08-24 12:05:45.720895+05	2022-08-24 12:05:45.720895+05	\N
+\.
+
+
+--
 -- Data for Name: brends; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -715,7 +741,6 @@ aea98b93-7bdf-455b-9ad4-a259d69dc76e	ru	uploads/language1c24e3a6-173e-4264-a631-
 --
 
 COPY public.likes (id, product_id, customer_id, created_at, updated_at, deleted_at) FROM stdin;
-bbb66a0a-1e48-43fd-9efe-323c789ff1b1	3b6d2d59-7ad4-4392-b7de-5a1d6bd003e1	7e872c52-0d23-4086-8c45-43000b57332e	2022-08-23 19:59:53.599285+05	2022-08-23 19:59:53.599285+05	\N
 \.
 
 
@@ -985,6 +1010,14 @@ ALTER TABLE ONLY public.banner
 
 
 --
+-- Name: basket basket_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.basket
+    ADD CONSTRAINT basket_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: brends brends_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1233,6 +1266,14 @@ ALTER TABLE ONLY public.translation_category
 
 
 --
+-- Name: basket fk_customer_basket; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.basket
+    ADD CONSTRAINT fk_customer_basket FOREIGN KEY (customer_id) REFERENCES public.customers(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
 -- Name: likes fk_customer_like; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1350,6 +1391,14 @@ ALTER TABLE ONLY public.translation_update_password_page
 
 ALTER TABLE ONLY public.translation_footer
     ADD CONSTRAINT fk_languages_translation_footer FOREIGN KEY (lang_id) REFERENCES public.languages(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: basket fk_product_basket; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.basket
+    ADD CONSTRAINT fk_product_basket FOREIGN KEY (product_id) REFERENCES public.products(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
