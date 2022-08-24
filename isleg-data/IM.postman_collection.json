@@ -1,0 +1,3375 @@
+{
+	"info": {
+		"_postman_id": "ab71fe00-ff0b-4495-9c55-4969161f0fd4",
+		"name": "IM",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Language",
+			"item": [
+				{
+					"name": "CreateLanguage",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "",
+									"value": "",
+									"type": "default",
+									"disabled": true
+								},
+								{
+									"key": "name_short",
+									"value": "fr",
+									"type": "default"
+								},
+								{
+									"key": "flag",
+									"type": "file",
+									"src": "/home/abb/Pictures/download (4).jpeg"
+								}
+							],
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:2406/admin/language",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"admin",
+								"language"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UpdateLanguageByID",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "",
+									"value": "",
+									"type": "default",
+									"disabled": true
+								},
+								{
+									"key": "name_short",
+									"value": "ru",
+									"type": "default"
+								},
+								{
+									"key": "flag",
+									"type": "file",
+									"src": "/home/abb/Pictures/profile.jpeg"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:2406/admin/language/aea98b93-7bdf-455b-9ad4-a259d69dc76e",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"admin",
+								"language",
+								"aea98b93-7bdf-455b-9ad4-a259d69dc76e"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetLanguages",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:2406/admin/languages",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"admin",
+								"languages"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetLanguageByID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:2406/admin/language/8723c1c7-aa6d-429f-b8af-ee9ace61f0d7",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"admin",
+								"language",
+								"8723c1c7-aa6d-429f-b8af-ee9ace61f0d7"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeleteLanguageByID",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "localhost:2406/admin/language/6472642a-3589-4631-a218-94dd87729d4b",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"admin",
+								"language",
+								"6472642a-3589-4631-a218-94dd87729d4b"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeletePermanentlyLanguageByID",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "localhost:2406/admin/delete-language/6472642a-3589-4631-a218-94dd87729d4b",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"admin",
+								"delete-language",
+								"6472642a-3589-4631-a218-94dd87729d4b"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "RestoreLanguageByID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:2406/admin/restore-language/aea98b93-7bdf-455b-9ad4-a259d69dc76e",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"admin",
+								"restore-language",
+								"aea98b93-7bdf-455b-9ad4-a259d69dc76e"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Category",
+			"item": [
+				{
+					"name": "CreateCategory",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "image",
+									"type": "file",
+									"src": []
+								},
+								{
+									"key": "name_tm",
+									"value": "Name_tm",
+									"type": "text"
+								},
+								{
+									"key": "name_ru",
+									"value": "Name_ru",
+									"type": "default"
+								},
+								{
+									"key": "parent_category_id",
+									"value": "02bd4413-8586-49ab-802e-16304e756a8p",
+									"type": "default"
+								},
+								{
+									"key": "is_home_category",
+									"value": "false",
+									"type": "default"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:2406/admin/category",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"admin",
+								"category"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UpdateCategoryByID",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "image",
+									"type": "file",
+									"src": "/home/abb/Pictures/download (4).jpeg"
+								},
+								{
+									"key": "name_tm",
+									"value": "name_tm",
+									"type": "text"
+								},
+								{
+									"key": "name_ru",
+									"value": "name_ru",
+									"type": "default"
+								},
+								{
+									"key": "parent_category_id",
+									"value": "",
+									"type": "default"
+								},
+								{
+									"key": "is_home_category",
+									"value": "false",
+									"type": "default"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:2406/admin/category/02bd4413-8586-49ab-802e-16304e756a8b",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"admin",
+								"category",
+								"02bd4413-8586-49ab-802e-16304e756a8b"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetAllCategory",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:2406/admin/categories",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"admin",
+								"categories"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetCategoryByID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:2406/admin/category/4af3388b-2738-4ff6-b42e-927cb0ff897f",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"admin",
+								"category",
+								"4af3388b-2738-4ff6-b42e-927cb0ff897f"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeleteCategoryByID",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "localhost:2406/admin/category/3d0851a3-45cf-4662-b315-67a98b9273c2",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"admin",
+								"category",
+								"3d0851a3-45cf-4662-b315-67a98b9273c2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeletePermanentlyCategoryByID",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "localhost:2406/admin/delete-category/3d0851a3-45cf-4662-b315-67a98b9273c2",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"admin",
+								"delete-category",
+								"3d0851a3-45cf-4662-b315-67a98b9273c2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "RestoreCategoryByID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:2406/admin/restore-category/3d0851a3-45cf-4662-b315-67a98b9273c2",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"admin",
+								"restore-category",
+								"3d0851a3-45cf-4662-b315-67a98b9273c2"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "CompanySetting",
+			"item": [
+				{
+					"name": "CreateCompanySetting",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "logo",
+									"type": "file",
+									"src": "/home/abb/Downloads/logo.jpg"
+								},
+								{
+									"key": "favicon",
+									"type": "file",
+									"src": "/home/abb/Downloads/logo.jpg"
+								},
+								{
+									"key": "email",
+									"value": "isleg@gmail.com",
+									"type": "default"
+								},
+								{
+									"key": "instagram",
+									"value": "@isleginstagram",
+									"type": "default"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:2406/admin/company-setting",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"admin",
+								"company-setting"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UpdateCompanySetting",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "logo",
+									"type": "file",
+									"src": "/home/abb/Pictures/download (2).jpeg"
+								},
+								{
+									"key": "favicon",
+									"type": "file",
+									"src": "/home/abb/Pictures/download (1).jpeg"
+								},
+								{
+									"key": "email",
+									"value": "isleg-bazar@gmail.com",
+									"type": "default"
+								},
+								{
+									"key": "instagram",
+									"value": "@islegbazarinstagram",
+									"type": "default"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:2406/admin/company-setting",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"admin",
+								"company-setting"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetOneCompanySetting",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:2406/admin/company-setting",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"admin",
+								"company-setting"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Front",
+			"item": [
+				{
+					"name": "GetHeaderData",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:2406/api/tm/header",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"api",
+								"tm",
+								"header"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetFooterData",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:2406/api/tm/footer",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"api",
+								"tm",
+								"footer"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetBrends",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:2406/api/tm/brends",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"api",
+								"tm",
+								"brends"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetHomePageCategories",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:2406/api/tm/homepage-categories",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"api",
+								"tm",
+								"homepage-categories"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetOneCategoryWithProducts",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:2406/api/tm/33cf0893-ff6e-40b3-b50f-2a3e926eca70/2/1",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"api",
+								"tm",
+								"33cf0893-ff6e-40b3-b50f-2a3e926eca70",
+								"2",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetCompanyPhones",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:2406/api/tm/company-phones",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"api",
+								"tm",
+								"company-phones"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetCompanyAddress",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:2406/api/tm/company-address",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"api",
+								"tm",
+								"company-address"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Brend",
+			"item": [
+				{
+					"name": "CreateBrend",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "Buzz",
+									"type": "default"
+								},
+								{
+									"key": "image",
+									"type": "file",
+									"src": "/home/abb/Pictures/download (4).jpeg"
+								},
+								{
+									"key": "",
+									"value": "",
+									"type": "default",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:2406/admin/brend",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"admin",
+								"brend"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": null,
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UpdateBrendByID",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "Golden Eagle",
+									"type": "default"
+								},
+								{
+									"key": "image",
+									"type": "file",
+									"src": "/home/abb/Pictures/download (1).jpeg"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:2406/admin/brend/c2f11fea-8057-4a7c-b290-c97d1d90ac59",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"admin",
+								"brend",
+								"c2f11fea-8057-4a7c-b290-c97d1d90ac59"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetBrendByID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:2406/admin/brend/6a31c50a-704f-4b0d-80ae-240ca3094cda",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"admin",
+								"brend",
+								"6a31c50a-704f-4b0d-80ae-240ca3094cda"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetBrends",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:2406/admin/brends",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"admin",
+								"brends"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeleteBrendByID",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "localhost:2406/admin/brend/c2f11fea-8057-4a7c-b290-c97d1d90ac59",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"admin",
+								"brend",
+								"c2f11fea-8057-4a7c-b290-c97d1d90ac59"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "RestoreBrendByID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:2406/admin/restore-brend/c2f11fea-8057-4a7c-b290-c97d1d90ac59",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"admin",
+								"restore-brend",
+								"c2f11fea-8057-4a7c-b290-c97d1d90ac59"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeletePermanentlyBrendByID",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "localhost:2406/admin/delete-brend/c2f11fea-8057-4a7c-b290-c97d1d90ac59",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"admin",
+								"delete-brend",
+								"c2f11fea-8057-4a7c-b290-c97d1d90ac59"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Product",
+			"item": [
+				{
+					"name": "CreateProduct",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "brend_id",
+									"value": "6a31c50a-704f-4b0d-80ae-240ca3094cda",
+									"type": "default"
+								},
+								{
+									"key": "price",
+									"value": "35",
+									"type": "default"
+								},
+								{
+									"key": "old_price",
+									"value": "37",
+									"type": "default"
+								},
+								{
+									"key": "amount",
+									"value": "19",
+									"type": "default"
+								},
+								{
+									"key": "product_code",
+									"value": "j6yukuy",
+									"type": "default"
+								},
+								{
+									"key": "main_image",
+									"type": "file",
+									"src": "/home/abb/Pictures/images (1).jpeg"
+								},
+								{
+									"key": "images",
+									"type": "file",
+									"src": []
+								},
+								{
+									"key": "images",
+									"type": "file",
+									"src": []
+								},
+								{
+									"key": "name_tm",
+									"value": "Nemlendiriji suwuk sabyn Aura Clean \"Черничный йогурт\" 1 ltr",
+									"type": "default"
+								},
+								{
+									"key": "name_ru",
+									"value": "Жидкое крем-мыло увлажняющее Aura Clean \"Черничный йогурт\" 1 л",
+									"type": "default"
+								},
+								{
+									"key": "description_tm",
+									"value": "Nemlendiriji suwuk sabyn Aura Clean \"Черничный йогурт\" 1 ltr",
+									"type": "default"
+								},
+								{
+									"key": "description_ru",
+									"value": "Жидкое крем-мыло увлажняющее Aura Clean \"Черничный йогурт\" 1 л",
+									"type": "default"
+								},
+								{
+									"key": "category_id",
+									"value": "4af3388b-2738-4ff6-b42e-927cb0ff897f",
+									"type": "default"
+								},
+								{
+									"key": "category_id",
+									"value": "5d877898-9ef4-4b91-8518-193b431228a8",
+									"type": "default"
+								},
+								{
+									"key": "category_id",
+									"value": "38d92a87-4a9c-4860-94e6-e568f21ecd8e",
+									"type": "default"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:2406/admin/product",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"admin",
+								"product"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UpdateProductByID",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "brend_id",
+									"value": "ddccb2dc-9697-4f4e-acf5-26b8bc2c8b72",
+									"type": "default"
+								},
+								{
+									"key": "price",
+									"value": "46",
+									"type": "default"
+								},
+								{
+									"key": "old_price",
+									"value": "46.5",
+									"type": "default"
+								},
+								{
+									"key": "amount",
+									"value": "998",
+									"type": "default"
+								},
+								{
+									"key": "product_code",
+									"value": "w5f2we6f598",
+									"type": "default"
+								},
+								{
+									"key": "main_image",
+									"type": "file",
+									"src": "/home/abb/Pictures/Isleg geljegimiz (1).jpg"
+								},
+								{
+									"key": "images",
+									"type": "file",
+									"src": "/home/abb/Pictures/download (3).jpeg"
+								},
+								{
+									"key": "images",
+									"type": "file",
+									"src": "/home/abb/Pictures/images.jpeg"
+								},
+								{
+									"key": "name_tm",
+									"value": "name_tm",
+									"type": "default"
+								},
+								{
+									"key": "name_ru",
+									"value": "name_ru",
+									"type": "default"
+								},
+								{
+									"key": "description_tm",
+									"value": "description_tm",
+									"type": "default"
+								},
+								{
+									"key": "description_ru",
+									"value": "description_ru",
+									"type": "default"
+								},
+								{
+									"key": "category_id",
+									"value": "5bb9a4e7-9992-418f-b551-537844d371da",
+									"type": "default"
+								},
+								{
+									"key": "category_id",
+									"value": "4af3388b-2738-4ff6-b42e-927cb0ff897f",
+									"type": "default"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:2406/admin/product/1a8935fd-c6ab-4656-b173-826c487a2274",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"admin",
+								"product",
+								"1a8935fd-c6ab-4656-b173-826c487a2274"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetProductByID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:2406/admin/product/e3f8aebb-1451-43a3-9e9b-582da01c8d08",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"admin",
+								"product",
+								"e3f8aebb-1451-43a3-9e9b-582da01c8d08"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetProducts",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:2406/admin/products",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"admin",
+								"products"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeleteProductByID",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "localhost:2406/admin/product/e3f8aebb-1451-43a3-9e9b-582da01c8d08",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"admin",
+								"product",
+								"e3f8aebb-1451-43a3-9e9b-582da01c8d08"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "RestoreProductByID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:2406/admin/restore-product/e3f8aebb-1451-43a3-9e9b-582da01c8d08",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"admin",
+								"restore-product",
+								"e3f8aebb-1451-43a3-9e9b-582da01c8d08"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeletePermanentlyProductByID",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "localhost:2406/admin/delete-product/e3f8aebb-1451-43a3-9e9b-582da01c8d08",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"admin",
+								"delete-product",
+								"e3f8aebb-1451-43a3-9e9b-582da01c8d08"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Afisa",
+			"item": [
+				{
+					"name": "CreateAfisa",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "image",
+									"type": "file",
+									"src": []
+								},
+								{
+									"key": "title_tm",
+									"value": "Aksiya",
+									"type": "default"
+								},
+								{
+									"key": "title_ru",
+									"value": "Действие",
+									"type": "default"
+								},
+								{
+									"key": "description_tm",
+									"value": "Aksiya barada maglumat",
+									"type": "default"
+								},
+								{
+									"key": "description_ru",
+									"value": "Информация о действии",
+									"type": "default"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:2406/admin/afisa",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"admin",
+								"afisa"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UpdateAfisaByID",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "title_tm",
+									"value": "title_tm",
+									"type": "default"
+								},
+								{
+									"key": "title_ru",
+									"value": "title_ru",
+									"type": "default"
+								},
+								{
+									"key": "description_tm",
+									"value": "description_tm",
+									"type": "default"
+								},
+								{
+									"key": "description_ru",
+									"value": "description_ru",
+									"type": "default"
+								},
+								{
+									"key": "image",
+									"type": "file",
+									"src": "/home/abb/Pictures/download (3).jpeg"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:2406/admin/afisa/cb670531-8ca3-4d74-8ea4-f7853aae4132",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"admin",
+								"afisa",
+								"cb670531-8ca3-4d74-8ea4-f7853aae4132"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetsAfisaByID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:2406/admin/afisa/cb670531-8ca3-4d74-8ea4-f7853aae4132",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"admin",
+								"afisa",
+								"cb670531-8ca3-4d74-8ea4-f7853aae4132"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetAfisas",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:2406/admin/afisas",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"admin",
+								"afisas"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeleteAfisaByID",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "localhost:2406/admin/afisa/cb670531-8ca3-4d74-8ea4-f7853aae4132",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"admin",
+								"afisa",
+								"cb670531-8ca3-4d74-8ea4-f7853aae4132"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "RestoreAfisaByID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:2406/admin/restore-afisa/cb670531-8ca3-4d74-8ea4-f7853aae4132",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"admin",
+								"restore-afisa",
+								"cb670531-8ca3-4d74-8ea4-f7853aae4132"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeletePermanentlyAfisaByID",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "localhost:2406/admin/delete-afisa/cb670531-8ca3-4d74-8ea4-f7853aae4132",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"admin",
+								"delete-afisa",
+								"cb670531-8ca3-4d74-8ea4-f7853aae4132"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "CompanyPhone",
+			"item": [
+				{
+					"name": "CreateCompanyPhone",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "phone",
+									"value": "61899737",
+									"type": "default"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:2406/admin/company-phone",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"admin",
+								"company-phone"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UpdateCompanyPhoneByID",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "phone",
+									"value": "63698547",
+									"type": "default"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:2406/admin/company-phone/3060bc25-2a55-4ee0-894d-f87f887e1fc4",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"admin",
+								"company-phone",
+								"3060bc25-2a55-4ee0-894d-f87f887e1fc4"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetCompanyPhoneByID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:2406/admin/company-phone/3060bc25-2a55-4ee0-894d-f87f887e1fc4",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"admin",
+								"company-phone",
+								"3060bc25-2a55-4ee0-894d-f87f887e1fc4"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeleteCompanyPhoneByID",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "localhost:2406/admin/company-phone/3060bc25-2a55-4ee0-894d-f87f887e1fc4",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"admin",
+								"company-phone",
+								"3060bc25-2a55-4ee0-894d-f87f887e1fc4"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "RestoreCompanyPhoneByID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:2406/admin/restore-company-phone/3060bc25-2a55-4ee0-894d-f87f887e1fc4",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"admin",
+								"restore-company-phone",
+								"3060bc25-2a55-4ee0-894d-f87f887e1fc4"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeletePermanentlyCompanyPhoneByID",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "localhost:2406/admin/delete-company-phone/3060bc25-2a55-4ee0-894d-f87f887e1fc4",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"admin",
+								"delete-company-phone",
+								"3060bc25-2a55-4ee0-894d-f87f887e1fc4"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Banner",
+			"item": [
+				{
+					"name": "CreateBanner",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "image",
+									"type": "file",
+									"src": []
+								},
+								{
+									"key": "url",
+									"value": "",
+									"type": "default"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:2406/admin/banner",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"admin",
+								"banner"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "CompanyAddress",
+			"item": [
+				{
+					"name": "CreateCompanyAddress",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "address_tm",
+									"value": "Aşgabat şäheri Azady köçesiniň 23-nji jaýy",
+									"type": "default"
+								},
+								{
+									"key": "address_ru",
+									"value": "Улица Азади 23, Ашхабад",
+									"type": "default"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:2406/admin/company-address",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"admin",
+								"company-address"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UpdateCompanyAddressByID",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "address",
+									"value": "adres_tm",
+									"type": "default"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:2406/admin/company-address/d2c66808-e5fe-435f-ba01-cb717f80d9e0",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"admin",
+								"company-address",
+								"d2c66808-e5fe-435f-ba01-cb717f80d9e0"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetCompanyAddressByID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:2406/admin/company-address/d2c66808-e5fe-435f-ba01-cb717f80d9e0",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"admin",
+								"company-address",
+								"d2c66808-e5fe-435f-ba01-cb717f80d9e0"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "TranslationFooter",
+			"item": [
+				{
+					"name": "CreateTranslationFooter",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "about_tm",
+									"value": "Biz Barada",
+									"type": "default"
+								},
+								{
+									"key": "about_ru",
+									"value": "О нас",
+									"type": "default"
+								},
+								{
+									"key": "payment_tm",
+									"value": "Eltip bermek we töleg tertibi",
+									"type": "default"
+								},
+								{
+									"key": "payment_ru",
+									"value": "Порядок доставки и оплаты",
+									"type": "default"
+								},
+								{
+									"key": "contact_tm",
+									"value": "Aragatnaşyk",
+									"type": "default"
+								},
+								{
+									"key": "contact_ru",
+									"value": "Коммуникация",
+									"type": "default"
+								},
+								{
+									"key": "secure_tm",
+									"value": "Ulanyş düzgünleri we gizlinlik şertnamasy",
+									"type": "default"
+								},
+								{
+									"key": "secure_ru",
+									"value": "Обслуживания и Политика Конфиденциальности",
+									"type": "default"
+								},
+								{
+									"key": "word_tm",
+									"value": "Ähli hukuklary goraglydyr",
+									"type": "default"
+								},
+								{
+									"key": "word_ru",
+									"value": "Все права защищены",
+									"type": "default"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:2406/admin/translation-footer",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"admin",
+								"translation-footer"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UpdateTranslationFooterByID",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "about",
+									"value": "Biz Barada",
+									"type": "default"
+								},
+								{
+									"key": "payment",
+									"value": "Eltip bermek we töleg tertibi",
+									"type": "default"
+								},
+								{
+									"key": "contact",
+									"value": "Aragatnaşyk",
+									"type": "default"
+								},
+								{
+									"key": "secure",
+									"value": "Ulanyş düzgünleri we gizlinlik şertnamasy",
+									"type": "default"
+								},
+								{
+									"key": "word",
+									"value": "Ähli hukuklary goraglydyr",
+									"type": "default"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:2406/admin/translation-footer/12dc4c16-5712-4bff-a957-8e16d450b4fb",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"admin",
+								"translation-footer",
+								"12dc4c16-5712-4bff-a957-8e16d450b4fb"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetTranslationFooterByID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:2406/admin/translation-footer/12dc4c16-5712-4bff-a957-8e16d450b4fb",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"admin",
+								"translation-footer",
+								"12dc4c16-5712-4bff-a957-8e16d450b4fb"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "TranslationHeader",
+			"item": [
+				{
+					"name": "CreateTranslationHeader",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "research_tm",
+									"value": "gözleg",
+									"type": "default"
+								},
+								{
+									"key": "research_ru",
+									"value": "поиск",
+									"type": "default"
+								},
+								{
+									"key": "phone_tm",
+									"value": "telefon",
+									"type": "default"
+								},
+								{
+									"key": "phone_ru",
+									"value": "tелефон",
+									"type": "default"
+								},
+								{
+									"key": "password_tm",
+									"value": "parol",
+									"type": "default"
+								},
+								{
+									"key": "password_ru",
+									"value": "пароль",
+									"type": "default"
+								},
+								{
+									"key": "forgot_password_tm",
+									"value": "Acar sozumi unutdym",
+									"type": "default"
+								},
+								{
+									"key": "forgot_password_ru",
+									"value": "забыл пароль",
+									"type": "default"
+								},
+								{
+									"key": "sign_in_tm",
+									"value": "ulgama girmek",
+									"type": "default"
+								},
+								{
+									"key": "sign_in_ru",
+									"value": "войти",
+									"type": "default"
+								},
+								{
+									"key": "sign_up_tm",
+									"value": "agza bolmak",
+									"type": "default"
+								},
+								{
+									"key": "sign_up_ru",
+									"value": "зарегистрироваться",
+									"type": "default"
+								},
+								{
+									"key": "name_tm",
+									"value": "Ady",
+									"type": "default"
+								},
+								{
+									"key": "name_ru",
+									"value": "имя",
+									"type": "default"
+								},
+								{
+									"key": "password_verification_tm",
+									"value": "Acar sozi tassyklamak",
+									"type": "default"
+								},
+								{
+									"key": "password_verification_ru",
+									"value": "Подтвердить Пароль",
+									"type": "default"
+								},
+								{
+									"key": "verify_secure_tm",
+									"value": "Ulanyş Düzgünlerini we Gizlinlik Şertnamasyny okadym we kabul edýärin",
+									"type": "default"
+								},
+								{
+									"key": "verify_secure_ru",
+									"value": "Я прочитал и принимаю Условия Обслуживания и Политика Конфиденциальности",
+									"type": "default"
+								},
+								{
+									"key": "my_information_tm",
+									"value": "maglumatym",
+									"type": "default"
+								},
+								{
+									"key": "my_information_ru",
+									"value": "моя информация",
+									"type": "default"
+								},
+								{
+									"key": "my_favorites_tm",
+									"value": "halanlarym",
+									"type": "default"
+								},
+								{
+									"key": "my_favorites_ru",
+									"value": "мои любимые",
+									"type": "default"
+								},
+								{
+									"key": "my_orders_tm",
+									"value": "sargytlarym",
+									"type": "default"
+								},
+								{
+									"key": "my_orders_ru",
+									"value": "мои заказы",
+									"type": "default"
+								},
+								{
+									"key": "log_out_tm",
+									"value": "cykmak",
+									"type": "default"
+								},
+								{
+									"key": "log_out_ru",
+									"value": "выйти",
+									"type": "default"
+								},
+								{
+									"key": "basket_tm",
+									"value": "sebet",
+									"type": "default"
+								},
+								{
+									"key": "basket_ru",
+									"value": "корзина",
+									"type": "default"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:2406/admin/translation-header",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"admin",
+								"translation-header"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UpdateTranslationHeaderByID",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "research",
+									"value": "gözleg",
+									"type": "default"
+								},
+								{
+									"key": "phone",
+									"value": "telefon",
+									"type": "default"
+								},
+								{
+									"key": "password",
+									"value": "parol",
+									"type": "default"
+								},
+								{
+									"key": "forgot_password",
+									"value": "Acar sozumi unutdym",
+									"type": "default"
+								},
+								{
+									"key": "sign_in",
+									"value": "ulgama girmek",
+									"type": "default"
+								},
+								{
+									"key": "sign_up",
+									"value": "agza bolmak",
+									"type": "default"
+								},
+								{
+									"key": "name",
+									"value": "Ady",
+									"type": "default"
+								},
+								{
+									"key": "password_verification",
+									"value": "Acar sozi tassyklamak",
+									"type": "default"
+								},
+								{
+									"key": "verify_secure",
+									"value": "Ulanyş Düzgünlerini we Gizlinlik Şertnamasyny okadym we kabul edýärin",
+									"type": "default"
+								},
+								{
+									"key": "my_information",
+									"value": "maglumatym",
+									"type": "default"
+								},
+								{
+									"key": "my_favorites",
+									"value": "halanlarym",
+									"type": "default"
+								},
+								{
+									"key": "my_orders",
+									"value": "sargytlarym",
+									"type": "default"
+								},
+								{
+									"key": "log_out",
+									"value": "cykmak",
+									"type": "default"
+								},
+								{
+									"key": "basket",
+									"value": "sebet",
+									"type": "default"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:2406/admin/translation-header/eaf206e6-d515-4bdb-9323-a047cd0edae5",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"admin",
+								"translation-header",
+								"eaf206e6-d515-4bdb-9323-a047cd0edae5"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetTranslationHeaderByID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:2406/admin/translation-header/eaf206e6-d515-4bdb-9323-a047cd0edae5",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"admin",
+								"translation-header",
+								"eaf206e6-d515-4bdb-9323-a047cd0edae5"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "District",
+			"item": [
+				{
+					"name": "CreateDistrict",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "price",
+									"value": "15",
+									"type": "default"
+								},
+								{
+									"key": "name_tm",
+									"value": "Parahat 2",
+									"type": "default"
+								},
+								{
+									"key": "name_ru",
+									"value": "Mir 2",
+									"type": "default"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:2406/admin/district",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"admin",
+								"district"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "TranslationSecure",
+			"item": [
+				{
+					"name": "CreateTranslationSecure",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "title_tm",
+									"value": "ÖZARA YLALAŞYGY",
+									"type": "default"
+								},
+								{
+									"key": "title_ru",
+									"value": "Пользовательское соглашение",
+									"type": "default"
+								},
+								{
+									"key": "content_tm",
+									"value": "Ynamdar - Internet Marketi (Mundan beýläk – “Ynamdar”) we www.ynamdar.com internet saýty (Mundan beýläk – “Saýt”) bilen, onuň agzasynyň (“Agza”) arasynda aşakdaky şertleri ýerine ýetirmek barada ylalaşyga gelindi.",
+									"type": "default"
+								},
+								{
+									"key": "content_ru",
+									"value": "Между Ынамдар – Интернет Маркетом (далее – “Ынамдар”) и интернет сайтом www.ynamdar.com (далее – “Сайт”), а также его клиентом (далее - “Клиент”) достигнуто соглашение по нижеследующим условиям.\n",
+									"type": "default"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:2406/admin/translation-secure",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"admin",
+								"translation-secure"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UpdateTranslationSecureByID",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "title",
+									"value": "ÖZARA YLALAŞYGY",
+									"type": "default"
+								},
+								{
+									"key": "content",
+									"value": "Ynamdar - Internet Marketi (Mundan beýläk – “Ynamdar”) we www.ynamdar.com internet saýty (Mundan beýläk – “Saýt”) bilen, onuň agzasynyň (“Agza”) arasynda aşakdaky şertleri ýerine ýetirmek barada ylalaşyga gelindi.",
+									"type": "default"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:2406/admin/translation-secure/5988b64a-82ad-4ed0-bd1b-bdd0b3b05912",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"admin",
+								"translation-secure",
+								"5988b64a-82ad-4ed0-bd1b-bdd0b3b05912"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetTranslationSecureByID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:2406/admin/translation-secure/5988b64a-82ad-4ed0-bd1b-bdd0b3b05912",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"admin",
+								"translation-secure",
+								"5988b64a-82ad-4ed0-bd1b-bdd0b3b05912"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetTranslationSecureByLangID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:2406/api/tm/translation-secure",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"api",
+								"tm",
+								"translation-secure"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "TranslationPayment",
+			"item": [
+				{
+					"name": "CreateTranslationPayment",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "title_tm",
+									"value": "Eltip bermek we töleg tertibi",
+									"type": "default"
+								},
+								{
+									"key": "title_ru",
+									"value": "Порядок доставки и оплаты",
+									"type": "default"
+								},
+								{
+									"key": "content_tm",
+									"value": "Eltip bermek hyzmaty Aşgabat şäheriniň çägi bilen bir hatarda Büzmeýine we Änew şäherine hem elýeterlidir. Hyzmat mugt amala aşyrylýar;\nHer bir sargydyň jemi bahasy azyndan 150 manat bolmalydyr;\nSaýtdan sargyt edeniňizden soňra operator size jaň edip sargydy tassyklar (eger hemişelik müşderi bolsaňyz sargytlaryňyz islegiňize görä awtomatik usulda hem tassyklanýar);\nGirizen salgyňyz we telefon belgiňiz esasynda hyzmat amala aşyrylýar;\nSargyt tassyklanmadyk ýagdaýynda ol hasaba alynmaýar we ýerine ýetirilmeýär. Sargydyň tassyklanmagy üçin girizen telefon belgiňizden jaň kabul edip bilýändigiňize göz ýetiriň. Şeýle hem girizen salgyňyzyň dogrulygyny barlaň;\nSargydy barlap alanyňyzdan soňra töleg amala aşyrylýar. Eltip berijiniň size gowşurýan töleg resminamasynda siziň tölemeli puluňyz bellenendir. Töleg nagt we nagt däl görnüşde milli manatda amala aşyrylýar. Kabul edip tölegini geçiren harydyňyz yzyna alynmaýar;\nSargyt tassyklanandan soňra 24 sagadyň dowamynda eýesi tapylmasa ol güýjüni ýitirýär;",
+									"type": "default"
+								},
+								{
+									"key": "content_ru",
+									"value": "В настоящее время услуга по доставке осуществляется по городу Ашхабад, Бюзмеин и Анау. Услуга предоставляется бесплатно.\nМинимальный заказ должен составлять не менее 150 манат;\nПосле Вашего заказа по сайту, оператор позвонит Вам для подтверждения заказа (постоянным клиентам по их желанию подтверждение осуществляется автоматизированно);\nУслуга доставки выполняется по указанному Вами адресу и номеру телефона;\nЕсли заказ не подтвержден то данный заказ не регистрируется и не выполняется. Для подтверждения заказа, удостоверьтесь, что можете принять звонок по указанному Вами номеру телефона. Также проверьте правильность указанного Вами адреса;\nОплата выполняется после того, как Вы проверите и примите заказ. На платежном документе курьера указана сумма Вашей оплаты. Оплата выполняется наличными и через карту в национальной валюте. Принятый и оплаченный товар возврату не подлежит;\nЕсли не удается найти владельца заказа в течение 24 часов после подтверждения заказа, то данный заказ аннулируется;",
+									"type": "default"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:2406/admin/translation-payment",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"admin",
+								"translation-payment"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetTranslationPaymentByLangID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:2406/api/tm/translation-payment",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"api",
+								"tm",
+								"translation-payment"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UpdateTranslationPaymentByID",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "title",
+									"value": "Eltip bermek we töleg tertibi",
+									"type": "default"
+								},
+								{
+									"key": "content",
+									"value": "",
+									"type": "default"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:2406/admin/translation-payment/5748ec03-5278-425c-babf-f7f2bf8d2efa",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"admin",
+								"translation-payment",
+								"5748ec03-5278-425c-babf-f7f2bf8d2efa"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetTranslationPaymentByID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:2406/admin/translation-payment/5748ec03-5278-425c-babf-f7f2bf8d2efa",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"admin",
+								"translation-payment",
+								"5748ec03-5278-425c-babf-f7f2bf8d2efa"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "TranslationAbout",
+			"item": [
+				{
+					"name": "CreateTranslationAbout",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "title_tm",
+									"value": "Sizi Isleg onlaýn marketimizde hoş gördük!",
+									"type": "default"
+								},
+								{
+									"key": "title_ru",
+									"value": "Рады приветствовать Вас в интернет-маркете Isleg!",
+									"type": "default"
+								},
+								{
+									"key": "content_tm",
+									"value": "Onlaýn marketimiz 2019-njy ýylyň iýul aýyndan bäri hyzmat berýär. Häzirki wagtda Size ýüzlerçe brendlere degişli bolan müňlerçe haryt görnüşlerini hödürleýäris! Haryt görnüşlerimizi sizden gelýän isleg we teklipleriň esasynda köpeltmäge dowam edýäris. Biziň maksadymyz müşderilerimize ýokary hilli hyzmat bermek bolup durýar. Indi Siz öýüňizden çykmazdan özüňizi gerekli zatlar bilen üpjün edip bilersiňiz! Munuň bilen bir hatarda Siz wagtyňyzy we transport çykdajylaryny hem tygşytlaýarsyňyz. Tölegi harytlar size gowuşandan soňra nagt ýa-da bank kartlarynyň üsti bilen amala aşyryp bilersiňiz!\n\nBiziň gapymyz hyzmatdaşlyklara we tekliplere hemişe açyk!",
+									"type": "default"
+								},
+								{
+									"key": "content_ru",
+									"value": "Мы начали работу в июле 2019 года и на сегодняшний день мы предлагаем Вам тысячи видов товаров, которые принадлежат сотням брендам. Каждый день мы работаем над увеличением ассортимента, привлечением новых компаний к сотрудничеству. Целью нашей работы является создание выгодных условий для наших клиентов-экономия времени на походы в магазины, оплата наличными или картой, доставка в удобное время, и конечно же качественная продукция по лучшим ценам!\n\nМы открыты для сотрудничества и пожеланий!",
+									"type": "default"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:2406/admin/translation-about",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"admin",
+								"translation-about"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetTranslationAboutByLangID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:2406/api/ru/translation-about",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"api",
+								"ru",
+								"translation-about"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UpdateTranslationAboutByID",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "title",
+									"value": "",
+									"type": "default"
+								},
+								{
+									"key": "content",
+									"value": "",
+									"type": "default"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:2406/admin/translation-about/7abeb5cf-2fbb-43b9-94ca-251dd5f40d5a",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"admin",
+								"translation-about",
+								"7abeb5cf-2fbb-43b9-94ca-251dd5f40d5a"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetTranslationAboutByID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:2406/admin/translation-about/7abeb5cf-2fbb-43b9-94ca-251dd5f40d5a",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"admin",
+								"translation-about",
+								"7abeb5cf-2fbb-43b9-94ca-251dd5f40d5a"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "TranslationContact",
+			"item": [
+				{
+					"name": "CreateTranslationContact",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "full_name_tm",
+									"value": "at_tm",
+									"type": "default"
+								},
+								{
+									"key": "full_name_ru",
+									"value": "at_ru",
+									"type": "default"
+								},
+								{
+									"key": "email_tm",
+									"value": "rmail_tm",
+									"type": "default"
+								},
+								{
+									"key": "email_ru",
+									"value": "mail_ru",
+									"type": "default"
+								},
+								{
+									"key": "phone_tm",
+									"value": "phone_tm",
+									"type": "default"
+								},
+								{
+									"key": "phone_ru",
+									"value": "phone_ru",
+									"type": "default"
+								},
+								{
+									"key": "letter_tm",
+									"value": "letter_tm",
+									"type": "default"
+								},
+								{
+									"key": "letter_ru",
+									"value": "letter ru",
+									"type": "default"
+								},
+								{
+									"key": "company_phone_tm",
+									"value": "cp tm",
+									"type": "default"
+								},
+								{
+									"key": "company_phone_ru",
+									"value": "cp ru",
+									"type": "default"
+								},
+								{
+									"key": "imo_tm",
+									"value": "imo tm",
+									"type": "default"
+								},
+								{
+									"key": "imo_ru",
+									"value": "imo ru",
+									"type": "default"
+								},
+								{
+									"key": "company_email_tm",
+									"value": "ce tm",
+									"type": "default"
+								},
+								{
+									"key": "company_email_ru",
+									"value": "ce ru",
+									"type": "default"
+								},
+								{
+									"key": "instagram_tm",
+									"value": "instagram tm",
+									"type": "default"
+								},
+								{
+									"key": "instagram_ru",
+									"value": "instagram ru",
+									"type": "default"
+								},
+								{
+									"key": "button_text_tm",
+									"value": "Ugrat",
+									"type": "default"
+								},
+								{
+									"key": "button_text_ru",
+									"value": "Отправить",
+									"type": "default"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:2406/admin/translation-contact",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"admin",
+								"translation-contact"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetTranslationContactByLangID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:2406/api/tm/translation-contact",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"api",
+								"tm",
+								"translation-contact"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UpdateTranslationContactByID",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "full_name",
+									"value": "at_tm",
+									"type": "default"
+								},
+								{
+									"key": "email",
+									"value": "mail_tm",
+									"type": "default"
+								},
+								{
+									"key": "phone",
+									"value": "phone_tm",
+									"type": "default"
+								},
+								{
+									"key": "letter",
+									"value": "letter_tm",
+									"type": "default"
+								},
+								{
+									"key": "company_phone",
+									"value": "cp_tm",
+									"type": "default"
+								},
+								{
+									"key": "imo",
+									"value": "imo_tm",
+									"type": "default"
+								},
+								{
+									"key": "company_email",
+									"value": "ce_tm",
+									"type": "default"
+								},
+								{
+									"key": "instagram",
+									"value": "ins_tm",
+									"type": "default"
+								},
+								{
+									"key": "button_text",
+									"value": "ugrat",
+									"type": "default"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:2406/admin/translation-contact/73253999-7355-42b4-8700-94de76f0058a",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"admin",
+								"translation-contact",
+								"73253999-7355-42b4-8700-94de76f0058a"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetTranslationContactByID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:2406/admin/translation-contact/73253999-7355-42b4-8700-94de76f0058a",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"admin",
+								"translation-contact",
+								"73253999-7355-42b4-8700-94de76f0058a"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "TranslationMyInformationPage",
+			"item": [
+				{
+					"name": "CreateTranslationMyInformationPage",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "address_tm",
+									"value": "salgyňyz",
+									"type": "default"
+								},
+								{
+									"key": "address_ru",
+									"value": "ваш адрес",
+									"type": "default"
+								},
+								{
+									"key": "birthday_tm",
+									"value": "doglan senäň",
+									"type": "default"
+								},
+								{
+									"key": "birthday_ru",
+									"value": "дата рождения",
+									"type": "default"
+								},
+								{
+									"key": "update_password_tm",
+									"value": "",
+									"type": "default"
+								},
+								{
+									"key": "update_password_ru",
+									"value": "",
+									"type": "default"
+								},
+								{
+									"key": "save_tm",
+									"value": "",
+									"type": "default"
+								},
+								{
+									"key": "save_ru",
+									"value": "",
+									"type": "default"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:2406/admin/translation-my-information-page",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"admin",
+								"translation-my-information-page"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetTranslationMyInformationPageByLangID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiI2NTQ1MzI5NCIsImV4cCI6MTY1Nzc4MDYzNH0.e_aJxSJb3IJUCnOT_dxMy3K0KJnlWvZSxcOWQaSQqBQ",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "localhost:2406/api/tm/translation-my-information-page",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"api",
+								"tm",
+								"translation-my-information-page"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UpdateTranslationMyInformationPageByID",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "address",
+									"value": "salgyňyz",
+									"type": "default"
+								},
+								{
+									"key": "birthday",
+									"value": "doglan senäň",
+									"type": "default"
+								},
+								{
+									"key": "update_password",
+									"value": "açar sözi üýtget",
+									"type": "default"
+								},
+								{
+									"key": "save",
+									"value": "ýatda sakla",
+									"type": "default"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:2406/admin/translation-my-information-page/11074158-69f2-473a-b4fe-94304ff0d8a7",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"admin",
+								"translation-my-information-page",
+								"11074158-69f2-473a-b4fe-94304ff0d8a7"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetTranslationMyInformationPageByID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:2406/admin/translation-my-information-page/11074158-69f2-473a-b4fe-94304ff0d8a7",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"admin",
+								"translation-my-information-page",
+								"11074158-69f2-473a-b4fe-94304ff0d8a7"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "TranslationUpdatePasswordPage",
+			"item": [
+				{
+					"name": "CreateTranslationUpdatePasswordPage",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "title_tm",
+									"value": "açar sözi üýtgetmek",
+									"type": "default"
+								},
+								{
+									"key": "title_ru",
+									"value": "изменить пароль",
+									"type": "default"
+								},
+								{
+									"key": "verify_password_tm",
+									"value": "açar sözi tassykla",
+									"type": "default"
+								},
+								{
+									"key": "verify_password_ru",
+									"value": "Подтвердить Пароль",
+									"type": "default"
+								},
+								{
+									"key": "explanation_tm",
+									"value": "siziň açar sözüňiz 5-20 uzynlygynda harp ýa-da sandan ybarat bolmalydyr",
+									"type": "default"
+								},
+								{
+									"key": "explanation_ru",
+									"value": "ключевое слово должно быть буквой или цифрой длиной от 5 до 20",
+									"type": "default"
+								},
+								{
+									"key": "save_tm",
+									"value": "ýatda sakla",
+									"type": "default"
+								},
+								{
+									"key": "save_ru",
+									"value": "запомнить",
+									"type": "default"
+								},
+								{
+									"key": "password_tm",
+									"value": "açar sözi",
+									"type": "default"
+								},
+								{
+									"key": "password_ru",
+									"value": "ключевое слово",
+									"type": "default"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:2406/admin/translation-update-password-page",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"admin",
+								"translation-update-password-page"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetTranslationUpdatePasswordPageByLangID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:2406/api/tm/translation-update-password-page",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"api",
+								"tm",
+								"translation-update-password-page"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UpdateTranslationUpdatePasswordPageByID",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "title",
+									"value": "açar sözi üýtgetmek",
+									"type": "default"
+								},
+								{
+									"key": "verify_password",
+									"value": "açar sözi tassykla",
+									"type": "default"
+								},
+								{
+									"key": "explanation",
+									"value": "siziň açar sözüňiz 5-20 uzynlygynda harp ýa-da sandan ybarat bolmalydyr",
+									"type": "default"
+								},
+								{
+									"key": "save",
+									"value": "ýatda sakla",
+									"type": "default"
+								},
+								{
+									"key": "password",
+									"value": "açar sözi",
+									"type": "default"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:2406/admin/translation-update-password-page/de12082b-baab-4b83-ac07-119df09d1230",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"admin",
+								"translation-update-password-page",
+								"de12082b-baab-4b83-ac07-119df09d1230"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetTranslationUpdatePasswordPageByID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:2406/admin/translation-update-password-page/de12082b-baab-4b83-ac07-119df09d1230",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"admin",
+								"translation-update-password-page",
+								"de12082b-baab-4b83-ac07-119df09d1230"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Customer",
+			"item": [
+				{
+					"name": "RegisterCustomer",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"full_name\":\"Aly Muhammedow\",\n    \"phone_number\":\"+99362458725\",\n    \"password\":\"12345\",\n    \"email\":\"aly@gmail.com\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:2406/api/auth/register",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"api",
+								"auth",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "LoginCustomer",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"phone_number\":\"+99362458725\",\n    \"password\":\"12345\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:2406/api/auth/login",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"api",
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Refresh",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "RefershToken",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiI2NTQ1MzI5NCIsImV4cCI6MTY1Nzc4MDU4Nn0.KaW-2DLaC_WmMY1u6AOiB8UGTrRHhUmcYWV5P1fhtJU",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "localhost:2406/api/tem/refresh",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"api",
+								"tem",
+								"refresh"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Like",
+			"item": [
+				{
+					"name": "AddLike",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiI2NTQ1MzI5NCIsImV4cCI6MTY1Nzc4ODAzNn0.n0u_4K8mQWiv1mKqTfgx6jdpjcBkiuqrInIYAi-DYUg",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "customer_id",
+									"value": "20b26aa1-2247-4ed8-a6ef-3ec6bb9f64d7",
+									"type": "default"
+								},
+								{
+									"key": "product_id",
+									"value": "525af569-06b6-440a-ab5a-6ee0b39cf51d",
+									"type": "default"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:2406/api/tm/like",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"api",
+								"tm",
+								"like"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Shop",
+			"item": [
+				{
+					"name": "CreateShop",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "owner_name",
+									"value": "Owez Myradow",
+									"type": "default"
+								},
+								{
+									"key": "address",
+									"value": "Asgabat saher Mir 2/2 jay 2 magazyn 23",
+									"type": "default"
+								},
+								{
+									"key": "phone_number",
+									"value": "62420387",
+									"type": "default"
+								},
+								{
+									"key": "running_time",
+									"value": "7:00-21:00",
+									"type": "default"
+								},
+								{
+									"key": "category_id",
+									"value": "33cf0893-ff6e-40b3-b50f-2a3e926eca70",
+									"type": "default"
+								},
+								{
+									"key": "category_id",
+									"value": "f745d171-68e6-42e2-b339-cb3c210cda55",
+									"type": "default"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:2406/admin/shop",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"admin",
+								"shop"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UpdateShopByID",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "owner_name",
+									"value": "Arslan Serdarow",
+									"type": "default"
+								},
+								{
+									"key": "address",
+									"value": "Mir 2 2/2 jay 7 dom 36",
+									"type": "default"
+								},
+								{
+									"key": "phone_number",
+									"value": "63254871",
+									"type": "default"
+								},
+								{
+									"key": "running_time",
+									"value": "7:00-21:00",
+									"type": "default"
+								},
+								{
+									"key": "category_id",
+									"value": "5d877898-9ef4-4b91-8518-193b431228a8",
+									"type": "default"
+								},
+								{
+									"key": "category_id",
+									"value": "66772380-c161-4c45-9350-a45e765193e2",
+									"type": "default"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:2406/admin/shop/0d4f9096-9cd7-4d72-afa5-e460de11e77e",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"admin",
+								"shop",
+								"0d4f9096-9cd7-4d72-afa5-e460de11e77e"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetShopByID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:2406/admin/shop/0d4f9096-9cd7-4d72-afa5-e460de11e77e",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"admin",
+								"shop",
+								"0d4f9096-9cd7-4d72-afa5-e460de11e77e"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetShops",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:2406/admin/shops",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"admin",
+								"shops"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeleteShopByID",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "localhost:2406/admin/shop/0d4f9096-9cd7-4d72-afa5-e460de11e77e",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"admin",
+								"shop",
+								"0d4f9096-9cd7-4d72-afa5-e460de11e77e"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "RestoreShopByID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:2406/admin/restore-shop/0d4f9096-9cd7-4d72-afa5-e460de11e77e",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"admin",
+								"restore-shop",
+								"0d4f9096-9cd7-4d72-afa5-e460de11e77e"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeletePermanentlyShopByID",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "localhost:2406/admin/delete-shop/0d4f9096-9cd7-4d72-afa5-e460de11e77e",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"admin",
+								"delete-shop",
+								"0d4f9096-9cd7-4d72-afa5-e460de11e77e"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

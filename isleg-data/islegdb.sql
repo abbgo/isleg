@@ -686,6 +686,8 @@ COPY public.company_setting (id, logo, favicon, email, instagram, created_at, up
 COPY public.customers (id, full_name, phone_number, password, birthday, gender, addresses, created_at, updated_at, deleted_at, email) FROM stdin;
 7e872c52-0d23-4086-8c45-43000b57332e	Muhammetmyrat	+99363747155	$2a$14$1uOYIcXK4lzyBnhm.L/dW.TD8c9ZqTzAiCsOMCCRRzxiKnDAU2gFK	\N	\N	\N	2022-08-02 23:41:59.869254+05	2022-08-02 23:41:59.869254+05	\N	m.bayramov@salam.tm
 7fafe6f8-c6b6-4bcc-9063-e98c113902c5	jjednkjwedjed	+99363747156	$2a$14$WPTcXE1j871GQ/n2i2CX9.RjyRIyR4bBqCj6b/vchJB1TjYC6v0XK	\N	\N	\N	2022-08-02 23:52:46.544849+05	2022-08-02 23:52:46.544849+05	\N	ewkdnewj@gmail.com
+38615c8c-1af5-424f-b7a3-071d38c42b86	Aly Muhammedow	+99363234587	$2a$14$Ep0/A9EAbgV/BD.UdQ6KQOU0DCpr2C8n6du8li5nPKYz.xIQb2HgC	\N	\N	\N	2022-08-23 19:59:07.331615+05	2022-08-23 19:59:07.331615+05	\N	aly@gmail.com
+9b1a0831-9943-4aa9-aa2a-3507743a5de4	Berdi	+99361235698	$2a$14$S5nCg8mlGD..q3didZiCFuaocaEPA35ugIfpovdEoM7p5I8TOTX0K	\N	\N	\N	2022-08-23 20:31:28.830324+05	2022-08-23 20:31:28.830324+05	\N	berdi@gmail.com
 \.
 
 
@@ -713,6 +715,7 @@ aea98b93-7bdf-455b-9ad4-a259d69dc76e	ru	uploads/language1c24e3a6-173e-4264-a631-
 --
 
 COPY public.likes (id, product_id, customer_id, created_at, updated_at, deleted_at) FROM stdin;
+bbb66a0a-1e48-43fd-9efe-323c789ff1b1	3b6d2d59-7ad4-4392-b7de-5a1d6bd003e1	7e872c52-0d23-4086-8c45-43000b57332e	2022-08-23 19:59:53.599285+05	2022-08-23 19:59:53.599285+05	\N
 \.
 
 
