@@ -185,7 +185,10 @@ func Routes() *gin.Engine {
 			securedCustomer.POST("/like", frontController.AddLike)
 
 			// get all favourite products of customer
-			securedCustomer.GET("/customer-likes/:customer_id", frontController.GetCustomerLikes)
+			securedCustomer.GET("/likes/:customer_id", frontController.GetCustomerLikes)
+
+			// remove favourite products of customer
+			securedCustomer.DELETE("/like/:customer_id/:product_id", frontController.RemoveLike)
 		}
 
 	}

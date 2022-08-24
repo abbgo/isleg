@@ -88,6 +88,7 @@ func GetCustomerLikes(c *gin.Context) {
 		})
 		return
 	}
+	defer rowCustomer.Close()
 
 	var customer_id string
 
@@ -126,6 +127,7 @@ func GetCustomerLikes(c *gin.Context) {
 		})
 		return
 	}
+	defer rowsLikes.Close()
 
 	var likes []ForLikeCustomer
 
@@ -144,6 +146,98 @@ func GetCustomerLikes(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"status":         true,
 		"customer_likes": likes,
+	})
+
+}
+
+func RemoveLike(c *gin.Context) {
+
+	db, err := config.ConnDB()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer db.Close()
+
+	customerID := c.Param("customer_id")
+	productID := c.Param("product_id")
+
+	rowCustomer, err := db.Query("SELECT id FROM customers WHERE id = $1 AND deleted_at IS NULL", customerID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer rowCustomer.Close()
+
+	var customer_id string
+
+	for rowCustomer.Next() {
+		if err := rowCustomer.Scan(&customer_id); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}
+
+	if customer_id == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "customer not found",
+		})
+		return
+	}
+
+	rowProduct, err := db.Query("SELECT id FROM products WHERE id = $1 AND deleted_at IS NULL", productID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer rowProduct.Close()
+
+	var product_id string
+
+	for rowProduct.Next() {
+		if err := rowProduct.Scan(&product_id); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}
+
+	if product_id == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "product not found",
+		})
+		return
+	}
+
+	resultLike, err := db.Query("DELETE FROM likes WHERE product_id = $1 AND customer_id = $2", productID, customerID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer resultLike.Close()
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":  true,
+		"message": "like successfully removed",
 	})
 
 }
