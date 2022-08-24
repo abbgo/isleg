@@ -189,6 +189,10 @@ func Routes() *gin.Engine {
 
 			// remove favourite products of customer
 			securedCustomer.DELETE("/like/:customer_id/:product_id", frontController.RemoveLike)
+
+			// add product to cart
+			securedCustomer.POST("/basket", frontController.AddProductToBasket)
+
 		}
 
 	}
