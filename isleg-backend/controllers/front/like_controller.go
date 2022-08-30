@@ -7,12 +7,11 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 )
 
 type ForLikeCustomer struct {
 	ID          string                 `json:"id"`
-	BrendID     uuid.UUID              `json:"brend_id"`
+	Brend       OneBrend               `json:"brend"`
 	Price       float64                `json:"price"`
 	OldPrice    float64                `json:"old_price"`
 	MainImage   string                 `json:"main_image"`
@@ -23,6 +22,11 @@ type ForLikeCustomer struct {
 type TranslationLikeProduct struct {
 	Name        string `json:"name"`
 	Description string `json:"description"`
+}
+
+type OneBrend struct {
+	ID   string `json:"id"`
+	Name string `json:"name"`
 }
 
 func AddLike(c *gin.Context) {
@@ -120,7 +124,7 @@ func GetCustomerLikes(c *gin.Context) {
 		return
 	}
 
-	rowsLikes, err := db.Query("SELECT p.id,p.brend_id,p.price,p.old_price,p.main_image,p.limit_amount,t.name,t.description FROM products p LEFT JOIN likes l ON l.product_id = p.id LEFT JOIN translation_product t ON t.product_id = p.id WHERE l.customer_id = $1 AND t.lang_id = $2 AND p.deleted_at IS NULL AND l.deleted_at IS NULL AND t.deleted_at IS NULL", customerID, langID)
+	rowsLikes, err := db.Query("SELECT p.id,p.price,p.old_price,p.main_image,p.limit_amount,t.name,t.description FROM products p LEFT JOIN likes l ON l.product_id = p.id LEFT JOIN translation_product t ON t.product_id = p.id WHERE l.customer_id = $1 AND t.lang_id = $2 AND p.deleted_at IS NULL AND l.deleted_at IS NULL AND t.deleted_at IS NULL", customerID, langID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -134,13 +138,39 @@ func GetCustomerLikes(c *gin.Context) {
 
 	for rowsLikes.Next() {
 		var like ForLikeCustomer
-		if err := rowsLikes.Scan(&like.ID, &like.BrendID, &like.Price, &like.OldPrice, &like.MainImage, &like.LimitAmount, &like.Translation.Name, &like.Translation.Description); err != nil {
+		if err := rowsLikes.Scan(&like.ID, &like.Price, &like.OldPrice, &like.MainImage, &like.LimitAmount, &like.Translation.Name, &like.Translation.Description); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
 			})
 			return
 		}
+
+		// get brend where id equal brend_id of product
+		brendRows, err := db.Query("SELECT b.id,b.name FROM products p LEFT JOIN brends b ON p.brend_id=b.id WHERE p.id = $1 AND p.deleted_at IS NULL AND b.deleted_at IS NULL", like.ID)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+		defer brendRows.Close()
+
+		var brend OneBrend
+
+		for brendRows.Next() {
+			if err := brendRows.Scan(&brend.ID, &brend.Name); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}
+
+		like.Brend = brend
+
 		likes = append(likes, like)
 	}
 
