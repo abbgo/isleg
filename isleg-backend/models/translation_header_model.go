@@ -25,6 +25,7 @@ type TranslationHeader struct {
 	LogOut               string    `json:"log_out"`
 	Basket               string    `json:"basket"`
 	Email                string    `json:"email"`
+	AddToBasket          string    `json:"add_to_basket"`
 	CreatedAt            string    `json:"-"`
 	UpdatedAt            string    `json:"-"`
 	DeletedAt            string    `json:"-"`
