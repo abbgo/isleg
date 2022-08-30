@@ -17,6 +17,7 @@ type ForLikeCustomer struct {
 	OldPrice    float64                `json:"old_price"`
 	MainImage   string                 `json:"main_image"`
 	Translation TranslationLikeProduct `json:"translations"`
+	LimitAmount uint                   `json:"limit_amount"`
 }
 
 type TranslationLikeProduct struct {
@@ -119,7 +120,7 @@ func GetCustomerLikes(c *gin.Context) {
 		return
 	}
 
-	rowsLikes, err := db.Query("SELECT p.id,p.brend_id,p.price,p.old_price,p.main_image,t.name,t.description FROM products p LEFT JOIN likes l ON l.product_id = p.id LEFT JOIN translation_product t ON t.product_id = p.id WHERE l.customer_id = $1 AND t.lang_id = $2 AND p.deleted_at IS NULL AND l.deleted_at IS NULL AND t.deleted_at IS NULL", customerID, langID)
+	rowsLikes, err := db.Query("SELECT p.id,p.brend_id,p.price,p.old_price,p.main_image,p.limit_amount,t.name,t.description FROM products p LEFT JOIN likes l ON l.product_id = p.id LEFT JOIN translation_product t ON t.product_id = p.id WHERE l.customer_id = $1 AND t.lang_id = $2 AND p.deleted_at IS NULL AND l.deleted_at IS NULL AND t.deleted_at IS NULL", customerID, langID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -133,7 +134,7 @@ func GetCustomerLikes(c *gin.Context) {
 
 	for rowsLikes.Next() {
 		var like ForLikeCustomer
-		if err := rowsLikes.Scan(&like.ID, &like.BrendID, &like.Price, &like.OldPrice, &like.MainImage, &like.Translation.Name, &like.Translation.Description); err != nil {
+		if err := rowsLikes.Scan(&like.ID, &like.BrendID, &like.Price, &like.OldPrice, &like.MainImage, &like.LimitAmount, &like.Translation.Name, &like.Translation.Description); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),

@@ -31,6 +31,7 @@ type OneProduct struct {
 	Images       pq.StringArray       `json:"images"`
 	Categories   []string             `json:"categories"`
 	Translations []TranslationProduct `json:"translations"`
+	LimitAmount  uint                 `json:"limit_amount"`
 }
 type TranslationProduct struct {
 	LanguageID  string `json:"lang_id"`
@@ -119,6 +120,16 @@ func CreateProduct(c *gin.Context) {
 
 	amountStr := c.PostForm("amount")
 	amount, err := strconv.ParseUint(amountStr, 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	limitAmountStr := c.PostForm("limit_amount")
+	limitAmount, err := strconv.ParseUint(limitAmountStr, 10, 64)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -216,7 +227,7 @@ func CreateProduct(c *gin.Context) {
 	}
 
 	// create product
-	resultProducts, err := db.Query("INSERT INTO products (brend_id,price,old_price,amount,product_code,main_image,images) VALUES ($1,$2,$3,$4,$5,$6,$7)", brendID, price, oldPrice, amount, productCode, "uploads/product/"+newFileName, pq.StringArray(imagePaths))
+	resultProducts, err := db.Query("INSERT INTO products (brend_id,price,old_price,amount,product_code,main_image,images,limit_amount) VALUES ($1,$2,$3,$4,$5,$6,$7)", brendID, price, oldPrice, amount, productCode, "uploads/product/"+newFileName, pq.StringArray(imagePaths), limitAmount)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{
 			"status":  false,
@@ -446,6 +457,16 @@ func UpdateProductByID(c *gin.Context) {
 		return
 	}
 
+	limitAmountStr := c.PostForm("limit_amount")
+	limitAmount, err := strconv.ParseUint(limitAmountStr, 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
 	productCode := c.PostForm("product_code")
 	if productCode == "" {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -559,7 +580,7 @@ func UpdateProductByID(c *gin.Context) {
 
 	currentTime := time.Now()
 
-	resultProducts, err := db.Query("UPDATE products SET brend_id = $1 , price = $2 , old_price = $3, amount = $4, product_code = $5, main_image = $6, images = $7, updated_at = $8 WHERE id = $9", brendID, price, oldPrice, amount, productCode, mainImageName, pq.StringArray(imagePaths), currentTime, ID)
+	resultProducts, err := db.Query("UPDATE products SET brend_id = $1 , price = $2 , old_price = $3, amount = $4, product_code = $5, main_image = $6, images = $7, limit_amount = $10 updated_at = $8 WHERE id = $9", brendID, price, oldPrice, amount, productCode, mainImageName, pq.StringArray(imagePaths), currentTime, ID, limitAmount)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -668,7 +689,7 @@ func GetProductByID(c *gin.Context) {
 
 	ID := c.Param("id")
 
-	rowProduct, err := db.Query("SELECT id,brend_id,price,old_price,amount,product_code,main_image,images FROM products WHERE id = $1 AND deleted_at IS NULL", ID)
+	rowProduct, err := db.Query("SELECT id,brend_id,price,old_price,amount,product_code,main_image,images,limit_amount FROM products WHERE id = $1 AND deleted_at IS NULL", ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -681,7 +702,7 @@ func GetProductByID(c *gin.Context) {
 	var product OneProduct
 
 	for rowProduct.Next() {
-		if err := rowProduct.Scan(&product.ID, &product.BrendID, &product.Price, &product.OldPrice, &product.Amount, &product.ProductCode, &product.MainImage, &product.Images); err != nil {
+		if err := rowProduct.Scan(&product.ID, &product.BrendID, &product.Price, &product.OldPrice, &product.Amount, &product.ProductCode, &product.MainImage, &product.Images, &product.LimitAmount); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
@@ -786,7 +807,7 @@ func GetProducts(c *gin.Context) {
 	}
 	defer db.Close()
 
-	rowsProduct, err := db.Query("SELECT id,brend_id,price,old_price,amount,product_code,main_image,images FROM products WHERE deleted_at IS NULL")
+	rowsProduct, err := db.Query("SELECT id,brend_id,price,old_price,amount,product_code,main_image,images,limit_amount FROM products WHERE deleted_at IS NULL")
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -802,7 +823,7 @@ func GetProducts(c *gin.Context) {
 	for rowsProduct.Next() {
 		var product OneProduct
 
-		if err := rowsProduct.Scan(&product.ID, &product.BrendID, &product.Price, &product.OldPrice, &product.Amount, &product.ProductCode, &product.MainImage, &product.Images); err != nil {
+		if err := rowsProduct.Scan(&product.ID, &product.BrendID, &product.Price, &product.OldPrice, &product.Amount, &product.ProductCode, &product.MainImage, &product.Images, &product.LimitAmount); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
