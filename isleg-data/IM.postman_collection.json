@@ -1046,7 +1046,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "localhost:2406/admin/product/e3f8aebb-1451-43a3-9e9b-582da01c8d08",
+							"raw": "localhost:2406/admin/product/3b6d2d59-7ad4-4392-b7de-5a1d6bd003e1",
 							"host": [
 								"localhost"
 							],
@@ -1054,7 +1054,7 @@
 							"path": [
 								"admin",
 								"product",
-								"e3f8aebb-1451-43a3-9e9b-582da01c8d08"
+								"3b6d2d59-7ad4-4392-b7de-5a1d6bd003e1"
 							]
 						}
 					},
@@ -3122,7 +3122,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIrOTkzNjMyMzQ1ODciLCJleHAiOjE2NjEyNjg1NDd9.qwScJcw21yRJElOMhoxdiRzH0IRGzOtG1iXcyEDtl3w",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NSIsImV4cCI6MTY2MTg0MDk4Mn0.1CZTzcSc9eBCuFC1YYTQCRG-Irkbhoxc-LrNPK7eKd4",
 								"type": "default"
 							}
 						],
@@ -3163,7 +3163,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIrOTkzNjEyMzU2OTgiLCJleHAiOjE2NjEyNzA0ODh9.TqVT9wanz4pG9818hKjYl8laygW7BltRqHFQzCb14vM",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NSIsImV4cCI6MTY2MTgzOTUxN30.2wzAchA-0QhHcdyWlx4iwMPEdhXq8oGGx60zphDU0uo",
 								"type": "default"
 							}
 						],
@@ -3470,6 +3470,220 @@
 								"api",
 								"tm",
 								"basket"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "TranslationBasketPage",
+			"item": [
+				{
+					"name": "CreateTranslationBasketPage",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "quantity_of_goods_tm",
+									"value": "quantity_of_goods_tm",
+									"type": "default"
+								},
+								{
+									"key": "quantity_of_goods_ru",
+									"value": "quantity_of_goods_ru",
+									"type": "default"
+								},
+								{
+									"key": "total_price_tm",
+									"value": "total_price_tm",
+									"type": "default"
+								},
+								{
+									"key": "total_price_ru",
+									"value": "total_price_ru",
+									"type": "default"
+								},
+								{
+									"key": "discount_tm",
+									"value": "discount_tm",
+									"type": "default"
+								},
+								{
+									"key": "discount_ru",
+									"value": "discount_ru",
+									"type": "default"
+								},
+								{
+									"key": "delivery_tm",
+									"value": "delivery_tm",
+									"type": "default"
+								},
+								{
+									"key": "delivery_ru",
+									"value": "delivery_ru",
+									"type": "default"
+								},
+								{
+									"key": "total_tm",
+									"value": "total_tm",
+									"type": "default"
+								},
+								{
+									"key": "total_ru",
+									"value": "total_ru",
+									"type": "default"
+								},
+								{
+									"key": "currency_tm",
+									"value": "currency_tm",
+									"type": "default"
+								},
+								{
+									"key": "currency_ru",
+									"value": "currency_ru",
+									"type": "default"
+								},
+								{
+									"key": "to_order_tm",
+									"value": "to_order_tm",
+									"type": "default"
+								},
+								{
+									"key": "to_order_ru",
+									"value": "to_order_ru",
+									"type": "default"
+								},
+								{
+									"key": "your_basket_tm",
+									"value": "your_basket_tm",
+									"type": "default"
+								},
+								{
+									"key": "your_basket_ru",
+									"value": "your_basket_ru",
+									"type": "default"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:2406/admin/translation-basket-page",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"admin",
+								"translation-basket-page"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UpdateTranslationBasketPageByID",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "quantity_of_goods",
+									"value": "quantity_of_goods",
+									"type": "default"
+								},
+								{
+									"key": "total_price",
+									"value": "total_price",
+									"type": "default"
+								},
+								{
+									"key": "discount",
+									"value": "discount",
+									"type": "default"
+								},
+								{
+									"key": "delivery",
+									"value": "delivery",
+									"type": "default"
+								},
+								{
+									"key": "total",
+									"value": "total",
+									"type": "default"
+								},
+								{
+									"key": "currency",
+									"value": "currency",
+									"type": "default"
+								},
+								{
+									"key": "to_order",
+									"value": "to_order",
+									"type": "default"
+								},
+								{
+									"key": "your_basket",
+									"value": "your_basket",
+									"type": "default"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:2406/admin/translation-basket-page/51b3699e-1c7b-442a-be7b-6b2ad1f111b4",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"admin",
+								"translation-basket-page",
+								"51b3699e-1c7b-442a-be7b-6b2ad1f111b4"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetTranslationBasketPageByID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:2406/admin/translation-basket-page/51b3699e-1c7b-442a-be7b-6b2ad1f111b4",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"admin",
+								"translation-basket-page",
+								"51b3699e-1c7b-442a-be7b-6b2ad1f111b4"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetTranslationBasketPageByLangID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:2406/api/tm/translation-basket-page",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"api",
+								"tm",
+								"translation-basket-page"
 							]
 						}
 					},

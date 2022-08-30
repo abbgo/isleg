@@ -279,7 +279,8 @@ CREATE TABLE public.products (
     images character varying[],
     created_at timestamp with time zone DEFAULT now(),
     updated_at timestamp with time zone DEFAULT now(),
-    deleted_at timestamp with time zone
+    deleted_at timestamp with time zone,
+    limit_amount bigint
 );
 
 
@@ -337,6 +338,29 @@ CREATE TABLE public.translation_afisa (
 
 
 ALTER TABLE public.translation_afisa OWNER TO postgres;
+
+--
+-- Name: translation_basket_page; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.translation_basket_page (
+    id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
+    lang_id uuid,
+    quantity_of_goods character varying DEFAULT 'uytget'::character varying,
+    total_price character varying DEFAULT 'uytget'::character varying,
+    discount character varying DEFAULT 'uytget'::character varying,
+    delivery character varying DEFAULT 'uytget'::character varying,
+    total character varying DEFAULT 'uytget'::character varying,
+    currency character varying DEFAULT 'uytget'::character varying,
+    to_order character varying DEFAULT 'uytget'::character varying,
+    your_basket character varying DEFAULT 'uytget'::character varying,
+    created_at timestamp with time zone DEFAULT now(),
+    updated_at timestamp with time zone DEFAULT now(),
+    deleted_at timestamp with time zone
+);
+
+
+ALTER TABLE public.translation_basket_page OWNER TO postgres;
 
 --
 -- Name: translation_category; Type: TABLE; Schema: public; Owner: postgres
@@ -440,7 +464,8 @@ CREATE TABLE public.translation_header (
     updated_at timestamp with time zone DEFAULT now(),
     deleted_at timestamp with time zone,
     basket character varying DEFAULT 'uytget'::character varying,
-    email character varying DEFAULT 'uytget'::character varying
+    email character varying DEFAULT 'uytget'::character varying,
+    add_to_basket character varying DEFAULT 'uytget'::character varying
 );
 
 
@@ -741,6 +766,7 @@ aea98b93-7bdf-455b-9ad4-a259d69dc76e	ru	uploads/language1c24e3a6-173e-4264-a631-
 --
 
 COPY public.likes (id, product_id, customer_id, created_at, updated_at, deleted_at) FROM stdin;
+023f9023-793b-4b32-babd-ea45c61bd93a	3b6d2d59-7ad4-4392-b7de-5a1d6bd003e1	7e872c52-0d23-4086-8c45-43000b57332e	2022-08-30 11:00:01.571057+05	2022-08-30 11:00:01.571057+05	\N
 \.
 
 
@@ -748,34 +774,34 @@ COPY public.likes (id, product_id, customer_id, created_at, updated_at, deleted_
 -- Data for Name: products; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.products (id, brend_id, price, old_price, amount, product_code, main_image, images, created_at, updated_at, deleted_at) FROM stdin;
-3b6d2d59-7ad4-4392-b7de-5a1d6bd003e1	6a31c50a-704f-4b0d-80ae-240ca3094cda	24	23.5	128	s6fs66	uploads/productMaind1d6a321-1d10-4355-be39-7ff7001578c5.jpeg	{uploads/productc0fb523c-0ff7-45fc-b37b-18bfd82f0156.jpeg}	2022-06-20 12:43:47.742025+05	2022-06-20 12:43:47.742025+05	\N
-b4499063-096e-4fa6-9e21-a47185afd829	214be879-65c3-4710-86b4-3fc3bce2e974	28	25.5	45	s6fs66	uploads/productMain07c5ce1d-b8b1-4893-9825-17d218832484.jpeg	{uploads/product4c118ed9-2986-484c-86c6-7540c11d5351.jpeg}	2022-06-21 10:17:07.683256+05	2022-06-21 10:17:07.683256+05	\N
-538f0688-30ce-497b-9a0e-cd53d0d5239d	214be879-65c3-4710-86b4-3fc3bce2e974	23.5	25	45	s6fs66	uploads/productMain7377551a-91b3-4996-a5ae-f03ddf5530ac.jpeg	{uploads/product8b43004a-ad22-4241-8ad5-bd12e644351e.jpeg}	2022-06-21 10:21:35.476766+05	2022-06-21 10:21:35.476766+05	\N
-0dc06a1f-e25a-4c3d-8310-09985e905262	214be879-65c3-4710-86b4-3fc3bce2e974	46	0	58	s6fs666516	uploads/productMainb95cac81-2dc7-4386-91ce-476b2f5763e4.jpeg	{uploads/product50e40976-8376-4028-a389-2557814cfa48.jpeg}	2022-06-21 10:23:26.430614+05	2022-06-21 10:23:26.430614+05	\N
-1fa25151-9c63-4554-a79d-faf6cc78ef69	ddccb2dc-9697-4f4e-acf5-26b8bc2c8b72	74.3	0	456	w5we	uploads/productMain08f71540-c011-4251-a7eb-4c8dccc28c08.jpeg	{uploads/productcd6cb444-b9d1-41cf-ad2d-272c80384c80.jpeg}	2022-06-21 10:33:58.914208+05	2022-06-21 10:33:58.914208+05	\N
-ce76ca4c-0ffb-4dd7-a252-3d3eaa6da732	6a31c50a-704f-4b0d-80ae-240ca3094cda	1.5	1.7	2684	w6dwed	uploads/productMain1ed63766-b427-4f3b-b796-a593d2a5397e.jpeg	{uploads/product104c0eee-f261-4ddc-8f05-6821a08675c5.jpeg,uploads/product213eb583-2b3c-4f2e-a6f7-1454e080ce74.jpeg}	2022-06-21 10:40:32.397262+05	2022-06-21 10:40:32.397262+05	\N
-2072a0fb-bbc4-4231-a7a4-dad00bb0a892	6a31c50a-704f-4b0d-80ae-240ca3094cda	7	0	264	1w6dew	uploads/productMain6ee2f9be-6e64-4aed-8631-ef4b81aa1701.jpeg	{uploads/product21c93b2f-1f1b-4fdc-a33c-b1e96aa3a119.jpeg,uploads/producteeaa8cfe-2f98-4ef7-b9cc-994991cea1d0.jpeg}	2022-06-21 10:41:30.430549+05	2022-06-21 10:41:30.430549+05	\N
-0cbe2487-c709-403f-a6c4-4f1a73fd3f78	214be879-65c3-4710-86b4-3fc3bce2e974	13.9	0	68	ww6	uploads/productMain389701f5-89f1-4996-9a1d-e327c78e2536.jpeg	{uploads/productc0c9898e-6404-4586-a786-0d93d2816957.jpeg,uploads/productf577b09a-d1e1-4ac3-90fa-183ecfc5840c.jpeg}	2022-06-21 10:50:40.591888+05	2022-06-21 10:50:40.591888+05	\N
-1a8935fd-c6ab-4656-b173-826c487a2274	ddccb2dc-9697-4f4e-acf5-26b8bc2c8b72	46	46.5	998	w5f2we6f598	uploads/product/5c92b792-827b-465a-99a4-2ba1cf33f31c.jpg	{uploads/product/c26113bd-e7c7-4fcc-a749-726b1737ad1e.jpeg,uploads/product/3b34a689-bd2b-417c-b0bc-abbf3c90f741.jpeg}	2022-06-21 10:15:31.506167+05	2022-08-11 11:08:02.236346+05	\N
-ec4963db-c429-4135-9790-d3860c350bc5	ddccb2dc-9697-4f4e-acf5-26b8bc2c8b72	34	35	89	6s5f6	uploads/productMainca02c36d-c390-41bf-b380-bd58e1879939.jpg	{uploads/producta0f75297-de8c-48ca-b923-a996926150ec.jpeg,uploads/producte977c95c-343e-41f8-9ee1-ec7c21c7ac35.jpeg}	2022-06-21 10:28:00.458614+05	2022-06-21 10:28:00.458614+05	2022-08-08 11:31:58.974112+05
-93096765-14be-4093-8e53-81caba6de3aa	6a31c50a-704f-4b0d-80ae-240ca3094cda	4.5	0	85	1yku4i9k84	uploads/productMain8b11acad-8d6a-4530-a484-4b61c1cec60f.jpeg	{uploads/productd04e2ca7-207d-42fd-b48c-c40bf02ffecc.jpeg,uploads/productb56d9e45-4ce6-4d70-9021-00a00710fcf4.jpeg}	2022-06-21 11:04:41.828533+05	2022-06-21 11:04:41.828533+05	2022-08-08 11:31:58.974112+05
-070d7096-2fdd-4327-b0b6-99b13af1570f	6a31c50a-704f-4b0d-80ae-240ca3094cda	94.8	98.6	92	ehrbterbi	uploads/productMain2037e05e-4c71-497d-847c-1736795da2c1.jpeg	{uploads/product419cf127-92d6-4f0d-aa59-440c4cecdb89.jpeg,uploads/productb5813ce9-4c4a-4145-9268-855478b7a9e3.jpeg}	2022-06-21 11:06:35.148892+05	2022-06-21 11:06:35.148892+05	\N
-aee7abe3-c6cc-4562-bf67-3f87e952611b	214be879-65c3-4710-86b4-3fc3bce2e974	56.1	58.1	34	odewfiobe	uploads/productMain6e6f4f07-c035-4449-b1ae-6671189e35f7.jpeg	{uploads/product97dc2e51-919f-41b5-8295-55d23c980dd4.jpeg,uploads/productd2745857-1f33-45e4-acdf-633c0437c87b.jpeg}	2022-06-21 11:07:41.736902+05	2022-06-21 11:07:41.736902+05	\N
-205b50c5-da4b-4edf-adac-54f93dc99253	214be879-65c3-4710-86b4-3fc3bce2e974	18.3	18.8	64	f6h51yuj7	uploads/productMain2b4d0e4b-6a4a-45e5-a9a8-bcd4c15f1e17.jpeg	{uploads/producta7c24eb9-99e2-4cc3-96b7-7bbaa61d2d86.jpeg,uploads/product9e85132c-cb21-4051-85e3-4c5e3b1931c4.jpeg}	2022-06-21 11:10:49.511294+05	2022-06-21 11:10:49.511294+05	\N
-c9307e74-88a2-4d96-96ec-6f04e42ad0cb	214be879-65c3-4710-86b4-3fc3bce2e974	40.3	0	95	656greg	uploads/productMainadf07ba4-eed4-4897-bbc9-ed78eb733877.jpeg	{uploads/productbcd14c08-5329-498b-9364-75a2333e6797.jpeg,uploads/product71217e34-1548-4414-8502-e5885257a323.jpeg}	2022-06-21 11:11:47.929311+05	2022-06-21 11:11:47.929311+05	\N
-f3208845-80d9-4ccb-9ad2-07a8ee2832c6	ddccb2dc-9697-4f4e-acf5-26b8bc2c8b72	13.9	15.4	485	14sfsffew654	uploads/productMain030a48cc-5c4d-4be8-b803-6107234be675.jpeg	{uploads/product8156e8d7-af24-4ea3-8135-19c2b661f1d5.jpeg,uploads/productccbe9505-f0e0-4eda-a23b-6c8538e1f54c.jpeg}	2022-06-21 11:13:34.425672+05	2022-06-21 11:13:34.425672+05	\N
-7bab1a39-0c66-4c1e-9f9c-7f25e050daa5	ddccb2dc-9697-4f4e-acf5-26b8bc2c8b72	11.5	15.8	72	oeiwfwoefo	uploads/productMain29caf1dd-47cd-470f-a27a-775fe6d1f3ad.jpeg	{uploads/product2b9ca336-235f-4fa5-a00c-cf141503d86d.jpeg,uploads/productc6d63afb-9cd3-4e04-a3f1-b7bc7634ecbe.jpeg}	2022-06-21 11:14:39.128719+05	2022-06-21 11:14:39.128719+05	\N
-c182ee68-2717-4604-b0ab-0e6994e61ff0	6a31c50a-704f-4b0d-80ae-240ca3094cda	31.7	0	72	6ef987e8	uploads/productMaind1c1e62c-af97-4983-92ca-d27044d9b94e.jpeg	{uploads/product14bb0731-ba19-483d-9bf7-e59230364b63.jpeg,uploads/product951f3c30-e33b-4c8f-8e37-273e303edac9.jpeg}	2022-06-21 11:17:33.304681+05	2022-06-21 11:17:33.304681+05	\N
-4ae4d83c-56ad-4d99-9d6f-e0dd77f9c982	6a31c50a-704f-4b0d-80ae-240ca3094cda	35	0	19	j6yukuy	uploads/productMain2ea4ba35-5068-4b76-bd96-41f87ef6ef6d.jpeg	{uploads/product3f3d03da-31a1-4da5-83c2-91ec4f262b31.jpeg,uploads/product9a7162dd-1616-404d-b5c5-2833d7e8febc.jpeg}	2022-06-21 11:18:25.021332+05	2022-06-21 11:18:25.021332+05	\N
-029f6bde-9ead-43e0-88b7-214b1dd831ee	6a31c50a-704f-4b0d-80ae-240ca3094cda	35	37	19	j6yukuy	uploads/productMain2b06bd3a-3199-4d99-a78f-1a1ea8e07e0f.jpeg	\N	2022-07-27 11:33:11.781445+05	2022-07-27 11:33:11.781445+05	\N
-f7000691-bc1a-4f98-9c2c-73963b87dbe0	6a31c50a-704f-4b0d-80ae-240ca3094cda	35	37	19	j6yukuy	uploads/productMain65284881-70f5-4a38-9e0e-355fefc4c6be.jpeg	\N	2022-07-27 11:33:24.524502+05	2022-07-27 11:33:24.524502+05	\N
-c9100c0c-0e40-4c00-b987-79872f751cbb	6a31c50a-704f-4b0d-80ae-240ca3094cda	35	37	19	j6yukuy	uploads/productMainf8e885f2-75a4-4ffe-a610-f733cbdf30de.jpeg	\N	2022-07-27 11:33:31.236459+05	2022-07-27 11:33:31.236459+05	\N
-86f78ca3-177d-4c89-8693-7678066d7389	6a31c50a-704f-4b0d-80ae-240ca3094cda	18.6	0	56	618ew	uploads/productMainb54c5441-9a0a-41bb-9c3a-64034fb3912d.jpeg	{uploads/product9e5080f3-d3bc-498d-b0fe-5621c1f4e0ac.jpeg,uploads/product4113739e-2e42-4f76-a46c-5d965891be60.jpeg}	2022-06-21 10:47:21.505128+05	2022-06-21 10:47:21.505128+05	\N
-0a6863e2-7ed9-4fcd-9875-270fb778b33e	6a31c50a-704f-4b0d-80ae-240ca3094cda	17.7	0	85	61d9we8	uploads/productMain2996089c-4c86-48d2-815c-10395b92a9cb.jpeg	{uploads/productfe827c62-1954-47b3-8416-f78817dbdcc0.jpeg,uploads/product1e9643be-36b3-47f8-82d0-9ad23a940b98.jpeg}	2022-06-21 10:48:09.289024+05	2022-06-21 10:48:09.289024+05	\N
-49381c4e-298d-43b7-8ae4-8dbe6e7da581	214be879-65c3-4710-86b4-3fc3bce2e974	13.9	0	89	6wd4we98	uploads/productMain75ac8d63-7d76-4758-8a60-375bcf30ff7f.jpeg	{uploads/producte48f5ec1-8d0f-4781-b1f8-50a52fc3e70a.jpeg,uploads/product1729d3ed-9e53-409a-aa99-06fa37e1c1f4.jpeg}	2022-06-21 10:49:08.655229+05	2022-06-21 10:49:08.655229+05	\N
-c1f8c7cb-081e-4f99-aeb3-0bc84153295e	214be879-65c3-4710-86b4-3fc3bce2e974	22.7	0	268	w6dw9	uploads/productMain93cf7211-66b8-47d1-aa7f-1580fe8137fc.jpeg	{uploads/product6f619bc9-936e-453d-a339-37ab850f64f9.jpeg,uploads/product65530cd8-c8c2-4ce2-8c37-7327a6aaec18.jpeg}	2022-06-21 10:49:54.728976+05	2022-06-21 10:49:54.728976+05	\N
-cbb0047a-e543-41a8-845b-8439d11638f4	214be879-65c3-4710-86b4-3fc3bce2e974	13.9	0	68	ww6	uploads/productMain0174f727-509f-4b7c-b217-4f913275510b.jpeg	{uploads/product974ab765-cdf9-4e93-9ff8-c8caae136b2d.jpeg,uploads/producta8a2abc9-fe81-44c9-a1d5-3476cec59b3b.jpeg}	2022-06-21 10:54:40.567153+05	2022-06-21 10:54:40.567153+05	\N
+COPY public.products (id, brend_id, price, old_price, amount, product_code, main_image, images, created_at, updated_at, deleted_at, limit_amount) FROM stdin;
+3b6d2d59-7ad4-4392-b7de-5a1d6bd003e1	6a31c50a-704f-4b0d-80ae-240ca3094cda	24	23.5	128	s6fs66	uploads/productMaind1d6a321-1d10-4355-be39-7ff7001578c5.jpeg	{uploads/productc0fb523c-0ff7-45fc-b37b-18bfd82f0156.jpeg}	2022-06-20 12:43:47.742025+05	2022-06-20 12:43:47.742025+05	\N	0
+b4499063-096e-4fa6-9e21-a47185afd829	214be879-65c3-4710-86b4-3fc3bce2e974	28	25.5	45	s6fs66	uploads/productMain07c5ce1d-b8b1-4893-9825-17d218832484.jpeg	{uploads/product4c118ed9-2986-484c-86c6-7540c11d5351.jpeg}	2022-06-21 10:17:07.683256+05	2022-06-21 10:17:07.683256+05	\N	0
+538f0688-30ce-497b-9a0e-cd53d0d5239d	214be879-65c3-4710-86b4-3fc3bce2e974	23.5	25	45	s6fs66	uploads/productMain7377551a-91b3-4996-a5ae-f03ddf5530ac.jpeg	{uploads/product8b43004a-ad22-4241-8ad5-bd12e644351e.jpeg}	2022-06-21 10:21:35.476766+05	2022-06-21 10:21:35.476766+05	\N	0
+0dc06a1f-e25a-4c3d-8310-09985e905262	214be879-65c3-4710-86b4-3fc3bce2e974	46	0	58	s6fs666516	uploads/productMainb95cac81-2dc7-4386-91ce-476b2f5763e4.jpeg	{uploads/product50e40976-8376-4028-a389-2557814cfa48.jpeg}	2022-06-21 10:23:26.430614+05	2022-06-21 10:23:26.430614+05	\N	0
+1fa25151-9c63-4554-a79d-faf6cc78ef69	ddccb2dc-9697-4f4e-acf5-26b8bc2c8b72	74.3	0	456	w5we	uploads/productMain08f71540-c011-4251-a7eb-4c8dccc28c08.jpeg	{uploads/productcd6cb444-b9d1-41cf-ad2d-272c80384c80.jpeg}	2022-06-21 10:33:58.914208+05	2022-06-21 10:33:58.914208+05	\N	0
+ce76ca4c-0ffb-4dd7-a252-3d3eaa6da732	6a31c50a-704f-4b0d-80ae-240ca3094cda	1.5	1.7	2684	w6dwed	uploads/productMain1ed63766-b427-4f3b-b796-a593d2a5397e.jpeg	{uploads/product104c0eee-f261-4ddc-8f05-6821a08675c5.jpeg,uploads/product213eb583-2b3c-4f2e-a6f7-1454e080ce74.jpeg}	2022-06-21 10:40:32.397262+05	2022-06-21 10:40:32.397262+05	\N	0
+2072a0fb-bbc4-4231-a7a4-dad00bb0a892	6a31c50a-704f-4b0d-80ae-240ca3094cda	7	0	264	1w6dew	uploads/productMain6ee2f9be-6e64-4aed-8631-ef4b81aa1701.jpeg	{uploads/product21c93b2f-1f1b-4fdc-a33c-b1e96aa3a119.jpeg,uploads/producteeaa8cfe-2f98-4ef7-b9cc-994991cea1d0.jpeg}	2022-06-21 10:41:30.430549+05	2022-06-21 10:41:30.430549+05	\N	0
+0cbe2487-c709-403f-a6c4-4f1a73fd3f78	214be879-65c3-4710-86b4-3fc3bce2e974	13.9	0	68	ww6	uploads/productMain389701f5-89f1-4996-9a1d-e327c78e2536.jpeg	{uploads/productc0c9898e-6404-4586-a786-0d93d2816957.jpeg,uploads/productf577b09a-d1e1-4ac3-90fa-183ecfc5840c.jpeg}	2022-06-21 10:50:40.591888+05	2022-06-21 10:50:40.591888+05	\N	0
+1a8935fd-c6ab-4656-b173-826c487a2274	ddccb2dc-9697-4f4e-acf5-26b8bc2c8b72	46	46.5	998	w5f2we6f598	uploads/product/5c92b792-827b-465a-99a4-2ba1cf33f31c.jpg	{uploads/product/c26113bd-e7c7-4fcc-a749-726b1737ad1e.jpeg,uploads/product/3b34a689-bd2b-417c-b0bc-abbf3c90f741.jpeg}	2022-06-21 10:15:31.506167+05	2022-08-11 11:08:02.236346+05	\N	0
+ec4963db-c429-4135-9790-d3860c350bc5	ddccb2dc-9697-4f4e-acf5-26b8bc2c8b72	34	35	89	6s5f6	uploads/productMainca02c36d-c390-41bf-b380-bd58e1879939.jpg	{uploads/producta0f75297-de8c-48ca-b923-a996926150ec.jpeg,uploads/producte977c95c-343e-41f8-9ee1-ec7c21c7ac35.jpeg}	2022-06-21 10:28:00.458614+05	2022-06-21 10:28:00.458614+05	2022-08-08 11:31:58.974112+05	0
+93096765-14be-4093-8e53-81caba6de3aa	6a31c50a-704f-4b0d-80ae-240ca3094cda	4.5	0	85	1yku4i9k84	uploads/productMain8b11acad-8d6a-4530-a484-4b61c1cec60f.jpeg	{uploads/productd04e2ca7-207d-42fd-b48c-c40bf02ffecc.jpeg,uploads/productb56d9e45-4ce6-4d70-9021-00a00710fcf4.jpeg}	2022-06-21 11:04:41.828533+05	2022-06-21 11:04:41.828533+05	2022-08-08 11:31:58.974112+05	0
+070d7096-2fdd-4327-b0b6-99b13af1570f	6a31c50a-704f-4b0d-80ae-240ca3094cda	94.8	98.6	92	ehrbterbi	uploads/productMain2037e05e-4c71-497d-847c-1736795da2c1.jpeg	{uploads/product419cf127-92d6-4f0d-aa59-440c4cecdb89.jpeg,uploads/productb5813ce9-4c4a-4145-9268-855478b7a9e3.jpeg}	2022-06-21 11:06:35.148892+05	2022-06-21 11:06:35.148892+05	\N	0
+aee7abe3-c6cc-4562-bf67-3f87e952611b	214be879-65c3-4710-86b4-3fc3bce2e974	56.1	58.1	34	odewfiobe	uploads/productMain6e6f4f07-c035-4449-b1ae-6671189e35f7.jpeg	{uploads/product97dc2e51-919f-41b5-8295-55d23c980dd4.jpeg,uploads/productd2745857-1f33-45e4-acdf-633c0437c87b.jpeg}	2022-06-21 11:07:41.736902+05	2022-06-21 11:07:41.736902+05	\N	0
+205b50c5-da4b-4edf-adac-54f93dc99253	214be879-65c3-4710-86b4-3fc3bce2e974	18.3	18.8	64	f6h51yuj7	uploads/productMain2b4d0e4b-6a4a-45e5-a9a8-bcd4c15f1e17.jpeg	{uploads/producta7c24eb9-99e2-4cc3-96b7-7bbaa61d2d86.jpeg,uploads/product9e85132c-cb21-4051-85e3-4c5e3b1931c4.jpeg}	2022-06-21 11:10:49.511294+05	2022-06-21 11:10:49.511294+05	\N	0
+c9307e74-88a2-4d96-96ec-6f04e42ad0cb	214be879-65c3-4710-86b4-3fc3bce2e974	40.3	0	95	656greg	uploads/productMainadf07ba4-eed4-4897-bbc9-ed78eb733877.jpeg	{uploads/productbcd14c08-5329-498b-9364-75a2333e6797.jpeg,uploads/product71217e34-1548-4414-8502-e5885257a323.jpeg}	2022-06-21 11:11:47.929311+05	2022-06-21 11:11:47.929311+05	\N	0
+f3208845-80d9-4ccb-9ad2-07a8ee2832c6	ddccb2dc-9697-4f4e-acf5-26b8bc2c8b72	13.9	15.4	485	14sfsffew654	uploads/productMain030a48cc-5c4d-4be8-b803-6107234be675.jpeg	{uploads/product8156e8d7-af24-4ea3-8135-19c2b661f1d5.jpeg,uploads/productccbe9505-f0e0-4eda-a23b-6c8538e1f54c.jpeg}	2022-06-21 11:13:34.425672+05	2022-06-21 11:13:34.425672+05	\N	0
+7bab1a39-0c66-4c1e-9f9c-7f25e050daa5	ddccb2dc-9697-4f4e-acf5-26b8bc2c8b72	11.5	15.8	72	oeiwfwoefo	uploads/productMain29caf1dd-47cd-470f-a27a-775fe6d1f3ad.jpeg	{uploads/product2b9ca336-235f-4fa5-a00c-cf141503d86d.jpeg,uploads/productc6d63afb-9cd3-4e04-a3f1-b7bc7634ecbe.jpeg}	2022-06-21 11:14:39.128719+05	2022-06-21 11:14:39.128719+05	\N	0
+c182ee68-2717-4604-b0ab-0e6994e61ff0	6a31c50a-704f-4b0d-80ae-240ca3094cda	31.7	0	72	6ef987e8	uploads/productMaind1c1e62c-af97-4983-92ca-d27044d9b94e.jpeg	{uploads/product14bb0731-ba19-483d-9bf7-e59230364b63.jpeg,uploads/product951f3c30-e33b-4c8f-8e37-273e303edac9.jpeg}	2022-06-21 11:17:33.304681+05	2022-06-21 11:17:33.304681+05	\N	0
+4ae4d83c-56ad-4d99-9d6f-e0dd77f9c982	6a31c50a-704f-4b0d-80ae-240ca3094cda	35	0	19	j6yukuy	uploads/productMain2ea4ba35-5068-4b76-bd96-41f87ef6ef6d.jpeg	{uploads/product3f3d03da-31a1-4da5-83c2-91ec4f262b31.jpeg,uploads/product9a7162dd-1616-404d-b5c5-2833d7e8febc.jpeg}	2022-06-21 11:18:25.021332+05	2022-06-21 11:18:25.021332+05	\N	0
+029f6bde-9ead-43e0-88b7-214b1dd831ee	6a31c50a-704f-4b0d-80ae-240ca3094cda	35	37	19	j6yukuy	uploads/productMain2b06bd3a-3199-4d99-a78f-1a1ea8e07e0f.jpeg	\N	2022-07-27 11:33:11.781445+05	2022-07-27 11:33:11.781445+05	\N	0
+f7000691-bc1a-4f98-9c2c-73963b87dbe0	6a31c50a-704f-4b0d-80ae-240ca3094cda	35	37	19	j6yukuy	uploads/productMain65284881-70f5-4a38-9e0e-355fefc4c6be.jpeg	\N	2022-07-27 11:33:24.524502+05	2022-07-27 11:33:24.524502+05	\N	0
+c9100c0c-0e40-4c00-b987-79872f751cbb	6a31c50a-704f-4b0d-80ae-240ca3094cda	35	37	19	j6yukuy	uploads/productMainf8e885f2-75a4-4ffe-a610-f733cbdf30de.jpeg	\N	2022-07-27 11:33:31.236459+05	2022-07-27 11:33:31.236459+05	\N	0
+86f78ca3-177d-4c89-8693-7678066d7389	6a31c50a-704f-4b0d-80ae-240ca3094cda	18.6	0	56	618ew	uploads/productMainb54c5441-9a0a-41bb-9c3a-64034fb3912d.jpeg	{uploads/product9e5080f3-d3bc-498d-b0fe-5621c1f4e0ac.jpeg,uploads/product4113739e-2e42-4f76-a46c-5d965891be60.jpeg}	2022-06-21 10:47:21.505128+05	2022-06-21 10:47:21.505128+05	\N	0
+0a6863e2-7ed9-4fcd-9875-270fb778b33e	6a31c50a-704f-4b0d-80ae-240ca3094cda	17.7	0	85	61d9we8	uploads/productMain2996089c-4c86-48d2-815c-10395b92a9cb.jpeg	{uploads/productfe827c62-1954-47b3-8416-f78817dbdcc0.jpeg,uploads/product1e9643be-36b3-47f8-82d0-9ad23a940b98.jpeg}	2022-06-21 10:48:09.289024+05	2022-06-21 10:48:09.289024+05	\N	0
+49381c4e-298d-43b7-8ae4-8dbe6e7da581	214be879-65c3-4710-86b4-3fc3bce2e974	13.9	0	89	6wd4we98	uploads/productMain75ac8d63-7d76-4758-8a60-375bcf30ff7f.jpeg	{uploads/producte48f5ec1-8d0f-4781-b1f8-50a52fc3e70a.jpeg,uploads/product1729d3ed-9e53-409a-aa99-06fa37e1c1f4.jpeg}	2022-06-21 10:49:08.655229+05	2022-06-21 10:49:08.655229+05	\N	0
+c1f8c7cb-081e-4f99-aeb3-0bc84153295e	214be879-65c3-4710-86b4-3fc3bce2e974	22.7	0	268	w6dw9	uploads/productMain93cf7211-66b8-47d1-aa7f-1580fe8137fc.jpeg	{uploads/product6f619bc9-936e-453d-a339-37ab850f64f9.jpeg,uploads/product65530cd8-c8c2-4ce2-8c37-7327a6aaec18.jpeg}	2022-06-21 10:49:54.728976+05	2022-06-21 10:49:54.728976+05	\N	0
+cbb0047a-e543-41a8-845b-8439d11638f4	214be879-65c3-4710-86b4-3fc3bce2e974	13.9	0	68	ww6	uploads/productMain0174f727-509f-4b7c-b217-4f913275510b.jpeg	{uploads/product974ab765-cdf9-4e93-9ff8-c8caae136b2d.jpeg,uploads/producta8a2abc9-fe81-44c9-a1d5-3476cec59b3b.jpeg}	2022-06-21 10:54:40.567153+05	2022-06-21 10:54:40.567153+05	\N	0
 \.
 
 
@@ -802,6 +828,16 @@ e50bb3d1-14a1-400e-83d9-8bc15969b914	aea98b93-7bdf-455b-9ad4-a259d69dc76e	Рад
 --
 
 COPY public.translation_afisa (id, afisa_id, lang_id, title, description, created_at, updated_at, deleted_at) FROM stdin;
+\.
+
+
+--
+-- Data for Name: translation_basket_page; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.translation_basket_page (id, lang_id, quantity_of_goods, total_price, discount, delivery, total, currency, to_order, your_basket, created_at, updated_at, deleted_at) FROM stdin;
+456dcb5a-fabb-47f8-b216-0cddd3077124	aea98b93-7bdf-455b-9ad4-a259d69dc76e	quantity_of_goods_ru	total_price_ru	discount_ru	delivery_ru	total_ru	currency_ru	to_order_ru	your_basket_ru	2022-08-30 12:36:24.978404+05	2022-08-30 12:36:37.967063+05	\N
+51b3699e-1c7b-442a-be7b-6b2ad1f111b4	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	quantity_of_goods	total_price	discount	delivery	total	currency	to_order	your_basket	2022-08-30 12:36:24.978404+05	2022-08-30 12:39:12.849615+05	\N
 \.
 
 
@@ -885,9 +921,9 @@ COPY public.translation_footer (id, lang_id, about, payment, contact, secure, wo
 -- Data for Name: translation_header; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.translation_header (id, lang_id, research, phone, password, forgot_password, sign_in, sign_up, name, password_verification, verify_secure, my_information, my_favorites, my_orders, log_out, created_at, updated_at, deleted_at, basket, email) FROM stdin;
-eaf206e6-d515-4bdb-9323-a047cd0edae5	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	gözleg	telefon	parol	Acar sozumi unutdym	ulgama girmek	agza bolmak	Ady	Acar sozi tassyklamak	Ulanyş Düzgünlerini we Gizlinlik Şertnamasyny okadym we kabul edýärin	maglumatym	halanlarym	sargytlarym	cykmak	2022-06-16 04:48:26.460534+05	2022-06-16 04:48:26.460534+05	\N	sebet	uytget
-9154e800-2a92-47de-b4ff-1e63b213e5f7	aea98b93-7bdf-455b-9ad4-a259d69dc76e	поиск	tелефон	пароль	забыл пароль	войти	зарегистрироваться	имя	Подтвердить Пароль	Я прочитал и принимаю Условия Обслуживания и Политика Конфиденциальности	моя информация	мои любимые	мои заказы	выйти	2022-06-16 04:48:26.491672+05	2022-06-16 04:48:26.491672+05	\N	корзина	uytget
+COPY public.translation_header (id, lang_id, research, phone, password, forgot_password, sign_in, sign_up, name, password_verification, verify_secure, my_information, my_favorites, my_orders, log_out, created_at, updated_at, deleted_at, basket, email, add_to_basket) FROM stdin;
+eaf206e6-d515-4bdb-9323-a047cd0edae5	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	gözleg	telefon	parol	Acar sozumi unutdym	ulgama girmek	agza bolmak	Ady	Acar sozi tassyklamak	Ulanyş Düzgünlerini we Gizlinlik Şertnamasyny okadym we kabul edýärin	maglumatym	halanlarym	sargytlarym	cykmak	2022-06-16 04:48:26.460534+05	2022-06-16 04:48:26.460534+05	\N	sebet	uytget	uytget
+9154e800-2a92-47de-b4ff-1e63b213e5f7	aea98b93-7bdf-455b-9ad4-a259d69dc76e	поиск	tелефон	пароль	забыл пароль	войти	зарегистрироваться	имя	Подтвердить Пароль	Я прочитал и принимаю Условия Обслуживания и Политика Конфиденциальности	моя информация	мои любимые	мои заказы	выйти	2022-06-16 04:48:26.491672+05	2022-06-16 04:48:26.491672+05	\N	корзина	uytget	uytget
 \.
 
 
@@ -1135,6 +1171,14 @@ ALTER TABLE ONLY public.translation_about
 
 ALTER TABLE ONLY public.translation_afisa
     ADD CONSTRAINT translation_afisa_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: translation_basket_page translation_basket_page_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.translation_basket_page
+    ADD CONSTRAINT translation_basket_page_pkey PRIMARY KEY (id);
 
 
 --
@@ -1431,6 +1475,14 @@ ALTER TABLE ONLY public.translation_product
 
 ALTER TABLE ONLY public.category_shop
     ADD CONSTRAINT fk_shop_category_shop FOREIGN KEY (shop_id) REFERENCES public.shops(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: translation_basket_page language_translation_basket_page; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.translation_basket_page
+    ADD CONSTRAINT language_translation_basket_page FOREIGN KEY (lang_id) REFERENCES public.languages(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --

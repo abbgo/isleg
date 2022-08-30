@@ -198,3 +198,58 @@ func GetTranslationBasketPageByID(c *gin.Context) {
 	})
 
 }
+
+func GetTranslationBasketPageByLangID(c *gin.Context) {
+
+	db, err := config.ConnDB()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer db.Close()
+
+	// GET DATA FROM ROUTE PARAMETER
+	langShortName := c.Param("lang")
+
+	// GET language id
+	langID, err := GetLangID(langShortName)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	// get translation-basket-page where lang_id equal langID
+	rowTRBasketPage, err := db.Query("SELECT quantity_of_goods,total_price,discount,delivery,total,currency,to_order,your_basket FROM translation_basket_page WHERE lang_id = $1 AND deleted_at IS NULL", langID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer rowTRBasketPage.Close()
+
+	var t TrBasketPage
+
+	for rowTRBasketPage.Next() {
+		if err := rowTRBasketPage.Scan(&t.QuantityOfGoods, &t.TotalPrice, &t.Discount, &t.Delivery, &t.Total, &t.Currency, &t.ToOrder, &t.YourBasket); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":                  true,
+		"translation_basket_page": t,
+	})
+
+}

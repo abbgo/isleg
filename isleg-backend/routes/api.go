@@ -174,6 +174,9 @@ func Routes() *gin.Engine {
 		// get update password page translation
 		front.GET("/translation-update-password-page", backController.GetTranslationUpdatePasswordPageByLangID)
 
+		// get basket page translation
+		front.GET("/translation-basket-page", backController.GetTranslationBasketPageByLangID)
+
 		// homepage categories
 		front.GET("/homepage-categories", frontController.GetHomePageCategories)
 
