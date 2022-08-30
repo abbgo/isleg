@@ -17,7 +17,7 @@ type TranslationBasketPage struct {
 	Total           string    `json:"total"`
 	Currency        string    `json:"currency"`
 	ToOrder         string    `json:"to_order"`
-	YourOrder       string    `json:"your_basket"`
+	YourBasket      string    `json:"your_basket"`
 	CreatedAt       string    `json:"-"`
 	UpdatedAt       string    `json:"-"`
 	DeletedAt       string    `json:"-"`
@@ -30,6 +30,18 @@ func ValidateTranslationBasketPageData(languages []Language, dataNames []string,
 			if context.PostForm(dataName+"_"+v.NameShort) == "" {
 				return errors.New(dataName + "_" + v.NameShort + " is required")
 			}
+		}
+	}
+
+	return nil
+
+}
+
+func ValidateTranslationBasketPageUpdate(dataNames []string, context *gin.Context) error {
+
+	for _, dataName := range dataNames {
+		if context.PostForm(dataName) == "" {
+			return errors.New(dataName + " is required")
 		}
 	}
 
