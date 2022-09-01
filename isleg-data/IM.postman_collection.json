@@ -3690,6 +3690,235 @@
 					"response": []
 				}
 			]
+		},
+		{
+			"name": "TranslationOrderPage",
+			"item": [
+				{
+					"name": "CreateTranslationOrderPage",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "content_tm",
+									"value": "content_tm",
+									"type": "default"
+								},
+								{
+									"key": "content_ru",
+									"value": "content_ru",
+									"type": "default"
+								},
+								{
+									"key": "type_of_payment_tm",
+									"value": "type_of_payment_tm",
+									"type": "default"
+								},
+								{
+									"key": "type_of_payment_ru",
+									"value": "type_of_payment_ru",
+									"type": "default"
+								},
+								{
+									"key": "choose_a_delivery_time_tm",
+									"value": "choose_a_delivery_time_tm",
+									"type": "default"
+								},
+								{
+									"key": "choose_a_delivery_time_ru",
+									"value": "choose_a_delivery_time_ru",
+									"type": "default"
+								},
+								{
+									"key": "your_address_tm",
+									"value": "your_address_tm",
+									"type": "default"
+								},
+								{
+									"key": "your_address_ru",
+									"value": "your_address_ru",
+									"type": "default"
+								},
+								{
+									"key": "mark_tm",
+									"value": "mark_tm",
+									"type": "default"
+								},
+								{
+									"key": "mark_ru",
+									"value": "mark_ru",
+									"type": "default"
+								},
+								{
+									"key": "to_order_tm",
+									"value": "to_order_tm",
+									"type": "default"
+								},
+								{
+									"key": "to_order_ru",
+									"value": "to_order_ru",
+									"type": "default"
+								},
+								{
+									"key": "tomorrow_tm",
+									"value": "tomorrow_tm",
+									"type": "default"
+								},
+								{
+									"key": "tomorrow_ru",
+									"value": "tomorrow_ru",
+									"type": "default"
+								},
+								{
+									"key": "cash_tm",
+									"value": "cash_tm",
+									"type": "default"
+								},
+								{
+									"key": "cash_ru",
+									"value": "cash_ru",
+									"type": "default"
+								},
+								{
+									"key": "payment_terminal_tm",
+									"value": "payment_terminal_tm",
+									"type": "default"
+								},
+								{
+									"key": "payment_terminal_ru",
+									"value": "payment_terminal_ru",
+									"type": "default"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:2406/admin/translation-order-page",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"admin",
+								"translation-order-page"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UpdateTranslationOrderPageByID",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "content",
+									"value": "content",
+									"type": "default"
+								},
+								{
+									"key": "type_of_payment",
+									"value": "type_of_payment",
+									"type": "default"
+								},
+								{
+									"key": "choose_a_delivery_time",
+									"value": "choose_a_delivery_time",
+									"type": "default"
+								},
+								{
+									"key": "your_address",
+									"value": "your_address",
+									"type": "default"
+								},
+								{
+									"key": "mark",
+									"value": "mark",
+									"type": "default"
+								},
+								{
+									"key": "to_order",
+									"value": "to_order",
+									"type": "default"
+								},
+								{
+									"key": "tomorrow",
+									"value": "tomorrow",
+									"type": "default"
+								},
+								{
+									"key": "cash",
+									"value": "cash",
+									"type": "default"
+								},
+								{
+									"key": "payment_terminal",
+									"value": "payment_terminal",
+									"type": "default"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:2406/admin/translation-order-page/75810722-07fd-400e-94b4-cd230de08cbf",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"admin",
+								"translation-order-page",
+								"75810722-07fd-400e-94b4-cd230de08cbf"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetTranslationOrderPageByID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:2406/admin/translation-order-page/75810722-07fd-400e-94b4-cd230de08cbf",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"admin",
+								"translation-order-page",
+								"75810722-07fd-400e-94b4-cd230de08cbf"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetTranslationOrderPageByLangID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:2406/api/tm/translation-order-page",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"api",
+								"tm",
+								"translation-order-page"
+							]
+						}
+					},
+					"response": []
+				}
+			]
 		}
 	]
 }

@@ -491,6 +491,30 @@ CREATE TABLE public.translation_my_information_page (
 ALTER TABLE public.translation_my_information_page OWNER TO postgres;
 
 --
+-- Name: translation_order_page; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.translation_order_page (
+    id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
+    lang_id uuid,
+    content character varying DEFAULT 'uytget'::character varying,
+    type_of_payment character varying DEFAULT 'uytget'::character varying,
+    choose_a_delivery_time character varying DEFAULT 'uytget'::character varying,
+    your_address character varying DEFAULT 'uytget'::character varying,
+    mark character varying DEFAULT 'uytget'::character varying,
+    to_order character varying DEFAULT 'uytget'::character varying,
+    tomorrow character varying DEFAULT 'uytget'::character varying,
+    cash character varying DEFAULT 'uytget'::character varying,
+    payment_terminal character varying DEFAULT 'uytget'::character varying,
+    created_at timestamp with time zone DEFAULT now(),
+    updated_at timestamp with time zone DEFAULT now(),
+    deleted_at timestamp with time zone
+);
+
+
+ALTER TABLE public.translation_order_page OWNER TO postgres;
+
+--
 -- Name: translation_payment; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -938,6 +962,16 @@ d294138e-b808-41ae-9ac5-1826751fda3d	aea98b93-7bdf-455b-9ad4-a259d69dc76e	ваш
 
 
 --
+-- Data for Name: translation_order_page; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.translation_order_page (id, lang_id, content, type_of_payment, choose_a_delivery_time, your_address, mark, to_order, tomorrow, cash, payment_terminal, created_at, updated_at, deleted_at) FROM stdin;
+474a15e9-1a05-49aa-9a61-c92837d9c9a8	aea98b93-7bdf-455b-9ad4-a259d69dc76e	content_ru	type_of_payment_ru	choose_a_delivery_time_ru	your_address_ru	mark_ru	to_order_ru	tomorrow_ru	cash_ru	payment_terminal_ru	2022-09-01 12:47:16.802639+05	2022-09-01 12:47:16.802639+05	\N
+75810722-07fd-400e-94b4-cd230de08cbf	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	content	type_of_payment	choose_a_delivery_time	your_address	mark	to_order	tomorrow	cash	payment_terminal	2022-09-01 12:47:16.720956+05	2022-09-01 12:55:25.638676+05	\N
+\.
+
+
+--
 -- Data for Name: translation_payment; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -1230,6 +1264,14 @@ ALTER TABLE ONLY public.translation_my_information_page
 
 
 --
+-- Name: translation_order_page translation_order_page_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.translation_order_page
+    ADD CONSTRAINT translation_order_page_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: translation_payment translation_payment_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1483,6 +1525,14 @@ ALTER TABLE ONLY public.category_shop
 
 ALTER TABLE ONLY public.translation_basket_page
     ADD CONSTRAINT language_translation_basket_page FOREIGN KEY (lang_id) REFERENCES public.languages(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: translation_order_page language_translation_order_page; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.translation_order_page
+    ADD CONSTRAINT language_translation_order_page FOREIGN KEY (lang_id) REFERENCES public.languages(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
