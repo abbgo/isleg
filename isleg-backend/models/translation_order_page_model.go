@@ -8,11 +8,20 @@ import (
 )
 
 type TranslationOrderPage struct {
-	ID        uuid.UUID `json:"id"`
-	LangID    uuid.UUID `json:"lang_id"`
-	CreatedAt string    `json:"-"`
-	UpdatedAt string    `json:"-"`
-	DeletedAt string    `json:"-"`
+	ID                  uuid.UUID `json:"id"`
+	LangID              uuid.UUID `json:"lang_id"`
+	Content             string    `json:"content"`
+	TypeOfPayment       string    `json:"type_of_payment"`
+	ChooseADeliveryTime string    `json:"choose_a_delivery_time"`
+	YourAddress         string    `json:"your_address"`
+	Mark                string    `json:"mark"`
+	ToOrder             string    `json:"to_order"`
+	Tomorrow            string    `json:"tomorrow"`
+	Cash                string    `json:"cash"`
+	PaymentTerminal     string    `json:"payment_terminal"`
+	CreatedAt           string    `json:"-"`
+	UpdatedAt           string    `json:"-"`
+	DeletedAt           string    `json:"-"`
 }
 
 func ValidateTranslationOrderPageData(languages []Language, dataNames []string, context *gin.Context) error {

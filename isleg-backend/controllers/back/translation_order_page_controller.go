@@ -9,6 +9,18 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+type TrOrderPage struct {
+	Content             string `json:"content"`
+	TypeOfPayment       string `json:"type_of_payment"`
+	ChooseADeliveryTime string `json:"choose_a_delivery_time"`
+	YourAddress         string `json:"your_address"`
+	Mark                string `json:"mark"`
+	ToOrder             string `json:"to_order"`
+	Tomorrow            string `json:"tomorrow"`
+	Cash                string `json:"cash"`
+	PaymentTerminal     string `json:"payment_terminal"`
+}
+
 func CreateTranslationOrderPage(c *gin.Context) {
 
 	db, err := config.ConnDB()
@@ -133,6 +145,57 @@ func UpdateTranslationOrderPageByID(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
 		"message": "translation order page successfully updated",
+	})
+
+}
+
+func GetTranslationOrderPageByID(c *gin.Context) {
+
+	db, err := config.ConnDB()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer db.Close()
+
+	ID := c.Param("id")
+
+	rowTrOrderPage, err := db.Query("SELECT content,type_of_payment,choose_a_delivery_time,your_address,mark,to_order,tomorrow,cash,payment_terminal FROM translation_order_page WHERE id = $1 AND deleted_at IS NULL", ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer rowTrOrderPage.Close()
+
+	var t TrOrderPage
+
+	for rowTrOrderPage.Next() {
+		if err := rowTrOrderPage.Scan(&t.Content, &t.TypeOfPayment, &t.ChooseADeliveryTime, &t.YourAddress, &t.Mark, &t.ToOrder, &t.Tomorrow, &t.Cash, &t.PaymentTerminal); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}
+
+	if t.Content == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "record not found",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":                 true,
+		"translation_order_page": t,
 	})
 
 }
