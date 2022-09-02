@@ -491,6 +491,31 @@ CREATE TABLE public.translation_my_information_page (
 ALTER TABLE public.translation_my_information_page OWNER TO postgres;
 
 --
+-- Name: translation_my_order_page; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.translation_my_order_page (
+    id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
+    lang_id uuid,
+    orders character varying DEFAULT 'uytget'::character varying,
+    date character varying DEFAULT 'uytget'::character varying,
+    price character varying DEFAULT 'uytget'::character varying,
+    currency character varying DEFAULT 'uytget'::character varying,
+    image character varying DEFAULT 'uytget'::character varying,
+    name character varying DEFAULT 'uytget'::character varying,
+    brend character varying DEFAULT 'uytget'::character varying,
+    code character varying DEFAULT 'uytget'::character varying,
+    amount character varying DEFAULT 'uytget'::character varying,
+    total_price character varying DEFAULT 'uytget'::character varying,
+    created_at timestamp with time zone DEFAULT now(),
+    updated_at timestamp with time zone DEFAULT now(),
+    deleted_at timestamp with time zone
+);
+
+
+ALTER TABLE public.translation_my_order_page OWNER TO postgres;
+
+--
 -- Name: translation_order_page; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -667,9 +692,6 @@ a920c76c-50ad-4695-a342-8d379756ac79	29ed85bb-11eb-4458-bbf3-5a5644d167d6	538f06
 317fa075-05a3-4f6f-b691-01b8e3035b54	45765130-7f97-4f0c-b886-f70b75e02610	538f0688-30ce-497b-9a0e-cd53d0d5239d	2022-06-21 10:21:35.579531+05	2022-06-21 10:21:35.579531+05	\N
 ffb0f490-3ed7-44d7-b1b2-8447e0eacce7	29ed85bb-11eb-4458-bbf3-5a5644d167d6	0dc06a1f-e25a-4c3d-8310-09985e905262	2022-06-21 10:23:26.481104+05	2022-06-21 10:23:26.481104+05	\N
 97f9ce4a-c0fe-41d4-abcd-6e3551893b71	45765130-7f97-4f0c-b886-f70b75e02610	0dc06a1f-e25a-4c3d-8310-09985e905262	2022-06-21 10:23:26.491473+05	2022-06-21 10:23:26.491473+05	\N
-1cc6b8a6-698d-41db-ae8c-fc74dfd01f41	02bd4413-8586-49ab-802e-16304e756a8b	1fa25151-9c63-4554-a79d-faf6cc78ef69	2022-06-21 10:33:59.011702+05	2022-06-21 10:33:59.011702+05	\N
-fee82dae-4c27-4e8f-86dd-cdbaf6243cdb	33cf0893-ff6e-40b3-b50f-2a3e926eca70	1fa25151-9c63-4554-a79d-faf6cc78ef69	2022-06-21 10:33:59.02302+05	2022-06-21 10:33:59.02302+05	\N
-08a138a4-4f36-4397-b6f3-4dcc931de242	b982bd86-0a0f-4950-baad-5a131e9b728e	1fa25151-9c63-4554-a79d-faf6cc78ef69	2022-06-21 10:33:59.035017+05	2022-06-21 10:33:59.035017+05	\N
 a67bcc04-5d5b-49e2-b7e6-16721ade24f8	02bd4413-8586-49ab-802e-16304e756a8b	ce76ca4c-0ffb-4dd7-a252-3d3eaa6da732	2022-06-21 10:40:32.442941+05	2022-06-21 10:40:32.442941+05	\N
 28fc71a8-c952-4d52-9556-87ab9f1eb8d7	b982bd86-0a0f-4950-baad-5a131e9b728e	ce76ca4c-0ffb-4dd7-a252-3d3eaa6da732	2022-06-21 10:40:32.452476+05	2022-06-21 10:40:32.452476+05	\N
 b28d2d48-5617-4cbb-81e3-546703fed513	f745d171-68e6-42e2-b339-cb3c210cda55	ce76ca4c-0ffb-4dd7-a252-3d3eaa6da732	2022-06-21 10:40:32.463348+05	2022-06-21 10:40:32.463348+05	\N
@@ -791,6 +813,7 @@ aea98b93-7bdf-455b-9ad4-a259d69dc76e	ru	uploads/language1c24e3a6-173e-4264-a631-
 
 COPY public.likes (id, product_id, customer_id, created_at, updated_at, deleted_at) FROM stdin;
 023f9023-793b-4b32-babd-ea45c61bd93a	3b6d2d59-7ad4-4392-b7de-5a1d6bd003e1	7e872c52-0d23-4086-8c45-43000b57332e	2022-08-30 11:00:01.571057+05	2022-08-30 11:00:01.571057+05	\N
+3706997f-5c52-4ac3-89be-a66b1bd1cb63	b4499063-096e-4fa6-9e21-a47185afd829	7e872c52-0d23-4086-8c45-43000b57332e	2022-09-02 11:47:07.883521+05	2022-09-02 11:47:07.883521+05	\N
 \.
 
 
@@ -799,11 +822,10 @@ COPY public.likes (id, product_id, customer_id, created_at, updated_at, deleted_
 --
 
 COPY public.products (id, brend_id, price, old_price, amount, product_code, main_image, images, created_at, updated_at, deleted_at, limit_amount) FROM stdin;
-3b6d2d59-7ad4-4392-b7de-5a1d6bd003e1	6a31c50a-704f-4b0d-80ae-240ca3094cda	24	23.5	128	s6fs66	uploads/productMaind1d6a321-1d10-4355-be39-7ff7001578c5.jpeg	{uploads/productc0fb523c-0ff7-45fc-b37b-18bfd82f0156.jpeg}	2022-06-20 12:43:47.742025+05	2022-06-20 12:43:47.742025+05	\N	0
-b4499063-096e-4fa6-9e21-a47185afd829	214be879-65c3-4710-86b4-3fc3bce2e974	28	25.5	45	s6fs66	uploads/productMain07c5ce1d-b8b1-4893-9825-17d218832484.jpeg	{uploads/product4c118ed9-2986-484c-86c6-7540c11d5351.jpeg}	2022-06-21 10:17:07.683256+05	2022-06-21 10:17:07.683256+05	\N	0
+3b6d2d59-7ad4-4392-b7de-5a1d6bd003e1	6a31c50a-704f-4b0d-80ae-240ca3094cda	24	25	128	s6fs66	uploads/productMaind1d6a321-1d10-4355-be39-7ff7001578c5.jpeg	{uploads/productc0fb523c-0ff7-45fc-b37b-18bfd82f0156.jpeg}	2022-06-20 12:43:47.742025+05	2022-06-20 12:43:47.742025+05	\N	0
+b4499063-096e-4fa6-9e21-a47185afd829	214be879-65c3-4710-86b4-3fc3bce2e974	28	28.5	45	s6fs66	uploads/productMain07c5ce1d-b8b1-4893-9825-17d218832484.jpeg	{uploads/product4c118ed9-2986-484c-86c6-7540c11d5351.jpeg}	2022-06-21 10:17:07.683256+05	2022-06-21 10:17:07.683256+05	\N	0
 538f0688-30ce-497b-9a0e-cd53d0d5239d	214be879-65c3-4710-86b4-3fc3bce2e974	23.5	25	45	s6fs66	uploads/productMain7377551a-91b3-4996-a5ae-f03ddf5530ac.jpeg	{uploads/product8b43004a-ad22-4241-8ad5-bd12e644351e.jpeg}	2022-06-21 10:21:35.476766+05	2022-06-21 10:21:35.476766+05	\N	0
 0dc06a1f-e25a-4c3d-8310-09985e905262	214be879-65c3-4710-86b4-3fc3bce2e974	46	0	58	s6fs666516	uploads/productMainb95cac81-2dc7-4386-91ce-476b2f5763e4.jpeg	{uploads/product50e40976-8376-4028-a389-2557814cfa48.jpeg}	2022-06-21 10:23:26.430614+05	2022-06-21 10:23:26.430614+05	\N	0
-1fa25151-9c63-4554-a79d-faf6cc78ef69	ddccb2dc-9697-4f4e-acf5-26b8bc2c8b72	74.3	0	456	w5we	uploads/productMain08f71540-c011-4251-a7eb-4c8dccc28c08.jpeg	{uploads/productcd6cb444-b9d1-41cf-ad2d-272c80384c80.jpeg}	2022-06-21 10:33:58.914208+05	2022-06-21 10:33:58.914208+05	\N	0
 ce76ca4c-0ffb-4dd7-a252-3d3eaa6da732	6a31c50a-704f-4b0d-80ae-240ca3094cda	1.5	1.7	2684	w6dwed	uploads/productMain1ed63766-b427-4f3b-b796-a593d2a5397e.jpeg	{uploads/product104c0eee-f261-4ddc-8f05-6821a08675c5.jpeg,uploads/product213eb583-2b3c-4f2e-a6f7-1454e080ce74.jpeg}	2022-06-21 10:40:32.397262+05	2022-06-21 10:40:32.397262+05	\N	0
 2072a0fb-bbc4-4231-a7a4-dad00bb0a892	6a31c50a-704f-4b0d-80ae-240ca3094cda	7	0	264	1w6dew	uploads/productMain6ee2f9be-6e64-4aed-8631-ef4b81aa1701.jpeg	{uploads/product21c93b2f-1f1b-4fdc-a33c-b1e96aa3a119.jpeg,uploads/producteeaa8cfe-2f98-4ef7-b9cc-994991cea1d0.jpeg}	2022-06-21 10:41:30.430549+05	2022-06-21 10:41:30.430549+05	\N	0
 0cbe2487-c709-403f-a6c4-4f1a73fd3f78	214be879-65c3-4710-86b4-3fc3bce2e974	13.9	0	68	ww6	uploads/productMain389701f5-89f1-4996-9a1d-e327c78e2536.jpeg	{uploads/productc0c9898e-6404-4586-a786-0d93d2816957.jpeg,uploads/productf577b09a-d1e1-4ac3-90fa-183ecfc5840c.jpeg}	2022-06-21 10:50:40.591888+05	2022-06-21 10:50:40.591888+05	\N	0
@@ -962,6 +984,16 @@ d294138e-b808-41ae-9ac5-1826751fda3d	aea98b93-7bdf-455b-9ad4-a259d69dc76e	ваш
 
 
 --
+-- Data for Name: translation_my_order_page; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.translation_my_order_page (id, lang_id, orders, date, price, currency, image, name, brend, code, amount, total_price, created_at, updated_at, deleted_at) FROM stdin;
+6f30b588-94d8-49f5-a558-a90c2ec9150e	aea98b93-7bdf-455b-9ad4-a259d69dc76e	orders_ru	date_ru	price_ru	currency_ru	image_ru	name_ru	brend_ru	code_ru	amount_ru	total_price_ru	2022-09-02 13:04:39.394714+05	2022-09-02 13:04:39.394714+05	\N
+ff43b90d-e22d-4364-b358-6fd56bb3a305	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	orders	date	price	currency	image	name	brend	code	amount	total_price	2022-09-02 13:04:39.36328+05	2022-09-02 13:12:48.119751+05	\N
+\.
+
+
+--
 -- Data for Name: translation_order_page; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -990,7 +1022,6 @@ COPY public.translation_product (id, lang_id, product_id, name, description, cre
 a62656f5-de15-4463-95e7-8a608c7f8469	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	b4499063-096e-4fa6-9e21-a47185afd829	Sowgatlyk toplumy Head & Shoulders "Saç üçin balzam 275 ml + Goňaga garşy şampun 400 ml	Sowgatlyk toplumy Head & Shoulders "Saç üçin balzam 275 ml + Goňaga garşy şampun 400 ml	2022-06-21 10:17:07.70902+05	2022-06-21 10:17:07.70902+05	\N
 7ed42c42-e90a-44c1-a079-44628ff773ab	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	538f0688-30ce-497b-9a0e-cd53d0d5239d	Duş üçin şampun-gel Faberlic "Calming Peak" 3x1, 380 ml	Duş üçin şampun-gel Faberlic "Calming Peak" 3x1, 380 ml	2022-06-21 10:21:35.539288+05	2022-06-21 10:21:35.539288+05	\N
 a028180a-939c-4c4b-9c65-41f3e071a696	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	0dc06a1f-e25a-4c3d-8310-09985e905262	Mikrofiber süpürgiç Mikrosan "Güderi" 40x50 sm (1 sany)	Mikrofiber süpürgiç Mikrosan "Güderi" 40x50 sm (1 sany)	2022-06-21 10:23:26.461681+05	2022-06-21 10:23:26.461681+05	\N
-0856032c-b195-4f2d-a267-aabb59696d02	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	1fa25151-9c63-4554-a79d-faf6cc78ef69	Kofe Carte Noire, paket gapda 75 gr	Kofe Carte Noire, paket gapda 75 gr	2022-06-21 10:33:58.984686+05	2022-06-21 10:33:58.984686+05	\N
 6a052dc2-9999-4052-a083-89a03cc84b6a	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	1a8935fd-c6ab-4656-b173-826c487a2274	name_tm	description_tm	2022-06-21 10:15:31.585324+05	2022-08-11 11:08:02.236346+05	\N
 c25c372b-2802-4977-a8e3-333d5a364a16	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	ce76ca4c-0ffb-4dd7-a252-3d3eaa6da732	Kofe Nescafe Classic, kiçi paket 2 gr	Kofe Nescafe Classic, kiçi paket 2 gr	2022-06-21 10:40:32.422306+05	2022-06-21 10:40:32.422306+05	\N
 6feb3554-183c-4f16-a675-441da66eac95	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	2072a0fb-bbc4-4231-a7a4-dad00bb0a892	Gyzgyn şokolad "Kentcafe" karamelli 19 gr	Gyzgyn şokolad "Kentcafe" karamelli 19 gr	2022-06-21 10:41:30.458042+05	2022-06-21 10:41:30.458042+05	\N
@@ -1027,7 +1058,6 @@ ee776393-79b2-4561-8095-b8bfc58c916e	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	f70006
 f1d0c111-921c-4420-9460-7a64562500ce	aea98b93-7bdf-455b-9ad4-a259d69dc76e	b4499063-096e-4fa6-9e21-a47185afd829	Подарочный Набор Head & Shoulders "Бальзам-ополаскиватель для волос 275 мл + Шампунь против перхоти 400 мл	Подарочный Набор Head & Shoulders "Бальзам-ополаскиватель для волос 275 мл + Шампунь против перхоти 400 мл	2022-06-21 10:17:07.718729+05	2022-06-21 10:17:07.718729+05	\N
 c8163361-10c7-4402-9dfd-bc66277fcc8e	aea98b93-7bdf-455b-9ad4-a259d69dc76e	538f0688-30ce-497b-9a0e-cd53d0d5239d	Шампунь-гель для душ "Calming Peak" 3в1, 380 мл	Шампунь-гель для душ "Calming Peak" 3в1, 380 мл	2022-06-21 10:21:35.556254+05	2022-06-21 10:21:35.556254+05	\N
 15acb070-ded8-4b88-9278-8026e2db07a4	aea98b93-7bdf-455b-9ad4-a259d69dc76e	0dc06a1f-e25a-4c3d-8310-09985e905262	Салфетка из микрофибры Mikrosan "Güderi" 40x50 см (1 шт)	Салфетка из микрофибры Mikrosan "Güderi" 40x50 см (1 шт)	2022-06-21 10:23:26.470717+05	2022-06-21 10:23:26.470717+05	\N
-1dd4e733-0808-4aae-a477-991b52e2fd6d	aea98b93-7bdf-455b-9ad4-a259d69dc76e	1fa25151-9c63-4554-a79d-faf6cc78ef69	Кофе Carte Noire, пакет 75 г	Кофе Carte Noire, пакет 75 г	2022-06-21 10:33:59.001019+05	2022-06-21 10:33:59.001019+05	\N
 16a440c8-d3e2-4dc9-8d48-9f3a733bb18c	aea98b93-7bdf-455b-9ad4-a259d69dc76e	1a8935fd-c6ab-4656-b173-826c487a2274	name_ru	description_ru	2022-06-21 10:15:31.626337+05	2022-08-11 11:08:02.236346+05	\N
 cd29576b-3cd2-4661-8060-bb14619ea840	aea98b93-7bdf-455b-9ad4-a259d69dc76e	ce76ca4c-0ffb-4dd7-a252-3d3eaa6da732	Кофе Nescafe Classic, стик 2 гр	Кофе Nescafe Classic, стик 2 гр	2022-06-21 10:40:32.431712+05	2022-06-21 10:40:32.431712+05	\N
 83996676-1a1f-47aa-9e9c-25609fb714e7	aea98b93-7bdf-455b-9ad4-a259d69dc76e	2072a0fb-bbc4-4231-a7a4-dad00bb0a892	Горячий шоколад "Kentcafe" карамель 19 г	Горячий шоколад "Kentcafe" карамель 19 г	2022-06-21 10:41:30.476604+05	2022-06-21 10:41:30.476604+05	\N
@@ -1261,6 +1291,14 @@ ALTER TABLE ONLY public.translation_header
 
 ALTER TABLE ONLY public.translation_my_information_page
     ADD CONSTRAINT translation_my_information_page_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: translation_my_order_page translation_my_order_page_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.translation_my_order_page
+    ADD CONSTRAINT translation_my_order_page_pkey PRIMARY KEY (id);
 
 
 --
@@ -1525,6 +1563,14 @@ ALTER TABLE ONLY public.category_shop
 
 ALTER TABLE ONLY public.translation_basket_page
     ADD CONSTRAINT language_translation_basket_page FOREIGN KEY (lang_id) REFERENCES public.languages(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: translation_my_order_page language_translation_my_order_page; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.translation_my_order_page
+    ADD CONSTRAINT language_translation_my_order_page FOREIGN KEY (lang_id) REFERENCES public.languages(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
