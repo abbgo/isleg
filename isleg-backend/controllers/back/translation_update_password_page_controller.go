@@ -239,6 +239,14 @@ func GetTranslationUpdatePasswordPageByLangID(c *gin.Context) {
 		}
 	}
 
+	if trUpdatePasswordPage.Title == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "record not found",
+		})
+		return
+	}
+
 	c.JSON(http.StatusOK, gin.H{
 		"status":                           true,
 		"translation_update_password_page": trUpdatePasswordPage,

@@ -243,6 +243,14 @@ func GetTranslationMyInformationPageByLangID(c *gin.Context) {
 		}
 	}
 
+	if trMyInformationPage.Address == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "record not found",
+		})
+		return
+	}
+
 	c.JSON(http.StatusOK, gin.H{
 		"status":                          true,
 		"translation_my_information_page": trMyInformationPage,
