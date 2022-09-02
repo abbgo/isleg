@@ -38,3 +38,15 @@ func ValidateTranslationMyOrderPageData(languages []Language, dataNames []string
 	return nil
 
 }
+
+func ValidateTranslationMyOrderPageUpdate(dataNames []string, context *gin.Context) error {
+
+	for _, dataName := range dataNames {
+		if context.PostForm(dataName) == "" {
+			return errors.New(dataName + " is required")
+		}
+	}
+
+	return nil
+
+}

@@ -4,6 +4,7 @@ import (
 	"github/abbgo/isleg/isleg-backend/config"
 	"github/abbgo/isleg/isleg-backend/models"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -57,6 +58,81 @@ func CreateTranslationMyOrderPage(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
 		"message": "translation my order page successfully added",
+	})
+
+}
+
+func UpdateTranslationMyOrderPageByID(c *gin.Context) {
+
+	db, err := config.ConnDB()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer db.Close()
+
+	ID := c.Param("id")
+
+	rowTrMyOrderPage, err := db.Query("SELECT id FROM translation_my_order_page WHERE id = $1 AND deleted_at IS NULL", ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer rowTrMyOrderPage.Close()
+
+	var id string
+
+	for rowTrMyOrderPage.Next() {
+		if err := rowTrMyOrderPage.Scan(&id); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}
+
+	if id == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "record not found",
+		})
+		return
+	}
+
+	dataNames := []string{"orders", "date", "price", "currency", "image", "name", "brend", "code", "amount", "total_price"}
+
+	// VALIDATE DATA
+	err = models.ValidateTranslationMyOrderPageUpdate(dataNames, c)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	currentTime := time.Now()
+
+	resultTrMyOrderPage, err := db.Query("UPDATE translation_my_order_page SET orders = $1, date = $2 , price = $3, currency = $4 , image = $5 , name = $6 , brend = $7, code = $8 , amount = $9, total_price = $10, updated_at = $11 WHERE id = $12", c.PostForm("orders"), c.PostForm("date"), c.PostForm("price"), c.PostForm("currency"), c.PostForm("image"), c.PostForm("name"), c.PostForm("brend"), c.PostForm("code"), c.PostForm("amount"), c.PostForm("total_price"), currentTime, id)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer resultTrMyOrderPage.Close()
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":  true,
+		"message": "translation my order page successfully updated",
 	})
 
 }
