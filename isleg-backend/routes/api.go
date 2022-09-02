@@ -188,6 +188,9 @@ func Routes() *gin.Engine {
 		// get order page translation
 		front.GET("/translation-order-page", backController.GetTranslationOrderPageByLangID)
 
+		// get my order page translation
+		front.GET("/translation-my-order-page", backController.GetTranslationMyOrderPageByLangID)
+
 		// homepage categories
 		front.GET("/homepage-categories", frontController.GetHomePageCategories)
 
