@@ -9,6 +9,19 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+type TrMyOrderPage struct {
+	Orders     string `json:"orders"`
+	Date       string `json:"date"`
+	Price      string `json:"price"`
+	Currency   string `json:"currency"`
+	Image      string `json:"image"`
+	Name       string `json:"name"`
+	Brend      string `json:"brend"`
+	Code       string `json:"code"`
+	Amount     string `json:"amount"`
+	TotalPrice string `json:"total_price"`
+}
+
 func CreateTranslationMyOrderPage(c *gin.Context) {
 
 	db, err := config.ConnDB()
@@ -133,6 +146,57 @@ func UpdateTranslationMyOrderPageByID(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
 		"message": "translation my order page successfully updated",
+	})
+
+}
+
+func GetTranslationMyOrderPageByID(c *gin.Context) {
+
+	db, err := config.ConnDB()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer db.Close()
+
+	ID := c.Param("id")
+
+	rowTrMyOrderPage, err := db.Query("SELECT orders,date,price,currency,image,name,brend,code,amount,total_price FROM translation_my_order_page WHERE id = $1 AND deleted_at IS NULL", ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer rowTrMyOrderPage.Close()
+
+	var t TrMyOrderPage
+
+	for rowTrMyOrderPage.Next() {
+		if err := rowTrMyOrderPage.Scan(&t.Orders, &t.Date, &t.Price, &t.Currency, &t.Image, &t.Name, &t.Brend, &t.Code, &t.Amount, &t.TotalPrice); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}
+
+	if t.Orders == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "record not found",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":                    true,
+		"translation_my_order_page": t,
 	})
 
 }
