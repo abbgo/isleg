@@ -9,14 +9,12 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type TrMyInformationPage struct {
-	Birthday       string `json:"birthday"`
-	Address        string `json:"address"`
-	UpdatePassword string `json:"update_password"`
-	Save           string `json:"save"`
+type TrAbout struct {
+	Title   string `json:"title"`
+	Content string `json:"content"`
 }
 
-func CreateTranslationMyInformationPage(c *gin.Context) {
+func CreateTranslationAbout(c *gin.Context) {
 
 	db, err := config.ConnDB()
 	if err != nil {
@@ -38,10 +36,10 @@ func CreateTranslationMyInformationPage(c *gin.Context) {
 		return
 	}
 
-	dataNames := []string{"address", "birthday", "update_password", "save"}
+	dataNames := []string{"title", "content"}
 
 	// VALIDATE DATA
-	if err = models.ValidateTranslationMyInformationPageData(languages, dataNames, c); err != nil {
+	if err = models.ValidateTranslationAboutData(languages, dataNames, c); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
 			"message": err.Error(),
@@ -49,9 +47,9 @@ func CreateTranslationMyInformationPage(c *gin.Context) {
 		return
 	}
 
-	// create translation_my_information_page
+	// create translation about
 	for _, v := range languages {
-		resutlTRMyInfPage, err := db.Query("INSERT INTO translation_my_information_page (lang_id,address,birthday,update_password,save) VALUES ($1,$2,$3,$4,$5)", v.ID, c.PostForm("address_"+v.NameShort), c.PostForm("birthday_"+v.NameShort), c.PostForm("update_password_"+v.NameShort), c.PostForm("save_"+v.NameShort))
+		resultTRAbout, err := db.Query("INSERT INTO translation_about (lang_id,title,content) VALUES ($1,$2,$3)", v.ID, c.PostForm("title_"+v.NameShort), c.PostForm("content_"+v.NameShort))
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
@@ -59,17 +57,17 @@ func CreateTranslationMyInformationPage(c *gin.Context) {
 			})
 			return
 		}
-		defer resutlTRMyInfPage.Close()
+		defer resultTRAbout.Close()
 	}
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
-		"message": "translation my information page successfully added",
+		"message": "translation about successfully added",
 	})
 
 }
 
-func UpdateTranslationMyInformationPageByID(c *gin.Context) {
+func UpdateTranslationAboutByID(c *gin.Context) {
 
 	db, err := config.ConnDB()
 	if err != nil {
@@ -83,7 +81,7 @@ func UpdateTranslationMyInformationPageByID(c *gin.Context) {
 
 	ID := c.Param("id")
 
-	rowFlag, err := db.Query("SELECT id FROM translation_my_information_page WHERE id = $1 AND deleted_at IS NULL", ID)
+	rowFlag, err := db.Query("SELECT id FROM translation_about WHERE id = $1 AND deleted_at IS NULL", ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -113,10 +111,10 @@ func UpdateTranslationMyInformationPageByID(c *gin.Context) {
 		return
 	}
 
-	dataNames := []string{"address", "birthday", "update_password", "save"}
+	dataNames := []string{"title", "content"}
 
 	// VALIDATE DATA
-	err = models.ValidateTranslationMyInformationPageUpdate(dataNames, c)
+	err = models.ValidateTranslationAboutUpdate(dataNames, c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -127,7 +125,7 @@ func UpdateTranslationMyInformationPageByID(c *gin.Context) {
 
 	currentTime := time.Now()
 
-	resultTRMyInfPage, err := db.Query("UPDATE translation_my_information_page SET address = $1, birthday = $2 , update_password = $3, save = $4 , updated_at = $6 WHERE id = $5", c.PostForm("address"), c.PostForm("birthday"), c.PostForm("update_password"), c.PostForm("save"), id, currentTime)
+	resultTRABout, err := db.Query("UPDATE translation_about SET title = $1, content = $2 , updated_at = $4 WHERE id = $3", c.PostForm("title"), c.PostForm("content"), id, currentTime)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -135,16 +133,16 @@ func UpdateTranslationMyInformationPageByID(c *gin.Context) {
 		})
 		return
 	}
-	defer resultTRMyInfPage.Close()
+	defer resultTRABout.Close()
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
-		"message": "translation_my_information_page successfully updated",
+		"message": "translation about successfully updated",
 	})
 
 }
 
-func GetTranslationMyInformationPageByID(c *gin.Context) {
+func GetTranslationAboutByID(c *gin.Context) {
 
 	db, err := config.ConnDB()
 	if err != nil {
@@ -158,7 +156,7 @@ func GetTranslationMyInformationPageByID(c *gin.Context) {
 
 	ID := c.Param("id")
 
-	rowFlag, err := db.Query("SELECT address,birthday,update_password,save FROM translation_my_information_page WHERE id = $1 AND deleted_at IS NULL", ID)
+	rowFlag, err := db.Query("SELECT title,content FROM translation_about WHERE id = $1 AND deleted_at IS NULL", ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -168,10 +166,10 @@ func GetTranslationMyInformationPageByID(c *gin.Context) {
 	}
 	defer rowFlag.Close()
 
-	var t TrMyInformationPage
+	var t TrAbout
 
 	for rowFlag.Next() {
-		if err := rowFlag.Scan(&t.Address, &t.Birthday, &t.UpdatePassword, &t.Save); err != nil {
+		if err := rowFlag.Scan(&t.Title, &t.Content); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
@@ -180,7 +178,7 @@ func GetTranslationMyInformationPageByID(c *gin.Context) {
 		}
 	}
 
-	if t.Address == "" {
+	if t.Title == "" {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
 			"message": "record not found",
@@ -189,13 +187,13 @@ func GetTranslationMyInformationPageByID(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"status":                          true,
-		"translation_my_information_page": t,
+		"status":            true,
+		"translation_about": t,
 	})
 
 }
 
-func GetTranslationMyInformationPageByLangID(c *gin.Context) {
+func GetTranslationAboutByLangID(c *gin.Context) {
 
 	db, err := config.ConnDB()
 	if err != nil {
@@ -207,11 +205,7 @@ func GetTranslationMyInformationPageByLangID(c *gin.Context) {
 	}
 	defer db.Close()
 
-	// GET DATA FROM ROUTE PARAMETER
-	langShortName := c.Param("lang")
-
-	// GET language id
-	langID, err := GetLangID(langShortName)
+	langID, err := CheckLanguage(c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -220,8 +214,8 @@ func GetTranslationMyInformationPageByLangID(c *gin.Context) {
 		return
 	}
 
-	// get translation-my-information-page where lang_id equal langID
-	aboutRow, err := db.Query("SELECT address,birthday,update_password,save FROM translation_my_information_page WHERE lang_id = $1 AND deleted_at IS NULL", langID)
+	// get translation about where lang_id equal langID
+	aboutRow, err := db.Query("SELECT title,content FROM translation_about WHERE lang_id = $1 AND deleted_at IS NULL", langID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -231,10 +225,10 @@ func GetTranslationMyInformationPageByLangID(c *gin.Context) {
 	}
 	defer aboutRow.Close()
 
-	var trMyInformationPage TrMyInformationPage
+	var translationAbout TrAbout
 
 	for aboutRow.Next() {
-		if err := aboutRow.Scan(&trMyInformationPage.Address, &trMyInformationPage.Birthday, &trMyInformationPage.UpdatePassword, &trMyInformationPage.Save); err != nil {
+		if err := aboutRow.Scan(&translationAbout.Title, &translationAbout.Content); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
@@ -243,9 +237,17 @@ func GetTranslationMyInformationPageByLangID(c *gin.Context) {
 		}
 	}
 
+	if translationAbout.Title == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "record not found",
+		})
+		return
+	}
+
 	c.JSON(http.StatusOK, gin.H{
-		"status":                          true,
-		"translation_my_information_page": trMyInformationPage,
+		"status":            true,
+		"translation_about": translationAbout,
 	})
 
 }

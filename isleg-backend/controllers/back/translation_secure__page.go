@@ -237,6 +237,14 @@ func GetTranslationSecureByLangID(c *gin.Context) {
 		}
 	}
 
+	if translationSecure.Title == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "record not found",
+		})
+		return
+	}
+
 	c.JSON(http.StatusOK, gin.H{
 		"status":             true,
 		"translation_secure": translationSecure,

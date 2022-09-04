@@ -1085,7 +1085,7 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "localhost:2406/admin/product/e3f8aebb-1451-43a3-9e9b-582da01c8d08",
+							"raw": "localhost:2406/admin/product/1fa25151-9c63-4554-a79d-faf6cc78ef69",
 							"host": [
 								"localhost"
 							],
@@ -1093,7 +1093,7 @@
 							"path": [
 								"admin",
 								"product",
-								"e3f8aebb-1451-43a3-9e9b-582da01c8d08"
+								"1fa25151-9c63-4554-a79d-faf6cc78ef69"
 							]
 						}
 					},
@@ -1125,7 +1125,7 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "localhost:2406/admin/delete-product/e3f8aebb-1451-43a3-9e9b-582da01c8d08",
+							"raw": "localhost:2406/admin/delete-product/1fa25151-9c63-4554-a79d-faf6cc78ef69",
 							"host": [
 								"localhost"
 							],
@@ -1133,7 +1133,7 @@
 							"path": [
 								"admin",
 								"delete-product",
-								"e3f8aebb-1451-43a3-9e9b-582da01c8d08"
+								"1fa25151-9c63-4554-a79d-faf6cc78ef69"
 							]
 						}
 					},
@@ -3122,7 +3122,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NSIsImV4cCI6MTY2MTg0MDk4Mn0.1CZTzcSc9eBCuFC1YYTQCRG-Irkbhoxc-LrNPK7eKd4",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NSIsImV4cCI6MTY2MjEwMjkzM30.VQYLJ3kCTBDFFhAA6Dpe9C-p6Sf-baCRIg4sNFCihcc",
 								"type": "default"
 							}
 						],
@@ -3135,8 +3135,13 @@
 									"type": "default"
 								},
 								{
-									"key": "product_id",
-									"value": "3b6d2d59-7ad4-4392-b7de-5a1d6bd003e1",
+									"key": "products",
+									"value": "b4499063-096e-4fa6-9e21-a47185afd829",
+									"type": "default"
+								},
+								{
+									"key": "products",
+									"value": "1fa25151-9c63-4554-a79d-faf6cc78ef69",
 									"type": "default"
 								}
 							]
@@ -3163,7 +3168,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NSIsImV4cCI6MTY2MTgzOTUxN30.2wzAchA-0QhHcdyWlx4iwMPEdhXq8oGGx60zphDU0uo",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NSIsImV4cCI6MTY2MjEwMjkzM30.VQYLJ3kCTBDFFhAA6Dpe9C-p6Sf-baCRIg4sNFCihcc",
 								"type": "default"
 							}
 						],
@@ -3913,6 +3918,250 @@
 								"api",
 								"tm",
 								"translation-order-page"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "TranslationMyOrderPage",
+			"item": [
+				{
+					"name": "CreateTranslationMyOrderPage",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "orders_tm",
+									"value": "orders_tm",
+									"type": "default"
+								},
+								{
+									"key": "orders_ru",
+									"value": "orders_ru",
+									"type": "default"
+								},
+								{
+									"key": "date_tm",
+									"value": "date_tm",
+									"type": "default"
+								},
+								{
+									"key": "date_ru",
+									"value": "date_ru",
+									"type": "default"
+								},
+								{
+									"key": "price_tm",
+									"value": "price_tm",
+									"type": "default"
+								},
+								{
+									"key": "price_ru",
+									"value": "price_ru",
+									"type": "default"
+								},
+								{
+									"key": "currency_tm",
+									"value": "currency_tm",
+									"type": "default"
+								},
+								{
+									"key": "currency_ru",
+									"value": "currency_ru",
+									"type": "default"
+								},
+								{
+									"key": "image_tm",
+									"value": "image_tm",
+									"type": "default"
+								},
+								{
+									"key": "image_ru",
+									"value": "image_ru",
+									"type": "default"
+								},
+								{
+									"key": "name_tm",
+									"value": "name_tm",
+									"type": "default"
+								},
+								{
+									"key": "name_ru",
+									"value": "name_ru",
+									"type": "default"
+								},
+								{
+									"key": "brend_tm",
+									"value": "brend_tm",
+									"type": "default"
+								},
+								{
+									"key": "brend_ru",
+									"value": "brend_ru",
+									"type": "default"
+								},
+								{
+									"key": "code_tm",
+									"value": "code_tm",
+									"type": "default"
+								},
+								{
+									"key": "code_ru",
+									"value": "code_ru",
+									"type": "default"
+								},
+								{
+									"key": "amount_tm",
+									"value": "amount_tm",
+									"type": "default"
+								},
+								{
+									"key": "amount_ru",
+									"value": "amount_ru",
+									"type": "default"
+								},
+								{
+									"key": "total_price_tm",
+									"value": "total_price_tm",
+									"type": "default"
+								},
+								{
+									"key": "total_price_ru",
+									"value": "total_price_ru",
+									"type": "default"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:2406/admin/translation-my-order-page",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"admin",
+								"translation-my-order-page"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UpdateTranslationMyOrderPageByID",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "orders",
+									"value": "orders",
+									"type": "default"
+								},
+								{
+									"key": "date",
+									"value": "date",
+									"type": "default"
+								},
+								{
+									"key": "price",
+									"value": "price",
+									"type": "default"
+								},
+								{
+									"key": "currency",
+									"value": "currency",
+									"type": "default"
+								},
+								{
+									"key": "image",
+									"value": "image",
+									"type": "default"
+								},
+								{
+									"key": "name",
+									"value": "name",
+									"type": "default"
+								},
+								{
+									"key": "brend",
+									"value": "brend",
+									"type": "default"
+								},
+								{
+									"key": "code",
+									"value": "code",
+									"type": "default"
+								},
+								{
+									"key": "amount",
+									"value": "amount",
+									"type": "default"
+								},
+								{
+									"key": "total_price",
+									"value": "total_price",
+									"type": "default"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:2406/admin/translation-my-order-page/ff43b90d-e22d-4364-b358-6fd56bb3a305",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"admin",
+								"translation-my-order-page",
+								"ff43b90d-e22d-4364-b358-6fd56bb3a305"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetTranslationMyOrderPageByID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:2406/admin/translation-my-order-page/ff43b90d-e22d-4364-b358-6fd56bb3a305",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"admin",
+								"translation-my-order-page",
+								"ff43b90d-e22d-4364-b358-6fd56bb3a305"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetTranslationMyOrderPageByLangID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:2406/api/tm/translation-my-order-page",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"api",
+								"tm",
+								"translation-my-order-page"
 							]
 						}
 					},

@@ -16,7 +16,7 @@ type Like struct {
 	DeletedAt  string    `json:"-"`
 }
 
-func ValidateCustomerLike(customerID, productID string) error {
+func ValidateCustomerLike(customerID string, productIDs []string) error {
 
 	db, err := config.ConnDB()
 	if err != nil {
@@ -44,44 +44,46 @@ func ValidateCustomerLike(customerID, productID string) error {
 		return errors.New("customer does not exist")
 	}
 
-	if productID == "" {
+	if len(productIDs) == 0 {
 		return errors.New("product_id is required")
 	}
 
-	rowProduct, err := db.Query("SELECT id FROM products WHERE id = $1 AND deleted_at IS NULL", productID)
-	if err != nil {
-		return err
-	}
-
-	var product_id string
-	for rowProduct.Next() {
-		if err := rowProduct.Scan(&product_id); err != nil {
+	for _, productID := range productIDs {
+		rowProduct, err := db.Query("SELECT id FROM products WHERE id = $1 AND deleted_at IS NULL", productID)
+		if err != nil {
 			return err
 		}
-	}
 
-	if product_id == "" {
-		return errors.New("product does not exist")
-	}
+		var product_id string
+		for rowProduct.Next() {
+			if err := rowProduct.Scan(&product_id); err != nil {
+				return err
+			}
+		}
 
-	rows, err := db.Query("SELECT product_id FROM likes WHERE customer_id = $1 AND deleted_at IS NULL", customerID)
-	if err != nil {
-		return err
-	}
-
-	var product_ids []string
-
-	for rows.Next() {
-		if err := rows.Scan(&product_id); err != nil {
+		if product_id == "" {
+			return errors.New("product does not exist")
+		}
+		rows, err := db.Query("SELECT product_id FROM likes WHERE customer_id = $1 AND deleted_at IS NULL", customerID)
+		if err != nil {
 			return err
 		}
-		product_ids = append(product_ids, product_id)
-	}
 
-	for _, v := range product_ids {
-		if productID == v {
-			return errors.New("this product already exists")
+		var product_ids []string
+
+		for rows.Next() {
+			if err := rows.Scan(&product_id); err != nil {
+				return err
+			}
+			product_ids = append(product_ids, product_id)
 		}
+
+		for _, v := range product_ids {
+			if productID == v {
+				return errors.New("this product already exists in this customer")
+			}
+		}
+
 	}
 
 	return nil

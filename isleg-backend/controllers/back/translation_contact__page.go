@@ -244,6 +244,14 @@ func GetTranslationContactByLangID(c *gin.Context) {
 		}
 	}
 
+	if translationContact.FullName == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "record not found",
+		})
+		return
+	}
+
 	c.JSON(http.StatusOK, gin.H{
 		"status":              true,
 		"translation_contact": translationContact,

@@ -82,6 +82,10 @@ func Routes() *gin.Engine {
 		back.PUT("/translation-order-page/:id", backController.UpdateTranslationOrderPageByID)
 		back.GET("/translation-order-page/:id", backController.GetTranslationOrderPageByID)
 
+		back.POST("/translation-my-order-page", backController.CreateTranslationMyOrderPage)
+		back.PUT("/translation-my-order-page/:id", backController.UpdateTranslationMyOrderPageByID)
+		back.GET("/translation-my-order-page/:id", backController.GetTranslationMyOrderPageByID)
+
 		back.POST("/category", backController.CreateCategory)
 		back.PUT("/category/:id", backController.UpdateCategoryByID)
 		back.GET("/category/:id", backController.GetCategoryByID)
@@ -183,6 +187,9 @@ func Routes() *gin.Engine {
 
 		// get order page translation
 		front.GET("/translation-order-page", backController.GetTranslationOrderPageByLangID)
+
+		// get my order page translation
+		front.GET("/translation-my-order-page", backController.GetTranslationMyOrderPageByLangID)
 
 		// homepage categories
 		front.GET("/homepage-categories", frontController.GetHomePageCategories)
