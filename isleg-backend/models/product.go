@@ -15,6 +15,7 @@ type Product struct {
 	MainImage   string         `json:"main_image"`
 	Images      pq.StringArray `json:"images"`
 	LimitAmount uint           `json:"limit_amount"`
+	IsNew       bool           `json:"is_new"`
 	CreatedAt   string         `json:"-"`
 	UpdatedAt   string         `json:"-"`
 	DeletedAt   string         `json:"-"`
