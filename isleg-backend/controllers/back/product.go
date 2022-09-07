@@ -32,6 +32,7 @@ type OneProduct struct {
 	Categories   []string             `json:"categories"`
 	Translations []TranslationProduct `json:"translations"`
 	LimitAmount  uint                 `json:"limit_amount"`
+	IsNew        bool                 `json:"is_new"`
 }
 type TranslationProduct struct {
 	LanguageID  string `json:"lang_id"`
@@ -725,7 +726,7 @@ func GetProductByID(c *gin.Context) {
 
 	ID := c.Param("id")
 
-	rowProduct, err := db.Query("SELECT id,brend_id,price,old_price,amount,product_code,main_image,images,limit_amount FROM products WHERE id = $1 AND deleted_at IS NULL", ID)
+	rowProduct, err := db.Query("SELECT id,brend_id,price,old_price,amount,product_code,main_image,images,limit_amount,is_new FROM products WHERE id = $1 AND deleted_at IS NULL", ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -738,7 +739,7 @@ func GetProductByID(c *gin.Context) {
 	var product OneProduct
 
 	for rowProduct.Next() {
-		if err := rowProduct.Scan(&product.ID, &product.BrendID, &product.Price, &product.OldPrice, &product.Amount, &product.ProductCode, &product.MainImage, &product.Images, &product.LimitAmount); err != nil {
+		if err := rowProduct.Scan(&product.ID, &product.BrendID, &product.Price, &product.OldPrice, &product.Amount, &product.ProductCode, &product.MainImage, &product.Images, &product.LimitAmount, &product.IsNew); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
