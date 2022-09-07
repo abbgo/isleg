@@ -274,3 +274,28 @@ func RemoveLike(c *gin.Context) {
 	})
 
 }
+
+// func GetLikedProductsWithoutCustomer(c *gin.Context) {
+
+// 	productIds, ok := c.GetPostFormArray("products")
+// 	if !ok {
+// 		c.JSON(http.StatusBadRequest, gin.H{
+// 			"status":  false,
+// 			"message": "product id is required",
+// 		})
+// 		return
+// 	}
+
+// 	db, err := config.ConnDB()
+// 	if err != nil {
+// 		c.JSON(http.StatusBadRequest, gin.H{
+// 			"status":  false,
+// 			"message": err.Error(),
+// 		})
+// 		return
+// 	}
+// 	defer db.Close()
+
+// 	rowLikes, err := db.Query("")
+
+// }
