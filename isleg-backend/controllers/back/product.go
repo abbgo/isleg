@@ -138,6 +138,14 @@ func CreateProduct(c *gin.Context) {
 		return
 	}
 
+	if limitAmount > amount {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "cannot be less than limit_amount amount",
+		})
+		return
+	}
+
 	productCode := c.PostForm("product_code")
 	if productCode == "" {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -477,11 +485,29 @@ func UpdateProductByID(c *gin.Context) {
 		return
 	}
 
+	if limitAmount > amount {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "cannot be less than limit_amount amount",
+		})
+		return
+	}
+
 	productCode := c.PostForm("product_code")
 	if productCode == "" {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
 			"message": "product code is required",
+		})
+		return
+	}
+
+	isNewStr := c.PostForm("is_new")
+	isNew, err := strconv.ParseBool(isNewStr)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
 		})
 		return
 	}
@@ -590,7 +616,7 @@ func UpdateProductByID(c *gin.Context) {
 
 	currentTime := time.Now()
 
-	resultProducts, err := db.Query("UPDATE products SET brend_id = $1 , price = $2 , old_price = $3, amount = $4, product_code = $5, main_image = $6, images = $7, limit_amount = $10 updated_at = $8 WHERE id = $9", brendID, price, oldPrice, amount, productCode, mainImageName, pq.StringArray(imagePaths), currentTime, ID, limitAmount)
+	resultProducts, err := db.Query("UPDATE products SET brend_id = $1 , price = $2 , old_price = $3, amount = $4, product_code = $5, main_image = $6, images = $7, limit_amount = $10 , is_new = $11 , updated_at = $8 WHERE id = $9", brendID, price, oldPrice, amount, productCode, mainImageName, pq.StringArray(imagePaths), currentTime, ID, limitAmount, isNew)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
