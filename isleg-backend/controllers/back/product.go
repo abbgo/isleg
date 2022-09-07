@@ -844,7 +844,7 @@ func GetProducts(c *gin.Context) {
 	}
 	defer db.Close()
 
-	rowsProduct, err := db.Query("SELECT id,brend_id,price,old_price,amount,product_code,main_image,images,limit_amount FROM products WHERE deleted_at IS NULL")
+	rowsProduct, err := db.Query("SELECT id,brend_id,price,old_price,amount,product_code,main_image,images,limit_amount,is_new FROM products WHERE deleted_at IS NULL")
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -860,7 +860,7 @@ func GetProducts(c *gin.Context) {
 	for rowsProduct.Next() {
 		var product OneProduct
 
-		if err := rowsProduct.Scan(&product.ID, &product.BrendID, &product.Price, &product.OldPrice, &product.Amount, &product.ProductCode, &product.MainImage, &product.Images, &product.LimitAmount); err != nil {
+		if err := rowsProduct.Scan(&product.ID, &product.BrendID, &product.Price, &product.OldPrice, &product.Amount, &product.ProductCode, &product.MainImage, &product.Images, &product.LimitAmount, &product.IsNew); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
