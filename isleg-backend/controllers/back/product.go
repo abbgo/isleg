@@ -147,6 +147,16 @@ func CreateProduct(c *gin.Context) {
 		return
 	}
 
+	isNewStr := c.PostForm("is_new")
+	isNew, err := strconv.ParseBool(isNewStr)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
 	// GET ALL LANGUAGE
 	languages, err := GetAllLanguageWithIDAndNameShort()
 	if err != nil {
@@ -227,7 +237,7 @@ func CreateProduct(c *gin.Context) {
 	}
 
 	// create product
-	resultProducts, err := db.Query("INSERT INTO products (brend_id,price,old_price,amount,product_code,main_image,images,limit_amount) VALUES ($1,$2,$3,$4,$5,$6,$7)", brendID, price, oldPrice, amount, productCode, "uploads/product/"+newFileName, pq.StringArray(imagePaths), limitAmount)
+	resultProducts, err := db.Query("INSERT INTO products (brend_id,price,old_price,amount,product_code,main_image,images,limit_amount,is_new) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)", brendID, price, oldPrice, amount, productCode, "uploads/product/"+newFileName, pq.StringArray(imagePaths), limitAmount, isNew)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{
 			"status":  false,
