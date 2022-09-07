@@ -599,7 +599,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "localhost:2406/api/tm/33cf0893-ff6e-40b3-b50f-2a3e926eca70/2/1",
+							"raw": "localhost:2406/api/tm/4af3388b-2738-4ff6-b42e-927cb0ff897f/2/1",
 							"host": [
 								"localhost"
 							],
@@ -607,7 +607,7 @@
 							"path": [
 								"api",
 								"tm",
-								"33cf0893-ff6e-40b3-b50f-2a3e926eca70",
+								"4af3388b-2738-4ff6-b42e-927cb0ff897f",
 								"2",
 								"1"
 							]
@@ -856,33 +856,33 @@
 							"formdata": [
 								{
 									"key": "brend_id",
-									"value": "6a31c50a-704f-4b0d-80ae-240ca3094cda",
+									"value": "fdd259c2-794a-42b9-a3ad-9e91502af23e",
 									"type": "default"
 								},
 								{
 									"key": "price",
-									"value": "35",
+									"value": "23",
 									"type": "default"
 								},
 								{
 									"key": "old_price",
-									"value": "37",
+									"value": "",
 									"type": "default"
 								},
 								{
 									"key": "amount",
-									"value": "19",
+									"value": "1000",
 									"type": "default"
 								},
 								{
 									"key": "product_code",
-									"value": "j6yukuy",
+									"value": "fer51gf65er",
 									"type": "default"
 								},
 								{
 									"key": "main_image",
 									"type": "file",
-									"src": "/home/abb/Pictures/images (1).jpeg"
+									"src": "/home/abb/Pictures/download (2).jpeg"
 								},
 								{
 									"key": "images",
@@ -916,17 +916,27 @@
 								},
 								{
 									"key": "category_id",
-									"value": "4af3388b-2738-4ff6-b42e-927cb0ff897f",
-									"type": "default"
-								},
-								{
-									"key": "category_id",
-									"value": "5d877898-9ef4-4b91-8518-193b431228a8",
+									"value": "d4cb1359-6c23-4194-8e3c-21ed8cec8373",
 									"type": "default"
 								},
 								{
 									"key": "category_id",
 									"value": "38d92a87-4a9c-4860-94e6-e568f21ecd8e",
+									"type": "default"
+								},
+								{
+									"key": "category_id",
+									"value": "29ed85bb-11eb-4458-bbf3-5a5644d167d6",
+									"type": "default"
+								},
+								{
+									"key": "is_new",
+									"value": "true",
+									"type": "default"
+								},
+								{
+									"key": "limit_amount",
+									"value": "100",
 									"type": "default"
 								}
 							]
@@ -1022,6 +1032,16 @@
 									"key": "category_id",
 									"value": "4af3388b-2738-4ff6-b42e-927cb0ff897f",
 									"type": "default"
+								},
+								{
+									"key": "limit_amount",
+									"value": "990",
+									"type": "default"
+								},
+								{
+									"key": "is_new",
+									"value": "true",
+									"type": "default"
 								}
 							]
 						},
@@ -1046,7 +1066,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "localhost:2406/admin/product/3b6d2d59-7ad4-4392-b7de-5a1d6bd003e1",
+							"raw": "localhost:2406/admin/product/1a8935fd-c6ab-4656-b173-826c487a2274",
 							"host": [
 								"localhost"
 							],
@@ -1054,7 +1074,7 @@
 							"path": [
 								"admin",
 								"product",
-								"3b6d2d59-7ad4-4392-b7de-5a1d6bd003e1"
+								"1a8935fd-c6ab-4656-b173-826c487a2274"
 							]
 						}
 					},
