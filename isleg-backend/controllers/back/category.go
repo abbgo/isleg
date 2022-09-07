@@ -47,6 +47,7 @@ type Product struct {
 	Images      pq.StringArray `json:"images"`
 	Brend       Brend          `json:"brend"`
 	LimitAmount uint           `json:"limit_amount"`
+	IsNew       bool           `json:"is_new"`
 }
 
 type Brend struct {
@@ -1410,7 +1411,7 @@ func GetOneCategoryWithProducts(c *gin.Context) {
 		}
 
 		// get all product where category id equal categoryID
-		productRows, err := db.Query("SELECT p.id,t.name,p.price,p.old_price,p.main_image,p.product_code,p.images,p.limit_amount FROM products p LEFT JOIN category_product c ON p.id=c.product_id LEFT JOIN translation_product t ON p.id=t.product_id WHERE t.lang_id = $1 AND c.category_id = $2 AND p.deleted_at IS NULL AND c.deleted_at IS NULL AND t.deleted_at IS NULL ORDER BY p.created_at ASC LIMIT $3 OFFSET $4", langID, categoryID, limit, offset)
+		productRows, err := db.Query("SELECT p.id,t.name,p.price,p.old_price,p.main_image,p.product_code,p.images,p.limit_amount,p.is_new FROM products p LEFT JOIN category_product c ON p.id=c.product_id LEFT JOIN translation_product t ON p.id=t.product_id WHERE t.lang_id = $1 AND c.category_id = $2 AND p.deleted_at IS NULL AND c.deleted_at IS NULL AND t.deleted_at IS NULL ORDER BY p.created_at ASC LIMIT $3 OFFSET $4", langID, categoryID, limit, offset)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
@@ -1424,7 +1425,7 @@ func GetOneCategoryWithProducts(c *gin.Context) {
 
 		for productRows.Next() {
 			var product Product
-			if err := productRows.Scan(&product.ID, &product.Name, &product.Price, &product.OldPrice, &product.MainImage, &product.ProductCode, &product.Images, &product.LimitAmount); err != nil {
+			if err := productRows.Scan(&product.ID, &product.Name, &product.Price, &product.OldPrice, &product.MainImage, &product.ProductCode, &product.Images, &product.LimitAmount, &product.IsNew); err != nil {
 				c.JSON(http.StatusBadRequest, gin.H{
 					"status":  false,
 					"message": err.Error(),
