@@ -103,12 +103,12 @@ func Routes() *gin.Engine {
 		back.DELETE("/delete-brend/:id", backController.DeletePermanentlyBrendByID)
 
 		back.POST("/product", backController.CreateProduct)
-		back.PUT("/product/:id", backController.UpdateProductByID)
-		back.GET("/product/:id", backController.GetProductByID)
-		back.GET("/products", backController.GetProducts)
-		back.DELETE("/product/:id", backController.DeleteProductByID)
-		back.GET("/restore-product/:id", backController.RestoreProductByID)
-		back.DELETE("/delete-product/:id", backController.DeletePermanentlyProductByID)
+		// back.PUT("/product/:id", backController.UpdateProductByID)
+		// back.GET("/product/:id", backController.GetProductByID)
+		// back.GET("/products", backController.GetProducts)
+		// back.DELETE("/product/:id", backController.DeleteProductByID)
+		// back.GET("/restore-product/:id", backController.RestoreProductByID)
+		// back.DELETE("/delete-product/:id", backController.DeletePermanentlyProductByID)
 
 		back.POST("/company-phone", backController.CreateCompanyPhone)
 		back.PUT("/company-phone/:id", backController.UpdateCompanyPhoneByID)
@@ -192,10 +192,10 @@ func Routes() *gin.Engine {
 		front.GET("/translation-my-order-page", backController.GetTranslationMyOrderPageByLangID)
 
 		// homepage categories
-		front.GET("/homepage-categories", frontController.GetHomePageCategories)
+		// front.GET("/homepage-categories", frontController.GetHomePageCategories)
 
-		// get one category with products
-		front.GET("/:category_id/:limit/:page", backController.GetOneCategoryWithProducts)
+		// // get one category with products
+		// front.GET("/:category_id/:limit/:page", backController.GetOneCategoryWithProducts)
 
 		securedCustomer := front.Group("/").Use(middlewares.Auth())
 		{

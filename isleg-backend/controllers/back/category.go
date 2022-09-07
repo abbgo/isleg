@@ -1302,168 +1302,168 @@ func DeletePermanentlyCategoryByID(c *gin.Context) {
 
 }
 
-func GetOneCategoryWithProducts(c *gin.Context) {
+// func GetOneCategoryWithProducts(c *gin.Context) {
 
-	db, err := config.ConnDB()
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-	defer db.Close()
+// 	db, err := config.ConnDB()
+// 	if err != nil {
+// 		c.JSON(http.StatusBadRequest, gin.H{
+// 			"status":  false,
+// 			"message": err.Error(),
+// 		})
+// 		return
+// 	}
+// 	defer db.Close()
 
-	var countOfProducts uint64
+// 	var countOfProducts uint64
 
-	langID, err := CheckLanguage(c)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
+// 	langID, err := CheckLanguage(c)
+// 	if err != nil {
+// 		c.JSON(http.StatusBadRequest, gin.H{
+// 			"status":  false,
+// 			"message": err.Error(),
+// 		})
+// 		return
+// 	}
 
-	// get limit from param
-	limitStr := c.Param("limit")
-	if limitStr == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": "limit is required",
-		})
-		return
-	}
-	limit, err := strconv.ParseUint(limitStr, 10, 64)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
+// 	// get limit from param
+// 	limitStr := c.Param("limit")
+// 	if limitStr == "" {
+// 		c.JSON(http.StatusBadRequest, gin.H{
+// 			"status":  false,
+// 			"message": "limit is required",
+// 		})
+// 		return
+// 	}
+// 	limit, err := strconv.ParseUint(limitStr, 10, 64)
+// 	if err != nil {
+// 		c.JSON(http.StatusBadRequest, gin.H{
+// 			"status":  false,
+// 			"message": err.Error(),
+// 		})
+// 		return
+// 	}
 
-	// get page from param
-	pageStr := c.Param("page")
-	if pageStr == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": "page is required",
-		})
-		return
-	}
-	page, err := strconv.ParseUint(pageStr, 10, 64)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
+// 	// get page from param
+// 	pageStr := c.Param("page")
+// 	if pageStr == "" {
+// 		c.JSON(http.StatusBadRequest, gin.H{
+// 			"status":  false,
+// 			"message": "page is required",
+// 		})
+// 		return
+// 	}
+// 	page, err := strconv.ParseUint(pageStr, 10, 64)
+// 	if err != nil {
+// 		c.JSON(http.StatusBadRequest, gin.H{
+// 			"status":  false,
+// 			"message": err.Error(),
+// 		})
+// 		return
+// 	}
 
-	offset := limit * (page - 1)
+// 	offset := limit * (page - 1)
 
-	categoryID := c.Param("category_id")
+// 	categoryID := c.Param("category_id")
 
-	// get category where id equal categiryID
-	categoryRow, err := db.Query("SELECT c.id,t.name FROM categories c LEFT JOIN translation_category t ON c.id=t.category_id WHERE t.lang_id = $1 AND c.id = $2 AND c.deleted_at IS NULL AND t.deleted_at IS NULL", langID, categoryID)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-	defer categoryRow.Close()
+// 	// get category where id equal categiryID
+// 	categoryRow, err := db.Query("SELECT c.id,t.name FROM categories c LEFT JOIN translation_category t ON c.id=t.category_id WHERE t.lang_id = $1 AND c.id = $2 AND c.deleted_at IS NULL AND t.deleted_at IS NULL", langID, categoryID)
+// 	if err != nil {
+// 		c.JSON(http.StatusBadRequest, gin.H{
+// 			"status":  false,
+// 			"message": err.Error(),
+// 		})
+// 		return
+// 	}
+// 	defer categoryRow.Close()
 
-	var category Category
+// 	var category Category
 
-	for categoryRow.Next() {
-		if err := categoryRow.Scan(&category.ID, &category.Name); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
+// 	for categoryRow.Next() {
+// 		if err := categoryRow.Scan(&category.ID, &category.Name); err != nil {
+// 			c.JSON(http.StatusBadRequest, gin.H{
+// 				"status":  false,
+// 				"message": err.Error(),
+// 			})
+// 			return
+// 		}
 
-		// get count product where product_id equal categoryID
-		productCount, err := db.Query("SELECT COUNT(p.id) FROM products p LEFT JOIN category_product c ON p.id=c.product_id WHERE c.category_id = $1 AND p.deleted_at IS NULL AND c.deleted_at IS NULL", categoryID)
-		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-		defer productCount.Close()
+// 		// get count product where product_id equal categoryID
+// 		productCount, err := db.Query("SELECT COUNT(p.id) FROM products p LEFT JOIN category_product c ON p.id=c.product_id WHERE c.category_id = $1 AND p.deleted_at IS NULL AND c.deleted_at IS NULL", categoryID)
+// 		if err != nil {
+// 			c.JSON(http.StatusBadRequest, gin.H{
+// 				"status":  false,
+// 				"message": err.Error(),
+// 			})
+// 			return
+// 		}
+// 		defer productCount.Close()
 
-		for productCount.Next() {
-			if err := productCount.Scan(&countOfProducts); err != nil {
-				if err != nil {
-					c.JSON(http.StatusBadRequest, gin.H{
-						"status":  false,
-						"message": err.Error(),
-					})
-					return
-				}
-			}
-		}
+// 		for productCount.Next() {
+// 			if err := productCount.Scan(&countOfProducts); err != nil {
+// 				if err != nil {
+// 					c.JSON(http.StatusBadRequest, gin.H{
+// 						"status":  false,
+// 						"message": err.Error(),
+// 					})
+// 					return
+// 				}
+// 			}
+// 		}
 
-		// get all product where category id equal categoryID
-		productRows, err := db.Query("SELECT p.id,t.name,p.price,p.old_price,p.main_image,p.product_code,p.images,p.limit_amount,p.is_new FROM products p LEFT JOIN category_product c ON p.id=c.product_id LEFT JOIN translation_product t ON p.id=t.product_id WHERE t.lang_id = $1 AND c.category_id = $2 AND p.deleted_at IS NULL AND c.deleted_at IS NULL AND t.deleted_at IS NULL ORDER BY p.created_at ASC LIMIT $3 OFFSET $4", langID, categoryID, limit, offset)
-		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-		defer productRows.Close()
+// 		// get all product where category id equal categoryID
+// 		productRows, err := db.Query("SELECT p.id,t.name,p.price,p.old_price,p.main_image,p.product_code,p.images,p.limit_amount,p.is_new FROM products p LEFT JOIN category_product c ON p.id=c.product_id LEFT JOIN translation_product t ON p.id=t.product_id WHERE t.lang_id = $1 AND c.category_id = $2 AND p.deleted_at IS NULL AND c.deleted_at IS NULL AND t.deleted_at IS NULL ORDER BY p.created_at ASC LIMIT $3 OFFSET $4", langID, categoryID, limit, offset)
+// 		if err != nil {
+// 			c.JSON(http.StatusBadRequest, gin.H{
+// 				"status":  false,
+// 				"message": err.Error(),
+// 			})
+// 			return
+// 		}
+// 		defer productRows.Close()
 
-		var products []Product
+// 		var products []Product
 
-		for productRows.Next() {
-			var product Product
-			if err := productRows.Scan(&product.ID, &product.Name, &product.Price, &product.OldPrice, &product.MainImage, &product.ProductCode, &product.Images, &product.LimitAmount, &product.IsNew); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
-				return
-			}
+// 		for productRows.Next() {
+// 			var product Product
+// 			if err := productRows.Scan(&product.ID, &product.Name, &product.Price, &product.OldPrice, &product.MainImage, &product.ProductCode, &product.Images, &product.LimitAmount, &product.IsNew); err != nil {
+// 				c.JSON(http.StatusBadRequest, gin.H{
+// 					"status":  false,
+// 					"message": err.Error(),
+// 				})
+// 				return
+// 			}
 
-			// get brend where id equal brend_id of product
-			brendRows, err := db.Query("SELECT b.id,b.name FROM products p LEFT JOIN brends b ON p.brend_id=b.id WHERE p.id = $1 AND p.deleted_at IS NULL AND b.deleted_at IS NULL", product.ID)
-			if err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
-				return
-			}
-			defer brendRows.Close()
+// 			// get brend where id equal brend_id of product
+// 			brendRows, err := db.Query("SELECT b.id,b.name FROM products p LEFT JOIN brends b ON p.brend_id=b.id WHERE p.id = $1 AND p.deleted_at IS NULL AND b.deleted_at IS NULL", product.ID)
+// 			if err != nil {
+// 				c.JSON(http.StatusBadRequest, gin.H{
+// 					"status":  false,
+// 					"message": err.Error(),
+// 				})
+// 				return
+// 			}
+// 			defer brendRows.Close()
 
-			var brend Brend
+// 			var brend Brend
 
-			for brendRows.Next() {
-				if err := brendRows.Scan(&brend.ID, &brend.Name); err != nil {
-					c.JSON(http.StatusBadRequest, gin.H{
-						"status":  false,
-						"message": err.Error(),
-					})
-					return
-				}
-			}
-			product.Brend = brend
-			products = append(products, product)
-		}
-		category.Products = products
-	}
-	c.JSON(http.StatusOK, gin.H{
-		"status":            true,
-		"category":          category,
-		"count_of_products": countOfProducts,
-	})
+// 			for brendRows.Next() {
+// 				if err := brendRows.Scan(&brend.ID, &brend.Name); err != nil {
+// 					c.JSON(http.StatusBadRequest, gin.H{
+// 						"status":  false,
+// 						"message": err.Error(),
+// 					})
+// 					return
+// 				}
+// 			}
+// 			product.Brend = brend
+// 			products = append(products, product)
+// 		}
+// 		category.Products = products
+// 	}
+// 	c.JSON(http.StatusOK, gin.H{
+// 		"status":            true,
+// 		"category":          category,
+// 		"count_of_products": countOfProducts,
+// 	})
 
-}
+// }
