@@ -880,21 +880,6 @@
 									"type": "default"
 								},
 								{
-									"key": "main_image",
-									"type": "file",
-									"src": "/home/abb/Pictures/download (2).jpeg"
-								},
-								{
-									"key": "images",
-									"type": "file",
-									"src": []
-								},
-								{
-									"key": "images",
-									"type": "file",
-									"src": []
-								},
-								{
 									"key": "name_tm",
 									"value": "Nemlendiriji suwuk sabyn Aura Clean \"Черничный йогурт\" 1 ltr",
 									"type": "default"
@@ -938,6 +923,51 @@
 									"key": "limit_amount",
 									"value": "100",
 									"type": "default"
+								},
+								{
+									"key": "main_small",
+									"type": "file",
+									"src": "/home/abb/Pictures/your-future-is-created-by-what-you-do-today-53172-1920x1200.jpg"
+								},
+								{
+									"key": "main_medium",
+									"type": "file",
+									"src": "/home/abb/Pictures/your-future-is-created-by-what-you-do-today-53172-1920x1200.jpg"
+								},
+								{
+									"key": "main_large",
+									"type": "file",
+									"src": "/home/abb/Pictures/your-future-is-created-by-what-you-do-today-53172-1920x1200.jpg"
+								},
+								{
+									"key": "small",
+									"type": "file",
+									"src": "/home/abb/Pictures/Quotefancy-76406-3840x2160.jpg"
+								},
+								{
+									"key": "small",
+									"type": "file",
+									"src": "/home/abb/Pictures/profile.jpeg"
+								},
+								{
+									"key": "medium",
+									"type": "file",
+									"src": "/home/abb/Pictures/Quotefancy-76406-3840x2160.jpg"
+								},
+								{
+									"key": "medium",
+									"type": "file",
+									"src": "/home/abb/Pictures/profile.jpeg"
+								},
+								{
+									"key": "large",
+									"type": "file",
+									"src": "/home/abb/Pictures/Quotefancy-76406-3840x2160.jpg"
+								},
+								{
+									"key": "large",
+									"type": "file",
+									"src": "/home/abb/Pictures/profile.jpeg"
 								}
 							]
 						},

@@ -1,4193 +1,1543 @@
-{
-	"info": {
-		"_postman_id": "ab71fe00-ff0b-4495-9c55-4969161f0fd4",
-		"name": "IM",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
-	},
-	"item": [
-		{
-			"name": "Language",
-			"item": [
-				{
-					"name": "CreateLanguage",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "",
-									"value": "",
-									"type": "default",
-									"disabled": true
-								},
-								{
-									"key": "name_short",
-									"value": "fr",
-									"type": "default"
-								},
-								{
-									"key": "flag",
-									"type": "file",
-									"src": "/home/abb/Pictures/download (4).jpeg"
-								}
-							],
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "localhost:2406/admin/language",
-							"host": [
-								"localhost"
-							],
-							"port": "2406",
-							"path": [
-								"admin",
-								"language"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "UpdateLanguageByID",
-					"request": {
-						"method": "PUT",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "",
-									"value": "",
-									"type": "default",
-									"disabled": true
-								},
-								{
-									"key": "name_short",
-									"value": "ru",
-									"type": "default"
-								},
-								{
-									"key": "flag",
-									"type": "file",
-									"src": "/home/abb/Pictures/profile.jpeg"
-								}
-							]
-						},
-						"url": {
-							"raw": "localhost:2406/admin/language/aea98b93-7bdf-455b-9ad4-a259d69dc76e",
-							"host": [
-								"localhost"
-							],
-							"port": "2406",
-							"path": [
-								"admin",
-								"language",
-								"aea98b93-7bdf-455b-9ad4-a259d69dc76e"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "GetLanguages",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "localhost:2406/admin/languages",
-							"host": [
-								"localhost"
-							],
-							"port": "2406",
-							"path": [
-								"admin",
-								"languages"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "GetLanguageByID",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "localhost:2406/admin/language/8723c1c7-aa6d-429f-b8af-ee9ace61f0d7",
-							"host": [
-								"localhost"
-							],
-							"port": "2406",
-							"path": [
-								"admin",
-								"language",
-								"8723c1c7-aa6d-429f-b8af-ee9ace61f0d7"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "DeleteLanguageByID",
-					"request": {
-						"method": "DELETE",
-						"header": [],
-						"url": {
-							"raw": "localhost:2406/admin/language/6472642a-3589-4631-a218-94dd87729d4b",
-							"host": [
-								"localhost"
-							],
-							"port": "2406",
-							"path": [
-								"admin",
-								"language",
-								"6472642a-3589-4631-a218-94dd87729d4b"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "DeletePermanentlyLanguageByID",
-					"request": {
-						"method": "DELETE",
-						"header": [],
-						"url": {
-							"raw": "localhost:2406/admin/delete-language/6472642a-3589-4631-a218-94dd87729d4b",
-							"host": [
-								"localhost"
-							],
-							"port": "2406",
-							"path": [
-								"admin",
-								"delete-language",
-								"6472642a-3589-4631-a218-94dd87729d4b"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "RestoreLanguageByID",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "localhost:2406/admin/restore-language/aea98b93-7bdf-455b-9ad4-a259d69dc76e",
-							"host": [
-								"localhost"
-							],
-							"port": "2406",
-							"path": [
-								"admin",
-								"restore-language",
-								"aea98b93-7bdf-455b-9ad4-a259d69dc76e"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "Category",
-			"item": [
-				{
-					"name": "CreateCategory",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "image",
-									"type": "file",
-									"src": []
-								},
-								{
-									"key": "name_tm",
-									"value": "Name_tm",
-									"type": "text"
-								},
-								{
-									"key": "name_ru",
-									"value": "Name_ru",
-									"type": "default"
-								},
-								{
-									"key": "parent_category_id",
-									"value": "02bd4413-8586-49ab-802e-16304e756a8p",
-									"type": "default"
-								},
-								{
-									"key": "is_home_category",
-									"value": "false",
-									"type": "default"
-								}
-							]
-						},
-						"url": {
-							"raw": "localhost:2406/admin/category",
-							"host": [
-								"localhost"
-							],
-							"port": "2406",
-							"path": [
-								"admin",
-								"category"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "UpdateCategoryByID",
-					"request": {
-						"method": "PUT",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "image",
-									"type": "file",
-									"src": "/home/abb/Pictures/download (4).jpeg"
-								},
-								{
-									"key": "name_tm",
-									"value": "name_tm",
-									"type": "text"
-								},
-								{
-									"key": "name_ru",
-									"value": "name_ru",
-									"type": "default"
-								},
-								{
-									"key": "parent_category_id",
-									"value": "",
-									"type": "default"
-								},
-								{
-									"key": "is_home_category",
-									"value": "false",
-									"type": "default"
-								}
-							]
-						},
-						"url": {
-							"raw": "localhost:2406/admin/category/02bd4413-8586-49ab-802e-16304e756a8b",
-							"host": [
-								"localhost"
-							],
-							"port": "2406",
-							"path": [
-								"admin",
-								"category",
-								"02bd4413-8586-49ab-802e-16304e756a8b"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "GetAllCategory",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "localhost:2406/admin/categories",
-							"host": [
-								"localhost"
-							],
-							"port": "2406",
-							"path": [
-								"admin",
-								"categories"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "GetCategoryByID",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "localhost:2406/admin/category/4af3388b-2738-4ff6-b42e-927cb0ff897f",
-							"host": [
-								"localhost"
-							],
-							"port": "2406",
-							"path": [
-								"admin",
-								"category",
-								"4af3388b-2738-4ff6-b42e-927cb0ff897f"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "DeleteCategoryByID",
-					"request": {
-						"method": "DELETE",
-						"header": [],
-						"url": {
-							"raw": "localhost:2406/admin/category/3d0851a3-45cf-4662-b315-67a98b9273c2",
-							"host": [
-								"localhost"
-							],
-							"port": "2406",
-							"path": [
-								"admin",
-								"category",
-								"3d0851a3-45cf-4662-b315-67a98b9273c2"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "DeletePermanentlyCategoryByID",
-					"request": {
-						"method": "DELETE",
-						"header": [],
-						"url": {
-							"raw": "localhost:2406/admin/delete-category/3d0851a3-45cf-4662-b315-67a98b9273c2",
-							"host": [
-								"localhost"
-							],
-							"port": "2406",
-							"path": [
-								"admin",
-								"delete-category",
-								"3d0851a3-45cf-4662-b315-67a98b9273c2"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "RestoreCategoryByID",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "localhost:2406/admin/restore-category/3d0851a3-45cf-4662-b315-67a98b9273c2",
-							"host": [
-								"localhost"
-							],
-							"port": "2406",
-							"path": [
-								"admin",
-								"restore-category",
-								"3d0851a3-45cf-4662-b315-67a98b9273c2"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "CompanySetting",
-			"item": [
-				{
-					"name": "CreateCompanySetting",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "logo",
-									"type": "file",
-									"src": "/home/abb/Downloads/logo.jpg"
-								},
-								{
-									"key": "favicon",
-									"type": "file",
-									"src": "/home/abb/Downloads/logo.jpg"
-								},
-								{
-									"key": "email",
-									"value": "isleg@gmail.com",
-									"type": "default"
-								},
-								{
-									"key": "instagram",
-									"value": "@isleginstagram",
-									"type": "default"
-								}
-							]
-						},
-						"url": {
-							"raw": "localhost:2406/admin/company-setting",
-							"host": [
-								"localhost"
-							],
-							"port": "2406",
-							"path": [
-								"admin",
-								"company-setting"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "UpdateCompanySetting",
-					"request": {
-						"method": "PUT",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "logo",
-									"type": "file",
-									"src": "/home/abb/Pictures/download (2).jpeg"
-								},
-								{
-									"key": "favicon",
-									"type": "file",
-									"src": "/home/abb/Pictures/download (1).jpeg"
-								},
-								{
-									"key": "email",
-									"value": "isleg-bazar@gmail.com",
-									"type": "default"
-								},
-								{
-									"key": "instagram",
-									"value": "@islegbazarinstagram",
-									"type": "default"
-								}
-							]
-						},
-						"url": {
-							"raw": "localhost:2406/admin/company-setting",
-							"host": [
-								"localhost"
-							],
-							"port": "2406",
-							"path": [
-								"admin",
-								"company-setting"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "GetOneCompanySetting",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "localhost:2406/admin/company-setting",
-							"host": [
-								"localhost"
-							],
-							"port": "2406",
-							"path": [
-								"admin",
-								"company-setting"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "Front",
-			"item": [
-				{
-					"name": "GetHeaderData",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "localhost:2406/api/tm/header",
-							"host": [
-								"localhost"
-							],
-							"port": "2406",
-							"path": [
-								"api",
-								"tm",
-								"header"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "GetFooterData",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "localhost:2406/api/tm/footer",
-							"host": [
-								"localhost"
-							],
-							"port": "2406",
-							"path": [
-								"api",
-								"tm",
-								"footer"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "GetBrends",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "localhost:2406/api/tm/brends",
-							"host": [
-								"localhost"
-							],
-							"port": "2406",
-							"path": [
-								"api",
-								"tm",
-								"brends"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "GetHomePageCategories",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "localhost:2406/api/tm/homepage-categories",
-							"host": [
-								"localhost"
-							],
-							"port": "2406",
-							"path": [
-								"api",
-								"tm",
-								"homepage-categories"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "GetOneCategoryWithProducts",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "localhost:2406/api/tm/4af3388b-2738-4ff6-b42e-927cb0ff897f/2/1",
-							"host": [
-								"localhost"
-							],
-							"port": "2406",
-							"path": [
-								"api",
-								"tm",
-								"4af3388b-2738-4ff6-b42e-927cb0ff897f",
-								"2",
-								"1"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "GetCompanyPhones",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "localhost:2406/api/tm/company-phones",
-							"host": [
-								"localhost"
-							],
-							"port": "2406",
-							"path": [
-								"api",
-								"tm",
-								"company-phones"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "GetCompanyAddress",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "localhost:2406/api/tm/company-address",
-							"host": [
-								"localhost"
-							],
-							"port": "2406",
-							"path": [
-								"api",
-								"tm",
-								"company-address"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "Brend",
-			"item": [
-				{
-					"name": "CreateBrend",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "name",
-									"value": "Buzz",
-									"type": "default"
-								},
-								{
-									"key": "image",
-									"type": "file",
-									"src": "/home/abb/Pictures/download (4).jpeg"
-								},
-								{
-									"key": "",
-									"value": "",
-									"type": "default",
-									"disabled": true
-								}
-							]
-						},
-						"url": {
-							"raw": "localhost:2406/admin/brend",
-							"host": [
-								"localhost"
-							],
-							"port": "2406",
-							"path": [
-								"admin",
-								"brend"
-							],
-							"query": [
-								{
-									"key": "",
-									"value": null,
-									"disabled": true
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "UpdateBrendByID",
-					"request": {
-						"method": "PUT",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "name",
-									"value": "Golden Eagle",
-									"type": "default"
-								},
-								{
-									"key": "image",
-									"type": "file",
-									"src": "/home/abb/Pictures/download (1).jpeg"
-								}
-							]
-						},
-						"url": {
-							"raw": "localhost:2406/admin/brend/c2f11fea-8057-4a7c-b290-c97d1d90ac59",
-							"host": [
-								"localhost"
-							],
-							"port": "2406",
-							"path": [
-								"admin",
-								"brend",
-								"c2f11fea-8057-4a7c-b290-c97d1d90ac59"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "GetBrendByID",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "localhost:2406/admin/brend/6a31c50a-704f-4b0d-80ae-240ca3094cda",
-							"host": [
-								"localhost"
-							],
-							"port": "2406",
-							"path": [
-								"admin",
-								"brend",
-								"6a31c50a-704f-4b0d-80ae-240ca3094cda"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "GetBrends",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "localhost:2406/admin/brends",
-							"host": [
-								"localhost"
-							],
-							"port": "2406",
-							"path": [
-								"admin",
-								"brends"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "DeleteBrendByID",
-					"request": {
-						"method": "DELETE",
-						"header": [],
-						"url": {
-							"raw": "localhost:2406/admin/brend/c2f11fea-8057-4a7c-b290-c97d1d90ac59",
-							"host": [
-								"localhost"
-							],
-							"port": "2406",
-							"path": [
-								"admin",
-								"brend",
-								"c2f11fea-8057-4a7c-b290-c97d1d90ac59"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "RestoreBrendByID",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "localhost:2406/admin/restore-brend/c2f11fea-8057-4a7c-b290-c97d1d90ac59",
-							"host": [
-								"localhost"
-							],
-							"port": "2406",
-							"path": [
-								"admin",
-								"restore-brend",
-								"c2f11fea-8057-4a7c-b290-c97d1d90ac59"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "DeletePermanentlyBrendByID",
-					"request": {
-						"method": "DELETE",
-						"header": [],
-						"url": {
-							"raw": "localhost:2406/admin/delete-brend/c2f11fea-8057-4a7c-b290-c97d1d90ac59",
-							"host": [
-								"localhost"
-							],
-							"port": "2406",
-							"path": [
-								"admin",
-								"delete-brend",
-								"c2f11fea-8057-4a7c-b290-c97d1d90ac59"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "Product",
-			"item": [
-				{
-					"name": "CreateProduct",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "brend_id",
-									"value": "fdd259c2-794a-42b9-a3ad-9e91502af23e",
-									"type": "default"
-								},
-								{
-									"key": "price",
-									"value": "23",
-									"type": "default"
-								},
-								{
-									"key": "old_price",
-									"value": "",
-									"type": "default"
-								},
-								{
-									"key": "amount",
-									"value": "1000",
-									"type": "default"
-								},
-								{
-									"key": "product_code",
-									"value": "fer51gf65er",
-									"type": "default"
-								},
-								{
-									"key": "main_image",
-									"type": "file",
-									"src": "/home/abb/Pictures/download (2).jpeg"
-								},
-								{
-									"key": "images",
-									"type": "file",
-									"src": []
-								},
-								{
-									"key": "images",
-									"type": "file",
-									"src": []
-								},
-								{
-									"key": "name_tm",
-									"value": "Nemlendiriji suwuk sabyn Aura Clean \"Черничный йогурт\" 1 ltr",
-									"type": "default"
-								},
-								{
-									"key": "name_ru",
-									"value": "Жидкое крем-мыло увлажняющее Aura Clean \"Черничный йогурт\" 1 л",
-									"type": "default"
-								},
-								{
-									"key": "description_tm",
-									"value": "Nemlendiriji suwuk sabyn Aura Clean \"Черничный йогурт\" 1 ltr",
-									"type": "default"
-								},
-								{
-									"key": "description_ru",
-									"value": "Жидкое крем-мыло увлажняющее Aura Clean \"Черничный йогурт\" 1 л",
-									"type": "default"
-								},
-								{
-									"key": "category_id",
-									"value": "d4cb1359-6c23-4194-8e3c-21ed8cec8373",
-									"type": "default"
-								},
-								{
-									"key": "category_id",
-									"value": "38d92a87-4a9c-4860-94e6-e568f21ecd8e",
-									"type": "default"
-								},
-								{
-									"key": "category_id",
-									"value": "29ed85bb-11eb-4458-bbf3-5a5644d167d6",
-									"type": "default"
-								},
-								{
-									"key": "is_new",
-									"value": "true",
-									"type": "default"
-								},
-								{
-									"key": "limit_amount",
-									"value": "100",
-									"type": "default"
-								}
-							]
-						},
-						"url": {
-							"raw": "localhost:2406/admin/product",
-							"host": [
-								"localhost"
-							],
-							"port": "2406",
-							"path": [
-								"admin",
-								"product"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "UpdateProductByID",
-					"request": {
-						"method": "PUT",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "brend_id",
-									"value": "ddccb2dc-9697-4f4e-acf5-26b8bc2c8b72",
-									"type": "default"
-								},
-								{
-									"key": "price",
-									"value": "46",
-									"type": "default"
-								},
-								{
-									"key": "old_price",
-									"value": "46.5",
-									"type": "default"
-								},
-								{
-									"key": "amount",
-									"value": "998",
-									"type": "default"
-								},
-								{
-									"key": "product_code",
-									"value": "w5f2we6f598",
-									"type": "default"
-								},
-								{
-									"key": "main_image",
-									"type": "file",
-									"src": "/home/abb/Pictures/Isleg geljegimiz (1).jpg"
-								},
-								{
-									"key": "images",
-									"type": "file",
-									"src": "/home/abb/Pictures/download (3).jpeg"
-								},
-								{
-									"key": "images",
-									"type": "file",
-									"src": "/home/abb/Pictures/images.jpeg"
-								},
-								{
-									"key": "name_tm",
-									"value": "name_tm",
-									"type": "default"
-								},
-								{
-									"key": "name_ru",
-									"value": "name_ru",
-									"type": "default"
-								},
-								{
-									"key": "description_tm",
-									"value": "description_tm",
-									"type": "default"
-								},
-								{
-									"key": "description_ru",
-									"value": "description_ru",
-									"type": "default"
-								},
-								{
-									"key": "category_id",
-									"value": "5bb9a4e7-9992-418f-b551-537844d371da",
-									"type": "default"
-								},
-								{
-									"key": "category_id",
-									"value": "4af3388b-2738-4ff6-b42e-927cb0ff897f",
-									"type": "default"
-								},
-								{
-									"key": "limit_amount",
-									"value": "990",
-									"type": "default"
-								},
-								{
-									"key": "is_new",
-									"value": "true",
-									"type": "default"
-								}
-							]
-						},
-						"url": {
-							"raw": "localhost:2406/admin/product/1a8935fd-c6ab-4656-b173-826c487a2274",
-							"host": [
-								"localhost"
-							],
-							"port": "2406",
-							"path": [
-								"admin",
-								"product",
-								"1a8935fd-c6ab-4656-b173-826c487a2274"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "GetProductByID",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "localhost:2406/admin/product/1a8935fd-c6ab-4656-b173-826c487a2274",
-							"host": [
-								"localhost"
-							],
-							"port": "2406",
-							"path": [
-								"admin",
-								"product",
-								"1a8935fd-c6ab-4656-b173-826c487a2274"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "GetProducts",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "localhost:2406/admin/products",
-							"host": [
-								"localhost"
-							],
-							"port": "2406",
-							"path": [
-								"admin",
-								"products"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "DeleteProductByID",
-					"request": {
-						"method": "DELETE",
-						"header": [],
-						"url": {
-							"raw": "localhost:2406/admin/product/1fa25151-9c63-4554-a79d-faf6cc78ef69",
-							"host": [
-								"localhost"
-							],
-							"port": "2406",
-							"path": [
-								"admin",
-								"product",
-								"1fa25151-9c63-4554-a79d-faf6cc78ef69"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "RestoreProductByID",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "localhost:2406/admin/restore-product/e3f8aebb-1451-43a3-9e9b-582da01c8d08",
-							"host": [
-								"localhost"
-							],
-							"port": "2406",
-							"path": [
-								"admin",
-								"restore-product",
-								"e3f8aebb-1451-43a3-9e9b-582da01c8d08"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "DeletePermanentlyProductByID",
-					"request": {
-						"method": "DELETE",
-						"header": [],
-						"url": {
-							"raw": "localhost:2406/admin/delete-product/1fa25151-9c63-4554-a79d-faf6cc78ef69",
-							"host": [
-								"localhost"
-							],
-							"port": "2406",
-							"path": [
-								"admin",
-								"delete-product",
-								"1fa25151-9c63-4554-a79d-faf6cc78ef69"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "Afisa",
-			"item": [
-				{
-					"name": "CreateAfisa",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "image",
-									"type": "file",
-									"src": []
-								},
-								{
-									"key": "title_tm",
-									"value": "Aksiya",
-									"type": "default"
-								},
-								{
-									"key": "title_ru",
-									"value": "Действие",
-									"type": "default"
-								},
-								{
-									"key": "description_tm",
-									"value": "Aksiya barada maglumat",
-									"type": "default"
-								},
-								{
-									"key": "description_ru",
-									"value": "Информация о действии",
-									"type": "default"
-								}
-							]
-						},
-						"url": {
-							"raw": "localhost:2406/admin/afisa",
-							"host": [
-								"localhost"
-							],
-							"port": "2406",
-							"path": [
-								"admin",
-								"afisa"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "UpdateAfisaByID",
-					"request": {
-						"method": "PUT",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "title_tm",
-									"value": "title_tm",
-									"type": "default"
-								},
-								{
-									"key": "title_ru",
-									"value": "title_ru",
-									"type": "default"
-								},
-								{
-									"key": "description_tm",
-									"value": "description_tm",
-									"type": "default"
-								},
-								{
-									"key": "description_ru",
-									"value": "description_ru",
-									"type": "default"
-								},
-								{
-									"key": "image",
-									"type": "file",
-									"src": "/home/abb/Pictures/download (3).jpeg"
-								}
-							]
-						},
-						"url": {
-							"raw": "localhost:2406/admin/afisa/cb670531-8ca3-4d74-8ea4-f7853aae4132",
-							"host": [
-								"localhost"
-							],
-							"port": "2406",
-							"path": [
-								"admin",
-								"afisa",
-								"cb670531-8ca3-4d74-8ea4-f7853aae4132"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "GetsAfisaByID",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "localhost:2406/admin/afisa/cb670531-8ca3-4d74-8ea4-f7853aae4132",
-							"host": [
-								"localhost"
-							],
-							"port": "2406",
-							"path": [
-								"admin",
-								"afisa",
-								"cb670531-8ca3-4d74-8ea4-f7853aae4132"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "GetAfisas",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "localhost:2406/admin/afisas",
-							"host": [
-								"localhost"
-							],
-							"port": "2406",
-							"path": [
-								"admin",
-								"afisas"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "DeleteAfisaByID",
-					"request": {
-						"method": "DELETE",
-						"header": [],
-						"url": {
-							"raw": "localhost:2406/admin/afisa/cb670531-8ca3-4d74-8ea4-f7853aae4132",
-							"host": [
-								"localhost"
-							],
-							"port": "2406",
-							"path": [
-								"admin",
-								"afisa",
-								"cb670531-8ca3-4d74-8ea4-f7853aae4132"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "RestoreAfisaByID",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "localhost:2406/admin/restore-afisa/cb670531-8ca3-4d74-8ea4-f7853aae4132",
-							"host": [
-								"localhost"
-							],
-							"port": "2406",
-							"path": [
-								"admin",
-								"restore-afisa",
-								"cb670531-8ca3-4d74-8ea4-f7853aae4132"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "DeletePermanentlyAfisaByID",
-					"request": {
-						"method": "DELETE",
-						"header": [],
-						"url": {
-							"raw": "localhost:2406/admin/delete-afisa/cb670531-8ca3-4d74-8ea4-f7853aae4132",
-							"host": [
-								"localhost"
-							],
-							"port": "2406",
-							"path": [
-								"admin",
-								"delete-afisa",
-								"cb670531-8ca3-4d74-8ea4-f7853aae4132"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "CompanyPhone",
-			"item": [
-				{
-					"name": "CreateCompanyPhone",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "phone",
-									"value": "61899737",
-									"type": "default"
-								}
-							]
-						},
-						"url": {
-							"raw": "localhost:2406/admin/company-phone",
-							"host": [
-								"localhost"
-							],
-							"port": "2406",
-							"path": [
-								"admin",
-								"company-phone"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "UpdateCompanyPhoneByID",
-					"request": {
-						"method": "PUT",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "phone",
-									"value": "63698547",
-									"type": "default"
-								}
-							]
-						},
-						"url": {
-							"raw": "localhost:2406/admin/company-phone/3060bc25-2a55-4ee0-894d-f87f887e1fc4",
-							"host": [
-								"localhost"
-							],
-							"port": "2406",
-							"path": [
-								"admin",
-								"company-phone",
-								"3060bc25-2a55-4ee0-894d-f87f887e1fc4"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "GetCompanyPhoneByID",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "localhost:2406/admin/company-phone/3060bc25-2a55-4ee0-894d-f87f887e1fc4",
-							"host": [
-								"localhost"
-							],
-							"port": "2406",
-							"path": [
-								"admin",
-								"company-phone",
-								"3060bc25-2a55-4ee0-894d-f87f887e1fc4"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "DeleteCompanyPhoneByID",
-					"request": {
-						"method": "DELETE",
-						"header": [],
-						"url": {
-							"raw": "localhost:2406/admin/company-phone/3060bc25-2a55-4ee0-894d-f87f887e1fc4",
-							"host": [
-								"localhost"
-							],
-							"port": "2406",
-							"path": [
-								"admin",
-								"company-phone",
-								"3060bc25-2a55-4ee0-894d-f87f887e1fc4"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "RestoreCompanyPhoneByID",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "localhost:2406/admin/restore-company-phone/3060bc25-2a55-4ee0-894d-f87f887e1fc4",
-							"host": [
-								"localhost"
-							],
-							"port": "2406",
-							"path": [
-								"admin",
-								"restore-company-phone",
-								"3060bc25-2a55-4ee0-894d-f87f887e1fc4"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "DeletePermanentlyCompanyPhoneByID",
-					"request": {
-						"method": "DELETE",
-						"header": [],
-						"url": {
-							"raw": "localhost:2406/admin/delete-company-phone/3060bc25-2a55-4ee0-894d-f87f887e1fc4",
-							"host": [
-								"localhost"
-							],
-							"port": "2406",
-							"path": [
-								"admin",
-								"delete-company-phone",
-								"3060bc25-2a55-4ee0-894d-f87f887e1fc4"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "Banner",
-			"item": [
-				{
-					"name": "CreateBanner",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "image",
-									"type": "file",
-									"src": []
-								},
-								{
-									"key": "url",
-									"value": "",
-									"type": "default"
-								}
-							]
-						},
-						"url": {
-							"raw": "localhost:2406/admin/banner",
-							"host": [
-								"localhost"
-							],
-							"port": "2406",
-							"path": [
-								"admin",
-								"banner"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "CompanyAddress",
-			"item": [
-				{
-					"name": "CreateCompanyAddress",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "address_tm",
-									"value": "Aşgabat şäheri Azady köçesiniň 23-nji jaýy",
-									"type": "default"
-								},
-								{
-									"key": "address_ru",
-									"value": "Улица Азади 23, Ашхабад",
-									"type": "default"
-								}
-							]
-						},
-						"url": {
-							"raw": "localhost:2406/admin/company-address",
-							"host": [
-								"localhost"
-							],
-							"port": "2406",
-							"path": [
-								"admin",
-								"company-address"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "UpdateCompanyAddressByID",
-					"request": {
-						"method": "PUT",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "address",
-									"value": "adres_tm",
-									"type": "default"
-								}
-							]
-						},
-						"url": {
-							"raw": "localhost:2406/admin/company-address/d2c66808-e5fe-435f-ba01-cb717f80d9e0",
-							"host": [
-								"localhost"
-							],
-							"port": "2406",
-							"path": [
-								"admin",
-								"company-address",
-								"d2c66808-e5fe-435f-ba01-cb717f80d9e0"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "GetCompanyAddressByID",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "localhost:2406/admin/company-address/d2c66808-e5fe-435f-ba01-cb717f80d9e0",
-							"host": [
-								"localhost"
-							],
-							"port": "2406",
-							"path": [
-								"admin",
-								"company-address",
-								"d2c66808-e5fe-435f-ba01-cb717f80d9e0"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "TranslationFooter",
-			"item": [
-				{
-					"name": "CreateTranslationFooter",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "about_tm",
-									"value": "Biz Barada",
-									"type": "default"
-								},
-								{
-									"key": "about_ru",
-									"value": "О нас",
-									"type": "default"
-								},
-								{
-									"key": "payment_tm",
-									"value": "Eltip bermek we töleg tertibi",
-									"type": "default"
-								},
-								{
-									"key": "payment_ru",
-									"value": "Порядок доставки и оплаты",
-									"type": "default"
-								},
-								{
-									"key": "contact_tm",
-									"value": "Aragatnaşyk",
-									"type": "default"
-								},
-								{
-									"key": "contact_ru",
-									"value": "Коммуникация",
-									"type": "default"
-								},
-								{
-									"key": "secure_tm",
-									"value": "Ulanyş düzgünleri we gizlinlik şertnamasy",
-									"type": "default"
-								},
-								{
-									"key": "secure_ru",
-									"value": "Обслуживания и Политика Конфиденциальности",
-									"type": "default"
-								},
-								{
-									"key": "word_tm",
-									"value": "Ähli hukuklary goraglydyr",
-									"type": "default"
-								},
-								{
-									"key": "word_ru",
-									"value": "Все права защищены",
-									"type": "default"
-								}
-							]
-						},
-						"url": {
-							"raw": "localhost:2406/admin/translation-footer",
-							"host": [
-								"localhost"
-							],
-							"port": "2406",
-							"path": [
-								"admin",
-								"translation-footer"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "UpdateTranslationFooterByID",
-					"request": {
-						"method": "PUT",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "about",
-									"value": "Biz Barada",
-									"type": "default"
-								},
-								{
-									"key": "payment",
-									"value": "Eltip bermek we töleg tertibi",
-									"type": "default"
-								},
-								{
-									"key": "contact",
-									"value": "Aragatnaşyk",
-									"type": "default"
-								},
-								{
-									"key": "secure",
-									"value": "Ulanyş düzgünleri we gizlinlik şertnamasy",
-									"type": "default"
-								},
-								{
-									"key": "word",
-									"value": "Ähli hukuklary goraglydyr",
-									"type": "default"
-								}
-							]
-						},
-						"url": {
-							"raw": "localhost:2406/admin/translation-footer/12dc4c16-5712-4bff-a957-8e16d450b4fb",
-							"host": [
-								"localhost"
-							],
-							"port": "2406",
-							"path": [
-								"admin",
-								"translation-footer",
-								"12dc4c16-5712-4bff-a957-8e16d450b4fb"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "GetTranslationFooterByID",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "localhost:2406/admin/translation-footer/12dc4c16-5712-4bff-a957-8e16d450b4fb",
-							"host": [
-								"localhost"
-							],
-							"port": "2406",
-							"path": [
-								"admin",
-								"translation-footer",
-								"12dc4c16-5712-4bff-a957-8e16d450b4fb"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "TranslationHeader",
-			"item": [
-				{
-					"name": "CreateTranslationHeader",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "research_tm",
-									"value": "gözleg",
-									"type": "default"
-								},
-								{
-									"key": "research_ru",
-									"value": "поиск",
-									"type": "default"
-								},
-								{
-									"key": "phone_tm",
-									"value": "telefon",
-									"type": "default"
-								},
-								{
-									"key": "phone_ru",
-									"value": "tелефон",
-									"type": "default"
-								},
-								{
-									"key": "password_tm",
-									"value": "parol",
-									"type": "default"
-								},
-								{
-									"key": "password_ru",
-									"value": "пароль",
-									"type": "default"
-								},
-								{
-									"key": "forgot_password_tm",
-									"value": "Acar sozumi unutdym",
-									"type": "default"
-								},
-								{
-									"key": "forgot_password_ru",
-									"value": "забыл пароль",
-									"type": "default"
-								},
-								{
-									"key": "sign_in_tm",
-									"value": "ulgama girmek",
-									"type": "default"
-								},
-								{
-									"key": "sign_in_ru",
-									"value": "войти",
-									"type": "default"
-								},
-								{
-									"key": "sign_up_tm",
-									"value": "agza bolmak",
-									"type": "default"
-								},
-								{
-									"key": "sign_up_ru",
-									"value": "зарегистрироваться",
-									"type": "default"
-								},
-								{
-									"key": "name_tm",
-									"value": "Ady",
-									"type": "default"
-								},
-								{
-									"key": "name_ru",
-									"value": "имя",
-									"type": "default"
-								},
-								{
-									"key": "password_verification_tm",
-									"value": "Acar sozi tassyklamak",
-									"type": "default"
-								},
-								{
-									"key": "password_verification_ru",
-									"value": "Подтвердить Пароль",
-									"type": "default"
-								},
-								{
-									"key": "verify_secure_tm",
-									"value": "Ulanyş Düzgünlerini we Gizlinlik Şertnamasyny okadym we kabul edýärin",
-									"type": "default"
-								},
-								{
-									"key": "verify_secure_ru",
-									"value": "Я прочитал и принимаю Условия Обслуживания и Политика Конфиденциальности",
-									"type": "default"
-								},
-								{
-									"key": "my_information_tm",
-									"value": "maglumatym",
-									"type": "default"
-								},
-								{
-									"key": "my_information_ru",
-									"value": "моя информация",
-									"type": "default"
-								},
-								{
-									"key": "my_favorites_tm",
-									"value": "halanlarym",
-									"type": "default"
-								},
-								{
-									"key": "my_favorites_ru",
-									"value": "мои любимые",
-									"type": "default"
-								},
-								{
-									"key": "my_orders_tm",
-									"value": "sargytlarym",
-									"type": "default"
-								},
-								{
-									"key": "my_orders_ru",
-									"value": "мои заказы",
-									"type": "default"
-								},
-								{
-									"key": "log_out_tm",
-									"value": "cykmak",
-									"type": "default"
-								},
-								{
-									"key": "log_out_ru",
-									"value": "выйти",
-									"type": "default"
-								},
-								{
-									"key": "basket_tm",
-									"value": "sebet",
-									"type": "default"
-								},
-								{
-									"key": "basket_ru",
-									"value": "корзина",
-									"type": "default"
-								}
-							]
-						},
-						"url": {
-							"raw": "localhost:2406/admin/translation-header",
-							"host": [
-								"localhost"
-							],
-							"port": "2406",
-							"path": [
-								"admin",
-								"translation-header"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "UpdateTranslationHeaderByID",
-					"request": {
-						"method": "PUT",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "research",
-									"value": "gözleg",
-									"type": "default"
-								},
-								{
-									"key": "phone",
-									"value": "telefon",
-									"type": "default"
-								},
-								{
-									"key": "password",
-									"value": "parol",
-									"type": "default"
-								},
-								{
-									"key": "forgot_password",
-									"value": "Acar sozumi unutdym",
-									"type": "default"
-								},
-								{
-									"key": "sign_in",
-									"value": "ulgama girmek",
-									"type": "default"
-								},
-								{
-									"key": "sign_up",
-									"value": "agza bolmak",
-									"type": "default"
-								},
-								{
-									"key": "name",
-									"value": "Ady",
-									"type": "default"
-								},
-								{
-									"key": "password_verification",
-									"value": "Acar sozi tassyklamak",
-									"type": "default"
-								},
-								{
-									"key": "verify_secure",
-									"value": "Ulanyş Düzgünlerini we Gizlinlik Şertnamasyny okadym we kabul edýärin",
-									"type": "default"
-								},
-								{
-									"key": "my_information",
-									"value": "maglumatym",
-									"type": "default"
-								},
-								{
-									"key": "my_favorites",
-									"value": "halanlarym",
-									"type": "default"
-								},
-								{
-									"key": "my_orders",
-									"value": "sargytlarym",
-									"type": "default"
-								},
-								{
-									"key": "log_out",
-									"value": "cykmak",
-									"type": "default"
-								},
-								{
-									"key": "basket",
-									"value": "sebet",
-									"type": "default"
-								}
-							]
-						},
-						"url": {
-							"raw": "localhost:2406/admin/translation-header/eaf206e6-d515-4bdb-9323-a047cd0edae5",
-							"host": [
-								"localhost"
-							],
-							"port": "2406",
-							"path": [
-								"admin",
-								"translation-header",
-								"eaf206e6-d515-4bdb-9323-a047cd0edae5"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "GetTranslationHeaderByID",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "localhost:2406/admin/translation-header/eaf206e6-d515-4bdb-9323-a047cd0edae5",
-							"host": [
-								"localhost"
-							],
-							"port": "2406",
-							"path": [
-								"admin",
-								"translation-header",
-								"eaf206e6-d515-4bdb-9323-a047cd0edae5"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "District",
-			"item": [
-				{
-					"name": "CreateDistrict",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "price",
-									"value": "15",
-									"type": "default"
-								},
-								{
-									"key": "name_tm",
-									"value": "Parahat 2",
-									"type": "default"
-								},
-								{
-									"key": "name_ru",
-									"value": "Mir 2",
-									"type": "default"
-								}
-							]
-						},
-						"url": {
-							"raw": "localhost:2406/admin/district",
-							"host": [
-								"localhost"
-							],
-							"port": "2406",
-							"path": [
-								"admin",
-								"district"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "TranslationSecure",
-			"item": [
-				{
-					"name": "CreateTranslationSecure",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "title_tm",
-									"value": "ÖZARA YLALAŞYGY",
-									"type": "default"
-								},
-								{
-									"key": "title_ru",
-									"value": "Пользовательское соглашение",
-									"type": "default"
-								},
-								{
-									"key": "content_tm",
-									"value": "Ynamdar - Internet Marketi (Mundan beýläk – “Ynamdar”) we www.ynamdar.com internet saýty (Mundan beýläk – “Saýt”) bilen, onuň agzasynyň (“Agza”) arasynda aşakdaky şertleri ýerine ýetirmek barada ylalaşyga gelindi.",
-									"type": "default"
-								},
-								{
-									"key": "content_ru",
-									"value": "Между Ынамдар – Интернет Маркетом (далее – “Ынамдар”) и интернет сайтом www.ynamdar.com (далее – “Сайт”), а также его клиентом (далее - “Клиент”) достигнуто соглашение по нижеследующим условиям.\n",
-									"type": "default"
-								}
-							]
-						},
-						"url": {
-							"raw": "localhost:2406/admin/translation-secure",
-							"host": [
-								"localhost"
-							],
-							"port": "2406",
-							"path": [
-								"admin",
-								"translation-secure"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "UpdateTranslationSecureByID",
-					"request": {
-						"method": "PUT",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "title",
-									"value": "ÖZARA YLALAŞYGY",
-									"type": "default"
-								},
-								{
-									"key": "content",
-									"value": "Ynamdar - Internet Marketi (Mundan beýläk – “Ynamdar”) we www.ynamdar.com internet saýty (Mundan beýläk – “Saýt”) bilen, onuň agzasynyň (“Agza”) arasynda aşakdaky şertleri ýerine ýetirmek barada ylalaşyga gelindi.",
-									"type": "default"
-								}
-							]
-						},
-						"url": {
-							"raw": "localhost:2406/admin/translation-secure/5988b64a-82ad-4ed0-bd1b-bdd0b3b05912",
-							"host": [
-								"localhost"
-							],
-							"port": "2406",
-							"path": [
-								"admin",
-								"translation-secure",
-								"5988b64a-82ad-4ed0-bd1b-bdd0b3b05912"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "GetTranslationSecureByID",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "localhost:2406/admin/translation-secure/5988b64a-82ad-4ed0-bd1b-bdd0b3b05912",
-							"host": [
-								"localhost"
-							],
-							"port": "2406",
-							"path": [
-								"admin",
-								"translation-secure",
-								"5988b64a-82ad-4ed0-bd1b-bdd0b3b05912"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "GetTranslationSecureByLangID",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "localhost:2406/api/tm/translation-secure",
-							"host": [
-								"localhost"
-							],
-							"port": "2406",
-							"path": [
-								"api",
-								"tm",
-								"translation-secure"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "TranslationPayment",
-			"item": [
-				{
-					"name": "CreateTranslationPayment",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "title_tm",
-									"value": "Eltip bermek we töleg tertibi",
-									"type": "default"
-								},
-								{
-									"key": "title_ru",
-									"value": "Порядок доставки и оплаты",
-									"type": "default"
-								},
-								{
-									"key": "content_tm",
-									"value": "Eltip bermek hyzmaty Aşgabat şäheriniň çägi bilen bir hatarda Büzmeýine we Änew şäherine hem elýeterlidir. Hyzmat mugt amala aşyrylýar;\nHer bir sargydyň jemi bahasy azyndan 150 manat bolmalydyr;\nSaýtdan sargyt edeniňizden soňra operator size jaň edip sargydy tassyklar (eger hemişelik müşderi bolsaňyz sargytlaryňyz islegiňize görä awtomatik usulda hem tassyklanýar);\nGirizen salgyňyz we telefon belgiňiz esasynda hyzmat amala aşyrylýar;\nSargyt tassyklanmadyk ýagdaýynda ol hasaba alynmaýar we ýerine ýetirilmeýär. Sargydyň tassyklanmagy üçin girizen telefon belgiňizden jaň kabul edip bilýändigiňize göz ýetiriň. Şeýle hem girizen salgyňyzyň dogrulygyny barlaň;\nSargydy barlap alanyňyzdan soňra töleg amala aşyrylýar. Eltip berijiniň size gowşurýan töleg resminamasynda siziň tölemeli puluňyz bellenendir. Töleg nagt we nagt däl görnüşde milli manatda amala aşyrylýar. Kabul edip tölegini geçiren harydyňyz yzyna alynmaýar;\nSargyt tassyklanandan soňra 24 sagadyň dowamynda eýesi tapylmasa ol güýjüni ýitirýär;",
-									"type": "default"
-								},
-								{
-									"key": "content_ru",
-									"value": "В настоящее время услуга по доставке осуществляется по городу Ашхабад, Бюзмеин и Анау. Услуга предоставляется бесплатно.\nМинимальный заказ должен составлять не менее 150 манат;\nПосле Вашего заказа по сайту, оператор позвонит Вам для подтверждения заказа (постоянным клиентам по их желанию подтверждение осуществляется автоматизированно);\nУслуга доставки выполняется по указанному Вами адресу и номеру телефона;\nЕсли заказ не подтвержден то данный заказ не регистрируется и не выполняется. Для подтверждения заказа, удостоверьтесь, что можете принять звонок по указанному Вами номеру телефона. Также проверьте правильность указанного Вами адреса;\nОплата выполняется после того, как Вы проверите и примите заказ. На платежном документе курьера указана сумма Вашей оплаты. Оплата выполняется наличными и через карту в национальной валюте. Принятый и оплаченный товар возврату не подлежит;\nЕсли не удается найти владельца заказа в течение 24 часов после подтверждения заказа, то данный заказ аннулируется;",
-									"type": "default"
-								}
-							]
-						},
-						"url": {
-							"raw": "localhost:2406/admin/translation-payment",
-							"host": [
-								"localhost"
-							],
-							"port": "2406",
-							"path": [
-								"admin",
-								"translation-payment"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "GetTranslationPaymentByLangID",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "localhost:2406/api/tm/translation-payment",
-							"host": [
-								"localhost"
-							],
-							"port": "2406",
-							"path": [
-								"api",
-								"tm",
-								"translation-payment"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "UpdateTranslationPaymentByID",
-					"request": {
-						"method": "PUT",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "title",
-									"value": "Eltip bermek we töleg tertibi",
-									"type": "default"
-								},
-								{
-									"key": "content",
-									"value": "",
-									"type": "default"
-								}
-							]
-						},
-						"url": {
-							"raw": "localhost:2406/admin/translation-payment/5748ec03-5278-425c-babf-f7f2bf8d2efa",
-							"host": [
-								"localhost"
-							],
-							"port": "2406",
-							"path": [
-								"admin",
-								"translation-payment",
-								"5748ec03-5278-425c-babf-f7f2bf8d2efa"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "GetTranslationPaymentByID",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "localhost:2406/admin/translation-payment/5748ec03-5278-425c-babf-f7f2bf8d2efa",
-							"host": [
-								"localhost"
-							],
-							"port": "2406",
-							"path": [
-								"admin",
-								"translation-payment",
-								"5748ec03-5278-425c-babf-f7f2bf8d2efa"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "TranslationAbout",
-			"item": [
-				{
-					"name": "CreateTranslationAbout",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "title_tm",
-									"value": "Sizi Isleg onlaýn marketimizde hoş gördük!",
-									"type": "default"
-								},
-								{
-									"key": "title_ru",
-									"value": "Рады приветствовать Вас в интернет-маркете Isleg!",
-									"type": "default"
-								},
-								{
-									"key": "content_tm",
-									"value": "Onlaýn marketimiz 2019-njy ýylyň iýul aýyndan bäri hyzmat berýär. Häzirki wagtda Size ýüzlerçe brendlere degişli bolan müňlerçe haryt görnüşlerini hödürleýäris! Haryt görnüşlerimizi sizden gelýän isleg we teklipleriň esasynda köpeltmäge dowam edýäris. Biziň maksadymyz müşderilerimize ýokary hilli hyzmat bermek bolup durýar. Indi Siz öýüňizden çykmazdan özüňizi gerekli zatlar bilen üpjün edip bilersiňiz! Munuň bilen bir hatarda Siz wagtyňyzy we transport çykdajylaryny hem tygşytlaýarsyňyz. Tölegi harytlar size gowuşandan soňra nagt ýa-da bank kartlarynyň üsti bilen amala aşyryp bilersiňiz!\n\nBiziň gapymyz hyzmatdaşlyklara we tekliplere hemişe açyk!",
-									"type": "default"
-								},
-								{
-									"key": "content_ru",
-									"value": "Мы начали работу в июле 2019 года и на сегодняшний день мы предлагаем Вам тысячи видов товаров, которые принадлежат сотням брендам. Каждый день мы работаем над увеличением ассортимента, привлечением новых компаний к сотрудничеству. Целью нашей работы является создание выгодных условий для наших клиентов-экономия времени на походы в магазины, оплата наличными или картой, доставка в удобное время, и конечно же качественная продукция по лучшим ценам!\n\nМы открыты для сотрудничества и пожеланий!",
-									"type": "default"
-								}
-							]
-						},
-						"url": {
-							"raw": "localhost:2406/admin/translation-about",
-							"host": [
-								"localhost"
-							],
-							"port": "2406",
-							"path": [
-								"admin",
-								"translation-about"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "GetTranslationAboutByLangID",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "localhost:2406/api/ru/translation-about",
-							"host": [
-								"localhost"
-							],
-							"port": "2406",
-							"path": [
-								"api",
-								"ru",
-								"translation-about"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "UpdateTranslationAboutByID",
-					"request": {
-						"method": "PUT",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "title",
-									"value": "",
-									"type": "default"
-								},
-								{
-									"key": "content",
-									"value": "",
-									"type": "default"
-								}
-							]
-						},
-						"url": {
-							"raw": "localhost:2406/admin/translation-about/7abeb5cf-2fbb-43b9-94ca-251dd5f40d5a",
-							"host": [
-								"localhost"
-							],
-							"port": "2406",
-							"path": [
-								"admin",
-								"translation-about",
-								"7abeb5cf-2fbb-43b9-94ca-251dd5f40d5a"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "GetTranslationAboutByID",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "localhost:2406/admin/translation-about/7abeb5cf-2fbb-43b9-94ca-251dd5f40d5a",
-							"host": [
-								"localhost"
-							],
-							"port": "2406",
-							"path": [
-								"admin",
-								"translation-about",
-								"7abeb5cf-2fbb-43b9-94ca-251dd5f40d5a"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "TranslationContact",
-			"item": [
-				{
-					"name": "CreateTranslationContact",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "full_name_tm",
-									"value": "at_tm",
-									"type": "default"
-								},
-								{
-									"key": "full_name_ru",
-									"value": "at_ru",
-									"type": "default"
-								},
-								{
-									"key": "email_tm",
-									"value": "rmail_tm",
-									"type": "default"
-								},
-								{
-									"key": "email_ru",
-									"value": "mail_ru",
-									"type": "default"
-								},
-								{
-									"key": "phone_tm",
-									"value": "phone_tm",
-									"type": "default"
-								},
-								{
-									"key": "phone_ru",
-									"value": "phone_ru",
-									"type": "default"
-								},
-								{
-									"key": "letter_tm",
-									"value": "letter_tm",
-									"type": "default"
-								},
-								{
-									"key": "letter_ru",
-									"value": "letter ru",
-									"type": "default"
-								},
-								{
-									"key": "company_phone_tm",
-									"value": "cp tm",
-									"type": "default"
-								},
-								{
-									"key": "company_phone_ru",
-									"value": "cp ru",
-									"type": "default"
-								},
-								{
-									"key": "imo_tm",
-									"value": "imo tm",
-									"type": "default"
-								},
-								{
-									"key": "imo_ru",
-									"value": "imo ru",
-									"type": "default"
-								},
-								{
-									"key": "company_email_tm",
-									"value": "ce tm",
-									"type": "default"
-								},
-								{
-									"key": "company_email_ru",
-									"value": "ce ru",
-									"type": "default"
-								},
-								{
-									"key": "instagram_tm",
-									"value": "instagram tm",
-									"type": "default"
-								},
-								{
-									"key": "instagram_ru",
-									"value": "instagram ru",
-									"type": "default"
-								},
-								{
-									"key": "button_text_tm",
-									"value": "Ugrat",
-									"type": "default"
-								},
-								{
-									"key": "button_text_ru",
-									"value": "Отправить",
-									"type": "default"
-								}
-							]
-						},
-						"url": {
-							"raw": "localhost:2406/admin/translation-contact",
-							"host": [
-								"localhost"
-							],
-							"port": "2406",
-							"path": [
-								"admin",
-								"translation-contact"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "GetTranslationContactByLangID",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "localhost:2406/api/tm/translation-contact",
-							"host": [
-								"localhost"
-							],
-							"port": "2406",
-							"path": [
-								"api",
-								"tm",
-								"translation-contact"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "UpdateTranslationContactByID",
-					"request": {
-						"method": "PUT",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "full_name",
-									"value": "at_tm",
-									"type": "default"
-								},
-								{
-									"key": "email",
-									"value": "mail_tm",
-									"type": "default"
-								},
-								{
-									"key": "phone",
-									"value": "phone_tm",
-									"type": "default"
-								},
-								{
-									"key": "letter",
-									"value": "letter_tm",
-									"type": "default"
-								},
-								{
-									"key": "company_phone",
-									"value": "cp_tm",
-									"type": "default"
-								},
-								{
-									"key": "imo",
-									"value": "imo_tm",
-									"type": "default"
-								},
-								{
-									"key": "company_email",
-									"value": "ce_tm",
-									"type": "default"
-								},
-								{
-									"key": "instagram",
-									"value": "ins_tm",
-									"type": "default"
-								},
-								{
-									"key": "button_text",
-									"value": "ugrat",
-									"type": "default"
-								}
-							]
-						},
-						"url": {
-							"raw": "localhost:2406/admin/translation-contact/73253999-7355-42b4-8700-94de76f0058a",
-							"host": [
-								"localhost"
-							],
-							"port": "2406",
-							"path": [
-								"admin",
-								"translation-contact",
-								"73253999-7355-42b4-8700-94de76f0058a"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "GetTranslationContactByID",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "localhost:2406/admin/translation-contact/73253999-7355-42b4-8700-94de76f0058a",
-							"host": [
-								"localhost"
-							],
-							"port": "2406",
-							"path": [
-								"admin",
-								"translation-contact",
-								"73253999-7355-42b4-8700-94de76f0058a"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "TranslationMyInformationPage",
-			"item": [
-				{
-					"name": "CreateTranslationMyInformationPage",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "address_tm",
-									"value": "salgyňyz",
-									"type": "default"
-								},
-								{
-									"key": "address_ru",
-									"value": "ваш адрес",
-									"type": "default"
-								},
-								{
-									"key": "birthday_tm",
-									"value": "doglan senäň",
-									"type": "default"
-								},
-								{
-									"key": "birthday_ru",
-									"value": "дата рождения",
-									"type": "default"
-								},
-								{
-									"key": "update_password_tm",
-									"value": "",
-									"type": "default"
-								},
-								{
-									"key": "update_password_ru",
-									"value": "",
-									"type": "default"
-								},
-								{
-									"key": "save_tm",
-									"value": "",
-									"type": "default"
-								},
-								{
-									"key": "save_ru",
-									"value": "",
-									"type": "default"
-								}
-							]
-						},
-						"url": {
-							"raw": "localhost:2406/admin/translation-my-information-page",
-							"host": [
-								"localhost"
-							],
-							"port": "2406",
-							"path": [
-								"admin",
-								"translation-my-information-page"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "GetTranslationMyInformationPageByLangID",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiI2NTQ1MzI5NCIsImV4cCI6MTY1Nzc4MDYzNH0.e_aJxSJb3IJUCnOT_dxMy3K0KJnlWvZSxcOWQaSQqBQ",
-								"type": "default"
-							}
-						],
-						"url": {
-							"raw": "localhost:2406/api/tm/translation-my-information-page",
-							"host": [
-								"localhost"
-							],
-							"port": "2406",
-							"path": [
-								"api",
-								"tm",
-								"translation-my-information-page"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "UpdateTranslationMyInformationPageByID",
-					"request": {
-						"method": "PUT",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "address",
-									"value": "salgyňyz",
-									"type": "default"
-								},
-								{
-									"key": "birthday",
-									"value": "doglan senäň",
-									"type": "default"
-								},
-								{
-									"key": "update_password",
-									"value": "açar sözi üýtget",
-									"type": "default"
-								},
-								{
-									"key": "save",
-									"value": "ýatda sakla",
-									"type": "default"
-								}
-							]
-						},
-						"url": {
-							"raw": "localhost:2406/admin/translation-my-information-page/11074158-69f2-473a-b4fe-94304ff0d8a7",
-							"host": [
-								"localhost"
-							],
-							"port": "2406",
-							"path": [
-								"admin",
-								"translation-my-information-page",
-								"11074158-69f2-473a-b4fe-94304ff0d8a7"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "GetTranslationMyInformationPageByID",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "localhost:2406/admin/translation-my-information-page/11074158-69f2-473a-b4fe-94304ff0d8a7",
-							"host": [
-								"localhost"
-							],
-							"port": "2406",
-							"path": [
-								"admin",
-								"translation-my-information-page",
-								"11074158-69f2-473a-b4fe-94304ff0d8a7"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "TranslationUpdatePasswordPage",
-			"item": [
-				{
-					"name": "CreateTranslationUpdatePasswordPage",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "title_tm",
-									"value": "açar sözi üýtgetmek",
-									"type": "default"
-								},
-								{
-									"key": "title_ru",
-									"value": "изменить пароль",
-									"type": "default"
-								},
-								{
-									"key": "verify_password_tm",
-									"value": "açar sözi tassykla",
-									"type": "default"
-								},
-								{
-									"key": "verify_password_ru",
-									"value": "Подтвердить Пароль",
-									"type": "default"
-								},
-								{
-									"key": "explanation_tm",
-									"value": "siziň açar sözüňiz 5-20 uzynlygynda harp ýa-da sandan ybarat bolmalydyr",
-									"type": "default"
-								},
-								{
-									"key": "explanation_ru",
-									"value": "ключевое слово должно быть буквой или цифрой длиной от 5 до 20",
-									"type": "default"
-								},
-								{
-									"key": "save_tm",
-									"value": "ýatda sakla",
-									"type": "default"
-								},
-								{
-									"key": "save_ru",
-									"value": "запомнить",
-									"type": "default"
-								},
-								{
-									"key": "password_tm",
-									"value": "açar sözi",
-									"type": "default"
-								},
-								{
-									"key": "password_ru",
-									"value": "ключевое слово",
-									"type": "default"
-								}
-							]
-						},
-						"url": {
-							"raw": "localhost:2406/admin/translation-update-password-page",
-							"host": [
-								"localhost"
-							],
-							"port": "2406",
-							"path": [
-								"admin",
-								"translation-update-password-page"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "GetTranslationUpdatePasswordPageByLangID",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "localhost:2406/api/tm/translation-update-password-page",
-							"host": [
-								"localhost"
-							],
-							"port": "2406",
-							"path": [
-								"api",
-								"tm",
-								"translation-update-password-page"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "UpdateTranslationUpdatePasswordPageByID",
-					"request": {
-						"method": "PUT",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "title",
-									"value": "açar sözi üýtgetmek",
-									"type": "default"
-								},
-								{
-									"key": "verify_password",
-									"value": "açar sözi tassykla",
-									"type": "default"
-								},
-								{
-									"key": "explanation",
-									"value": "siziň açar sözüňiz 5-20 uzynlygynda harp ýa-da sandan ybarat bolmalydyr",
-									"type": "default"
-								},
-								{
-									"key": "save",
-									"value": "ýatda sakla",
-									"type": "default"
-								},
-								{
-									"key": "password",
-									"value": "açar sözi",
-									"type": "default"
-								}
-							]
-						},
-						"url": {
-							"raw": "localhost:2406/admin/translation-update-password-page/de12082b-baab-4b83-ac07-119df09d1230",
-							"host": [
-								"localhost"
-							],
-							"port": "2406",
-							"path": [
-								"admin",
-								"translation-update-password-page",
-								"de12082b-baab-4b83-ac07-119df09d1230"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "GetTranslationUpdatePasswordPageByID",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "localhost:2406/admin/translation-update-password-page/de12082b-baab-4b83-ac07-119df09d1230",
-							"host": [
-								"localhost"
-							],
-							"port": "2406",
-							"path": [
-								"admin",
-								"translation-update-password-page",
-								"de12082b-baab-4b83-ac07-119df09d1230"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "Customer",
-			"item": [
-				{
-					"name": "RegisterCustomer",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"full_name\":\"Berdi\",\n    \"phone_number\":\"+99361235698\",\n    \"password\":\"12345\",\n    \"email\":\"berdi@gmail.com\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "localhost:2406/api/auth/register",
-							"host": [
-								"localhost"
-							],
-							"port": "2406",
-							"path": [
-								"api",
-								"auth",
-								"register"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "LoginCustomer",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"phone_number\":\"+99361235698\",\n    \"password\":\"12345\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "localhost:2406/api/auth/login",
-							"host": [
-								"localhost"
-							],
-							"port": "2406",
-							"path": [
-								"api",
-								"auth",
-								"login"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Refresh",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "RefershToken",
-								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiI2NTQ1MzI5NCIsImV4cCI6MTY1Nzc4MDU4Nn0.KaW-2DLaC_WmMY1u6AOiB8UGTrRHhUmcYWV5P1fhtJU",
-								"type": "default"
-							}
-						],
-						"url": {
-							"raw": "localhost:2406/api/tem/refresh",
-							"host": [
-								"localhost"
-							],
-							"port": "2406",
-							"path": [
-								"api",
-								"tem",
-								"refresh"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "Like",
-			"item": [
-				{
-					"name": "AddLike",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NSIsImV4cCI6MTY2MjEwMjkzM30.VQYLJ3kCTBDFFhAA6Dpe9C-p6Sf-baCRIg4sNFCihcc",
-								"type": "default"
-							}
-						],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "customer_id",
-									"value": "7e872c52-0d23-4086-8c45-43000b57332e",
-									"type": "default"
-								},
-								{
-									"key": "products",
-									"value": "b4499063-096e-4fa6-9e21-a47185afd829",
-									"type": "default"
-								},
-								{
-									"key": "products",
-									"value": "1fa25151-9c63-4554-a79d-faf6cc78ef69",
-									"type": "default"
-								}
-							]
-						},
-						"url": {
-							"raw": "localhost:2406/api/tm/like",
-							"host": [
-								"localhost"
-							],
-							"port": "2406",
-							"path": [
-								"api",
-								"tm",
-								"like"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "GetLikes",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NSIsImV4cCI6MTY2MjEwMjkzM30.VQYLJ3kCTBDFFhAA6Dpe9C-p6Sf-baCRIg4sNFCihcc",
-								"type": "default"
-							}
-						],
-						"url": {
-							"raw": "localhost:2406/api/tm/likes/7e872c52-0d23-4086-8c45-43000b57332e",
-							"host": [
-								"localhost"
-							],
-							"port": "2406",
-							"path": [
-								"api",
-								"tm",
-								"likes",
-								"7e872c52-0d23-4086-8c45-43000b57332e"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "RemoveLike",
-					"request": {
-						"method": "DELETE",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NSIsImV4cCI6MTY2MTMxNzI5MH0.MJHNJP67wLeP-_SfK4_C2eCGVe9QijOqQdPog1BsRxI",
-								"type": "default"
-							}
-						],
-						"url": {
-							"raw": "localhost:2406/api/tm/like/7e872c52-0d23-4086-8c45-43000b57332e/3b6d2d59-7ad4-4392-b7de-5a1d6bd003e1",
-							"host": [
-								"localhost"
-							],
-							"port": "2406",
-							"path": [
-								"api",
-								"tm",
-								"like",
-								"7e872c52-0d23-4086-8c45-43000b57332e",
-								"3b6d2d59-7ad4-4392-b7de-5a1d6bd003e1"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "Shop",
-			"item": [
-				{
-					"name": "CreateShop",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "owner_name",
-									"value": "Owez Myradow",
-									"type": "default"
-								},
-								{
-									"key": "address",
-									"value": "Asgabat saher Mir 2/2 jay 2 magazyn 23",
-									"type": "default"
-								},
-								{
-									"key": "phone_number",
-									"value": "62420387",
-									"type": "default"
-								},
-								{
-									"key": "running_time",
-									"value": "7:00-21:00",
-									"type": "default"
-								},
-								{
-									"key": "category_id",
-									"value": "33cf0893-ff6e-40b3-b50f-2a3e926eca70",
-									"type": "default"
-								},
-								{
-									"key": "category_id",
-									"value": "f745d171-68e6-42e2-b339-cb3c210cda55",
-									"type": "default"
-								}
-							]
-						},
-						"url": {
-							"raw": "localhost:2406/admin/shop",
-							"host": [
-								"localhost"
-							],
-							"port": "2406",
-							"path": [
-								"admin",
-								"shop"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "UpdateShopByID",
-					"request": {
-						"method": "PUT",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "owner_name",
-									"value": "Arslan Serdarow",
-									"type": "default"
-								},
-								{
-									"key": "address",
-									"value": "Mir 2 2/2 jay 7 dom 36",
-									"type": "default"
-								},
-								{
-									"key": "phone_number",
-									"value": "63254871",
-									"type": "default"
-								},
-								{
-									"key": "running_time",
-									"value": "7:00-21:00",
-									"type": "default"
-								},
-								{
-									"key": "category_id",
-									"value": "5d877898-9ef4-4b91-8518-193b431228a8",
-									"type": "default"
-								},
-								{
-									"key": "category_id",
-									"value": "66772380-c161-4c45-9350-a45e765193e2",
-									"type": "default"
-								}
-							]
-						},
-						"url": {
-							"raw": "localhost:2406/admin/shop/0d4f9096-9cd7-4d72-afa5-e460de11e77e",
-							"host": [
-								"localhost"
-							],
-							"port": "2406",
-							"path": [
-								"admin",
-								"shop",
-								"0d4f9096-9cd7-4d72-afa5-e460de11e77e"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "GetShopByID",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "localhost:2406/admin/shop/0d4f9096-9cd7-4d72-afa5-e460de11e77e",
-							"host": [
-								"localhost"
-							],
-							"port": "2406",
-							"path": [
-								"admin",
-								"shop",
-								"0d4f9096-9cd7-4d72-afa5-e460de11e77e"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "GetShops",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "localhost:2406/admin/shops",
-							"host": [
-								"localhost"
-							],
-							"port": "2406",
-							"path": [
-								"admin",
-								"shops"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "DeleteShopByID",
-					"request": {
-						"method": "DELETE",
-						"header": [],
-						"url": {
-							"raw": "localhost:2406/admin/shop/0d4f9096-9cd7-4d72-afa5-e460de11e77e",
-							"host": [
-								"localhost"
-							],
-							"port": "2406",
-							"path": [
-								"admin",
-								"shop",
-								"0d4f9096-9cd7-4d72-afa5-e460de11e77e"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "RestoreShopByID",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "localhost:2406/admin/restore-shop/0d4f9096-9cd7-4d72-afa5-e460de11e77e",
-							"host": [
-								"localhost"
-							],
-							"port": "2406",
-							"path": [
-								"admin",
-								"restore-shop",
-								"0d4f9096-9cd7-4d72-afa5-e460de11e77e"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "DeletePermanentlyShopByID",
-					"request": {
-						"method": "DELETE",
-						"header": [],
-						"url": {
-							"raw": "localhost:2406/admin/delete-shop/0d4f9096-9cd7-4d72-afa5-e460de11e77e",
-							"host": [
-								"localhost"
-							],
-							"port": "2406",
-							"path": [
-								"admin",
-								"delete-shop",
-								"0d4f9096-9cd7-4d72-afa5-e460de11e77e"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "Basket",
-			"item": [
-				{
-					"name": "AddProductToBasket",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NSIsImV4cCI6MTY2MTMyNjM2NX0.qS_y_xBb-7uhr0YmZS2-J7401tfIY99a5HU_w1v2KiU",
-								"type": "default"
-							}
-						],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "customer_id",
-									"value": "9b1a0831-9943-4aa9-aa2a-3507743a5de4",
-									"type": "default"
-								},
-								{
-									"key": "product_id",
-									"value": "3b6d2d59-7ad4-4392-b7de-5a1d6bd003e1",
-									"type": "default"
-								},
-								{
-									"key": "quantity_of_product",
-									"value": "2",
-									"type": "default"
-								}
-							]
-						},
-						"url": {
-							"raw": "localhost:2406/api/tm/basket",
-							"host": [
-								"localhost"
-							],
-							"port": "2406",
-							"path": [
-								"api",
-								"tm",
-								"basket"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "TranslationBasketPage",
-			"item": [
-				{
-					"name": "CreateTranslationBasketPage",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "quantity_of_goods_tm",
-									"value": "quantity_of_goods_tm",
-									"type": "default"
-								},
-								{
-									"key": "quantity_of_goods_ru",
-									"value": "quantity_of_goods_ru",
-									"type": "default"
-								},
-								{
-									"key": "total_price_tm",
-									"value": "total_price_tm",
-									"type": "default"
-								},
-								{
-									"key": "total_price_ru",
-									"value": "total_price_ru",
-									"type": "default"
-								},
-								{
-									"key": "discount_tm",
-									"value": "discount_tm",
-									"type": "default"
-								},
-								{
-									"key": "discount_ru",
-									"value": "discount_ru",
-									"type": "default"
-								},
-								{
-									"key": "delivery_tm",
-									"value": "delivery_tm",
-									"type": "default"
-								},
-								{
-									"key": "delivery_ru",
-									"value": "delivery_ru",
-									"type": "default"
-								},
-								{
-									"key": "total_tm",
-									"value": "total_tm",
-									"type": "default"
-								},
-								{
-									"key": "total_ru",
-									"value": "total_ru",
-									"type": "default"
-								},
-								{
-									"key": "currency_tm",
-									"value": "currency_tm",
-									"type": "default"
-								},
-								{
-									"key": "currency_ru",
-									"value": "currency_ru",
-									"type": "default"
-								},
-								{
-									"key": "to_order_tm",
-									"value": "to_order_tm",
-									"type": "default"
-								},
-								{
-									"key": "to_order_ru",
-									"value": "to_order_ru",
-									"type": "default"
-								},
-								{
-									"key": "your_basket_tm",
-									"value": "your_basket_tm",
-									"type": "default"
-								},
-								{
-									"key": "your_basket_ru",
-									"value": "your_basket_ru",
-									"type": "default"
-								}
-							]
-						},
-						"url": {
-							"raw": "localhost:2406/admin/translation-basket-page",
-							"host": [
-								"localhost"
-							],
-							"port": "2406",
-							"path": [
-								"admin",
-								"translation-basket-page"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "UpdateTranslationBasketPageByID",
-					"request": {
-						"method": "PUT",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "quantity_of_goods",
-									"value": "quantity_of_goods",
-									"type": "default"
-								},
-								{
-									"key": "total_price",
-									"value": "total_price",
-									"type": "default"
-								},
-								{
-									"key": "discount",
-									"value": "discount",
-									"type": "default"
-								},
-								{
-									"key": "delivery",
-									"value": "delivery",
-									"type": "default"
-								},
-								{
-									"key": "total",
-									"value": "total",
-									"type": "default"
-								},
-								{
-									"key": "currency",
-									"value": "currency",
-									"type": "default"
-								},
-								{
-									"key": "to_order",
-									"value": "to_order",
-									"type": "default"
-								},
-								{
-									"key": "your_basket",
-									"value": "your_basket",
-									"type": "default"
-								}
-							]
-						},
-						"url": {
-							"raw": "localhost:2406/admin/translation-basket-page/51b3699e-1c7b-442a-be7b-6b2ad1f111b4",
-							"host": [
-								"localhost"
-							],
-							"port": "2406",
-							"path": [
-								"admin",
-								"translation-basket-page",
-								"51b3699e-1c7b-442a-be7b-6b2ad1f111b4"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "GetTranslationBasketPageByID",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "localhost:2406/admin/translation-basket-page/51b3699e-1c7b-442a-be7b-6b2ad1f111b4",
-							"host": [
-								"localhost"
-							],
-							"port": "2406",
-							"path": [
-								"admin",
-								"translation-basket-page",
-								"51b3699e-1c7b-442a-be7b-6b2ad1f111b4"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "GetTranslationBasketPageByLangID",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "localhost:2406/api/tm/translation-basket-page",
-							"host": [
-								"localhost"
-							],
-							"port": "2406",
-							"path": [
-								"api",
-								"tm",
-								"translation-basket-page"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "TranslationOrderPage",
-			"item": [
-				{
-					"name": "CreateTranslationOrderPage",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "content_tm",
-									"value": "content_tm",
-									"type": "default"
-								},
-								{
-									"key": "content_ru",
-									"value": "content_ru",
-									"type": "default"
-								},
-								{
-									"key": "type_of_payment_tm",
-									"value": "type_of_payment_tm",
-									"type": "default"
-								},
-								{
-									"key": "type_of_payment_ru",
-									"value": "type_of_payment_ru",
-									"type": "default"
-								},
-								{
-									"key": "choose_a_delivery_time_tm",
-									"value": "choose_a_delivery_time_tm",
-									"type": "default"
-								},
-								{
-									"key": "choose_a_delivery_time_ru",
-									"value": "choose_a_delivery_time_ru",
-									"type": "default"
-								},
-								{
-									"key": "your_address_tm",
-									"value": "your_address_tm",
-									"type": "default"
-								},
-								{
-									"key": "your_address_ru",
-									"value": "your_address_ru",
-									"type": "default"
-								},
-								{
-									"key": "mark_tm",
-									"value": "mark_tm",
-									"type": "default"
-								},
-								{
-									"key": "mark_ru",
-									"value": "mark_ru",
-									"type": "default"
-								},
-								{
-									"key": "to_order_tm",
-									"value": "to_order_tm",
-									"type": "default"
-								},
-								{
-									"key": "to_order_ru",
-									"value": "to_order_ru",
-									"type": "default"
-								},
-								{
-									"key": "tomorrow_tm",
-									"value": "tomorrow_tm",
-									"type": "default"
-								},
-								{
-									"key": "tomorrow_ru",
-									"value": "tomorrow_ru",
-									"type": "default"
-								},
-								{
-									"key": "cash_tm",
-									"value": "cash_tm",
-									"type": "default"
-								},
-								{
-									"key": "cash_ru",
-									"value": "cash_ru",
-									"type": "default"
-								},
-								{
-									"key": "payment_terminal_tm",
-									"value": "payment_terminal_tm",
-									"type": "default"
-								},
-								{
-									"key": "payment_terminal_ru",
-									"value": "payment_terminal_ru",
-									"type": "default"
-								}
-							]
-						},
-						"url": {
-							"raw": "localhost:2406/admin/translation-order-page",
-							"host": [
-								"localhost"
-							],
-							"port": "2406",
-							"path": [
-								"admin",
-								"translation-order-page"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "UpdateTranslationOrderPageByID",
-					"request": {
-						"method": "PUT",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "content",
-									"value": "content",
-									"type": "default"
-								},
-								{
-									"key": "type_of_payment",
-									"value": "type_of_payment",
-									"type": "default"
-								},
-								{
-									"key": "choose_a_delivery_time",
-									"value": "choose_a_delivery_time",
-									"type": "default"
-								},
-								{
-									"key": "your_address",
-									"value": "your_address",
-									"type": "default"
-								},
-								{
-									"key": "mark",
-									"value": "mark",
-									"type": "default"
-								},
-								{
-									"key": "to_order",
-									"value": "to_order",
-									"type": "default"
-								},
-								{
-									"key": "tomorrow",
-									"value": "tomorrow",
-									"type": "default"
-								},
-								{
-									"key": "cash",
-									"value": "cash",
-									"type": "default"
-								},
-								{
-									"key": "payment_terminal",
-									"value": "payment_terminal",
-									"type": "default"
-								}
-							]
-						},
-						"url": {
-							"raw": "localhost:2406/admin/translation-order-page/75810722-07fd-400e-94b4-cd230de08cbf",
-							"host": [
-								"localhost"
-							],
-							"port": "2406",
-							"path": [
-								"admin",
-								"translation-order-page",
-								"75810722-07fd-400e-94b4-cd230de08cbf"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "GetTranslationOrderPageByID",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "localhost:2406/admin/translation-order-page/75810722-07fd-400e-94b4-cd230de08cbf",
-							"host": [
-								"localhost"
-							],
-							"port": "2406",
-							"path": [
-								"admin",
-								"translation-order-page",
-								"75810722-07fd-400e-94b4-cd230de08cbf"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "GetTranslationOrderPageByLangID",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "localhost:2406/api/tm/translation-order-page",
-							"host": [
-								"localhost"
-							],
-							"port": "2406",
-							"path": [
-								"api",
-								"tm",
-								"translation-order-page"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "TranslationMyOrderPage",
-			"item": [
-				{
-					"name": "CreateTranslationMyOrderPage",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "orders_tm",
-									"value": "orders_tm",
-									"type": "default"
-								},
-								{
-									"key": "orders_ru",
-									"value": "orders_ru",
-									"type": "default"
-								},
-								{
-									"key": "date_tm",
-									"value": "date_tm",
-									"type": "default"
-								},
-								{
-									"key": "date_ru",
-									"value": "date_ru",
-									"type": "default"
-								},
-								{
-									"key": "price_tm",
-									"value": "price_tm",
-									"type": "default"
-								},
-								{
-									"key": "price_ru",
-									"value": "price_ru",
-									"type": "default"
-								},
-								{
-									"key": "currency_tm",
-									"value": "currency_tm",
-									"type": "default"
-								},
-								{
-									"key": "currency_ru",
-									"value": "currency_ru",
-									"type": "default"
-								},
-								{
-									"key": "image_tm",
-									"value": "image_tm",
-									"type": "default"
-								},
-								{
-									"key": "image_ru",
-									"value": "image_ru",
-									"type": "default"
-								},
-								{
-									"key": "name_tm",
-									"value": "name_tm",
-									"type": "default"
-								},
-								{
-									"key": "name_ru",
-									"value": "name_ru",
-									"type": "default"
-								},
-								{
-									"key": "brend_tm",
-									"value": "brend_tm",
-									"type": "default"
-								},
-								{
-									"key": "brend_ru",
-									"value": "brend_ru",
-									"type": "default"
-								},
-								{
-									"key": "code_tm",
-									"value": "code_tm",
-									"type": "default"
-								},
-								{
-									"key": "code_ru",
-									"value": "code_ru",
-									"type": "default"
-								},
-								{
-									"key": "amount_tm",
-									"value": "amount_tm",
-									"type": "default"
-								},
-								{
-									"key": "amount_ru",
-									"value": "amount_ru",
-									"type": "default"
-								},
-								{
-									"key": "total_price_tm",
-									"value": "total_price_tm",
-									"type": "default"
-								},
-								{
-									"key": "total_price_ru",
-									"value": "total_price_ru",
-									"type": "default"
-								}
-							]
-						},
-						"url": {
-							"raw": "localhost:2406/admin/translation-my-order-page",
-							"host": [
-								"localhost"
-							],
-							"port": "2406",
-							"path": [
-								"admin",
-								"translation-my-order-page"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "UpdateTranslationMyOrderPageByID",
-					"request": {
-						"method": "PUT",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "orders",
-									"value": "orders",
-									"type": "default"
-								},
-								{
-									"key": "date",
-									"value": "date",
-									"type": "default"
-								},
-								{
-									"key": "price",
-									"value": "price",
-									"type": "default"
-								},
-								{
-									"key": "currency",
-									"value": "currency",
-									"type": "default"
-								},
-								{
-									"key": "image",
-									"value": "image",
-									"type": "default"
-								},
-								{
-									"key": "name",
-									"value": "name",
-									"type": "default"
-								},
-								{
-									"key": "brend",
-									"value": "brend",
-									"type": "default"
-								},
-								{
-									"key": "code",
-									"value": "code",
-									"type": "default"
-								},
-								{
-									"key": "amount",
-									"value": "amount",
-									"type": "default"
-								},
-								{
-									"key": "total_price",
-									"value": "total_price",
-									"type": "default"
-								}
-							]
-						},
-						"url": {
-							"raw": "localhost:2406/admin/translation-my-order-page/ff43b90d-e22d-4364-b358-6fd56bb3a305",
-							"host": [
-								"localhost"
-							],
-							"port": "2406",
-							"path": [
-								"admin",
-								"translation-my-order-page",
-								"ff43b90d-e22d-4364-b358-6fd56bb3a305"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "GetTranslationMyOrderPageByID",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "localhost:2406/admin/translation-my-order-page/ff43b90d-e22d-4364-b358-6fd56bb3a305",
-							"host": [
-								"localhost"
-							],
-							"port": "2406",
-							"path": [
-								"admin",
-								"translation-my-order-page",
-								"ff43b90d-e22d-4364-b358-6fd56bb3a305"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "GetTranslationMyOrderPageByLangID",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "localhost:2406/api/tm/translation-my-order-page",
-							"host": [
-								"localhost"
-							],
-							"port": "2406",
-							"path": [
-								"api",
-								"tm",
-								"translation-my-order-page"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		}
-	]
-}
+--
+-- PostgreSQL database dump
+--
+
+-- Dumped from database version 12.12 (Ubuntu 12.12-0ubuntu0.20.04.1)
+-- Dumped by pg_dump version 12.12 (Ubuntu 12.12-0ubuntu0.20.04.1)
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET xmloption = content;
+SET client_min_messages = warning;
+SET row_security = off;
+
+--
+-- Name: uuid-ossp; Type: EXTENSION; Schema: -; Owner: -
+--
+
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp" WITH SCHEMA public;
+
+
+--
+-- Name: EXTENSION "uuid-ossp"; Type: COMMENT; Schema: -; Owner: 
+--
+
+COMMENT ON EXTENSION "uuid-ossp" IS 'generate universally unique identifiers (UUIDs)';
+
+
+SET default_tablespace = '';
+
+SET default_table_access_method = heap;
+
+--
+-- Name: afisa; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.afisa (
+    id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
+    image character varying,
+    created_at timestamp with time zone DEFAULT now(),
+    updated_at timestamp with time zone DEFAULT now(),
+    deleted_at timestamp with time zone
+);
+
+
+ALTER TABLE public.afisa OWNER TO postgres;
+
+--
+-- Name: banner; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.banner (
+    id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
+    image character varying,
+    url text,
+    created_at timestamp with time zone DEFAULT now(),
+    updated_at timestamp with time zone DEFAULT now(),
+    deleted_at timestamp with time zone
+);
+
+
+ALTER TABLE public.banner OWNER TO postgres;
+
+--
+-- Name: basket; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.basket (
+    id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
+    product_id uuid,
+    customer_id uuid,
+    quantity_of_product bigint,
+    created_at timestamp with time zone DEFAULT now(),
+    updated_at timestamp with time zone DEFAULT now(),
+    deleted_at timestamp with time zone
+);
+
+
+ALTER TABLE public.basket OWNER TO postgres;
+
+--
+-- Name: brends; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.brends (
+    id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
+    name character varying,
+    image character varying,
+    created_at timestamp with time zone DEFAULT now(),
+    updated_at timestamp with time zone DEFAULT now(),
+    deleted_at timestamp with time zone
+);
+
+
+ALTER TABLE public.brends OWNER TO postgres;
+
+--
+-- Name: categories; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.categories (
+    id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
+    parent_category_id uuid,
+    image character varying,
+    is_home_category boolean,
+    created_at timestamp with time zone DEFAULT now(),
+    updated_at timestamp with time zone DEFAULT now(),
+    deleted_at timestamp with time zone
+);
+
+
+ALTER TABLE public.categories OWNER TO postgres;
+
+--
+-- Name: category_product; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.category_product (
+    id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
+    category_id uuid,
+    product_id uuid,
+    created_at timestamp with time zone DEFAULT now(),
+    updated_at timestamp with time zone DEFAULT now(),
+    deleted_at timestamp with time zone
+);
+
+
+ALTER TABLE public.category_product OWNER TO postgres;
+
+--
+-- Name: category_shop; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.category_shop (
+    id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
+    category_id uuid,
+    shop_id uuid,
+    created_at timestamp with time zone DEFAULT now(),
+    updated_at timestamp with time zone DEFAULT now(),
+    deleted_at timestamp with time zone
+);
+
+
+ALTER TABLE public.category_shop OWNER TO postgres;
+
+--
+-- Name: company_address; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.company_address (
+    id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
+    lang_id uuid,
+    address character varying DEFAULT 'uytget'::character varying,
+    created_at timestamp with time zone DEFAULT now(),
+    updated_at timestamp with time zone DEFAULT now(),
+    deleted_at timestamp with time zone
+);
+
+
+ALTER TABLE public.company_address OWNER TO postgres;
+
+--
+-- Name: company_phone; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.company_phone (
+    id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
+    phone character varying,
+    created_at timestamp with time zone DEFAULT now(),
+    updated_at timestamp with time zone DEFAULT now(),
+    deleted_at timestamp with time zone
+);
+
+
+ALTER TABLE public.company_phone OWNER TO postgres;
+
+--
+-- Name: company_setting; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.company_setting (
+    id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
+    logo character varying,
+    favicon character varying,
+    email character varying,
+    instagram character varying,
+    created_at timestamp with time zone DEFAULT now(),
+    updated_at timestamp with time zone DEFAULT now(),
+    deleted_at timestamp without time zone
+);
+
+
+ALTER TABLE public.company_setting OWNER TO postgres;
+
+--
+-- Name: customers; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.customers (
+    id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
+    full_name character varying,
+    phone_number character varying,
+    password character varying,
+    birthday date,
+    gender character varying,
+    addresses character varying[],
+    created_at timestamp with time zone DEFAULT now(),
+    updated_at timestamp with time zone DEFAULT now(),
+    deleted_at timestamp with time zone,
+    email character varying
+);
+
+
+ALTER TABLE public.customers OWNER TO postgres;
+
+--
+-- Name: district; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.district (
+    id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
+    price numeric,
+    created_at timestamp with time zone DEFAULT now(),
+    updated_at timestamp with time zone DEFAULT now(),
+    deleted_at timestamp with time zone
+);
+
+
+ALTER TABLE public.district OWNER TO postgres;
+
+--
+-- Name: images; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.images (
+    id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
+    product_id uuid,
+    small character varying,
+    medium character varying,
+    large character varying,
+    created_at timestamp with time zone DEFAULT now(),
+    updated_at timestamp with time zone DEFAULT now(),
+    deleted_at timestamp with time zone
+);
+
+
+ALTER TABLE public.images OWNER TO postgres;
+
+--
+-- Name: languages; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.languages (
+    id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
+    name_short character varying(5),
+    flag character varying,
+    created_at timestamp with time zone DEFAULT now(),
+    updated_at timestamp with time zone DEFAULT now(),
+    deleted_at timestamp with time zone
+);
+
+
+ALTER TABLE public.languages OWNER TO postgres;
+
+--
+-- Name: likes; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.likes (
+    id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
+    product_id uuid,
+    customer_id uuid,
+    created_at timestamp with time zone DEFAULT now(),
+    updated_at timestamp with time zone DEFAULT now(),
+    deleted_at timestamp with time zone
+);
+
+
+ALTER TABLE public.likes OWNER TO postgres;
+
+--
+-- Name: main_image; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.main_image (
+    id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
+    product_id uuid,
+    small character varying,
+    medium character varying,
+    large character varying,
+    created_at timestamp with time zone DEFAULT now(),
+    updated_at timestamp with time zone DEFAULT now(),
+    deleted_at timestamp with time zone
+);
+
+
+ALTER TABLE public.main_image OWNER TO postgres;
+
+--
+-- Name: products; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.products (
+    id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
+    brend_id uuid,
+    price numeric,
+    old_price numeric,
+    amount bigint,
+    product_code character varying,
+    created_at timestamp with time zone DEFAULT now(),
+    updated_at timestamp with time zone DEFAULT now(),
+    deleted_at timestamp with time zone,
+    limit_amount bigint,
+    is_new boolean DEFAULT false
+);
+
+
+ALTER TABLE public.products OWNER TO postgres;
+
+--
+-- Name: shops; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.shops (
+    id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
+    owner_name character varying,
+    address character varying,
+    phone_number character varying,
+    running_time character varying,
+    created_at timestamp with time zone DEFAULT now(),
+    updated_at timestamp with time zone DEFAULT now(),
+    deleted_at timestamp with time zone
+);
+
+
+ALTER TABLE public.shops OWNER TO postgres;
+
+--
+-- Name: translation_about; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.translation_about (
+    id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
+    lang_id uuid,
+    title character varying DEFAULT 'uytget'::character varying,
+    content text DEFAULT 'uytget'::text,
+    created_at timestamp with time zone DEFAULT now(),
+    updated_at timestamp with time zone DEFAULT now(),
+    deleted_at timestamp with time zone
+);
+
+
+ALTER TABLE public.translation_about OWNER TO postgres;
+
+--
+-- Name: translation_afisa; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.translation_afisa (
+    id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
+    afisa_id uuid,
+    lang_id uuid,
+    title character varying DEFAULT 'uytget'::character varying,
+    description text DEFAULT 'uytget'::text,
+    created_at timestamp with time zone DEFAULT now(),
+    updated_at timestamp with time zone DEFAULT now(),
+    deleted_at timestamp with time zone
+);
+
+
+ALTER TABLE public.translation_afisa OWNER TO postgres;
+
+--
+-- Name: translation_basket_page; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.translation_basket_page (
+    id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
+    lang_id uuid,
+    quantity_of_goods character varying DEFAULT 'uytget'::character varying,
+    total_price character varying DEFAULT 'uytget'::character varying,
+    discount character varying DEFAULT 'uytget'::character varying,
+    delivery character varying DEFAULT 'uytget'::character varying,
+    total character varying DEFAULT 'uytget'::character varying,
+    currency character varying DEFAULT 'uytget'::character varying,
+    to_order character varying DEFAULT 'uytget'::character varying,
+    your_basket character varying DEFAULT 'uytget'::character varying,
+    created_at timestamp with time zone DEFAULT now(),
+    updated_at timestamp with time zone DEFAULT now(),
+    deleted_at timestamp with time zone
+);
+
+
+ALTER TABLE public.translation_basket_page OWNER TO postgres;
+
+--
+-- Name: translation_category; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.translation_category (
+    id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
+    lang_id uuid,
+    category_id uuid,
+    name character varying DEFAULT 'uytget'::character varying,
+    created_at timestamp with time zone DEFAULT now(),
+    updated_at timestamp with time zone DEFAULT now(),
+    deleted_at timestamp with time zone
+);
+
+
+ALTER TABLE public.translation_category OWNER TO postgres;
+
+--
+-- Name: translation_contact; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.translation_contact (
+    id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
+    lang_id uuid,
+    full_name character varying DEFAULT 'uytget'::character varying,
+    email character varying DEFAULT 'uytget'::character varying,
+    phone character varying DEFAULT 'uytget'::character varying,
+    letter character varying DEFAULT 'uytget'::character varying,
+    company_phone character varying DEFAULT 'uytget'::character varying,
+    imo character varying DEFAULT 'uytget'::character varying,
+    company_email character varying DEFAULT 'uytget'::character varying,
+    instagram character varying DEFAULT 'uytget'::character varying,
+    created_at timestamp with time zone DEFAULT now(),
+    updated_at timestamp with time zone DEFAULT now(),
+    deleted_at timestamp with time zone,
+    button_text character varying
+);
+
+
+ALTER TABLE public.translation_contact OWNER TO postgres;
+
+--
+-- Name: translation_district; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.translation_district (
+    id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
+    lang_id uuid,
+    district_id uuid,
+    name character varying DEFAULT 'uytget'::character varying,
+    created_at timestamp with time zone DEFAULT now(),
+    updated_at timestamp with time zone DEFAULT now(),
+    deleted_at timestamp with time zone
+);
+
+
+ALTER TABLE public.translation_district OWNER TO postgres;
+
+--
+-- Name: translation_footer; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.translation_footer (
+    id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
+    lang_id uuid,
+    about character varying DEFAULT 'uytget'::character varying,
+    payment character varying DEFAULT 'uytget'::character varying,
+    contact character varying DEFAULT 'uytget'::character varying,
+    secure character varying DEFAULT 'uytget'::character varying,
+    word character varying DEFAULT 'uytget'::character varying,
+    created_at timestamp with time zone DEFAULT now(),
+    updated_at timestamp with time zone DEFAULT now(),
+    deleted_at timestamp with time zone
+);
+
+
+ALTER TABLE public.translation_footer OWNER TO postgres;
+
+--
+-- Name: translation_header; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.translation_header (
+    id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
+    lang_id uuid DEFAULT public.uuid_generate_v4(),
+    research character varying DEFAULT 'uytget'::character varying,
+    phone character varying DEFAULT 'uytget'::character varying,
+    password character varying DEFAULT 'uytget'::character varying,
+    forgot_password character varying DEFAULT 'uytget'::character varying,
+    sign_in character varying DEFAULT 'uytget'::character varying,
+    sign_up character varying DEFAULT 'uytget'::character varying,
+    name character varying DEFAULT 'uytget'::character varying,
+    password_verification character varying DEFAULT 'uytget'::character varying,
+    verify_secure character varying DEFAULT 'uytget'::character varying,
+    my_information character varying DEFAULT 'uytget'::character varying,
+    my_favorites character varying DEFAULT 'uytget'::character varying,
+    my_orders character varying DEFAULT 'uytget'::character varying,
+    log_out character varying DEFAULT 'uytget'::character varying,
+    created_at timestamp with time zone DEFAULT now(),
+    updated_at timestamp with time zone DEFAULT now(),
+    deleted_at timestamp with time zone,
+    basket character varying DEFAULT 'uytget'::character varying,
+    email character varying DEFAULT 'uytget'::character varying,
+    add_to_basket character varying DEFAULT 'uytget'::character varying
+);
+
+
+ALTER TABLE public.translation_header OWNER TO postgres;
+
+--
+-- Name: translation_my_information_page; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.translation_my_information_page (
+    id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
+    lang_id uuid,
+    address character varying DEFAULT 'uytget'::character varying,
+    created_at timestamp with time zone DEFAULT now(),
+    updated_at timestamp with time zone DEFAULT now(),
+    deleted_at timestamp with time zone,
+    birthday character varying DEFAULT 'uytget'::character varying,
+    update_password character varying DEFAULT 'uytegt'::character varying,
+    save character varying DEFAULT 'uytegt'::character varying
+);
+
+
+ALTER TABLE public.translation_my_information_page OWNER TO postgres;
+
+--
+-- Name: translation_my_order_page; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.translation_my_order_page (
+    id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
+    lang_id uuid,
+    orders character varying DEFAULT 'uytget'::character varying,
+    date character varying DEFAULT 'uytget'::character varying,
+    price character varying DEFAULT 'uytget'::character varying,
+    currency character varying DEFAULT 'uytget'::character varying,
+    image character varying DEFAULT 'uytget'::character varying,
+    name character varying DEFAULT 'uytget'::character varying,
+    brend character varying DEFAULT 'uytget'::character varying,
+    code character varying DEFAULT 'uytget'::character varying,
+    amount character varying DEFAULT 'uytget'::character varying,
+    total_price character varying DEFAULT 'uytget'::character varying,
+    created_at timestamp with time zone DEFAULT now(),
+    updated_at timestamp with time zone DEFAULT now(),
+    deleted_at timestamp with time zone
+);
+
+
+ALTER TABLE public.translation_my_order_page OWNER TO postgres;
+
+--
+-- Name: translation_order_page; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.translation_order_page (
+    id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
+    lang_id uuid,
+    content character varying DEFAULT 'uytget'::character varying,
+    type_of_payment character varying DEFAULT 'uytget'::character varying,
+    choose_a_delivery_time character varying DEFAULT 'uytget'::character varying,
+    your_address character varying DEFAULT 'uytget'::character varying,
+    mark character varying DEFAULT 'uytget'::character varying,
+    to_order character varying DEFAULT 'uytget'::character varying,
+    tomorrow character varying DEFAULT 'uytget'::character varying,
+    cash character varying DEFAULT 'uytget'::character varying,
+    payment_terminal character varying DEFAULT 'uytget'::character varying,
+    created_at timestamp with time zone DEFAULT now(),
+    updated_at timestamp with time zone DEFAULT now(),
+    deleted_at timestamp with time zone
+);
+
+
+ALTER TABLE public.translation_order_page OWNER TO postgres;
+
+--
+-- Name: translation_payment; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.translation_payment (
+    id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
+    lang_id uuid,
+    title character varying DEFAULT 'uytget'::character varying,
+    content text DEFAULT 'uytget'::text,
+    created_at timestamp with time zone DEFAULT now(),
+    updated_at timestamp with time zone DEFAULT now(),
+    deleted_at timestamp with time zone
+);
+
+
+ALTER TABLE public.translation_payment OWNER TO postgres;
+
+--
+-- Name: translation_product; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.translation_product (
+    id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
+    lang_id uuid,
+    product_id uuid,
+    name character varying DEFAULT 'uytget'::character varying,
+    description text DEFAULT 'uytget'::text,
+    created_at timestamp with time zone DEFAULT now(),
+    updated_at timestamp with time zone DEFAULT now(),
+    deleted_at timestamp with time zone
+);
+
+
+ALTER TABLE public.translation_product OWNER TO postgres;
+
+--
+-- Name: translation_secure; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.translation_secure (
+    id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
+    lang_id uuid,
+    title character varying DEFAULT 'uytget'::character varying,
+    content text DEFAULT 'uytget'::text,
+    created_at timestamp with time zone DEFAULT now(),
+    updated_at timestamp with time zone DEFAULT now(),
+    deleted_at timestamp with time zone
+);
+
+
+ALTER TABLE public.translation_secure OWNER TO postgres;
+
+--
+-- Name: translation_update_password_page; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.translation_update_password_page (
+    id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
+    lang_id uuid,
+    title character varying DEFAULT 'uytget'::character varying,
+    verify_password character varying DEFAULT 'uytget'::character varying,
+    explanation character varying DEFAULT 'uytget'::character varying,
+    save character varying DEFAULT 'uytget'::character varying,
+    created_at timestamp with time zone DEFAULT now(),
+    updated_at timestamp with time zone DEFAULT now(),
+    deleted_at timestamp with time zone,
+    password character varying DEFAULT 'uytget'::character varying
+);
+
+
+ALTER TABLE public.translation_update_password_page OWNER TO postgres;
+
+--
+-- Data for Name: afisa; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.afisa (id, image, created_at, updated_at, deleted_at) FROM stdin;
+\.
+
+
+--
+-- Data for Name: banner; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.banner (id, image, url, created_at, updated_at, deleted_at) FROM stdin;
+\.
+
+
+--
+-- Data for Name: basket; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.basket (id, product_id, customer_id, quantity_of_product, created_at, updated_at, deleted_at) FROM stdin;
+\.
+
+
+--
+-- Data for Name: brends; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.brends (id, name, image, created_at, updated_at, deleted_at) FROM stdin;
+6a31c50a-704f-4b0d-80ae-240ca3094cda	Algida	uploads/brendbf1a1059-508d-48a0-9cab-e9c0ff52ea82.jpg	2022-06-16 14:13:49.98051+05	2022-06-16 14:13:49.98051+05	\N
+214be879-65c3-4710-86b4-3fc3bce2e974	Arcalyk	uploads/brend24badfac-613d-4aa3-881b-952bd14994b5.jpeg	2022-06-16 14:14:05.416191+05	2022-06-16 14:14:05.416191+05	\N
+ddccb2dc-9697-4f4e-acf5-26b8bc2c8b72	Tut	uploads/brend4f68381a-aa73-4168-90b3-66c1a17cd5c5.jpeg	2022-06-16 14:14:25.908903+05	2022-06-16 14:14:25.908903+05	\N
+fdd259c2-794a-42b9-a3ad-9e91502af23e	Koka Kola	uploads/brend75f655c6-bcf5-47b2-ba01-d112cba64e81.jpg	2022-07-12 17:54:39.242004+05	2022-07-12 17:54:39.242004+05	\N
+f53a27b4-7810-4d8f-bd45-edad405d92b9	Maral Koke	uploads/brend7827fcfe-f8a9-4747-8c34-b55af2488b29.jpeg	2022-07-12 17:57:46.472194+05	2022-07-12 17:57:46.472194+05	\N
+46b13f0a-d584-4ad3-b270-437ecdc51449	Taze Ay	uploads/brend993b6484-657d-4662-abe2-922170abe75b.jpeg	2022-07-12 18:16:12.889441+05	2022-07-12 18:16:12.889441+05	\N
+c4bcda34-7332-4ae5-8129-d7538d63fee4	Buzz	uploads/brend/67f6bc90-a0ef-4828-b17b-8b00e930f1f1.jpeg	2022-08-12 10:36:10.886455+05	2022-08-12 10:36:10.886455+05	\N
+\.
+
+
+--
+-- Data for Name: categories; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.categories (id, parent_category_id, image, is_home_category, created_at, updated_at, deleted_at) FROM stdin;
+33cf0893-ff6e-40b3-b50f-2a3e926eca70	b982bd86-0a0f-4950-baad-5a131e9b728e		f	2022-06-16 13:44:51.155881+05	2022-06-16 13:44:51.155881+05	\N
+f745d171-68e6-42e2-b339-cb3c210cda55	b982bd86-0a0f-4950-baad-5a131e9b728e		f	2022-06-16 13:45:48.828786+05	2022-06-16 13:45:48.828786+05	\N
+5bb9a4e7-9992-418f-b551-537844d371da	02bd4413-8586-49ab-802e-16304e756a8b		f	2022-06-16 13:46:44.575803+05	2022-06-16 13:46:44.575803+05	\N
+d4cb1359-6c23-4194-8e3c-21ed8cec8373	5bb9a4e7-9992-418f-b551-537844d371da		f	2022-06-16 13:48:04.517774+05	2022-06-16 13:48:04.517774+05	\N
+4af3388b-2738-4ff6-b42e-927cb0ff897f	\N	uploads/categoryf3278014-450d-4d6f-a1f6-8f9b60652821.jpeg	f	2022-06-16 13:49:43.627092+05	2022-06-16 13:49:43.627092+05	\N
+56b86071-1c45-490b-a683-a8898546f179	4af3388b-2738-4ff6-b42e-927cb0ff897f		f	2022-06-16 13:50:35.295305+05	2022-06-16 13:50:35.295305+05	\N
+ec0b10ac-bf81-4ae3-881e-ef616ea13d7f	56b86071-1c45-490b-a683-a8898546f179		f	2022-06-16 13:51:05.800143+05	2022-06-16 13:51:05.800143+05	\N
+0a1963a2-4084-403e-871d-763ae4825fab	56b86071-1c45-490b-a683-a8898546f179		f	2022-06-16 13:51:55.953017+05	2022-06-16 13:51:55.953017+05	\N
+5d877898-9ef4-4b91-8518-193b431228a8	4af3388b-2738-4ff6-b42e-927cb0ff897f		f	2022-06-16 13:52:45.112373+05	2022-06-16 13:52:45.112373+05	\N
+fc87c4c5-d7cb-4def-a0e0-11cd5751e04b	5d877898-9ef4-4b91-8518-193b431228a8		f	2022-06-16 13:53:34.255795+05	2022-06-16 13:53:34.255795+05	\N
+38d92a87-4a9c-4860-94e6-e568f21ecd8e	5d877898-9ef4-4b91-8518-193b431228a8		f	2022-06-16 13:54:05.320424+05	2022-06-16 13:54:05.320424+05	\N
+7f453dd0-7b2e-480d-a8be-fcfa23bd863e	29ed85bb-11eb-4458-bbf3-5a5644d167d6		t	2022-06-20 09:43:07.336084+05	2022-06-20 09:43:07.336084+05	\N
+29ed85bb-11eb-4458-bbf3-5a5644d167d6	\N	uploads/categoryeaae1626-7e9f-4db9-abf6-f454ade813d3.jpeg	f	2022-06-20 09:41:17.575565+05	2022-06-20 09:41:17.575565+05	\N
+66772380-c161-4c45-9350-a45e765193e2	29ed85bb-11eb-4458-bbf3-5a5644d167d6		t	2022-06-20 09:45:34.38667+05	2022-06-20 09:45:34.38667+05	\N
+338906f1-dbe2-4ba7-84fc-fe7a4d7856ec	29ed85bb-11eb-4458-bbf3-5a5644d167d6		t	2022-06-20 09:46:01.119337+05	2022-06-20 09:46:01.119337+05	\N
+45765130-7f97-4f0c-b886-f70b75e02610	29ed85bb-11eb-4458-bbf3-5a5644d167d6		t	2022-06-20 10:11:06.648938+05	2022-06-20 10:11:06.648938+05	\N
+b982bd86-0a0f-4950-baad-5a131e9b728e	02bd4413-8586-49ab-802e-16304e756a8b		f	2022-06-16 13:44:16.430875+05	2022-06-16 13:44:16.430875+05	\N
+02bd4413-8586-49ab-802e-16304e756a8b	\N	uploads/category0684921b-251d-405f-8b30-30964be0b3d2.jpeg	f	2022-06-16 13:43:22.644619+05	2022-06-16 13:43:22.644619+05	\N
+fdc10d33-043b-4ee0-9d6e-e2a12a3e150a	5bb9a4e7-9992-418f-b551-537844d371da		f	2022-06-16 13:47:18.854741+05	2022-06-16 13:47:18.854741+05	\N
+\.
+
+
+--
+-- Data for Name: category_product; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.category_product (id, category_id, product_id, created_at, updated_at, deleted_at) FROM stdin;
+f2605786-e1be-48a5-8546-0b31df8cc568	d4cb1359-6c23-4194-8e3c-21ed8cec8373	f66bb675-db85-45fd-8df5-e5a1e2fa363f	2022-09-07 16:32:42.046655+05	2022-09-07 16:32:42.046655+05	\N
+40a14929-6007-4bdd-82c4-366b3aad0ba4	38d92a87-4a9c-4860-94e6-e568f21ecd8e	f66bb675-db85-45fd-8df5-e5a1e2fa363f	2022-09-07 16:32:42.05671+05	2022-09-07 16:32:42.05671+05	\N
+c032f83a-599a-4ec2-8af4-b33f6019f5e3	29ed85bb-11eb-4458-bbf3-5a5644d167d6	f66bb675-db85-45fd-8df5-e5a1e2fa363f	2022-09-07 16:32:42.069372+05	2022-09-07 16:32:42.069372+05	\N
+\.
+
+
+--
+-- Data for Name: category_shop; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.category_shop (id, category_id, shop_id, created_at, updated_at, deleted_at) FROM stdin;
+\.
+
+
+--
+-- Data for Name: company_address; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.company_address (id, lang_id, address, created_at, updated_at, deleted_at) FROM stdin;
+75706251-06ea-41c1-905f-95ed8b4132f8	aea98b93-7bdf-455b-9ad4-a259d69dc76e	Улица Азади 23, Ашхабад	2022-06-22 18:44:50.239558+05	2022-06-22 18:44:50.239558+05	\N
+d2c66808-e5fe-435f-ba01-cb717f80d9e0	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	adres_tm	2022-06-22 18:44:50.21776+05	2022-08-22 09:33:42.14835+05	\N
+\.
+
+
+--
+-- Data for Name: company_phone; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.company_phone (id, phone, created_at, updated_at, deleted_at) FROM stdin;
+\.
+
+
+--
+-- Data for Name: company_setting; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.company_setting (id, logo, favicon, email, instagram, created_at, updated_at, deleted_at) FROM stdin;
+7d193677-e0b1-4df0-be88-dc6e16a47ca7	uploads/logode9c4f45-acba-42ce-b435-e744631a98ba.jpeg	uploads/favicon8a413c02-108d-4d2f-8e92-d24a18cea1d3.jpeg	isleg-bazar@gmail.com	@islegbazarinstagram	2022-06-15 19:57:04.54457+05	2022-06-15 19:57:04.54457+05	\N
+\.
+
+
+--
+-- Data for Name: customers; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.customers (id, full_name, phone_number, password, birthday, gender, addresses, created_at, updated_at, deleted_at, email) FROM stdin;
+7e872c52-0d23-4086-8c45-43000b57332e	Muhammetmyrat	+99363747155	$2a$14$1uOYIcXK4lzyBnhm.L/dW.TD8c9ZqTzAiCsOMCCRRzxiKnDAU2gFK	\N	\N	\N	2022-08-02 23:41:59.869254+05	2022-08-02 23:41:59.869254+05	\N	m.bayramov@salam.tm
+7fafe6f8-c6b6-4bcc-9063-e98c113902c5	jjednkjwedjed	+99363747156	$2a$14$WPTcXE1j871GQ/n2i2CX9.RjyRIyR4bBqCj6b/vchJB1TjYC6v0XK	\N	\N	\N	2022-08-02 23:52:46.544849+05	2022-08-02 23:52:46.544849+05	\N	ewkdnewj@gmail.com
+38615c8c-1af5-424f-b7a3-071d38c42b86	Aly Muhammedow	+99363234587	$2a$14$Ep0/A9EAbgV/BD.UdQ6KQOU0DCpr2C8n6du8li5nPKYz.xIQb2HgC	\N	\N	\N	2022-08-23 19:59:07.331615+05	2022-08-23 19:59:07.331615+05	\N	aly@gmail.com
+9b1a0831-9943-4aa9-aa2a-3507743a5de4	Berdi	+99361235698	$2a$14$S5nCg8mlGD..q3didZiCFuaocaEPA35ugIfpovdEoM7p5I8TOTX0K	\N	\N	\N	2022-08-23 20:31:28.830324+05	2022-08-23 20:31:28.830324+05	\N	berdi@gmail.com
+\.
+
+
+--
+-- Data for Name: district; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.district (id, price, created_at, updated_at, deleted_at) FROM stdin;
+a58294d3-efe5-4cb7-82d3-8df8c37563c5	15	2022-06-25 10:23:25.640364+05	2022-06-25 10:23:25.640364+05	\N
+\.
+
+
+--
+-- Data for Name: images; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.images (id, product_id, small, medium, large, created_at, updated_at, deleted_at) FROM stdin;
+2481d233-e91c-4d76-bbd9-460cd6d381f7	f66bb675-db85-45fd-8df5-e5a1e2fa363f	uploads/product/b5a60b3b-43aa-4e5c-a2b3-cbd2874fd280.jpg	uploads/product/8c9f46ea-debb-48fa-a5d5-982267641674.jpg	uploads/product/b768b0f1-896c-4fca-8a81-9f8e2bd923dd.jpg	2022-09-07 16:32:42.00139+05	2022-09-07 16:32:42.00139+05	\N
+7950c61c-4499-4d25-a747-0098e09aa877	f66bb675-db85-45fd-8df5-e5a1e2fa363f	uploads/product/befea72a-d086-4c6e-85e1-4c37781e7da6.jpeg	uploads/product/b2a5ec67-19c0-4975-9960-213fc1a3747a.jpeg	uploads/product/29785c89-d9cc-4929-92fd-b4b291e0bc3d.jpeg	2022-09-07 16:32:42.012276+05	2022-09-07 16:32:42.012276+05	\N
+\.
+
+
+--
+-- Data for Name: languages; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.languages (id, name_short, flag, created_at, updated_at, deleted_at) FROM stdin;
+8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	tm	uploads/language17b99bd1-f52d-41db-b4e6-1ecff03e0fd0.jpeg	2022-06-15 19:53:06.041686+05	2022-06-15 19:53:06.041686+05	\N
+aea98b93-7bdf-455b-9ad4-a259d69dc76e	ru	uploads/language1c24e3a6-173e-4264-a631-f099d15495dd.jpeg	2022-06-15 19:53:21.29491+05	2022-06-15 19:53:21.29491+05	\N
+\.
+
+
+--
+-- Data for Name: likes; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.likes (id, product_id, customer_id, created_at, updated_at, deleted_at) FROM stdin;
+\.
+
+
+--
+-- Data for Name: main_image; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.main_image (id, product_id, small, medium, large, created_at, updated_at, deleted_at) FROM stdin;
+2d57434a-a57b-4e2d-8415-e878055523fb	f66bb675-db85-45fd-8df5-e5a1e2fa363f	uploads/product/dc985d3b-9a7d-495c-8422-bdc9bebe8569.jpg	uploads/product/c21bf74f-5749-4a35-a29e-7f8c272c076d.jpg	uploads/product/fec10a11-0d00-4b10-ab09-ef721f91fe5d.jpg	2022-09-07 16:32:41.979363+05	2022-09-07 16:32:41.979363+05	\N
+\.
+
+
+--
+-- Data for Name: products; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.products (id, brend_id, price, old_price, amount, product_code, created_at, updated_at, deleted_at, limit_amount, is_new) FROM stdin;
+f66bb675-db85-45fd-8df5-e5a1e2fa363f	fdd259c2-794a-42b9-a3ad-9e91502af23e	23	0	1000	fer51gf65er	2022-09-07 16:32:41.922712+05	2022-09-07 16:32:41.922712+05	\N	100	t
+\.
+
+
+--
+-- Data for Name: shops; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.shops (id, owner_name, address, phone_number, running_time, created_at, updated_at, deleted_at) FROM stdin;
+\.
+
+
+--
+-- Data for Name: translation_about; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.translation_about (id, lang_id, title, content, created_at, updated_at, deleted_at) FROM stdin;
+7abeb5cf-2fbb-43b9-94ca-251dd5f40d5a	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	Sizi Isleg onlaýn marketimizde hoş gördük!	Onlaýn marketimiz 2019-njy ýylyň iýul aýyndan bäri hyzmat berýär. Häzirki wagtda Size ýüzlerçe brendlere degişli bolan müňlerçe haryt görnüşlerini hödürleýäris! Haryt görnüşlerimizi sizden gelýän isleg we teklipleriň esasynda köpeltmäge dowam edýäris. Biziň maksadymyz müşderilerimize ýokary hilli hyzmat bermek bolup durýar. Indi Siz öýüňizden çykmazdan özüňizi gerekli zatlar bilen üpjün edip bilersiňiz! Munuň bilen bir hatarda Siz wagtyňyzy we transport çykdajylaryny hem tygşytlaýarsyňyz. Tölegi harytlar size gowuşandan soňra nagt ýa-da bank kartlarynyň üsti bilen amala aşyryp bilersiňiz!\n\nBiziň gapymyz hyzmatdaşlyklara we tekliplere hemişe açyk!	2022-06-25 12:07:15.62033+05	2022-06-25 12:07:15.62033+05	\N
+e50bb3d1-14a1-400e-83d9-8bc15969b914	aea98b93-7bdf-455b-9ad4-a259d69dc76e	Рады приветствовать Вас в интернет-маркете Isleg!	Мы начали работу в июле 2019 года и на сегодняшний день мы предлагаем Вам тысячи видов товаров, которые принадлежат сотням брендам. Каждый день мы работаем над увеличением ассортимента, привлечением новых компаний к сотрудничеству. Целью нашей работы является создание выгодных условий для наших клиентов-экономия времени на походы в магазины, оплата наличными или картой, доставка в удобное время, и конечно же качественная продукция по лучшим ценам!\n\nМы открыты для сотрудничества и пожеланий!	2022-06-25 12:07:15.653744+05	2022-06-25 12:07:15.653744+05	\N
+\.
+
+
+--
+-- Data for Name: translation_afisa; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.translation_afisa (id, afisa_id, lang_id, title, description, created_at, updated_at, deleted_at) FROM stdin;
+\.
+
+
+--
+-- Data for Name: translation_basket_page; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.translation_basket_page (id, lang_id, quantity_of_goods, total_price, discount, delivery, total, currency, to_order, your_basket, created_at, updated_at, deleted_at) FROM stdin;
+456dcb5a-fabb-47f8-b216-0cddd3077124	aea98b93-7bdf-455b-9ad4-a259d69dc76e	quantity_of_goods_ru	total_price_ru	discount_ru	delivery_ru	total_ru	currency_ru	to_order_ru	your_basket_ru	2022-08-30 12:36:24.978404+05	2022-08-30 12:36:37.967063+05	\N
+51b3699e-1c7b-442a-be7b-6b2ad1f111b4	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	quantity_of_goods	total_price	discount	delivery	total	currency	to_order	your_basket	2022-08-30 12:36:24.978404+05	2022-08-30 12:39:12.849615+05	\N
+\.
+
+
+--
+-- Data for Name: translation_category; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.translation_category (id, lang_id, category_id, name, created_at, updated_at, deleted_at) FROM stdin;
+d8a96324-9b81-4b09-914f-f77a0915e35b	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	33cf0893-ff6e-40b3-b50f-2a3e926eca70	Tebigy ereýän kofeler	2022-06-16 13:44:51.233713+05	2022-06-16 13:44:51.233713+05	\N
+21520180-13e2-4c2b-a5f9-866c2e59ba87	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	f745d171-68e6-42e2-b339-cb3c210cda55	Kiçi paket kofeler	2022-06-16 13:45:48.889727+05	2022-06-16 13:45:48.889727+05	\N
+e099e7f6-1b97-4f70-8f29-f586ab6697d0	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	5bb9a4e7-9992-418f-b551-537844d371da	Şokolad we Keksler	2022-06-16 13:46:44.657849+05	2022-06-16 13:46:44.657849+05	\N
+ee2f97fb-8c6c-4e38-bdb3-bf769bc95d3b	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	d4cb1359-6c23-4194-8e3c-21ed8cec8373	Batonçikler	2022-06-16 13:48:04.581888+05	2022-06-16 13:48:04.581888+05	\N
+5cfeab53-7e44-4001-8310-ddbf1779d4c6	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	4af3388b-2738-4ff6-b42e-927cb0ff897f	Arassaçylyk we Hojalyk	2022-06-16 13:49:43.658705+05	2022-06-16 13:49:43.658705+05	\N
+9d79f031-a5d1-4827-8547-ff44e8ee9ec7	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	56b86071-1c45-490b-a683-a8898546f179	Kir ýuwujy serişdeler	2022-06-16 13:50:35.361634+05	2022-06-16 13:50:35.361634+05	\N
+edf0966a-559e-4b49-a3f7-9ad28f5d26cb	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	ec0b10ac-bf81-4ae3-881e-ef616ea13d7f	Awtomat üçin	2022-06-16 13:51:05.861192+05	2022-06-16 13:51:05.861192+05	\N
+5098490c-af17-49ce-8fb4-2742c152b25d	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	0a1963a2-4084-403e-871d-763ae4825fab	Elde ýuwmak üçin	2022-06-16 13:51:56.030185+05	2022-06-16 13:51:56.030185+05	\N
+250873f0-eb5e-4484-8e83-421c83f571a2	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	5d877898-9ef4-4b91-8518-193b431228a8	Sabynlar	2022-06-16 13:52:45.186062+05	2022-06-16 13:52:45.186062+05	\N
+2f99f616-59dd-4499-8ad2-6efe92a2928a	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	fc87c4c5-d7cb-4def-a0e0-11cd5751e04b	Adaty Sabynlar	2022-06-16 13:53:34.342238+05	2022-06-16 13:53:34.342238+05	\N
+4c11f4ea-46f4-43e8-9359-7c34118109bd	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	38d92a87-4a9c-4860-94e6-e568f21ecd8e	Suwuk Sabynlar	2022-06-16 13:54:05.397857+05	2022-06-16 13:54:05.397857+05	\N
+85469cf2-f48a-4e73-800d-ebf599aaeaba	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	29ed85bb-11eb-4458-bbf3-5a5644d167d6	Arzanladyş we Aksiýalar	2022-06-20 09:41:17.756928+05	2022-06-20 09:41:17.756928+05	\N
+8a91bcb0-fcce-4a4f-80ff-a2896c0cc36a	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	7f453dd0-7b2e-480d-a8be-fcfa23bd863e	Arzanladyşdaky harytlar	2022-06-20 09:43:07.368782+05	2022-06-20 09:43:07.368782+05	\N
+34f4cdb5-04b9-48c0-b5b0-0045a02aa094	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	66772380-c161-4c45-9350-a45e765193e2	Aksiýadaky harytlar	2022-06-20 09:45:34.450534+05	2022-06-20 09:45:34.450534+05	\N
+e224ecfc-6daa-4df5-8112-74846fc44867	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	338906f1-dbe2-4ba7-84fc-fe7a4d7856ec	Sowgatlyk toplumlar	2022-06-20 09:46:01.148565+05	2022-06-20 09:46:01.148565+05	\N
+3b756a33-bf2c-4d04-af57-962a3226d00b	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	45765130-7f97-4f0c-b886-f70b75e02610	Täze harytlar	2022-06-20 10:11:06.719528+05	2022-06-20 10:11:06.719528+05	\N
+b88bb26f-942f-4638-b189-02bad933b730	aea98b93-7bdf-455b-9ad4-a259d69dc76e	33cf0893-ff6e-40b3-b50f-2a3e926eca70	Натуральный растворимый Кофе	2022-06-16 13:44:51.250133+05	2022-06-16 13:44:51.250133+05	\N
+ab35a97a-dfd1-4100-8e84-d34e74e9a02e	aea98b93-7bdf-455b-9ad4-a259d69dc76e	f745d171-68e6-42e2-b339-cb3c210cda55	Кофе в пакетиках	2022-06-16 13:45:48.906024+05	2022-06-16 13:45:48.906024+05	\N
+415a0711-2482-44b3-8f03-923dca28bd5d	aea98b93-7bdf-455b-9ad4-a259d69dc76e	5bb9a4e7-9992-418f-b551-537844d371da	Шоколады и Кексы	2022-06-16 13:46:44.673892+05	2022-06-16 13:46:44.673892+05	\N
+ea104eaf-c3fd-4f2d-88bf-dffc14d48dc5	aea98b93-7bdf-455b-9ad4-a259d69dc76e	d4cb1359-6c23-4194-8e3c-21ed8cec8373	Батончики	2022-06-16 13:48:04.597499+05	2022-06-16 13:48:04.597499+05	\N
+2b31f071-4d17-49a6-96b1-ca7bf2121083	aea98b93-7bdf-455b-9ad4-a259d69dc76e	4af3388b-2738-4ff6-b42e-927cb0ff897f	Уборка и Дом	2022-06-16 13:49:43.665449+05	2022-06-16 13:49:43.665449+05	\N
+c4dc2d27-8966-460d-9992-f9fcf2ca6c0c	aea98b93-7bdf-455b-9ad4-a259d69dc76e	56b86071-1c45-490b-a683-a8898546f179	Моющие cредства	2022-06-16 13:50:35.378397+05	2022-06-16 13:50:35.378397+05	\N
+d0b77bd5-7bcf-4f05-a04d-299eedaba57d	aea98b93-7bdf-455b-9ad4-a259d69dc76e	ec0b10ac-bf81-4ae3-881e-ef616ea13d7f	Для автоматической стирки	2022-06-16 13:51:05.877721+05	2022-06-16 13:51:05.877721+05	\N
+266b5dfd-e894-48d0-9b28-8a905f631cc2	aea98b93-7bdf-455b-9ad4-a259d69dc76e	0a1963a2-4084-403e-871d-763ae4825fab	Для ручной стирки	2022-06-16 13:51:56.046414+05	2022-06-16 13:51:56.046414+05	\N
+c670fa26-0df8-4eaf-937a-30e1eab17846	aea98b93-7bdf-455b-9ad4-a259d69dc76e	5d877898-9ef4-4b91-8518-193b431228a8	Мыла	2022-06-16 13:52:45.202046+05	2022-06-16 13:52:45.202046+05	\N
+49752597-6eb4-44c3-8714-92ad883fca65	aea98b93-7bdf-455b-9ad4-a259d69dc76e	fc87c4c5-d7cb-4def-a0e0-11cd5751e04b	Обычные мыла	2022-06-16 13:53:34.359039+05	2022-06-16 13:53:34.359039+05	\N
+093e32f6-c04e-42a2-b446-413982903718	aea98b93-7bdf-455b-9ad4-a259d69dc76e	38d92a87-4a9c-4860-94e6-e568f21ecd8e	Жидкие мыла	2022-06-16 13:54:05.41627+05	2022-06-16 13:54:05.41627+05	\N
+bbdd06a4-2dce-4c99-bf05-cf4e911776c7	aea98b93-7bdf-455b-9ad4-a259d69dc76e	29ed85bb-11eb-4458-bbf3-5a5644d167d6	Распродажи и Акции	2022-06-20 09:41:17.941489+05	2022-06-20 09:41:17.941489+05	\N
+ce573dfd-6af8-4e64-8260-8746a090acd7	aea98b93-7bdf-455b-9ad4-a259d69dc76e	7f453dd0-7b2e-480d-a8be-fcfa23bd863e	Продукция со скидкой	2022-06-20 09:43:07.377729+05	2022-06-20 09:43:07.377729+05	\N
+713cc05f-6a9d-4dae-88b5-dde2e564480c	aea98b93-7bdf-455b-9ad4-a259d69dc76e	66772380-c161-4c45-9350-a45e765193e2	Продукция в категории Акции	2022-06-20 09:45:34.466904+05	2022-06-20 09:45:34.466904+05	\N
+53959762-0b63-4100-ae13-4bbf8c015fec	aea98b93-7bdf-455b-9ad4-a259d69dc76e	338906f1-dbe2-4ba7-84fc-fe7a4d7856ec	Подарочные наборы	2022-06-20 09:46:01.408239+05	2022-06-20 09:46:01.408239+05	\N
+2d22961c-ef08-4238-ae54-c00593c0073c	aea98b93-7bdf-455b-9ad4-a259d69dc76e	45765130-7f97-4f0c-b886-f70b75e02610	Новые продукты	2022-06-20 10:11:06.735056+05	2022-06-20 10:11:06.735056+05	\N
+4eef5d40-9aad-4101-b36b-9026dd3dfb51	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	b982bd86-0a0f-4950-baad-5a131e9b728e	name_tm	2022-06-16 13:44:16.499713+05	2022-06-16 13:44:16.499713+05	\N
+10a8b5ec-a3ca-448d-975b-83b3a7a8c0d2	aea98b93-7bdf-455b-9ad4-a259d69dc76e	b982bd86-0a0f-4950-baad-5a131e9b728e	name_ru	2022-06-16 13:44:16.515874+05	2022-06-16 13:44:16.515874+05	\N
+bff34c21-04c1-4cea-bfaf-c8f9ce7e2bfe	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	02bd4413-8586-49ab-802e-16304e756a8b	name_tm	2022-06-16 13:43:22.674562+05	2022-06-16 13:43:22.674562+05	\N
+0e400414-a80c-449d-8842-dd6667b45c73	aea98b93-7bdf-455b-9ad4-a259d69dc76e	02bd4413-8586-49ab-802e-16304e756a8b	name_ru	2022-06-16 13:43:22.681932+05	2022-06-16 13:43:22.681932+05	\N
+4eb6bcbf-91f2-4505-a27e-cc3f96f2b829	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	fdc10d33-043b-4ee0-9d6e-e2a12a3e150a	Plitkalar	2022-06-16 13:47:18.888998+05	2022-06-16 13:47:18.888998+05	\N
+53fb44c7-45fb-49f0-a433-aaed23b2dfc0	aea98b93-7bdf-455b-9ad4-a259d69dc76e	fdc10d33-043b-4ee0-9d6e-e2a12a3e150a	Плитки	2022-06-16 13:47:18.942159+05	2022-06-16 13:47:18.942159+05	\N
+\.
+
+
+--
+-- Data for Name: translation_contact; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.translation_contact (id, lang_id, full_name, email, phone, letter, company_phone, imo, company_email, instagram, created_at, updated_at, deleted_at, button_text) FROM stdin;
+f1693167-0c68-4a54-9831-56f124d629a3	aea98b93-7bdf-455b-9ad4-a259d69dc76e	at_ru	mail_ru	phone_ru	letter ru	cp ru	imo ru	ce ru	instagram ru	2022-06-27 11:29:48.050553+05	2022-06-27 11:29:48.050553+05	\N	Отправить
+73253999-7355-42b4-8700-94de76f0058a	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	at_tm	mail_tm	phone_tm	letter_tm	cp_tm	imo_tm	ce_tm	ins_tm	2022-06-27 11:29:47.914891+05	2022-06-27 11:29:47.914891+05	\N	ugrat
+\.
+
+
+--
+-- Data for Name: translation_district; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.translation_district (id, lang_id, district_id, name, created_at, updated_at, deleted_at) FROM stdin;
+ad9f94d3-05e7-43b3-aa77-7b7f3754d003	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	a58294d3-efe5-4cb7-82d3-8df8c37563c5	Parahat 2	2022-06-25 10:23:25.712337+05	2022-06-25 10:23:25.712337+05	\N
+aa1cfa48-3132-4dd4-abfb-070a2986690b	aea98b93-7bdf-455b-9ad4-a259d69dc76e	a58294d3-efe5-4cb7-82d3-8df8c37563c5	Mir 2	2022-06-25 10:23:25.774504+05	2022-06-25 10:23:25.774504+05	\N
+\.
+
+
+--
+-- Data for Name: translation_footer; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.translation_footer (id, lang_id, about, payment, contact, secure, word, created_at, updated_at, deleted_at) FROM stdin;
+84b5504f-1056-4b44-94dd-a7819148da66	aea98b93-7bdf-455b-9ad4-a259d69dc76e	О нас	Порядок доставки и оплаты	Коммуникация	Обслуживания и Политика Конфиденциальности	Все права защищены	2022-06-22 15:23:32.793161+05	2022-06-22 15:23:32.793161+05	\N
+12dc4c16-5712-4bff-a957-8e16d450b4fb	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	Biz Barada	Eltip bermek we töleg tertibi	Aragatnaşyk	Ulanyş düzgünleri we gizlinlik şertnamasy	Ähli hukuklary goraglydyr	2022-06-22 15:23:32.716064+05	2022-06-22 15:23:32.716064+05	\N
+\.
+
+
+--
+-- Data for Name: translation_header; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.translation_header (id, lang_id, research, phone, password, forgot_password, sign_in, sign_up, name, password_verification, verify_secure, my_information, my_favorites, my_orders, log_out, created_at, updated_at, deleted_at, basket, email, add_to_basket) FROM stdin;
+eaf206e6-d515-4bdb-9323-a047cd0edae5	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	gözleg	telefon	parol	Acar sozumi unutdym	ulgama girmek	agza bolmak	Ady	Acar sozi tassyklamak	Ulanyş Düzgünlerini we Gizlinlik Şertnamasyny okadym we kabul edýärin	maglumatym	halanlarym	sargytlarym	cykmak	2022-06-16 04:48:26.460534+05	2022-06-16 04:48:26.460534+05	\N	sebet	uytget	uytget
+9154e800-2a92-47de-b4ff-1e63b213e5f7	aea98b93-7bdf-455b-9ad4-a259d69dc76e	поиск	tелефон	пароль	забыл пароль	войти	зарегистрироваться	имя	Подтвердить Пароль	Я прочитал и принимаю Условия Обслуживания и Политика Конфиденциальности	моя информация	мои любимые	мои заказы	выйти	2022-06-16 04:48:26.491672+05	2022-06-16 04:48:26.491672+05	\N	корзина	uytget	uytget
+\.
+
+
+--
+-- Data for Name: translation_my_information_page; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.translation_my_information_page (id, lang_id, address, created_at, updated_at, deleted_at, birthday, update_password, save) FROM stdin;
+d294138e-b808-41ae-9ac5-1826751fda3d	aea98b93-7bdf-455b-9ad4-a259d69dc76e	ваш адрес	2022-07-04 19:28:46.603058+05	2022-07-04 19:28:46.603058+05	\N	дата рождения	изменить пароль	запомнить
+11074158-69f2-473a-b4fe-94304ff0d8a7	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	salgyňyz	2022-07-04 19:28:46.529935+05	2022-07-04 19:28:46.529935+05	\N	doglan senäň	açar sözi üýtget	ýatda sakla
+\.
+
+
+--
+-- Data for Name: translation_my_order_page; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.translation_my_order_page (id, lang_id, orders, date, price, currency, image, name, brend, code, amount, total_price, created_at, updated_at, deleted_at) FROM stdin;
+6f30b588-94d8-49f5-a558-a90c2ec9150e	aea98b93-7bdf-455b-9ad4-a259d69dc76e	orders_ru	date_ru	price_ru	currency_ru	image_ru	name_ru	brend_ru	code_ru	amount_ru	total_price_ru	2022-09-02 13:04:39.394714+05	2022-09-02 13:04:39.394714+05	\N
+ff43b90d-e22d-4364-b358-6fd56bb3a305	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	orders	date	price	currency	image	name	brend	code	amount	total_price	2022-09-02 13:04:39.36328+05	2022-09-02 13:12:48.119751+05	\N
+\.
+
+
+--
+-- Data for Name: translation_order_page; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.translation_order_page (id, lang_id, content, type_of_payment, choose_a_delivery_time, your_address, mark, to_order, tomorrow, cash, payment_terminal, created_at, updated_at, deleted_at) FROM stdin;
+474a15e9-1a05-49aa-9a61-c92837d9c9a8	aea98b93-7bdf-455b-9ad4-a259d69dc76e	content_ru	type_of_payment_ru	choose_a_delivery_time_ru	your_address_ru	mark_ru	to_order_ru	tomorrow_ru	cash_ru	payment_terminal_ru	2022-09-01 12:47:16.802639+05	2022-09-01 12:47:16.802639+05	\N
+75810722-07fd-400e-94b4-cd230de08cbf	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	content	type_of_payment	choose_a_delivery_time	your_address	mark	to_order	tomorrow	cash	payment_terminal	2022-09-01 12:47:16.720956+05	2022-09-01 12:55:25.638676+05	\N
+\.
+
+
+--
+-- Data for Name: translation_payment; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.translation_payment (id, lang_id, title, content, created_at, updated_at, deleted_at) FROM stdin;
+5748ec03-5278-425c-babf-f7f2bf8d2efa	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	Eltip bermek we töleg tertibi	Eltip bermek hyzmaty Aşgabat şäheriniň çägi bilen bir hatarda Büzmeýine we Änew şäherine hem elýeterlidir. Hyzmat mugt amala aşyrylýar;\nHer bir sargydyň jemi bahasy azyndan 150 manat bolmalydyr;\nSaýtdan sargyt edeniňizden soňra operator size jaň edip sargydy tassyklar (eger hemişelik müşderi bolsaňyz sargytlaryňyz islegiňize görä awtomatik usulda hem tassyklanýar);\nGirizen salgyňyz we telefon belgiňiz esasynda hyzmat amala aşyrylýar;\nSargyt tassyklanmadyk ýagdaýynda ol hasaba alynmaýar we ýerine ýetirilmeýär. Sargydyň tassyklanmagy üçin girizen telefon belgiňizden jaň kabul edip bilýändigiňize göz ýetiriň. Şeýle hem girizen salgyňyzyň dogrulygyny barlaň;\nSargydy barlap alanyňyzdan soňra töleg amala aşyrylýar. Eltip berijiniň size gowşurýan töleg resminamasynda siziň tölemeli puluňyz bellenendir. Töleg nagt we nagt däl görnüşde milli manatda amala aşyrylýar. Kabul edip tölegini geçiren harydyňyz yzyna alynmaýar;\nSargyt tassyklanandan soňra 24 sagadyň dowamynda eýesi tapylmasa ol güýjüni ýitirýär;	2022-06-25 11:37:47.362666+05	2022-06-25 11:37:47.362666+05	\N
+ea7f4c0c-4b1a-41d3-94eb-e058aba9c99f	aea98b93-7bdf-455b-9ad4-a259d69dc76e	Порядок доставки и оплаты	В настоящее время услуга по доставке осуществляется по городу Ашхабад, Бюзмеин и Анау. Услуга предоставляется бесплатно.\nМинимальный заказ должен составлять не менее 150 манат;\nПосле Вашего заказа по сайту, оператор позвонит Вам для подтверждения заказа (постоянным клиентам по их желанию подтверждение осуществляется автоматизированно);\nУслуга доставки выполняется по указанному Вами адресу и номеру телефона;\nЕсли заказ не подтвержден то данный заказ не регистрируется и не выполняется. Для подтверждения заказа, удостоверьтесь, что можете принять звонок по указанному Вами номеру телефона. Также проверьте правильность указанного Вами адреса;\nОплата выполняется после того, как Вы проверите и примите заказ. На платежном документе курьера указана сумма Вашей оплаты. Оплата выполняется наличными и через карту в национальной валюте. Принятый и оплаченный товар возврату не подлежит;\nЕсли не удается найти владельца заказа в течение 24 часов после подтверждения заказа, то данный заказ аннулируется;	2022-06-25 11:37:47.39047+05	2022-06-25 11:37:47.39047+05	\N
+\.
+
+
+--
+-- Data for Name: translation_product; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.translation_product (id, lang_id, product_id, name, description, created_at, updated_at, deleted_at) FROM stdin;
+3169e11f-03bf-4588-9fcb-6f7ef94ff90c	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	f66bb675-db85-45fd-8df5-e5a1e2fa363f	Nemlendiriji suwuk sabyn Aura Clean "Черничный йогурт" 1 ltr	Nemlendiriji suwuk sabyn Aura Clean "Черничный йогурт" 1 ltr	2022-09-07 16:32:42.024221+05	2022-09-07 16:32:42.024221+05	\N
+c6543a24-cb12-4342-804a-01ae3c653f97	aea98b93-7bdf-455b-9ad4-a259d69dc76e	f66bb675-db85-45fd-8df5-e5a1e2fa363f	Жидкое крем-мыло увлажняющее Aura Clean "Черничный йогурт" 1 л	Жидкое крем-мыло увлажняющее Aura Clean "Черничный йогурт" 1 л	2022-09-07 16:32:42.036254+05	2022-09-07 16:32:42.036254+05	\N
+\.
+
+
+--
+-- Data for Name: translation_secure; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.translation_secure (id, lang_id, title, content, created_at, updated_at, deleted_at) FROM stdin;
+3579a847-ce74-4fbe-b10d-8aba83867857	aea98b93-7bdf-455b-9ad4-a259d69dc76e	Пользовательское соглашение	Между Ынамдар – Интернет Маркетом (далее – “Ынамдар”) и интернет сайтом www.ynamdar.com (далее – “Сайт”), а также его клиентом (далее - “Клиент”) достигнуто соглашение по нижеследующим условиям.\n	2022-06-25 10:46:54.221498+05	2022-06-25 10:46:54.221498+05	\N
+5988b64a-82ad-4ed0-bd1b-bdd0b3b05912	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	ÖZARA YLALAŞYGY	Ynamdar - Internet Marketi (Mundan beýläk – “Ynamdar”) we www.ynamdar.com internet saýty (Mundan beýläk – “Saýt”) bilen, onuň agzasynyň (“Agza”) arasynda aşakdaky şertleri ýerine ýetirmek barada ylalaşyga gelindi.	2022-06-25 10:46:54.190131+05	2022-06-25 10:46:54.190131+05	\N
+\.
+
+
+--
+-- Data for Name: translation_update_password_page; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.translation_update_password_page (id, lang_id, title, verify_password, explanation, save, created_at, updated_at, deleted_at, password) FROM stdin;
+5190ca93-7007-4db4-8105-65cc3b1af868	aea98b93-7bdf-455b-9ad4-a259d69dc76e	изменить пароль	Подтвердить Пароль	ключевое слово должно быть буквой или цифрой длиной от 5 до 20	запомнить	2022-07-05 10:35:08.984141+05	2022-07-05 10:35:08.984141+05	\N	ключевое слово
+de12082b-baab-4b83-ac07-119df09d1230	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	açar sözi üýtgetmek	açar sözi tassykla	siziň açar sözüňiz 5-20 uzynlygynda harp ýa-da sandan ybarat bolmalydyr	ýatda sakla	2022-07-05 10:35:08.867617+05	2022-07-05 10:35:08.867617+05	\N	açar sözi
+\.
+
+
+--
+-- Name: afisa afisa_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.afisa
+    ADD CONSTRAINT afisa_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: banner banner_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.banner
+    ADD CONSTRAINT banner_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: basket basket_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.basket
+    ADD CONSTRAINT basket_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: brends brends_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.brends
+    ADD CONSTRAINT brends_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: categories categories_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.categories
+    ADD CONSTRAINT categories_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: category_product category_product_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.category_product
+    ADD CONSTRAINT category_product_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: category_shop category_shop_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.category_shop
+    ADD CONSTRAINT category_shop_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: company_address company_address_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.company_address
+    ADD CONSTRAINT company_address_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: company_phone company_phone_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.company_phone
+    ADD CONSTRAINT company_phone_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: company_setting company_setting_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.company_setting
+    ADD CONSTRAINT company_setting_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: customers customers_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.customers
+    ADD CONSTRAINT customers_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: district district_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.district
+    ADD CONSTRAINT district_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: images images_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.images
+    ADD CONSTRAINT images_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: languages languages_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.languages
+    ADD CONSTRAINT languages_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: likes likes_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.likes
+    ADD CONSTRAINT likes_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: main_image main_image_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.main_image
+    ADD CONSTRAINT main_image_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: products product_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.products
+    ADD CONSTRAINT product_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: shops shops_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.shops
+    ADD CONSTRAINT shops_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: translation_about translation_about_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.translation_about
+    ADD CONSTRAINT translation_about_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: translation_afisa translation_afisa_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.translation_afisa
+    ADD CONSTRAINT translation_afisa_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: translation_basket_page translation_basket_page_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.translation_basket_page
+    ADD CONSTRAINT translation_basket_page_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: translation_category translation_category_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.translation_category
+    ADD CONSTRAINT translation_category_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: translation_contact translation_contact_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.translation_contact
+    ADD CONSTRAINT translation_contact_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: translation_district translation_district_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.translation_district
+    ADD CONSTRAINT translation_district_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: translation_footer translation_footer_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.translation_footer
+    ADD CONSTRAINT translation_footer_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: translation_header translation_header_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.translation_header
+    ADD CONSTRAINT translation_header_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: translation_my_information_page translation_my_information_page_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.translation_my_information_page
+    ADD CONSTRAINT translation_my_information_page_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: translation_my_order_page translation_my_order_page_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.translation_my_order_page
+    ADD CONSTRAINT translation_my_order_page_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: translation_order_page translation_order_page_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.translation_order_page
+    ADD CONSTRAINT translation_order_page_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: translation_payment translation_payment_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.translation_payment
+    ADD CONSTRAINT translation_payment_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: translation_product translation_product_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.translation_product
+    ADD CONSTRAINT translation_product_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: translation_secure translation_secure_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.translation_secure
+    ADD CONSTRAINT translation_secure_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: translation_update_password_page translation_update_password_page_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.translation_update_password_page
+    ADD CONSTRAINT translation_update_password_page_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: translation_afisa fk_afisa_translation_afisa; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.translation_afisa
+    ADD CONSTRAINT fk_afisa_translation_afisa FOREIGN KEY (afisa_id) REFERENCES public.afisa(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: products fk_brend_product; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.products
+    ADD CONSTRAINT fk_brend_product FOREIGN KEY (brend_id) REFERENCES public.brends(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: category_product fk_category_category_product; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.category_product
+    ADD CONSTRAINT fk_category_category_product FOREIGN KEY (category_id) REFERENCES public.categories(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: category_shop fk_category_category_shop; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.category_shop
+    ADD CONSTRAINT fk_category_category_shop FOREIGN KEY (category_id) REFERENCES public.categories(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: categories fk_category_child_category; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.categories
+    ADD CONSTRAINT fk_category_child_category FOREIGN KEY (parent_category_id) REFERENCES public.categories(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: translation_category fk_category_translation_category; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.translation_category
+    ADD CONSTRAINT fk_category_translation_category FOREIGN KEY (category_id) REFERENCES public.categories(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: basket fk_customer_basket; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.basket
+    ADD CONSTRAINT fk_customer_basket FOREIGN KEY (customer_id) REFERENCES public.customers(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: likes fk_customer_like; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.likes
+    ADD CONSTRAINT fk_customer_like FOREIGN KEY (customer_id) REFERENCES public.customers(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: translation_district fk_district_translation_district; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.translation_district
+    ADD CONSTRAINT fk_district_translation_district FOREIGN KEY (district_id) REFERENCES public.district(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: company_address fk_language_company_address; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.company_address
+    ADD CONSTRAINT fk_language_company_address FOREIGN KEY (lang_id) REFERENCES public.languages(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: translation_about fk_language_translation_about; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.translation_about
+    ADD CONSTRAINT fk_language_translation_about FOREIGN KEY (lang_id) REFERENCES public.languages(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: translation_afisa fk_language_translation_afisa; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.translation_afisa
+    ADD CONSTRAINT fk_language_translation_afisa FOREIGN KEY (lang_id) REFERENCES public.languages(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: translation_category fk_language_translation_category; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.translation_category
+    ADD CONSTRAINT fk_language_translation_category FOREIGN KEY (lang_id) REFERENCES public.languages(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: translation_contact fk_language_translation_contact; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.translation_contact
+    ADD CONSTRAINT fk_language_translation_contact FOREIGN KEY (lang_id) REFERENCES public.languages(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: translation_district fk_language_translation_district; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.translation_district
+    ADD CONSTRAINT fk_language_translation_district FOREIGN KEY (lang_id) REFERENCES public.languages(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: translation_header fk_language_translation_header; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.translation_header
+    ADD CONSTRAINT fk_language_translation_header FOREIGN KEY (lang_id) REFERENCES public.languages(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: translation_my_information_page fk_language_translation_my_information_page; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.translation_my_information_page
+    ADD CONSTRAINT fk_language_translation_my_information_page FOREIGN KEY (lang_id) REFERENCES public.languages(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: translation_payment fk_language_translation_payment; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.translation_payment
+    ADD CONSTRAINT fk_language_translation_payment FOREIGN KEY (lang_id) REFERENCES public.languages(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: translation_product fk_language_translation_product; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.translation_product
+    ADD CONSTRAINT fk_language_translation_product FOREIGN KEY (lang_id) REFERENCES public.languages(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: translation_secure fk_language_translation_secure; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.translation_secure
+    ADD CONSTRAINT fk_language_translation_secure FOREIGN KEY (lang_id) REFERENCES public.languages(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: translation_update_password_page fk_language_translation_update_password_page; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.translation_update_password_page
+    ADD CONSTRAINT fk_language_translation_update_password_page FOREIGN KEY (lang_id) REFERENCES public.languages(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: translation_footer fk_languages_translation_footer; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.translation_footer
+    ADD CONSTRAINT fk_languages_translation_footer FOREIGN KEY (lang_id) REFERENCES public.languages(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: basket fk_product_basket; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.basket
+    ADD CONSTRAINT fk_product_basket FOREIGN KEY (product_id) REFERENCES public.products(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: category_product fk_product_category_product; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.category_product
+    ADD CONSTRAINT fk_product_category_product FOREIGN KEY (product_id) REFERENCES public.products(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: likes fk_product_like; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.likes
+    ADD CONSTRAINT fk_product_like FOREIGN KEY (product_id) REFERENCES public.products(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: translation_product fk_product_translation_product; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.translation_product
+    ADD CONSTRAINT fk_product_translation_product FOREIGN KEY (product_id) REFERENCES public.products(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: category_shop fk_shop_category_shop; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.category_shop
+    ADD CONSTRAINT fk_shop_category_shop FOREIGN KEY (shop_id) REFERENCES public.shops(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: translation_basket_page language_translation_basket_page; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.translation_basket_page
+    ADD CONSTRAINT language_translation_basket_page FOREIGN KEY (lang_id) REFERENCES public.languages(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: translation_my_order_page language_translation_my_order_page; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.translation_my_order_page
+    ADD CONSTRAINT language_translation_my_order_page FOREIGN KEY (lang_id) REFERENCES public.languages(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: translation_order_page language_translation_order_page; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.translation_order_page
+    ADD CONSTRAINT language_translation_order_page FOREIGN KEY (lang_id) REFERENCES public.languages(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: images products_images; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.images
+    ADD CONSTRAINT products_images FOREIGN KEY (product_id) REFERENCES public.products(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: main_image products_main_image; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.main_image
+    ADD CONSTRAINT products_main_image FOREIGN KEY (product_id) REFERENCES public.products(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- PostgreSQL database dump complete
+--
+
