@@ -1072,11 +1072,56 @@
 									"key": "is_new",
 									"value": "true",
 									"type": "default"
+								},
+								{
+									"key": "main_small",
+									"type": "file",
+									"src": "/home/abb/Pictures/download.jpeg"
+								},
+								{
+									"key": "main_medium",
+									"type": "file",
+									"src": "/home/abb/Pictures/download.jpeg"
+								},
+								{
+									"key": "main_large",
+									"type": "file",
+									"src": "/home/abb/Pictures/download.jpeg"
+								},
+								{
+									"key": "small",
+									"type": "file",
+									"src": "/home/abb/Pictures/download (1).jpeg"
+								},
+								{
+									"key": "small",
+									"type": "file",
+									"src": "/home/abb/Pictures/download (2).jpeg"
+								},
+								{
+									"key": "medium",
+									"type": "file",
+									"src": "/home/abb/Pictures/download (1).jpeg"
+								},
+								{
+									"key": "medium",
+									"type": "file",
+									"src": "/home/abb/Pictures/download (2).jpeg"
+								},
+								{
+									"key": "large",
+									"type": "file",
+									"src": "/home/abb/Pictures/download (1).jpeg"
+								},
+								{
+									"key": "large",
+									"type": "file",
+									"src": "/home/abb/Pictures/download (2).jpeg"
 								}
 							]
 						},
 						"url": {
-							"raw": "localhost:2406/admin/product/1a8935fd-c6ab-4656-b173-826c487a2274",
+							"raw": "localhost:2406/admin/product/ff3ef680-3f35-4424-bc08-6fbb9c065675",
 							"host": [
 								"localhost"
 							],
@@ -1084,7 +1129,7 @@
 							"path": [
 								"admin",
 								"product",
-								"1a8935fd-c6ab-4656-b173-826c487a2274"
+								"ff3ef680-3f35-4424-bc08-6fbb9c065675"
 							]
 						}
 					},
@@ -1096,7 +1141,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "localhost:2406/admin/product/1a8935fd-c6ab-4656-b173-826c487a2274",
+							"raw": "localhost:2406/admin/product/ff3ef680-3f35-4424-bc08-6fbb9c065675",
 							"host": [
 								"localhost"
 							],
@@ -1104,7 +1149,7 @@
 							"path": [
 								"admin",
 								"product",
-								"1a8935fd-c6ab-4656-b173-826c487a2274"
+								"ff3ef680-3f35-4424-bc08-6fbb9c065675"
 							]
 						}
 					},
@@ -1135,7 +1180,7 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "localhost:2406/admin/product/1fa25151-9c63-4554-a79d-faf6cc78ef69",
+							"raw": "localhost:2406/admin/product/ff3ef680-3f35-4424-bc08-6fbb9c065675",
 							"host": [
 								"localhost"
 							],
@@ -1143,7 +1188,7 @@
 							"path": [
 								"admin",
 								"product",
-								"1fa25151-9c63-4554-a79d-faf6cc78ef69"
+								"ff3ef680-3f35-4424-bc08-6fbb9c065675"
 							]
 						}
 					},
@@ -1155,7 +1200,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "localhost:2406/admin/restore-product/e3f8aebb-1451-43a3-9e9b-582da01c8d08",
+							"raw": "localhost:2406/admin/restore-product/ff3ef680-3f35-4424-bc08-6fbb9c065675",
 							"host": [
 								"localhost"
 							],
@@ -1163,7 +1208,7 @@
 							"path": [
 								"admin",
 								"restore-product",
-								"e3f8aebb-1451-43a3-9e9b-582da01c8d08"
+								"ff3ef680-3f35-4424-bc08-6fbb9c065675"
 							]
 						}
 					},
@@ -1175,7 +1220,7 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "localhost:2406/admin/delete-product/1fa25151-9c63-4554-a79d-faf6cc78ef69",
+							"raw": "localhost:2406/admin/delete-product/ff3ef680-3f35-4424-bc08-6fbb9c065675",
 							"host": [
 								"localhost"
 							],
@@ -1183,7 +1228,7 @@
 							"path": [
 								"admin",
 								"delete-product",
-								"1fa25151-9c63-4554-a79d-faf6cc78ef69"
+								"ff3ef680-3f35-4424-bc08-6fbb9c065675"
 							]
 						}
 					},

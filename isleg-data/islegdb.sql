@@ -717,9 +717,6 @@ fdc10d33-043b-4ee0-9d6e-e2a12a3e150a	5bb9a4e7-9992-418f-b551-537844d371da		f	202
 --
 
 COPY public.category_product (id, category_id, product_id, created_at, updated_at, deleted_at) FROM stdin;
-f2605786-e1be-48a5-8546-0b31df8cc568	d4cb1359-6c23-4194-8e3c-21ed8cec8373	f66bb675-db85-45fd-8df5-e5a1e2fa363f	2022-09-07 16:32:42.046655+05	2022-09-07 16:32:42.046655+05	\N
-40a14929-6007-4bdd-82c4-366b3aad0ba4	38d92a87-4a9c-4860-94e6-e568f21ecd8e	f66bb675-db85-45fd-8df5-e5a1e2fa363f	2022-09-07 16:32:42.05671+05	2022-09-07 16:32:42.05671+05	\N
-c032f83a-599a-4ec2-8af4-b33f6019f5e3	29ed85bb-11eb-4458-bbf3-5a5644d167d6	f66bb675-db85-45fd-8df5-e5a1e2fa363f	2022-09-07 16:32:42.069372+05	2022-09-07 16:32:42.069372+05	\N
 \.
 
 
@@ -784,8 +781,6 @@ a58294d3-efe5-4cb7-82d3-8df8c37563c5	15	2022-06-25 10:23:25.640364+05	2022-06-25
 --
 
 COPY public.images (id, product_id, small, medium, large, created_at, updated_at, deleted_at) FROM stdin;
-2481d233-e91c-4d76-bbd9-460cd6d381f7	f66bb675-db85-45fd-8df5-e5a1e2fa363f	uploads/product/b5a60b3b-43aa-4e5c-a2b3-cbd2874fd280.jpg	uploads/product/8c9f46ea-debb-48fa-a5d5-982267641674.jpg	uploads/product/b768b0f1-896c-4fca-8a81-9f8e2bd923dd.jpg	2022-09-07 16:32:42.00139+05	2022-09-07 16:32:42.00139+05	\N
-7950c61c-4499-4d25-a747-0098e09aa877	f66bb675-db85-45fd-8df5-e5a1e2fa363f	uploads/product/befea72a-d086-4c6e-85e1-4c37781e7da6.jpeg	uploads/product/b2a5ec67-19c0-4975-9960-213fc1a3747a.jpeg	uploads/product/29785c89-d9cc-4929-92fd-b4b291e0bc3d.jpeg	2022-09-07 16:32:42.012276+05	2022-09-07 16:32:42.012276+05	\N
 \.
 
 
@@ -812,7 +807,6 @@ COPY public.likes (id, product_id, customer_id, created_at, updated_at, deleted_
 --
 
 COPY public.main_image (id, product_id, small, medium, large, created_at, updated_at, deleted_at) FROM stdin;
-2d57434a-a57b-4e2d-8415-e878055523fb	f66bb675-db85-45fd-8df5-e5a1e2fa363f	uploads/product/dc985d3b-9a7d-495c-8422-bdc9bebe8569.jpg	uploads/product/c21bf74f-5749-4a35-a29e-7f8c272c076d.jpg	uploads/product/fec10a11-0d00-4b10-ab09-ef721f91fe5d.jpg	2022-09-07 16:32:41.979363+05	2022-09-07 16:32:41.979363+05	\N
 \.
 
 
@@ -821,7 +815,6 @@ COPY public.main_image (id, product_id, small, medium, large, created_at, update
 --
 
 COPY public.products (id, brend_id, price, old_price, amount, product_code, created_at, updated_at, deleted_at, limit_amount, is_new) FROM stdin;
-f66bb675-db85-45fd-8df5-e5a1e2fa363f	fdd259c2-794a-42b9-a3ad-9e91502af23e	23	0	1000	fer51gf65er	2022-09-07 16:32:41.922712+05	2022-09-07 16:32:41.922712+05	\N	100	t
 \.
 
 
@@ -992,8 +985,6 @@ ea7f4c0c-4b1a-41d3-94eb-e058aba9c99f	aea98b93-7bdf-455b-9ad4-a259d69dc76e	Пор
 --
 
 COPY public.translation_product (id, lang_id, product_id, name, description, created_at, updated_at, deleted_at) FROM stdin;
-3169e11f-03bf-4588-9fcb-6f7ef94ff90c	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	f66bb675-db85-45fd-8df5-e5a1e2fa363f	Nemlendiriji suwuk sabyn Aura Clean "Черничный йогурт" 1 ltr	Nemlendiriji suwuk sabyn Aura Clean "Черничный йогурт" 1 ltr	2022-09-07 16:32:42.024221+05	2022-09-07 16:32:42.024221+05	\N
-c6543a24-cb12-4342-804a-01ae3c653f97	aea98b93-7bdf-455b-9ad4-a259d69dc76e	f66bb675-db85-45fd-8df5-e5a1e2fa363f	Жидкое крем-мыло увлажняющее Aura Clean "Черничный йогурт" 1 л	Жидкое крем-мыло увлажняющее Aura Clean "Черничный йогурт" 1 л	2022-09-07 16:32:42.036254+05	2022-09-07 16:32:42.036254+05	\N
 \.
 
 
