@@ -105,7 +105,7 @@ func Routes() *gin.Engine {
 		back.POST("/product", backController.CreateProduct)
 		back.PUT("/product/:id", backController.UpdateProductByID)
 		back.GET("/product/:id", backController.GetProductByID)
-		// back.GET("/products", backController.GetProducts)
+		back.GET("/products", backController.GetProducts)
 		// back.DELETE("/product/:id", backController.DeleteProductByID)
 		// back.GET("/restore-product/:id", backController.RestoreProductByID)
 		// back.DELETE("/delete-product/:id", backController.DeletePermanentlyProductByID)
