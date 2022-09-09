@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"github/abbgo/isleg/isleg-backend/config"
+	"github/abbgo/isleg/isleg-backend/models"
 	"github/abbgo/isleg/isleg-backend/pkg"
 	"net/http"
 	"os"
@@ -10,7 +11,6 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
-	"github.com/lib/pq"
 )
 
 type BrendForHomePage struct {
@@ -23,10 +23,10 @@ type OneBrend struct {
 	Image string `json:"image"`
 }
 
-type ProductImages struct {
-	MainImage string         `json:"main_image"`
-	Images    pq.StringArray `json:"images"`
-}
+// type ProductImages struct {
+// 	MainImage string         `json:"main_image"`
+// 	Images    pq.StringArray `json:"images"`
+// }
 
 func CreateBrend(c *gin.Context) {
 
@@ -493,7 +493,7 @@ func DeletePermanentlyBrendByID(c *gin.Context) {
 		return
 	}
 
-	rowProducts, err := db.Query("SELECT main_image,images FROM products WHERE brend_id = $1", ID)
+	rowsMainImage, err := db.Query("SELECT m.small,m.medium,m.large FROM main_image m INNER JOIN products p ON p.id = m.product_id WHERE p.brend_id = $1", ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -501,14 +501,14 @@ func DeletePermanentlyBrendByID(c *gin.Context) {
 		})
 		return
 	}
-	defer rowProducts.Close()
+	defer rowsMainImage.Close()
 
-	var products []ProductImages
+	var mainImages []models.MainImage
 
-	for rowProducts.Next() {
-		var product ProductImages
+	for rowsMainImage.Next() {
+		var mainImage models.MainImage
 
-		if err := rowProducts.Scan(&product.MainImage, &product.Images); err != nil {
+		if err := rowsMainImage.Scan(&mainImage.Small, &mainImage.Medium, &mainImage.Large); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
@@ -516,11 +516,11 @@ func DeletePermanentlyBrendByID(c *gin.Context) {
 			return
 		}
 
-		products = append(products, product)
+		mainImages = append(mainImages, mainImage)
 	}
 
-	for _, v := range products {
-		if err := os.Remove("./" + v.MainImage); err != nil {
+	for _, v := range mainImages {
+		if err := os.Remove("./" + v.Small); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
@@ -528,16 +528,72 @@ func DeletePermanentlyBrendByID(c *gin.Context) {
 			return
 		}
 
-		if len(v.Images) != 0 {
-			for _, img := range v.Images {
-				if err := os.Remove("./" + img); err != nil {
-					c.JSON(http.StatusBadRequest, gin.H{
-						"status":  false,
-						"message": err.Error(),
-					})
-					return
-				}
-			}
+		if err := os.Remove("./" + v.Medium); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+
+		if err := os.Remove("./" + v.Large); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}
+
+	rowsImages, err := db.Query("SELECT i.small,i.medium,i.large FROM images i INNER JOIN products p ON p.id = i.product_id WHERE p.brend_id = $1", ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer rowsImages.Close()
+
+	var images []models.Images
+
+	for rowsImages.Next() {
+		var image models.Images
+
+		if err := rowsImages.Scan(&image.Small, &image.Medium, &image.Large); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+
+		images = append(images, image)
+	}
+
+	for _, v := range images {
+		if err := os.Remove("./" + v.Small); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+
+		if err := os.Remove("./" + v.Medium); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+
+		if err := os.Remove("./" + v.Large); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
 		}
 	}
 

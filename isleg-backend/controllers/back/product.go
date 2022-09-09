@@ -190,6 +190,15 @@ func CreateProduct(c *gin.Context) {
 		}
 	}
 
+	// file upload
+	if err := c.Request.ParseMultipartForm(2000000); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
 	mainSamllFile, err := c.FormFile("main_small")
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
