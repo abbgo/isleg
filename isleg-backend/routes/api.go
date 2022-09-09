@@ -195,7 +195,7 @@ func Routes() *gin.Engine {
 		front.GET("/homepage-categories", frontController.GetHomePageCategories)
 
 		// // get one category with products
-		// front.GET("/:category_id/:limit/:page", backController.GetOneCategoryWithProducts)
+		front.GET("/:category_id/:limit/:page", backController.GetOneCategoryWithProducts)
 
 		securedCustomer := front.Group("/").Use(middlewares.Auth())
 		{
