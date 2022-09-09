@@ -192,7 +192,7 @@ func Routes() *gin.Engine {
 		front.GET("/translation-my-order-page", backController.GetTranslationMyOrderPageByLangID)
 
 		// homepage categories
-		// front.GET("/homepage-categories", frontController.GetHomePageCategories)
+		front.GET("/homepage-categories", frontController.GetHomePageCategories)
 
 		// // get one category with products
 		// front.GET("/:category_id/:limit/:page", backController.GetOneCategoryWithProducts)
