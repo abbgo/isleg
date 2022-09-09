@@ -10,6 +10,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	"github.com/lib/pq"
 )
 
 type BrendForHomePage struct {
@@ -20,6 +21,11 @@ type BrendForHomePage struct {
 type OneBrend struct {
 	Name  string `json:"name"`
 	Image string `json:"image"`
+}
+
+type ProductImages struct {
+	MainImage string         `json:"main_image"`
+	Images    pq.StringArray `json:"images"`
 }
 
 func CreateBrend(c *gin.Context) {
