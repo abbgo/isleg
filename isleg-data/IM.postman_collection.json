@@ -342,7 +342,7 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "localhost:2406/admin/category/3d0851a3-45cf-4662-b315-67a98b9273c2",
+							"raw": "localhost:2406/admin/category/4af3388b-2738-4ff6-b42e-927cb0ff897f",
 							"host": [
 								"localhost"
 							],
@@ -350,7 +350,7 @@
 							"path": [
 								"admin",
 								"category",
-								"3d0851a3-45cf-4662-b315-67a98b9273c2"
+								"4af3388b-2738-4ff6-b42e-927cb0ff897f"
 							]
 						}
 					},
@@ -362,7 +362,7 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "localhost:2406/admin/delete-category/3d0851a3-45cf-4662-b315-67a98b9273c2",
+							"raw": "localhost:2406/admin/delete-category/4af3388b-2738-4ff6-b42e-927cb0ff897f",
 							"host": [
 								"localhost"
 							],
@@ -370,7 +370,7 @@
 							"path": [
 								"admin",
 								"delete-category",
-								"3d0851a3-45cf-4662-b315-67a98b9273c2"
+								"4af3388b-2738-4ff6-b42e-927cb0ff897f"
 							]
 						}
 					},
@@ -382,7 +382,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "localhost:2406/admin/restore-category/3d0851a3-45cf-4662-b315-67a98b9273c2",
+							"raw": "localhost:2406/admin/restore-category/4af3388b-2738-4ff6-b42e-927cb0ff897f",
 							"host": [
 								"localhost"
 							],
@@ -390,7 +390,7 @@
 							"path": [
 								"admin",
 								"restore-category",
-								"3d0851a3-45cf-4662-b315-67a98b9273c2"
+								"4af3388b-2738-4ff6-b42e-927cb0ff897f"
 							]
 						}
 					},
@@ -599,7 +599,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "localhost:2406/api/tm/4af3388b-2738-4ff6-b42e-927cb0ff897f/2/1",
+							"raw": "localhost:2406/api/tm/fdc10d33-043b-4ee0-9d6e-e2a12a3e150a/2/1",
 							"host": [
 								"localhost"
 							],
@@ -607,7 +607,7 @@
 							"path": [
 								"api",
 								"tm",
-								"4af3388b-2738-4ff6-b42e-927cb0ff897f",
+								"fdc10d33-043b-4ee0-9d6e-e2a12a3e150a",
 								"2",
 								"1"
 							]
@@ -787,7 +787,7 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "localhost:2406/admin/brend/c2f11fea-8057-4a7c-b290-c97d1d90ac59",
+							"raw": "localhost:2406/admin/brend/6a31c50a-704f-4b0d-80ae-240ca3094cda",
 							"host": [
 								"localhost"
 							],
@@ -795,7 +795,7 @@
 							"path": [
 								"admin",
 								"brend",
-								"c2f11fea-8057-4a7c-b290-c97d1d90ac59"
+								"6a31c50a-704f-4b0d-80ae-240ca3094cda"
 							]
 						}
 					},
@@ -807,7 +807,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "localhost:2406/admin/restore-brend/c2f11fea-8057-4a7c-b290-c97d1d90ac59",
+							"raw": "localhost:2406/admin/restore-brend/6a31c50a-704f-4b0d-80ae-240ca3094cda",
 							"host": [
 								"localhost"
 							],
@@ -815,7 +815,7 @@
 							"path": [
 								"admin",
 								"restore-brend",
-								"c2f11fea-8057-4a7c-b290-c97d1d90ac59"
+								"6a31c50a-704f-4b0d-80ae-240ca3094cda"
 							]
 						}
 					},
@@ -827,7 +827,7 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "localhost:2406/admin/delete-brend/c2f11fea-8057-4a7c-b290-c97d1d90ac59",
+							"raw": "localhost:2406/admin/delete-brend/6a31c50a-704f-4b0d-80ae-240ca3094cda",
 							"host": [
 								"localhost"
 							],
@@ -835,7 +835,7 @@
 							"path": [
 								"admin",
 								"delete-brend",
-								"c2f11fea-8057-4a7c-b290-c97d1d90ac59"
+								"6a31c50a-704f-4b0d-80ae-240ca3094cda"
 							]
 						}
 					},
@@ -856,17 +856,17 @@
 							"formdata": [
 								{
 									"key": "brend_id",
-									"value": "fdd259c2-794a-42b9-a3ad-9e91502af23e",
+									"value": "ddccb2dc-9697-4f4e-acf5-26b8bc2c8b72",
 									"type": "default"
 								},
 								{
 									"key": "price",
-									"value": "23",
+									"value": "65",
 									"type": "default"
 								},
 								{
 									"key": "old_price",
-									"value": "",
+									"value": "68",
 									"type": "default"
 								},
 								{
@@ -876,7 +876,7 @@
 								},
 								{
 									"key": "product_code",
-									"value": "fer51gf65er",
+									"value": "151fwe51we",
 									"type": "default"
 								},
 								{
@@ -901,22 +901,22 @@
 								},
 								{
 									"key": "category_id",
-									"value": "d4cb1359-6c23-4194-8e3c-21ed8cec8373",
+									"value": "b982bd86-0a0f-4950-baad-5a131e9b728e",
 									"type": "default"
 								},
 								{
 									"key": "category_id",
-									"value": "38d92a87-4a9c-4860-94e6-e568f21ecd8e",
+									"value": "5bb9a4e7-9992-418f-b551-537844d371da",
 									"type": "default"
 								},
 								{
 									"key": "category_id",
-									"value": "29ed85bb-11eb-4458-bbf3-5a5644d167d6",
+									"value": "02bd4413-8586-49ab-802e-16304e756a8b",
 									"type": "default"
 								},
 								{
 									"key": "is_new",
-									"value": "true",
+									"value": "false",
 									"type": "default"
 								},
 								{
@@ -1180,7 +1180,7 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "localhost:2406/admin/product/ff3ef680-3f35-4424-bc08-6fbb9c065675",
+							"raw": "localhost:2406/admin/product/dd531556-17ac-4e27-997e-57c0a48730f5",
 							"host": [
 								"localhost"
 							],
@@ -1188,7 +1188,7 @@
 							"path": [
 								"admin",
 								"product",
-								"ff3ef680-3f35-4424-bc08-6fbb9c065675"
+								"dd531556-17ac-4e27-997e-57c0a48730f5"
 							]
 						}
 					},
@@ -1220,7 +1220,7 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "localhost:2406/admin/delete-product/ff3ef680-3f35-4424-bc08-6fbb9c065675",
+							"raw": "localhost:2406/admin/delete-product/dd531556-17ac-4e27-997e-57c0a48730f5",
 							"host": [
 								"localhost"
 							],
@@ -1228,7 +1228,7 @@
 							"path": [
 								"admin",
 								"delete-product",
-								"ff3ef680-3f35-4424-bc08-6fbb9c065675"
+								"dd531556-17ac-4e27-997e-57c0a48730f5"
 							]
 						}
 					},
