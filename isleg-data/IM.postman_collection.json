@@ -1141,7 +1141,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "localhost:2406/admin/product/ff3ef680-3f35-4424-bc08-6fbb9c065675",
+							"raw": "localhost:2406/admin/product/ba935176-cf8c-4684-ab24-3ff11e5f176a",
 							"host": [
 								"localhost"
 							],
@@ -1149,7 +1149,7 @@
 							"path": [
 								"admin",
 								"product",
-								"ff3ef680-3f35-4424-bc08-6fbb9c065675"
+								"ba935176-cf8c-4684-ab24-3ff11e5f176a"
 							]
 						}
 					},
@@ -3211,13 +3211,16 @@
 			"name": "Like",
 			"item": [
 				{
-					"name": "AddLike",
+					"name": "GetLikedProductsWithoutCustomer",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
 					"request": {
-						"method": "POST",
+						"method": "GET",
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NSIsImV4cCI6MTY2MjEwMjkzM30.VQYLJ3kCTBDFFhAA6Dpe9C-p6Sf-baCRIg4sNFCihcc",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NSIsImV4cCI6MTY2Mjk3ODI4Nn0.jPzZuPJ5TtSXPSaHA2ggZMCqw1YKHaBhV4aOssUF_Is",
 								"type": "default"
 							}
 						],
@@ -3225,24 +3228,24 @@
 							"mode": "formdata",
 							"formdata": [
 								{
-									"key": "customer_id",
-									"value": "7e872c52-0d23-4086-8c45-43000b57332e",
+									"key": "product_ids",
+									"value": "3ca5ade3-d2ce-40ba-9be6-601105b5205a",
 									"type": "default"
 								},
 								{
-									"key": "products",
-									"value": "b4499063-096e-4fa6-9e21-a47185afd829",
+									"key": "product_ids",
+									"value": "ba935176-cf8c-4684-ab24-3ff11e5f176a",
 									"type": "default"
 								},
 								{
-									"key": "products",
-									"value": "1fa25151-9c63-4554-a79d-faf6cc78ef69",
+									"key": "product_ids",
+									"value": "abc05e23-5d72-41db-969a-662442da399f",
 									"type": "default"
 								}
 							]
 						},
 						"url": {
-							"raw": "localhost:2406/api/tm/like",
+							"raw": "localhost:2406/api/tm/likes-without-customer",
 							"host": [
 								"localhost"
 							],
@@ -3250,62 +3253,7 @@
 							"path": [
 								"api",
 								"tm",
-								"like"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "GetLikes",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NSIsImV4cCI6MTY2MjEwMjkzM30.VQYLJ3kCTBDFFhAA6Dpe9C-p6Sf-baCRIg4sNFCihcc",
-								"type": "default"
-							}
-						],
-						"url": {
-							"raw": "localhost:2406/api/tm/likes/7e872c52-0d23-4086-8c45-43000b57332e",
-							"host": [
-								"localhost"
-							],
-							"port": "2406",
-							"path": [
-								"api",
-								"tm",
-								"likes",
-								"7e872c52-0d23-4086-8c45-43000b57332e"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "RemoveLike",
-					"request": {
-						"method": "DELETE",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NSIsImV4cCI6MTY2MTMxNzI5MH0.MJHNJP67wLeP-_SfK4_C2eCGVe9QijOqQdPog1BsRxI",
-								"type": "default"
-							}
-						],
-						"url": {
-							"raw": "localhost:2406/api/tm/like/7e872c52-0d23-4086-8c45-43000b57332e/3b6d2d59-7ad4-4392-b7de-5a1d6bd003e1",
-							"host": [
-								"localhost"
-							],
-							"port": "2406",
-							"path": [
-								"api",
-								"tm",
-								"like",
-								"7e872c52-0d23-4086-8c45-43000b57332e",
-								"3b6d2d59-7ad4-4392-b7de-5a1d6bd003e1"
+								"likes-without-customer"
 							]
 						}
 					},
