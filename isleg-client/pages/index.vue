@@ -1,16 +1,26 @@
 <template>
   <div>
-    <slider-main :imgURL="imgURL" :brends="brends"></slider-main>
+    <slider-main
+      v-if="brends.length"
+      :imgURL="imgURL"
+      :brends="brends"
+    ></slider-main>
     <section class="product__categoty __container">
-      <product-column @productPopUpOpen="productPopUpOpen"></product-column>
-      <product-column @productPopUpOpen="productPopUpOpen"></product-column>
-      <product-column @productPopUpOpen="productPopUpOpen"></product-column>
+      <product-column
+        v-for="productsCategory in productsCategories.filter(
+          (item) => item.products !== null
+        )"
+        :key="productsCategory.id"
+        :productsCategory="productsCategory"
+        @openPopUp="openPopUp"
+      ></product-column>
     </section>
     <slider-brends></slider-brends>
     <pop-up-product
       :isProduct="isProduct"
       :images="images"
       :bigSlider="bigSlider"
+      :productData="productData"
       @changeImagePath="changeImagePath"
       @currentImagePath="currentImagePath"
       @close="closeProductPopUp"
@@ -28,6 +38,7 @@ export default {
   data() {
     return {
       isProduct: false,
+      productData: null,
       bigSlider: 'bigSlider.jpg',
       images: [
         { id: 1, src: '1.jpg' },
@@ -44,12 +55,19 @@ export default {
       url: `${process.env.BASE_API}/${this.$i18n.locale}/brends`,
       $nuxt: this.$nuxt,
     })
+    await this.$store.dispatch('products/fetchProductsCategories', {
+      url: `${process.env.BASE_API}/${this.$i18n.locale}/homepage-categories`,
+      $nuxt: this.$nuxt,
+    })
   },
   computed: {
     ...mapGetters('ui', ['imgURL', 'brends']),
+    ...mapGetters('products', ['productsCategories']),
   },
   methods: {
-    productPopUpOpen() {
+    openPopUp(data) {
+      console.log(data)
+      this.productData = data
       this.isProduct = true
       document.body.classList.add('_lock')
     },

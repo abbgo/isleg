@@ -1,11 +1,11 @@
 <template>
   <div class="products">
-    <product-box @productPopUp="$emit('productPopUpOpen')"></product-box>
-    <product-box @productPopUp="$emit('productPopUpOpen')"></product-box>
-    <product-box @productPopUp="$emit('productPopUpOpen')"></product-box>
-    <product-box @productPopUp="$emit('productPopUpOpen')"></product-box>
-    <product-box @productPopUp="$emit('productPopUpOpen')"></product-box>
-    <product-box @productPopUp="$emit('productPopUpOpen')"></product-box>
+    <product-box
+      v-for="product in productsCategory.products"
+      :key="product.id"
+      :product="product"
+      @productPopUp="productPopUp"
+    ></product-box>
   </div>
 </template>
 
@@ -15,9 +15,18 @@ export default {
   components: {
     ProductBox,
   },
+  props: {
+    productsCategory: {
+      type: Object,
+      default: () => {},
+    },
+  },
   methods: {
     openPop() {
       console.log('eee')
+    },
+    productPopUp(product) {
+      this.$emit('productPopUpOpen', product)
     },
   },
 }

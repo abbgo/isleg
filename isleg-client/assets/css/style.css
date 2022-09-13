@@ -719,8 +719,8 @@ main {
   transition: 0.4s ease;
   margin-bottom: 25px;
 }
-.product__box:hover {
-  transform: scale(1.05);
+.product__box:hover::after {
+  border: 0.1px solid #fd5e29;
 }
 .product__img {
   width: 215px;
@@ -769,13 +769,14 @@ main {
   opacity: 0.5;
 }
 .product__add-btn {
-  width: 209px;
-  height: 47px;
+  width: 175px;
+  height: 45px;
   border-radius: 10px;
   background: #fd5e29;
   display: flex;
   align-items: center;
   justify-content: center;
+  margin-top: 5px;
 }
 .product__add-btn h4 {
   font-family: TTNormsPro-Bold;
@@ -1594,8 +1595,8 @@ input[type*='date']::-webkit-calendar-picker-indicator {
   justify-content: space-between;
 }
 .btn__count-box {
-  width: 120px;
-  height: 47px;
+  width: 175px;
+  height: 45px;
   border-radius: 10px;
   background: #fd5e29;
   display: flex;
@@ -1604,7 +1605,7 @@ input[type*='date']::-webkit-calendar-picker-indicator {
   color: #fff;
 }
 .btn__count-box button {
-  margin: 0 4px;
+  margin: 0 6px;
   width: 35px;
   height: 35px;
   background: #fff;
@@ -1614,9 +1615,12 @@ input[type*='date']::-webkit-calendar-picker-indicator {
   justify-content: center;
 }
 .btn__count-box p {
-  font-size: 26px;
   font-family: TTNormsPro;
-  font-weight: 400;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 24px;
+  line-height: 29px;
+  color: #fff;
 }
 
 .payment__settings {
@@ -2214,15 +2218,15 @@ input::-webkit-inner-spin-button {
   transition: 0.3s ease;
 }
 .box__count {
-  height: 47px;
-  width: 209px;
+  width: 175px;
+  height: 45px;
   border-radius: 10px;
   background: #fd5e29;
   display: flex;
   align-items: center;
   justify-content: space-between;
   color: #fff;
-  margin-top: 15px;
+  margin-top: 5px;
 }
 .brend__items {
   display: flex;
@@ -2637,10 +2641,6 @@ input::-webkit-inner-spin-button {
   }
   .product__add-btn h4 {
     font-size: 18px;
-  }
-  .product__add-btn {
-    height: 40px;
-    width: 190px;
   }
   .product__add-btn svg {
     width: 22px !important;

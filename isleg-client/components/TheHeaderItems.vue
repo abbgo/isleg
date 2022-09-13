@@ -59,13 +59,18 @@
           fill="#8D98A9"
         />
       </svg>
-      <span class="shop__count">1</span>
+      <client-only
+        ><span class="shop__count" v-if="productCount">{{
+          productCount
+        }}</span></client-only
+      >
       <span class="shop__span">Sebet</span>
     </button>
   </div>
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 export default {
   props: {
     isProfile: {
@@ -100,6 +105,9 @@ export default {
       type: String,
       default: () => '',
     },
+  },
+  computed: {
+    ...mapGetters('products', ['productCount']),
   },
   methods: {
     mouseEnter() {

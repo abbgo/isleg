@@ -1,8 +1,8 @@
 <template>
-  <div :class="['pop-up', { active: isProduct }]" @click="$emit('close')">
+  <div :class="['pop-up', { active: isProduct }]" @click.stop="$emit('close')">
     <div class="pop-up__product-body" @click.stop>
       <div class="pop-up__wrapper">
-        <div class="pop-up__close" @click="$emit('close')">
+        <div class="pop-up__close" @click.stop="$emit('close')">
           <svg
             width="60"
             height="60"
@@ -51,15 +51,31 @@
             </div>
           </div>
           <div class="product__datas">
-            <h4 class="pop-up-product__title">Набор карандашей Bianyo</h4>
+            <h4 class="pop-up-product__title">
+              {{ productData && productData.name }}
+            </h4>
             <p class="product__text">
               Набор карандашей Bianyoчёрнографитных в коробке 12 шт
             </p>
-            <span class="old__price price-old">213 manat</span>
-            <span class="new__price price-new">120.10 manat</span>
+            <span class="old__price price-old"
+              >{{ productData && productData.old_price }} manat</span
+            >
+            <span class="new__price price-new"
+              >{{ productData && productData.price }} manat</span
+            >
             <div class="product__btns">
-              <div class="btn__count-box">
-                <button>
+              <div
+                class="btn__count-box"
+                v-if="productData && productData.quantity > 0"
+              >
+                <button
+                  @click="
+                    $store.commit(
+                      'products/SET_PRODUCT_TOTAL_INCREMENT',
+                      productData
+                    )
+                  "
+                >
                   <svg
                     width="15"
                     height="4"
@@ -73,8 +89,15 @@
                     />
                   </svg>
                 </button>
-                <p>1</p>
-                <button>
+                <p>{{ productData && productData.quantity }}</p>
+                <button
+                  @click="
+                    $store.commit(
+                      'products/SET_PRODUCT_TOTAL_DICREMENT',
+                      productData
+                    )
+                  "
+                >
                   <svg
                     width="15"
                     height="15"
@@ -89,7 +112,16 @@
                   </svg>
                 </button>
               </div>
-              <button class="product__add-btn">
+              <button
+                class="product__add-btn"
+                v-else
+                @click="
+                  $store.commit(
+                    'products/SET_PRODUCT_TOTAL_DICREMENT',
+                    productData
+                  )
+                "
+              >
                 <svg
                   width="27"
                   height="27"
@@ -127,6 +159,13 @@ export default {
       type: Array,
       default: () => [],
     },
+    productData: {
+      type: Object,
+      default: () => {},
+    },
+  },
+  data() {
+    return { product_count: 0 }
   },
   methods: {
     imageZoom(e) {

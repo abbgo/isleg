@@ -1,6 +1,6 @@
 <template>
   <div class="product__title">
-    <h3>Taze harytlar</h3>
+    <h3>{{ title }}</h3>
     <svg
       width="11"
       height="16"
@@ -14,5 +14,12 @@
 </template>
 
 <script>
-export default {}
+export default {
+  props: {
+    title: {
+      type: String,
+      default: () => '',
+    },
+  },
+}
 </script>
