@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "ab71fe00-ff0b-4495-9c55-4969161f0fd4",
+		"_postman_id": "1689e972-5520-49da-8667-5c6f3a52494b",
 		"name": "IM",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -3315,7 +3315,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NSIsImV4cCI6MTY2MzA1OTgxMX0.gORgOv7agNz43_LqVQUy5Q6QTyFXRtTk7yXlrM4Q32Q",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NSIsImV4cCI6MTY2MzEwNjIyMX0.wo7EtjAr3qw-tYcpzPLVGZZR-Wp3WLIJGzC4yqNDyIc",
 								"type": "default"
 							}
 						],
@@ -3583,41 +3583,30 @@
 			]
 		},
 		{
-			"name": "Basket",
+			"name": "Cart",
 			"item": [
 				{
-					"name": "AddProductToBasket",
+					"name": "AddCart",
 					"request": {
 						"method": "POST",
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NSIsImV4cCI6MTY2MTMyNjM2NX0.qS_y_xBb-7uhr0YmZS2-J7401tfIY99a5HU_w1v2KiU",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NSIsImV4cCI6MTY2MzEwODgwMH0.-8fJqFbIzv4gF4Xf1-iqThw86oQ3Q3z32h7SAjP8kuo",
 								"type": "default"
 							}
 						],
 						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "customer_id",
-									"value": "9b1a0831-9943-4aa9-aa2a-3507743a5de4",
-									"type": "default"
-								},
-								{
-									"key": "product_id",
-									"value": "3b6d2d59-7ad4-4392-b7de-5a1d6bd003e1",
-									"type": "default"
-								},
-								{
-									"key": "quantity_of_product",
-									"value": "2",
-									"type": "default"
+							"mode": "raw",
+							"raw": "{\n    \"customer_id\":\"7e872c52-0d23-4086-8c45-43000b57332e\",\n    \"products\":[\n        {\n            \"product_id\":\"3ca5ade3-d2ce-40ba-9be6-601105b5205a\",\n            \"quantity_of_product\":1\n        },\n         {\n            \"product_id\":\"ba935176-cf8c-4684-ab24-3ff11e5f176a\",\n            \"quantity_of_product\":18\n        },\n         {\n            \"product_id\":\"abc05e23-5d72-41db-969a-662442da399f\",\n            \"quantity_of_product\":13\n        }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
 								}
-							]
+							}
 						},
 						"url": {
-							"raw": "localhost:2406/api/tm/basket",
+							"raw": "localhost:2406/api/tm/add-cart",
 							"host": [
 								"localhost"
 							],
@@ -3625,7 +3614,7 @@
 							"path": [
 								"api",
 								"tm",
-								"basket"
+								"add-cart"
 							]
 						}
 					},

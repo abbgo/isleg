@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 12.12 (Ubuntu 12.12-0ubuntu0.20.04.1)
--- Dumped by pg_dump version 12.12 (Ubuntu 12.12-0ubuntu0.20.04.1)
+-- Dumped from database version 14.4 (Ubuntu 14.4-1.pgdg20.04+1)
+-- Dumped by pg_dump version 14.4 (Ubuntu 14.4-1.pgdg20.04+1)
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -66,23 +66,6 @@ CREATE TABLE public.banner (
 ALTER TABLE public.banner OWNER TO postgres;
 
 --
--- Name: basket; Type: TABLE; Schema: public; Owner: postgres
---
-
-CREATE TABLE public.basket (
-    id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
-    product_id uuid,
-    customer_id uuid,
-    quantity_of_product bigint,
-    created_at timestamp with time zone DEFAULT now(),
-    updated_at timestamp with time zone DEFAULT now(),
-    deleted_at timestamp with time zone
-);
-
-
-ALTER TABLE public.basket OWNER TO postgres;
-
---
 -- Name: brends; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -97,6 +80,23 @@ CREATE TABLE public.brends (
 
 
 ALTER TABLE public.brends OWNER TO postgres;
+
+--
+-- Name: cart; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.cart (
+    id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
+    product_id uuid,
+    customer_id uuid,
+    quantity_of_product bigint,
+    created_at timestamp with time zone DEFAULT now(),
+    updated_at timestamp with time zone DEFAULT now(),
+    deleted_at timestamp with time zone
+);
+
+
+ALTER TABLE public.cart OWNER TO postgres;
 
 --
 -- Name: categories; Type: TABLE; Schema: public; Owner: postgres
@@ -663,14 +663,6 @@ COPY public.banner (id, image, url, created_at, updated_at, deleted_at) FROM std
 
 
 --
--- Data for Name: basket; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-COPY public.basket (id, product_id, customer_id, quantity_of_product, created_at, updated_at, deleted_at) FROM stdin;
-\.
-
-
---
 -- Data for Name: brends; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -681,6 +673,17 @@ fdd259c2-794a-42b9-a3ad-9e91502af23e	Koka Kola	uploads/brend75f655c6-bcf5-47b2-b
 f53a27b4-7810-4d8f-bd45-edad405d92b9	Maral Koke	uploads/brend7827fcfe-f8a9-4747-8c34-b55af2488b29.jpeg	2022-07-12 17:57:46.472194+05	2022-07-12 17:57:46.472194+05	\N
 46b13f0a-d584-4ad3-b270-437ecdc51449	Taze Ay	uploads/brend993b6484-657d-4662-abe2-922170abe75b.jpeg	2022-07-12 18:16:12.889441+05	2022-07-12 18:16:12.889441+05	\N
 c4bcda34-7332-4ae5-8129-d7538d63fee4	Buzz	uploads/brend/67f6bc90-a0ef-4828-b17b-8b00e930f1f1.jpeg	2022-08-12 10:36:10.886455+05	2022-08-12 10:36:10.886455+05	\N
+\.
+
+
+--
+-- Data for Name: cart; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.cart (id, product_id, customer_id, quantity_of_product, created_at, updated_at, deleted_at) FROM stdin;
+6317032d-3dff-4d25-8147-6a23457d602d	3ca5ade3-d2ce-40ba-9be6-601105b5205a	7e872c52-0d23-4086-8c45-43000b57332e	1	2022-09-14 03:27:24.35366+05	2022-09-14 03:27:24.35366+05	\N
+4e0a54d0-4a1b-49c6-8d1c-df42539311c1	ba935176-cf8c-4684-ab24-3ff11e5f176a	7e872c52-0d23-4086-8c45-43000b57332e	18	2022-09-14 03:27:24.35366+05	2022-09-14 03:27:24.35366+05	\N
+59e2dc8f-4b14-4176-962c-cca419c93758	abc05e23-5d72-41db-969a-662442da399f	7e872c52-0d23-4086-8c45-43000b57332e	13	2022-09-14 03:27:24.35366+05	2022-09-14 03:27:24.35366+05	\N
 \.
 
 
@@ -1082,10 +1085,10 @@ ALTER TABLE ONLY public.banner
 
 
 --
--- Name: basket basket_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: cart basket_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY public.basket
+ALTER TABLE ONLY public.cart
     ADD CONSTRAINT basket_pkey PRIMARY KEY (id);
 
 
@@ -1378,10 +1381,10 @@ ALTER TABLE ONLY public.translation_category
 
 
 --
--- Name: basket fk_customer_basket; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: cart fk_customer_basket; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY public.basket
+ALTER TABLE ONLY public.cart
     ADD CONSTRAINT fk_customer_basket FOREIGN KEY (customer_id) REFERENCES public.customers(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
@@ -1506,10 +1509,10 @@ ALTER TABLE ONLY public.translation_footer
 
 
 --
--- Name: basket fk_product_basket; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: cart fk_product_basket; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY public.basket
+ALTER TABLE ONLY public.cart
     ADD CONSTRAINT fk_product_basket FOREIGN KEY (product_id) REFERENCES public.products(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
