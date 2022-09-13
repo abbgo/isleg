@@ -3258,6 +3258,114 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "AddLike",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NSIsImV4cCI6MTY2MzA1NzA1Nn0.YrgFdVGdzOy48Wn0fyWNVQfKKQ4CvjtZOF_rxcmbCHo",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "customer_id",
+									"value": "7e872c52-0d23-4086-8c45-43000b57332e",
+									"type": "default"
+								},
+								{
+									"key": "product_ids",
+									"value": "8cb36bb0-9103-4031-b83b-4180552d74ca",
+									"type": "default"
+								},
+								{
+									"key": "product_ids",
+									"value": "440507af-648f-4b56-b126-ca75d0370731",
+									"type": "default"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:2406/api/tm/like",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"api",
+								"tm",
+								"like"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetLikes",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NSIsImV4cCI6MTY2MzA1OTgxMX0.gORgOv7agNz43_LqVQUy5Q6QTyFXRtTk7yXlrM4Q32Q",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"url": {
+							"raw": "localhost:2406/api/tm/likes/7e872c52-0d23-4086-8c45-43000b57332e",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"api",
+								"tm",
+								"likes",
+								"7e872c52-0d23-4086-8c45-43000b57332e"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "RemoveLike",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NSIsImV4cCI6MTY2MzA1OTgxMX0.gORgOv7agNz43_LqVQUy5Q6QTyFXRtTk7yXlrM4Q32Q",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "localhost:2406/api/tm/like/7e872c52-0d23-4086-8c45-43000b57332e/8cb36bb0-9103-4031-b83b-4180552d74ca",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"api",
+								"tm",
+								"like",
+								"7e872c52-0d23-4086-8c45-43000b57332e",
+								"8cb36bb0-9103-4031-b83b-4180552d74ca"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},

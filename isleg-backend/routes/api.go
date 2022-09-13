@@ -202,7 +202,7 @@ func Routes() *gin.Engine {
 			// get my information page translation
 			securedCustomer.GET("/translation-my-information-page", backController.GetTranslationMyInformationPageByLangID)
 
-			// add like
+			// add like if customer exists
 			securedCustomer.POST("/like", frontController.AddLike)
 
 			// remove like if customer exists

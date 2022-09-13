@@ -835,6 +835,7 @@ aea98b93-7bdf-455b-9ad4-a259d69dc76e	ru	uploads/language1c24e3a6-173e-4264-a631-
 --
 
 COPY public.likes (id, product_id, customer_id, created_at, updated_at, deleted_at) FROM stdin;
+64d79a92-c0f4-488b-92bc-8edeaae44dd2	440507af-648f-4b56-b126-ca75d0370731	7e872c52-0d23-4086-8c45-43000b57332e	2022-09-13 12:52:04.123267+05	2022-09-13 12:52:04.123267+05	\N
 \.
 
 
