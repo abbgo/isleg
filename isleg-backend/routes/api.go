@@ -194,7 +194,7 @@ func Routes() *gin.Engine {
 		// homepage categories
 		front.GET("/homepage-categories", frontController.GetHomePageCategories)
 
-		// get one category with products
+		// // get one category with products
 		front.GET("/:category_id/:limit/:page", backController.GetOneCategoryWithProducts)
 
 		securedCustomer := front.Group("/").Use(middlewares.Auth())
@@ -202,17 +202,20 @@ func Routes() *gin.Engine {
 			// get my information page translation
 			securedCustomer.GET("/translation-my-information-page", backController.GetTranslationMyInformationPageByLangID)
 
-			// add favourite products of customer
+			// add like if customer exists
 			securedCustomer.POST("/like", frontController.AddLike)
 
-			// get all favourite products of customer
-			securedCustomer.GET("/likes/:customer_id", frontController.GetCustomerLikes)
-
-			// remove favourite products of customer
+			// remove like if customer exists
 			securedCustomer.DELETE("/like/:customer_id/:product_id", frontController.RemoveLike)
 
+			// get like products if customer exists
+			securedCustomer.GET("/likes/:customer_id", frontController.GetLikes)
+
+			// get like products without customer by product id
+			securedCustomer.GET("/likes-without-customer", frontController.GetLikedProductsWithoutCustomer)
+
 			// add product to cart
-			securedCustomer.POST("/basket", frontController.AddProductToBasket)
+			securedCustomer.POST("/add-cart", frontController.AddCart)
 
 		}
 

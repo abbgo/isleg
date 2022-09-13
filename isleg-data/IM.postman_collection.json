@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "ab71fe00-ff0b-4495-9c55-4969161f0fd4",
+		"_postman_id": "1689e972-5520-49da-8667-5c6f3a52494b",
 		"name": "IM",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -342,7 +342,7 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "localhost:2406/admin/category/3d0851a3-45cf-4662-b315-67a98b9273c2",
+							"raw": "localhost:2406/admin/category/4af3388b-2738-4ff6-b42e-927cb0ff897f",
 							"host": [
 								"localhost"
 							],
@@ -350,7 +350,7 @@
 							"path": [
 								"admin",
 								"category",
-								"3d0851a3-45cf-4662-b315-67a98b9273c2"
+								"4af3388b-2738-4ff6-b42e-927cb0ff897f"
 							]
 						}
 					},
@@ -362,7 +362,7 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "localhost:2406/admin/delete-category/3d0851a3-45cf-4662-b315-67a98b9273c2",
+							"raw": "localhost:2406/admin/delete-category/4af3388b-2738-4ff6-b42e-927cb0ff897f",
 							"host": [
 								"localhost"
 							],
@@ -370,7 +370,7 @@
 							"path": [
 								"admin",
 								"delete-category",
-								"3d0851a3-45cf-4662-b315-67a98b9273c2"
+								"4af3388b-2738-4ff6-b42e-927cb0ff897f"
 							]
 						}
 					},
@@ -382,7 +382,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "localhost:2406/admin/restore-category/3d0851a3-45cf-4662-b315-67a98b9273c2",
+							"raw": "localhost:2406/admin/restore-category/4af3388b-2738-4ff6-b42e-927cb0ff897f",
 							"host": [
 								"localhost"
 							],
@@ -390,7 +390,7 @@
 							"path": [
 								"admin",
 								"restore-category",
-								"3d0851a3-45cf-4662-b315-67a98b9273c2"
+								"4af3388b-2738-4ff6-b42e-927cb0ff897f"
 							]
 						}
 					},
@@ -599,7 +599,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "localhost:2406/api/tm/33cf0893-ff6e-40b3-b50f-2a3e926eca70/2/1",
+							"raw": "localhost:2406/api/tm/fdc10d33-043b-4ee0-9d6e-e2a12a3e150a/2/1",
 							"host": [
 								"localhost"
 							],
@@ -607,7 +607,7 @@
 							"path": [
 								"api",
 								"tm",
-								"33cf0893-ff6e-40b3-b50f-2a3e926eca70",
+								"fdc10d33-043b-4ee0-9d6e-e2a12a3e150a",
 								"2",
 								"1"
 							]
@@ -787,7 +787,7 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "localhost:2406/admin/brend/c2f11fea-8057-4a7c-b290-c97d1d90ac59",
+							"raw": "localhost:2406/admin/brend/6a31c50a-704f-4b0d-80ae-240ca3094cda",
 							"host": [
 								"localhost"
 							],
@@ -795,7 +795,7 @@
 							"path": [
 								"admin",
 								"brend",
-								"c2f11fea-8057-4a7c-b290-c97d1d90ac59"
+								"6a31c50a-704f-4b0d-80ae-240ca3094cda"
 							]
 						}
 					},
@@ -807,7 +807,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "localhost:2406/admin/restore-brend/c2f11fea-8057-4a7c-b290-c97d1d90ac59",
+							"raw": "localhost:2406/admin/restore-brend/6a31c50a-704f-4b0d-80ae-240ca3094cda",
 							"host": [
 								"localhost"
 							],
@@ -815,7 +815,7 @@
 							"path": [
 								"admin",
 								"restore-brend",
-								"c2f11fea-8057-4a7c-b290-c97d1d90ac59"
+								"6a31c50a-704f-4b0d-80ae-240ca3094cda"
 							]
 						}
 					},
@@ -827,7 +827,7 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "localhost:2406/admin/delete-brend/c2f11fea-8057-4a7c-b290-c97d1d90ac59",
+							"raw": "localhost:2406/admin/delete-brend/6a31c50a-704f-4b0d-80ae-240ca3094cda",
 							"host": [
 								"localhost"
 							],
@@ -835,7 +835,7 @@
 							"path": [
 								"admin",
 								"delete-brend",
-								"c2f11fea-8057-4a7c-b290-c97d1d90ac59"
+								"6a31c50a-704f-4b0d-80ae-240ca3094cda"
 							]
 						}
 					},
@@ -856,43 +856,28 @@
 							"formdata": [
 								{
 									"key": "brend_id",
-									"value": "6a31c50a-704f-4b0d-80ae-240ca3094cda",
+									"value": "ddccb2dc-9697-4f4e-acf5-26b8bc2c8b72",
 									"type": "default"
 								},
 								{
 									"key": "price",
-									"value": "35",
+									"value": "65",
 									"type": "default"
 								},
 								{
 									"key": "old_price",
-									"value": "37",
+									"value": "68",
 									"type": "default"
 								},
 								{
 									"key": "amount",
-									"value": "19",
+									"value": "1000",
 									"type": "default"
 								},
 								{
 									"key": "product_code",
-									"value": "j6yukuy",
+									"value": "151fwe51we",
 									"type": "default"
-								},
-								{
-									"key": "main_image",
-									"type": "file",
-									"src": "/home/abb/Pictures/images (1).jpeg"
-								},
-								{
-									"key": "images",
-									"type": "file",
-									"src": []
-								},
-								{
-									"key": "images",
-									"type": "file",
-									"src": []
 								},
 								{
 									"key": "name_tm",
@@ -916,18 +901,73 @@
 								},
 								{
 									"key": "category_id",
-									"value": "4af3388b-2738-4ff6-b42e-927cb0ff897f",
+									"value": "b982bd86-0a0f-4950-baad-5a131e9b728e",
 									"type": "default"
 								},
 								{
 									"key": "category_id",
-									"value": "5d877898-9ef4-4b91-8518-193b431228a8",
+									"value": "5bb9a4e7-9992-418f-b551-537844d371da",
 									"type": "default"
 								},
 								{
 									"key": "category_id",
-									"value": "38d92a87-4a9c-4860-94e6-e568f21ecd8e",
+									"value": "02bd4413-8586-49ab-802e-16304e756a8b",
 									"type": "default"
+								},
+								{
+									"key": "is_new",
+									"value": "false",
+									"type": "default"
+								},
+								{
+									"key": "limit_amount",
+									"value": "100",
+									"type": "default"
+								},
+								{
+									"key": "main_small",
+									"type": "file",
+									"src": "/home/abb/Pictures/your-future-is-created-by-what-you-do-today-53172-1920x1200.jpg"
+								},
+								{
+									"key": "main_medium",
+									"type": "file",
+									"src": "/home/abb/Pictures/your-future-is-created-by-what-you-do-today-53172-1920x1200.jpg"
+								},
+								{
+									"key": "main_large",
+									"type": "file",
+									"src": "/home/abb/Pictures/your-future-is-created-by-what-you-do-today-53172-1920x1200.jpg"
+								},
+								{
+									"key": "small",
+									"type": "file",
+									"src": "/home/abb/Pictures/Quotefancy-76406-3840x2160.jpg"
+								},
+								{
+									"key": "small",
+									"type": "file",
+									"src": "/home/abb/Pictures/profile.jpeg"
+								},
+								{
+									"key": "medium",
+									"type": "file",
+									"src": "/home/abb/Pictures/Quotefancy-76406-3840x2160.jpg"
+								},
+								{
+									"key": "medium",
+									"type": "file",
+									"src": "/home/abb/Pictures/profile.jpeg"
+								},
+								{
+									"key": "large",
+									"type": "file",
+									"src": "/home/abb/Pictures/Quotefancy-76406-3840x2160.jpg"
+								},
+								{
+									"key": "large",
+									"type": "file",
+									"src": "/home/abb/Pictures/profile.jpeg"
 								}
 							]
 						},
@@ -1022,11 +1062,66 @@
 									"key": "category_id",
 									"value": "4af3388b-2738-4ff6-b42e-927cb0ff897f",
 									"type": "default"
+								},
+								{
+									"key": "limit_amount",
+									"value": "990",
+									"type": "default"
+								},
+								{
+									"key": "is_new",
+									"value": "true",
+									"type": "default"
+								},
+								{
+									"key": "main_small",
+									"type": "file",
+									"src": "/home/abb/Pictures/download.jpeg"
+								},
+								{
+									"key": "main_medium",
+									"type": "file",
+									"src": "/home/abb/Pictures/download.jpeg"
+								},
+								{
+									"key": "main_large",
+									"type": "file",
+									"src": "/home/abb/Pictures/download.jpeg"
+								},
+								{
+									"key": "small",
+									"type": "file",
+									"src": "/home/abb/Pictures/download (1).jpeg"
+								},
+								{
+									"key": "small",
+									"type": "file",
+									"src": "/home/abb/Pictures/download (2).jpeg"
+								},
+								{
+									"key": "medium",
+									"type": "file",
+									"src": "/home/abb/Pictures/download (1).jpeg"
+								},
+								{
+									"key": "medium",
+									"type": "file",
+									"src": "/home/abb/Pictures/download (2).jpeg"
+								},
+								{
+									"key": "large",
+									"type": "file",
+									"src": "/home/abb/Pictures/download (1).jpeg"
+								},
+								{
+									"key": "large",
+									"type": "file",
+									"src": "/home/abb/Pictures/download (2).jpeg"
 								}
 							]
 						},
 						"url": {
-							"raw": "localhost:2406/admin/product/1a8935fd-c6ab-4656-b173-826c487a2274",
+							"raw": "localhost:2406/admin/product/ff3ef680-3f35-4424-bc08-6fbb9c065675",
 							"host": [
 								"localhost"
 							],
@@ -1034,7 +1129,7 @@
 							"path": [
 								"admin",
 								"product",
-								"1a8935fd-c6ab-4656-b173-826c487a2274"
+								"ff3ef680-3f35-4424-bc08-6fbb9c065675"
 							]
 						}
 					},
@@ -1046,7 +1141,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "localhost:2406/admin/product/3b6d2d59-7ad4-4392-b7de-5a1d6bd003e1",
+							"raw": "localhost:2406/admin/product/ba935176-cf8c-4684-ab24-3ff11e5f176a",
 							"host": [
 								"localhost"
 							],
@@ -1054,7 +1149,7 @@
 							"path": [
 								"admin",
 								"product",
-								"3b6d2d59-7ad4-4392-b7de-5a1d6bd003e1"
+								"ba935176-cf8c-4684-ab24-3ff11e5f176a"
 							]
 						}
 					},
@@ -1085,7 +1180,7 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "localhost:2406/admin/product/1fa25151-9c63-4554-a79d-faf6cc78ef69",
+							"raw": "localhost:2406/admin/product/dd531556-17ac-4e27-997e-57c0a48730f5",
 							"host": [
 								"localhost"
 							],
@@ -1093,7 +1188,7 @@
 							"path": [
 								"admin",
 								"product",
-								"1fa25151-9c63-4554-a79d-faf6cc78ef69"
+								"dd531556-17ac-4e27-997e-57c0a48730f5"
 							]
 						}
 					},
@@ -1105,7 +1200,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "localhost:2406/admin/restore-product/e3f8aebb-1451-43a3-9e9b-582da01c8d08",
+							"raw": "localhost:2406/admin/restore-product/ff3ef680-3f35-4424-bc08-6fbb9c065675",
 							"host": [
 								"localhost"
 							],
@@ -1113,7 +1208,7 @@
 							"path": [
 								"admin",
 								"restore-product",
-								"e3f8aebb-1451-43a3-9e9b-582da01c8d08"
+								"ff3ef680-3f35-4424-bc08-6fbb9c065675"
 							]
 						}
 					},
@@ -1125,7 +1220,7 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "localhost:2406/admin/delete-product/1fa25151-9c63-4554-a79d-faf6cc78ef69",
+							"raw": "localhost:2406/admin/delete-product/dd531556-17ac-4e27-997e-57c0a48730f5",
 							"host": [
 								"localhost"
 							],
@@ -1133,7 +1228,7 @@
 							"path": [
 								"admin",
 								"delete-product",
-								"1fa25151-9c63-4554-a79d-faf6cc78ef69"
+								"dd531556-17ac-4e27-997e-57c0a48730f5"
 							]
 						}
 					},
@@ -3116,13 +3211,62 @@
 			"name": "Like",
 			"item": [
 				{
+					"name": "GetLikedProductsWithoutCustomer",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NSIsImV4cCI6MTY2Mjk3ODI4Nn0.jPzZuPJ5TtSXPSaHA2ggZMCqw1YKHaBhV4aOssUF_Is",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "product_ids",
+									"value": "3ca5ade3-d2ce-40ba-9be6-601105b5205a",
+									"type": "default"
+								},
+								{
+									"key": "product_ids",
+									"value": "ba935176-cf8c-4684-ab24-3ff11e5f176a",
+									"type": "default"
+								},
+								{
+									"key": "product_ids",
+									"value": "abc05e23-5d72-41db-969a-662442da399f",
+									"type": "default"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:2406/api/tm/likes-without-customer",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"api",
+								"tm",
+								"likes-without-customer"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "AddLike",
 					"request": {
 						"method": "POST",
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NSIsImV4cCI6MTY2MjEwMjkzM30.VQYLJ3kCTBDFFhAA6Dpe9C-p6Sf-baCRIg4sNFCihcc",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NSIsImV4cCI6MTY2MzA1NzA1Nn0.YrgFdVGdzOy48Wn0fyWNVQfKKQ4CvjtZOF_rxcmbCHo",
 								"type": "default"
 							}
 						],
@@ -3135,13 +3279,13 @@
 									"type": "default"
 								},
 								{
-									"key": "products",
-									"value": "b4499063-096e-4fa6-9e21-a47185afd829",
+									"key": "product_ids",
+									"value": "8cb36bb0-9103-4031-b83b-4180552d74ca",
 									"type": "default"
 								},
 								{
-									"key": "products",
-									"value": "1fa25151-9c63-4554-a79d-faf6cc78ef69",
+									"key": "product_ids",
+									"value": "440507af-648f-4b56-b126-ca75d0370731",
 									"type": "default"
 								}
 							]
@@ -3163,15 +3307,22 @@
 				},
 				{
 					"name": "GetLikes",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
 					"request": {
 						"method": "GET",
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NSIsImV4cCI6MTY2MjEwMjkzM30.VQYLJ3kCTBDFFhAA6Dpe9C-p6Sf-baCRIg4sNFCihcc",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NSIsImV4cCI6MTY2MzEwNjIyMX0.wo7EtjAr3qw-tYcpzPLVGZZR-Wp3WLIJGzC4yqNDyIc",
 								"type": "default"
 							}
 						],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
 						"url": {
 							"raw": "localhost:2406/api/tm/likes/7e872c52-0d23-4086-8c45-43000b57332e",
 							"host": [
@@ -3195,12 +3346,12 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NSIsImV4cCI6MTY2MTMxNzI5MH0.MJHNJP67wLeP-_SfK4_C2eCGVe9QijOqQdPog1BsRxI",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NSIsImV4cCI6MTY2MzA1OTgxMX0.gORgOv7agNz43_LqVQUy5Q6QTyFXRtTk7yXlrM4Q32Q",
 								"type": "default"
 							}
 						],
 						"url": {
-							"raw": "localhost:2406/api/tm/like/7e872c52-0d23-4086-8c45-43000b57332e/3b6d2d59-7ad4-4392-b7de-5a1d6bd003e1",
+							"raw": "localhost:2406/api/tm/like/7e872c52-0d23-4086-8c45-43000b57332e/8cb36bb0-9103-4031-b83b-4180552d74ca",
 							"host": [
 								"localhost"
 							],
@@ -3210,7 +3361,7 @@
 								"tm",
 								"like",
 								"7e872c52-0d23-4086-8c45-43000b57332e",
-								"3b6d2d59-7ad4-4392-b7de-5a1d6bd003e1"
+								"8cb36bb0-9103-4031-b83b-4180552d74ca"
 							]
 						}
 					},
@@ -3432,41 +3583,30 @@
 			]
 		},
 		{
-			"name": "Basket",
+			"name": "Cart",
 			"item": [
 				{
-					"name": "AddProductToBasket",
+					"name": "AddCart",
 					"request": {
 						"method": "POST",
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NSIsImV4cCI6MTY2MTMyNjM2NX0.qS_y_xBb-7uhr0YmZS2-J7401tfIY99a5HU_w1v2KiU",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NSIsImV4cCI6MTY2MzEwODgwMH0.-8fJqFbIzv4gF4Xf1-iqThw86oQ3Q3z32h7SAjP8kuo",
 								"type": "default"
 							}
 						],
 						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "customer_id",
-									"value": "9b1a0831-9943-4aa9-aa2a-3507743a5de4",
-									"type": "default"
-								},
-								{
-									"key": "product_id",
-									"value": "3b6d2d59-7ad4-4392-b7de-5a1d6bd003e1",
-									"type": "default"
-								},
-								{
-									"key": "quantity_of_product",
-									"value": "2",
-									"type": "default"
+							"mode": "raw",
+							"raw": "{\n    \"customer_id\":\"7e872c52-0d23-4086-8c45-43000b57332e\",\n    \"products\":[\n        {\n            \"product_id\":\"3ca5ade3-d2ce-40ba-9be6-601105b5205a\",\n            \"quantity_of_product\":1\n        },\n         {\n            \"product_id\":\"ba935176-cf8c-4684-ab24-3ff11e5f176a\",\n            \"quantity_of_product\":18\n        },\n         {\n            \"product_id\":\"abc05e23-5d72-41db-969a-662442da399f\",\n            \"quantity_of_product\":13\n        }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
 								}
-							]
+							}
 						},
 						"url": {
-							"raw": "localhost:2406/api/tm/basket",
+							"raw": "localhost:2406/api/tm/add-cart",
 							"host": [
 								"localhost"
 							],
@@ -3474,7 +3614,7 @@
 							"path": [
 								"api",
 								"tm",
-								"basket"
+								"add-cart"
 							]
 						}
 					},
