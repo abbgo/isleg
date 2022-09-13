@@ -162,6 +162,98 @@ func AddLike(c *gin.Context) {
 
 }
 
+func RemoveLike(c *gin.Context) {
+
+	db, err := config.ConnDB()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer db.Close()
+
+	customerID := c.Param("customer_id")
+	productID := c.Param("product_id")
+
+	rowCustomer, err := db.Query("SELECT id FROM customers WHERE id = $1 AND deleted_at IS NULL", customerID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer rowCustomer.Close()
+
+	var customer_id string
+
+	for rowCustomer.Next() {
+		if err := rowCustomer.Scan(&customer_id); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}
+
+	if customer_id == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "customer not found",
+		})
+		return
+	}
+
+	rowLike, err := db.Query("SELECT product_id FROM likes WHERE customer_id = $1 AND product_id = $2 AND deleted_at IS NULL", customerID, productID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer rowLike.Close()
+
+	var product_id string
+
+	for rowLike.Next() {
+		if err := rowLike.Scan(&product_id); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}
+
+	if product_id == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "this product not found in this customer",
+		})
+		return
+	}
+
+	resultLike, err := db.Query("DELETE FROM likes WHERE customer_id = $1 AND product_id = $2 AND deleted_at IS NULL", customerID, productID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer resultLike.Close()
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":  true,
+		"message": "like successfull deleted",
+	})
+
+}
+
 func GetLikes(c *gin.Context) {
 
 	db, err := config.ConnDB()
@@ -187,7 +279,7 @@ func GetLikes(c *gin.Context) {
 		return
 	}
 
-	customerID := c.PostForm("customer_id")
+	customerID := c.Param("customer_id")
 
 	rowCustomer, err := db.Query("SELECT id FROM customers WHERE id = $1 AND deleted_at IS NULL", customerID)
 	if err != nil {
