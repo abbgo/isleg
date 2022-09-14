@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"errors"
 	"github/abbgo/isleg/isleg-backend/config"
 	backController "github/abbgo/isleg/isleg-backend/controllers/back"
 	"github/abbgo/isleg/isleg-backend/models"
@@ -47,6 +48,7 @@ func AddCart(c *gin.Context) {
 	}
 	defer db.Close()
 
+	langShortName := c.Param("lang")
 	var cart Cart
 
 	if err := c.BindJSON(&cart); err != nil {
@@ -184,47 +186,44 @@ func AddCart(c *gin.Context) {
 
 	}
 
+	products, err := GetCartProducts(langShortName, cart.CustomerID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
 	c.JSON(http.StatusOK, gin.H{
-		"status":  true,
-		"message": "product added successfull to cart",
+		"status":   true,
+		"products": products,
 	})
 
 }
 
-func GetCartProducts(c *gin.Context) {
+func GetCartProducts(langShortName, customerID string) ([]ProductOfCart, error) {
 
 	db, err := config.ConnDB()
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
+		return []ProductOfCart{}, err
 	}
 	defer db.Close()
 
 	// GET DATA FROM ROUTE PARAMETER
-	langShortName := c.Param("lang")
+	// langShortName := c.Param("lang")
 
 	// GET language id
 	langID, err := backController.GetLangID(langShortName)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
+		return []ProductOfCart{}, err
 	}
 
-	customerID := c.Param("customer_id")
+	// customerID := c.Param("customer_id")
 
 	rowCustomer, err := db.Query("SELECT id FROM customers WHERE id = $1 AND deleted_at IS NULL", customerID)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
+		return []ProductOfCart{}, err
 	}
 	defer rowCustomer.Close()
 
@@ -232,29 +231,17 @@ func GetCartProducts(c *gin.Context) {
 
 	for rowCustomer.Next() {
 		if err := rowCustomer.Scan(&customer_id); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
+			return []ProductOfCart{}, err
 		}
 	}
 
 	if customer_id == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": "customer not found",
-		})
-		return
+		return []ProductOfCart{}, errors.New("customer not found")
 	}
 
 	rowsProduct, err := db.Query("SELECT p.id,p.brend_id,p.price,p.old_price,p.amount,p.product_code,p.limit_amount,p.is_new,c.quantity_of_product FROM products p LEFT JOIN cart c ON c.product_id = p.id WHERE c.customer_id = $1 AND c.deleted_at IS NULL AND p.deleted_at IS NULL", customerID)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
+		return []ProductOfCart{}, err
 	}
 	defer rowsProduct.Close()
 
@@ -264,20 +251,12 @@ func GetCartProducts(c *gin.Context) {
 		var product ProductOfCart
 
 		if err := rowsProduct.Scan(&product.ID, &product.BrendID, &product.Price, &product.OldPrice, &product.Amount, &product.ProductCode, &product.LimitAmount, &product.IsNew, &product.QuantityOfProduct); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
+			return []ProductOfCart{}, err
 		}
 
 		rowMainImage, err := db.Query("SELECT small,medium,large FROM main_image WHERE product_id = $1 AND deleted_at IS NULL", product.ID)
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
+			return []ProductOfCart{}, err
 		}
 		defer rowMainImage.Close()
 
@@ -285,11 +264,7 @@ func GetCartProducts(c *gin.Context) {
 
 		for rowMainImage.Next() {
 			if err := rowMainImage.Scan(&mainImage.Small, &mainImage.Medium, &mainImage.Large); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
-				return
+				return []ProductOfCart{}, err
 			}
 		}
 
@@ -297,11 +272,7 @@ func GetCartProducts(c *gin.Context) {
 
 		rowsImages, err := db.Query("SELECT small,medium,large FROM images WHERE product_id = $1 AND deleted_at IS NULL", product.ID)
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
+			return []ProductOfCart{}, err
 		}
 		defer rowsImages.Close()
 
@@ -311,11 +282,7 @@ func GetCartProducts(c *gin.Context) {
 			var image models.Images
 
 			if err := rowsImages.Scan(&image.Small, &image.Medium, &image.Large); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
-				return
+				return []ProductOfCart{}, err
 			}
 
 			images = append(images, image)
@@ -325,11 +292,7 @@ func GetCartProducts(c *gin.Context) {
 
 		rowTrProduct, err := db.Query("SELECT name,description FROM translation_product WHERE lang_id = $1 AND product_id = $2", langID, product.ID)
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
+			return []ProductOfCart{}, err
 		}
 		defer rowTrProduct.Close()
 
@@ -337,11 +300,7 @@ func GetCartProducts(c *gin.Context) {
 
 		for rowTrProduct.Next() {
 			if err := rowTrProduct.Scan(&trProduct.Name, &trProduct.Description); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
-				return
+				return []ProductOfCart{}, err
 			}
 		}
 
@@ -350,10 +309,7 @@ func GetCartProducts(c *gin.Context) {
 		products = append(products, product)
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"status":   true,
-		"products": products,
-	})
+	return products, nil
 
 }
 
