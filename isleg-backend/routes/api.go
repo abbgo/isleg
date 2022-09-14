@@ -217,6 +217,9 @@ func Routes() *gin.Engine {
 			// add product to cart
 			securedCustomer.POST("/add-cart", frontController.AddCart)
 
+			// get product of cart
+			securedCustomer.GET("/get-cart/:customer_id", frontController.GetCartProducts)
+
 		}
 
 	}
