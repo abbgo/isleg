@@ -357,77 +357,94 @@ func GetCartProducts(c *gin.Context) {
 
 }
 
-// func AddProductToBasket(c *gin.Context) {
+func RemoveCart(c *gin.Context) {
 
-// 	db, err := config.ConnDB()
-// 	if err != nil {
-// 		c.JSON(http.StatusBadRequest, gin.H{
-// 			"status":  false,
-// 			"message": err.Error(),
-// 		})
-// 		return
-// 	}
-// 	defer db.Close()
+	db, err := config.ConnDB()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer db.Close()
 
-// 	customerID := c.PostForm("customer_id")
-// 	productID := c.PostForm("product_id")
-// 	quantityOfProduct := c.PostForm("quantity_of_product")
+	customerID := c.Param("customer_id")
+	productID := c.Param("product_id")
 
-// 	quantityInt, err := models.ValidateCustomerBasket(customerID, productID, quantityOfProduct)
-// 	if err != nil {
-// 		c.JSON(http.StatusBadRequest, gin.H{
-// 			"status":  false,
-// 			"message": err.Error(),
-// 		})
-// 		return
-// 	}
+	rowCustomer, err := db.Query("SELECT id FROM customers WHERE id = $1 AND deleted_at IS NULL", customerID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer rowCustomer.Close()
 
-// 	rowBasket, err := db.Query("SELECT COUNT(*) FROM basket WHERE product_id = $1 AND customer_id = $2 AND deleted_at IS NULL", productID, customerID)
-// 	if err != nil {
-// 		c.JSON(http.StatusBadRequest, gin.H{
-// 			"status":  false,
-// 			"message": err.Error(),
-// 		})
-// 		return
-// 	}
+	var customer_id string
 
-// 	var quantity int
+	for rowCustomer.Next() {
+		if err := rowCustomer.Scan(&customer_id); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}
 
-// 	for rowBasket.Next() {
-// 		if err := rowBasket.Scan(&quantity); err != nil {
-// 			c.JSON(http.StatusBadRequest, gin.H{
-// 				"status":  false,
-// 				"message": err.Error(),
-// 			})
-// 			return
-// 		}
-// 	}
+	if customer_id == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "customer not found",
+		})
+		return
+	}
 
-// 	if quantity == 0 {
-// 		resultBasket, err := db.Query("INSERT INTO basket (product_id,customer_id,quantity_of_product) VALUES ($1,$2,$3)", productID, customerID, quantityInt)
-// 		if err != nil {
-// 			c.JSON(http.StatusBadRequest, gin.H{
-// 				"status":  false,
-// 				"message": err.Error(),
-// 			})
-// 			return
-// 		}
-// 		defer resultBasket.Close()
-// 	} else {
-// 		resultBasket, err := db.Query("UPDATE basket SET quantity_of_product = $1 WHERE product_id = $2 AND customer_id = $3", quantityInt, productID, customerID)
-// 		if err != nil {
-// 			c.JSON(http.StatusBadRequest, gin.H{
-// 				"status":  false,
-// 				"message": err.Error(),
-// 			})
-// 			return
-// 		}
-// 		defer resultBasket.Close()
-// 	}
+	rowCart, err := db.Query("SELECT product_id FROM cart WHERE customer_id = $1 AND product_id = $2 AND deleted_at IS NULL", customerID, productID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer rowCart.Close()
 
-// 	c.JSON(http.StatusOK, gin.H{
-// 		"status":  true,
-// 		"message": "product successfully added to card",
-// 	})
+	var product_id string
 
-// }
+	for rowCart.Next() {
+		if err := rowCart.Scan(&product_id); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}
+
+	if product_id == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "this product not found in this customer",
+		})
+		return
+	}
+
+	resultCart, err := db.Query("DELETE FROM cart WHERE customer_id = $1 AND product_id = $2 AND deleted_at IS NULL", customerID, productID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer resultCart.Close()
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":  true,
+		"message": "product successfull deleted from cart",
+	})
+
+}
