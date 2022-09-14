@@ -5,7 +5,6 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/lib/pq"
 )
 
 type Cart struct {
@@ -31,8 +30,6 @@ func AddCart(c *gin.Context) {
 	defer db.Close()
 
 	var cart Cart
-	var ids []string
-	var counts []int
 
 	if err := c.BindJSON(&cart); err != nil {
 		c.JSON(http.StatusBadRequest, err.Error())
@@ -119,21 +116,55 @@ func AddCart(c *gin.Context) {
 			return
 		}
 
-		ids = append(ids, v.ProductID)
-		counts = append(counts, v.QuantityOfProduct)
+		rowCart, err := db.Query("SELECT product_id FROM cart WHERE customer_id = $1 AND product_id = $2 AND deleted_at IS NULL", cart.CustomerID, v.ProductID)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+		defer rowCart.Close()
+
+		var productId string
+
+		for rowCart.Next() {
+			if err := rowCart.Scan(&productId); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}
+
+		if productId == "" {
+
+			resultCartInsert, err := db.Query("INSERT INTO cart (customer_id,product_id,quantity_of_product) VALUES ($1,$2,$3)", cart.CustomerID, v.ProductID, v.QuantityOfProduct)
+			if err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+			defer resultCartInsert.Close()
+
+		} else {
+
+			reultCartUpdate, err := db.Query("UPDATE cart SET quantity_of_product = $1 WHERE customer_id = $2 AND product_id = $3 AND deleted_at IS NULL", v.QuantityOfProduct, cart.CustomerID, v.ProductID)
+			if err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+			defer reultCartUpdate.Close()
+
+		}
 
 	}
-
-	resultCart, err := db.Query("INSERT INTO cart (customer_id,product_id,quantity_of_product) VALUES ($1,unnest($2::uuid[]),unnest($3::int[]))", cart.CustomerID, pq.Array(ids), pq.Array(counts))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status": false,
-			// "message": err.Error(),
-			"message": "yalnys",
-		})
-		return
-	}
-	defer resultCart.Close()
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
