@@ -33,7 +33,6 @@ type Images struct {
 	ID        uuid.UUID `json:"id"`
 	ProductID uuid.UUID `json:"product_id"`
 	Small     string    `json:"small"`
-	Medium    string    `json:"medium"`
 	Large     string    `json:"large"`
 	CreatedAt string    `json:"-"`
 	UpdatedAt string    `json:"-"`
