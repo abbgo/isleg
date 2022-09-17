@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "510657a9-6138-40f8-a390-aa394747ab75",
+		"_postman_id": "a35e5083-43ca-43c2-812d-33469deb0d3f",
 		"name": "IM",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -3246,7 +3246,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NSIsImV4cCI6MTY2MzA1NzA1Nn0.YrgFdVGdzOy48Wn0fyWNVQfKKQ4CvjtZOF_rxcmbCHo",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NSIsImV4cCI6MTY2MzE5MTQxOX0.QBQkVL0e7RCoD6ybtF4XjNaNNlDNMWQP3kxNkfFhfyA",
 								"type": "default"
 							}
 						],
@@ -3295,7 +3295,11 @@
 						"header": [
 							{
 								"key": "Authorization",
+<<<<<<< HEAD
 								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NSIsImV4cCI6MTY2MzQwNzk3NH0.54fNs-jACWe01_HHYLLdA8nVC8fQXCUen0XkDqVGzPk",
+=======
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NSIsImV4cCI6MTY2MzE5MTQxOX0.QBQkVL0e7RCoD6ybtF4XjNaNNlDNMWQP3kxNkfFhfyA",
+>>>>>>> 350ede8c373da442a18a69a3688e2fbd2c647859
 								"type": "default"
 							}
 						],
@@ -3572,7 +3576,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NSIsImV4cCI6MTY2MzE1ODMzM30.2sMX3gfwhfCkSSx8lILcE331jX7khLHI1T780bm8I0g",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NSIsImV4cCI6MTY2MzE5MTQxOX0.QBQkVL0e7RCoD6ybtF4XjNaNNlDNMWQP3kxNkfFhfyA",
 								"type": "default"
 							}
 						],

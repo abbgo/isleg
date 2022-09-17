@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 12.12 (Ubuntu 12.12-0ubuntu0.20.04.1)
--- Dumped by pg_dump version 12.12 (Ubuntu 12.12-0ubuntu0.20.04.1)
+-- Dumped from database version 14.4 (Ubuntu 14.4-1.pgdg20.04+1)
+-- Dumped by pg_dump version 14.4 (Ubuntu 14.4-1.pgdg20.04+1)
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -680,6 +680,13 @@ c4bcda34-7332-4ae5-8129-d7538d63fee4	Buzz	uploads/brend/67f6bc90-a0ef-4828-b17b-
 --
 
 COPY public.cart (id, product_id, customer_id, quantity_of_product, created_at, updated_at, deleted_at) FROM stdin;
+<<<<<<< HEAD
+=======
+6317032d-3dff-4d25-8147-6a23457d602d	3ca5ade3-d2ce-40ba-9be6-601105b5205a	7e872c52-0d23-4086-8c45-43000b57332e	10	2022-09-14 03:27:24.35366+05	2022-09-14 03:27:24.35366+05	\N
+4e0a54d0-4a1b-49c6-8d1c-df42539311c1	ba935176-cf8c-4684-ab24-3ff11e5f176a	7e872c52-0d23-4086-8c45-43000b57332e	23	2022-09-14 03:27:24.35366+05	2022-09-14 03:27:24.35366+05	\N
+59e2dc8f-4b14-4176-962c-cca419c93758	abc05e23-5d72-41db-969a-662442da399f	7e872c52-0d23-4086-8c45-43000b57332e	3	2022-09-14 03:27:24.35366+05	2022-09-14 03:27:24.35366+05	\N
+953bf49b-181a-401e-9bd3-ae0c4bc7b8f2	32cd4c58-c96c-4b05-8158-bc9f7f7d02d4	7e872c52-0d23-4086-8c45-43000b57332e	30	2022-09-15 02:29:15.271138+05	2022-09-15 02:29:15.271138+05	\N
+>>>>>>> 350ede8c373da442a18a69a3688e2fbd2c647859
 \.
 
 
@@ -844,6 +851,11 @@ aea98b93-7bdf-455b-9ad4-a259d69dc76e	ru	uploads/language1c24e3a6-173e-4264-a631-
 --
 
 COPY public.likes (id, product_id, customer_id, created_at, updated_at, deleted_at) FROM stdin;
+<<<<<<< HEAD
+=======
+64d79a92-c0f4-488b-92bc-8edeaae44dd2	440507af-648f-4b56-b126-ca75d0370731	7e872c52-0d23-4086-8c45-43000b57332e	2022-09-13 12:52:04.123267+05	2022-09-13 12:52:04.123267+05	\N
+e3cd5a4b-b923-4a87-ad9c-359d9abce522	8cb36bb0-9103-4031-b83b-4180552d74ca	7e872c52-0d23-4086-8c45-43000b57332e	2022-09-15 02:07:43.636619+05	2022-09-15 02:07:43.636619+05	\N
+>>>>>>> 350ede8c373da442a18a69a3688e2fbd2c647859
 \.
 
 
