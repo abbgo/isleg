@@ -856,7 +856,7 @@
 							"formdata": [
 								{
 									"key": "brend_id",
-									"value": "ddccb2dc-9697-4f4e-acf5-26b8bc2c8b72",
+									"value": "46b13f0a-d584-4ad3-b270-437ecdc51449",
 									"type": "default"
 								},
 								{
@@ -906,12 +906,12 @@
 								},
 								{
 									"key": "category_id",
-									"value": "5bb9a4e7-9992-418f-b551-537844d371da",
+									"value": "f745d171-68e6-42e2-b339-cb3c210cda55",
 									"type": "default"
 								},
 								{
 									"key": "category_id",
-									"value": "02bd4413-8586-49ab-802e-16304e756a8b",
+									"value": "d4cb1359-6c23-4194-8e3c-21ed8cec8373",
 									"type": "default"
 								},
 								{
@@ -927,47 +927,37 @@
 								{
 									"key": "main_small",
 									"type": "file",
-									"src": "/home/abb/Pictures/your-future-is-created-by-what-you-do-today-53172-1920x1200.jpg"
+									"src": "/home/abb/go/src/github.com/abbgo/isleg/isleg-data/Saydyn suratynyn razmeri/Yazuw kagyz/small.jpg"
 								},
 								{
 									"key": "main_medium",
 									"type": "file",
-									"src": "/home/abb/Pictures/your-future-is-created-by-what-you-do-today-53172-1920x1200.jpg"
+									"src": "/home/abb/go/src/github.com/abbgo/isleg/isleg-data/Saydyn suratynyn razmeri/Yazuw kagyz/medium.jpg"
 								},
 								{
 									"key": "main_large",
 									"type": "file",
-									"src": "/home/abb/Pictures/your-future-is-created-by-what-you-do-today-53172-1920x1200.jpg"
+									"src": "/home/abb/go/src/github.com/abbgo/isleg/isleg-data/Saydyn suratynyn razmeri/Yazuw kagyz/large.jpg"
 								},
 								{
 									"key": "small",
 									"type": "file",
-									"src": "/home/abb/Pictures/Quotefancy-76406-3840x2160.jpg"
+									"src": "/home/abb/go/src/github.com/abbgo/isleg/isleg-data/Saydyn suratynyn razmeri/Yalong galam/small.jpg"
 								},
 								{
 									"key": "small",
 									"type": "file",
-									"src": "/home/abb/Pictures/profile.jpeg"
-								},
-								{
-									"key": "medium",
-									"type": "file",
-									"src": "/home/abb/Pictures/Quotefancy-76406-3840x2160.jpg"
-								},
-								{
-									"key": "medium",
-									"type": "file",
-									"src": "/home/abb/Pictures/profile.jpeg"
+									"src": "/home/abb/go/src/github.com/abbgo/isleg/isleg-data/Saydyn suratynyn razmeri/Kagyz kley/small.jpg"
 								},
 								{
 									"key": "large",
 									"type": "file",
-									"src": "/home/abb/Pictures/Quotefancy-76406-3840x2160.jpg"
+									"src": "/home/abb/go/src/github.com/abbgo/isleg/isleg-data/Saydyn suratynyn razmeri/Yalong galam/large.jpg"
 								},
 								{
 									"key": "large",
 									"type": "file",
-									"src": "/home/abb/Pictures/profile.jpeg"
+									"src": "/home/abb/go/src/github.com/abbgo/isleg/isleg-data/Saydyn suratynyn razmeri/Kagyz kley/large.jpg"
 								}
 							]
 						},
@@ -1055,12 +1045,12 @@
 								},
 								{
 									"key": "category_id",
-									"value": "5bb9a4e7-9992-418f-b551-537844d371da",
+									"value": "45765130-7f97-4f0c-b886-f70b75e02610",
 									"type": "default"
 								},
 								{
 									"key": "category_id",
-									"value": "4af3388b-2738-4ff6-b42e-927cb0ff897f",
+									"value": "5bb9a4e7-9992-418f-b551-537844d371da",
 									"type": "default"
 								},
 								{
@@ -1099,16 +1089,6 @@
 									"src": "/home/abb/Pictures/download (2).jpeg"
 								},
 								{
-									"key": "medium",
-									"type": "file",
-									"src": "/home/abb/Pictures/download (1).jpeg"
-								},
-								{
-									"key": "medium",
-									"type": "file",
-									"src": "/home/abb/Pictures/download (2).jpeg"
-								},
-								{
 									"key": "large",
 									"type": "file",
 									"src": "/home/abb/Pictures/download (1).jpeg"
@@ -1121,7 +1101,7 @@
 							]
 						},
 						"url": {
-							"raw": "localhost:2406/admin/product/ff3ef680-3f35-4424-bc08-6fbb9c065675",
+							"raw": "localhost:2406/admin/product/61882979-a4bd-4934-b51b-3f7df53c7870",
 							"host": [
 								"localhost"
 							],
@@ -1129,7 +1109,7 @@
 							"path": [
 								"admin",
 								"product",
-								"ff3ef680-3f35-4424-bc08-6fbb9c065675"
+								"61882979-a4bd-4934-b51b-3f7df53c7870"
 							]
 						}
 					},
@@ -1141,7 +1121,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "localhost:2406/admin/product/ba935176-cf8c-4684-ab24-3ff11e5f176a",
+							"raw": "localhost:2406/admin/product/61882979-a4bd-4934-b51b-3f7df53c7870",
 							"host": [
 								"localhost"
 							],
@@ -1149,7 +1129,7 @@
 							"path": [
 								"admin",
 								"product",
-								"ba935176-cf8c-4684-ab24-3ff11e5f176a"
+								"61882979-a4bd-4934-b51b-3f7df53c7870"
 							]
 						}
 					},
@@ -1180,7 +1160,7 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "localhost:2406/admin/product/dd531556-17ac-4e27-997e-57c0a48730f5",
+							"raw": "localhost:2406/admin/product/61882979-a4bd-4934-b51b-3f7df53c7870",
 							"host": [
 								"localhost"
 							],
@@ -1188,7 +1168,7 @@
 							"path": [
 								"admin",
 								"product",
-								"dd531556-17ac-4e27-997e-57c0a48730f5"
+								"61882979-a4bd-4934-b51b-3f7df53c7870"
 							]
 						}
 					},
@@ -1220,7 +1200,7 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "localhost:2406/admin/delete-product/dd531556-17ac-4e27-997e-57c0a48730f5",
+							"raw": "localhost:2406/admin/delete-product/61882979-a4bd-4934-b51b-3f7df53c7870",
 							"host": [
 								"localhost"
 							],
@@ -1228,7 +1208,7 @@
 							"path": [
 								"admin",
 								"delete-product",
-								"dd531556-17ac-4e27-997e-57c0a48730f5"
+								"61882979-a4bd-4934-b51b-3f7df53c7870"
 							]
 						}
 					},
@@ -3220,7 +3200,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NSIsImV4cCI6MTY2Mjk3ODI4Nn0.jPzZuPJ5TtSXPSaHA2ggZMCqw1YKHaBhV4aOssUF_Is",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NSIsImV4cCI6MTY2MzQwNzk3NH0.54fNs-jACWe01_HHYLLdA8nVC8fQXCUen0XkDqVGzPk",
 								"type": "default"
 							}
 						],
@@ -3315,7 +3295,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NSIsImV4cCI6MTY2MzEwNjIyMX0.wo7EtjAr3qw-tYcpzPLVGZZR-Wp3WLIJGzC4yqNDyIc",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NSIsImV4cCI6MTY2MzQwNzk3NH0.54fNs-jACWe01_HHYLLdA8nVC8fQXCUen0XkDqVGzPk",
 								"type": "default"
 							}
 						],
@@ -3627,7 +3607,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NSIsImV4cCI6MTY2MzE2NDczMX0.E6R2gHpDhNmORsH0qdwTAviX92SH6lQoZXHYc7GAv5I",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NSIsImV4cCI6MTY2MzQwNzk3NH0.54fNs-jACWe01_HHYLLdA8nVC8fQXCUen0XkDqVGzPk",
 								"type": "default"
 							}
 						],
