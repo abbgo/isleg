@@ -1,0 +1,5 @@
+Saydyn suratynyn razmeri -
+in kici      (100x100 pic/30 kb)
+sayt das     (400x400 pic/40 kb)
+icki         (500x500 pic/50 kb)
+ulaldylan    (1000x1000 pic/200 kb)
