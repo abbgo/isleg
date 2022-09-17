@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "a35e5083-43ca-43c2-812d-33469deb0d3f",
+		"_postman_id": "510657a9-6138-40f8-a390-aa394747ab75",
 		"name": "IM",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -3246,7 +3246,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NSIsImV4cCI6MTY2MzE5MTQxOX0.QBQkVL0e7RCoD6ybtF4XjNaNNlDNMWQP3kxNkfFhfyA",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NSIsImV4cCI6MTY2MzQxMTAwNn0.OmZ5fjLrq9rEnL-CSpuu8IaGSn9n029j11Sa1Wqckuw",
 								"type": "default"
 							}
 						],
@@ -3260,12 +3260,12 @@
 								},
 								{
 									"key": "product_ids",
-									"value": "8cb36bb0-9103-4031-b83b-4180552d74ca",
+									"value": "bb6c3bdb-79e2-44b3-98b1-c1cee0976777",
 									"type": "default"
 								},
 								{
 									"key": "product_ids",
-									"value": "440507af-648f-4b56-b126-ca75d0370731",
+									"value": "e3c33ead-3c30-40f1-9d28-7bb8b71b767f",
 									"type": "default"
 								}
 							]
@@ -3295,11 +3295,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-<<<<<<< HEAD
-								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NSIsImV4cCI6MTY2MzQwNzk3NH0.54fNs-jACWe01_HHYLLdA8nVC8fQXCUen0XkDqVGzPk",
-=======
-								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NSIsImV4cCI6MTY2MzE5MTQxOX0.QBQkVL0e7RCoD6ybtF4XjNaNNlDNMWQP3kxNkfFhfyA",
->>>>>>> 350ede8c373da442a18a69a3688e2fbd2c647859
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NSIsImV4cCI6MTY2MzQxMTAwNn0.OmZ5fjLrq9rEnL-CSpuu8IaGSn9n029j11Sa1Wqckuw",
 								"type": "default"
 							}
 						],
@@ -3576,7 +3572,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NSIsImV4cCI6MTY2MzE5MTQxOX0.QBQkVL0e7RCoD6ybtF4XjNaNNlDNMWQP3kxNkfFhfyA",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NSIsImV4cCI6MTY2MzE1ODMzM30.2sMX3gfwhfCkSSx8lILcE331jX7khLHI1T780bm8I0g",
 								"type": "default"
 							}
 						],
