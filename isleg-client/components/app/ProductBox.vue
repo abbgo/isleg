@@ -2,7 +2,10 @@
   <client-only>
     <div class="product__box" @click.stop="$emit('productPopUp', getProduct)">
       <div class="product__img">
-        <img :src="`${imgURL}/${getProduct && getProduct.main_image}`" alt="" />
+        <img
+          :src="`${imgURL}/${getProduct && getProduct.main_image.medium}`"
+          alt=""
+        />
       </div>
       <div class="product__description">
         <p>{{ getProduct && getProduct.name }}</p>
@@ -69,7 +72,7 @@
       </button>
       <div class="product__like">
         <svg
-          v-if="$route.name == `favorites___${$i18n.locale}`"
+          @click.stop="productLike(getProduct)"
           width="26"
           height="25"
           viewBox="0 0 26 25"
@@ -78,23 +81,7 @@
         >
           <path
             d="M13 23L11.2602 21.4185C5.08064 15.8191 1.0003 12.1266 1.0003 7.5928C0.991958 6.7246 1.15698 5.86346 1.48571 5.05975C1.81445 4.25603 2.30029 3.52589 2.91483 2.91203C3.52936 2.29817 4.26025 1.81292 5.06473 1.48467C5.8692 1.15642 6.73112 0.991759 7.60005 1.00032C8.62705 1.00808 9.64046 1.23574 10.572 1.66794C11.5035 2.10014 12.3314 2.72684 13 3.5058C13.6686 2.72684 14.4965 2.10014 15.428 1.66794C16.3595 1.23574 17.3729 1.00808 18.3999 1.00032C19.269 0.991755 20.1311 1.15647 20.9357 1.48483C21.7402 1.81318 22.4712 2.29858 23.0858 2.91262C23.7003 3.52666 24.1861 4.25701 24.5148 5.06091C24.8434 5.86482 25.0083 6.72615 24.9997 7.59449C24.9997 12.1266 20.9193 15.8191 14.7398 21.4303L13 23Z"
-            fill="#FD5E29"
-            stroke="#FD5E29"
-            stroke-width="2"
-          />
-        </svg>
-        <svg
-          v-else
-          @click.stop="productLike"
-          width="26"
-          height="25"
-          viewBox="0 0 26 25"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            d="M13 23L11.2602 21.4185C5.08064 15.8191 1.0003 12.1266 1.0003 7.5928C0.991958 6.7246 1.15698 5.86346 1.48571 5.05975C1.81445 4.25603 2.30029 3.52589 2.91483 2.91203C3.52936 2.29817 4.26025 1.81292 5.06473 1.48467C5.8692 1.15642 6.73112 0.991759 7.60005 1.00032C8.62705 1.00808 9.64046 1.23574 10.572 1.66794C11.5035 2.10014 12.3314 2.72684 13 3.5058C13.6686 2.72684 14.4965 2.10014 15.428 1.66794C16.3595 1.23574 17.3729 1.00808 18.3999 1.00032C19.269 0.991755 20.1311 1.15647 20.9357 1.48483C21.7402 1.81318 22.4712 2.29858 23.0858 2.91262C23.7003 3.52666 24.1861 4.25701 24.5148 5.06091C24.8434 5.86482 25.0083 6.72615 24.9997 7.59449C24.9997 12.1266 20.9193 15.8191 14.7398 21.4303L13 23Z"
-            :fill="fillEmpty"
+            :fill="isFavorite ? fillColor : fillEmpty"
             stroke="#FD5E29"
             stroke-width="2"
           />
@@ -118,7 +105,9 @@ export default {
   data() {
     return {
       fillEmpty: null,
+      fillColor: '#FD5E29',
       quantity: 0,
+      isFavorite: false,
     }
   },
   computed: {
@@ -140,6 +129,7 @@ export default {
             return total + num.quantity
           }, 0)
           this.quantity = findProduct.quantity
+          this.isFavorite = findProduct.is_favorite
           this.$store.commit(
             'products/SET_PRODUCT_COUNT',
             totalCount == 0 ? null : totalCount
@@ -151,20 +141,48 @@ export default {
       }
     },
   },
+  mounted() {
+    console.log(this.getProduct)
+  },
   methods: {
-    productLike() {
-      let isAuth = this.$auth.loggedIn
-      if (isAuth) {
-        this.num++
-        console.log(this.num)
-        if (this.num % 2 == 0) {
-          this.fillEmpty = null
+    productLike(data) {
+      // let isAuth = this.$auth.loggedIn
+      // if (isAuth) {
+      //   this.num++
+      //   console.log(this.num)
+      //   if (this.num % 2 == 0) {
+      //     this.fillEmpty = null
+      //   } else {
+      //     this.fillEmpty = '#FD5E29'
+      //   }
+      // } else {
+      //   this.fillEmpty = null
+      //   this.$store.commit('ui/SET_OPEN_ISOPENSIGNUP')
+      // }
+      const cart = JSON.parse(localStorage.getItem('lorem'))
+      const array = []
+      this.isFavorite = !this.isFavorite
+      this.$store.commit('products/SET_PRODUCT_FAVORITE', {
+        data: data,
+        isFavorite: this.isFavorite,
+      })
+      array.push(data)
+      if (cart) {
+        const findProduct = cart.cart.find((product) => product.id === data.id)
+        if (findProduct) {
+          findProduct.is_favorite = this.isFavorite
+          localStorage.setItem('lorem', JSON.stringify(cart))
         } else {
-          this.fillEmpty = '#FD5E29'
+          cart.cart.push(data)
+          localStorage.setItem('lorem', JSON.stringify(cart))
         }
       } else {
-        this.fillEmpty = null
-        this.$store.commit('ui/SET_OPEN_ISOPENSIGNUP')
+        localStorage.setItem(
+          'lorem',
+          JSON.stringify({
+            cart: [...array],
+          })
+        )
       }
     },
     basketAdd(data) {

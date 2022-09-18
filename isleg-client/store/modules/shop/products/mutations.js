@@ -4,6 +4,7 @@ const SET_PRODUCTS_CATEGORIES = (state, payload) => {
     if (state.productsCategories[i].products) {
       for (let j = 0; j < state.productsCategories[i].products.length; j++) {
         state.productsCategories[i].products[j]['quantity'] = Number(0)
+        state.productsCategories[i].products[j]['is_favorite'] = false
       }
     }
   }
@@ -19,10 +20,14 @@ const SET_PRODUCT_TOTAL_DECREMENT = (state, { data, quantity }) => {
 const SET_PRODUCT_COUNT = (state, count) => {
   state.productCount = count
 }
+const SET_PRODUCT_FAVORITE = (state, { data, isFavorite }) => {
+  data.is_favorite = isFavorite
+}
 
 export default {
   SET_PRODUCTS_CATEGORIES,
   SET_PRODUCT_TOTAL_INCREMENT,
   SET_PRODUCT_TOTAL_DECREMENT,
   SET_PRODUCT_COUNT,
+  SET_PRODUCT_FAVORITE,
 }
