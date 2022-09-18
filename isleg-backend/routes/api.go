@@ -209,13 +209,19 @@ func Routes() *gin.Engine {
 			securedCustomer.DELETE("/like/:customer_id/:product_id", frontController.RemoveLike)
 
 			// get like products if customer exists
-			securedCustomer.GET("/likes/:customer_id", frontController.GetLikes)
+			// securedCustomer.GET("/likes/:customer_id", frontController.GetLikes)
 
 			// get like products without customer by product id
 			securedCustomer.GET("/likes-without-customer", frontController.GetLikedProductsWithoutCustomer)
 
 			// add product to cart
 			securedCustomer.POST("/add-cart", frontController.AddCart)
+
+			// get product of cart
+			// securedCustomer.GET("/get-cart/:customer_id", frontController.GetCartProducts)
+
+			// remove product from cart
+			securedCustomer.DELETE("/remove-cart/:customer_id/:product_id", frontController.RemoveCart)
 
 		}
 

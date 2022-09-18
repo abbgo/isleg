@@ -545,7 +545,7 @@ func DeletePermanentlyBrendByID(c *gin.Context) {
 		}
 	}
 
-	rowsImages, err := db.Query("SELECT i.small,i.medium,i.large FROM images i INNER JOIN products p ON p.id = i.product_id WHERE p.brend_id = $1", ID)
+	rowsImages, err := db.Query("SELECT i.small,i.large FROM images i INNER JOIN products p ON p.id = i.product_id WHERE p.brend_id = $1", ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -560,7 +560,7 @@ func DeletePermanentlyBrendByID(c *gin.Context) {
 	for rowsImages.Next() {
 		var image models.Images
 
-		if err := rowsImages.Scan(&image.Small, &image.Medium, &image.Large); err != nil {
+		if err := rowsImages.Scan(&image.Small, &image.Large); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
@@ -573,14 +573,6 @@ func DeletePermanentlyBrendByID(c *gin.Context) {
 
 	for _, v := range images {
 		if err := os.Remove("./" + v.Small); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-
-		if err := os.Remove("./" + v.Medium); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
