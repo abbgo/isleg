@@ -18,6 +18,7 @@ type TrBasketPage struct {
 	Currency        string `json:"currency"`
 	ToOrder         string `json:"to_order"`
 	YourBasket      string `json:"your_basket"`
+	EmptyTheBasket  string `json:"empty_the_basket"`
 }
 
 func CreateTranslationBasketPage(c *gin.Context) {
@@ -42,7 +43,7 @@ func CreateTranslationBasketPage(c *gin.Context) {
 		return
 	}
 
-	dataNames := []string{"quantity_of_goods", "total_price", "discount", "delivery", "total", "currency", "to_order", "your_basket"}
+	dataNames := []string{"quantity_of_goods", "total_price", "discount", "delivery", "total", "currency", "to_order", "your_basket", "empty_the_basket"}
 
 	// VALIDATE DATA
 	if err = models.ValidateTranslationBasketPageData(languages, dataNames, c); err != nil {
@@ -55,7 +56,7 @@ func CreateTranslationBasketPage(c *gin.Context) {
 
 	// create translation_my_information_page
 	for _, v := range languages {
-		resultTrBasketPage, err := db.Query("INSERT INTO translation_basket_page (lang_id,quantity_of_goods,total_price,discount,delivery,total,currency,to_order,your_basket) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)", v.ID, c.PostForm("quantity_of_goods_"+v.NameShort), c.PostForm("total_price_"+v.NameShort), c.PostForm("discount_"+v.NameShort), c.PostForm("delivery_"+v.NameShort), c.PostForm("total_"+v.NameShort), c.PostForm("currency_"+v.NameShort), c.PostForm("to_order_"+v.NameShort), c.PostForm("your_basket_"+v.NameShort))
+		resultTrBasketPage, err := db.Query("INSERT INTO translation_basket_page (lang_id,quantity_of_goods,total_price,discount,delivery,total,currency,to_order,your_basket,empty_the_basket) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)", v.ID, c.PostForm("quantity_of_goods_"+v.NameShort), c.PostForm("total_price_"+v.NameShort), c.PostForm("discount_"+v.NameShort), c.PostForm("delivery_"+v.NameShort), c.PostForm("total_"+v.NameShort), c.PostForm("currency_"+v.NameShort), c.PostForm("to_order_"+v.NameShort), c.PostForm("your_basket_"+v.NameShort), c.PostForm("empty_the_basket_"+v.NameShort))
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
@@ -117,7 +118,7 @@ func UpdateTranslationBasketPageByID(c *gin.Context) {
 		return
 	}
 
-	dataNames := []string{"quantity_of_goods", "total_price", "discount", "delivery", "total", "currency", "to_order", "your_basket"}
+	dataNames := []string{"quantity_of_goods", "total_price", "discount", "delivery", "total", "currency", "to_order", "your_basket", "empty_the_basket"}
 
 	// VALIDATE DATA
 	err = models.ValidateTranslationBasketPageUpdate(dataNames, c)
@@ -131,7 +132,7 @@ func UpdateTranslationBasketPageByID(c *gin.Context) {
 
 	currentTime := time.Now()
 
-	resultTrBasketPage, err := db.Query("UPDATE translation_basket_page SET quantity_of_goods = $1, total_price = $2 , discount = $3, delivery = $4 , total = $5 , currency = $6 , to_order = $7, your_basket = $8 , updated_at = $9 WHERE id = $10", c.PostForm("quantity_of_goods"), c.PostForm("total_price"), c.PostForm("discount"), c.PostForm("delivery"), c.PostForm("total"), c.PostForm("currency"), c.PostForm("to_order"), c.PostForm("your_basket"), currentTime, id)
+	resultTrBasketPage, err := db.Query("UPDATE translation_basket_page SET quantity_of_goods = $1, total_price = $2 , discount = $3, delivery = $4 , total = $5 , currency = $6 , to_order = $7, your_basket = $8 , empty_the_basket = $9 , updated_at = $10 WHERE id = $11", c.PostForm("quantity_of_goods"), c.PostForm("total_price"), c.PostForm("discount"), c.PostForm("delivery"), c.PostForm("total"), c.PostForm("currency"), c.PostForm("to_order"), c.PostForm("your_basket"), c.PostForm("empty_the_basket"), currentTime, id)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -162,7 +163,7 @@ func GetTranslationBasketPageByID(c *gin.Context) {
 
 	ID := c.Param("id")
 
-	rowTRBasketPage, err := db.Query("SELECT quantity_of_goods,total_price,discount,delivery,total,currency,to_order,your_basket FROM translation_basket_page WHERE id = $1 AND deleted_at IS NULL", ID)
+	rowTRBasketPage, err := db.Query("SELECT quantity_of_goods,total_price,discount,delivery,total,currency,to_order,your_basket,empty_the_basket FROM translation_basket_page WHERE id = $1 AND deleted_at IS NULL", ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -175,7 +176,7 @@ func GetTranslationBasketPageByID(c *gin.Context) {
 	var t TrBasketPage
 
 	for rowTRBasketPage.Next() {
-		if err := rowTRBasketPage.Scan(&t.QuantityOfGoods, &t.TotalPrice, &t.Discount, &t.Delivery, &t.Total, &t.Currency, &t.ToOrder, &t.YourBasket); err != nil {
+		if err := rowTRBasketPage.Scan(&t.QuantityOfGoods, &t.TotalPrice, &t.Discount, &t.Delivery, &t.Total, &t.Currency, &t.ToOrder, &t.YourBasket, &t.EmptyTheBasket); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
@@ -225,7 +226,7 @@ func GetTranslationBasketPageByLangID(c *gin.Context) {
 	}
 
 	// get translation-basket-page where lang_id equal langID
-	rowTRBasketPage, err := db.Query("SELECT quantity_of_goods,total_price,discount,delivery,total,currency,to_order,your_basket FROM translation_basket_page WHERE lang_id = $1 AND deleted_at IS NULL", langID)
+	rowTRBasketPage, err := db.Query("SELECT quantity_of_goods,total_price,discount,delivery,total,currency,to_order,your_basket,empty_the_basket FROM translation_basket_page WHERE lang_id = $1 AND deleted_at IS NULL", langID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -238,7 +239,7 @@ func GetTranslationBasketPageByLangID(c *gin.Context) {
 	var t TrBasketPage
 
 	for rowTRBasketPage.Next() {
-		if err := rowTRBasketPage.Scan(&t.QuantityOfGoods, &t.TotalPrice, &t.Discount, &t.Delivery, &t.Total, &t.Currency, &t.ToOrder, &t.YourBasket); err != nil {
+		if err := rowTRBasketPage.Scan(&t.QuantityOfGoods, &t.TotalPrice, &t.Discount, &t.Delivery, &t.Total, &t.Currency, &t.ToOrder, &t.YourBasket, &t.EmptyTheBasket); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
