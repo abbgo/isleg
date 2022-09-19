@@ -3246,7 +3246,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NSIsImV4cCI6MTY2MzQxMTAwNn0.OmZ5fjLrq9rEnL-CSpuu8IaGSn9n029j11Sa1Wqckuw",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NSIsImV4cCI6MTY2MzU2MjEzOH0.793xVgCEkg--G72auyGWIaHM7lX7hrIGt9jgN5X23Uw",
 								"type": "default"
 							}
 						],
@@ -3295,7 +3295,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NSIsImV4cCI6MTY2MzQxMTAwNn0.OmZ5fjLrq9rEnL-CSpuu8IaGSn9n029j11Sa1Wqckuw",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NSIsImV4cCI6MTY2MzU2MjEzOH0.793xVgCEkg--G72auyGWIaHM7lX7hrIGt9jgN5X23Uw",
 								"type": "default"
 							}
 						],
@@ -3572,13 +3572,13 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NSIsImV4cCI6MTY2MzE1ODMzM30.2sMX3gfwhfCkSSx8lILcE331jX7khLHI1T780bm8I0g",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NSIsImV4cCI6MTY2MzU2MjEzOH0.793xVgCEkg--G72auyGWIaHM7lX7hrIGt9jgN5X23Uw",
 								"type": "default"
 							}
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"customer_id\":\"7e872c52-0d23-4086-8c45-43000b57332e\",\n    \"products\":[\n        {\n            \"product_id\":\"3ca5ade3-d2ce-40ba-9be6-601105b5205a\",\n            \"quantity_of_product\":10\n        },\n         {\n            \"product_id\":\"ba935176-cf8c-4684-ab24-3ff11e5f176a\",\n            \"quantity_of_product\":23\n        },\n         {\n            \"product_id\":\"abc05e23-5d72-41db-969a-662442da399f\",\n            \"quantity_of_product\":3\n        },\n         {\n            \"product_id\":\"32cd4c58-c96c-4b05-8158-bc9f7f7d02d4\",\n            \"quantity_of_product\":30\n        }\n    ]\n}",
+							"raw": "{\n    \"customer_id\":\"7e872c52-0d23-4086-8c45-43000b57332e\",\n    \"products\":[\n        {\n            \"product_id\":\"d4156225-082e-4f0f-9b2c-85268114433a\",\n            \"quantity_of_product\":10\n        },\n         {\n            \"product_id\":\"8df705a5-2351-4aca-b03e-3357a23840b4\",\n            \"quantity_of_product\":23\n        },\n         {\n            \"product_id\":\"b2b165a3-2261-4d67-8160-0e239ecd99b5\",\n            \"quantity_of_product\":3\n        },\n         {\n            \"product_id\":\"a2bb8745-1f3a-4de9-ad66-11b0bb3bb754\",\n            \"quantity_of_product\":30\n        }\n    ]\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -3747,6 +3747,16 @@
 									"key": "your_basket_ru",
 									"value": "your_basket_ru",
 									"type": "default"
+								},
+								{
+									"key": "empty_the_basket_tm",
+									"value": "empty_the_basket_tm",
+									"type": "default"
+								},
+								{
+									"key": "empty_the_basket_ru",
+									"value": "empty_the_basket_ru",
+									"type": "default"
 								}
 							]
 						},
@@ -3810,6 +3820,11 @@
 								{
 									"key": "your_basket",
 									"value": "your_basket",
+									"type": "default"
+								},
+								{
+									"key": "empty_the_basket",
+									"value": "empty_the_basket",
 									"type": "default"
 								}
 							]

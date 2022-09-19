@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 14.4 (Ubuntu 14.4-1.pgdg20.04+1)
--- Dumped by pg_dump version 14.4 (Ubuntu 14.4-1.pgdg20.04+1)
+-- Dumped from database version 12.12 (Ubuntu 12.12-0ubuntu0.20.04.1)
+-- Dumped by pg_dump version 12.12 (Ubuntu 12.12-0ubuntu0.20.04.1)
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -390,7 +390,8 @@ CREATE TABLE public.translation_basket_page (
     your_basket character varying DEFAULT 'uytget'::character varying,
     created_at timestamp with time zone DEFAULT now(),
     updated_at timestamp with time zone DEFAULT now(),
-    deleted_at timestamp with time zone
+    deleted_at timestamp with time zone,
+    empty_the_basket character varying DEFAULT 'uytget'::character varying
 );
 
 
@@ -680,13 +681,10 @@ c4bcda34-7332-4ae5-8129-d7538d63fee4	Buzz	uploads/brend/67f6bc90-a0ef-4828-b17b-
 --
 
 COPY public.cart (id, product_id, customer_id, quantity_of_product, created_at, updated_at, deleted_at) FROM stdin;
-<<<<<<< HEAD
-=======
-6317032d-3dff-4d25-8147-6a23457d602d	3ca5ade3-d2ce-40ba-9be6-601105b5205a	7e872c52-0d23-4086-8c45-43000b57332e	10	2022-09-14 03:27:24.35366+05	2022-09-14 03:27:24.35366+05	\N
-4e0a54d0-4a1b-49c6-8d1c-df42539311c1	ba935176-cf8c-4684-ab24-3ff11e5f176a	7e872c52-0d23-4086-8c45-43000b57332e	23	2022-09-14 03:27:24.35366+05	2022-09-14 03:27:24.35366+05	\N
-59e2dc8f-4b14-4176-962c-cca419c93758	abc05e23-5d72-41db-969a-662442da399f	7e872c52-0d23-4086-8c45-43000b57332e	3	2022-09-14 03:27:24.35366+05	2022-09-14 03:27:24.35366+05	\N
-953bf49b-181a-401e-9bd3-ae0c4bc7b8f2	32cd4c58-c96c-4b05-8158-bc9f7f7d02d4	7e872c52-0d23-4086-8c45-43000b57332e	30	2022-09-15 02:29:15.271138+05	2022-09-15 02:29:15.271138+05	\N
->>>>>>> 350ede8c373da442a18a69a3688e2fbd2c647859
+5ccc8636-5b3f-4fca-a357-a5fc5599d0fa	d4156225-082e-4f0f-9b2c-85268114433a	7e872c52-0d23-4086-8c45-43000b57332e	10	2022-09-19 09:08:43.874904+05	2022-09-19 09:08:43.874904+05	\N
+522072a7-6dc7-407b-9767-c48586bf30b6	8df705a5-2351-4aca-b03e-3357a23840b4	7e872c52-0d23-4086-8c45-43000b57332e	23	2022-09-19 09:08:43.972128+05	2022-09-19 09:08:43.972128+05	\N
+251a4c91-862f-41ca-8445-e9cca557c3d2	b2b165a3-2261-4d67-8160-0e239ecd99b5	7e872c52-0d23-4086-8c45-43000b57332e	3	2022-09-19 09:08:43.983866+05	2022-09-19 09:08:43.983866+05	\N
+8a7f148a-2a42-405d-aac6-dea1eb802e80	a2bb8745-1f3a-4de9-ad66-11b0bb3bb754	7e872c52-0d23-4086-8c45-43000b57332e	30	2022-09-19 09:08:43.994441+05	2022-09-19 09:08:43.994441+05	\N
 \.
 
 
@@ -851,11 +849,10 @@ aea98b93-7bdf-455b-9ad4-a259d69dc76e	ru	uploads/language1c24e3a6-173e-4264-a631-
 --
 
 COPY public.likes (id, product_id, customer_id, created_at, updated_at, deleted_at) FROM stdin;
-<<<<<<< HEAD
-=======
-64d79a92-c0f4-488b-92bc-8edeaae44dd2	440507af-648f-4b56-b126-ca75d0370731	7e872c52-0d23-4086-8c45-43000b57332e	2022-09-13 12:52:04.123267+05	2022-09-13 12:52:04.123267+05	\N
-e3cd5a4b-b923-4a87-ad9c-359d9abce522	8cb36bb0-9103-4031-b83b-4180552d74ca	7e872c52-0d23-4086-8c45-43000b57332e	2022-09-15 02:07:43.636619+05	2022-09-15 02:07:43.636619+05	\N
->>>>>>> 350ede8c373da442a18a69a3688e2fbd2c647859
+7fbd52d7-ebdc-4d64-8747-07064d8e290c	0d4a6c3c-cc5d-457b-ac9a-ce60eacb94de	7e872c52-0d23-4086-8c45-43000b57332e	2022-09-17 15:07:24.825209+05	2022-09-17 15:07:24.825209+05	\N
+4e9df8f4-a3f8-4dea-82ee-5425971a75b2	b2b165a3-2261-4d67-8160-0e239ecd99b5	7e872c52-0d23-4086-8c45-43000b57332e	2022-09-17 15:07:24.825209+05	2022-09-17 15:07:24.825209+05	\N
+dacc5a07-7340-46ad-9231-628c81fe782d	bb6c3bdb-79e2-44b3-98b1-c1cee0976777	7e872c52-0d23-4086-8c45-43000b57332e	2022-09-17 15:07:37.579366+05	2022-09-17 15:07:37.579366+05	\N
+17e9980f-ec5c-4b41-ab86-53903a67b174	e3c33ead-3c30-40f1-9d28-7bb8b71b767f	7e872c52-0d23-4086-8c45-43000b57332e	2022-09-17 15:07:37.579366+05	2022-09-17 15:07:37.579366+05	\N
 \.
 
 
@@ -927,9 +924,9 @@ COPY public.translation_afisa (id, afisa_id, lang_id, title, description, create
 -- Data for Name: translation_basket_page; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.translation_basket_page (id, lang_id, quantity_of_goods, total_price, discount, delivery, total, currency, to_order, your_basket, created_at, updated_at, deleted_at) FROM stdin;
-456dcb5a-fabb-47f8-b216-0cddd3077124	aea98b93-7bdf-455b-9ad4-a259d69dc76e	quantity_of_goods_ru	total_price_ru	discount_ru	delivery_ru	total_ru	currency_ru	to_order_ru	your_basket_ru	2022-08-30 12:36:24.978404+05	2022-08-30 12:36:37.967063+05	\N
-51b3699e-1c7b-442a-be7b-6b2ad1f111b4	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	quantity_of_goods	total_price	discount	delivery	total	currency	to_order	your_basket	2022-08-30 12:36:24.978404+05	2022-08-30 12:39:12.849615+05	\N
+COPY public.translation_basket_page (id, lang_id, quantity_of_goods, total_price, discount, delivery, total, currency, to_order, your_basket, created_at, updated_at, deleted_at, empty_the_basket) FROM stdin;
+456dcb5a-fabb-47f8-b216-0cddd3077124	aea98b93-7bdf-455b-9ad4-a259d69dc76e	quantity_of_goods_ru	total_price_ru	discount_ru	delivery_ru	total_ru	currency_ru	to_order_ru	your_basket_ru	2022-08-30 12:36:24.978404+05	2022-08-30 12:36:37.967063+05	\N	uytget
+51b3699e-1c7b-442a-be7b-6b2ad1f111b4	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	quantity_of_goods	total_price	discount	delivery	total	currency	to_order	your_basket	2022-08-30 12:36:24.978404+05	2022-09-19 14:28:12.008122+05	\N	empty_the_basket
 \.
 
 
