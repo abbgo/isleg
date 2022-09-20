@@ -18,6 +18,7 @@ type Customer struct {
 	Birthday    time.Time `json:"birthday"`
 	Gender      string    `json:"gender"`
 	Email       string    `json:"email" binding:"email"`
+	IsRegister  bool      `json:"is_register"`
 	CreatedAt   string    `json:"-"`
 	UpdatedAt   string    `json:"-"`
 	DeletedAt   string    `json:"-"`
