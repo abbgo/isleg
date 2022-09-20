@@ -197,6 +197,23 @@ CREATE TABLE public.company_setting (
 ALTER TABLE public.company_setting OWNER TO postgres;
 
 --
+-- Name: customer_address; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.customer_address (
+    id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
+    customer_id uuid,
+    address character varying,
+    created_at timestamp with time zone DEFAULT now(),
+    updated_at timestamp with time zone DEFAULT now(),
+    deleted_at timestamp with time zone,
+    is_active boolean DEFAULT true
+);
+
+
+ALTER TABLE public.customer_address OWNER TO postgres;
+
+--
 -- Name: customers; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -207,11 +224,11 @@ CREATE TABLE public.customers (
     password character varying,
     birthday date,
     gender character varying,
-    addresses character varying[],
     created_at timestamp with time zone DEFAULT now(),
     updated_at timestamp with time zone DEFAULT now(),
     deleted_at timestamp with time zone,
-    email character varying
+    email character varying,
+    is_register boolean DEFAULT true
 );
 
 
@@ -298,6 +315,22 @@ CREATE TABLE public.main_image (
 
 
 ALTER TABLE public.main_image OWNER TO postgres;
+
+--
+-- Name: payment_types; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.payment_types (
+    id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
+    lang_id uuid,
+    type character varying,
+    created_at timestamp with time zone DEFAULT now(),
+    updated_at timestamp with time zone DEFAULT now(),
+    deleted_at timestamp with time zone
+);
+
+
+ALTER TABLE public.payment_types OWNER TO postgres;
 
 --
 -- Name: products; Type: TABLE; Schema: public; Owner: postgres
@@ -784,14 +817,23 @@ COPY public.company_setting (id, logo, favicon, email, instagram, created_at, up
 
 
 --
+-- Data for Name: customer_address; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.customer_address (id, customer_id, address, created_at, updated_at, deleted_at, is_active) FROM stdin;
+\.
+
+
+--
 -- Data for Name: customers; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.customers (id, full_name, phone_number, password, birthday, gender, addresses, created_at, updated_at, deleted_at, email) FROM stdin;
-7e872c52-0d23-4086-8c45-43000b57332e	Muhammetmyrat	+99363747155	$2a$14$1uOYIcXK4lzyBnhm.L/dW.TD8c9ZqTzAiCsOMCCRRzxiKnDAU2gFK	\N	\N	\N	2022-08-02 23:41:59.869254+05	2022-08-02 23:41:59.869254+05	\N	m.bayramov@salam.tm
-7fafe6f8-c6b6-4bcc-9063-e98c113902c5	jjednkjwedjed	+99363747156	$2a$14$WPTcXE1j871GQ/n2i2CX9.RjyRIyR4bBqCj6b/vchJB1TjYC6v0XK	\N	\N	\N	2022-08-02 23:52:46.544849+05	2022-08-02 23:52:46.544849+05	\N	ewkdnewj@gmail.com
-38615c8c-1af5-424f-b7a3-071d38c42b86	Aly Muhammedow	+99363234587	$2a$14$Ep0/A9EAbgV/BD.UdQ6KQOU0DCpr2C8n6du8li5nPKYz.xIQb2HgC	\N	\N	\N	2022-08-23 19:59:07.331615+05	2022-08-23 19:59:07.331615+05	\N	aly@gmail.com
-9b1a0831-9943-4aa9-aa2a-3507743a5de4	Berdi	+99361235698	$2a$14$S5nCg8mlGD..q3didZiCFuaocaEPA35ugIfpovdEoM7p5I8TOTX0K	\N	\N	\N	2022-08-23 20:31:28.830324+05	2022-08-23 20:31:28.830324+05	\N	berdi@gmail.com
+COPY public.customers (id, full_name, phone_number, password, birthday, gender, created_at, updated_at, deleted_at, email, is_register) FROM stdin;
+7e872c52-0d23-4086-8c45-43000b57332e	Muhammetmyrat	+99363747155	$2a$14$1uOYIcXK4lzyBnhm.L/dW.TD8c9ZqTzAiCsOMCCRRzxiKnDAU2gFK	\N	\N	2022-08-02 23:41:59.869254+05	2022-08-02 23:41:59.869254+05	\N	m.bayramov@salam.tm	t
+7fafe6f8-c6b6-4bcc-9063-e98c113902c5	jjednkjwedjed	+99363747156	$2a$14$WPTcXE1j871GQ/n2i2CX9.RjyRIyR4bBqCj6b/vchJB1TjYC6v0XK	\N	\N	2022-08-02 23:52:46.544849+05	2022-08-02 23:52:46.544849+05	\N	ewkdnewj@gmail.com	t
+38615c8c-1af5-424f-b7a3-071d38c42b86	Aly Muhammedow	+99363234587	$2a$14$Ep0/A9EAbgV/BD.UdQ6KQOU0DCpr2C8n6du8li5nPKYz.xIQb2HgC	\N	\N	2022-08-23 19:59:07.331615+05	2022-08-23 19:59:07.331615+05	\N	aly@gmail.com	t
+9b1a0831-9943-4aa9-aa2a-3507743a5de4	Berdi	+99361235698	$2a$14$S5nCg8mlGD..q3didZiCFuaocaEPA35ugIfpovdEoM7p5I8TOTX0K	\N	\N	2022-08-23 20:31:28.830324+05	2022-08-23 20:31:28.830324+05	\N	berdi@gmail.com	t
+eb4d03d3-c201-49e6-867e-a7b6927a414c	Salam	+99363658741	$2a$14$ZB/2DyXxUCHOdWXb3PetceGK60tptU.OnQVxeioPyznRJcFXpahlG	\N	\N	2022-09-20 11:49:39.074906+05	2022-09-20 11:49:39.074906+05	\N	salam@gmail.com	t
 \.
 
 
@@ -872,6 +914,18 @@ af383593-cacb-4440-8144-4560c1887921	0d4a6c3c-cc5d-457b-ac9a-ce60eacb94de	upload
 489304cb-a16a-4f78-841e-797b341f224b	c866d5e4-284c-4bea-a94f-cc23f6c7e5d0	uploads/product/139044f5-bb94-4f31-9b5a-c7c28056398f.jpg	uploads/product/a45a8c58-bc17-44ad-807d-719607bdd031.jpg	uploads/product/7d873556-bfe5-4991-8cc7-0ab6609eb45e.jpg	2022-09-17 14:59:14.066244+05	2022-09-17 14:59:14.066244+05	\N
 3141d941-c1fa-41f0-b542-44090d4ba2a1	e3c33ead-3c30-40f1-9d28-7bb8b71b767f	uploads/product/ad41dd13-4b3b-442a-92a9-ea7ba39a8ffd.jpg	uploads/product/4b536ae1-bb8a-43f3-bf33-378fb2e53f58.jpg	uploads/product/e50d6762-01dd-4894-a991-0f27bb401630.jpg	2022-09-17 14:59:44.866884+05	2022-09-17 14:59:44.866884+05	\N
 24fdc6b1-afb2-4735-b406-70addc0dd8d9	8df705a5-2351-4aca-b03e-3357a23840b4	uploads/product/c0a88fd0-2374-49af-95d0-5c692c626b94.jpg	uploads/product/8a67c3a7-94fc-4831-9f90-80ae409c684f.jpg	uploads/product/c7a5b0ce-d9fc-449c-b039-726d716c62a7.jpg	2022-09-17 15:00:15.178822+05	2022-09-17 15:00:15.178822+05	\N
+\.
+
+
+--
+-- Data for Name: payment_types; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.payment_types (id, lang_id, type, created_at, updated_at, deleted_at) FROM stdin;
+83e6589c-0cb6-4267-bcc5-e06cc93b36d8	aea98b93-7bdf-455b-9ad4-a259d69dc76e	наличные	2022-09-20 14:33:50.780468+05	2022-09-20 14:33:50.780468+05	\N
+7a6a313d-8fcd-4c56-9fa5-aefb12552b82	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	töleg terminaly	2022-09-20 14:34:46.329459+05	2022-09-20 14:34:46.329459+05	\N
+cb7e8cc9-9b2e-4cd8-921f-91b3bb5e5564	aea98b93-7bdf-455b-9ad4-a259d69dc76e	платежный терминал	2022-09-20 14:34:46.359276+05	2022-09-20 14:34:46.359276+05	\N
+38696743-82e5-4644-9c86-4a99ae45f912	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	nagt_tm	2022-09-20 14:33:50.755689+05	2022-09-20 14:40:04.959827+05	\N
 \.
 
 
@@ -1171,6 +1225,14 @@ ALTER TABLE ONLY public.company_setting
 
 
 --
+-- Name: customer_address customer_address_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.customer_address
+    ADD CONSTRAINT customer_address_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: customers customers_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1216,6 +1278,14 @@ ALTER TABLE ONLY public.likes
 
 ALTER TABLE ONLY public.main_image
     ADD CONSTRAINT main_image_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: payment_types payment_types_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.payment_types
+    ADD CONSTRAINT payment_types_pkey PRIMARY KEY (id);
 
 
 --
@@ -1352,6 +1422,14 @@ ALTER TABLE ONLY public.translation_secure
 
 ALTER TABLE ONLY public.translation_update_password_page
     ADD CONSTRAINT translation_update_password_page_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: customer_address customer_customer_address; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.customer_address
+    ADD CONSTRAINT customer_customer_address FOREIGN KEY (customer_id) REFERENCES public.customers(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -1592,6 +1670,14 @@ ALTER TABLE ONLY public.translation_my_order_page
 
 ALTER TABLE ONLY public.translation_order_page
     ADD CONSTRAINT language_translation_order_page FOREIGN KEY (lang_id) REFERENCES public.languages(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: payment_types languages_payment_types; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.payment_types
+    ADD CONSTRAINT languages_payment_types FOREIGN KEY (lang_id) REFERENCES public.languages(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --

@@ -3108,7 +3108,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"full_name\":\"Berdi\",\n    \"phone_number\":\"+99361235698\",\n    \"password\":\"12345\",\n    \"email\":\"berdi@gmail.com\"\n}",
+							"raw": "{\n    \"full_name\":\"Salam\",\n    \"phone_number\":\"+99363658741\",\n    \"password\":\"\",\n    \"email\":\"salam@gmail.com\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -4352,6 +4352,134 @@
 								"api",
 								"tm",
 								"translation-my-order-page"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "PaymentTypes",
+			"item": [
+				{
+					"name": "CreatePaymentType",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "type_tm",
+									"value": "töleg terminaly",
+									"type": "default"
+								},
+								{
+									"key": "type_ru",
+									"value": "платежный терминал",
+									"type": "default"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:2406/admin/payment-type",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"admin",
+								"payment-type"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UpdatePaymentTypeByID",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "type",
+									"value": "nagt_tm",
+									"type": "default"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:2406/admin/payment-type/38696743-82e5-4644-9c86-4a99ae45f912",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"admin",
+								"payment-type",
+								"38696743-82e5-4644-9c86-4a99ae45f912"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetPaymentTypeByID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:2406/admin/payment-type/38696743-82e5-4644-9c86-4a99ae45f912",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"admin",
+								"payment-type",
+								"38696743-82e5-4644-9c86-4a99ae45f912"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetPaymentTypes",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:2406/admin/payment-types",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"admin",
+								"payment-types"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetPaymentTypesByLangID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:2406/api/tm/payment-types",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"api",
+								"tm",
+								"payment-types"
 							]
 						}
 					},
