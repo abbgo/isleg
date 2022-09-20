@@ -234,3 +234,62 @@ func GetPaymentTypes(c *gin.Context) {
 	})
 
 }
+
+func GetPaymentTypesByLangID(c *gin.Context) {
+
+	db, err := config.ConnDB()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer db.Close()
+
+	// GET DATA FROM ROUTE PARAMETER
+	langShortName := c.Param("lang")
+
+	// GET language id
+	langID, err := GetLangID(langShortName)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	rowsPaymentType, err := db.Query("SELECT type FROM payment_types WHERE lang_id = $1 AND deleted_at IS NULL", langID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer rowsPaymentType.Close()
+
+	var paymentTypes []string
+
+	for rowsPaymentType.Next() {
+		var paymentType string
+
+		if err := rowsPaymentType.Scan(&paymentType); err != nil {
+
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+
+		paymentTypes = append(paymentTypes, paymentType)
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":        true,
+		"payment_types": paymentTypes,
+	})
+
+}

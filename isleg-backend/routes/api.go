@@ -196,6 +196,9 @@ func Routes() *gin.Engine {
 		// get my order page translation
 		front.GET("/translation-my-order-page", backController.GetTranslationMyOrderPageByLangID)
 
+		// get payment ttype by lang id
+		front.GET("/payment-types", backController.GetPaymentTypesByLangID)
+
 		// homepage categories
 		front.GET("/homepage-categories", frontController.GetHomePageCategories)
 
