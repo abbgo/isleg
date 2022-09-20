@@ -6,7 +6,13 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 )
+
+type PaymentTypes struct {
+	LangID uuid.UUID `json:"lang_id"`
+	Type   string    `json:"type"`
+}
 
 func CreatePaymentType(c *gin.Context) {
 
@@ -180,6 +186,51 @@ func GetPaymentTypeByID(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"status":       true,
 		"payment_type": paymentType,
+	})
+
+}
+
+func GetPaymentTypes(c *gin.Context) {
+
+	db, err := config.ConnDB()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer db.Close()
+
+	rowsPaymentType, err := db.Query("SELECT lang_id,type FROM payment_types WHERE deleted_at IS NULL")
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer rowsPaymentType.Close()
+
+	var paymentTypes []PaymentTypes
+
+	for rowsPaymentType.Next() {
+		var paymentType PaymentTypes
+
+		if err := rowsPaymentType.Scan(&paymentType.LangID, &paymentType.Type); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+
+		paymentTypes = append(paymentTypes, paymentType)
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":        true,
+		"payment_types": paymentTypes,
 	})
 
 }
