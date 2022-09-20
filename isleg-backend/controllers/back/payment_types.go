@@ -132,3 +132,54 @@ func UpdatePaymentTypeByID(c *gin.Context) {
 	})
 
 }
+
+func GetPaymentTypeByID(c *gin.Context) {
+
+	db, err := config.ConnDB()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer db.Close()
+
+	ID := c.Param("id")
+
+	rowPaymentType, err := db.Query("SELECT type FROM payment_types WHERE id = $1 AND deleted_at IS NULL", ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer rowPaymentType.Close()
+
+	var paymentType string
+
+	for rowPaymentType.Next() {
+		if err := rowPaymentType.Scan(&paymentType); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}
+
+	if paymentType == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "record not found",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":       true,
+		"payment_type": paymentType,
+	})
+
+}
