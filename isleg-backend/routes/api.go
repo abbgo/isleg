@@ -231,6 +231,9 @@ func Routes() *gin.Engine {
 			// remove product from cart
 			securedCustomer.DELETE("/remove-cart/:customer_id/:product_id", frontController.RemoveCart)
 
+			// to order
+			securedCustomer.POST("/to-order", frontController.ToOrder)
+
 		}
 
 	}

@@ -317,13 +317,49 @@ CREATE TABLE public.main_image (
 ALTER TABLE public.main_image OWNER TO postgres;
 
 --
+-- Name: ordered_products; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.ordered_products (
+    id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
+    product_id uuid,
+    quantity_of_product integer,
+    order_id uuid,
+    created_at timestamp with time zone DEFAULT now(),
+    updated_at timestamp with time zone DEFAULT now(),
+    deleted_at timestamp with time zone
+);
+
+
+ALTER TABLE public.ordered_products OWNER TO postgres;
+
+--
+-- Name: orders; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.orders (
+    id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
+    customer_id uuid,
+    customer_mark character varying,
+    order_time character varying,
+    payment_type character varying,
+    total_price character varying,
+    created_at timestamp with time zone DEFAULT now(),
+    updated_at timestamp with time zone DEFAULT now(),
+    deleted_at timestamp with time zone
+);
+
+
+ALTER TABLE public.orders OWNER TO postgres;
+
+--
 -- Name: payment_types; Type: TABLE; Schema: public; Owner: postgres
 --
 
 CREATE TABLE public.payment_types (
     id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
     lang_id uuid,
-    type character varying,
+    type character varying DEFAULT 'uytget'::character varying,
     created_at timestamp with time zone DEFAULT now(),
     updated_at timestamp with time zone DEFAULT now(),
     deleted_at timestamp with time zone
@@ -918,6 +954,22 @@ af383593-cacb-4440-8144-4560c1887921	0d4a6c3c-cc5d-457b-ac9a-ce60eacb94de	upload
 
 
 --
+-- Data for Name: ordered_products; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.ordered_products (id, product_id, quantity_of_product, order_id, created_at, updated_at, deleted_at) FROM stdin;
+\.
+
+
+--
+-- Data for Name: orders; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.orders (id, customer_id, customer_mark, order_time, payment_type, total_price, created_at, updated_at, deleted_at) FROM stdin;
+\.
+
+
+--
 -- Data for Name: payment_types; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -1281,6 +1333,22 @@ ALTER TABLE ONLY public.main_image
 
 
 --
+-- Name: ordered_products ordered_products_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.ordered_products
+    ADD CONSTRAINT ordered_products_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: orders orders_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.orders
+    ADD CONSTRAINT orders_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: payment_types payment_types_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1430,6 +1498,14 @@ ALTER TABLE ONLY public.translation_update_password_page
 
 ALTER TABLE ONLY public.customer_address
     ADD CONSTRAINT customer_customer_address FOREIGN KEY (customer_id) REFERENCES public.customers(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: orders customers_orders; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.orders
+    ADD CONSTRAINT customers_orders FOREIGN KEY (customer_id) REFERENCES public.customers(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -1681,6 +1757,14 @@ ALTER TABLE ONLY public.payment_types
 
 
 --
+-- Name: ordered_products orders_ordered_products; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.ordered_products
+    ADD CONSTRAINT orders_ordered_products FOREIGN KEY (order_id) REFERENCES public.orders(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
 -- Name: images products_images; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1694,6 +1778,14 @@ ALTER TABLE ONLY public.images
 
 ALTER TABLE ONLY public.main_image
     ADD CONSTRAINT products_main_image FOREIGN KEY (product_id) REFERENCES public.products(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: ordered_products products_ordered_products; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.ordered_products
+    ADD CONSTRAINT products_ordered_products FOREIGN KEY (product_id) REFERENCES public.products(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
