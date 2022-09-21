@@ -17,8 +17,8 @@ type Cart struct {
 }
 
 type CartProduct struct {
-	ProductID         string `json:"product_id"`
-	QuantityOfProduct int    `json:"quantity_of_product"`
+	ProductID         string `json:"product_id" binding:"required"`
+	QuantityOfProduct int    `json:"quantity_of_product" binding:"required"`
 }
 
 type ProductOfCart struct {

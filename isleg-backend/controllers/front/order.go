@@ -8,14 +8,14 @@ import (
 )
 
 type Order struct {
-	FullName     string        `json:"full_name"`
-	PhoneNumber  string        `json:"phone_number"`
-	Address      string        `json:"address"`
+	FullName     string        `json:"full_name" binding:"required,min=3"`
+	PhoneNumber  string        `json:"phone_number" binding:"required,e164,len=12"`
+	Address      string        `json:"address" binding:"required,min=3"`
 	CustomerMark string        `json:"customer_mark"`
-	OrderTime    string        `json:"order_time"`
-	PaymentType  string        `json:"payment_type"`
-	TotalPrice   float64       `json:"total_price"`
-	Products     []CartProduct `json:"products"`
+	OrderTime    string        `json:"order_time" binding:"required"`
+	PaymentType  string        `json:"payment_type" binding:"required"`
+	TotalPrice   float64       `json:"total_price" binding:"required"`
+	Products     []CartProduct `json:"products" binding:"required"`
 }
 
 func ToOrder(c *gin.Context) {
@@ -203,5 +203,10 @@ func ToOrder(c *gin.Context) {
 		defer resultOrderedProduct.Close()
 
 	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":  true,
+		"message": "success",
+	})
 
 }
