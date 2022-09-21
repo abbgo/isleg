@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 12.12 (Ubuntu 12.12-0ubuntu0.20.04.1)
--- Dumped by pg_dump version 12.12 (Ubuntu 12.12-0ubuntu0.20.04.1)
+-- Dumped from database version 14.4 (Ubuntu 14.4-1.pgdg20.04+1)
+-- Dumped by pg_dump version 14.4 (Ubuntu 14.4-1.pgdg20.04+1)
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -857,6 +857,9 @@ COPY public.company_setting (id, logo, favicon, email, instagram, created_at, up
 --
 
 COPY public.customer_address (id, customer_id, address, created_at, updated_at, deleted_at, is_active) FROM stdin;
+dad2aaae-1b17-4494-8d85-8a8ee6e3e60f	7e872c52-0d23-4086-8c45-43000b57332e	Mir 2/2 jay 7 oy 36	2022-09-21 21:28:29.708359+05	2022-09-21 21:28:29.708359+05	\N	f
+1cb747b5-e39e-44eb-b538-012ef45ece9d	84b30e79-56d9-4b49-bc77-ccc8529d2355	Mir 2/2 jay 7 oy 36	2022-09-21 21:30:33.797818+05	2022-09-21 21:30:33.797818+05	\N	f
+1924cc23-01f1-4b7d-9630-5b708ec8a9ff	84b30e79-56d9-4b49-bc77-ccc8529d2355	Mir 2/2 jay 7 oy 36	2022-09-21 21:31:12.131253+05	2022-09-21 21:31:12.131253+05	\N	f
 \.
 
 
@@ -870,6 +873,7 @@ COPY public.customers (id, full_name, phone_number, password, birthday, gender, 
 38615c8c-1af5-424f-b7a3-071d38c42b86	Aly Muhammedow	+99363234587	$2a$14$Ep0/A9EAbgV/BD.UdQ6KQOU0DCpr2C8n6du8li5nPKYz.xIQb2HgC	\N	\N	2022-08-23 19:59:07.331615+05	2022-08-23 19:59:07.331615+05	\N	aly@gmail.com	t
 9b1a0831-9943-4aa9-aa2a-3507743a5de4	Berdi	+99361235698	$2a$14$S5nCg8mlGD..q3didZiCFuaocaEPA35ugIfpovdEoM7p5I8TOTX0K	\N	\N	2022-08-23 20:31:28.830324+05	2022-08-23 20:31:28.830324+05	\N	berdi@gmail.com	t
 eb4d03d3-c201-49e6-867e-a7b6927a414c	Salam	+99363658741	$2a$14$ZB/2DyXxUCHOdWXb3PetceGK60tptU.OnQVxeioPyznRJcFXpahlG	\N	\N	2022-09-20 11:49:39.074906+05	2022-09-20 11:49:39.074906+05	\N	salam@gmail.com	t
+84b30e79-56d9-4b49-bc77-ccc8529d2355	Allanur Bayramgeldiyev	+99362420377	\N	\N	\N	2022-09-21 21:30:33.73897+05	2022-09-21 21:30:33.73897+05	\N	\N	f
 \.
 
 
@@ -958,6 +962,12 @@ af383593-cacb-4440-8144-4560c1887921	0d4a6c3c-cc5d-457b-ac9a-ce60eacb94de	upload
 --
 
 COPY public.ordered_products (id, product_id, quantity_of_product, order_id, created_at, updated_at, deleted_at) FROM stdin;
+777caf46-9fb8-46a8-808a-cd285ea11340	b2b165a3-2261-4d67-8160-0e239ecd99b5	12	3d29c94b-1869-4d4c-a94f-180a5c9eb614	2022-09-21 21:28:30.413438+05	2022-09-21 21:28:30.413438+05	\N
+e209c082-ae64-44c1-b235-9245a07cb79d	c866d5e4-284c-4bea-a94f-cc23f6c7e5d0	4	3d29c94b-1869-4d4c-a94f-180a5c9eb614	2022-09-21 21:28:30.437102+05	2022-09-21 21:28:30.437102+05	\N
+aadc04c7-879a-4363-b2e7-8a77f800ba3b	b2b165a3-2261-4d67-8160-0e239ecd99b5	12	9023a4c7-b1af-4595-873d-69310704af9a	2022-09-21 21:30:33.847089+05	2022-09-21 21:30:33.847089+05	\N
+36bbec99-00d1-4bed-82e5-19193a68faf9	c866d5e4-284c-4bea-a94f-cc23f6c7e5d0	4	9023a4c7-b1af-4595-873d-69310704af9a	2022-09-21 21:30:33.872884+05	2022-09-21 21:30:33.872884+05	\N
+fd331c32-277f-4aa7-b1b6-2a5369c4ceb1	b2b165a3-2261-4d67-8160-0e239ecd99b5	12	b40e3e13-fd2c-4f66-9d4d-0cce67410148	2022-09-21 21:31:12.180879+05	2022-09-21 21:31:12.180879+05	\N
+c6acd814-862d-4095-a8ce-c2554205fc94	c866d5e4-284c-4bea-a94f-cc23f6c7e5d0	4	b40e3e13-fd2c-4f66-9d4d-0cce67410148	2022-09-21 21:31:12.205043+05	2022-09-21 21:31:12.205043+05	\N
 \.
 
 
@@ -966,6 +976,9 @@ COPY public.ordered_products (id, product_id, quantity_of_product, order_id, cre
 --
 
 COPY public.orders (id, customer_id, customer_mark, order_time, payment_type, total_price, created_at, updated_at, deleted_at) FROM stdin;
+3d29c94b-1869-4d4c-a94f-180a5c9eb614	7e872c52-0d23-4086-8c45-43000b57332e	isleg market bet cykypdyr	12:00 - 16:00	nagt	1223.6	2022-09-21 21:28:30.39466+05	2022-09-21 21:28:30.39466+05	\N
+9023a4c7-b1af-4595-873d-69310704af9a	84b30e79-56d9-4b49-bc77-ccc8529d2355	isleg market bet cykypdyr	12:00 - 16:00	nagt	1223.6	2022-09-21 21:30:33.819728+05	2022-09-21 21:30:33.819728+05	\N
+b40e3e13-fd2c-4f66-9d4d-0cce67410148	84b30e79-56d9-4b49-bc77-ccc8529d2355	isleg market bet cykypdyr	12:00 - 16:00	nagt	1223.6	2022-09-21 21:31:12.154565+05	2022-09-21 21:31:12.154565+05	\N
 \.
 
 

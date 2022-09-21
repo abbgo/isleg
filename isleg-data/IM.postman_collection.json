@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "510657a9-6138-40f8-a390-aa394747ab75",
+		"_postman_id": "74d7bea8-3114-484f-a5e1-8c21b9d13a6f",
 		"name": "IM",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -4480,6 +4480,46 @@
 								"api",
 								"tm",
 								"payment-types"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Order",
+			"item": [
+				{
+					"name": "ToOrder",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NSIsImV4cCI6MTY2Mzc3OTQ5OH0.tztFWq0pxdCOFBF2tUpRYCntzNGQtiz2WBzWzDmyHoI",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"full_name\":\"Allanur Bayramgeldiyev\",\n    \"phone_number\":\"+99362420377\",\n    \"address\":\"Mir 2/2 jay 7 oy 36\",\n    \"customer_mark\":\"isleg market bet cykypdyr\",\n    \"order_time\":\"12:00 - 16:00\",\n    \"payment_type\":\"nagt\",\n    \"total_price\":1223.6,\n    \"products\":[\n        {\n            \"product_id\":\"b2b165a3-2261-4d67-8160-0e239ecd99b5\",\n            \"quantity_of_product\":12\n        },\n         {\n            \"product_id\":\"c866d5e4-284c-4bea-a94f-cc23f6c7e5d0\",\n            \"quantity_of_product\":4\n        }\n    ]\n\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:2406/api/tm/to-order",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"api",
+								"tm",
+								"to-order"
 							]
 						}
 					},
