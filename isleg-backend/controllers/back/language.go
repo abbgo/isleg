@@ -96,6 +96,36 @@ func CreateLanguage(c *gin.Context) {
 	}
 	defer resultPaymentType.Close()
 
+	resultTrMyOrderPage, err := db.Query("INSERT INTO translation_my_order_page (lang_id) VALUES ($1)", langID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer resultTrMyOrderPage.Close()
+
+	resultTrOrderPage, err := db.Query("INSERT INTO translation_order_page (lang_id) VALUES ($1)", langID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer resultTrOrderPage.Close()
+
+	resultTrBasketPage, err := db.Query("INSERT INTO translation_basket_page (lang_id) VALUES ($1)", langID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer resultTrBasketPage.Close()
+
 	// CREATE TRANSLATION HEADER
 	resultTrHeader, err := db.Query("INSERT INTO translation_header (lang_id) VALUES ($1)", langID)
 	if err != nil {
@@ -575,6 +605,46 @@ func DeleteLanguageByID(c *gin.Context) {
 	}
 	defer resutlTRLand.Close()
 
+	resultPaymentType, err := db.Query("UPDATE payment_types SET deleted_at = $1 WHERE lang_id = $2", currentTime, langID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer resultPaymentType.Close()
+
+	resultTrMyOrderPage, err := db.Query("UPDATE translation_my_order_page SET deleted_at = $1 WHERE lang_id = $2", currentTime, langID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer resultTrMyOrderPage.Close()
+
+	resultTrOrderPage, err := db.Query("UPDATE translation_order_page SET deleted_at = $1 WHERE lang_id = $2", currentTime, langID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer resultTrOrderPage.Close()
+
+	resultTrBasketPage, err := db.Query("UPDATE translation_basket_page SET deleted_at = $1 WHERE lang_id = $2", currentTime, langID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer resultTrBasketPage.Close()
+
 	resultTRHeader, err := db.Query("UPDATE translation_header SET deleted_at = $1 WHERE lang_id = $2", currentTime, langID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -765,6 +835,46 @@ func RestoreLanguageByID(c *gin.Context) {
 		return
 	}
 	defer resultLang.Close()
+
+	resultPaymentType, err := db.Query("UPDATE payment_types SET deleted_at = NULL WHERE lang_id = $1", langID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer resultPaymentType.Close()
+
+	resultTrMyOrderPage, err := db.Query("UPDATE translation_my_order_page SET deleted_at = NULL WHERE lang_id = $1", langID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer resultTrMyOrderPage.Close()
+
+	resultTrBasketPage, err := db.Query("UPDATE translation_basket_page SET deleted_at = NULL WHERE lang_id = $1", langID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer resultTrBasketPage.Close()
+
+	resultTrOrderPage, err := db.Query("UPDATE translation_order_page SET deleted_at = NULL WHERE lang_id = $1", langID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer resultTrOrderPage.Close()
 
 	resultTRHeader, err := db.Query("UPDATE translation_header SET deleted_at = NULL WHERE lang_id = $1", langID)
 	if err != nil {
