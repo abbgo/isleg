@@ -86,6 +86,16 @@ func CreateLanguage(c *gin.Context) {
 		}
 	}
 
+	resultPaymentType, err := db.Query("INSERT INTO payment_types (lang_id) VALUES ($1)", langID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer resultPaymentType.Close()
+
 	// CREATE TRANSLATION HEADER
 	resultTrHeader, err := db.Query("INSERT INTO translation_header (lang_id) VALUES ($1)", langID)
 	if err != nil {
