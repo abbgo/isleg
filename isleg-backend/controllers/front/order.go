@@ -71,7 +71,7 @@ func ToOrder(c *gin.Context) {
 
 	if customerPhoneNumber != "" {
 
-		resultCustomerAddres, err := db.Query("INSERT INTO customer_address (customer_id,address,is_active) VALUES ($1,$2,$3)", customerID, order.Address, false)
+		rowsCustomerAddress, err := db.Query("SELECT address FROM customer_address WHERE customer_id = $1 AND address = $2 AND deleted_at IS NULL", customerID, order.Address)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
@@ -79,7 +79,33 @@ func ToOrder(c *gin.Context) {
 			})
 			return
 		}
-		defer resultCustomerAddres.Close()
+		defer rowsCustomerAddress.Close()
+
+		var customerAddress string
+
+		for rowsCustomerAddress.Next() {
+			if err := rowsCustomerAddress.Scan(&customerAddress); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}
+
+		if customerAddress == "" {
+
+			resultCustomerAddres, err := db.Query("INSERT INTO customer_address (customer_id,address,is_active) VALUES ($1,$2,$3)", customerID, order.Address, false)
+			if err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+			defer resultCustomerAddres.Close()
+
+		}
 
 	} else {
 

@@ -235,7 +235,10 @@ func Routes() *gin.Engine {
 			securedCustomer.POST("/to-order", frontController.ToOrder)
 
 			// get customer orders
-			securedCustomer.GET("/get-orders/:customer_id", frontController.GetCustomerOrders)
+			securedCustomer.GET("/orders/:customer_id", frontController.GetCustomerOrders)
+
+			// get customer orders
+			securedCustomer.GET("/addresses/:customer_id", frontController.GetCustomerAddresses)
 
 		}
 
