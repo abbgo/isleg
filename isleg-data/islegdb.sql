@@ -317,6 +317,37 @@ CREATE TABLE public.main_image (
 ALTER TABLE public.main_image OWNER TO postgres;
 
 --
+-- Name: order_dates; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.order_dates (
+    id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
+    date timestamp with time zone,
+    created_at timestamp with time zone DEFAULT now(),
+    updated_at timestamp with time zone DEFAULT now(),
+    deleted_at timestamp with time zone
+);
+
+
+ALTER TABLE public.order_dates OWNER TO postgres;
+
+--
+-- Name: order_times; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.order_times (
+    id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
+    order_date_id uuid,
+    "time" character varying,
+    created_at timestamp with time zone DEFAULT now(),
+    updated_at timestamp with time zone DEFAULT now(),
+    deleted_at timestamp with time zone
+);
+
+
+ALTER TABLE public.order_times OWNER TO postgres;
+
+--
 -- Name: ordered_products; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -958,6 +989,25 @@ af383593-cacb-4440-8144-4560c1887921	0d4a6c3c-cc5d-457b-ac9a-ce60eacb94de	upload
 
 
 --
+-- Data for Name: order_dates; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.order_dates (id, date, created_at, updated_at, deleted_at) FROM stdin;
+d2275bde-5967-4a75-b6e5-55cd84679723	2022-12-26 00:00:00+05	2022-09-26 17:44:02.675667+05	2022-09-26 17:44:02.675667+05	\N
+\.
+
+
+--
+-- Data for Name: order_times; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.order_times (id, order_date_id, "time", created_at, updated_at, deleted_at) FROM stdin;
+89a18569-b115-433f-8ef7-88bf6e74855c	d2275bde-5967-4a75-b6e5-55cd84679723	12:00 - 15:00	2022-09-26 17:44:02.703448+05	2022-09-26 17:44:02.703448+05	\N
+a0f46117-5891-4622-9b7b-b074dc94666c	d2275bde-5967-4a75-b6e5-55cd84679723	16:00 - 19:00	2022-09-26 17:44:02.703448+05	2022-09-26 17:44:02.703448+05	\N
+\.
+
+
+--
 -- Data for Name: ordered_products; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -1346,6 +1396,22 @@ ALTER TABLE ONLY public.likes
 
 ALTER TABLE ONLY public.main_image
     ADD CONSTRAINT main_image_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: order_dates order_dates_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.order_dates
+    ADD CONSTRAINT order_dates_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: order_times order_times_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.order_times
+    ADD CONSTRAINT order_times_pkey PRIMARY KEY (id);
 
 
 --
@@ -1770,6 +1836,14 @@ ALTER TABLE ONLY public.translation_order_page
 
 ALTER TABLE ONLY public.payment_types
     ADD CONSTRAINT languages_payment_types FOREIGN KEY (lang_id) REFERENCES public.languages(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: order_times order_dates_order_times; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.order_times
+    ADD CONSTRAINT order_dates_order_times FOREIGN KEY (order_date_id) REFERENCES public.order_dates(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --

@@ -4585,6 +4585,50 @@
 					"response": []
 				}
 			]
+		},
+		{
+			"name": "OrderDatesAndTimes",
+			"item": [
+				{
+					"name": "CreateOrderTime",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "date",
+									"value": "2022-12-26",
+									"type": "default"
+								},
+								{
+									"key": "times",
+									"value": "12:00 - 15:00",
+									"type": "default"
+								},
+								{
+									"key": "times",
+									"value": "16:00 - 19:00",
+									"type": "default"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:2406/admin/order-time",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"admin",
+								"order-time"
+							]
+						}
+					},
+					"response": []
+				}
+			]
 		}
 	]
 }
