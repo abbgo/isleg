@@ -42,6 +42,8 @@ func Routes() *gin.Engine {
 		back.PUT("/company-setting", backController.UpdateCompanySetting)
 		back.GET("/company-setting", backController.GetCompanySetting)
 
+		back.POST("/order-time", backController.CreateOrderTime)
+
 		back.POST("/translation-header", backController.CreateTranslationHeader)
 		back.PUT("/translation-header/:id", backController.UpdateTranslationHeaderByID)
 		back.GET("/translation-header/:id", backController.GetTranslationHeaderByID)
