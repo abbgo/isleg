@@ -4599,17 +4599,27 @@
 							"formdata": [
 								{
 									"key": "date",
-									"value": "2022-12-26",
+									"value": "tomorrow",
 									"type": "default"
 								},
 								{
 									"key": "times",
-									"value": "12:00 - 15:00",
+									"value": "09:00 - 12:00",
 									"type": "default"
 								},
 								{
 									"key": "times",
-									"value": "16:00 - 19:00",
+									"value": "18:00 - 21:00",
+									"type": "default"
+								},
+								{
+									"key": "translation_date_tm",
+									"value": "Ertir",
+									"type": "default"
+								},
+								{
+									"key": "translation_date_ru",
+									"value": "Завтра",
 									"type": "default"
 								}
 							]
@@ -4622,6 +4632,26 @@
 							"port": "2406",
 							"path": [
 								"admin",
+								"order-time"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetOrderTime",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:2406/api/tm/order-time",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"api",
+								"tm",
 								"order-time"
 							]
 						}
