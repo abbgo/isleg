@@ -42,14 +42,6 @@ func main() {
 	os.Mkdir("./uploads", os.ModePerm)
 	r.Static("/uploads", "./uploads")
 
-	// test
-	// stringDate := "12:00"
-	// date, err := time.Parse("2006-01-02 00:00:00 +0000 UTC", stringDate)
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-	// fmt.Println(date)
-
 	// run routes
 	if err := r.Run(":2406"); err != nil {
 		log.Fatal(err)

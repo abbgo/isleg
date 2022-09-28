@@ -22,10 +22,21 @@ func CreateOrderTime(c *gin.Context) {
 	}
 	defer db.Close()
 
+	languages, err := GetAllLanguageWithIDAndNameShort()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
 	date := c.PostForm("date")
 	times := c.PostFormArray("times")
 
-	if err := models.ValidateOrderDateAndTime(date, times); err != nil {
+	dataNames := []string{"translation_date"}
+
+	if err := models.ValidateOrderDateAndTime(date, times, languages, dataNames, c); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
 			"message": err.Error(),
@@ -79,11 +90,24 @@ func CreateOrderTime(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
 			"message": err.Error(),
-			// "message": "yalnmys bar",
 		})
 		return
 	}
 	defer resultOrderTimes.Close()
+
+	for _, v := range languages {
+
+		resultTrOrderDates, err := db.Query("INSERT INTO translation_order_dates (lang_id,order_date_id,date) VALUES ($1,$2,$3)", v.ID, lastID, c.PostForm("translation_date_"+v.NameShort))
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+		defer resultTrOrderDates.Close()
+
+	}
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
