@@ -207,6 +207,9 @@ func Routes() *gin.Engine {
 		// // get one category with products
 		front.GET("/:category_id/:limit/:page", backController.GetOneCategoryWithProducts)
 
+		// get order time
+		front.GET("/order-time", backController.GetOrderTime)
+
 		securedCustomer := front.Group("/").Use(middlewares.Auth())
 		{
 			// get my information page translation
