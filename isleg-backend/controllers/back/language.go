@@ -12,6 +12,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	"github.com/lib/pq"
 )
 
 type LanguageForHeader struct {
@@ -95,6 +96,42 @@ func CreateLanguage(c *gin.Context) {
 		return
 	}
 	defer resultPaymentType.Close()
+
+	rowsOrderDateID, err := db.Query("SELECT id FROM order_dates WHERE deleted_at IS NULL")
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer rowsOrderDateID.Close()
+
+	var orderDateIDs []string
+
+	for rowsOrderDateID.Next() {
+		var orderDateID string
+
+		if err := rowsOrderDateID.Scan(&orderDateID); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+
+		orderDateIDs = append(orderDateIDs, orderDateID)
+	}
+
+	resultTrOrderDates, err := db.Query("INSERT INTO translation_order_dates (lang_id,order_date_id) VALUES ($1,unnest($2::uuid[]))", langID, pq.Array(orderDateIDs))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer resultTrOrderDates.Close()
 
 	resultTrMyOrderPage, err := db.Query("INSERT INTO translation_my_order_page (lang_id) VALUES ($1)", langID)
 	if err != nil {
@@ -615,6 +652,16 @@ func DeleteLanguageByID(c *gin.Context) {
 	}
 	defer resultPaymentType.Close()
 
+	resultTrOrderDates, err := db.Query("UPDATE translation_order_dates SET deleted_at = $1 WHERE lang_id = $2", currentTime, langID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer resultTrOrderDates.Close()
+
 	resultTrMyOrderPage, err := db.Query("UPDATE translation_my_order_page SET deleted_at = $1 WHERE lang_id = $2", currentTime, langID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -845,6 +892,16 @@ func RestoreLanguageByID(c *gin.Context) {
 		return
 	}
 	defer resultPaymentType.Close()
+
+	resultOrderDates, err := db.Query("UPDATE translation_order_dates SET deleted_at = NULL WHERE lang_id = $1", langID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer resultOrderDates.Close()
 
 	resultTrMyOrderPage, err := db.Query("UPDATE translation_my_order_page SET deleted_at = NULL WHERE lang_id = $1", langID)
 	if err != nil {
