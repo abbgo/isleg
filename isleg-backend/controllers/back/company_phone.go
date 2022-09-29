@@ -4,6 +4,7 @@ import (
 	"github/abbgo/isleg/isleg-backend/config"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -33,22 +34,30 @@ func CreateCompanyPhone(c *gin.Context) {
 		return
 	}
 
-	_, err = strconv.Atoi(phone)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
+	trimPhone := strings.Trim(phone, "+")
+
+	phones := strings.Split(trimPhone, " ")
+
+	for _, v := range phones {
+
+		_, err = strconv.Atoi(v)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+
 	}
 
-	if len(phone) != 8 {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": "the length of the phone number must be 8",
-		})
-		return
-	}
+	// if len(phone) != 8 {
+	// 	c.JSON(http.StatusBadRequest, gin.H{
+	// 		"status":  false,
+	// 		"message": "the length of the phone number must be 8",
+	// 	})
+	// 	return
+	// }
 
 	// create company phone
 	resultComPhone, err := db.Query("INSERT INTO company_phone (phone) VALUES ($1)", phone)
