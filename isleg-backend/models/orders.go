@@ -9,6 +9,7 @@ type Orders struct {
 	OrderTime    string    `json:"order_time"`
 	PaymentType  string    `json:"payment_type"`
 	TotalPrice   float64   `json:"total_price"`
+	OrderNumber  uint      `json:"order_number"`
 	UpdatedAt    string    `json:"-"`
 	DeletedAt    string    `json:"-"`
 }
