@@ -377,11 +377,34 @@ CREATE TABLE public.orders (
     total_price character varying,
     created_at timestamp with time zone DEFAULT now(),
     updated_at timestamp with time zone DEFAULT now(),
-    deleted_at timestamp with time zone
+    deleted_at timestamp with time zone,
+    order_number integer NOT NULL
 );
 
 
 ALTER TABLE public.orders OWNER TO postgres;
+
+--
+-- Name: orders_order_number_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.orders_order_number_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.orders_order_number_seq OWNER TO postgres;
+
+--
+-- Name: orders_order_number_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.orders_order_number_seq OWNED BY public.orders.order_number;
+
 
 --
 -- Name: payment_types; Type: TABLE; Schema: public; Owner: postgres
@@ -764,6 +787,13 @@ CREATE TABLE public.translation_update_password_page (
 ALTER TABLE public.translation_update_password_page OWNER TO postgres;
 
 --
+-- Name: orders order_number; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.orders ALTER COLUMN order_number SET DEFAULT nextval('public.orders_order_number_seq'::regclass);
+
+
+--
 -- Data for Name: afisa; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -888,6 +918,7 @@ d2c66808-e5fe-435f-ba01-cb717f80d9e0	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	adres_
 --
 
 COPY public.company_phone (id, phone, created_at, updated_at, deleted_at) FROM stdin;
+96c30e15-274c-49a0-bcc5-e2f8deac248f	+993 12 227475	2022-09-29 12:49:06.569246+05	2022-09-29 12:49:06.569246+05	\N
 \.
 
 
@@ -1040,6 +1071,16 @@ e209c082-ae64-44c1-b235-9245a07cb79d	c866d5e4-284c-4bea-a94f-cc23f6c7e5d0	4	3d29
 17685559-6510-4f87-92dc-8e3e5ad339e2	8df705a5-2351-4aca-b03e-3357a23840b4	3	e9b43b21-2947-4c41-95e6-1b81d925996b	2022-09-22 14:27:08.855567+05	2022-09-22 14:27:08.855567+05	\N
 f4f79932-6d84-43d7-a4dd-aa6a64588f48	d4156225-082e-4f0f-9b2c-85268114433a	25	9f1f4526-7ee7-4347-96fc-6fb97c1b402a	2022-09-22 14:45:46.407399+05	2022-09-22 14:45:46.407399+05	\N
 982165f4-c3fa-4922-9d42-9d28b138b438	81b84c5d-9759-4b86-978a-649c8ef79660	3	9f1f4526-7ee7-4347-96fc-6fb97c1b402a	2022-09-22 14:45:46.419832+05	2022-09-22 14:45:46.419832+05	\N
+336647b9-abd9-4a2a-a145-9e4326bdcc76	d4156225-082e-4f0f-9b2c-85268114433a	25	7728fdeb-e871-414d-b5fd-d57ee59e879c	2022-09-29 14:05:14.80837+05	2022-09-29 14:05:14.80837+05	\N
+c8a62bf5-9dfc-4aef-bdfe-8b17913d770c	81b84c5d-9759-4b86-978a-649c8ef79660	3	7728fdeb-e871-414d-b5fd-d57ee59e879c	2022-09-29 14:05:14.853259+05	2022-09-29 14:05:14.853259+05	\N
+7929584a-340c-4ec1-bb0c-8c7d9f858559	d4156225-082e-4f0f-9b2c-85268114433a	25	8930edc5-7b9e-4cef-ac58-97bc8261df3a	2022-09-29 14:06:29.698335+05	2022-09-29 14:06:29.698335+05	\N
+93bcf413-e45b-4903-ac39-a444b627d325	81b84c5d-9759-4b86-978a-649c8ef79660	3	8930edc5-7b9e-4cef-ac58-97bc8261df3a	2022-09-29 14:06:29.710636+05	2022-09-29 14:06:29.710636+05	\N
+af266256-496c-4f52-849f-ff3471ed3afd	d4156225-082e-4f0f-9b2c-85268114433a	25	3a8f977f-2eb9-4a4a-9bb1-51cd9a5a4fe6	2022-09-29 14:06:57.843088+05	2022-09-29 14:06:57.843088+05	\N
+c2b3ead0-63ff-4161-b16b-f6cded8b8a88	81b84c5d-9759-4b86-978a-649c8ef79660	3	3a8f977f-2eb9-4a4a-9bb1-51cd9a5a4fe6	2022-09-29 14:06:57.854411+05	2022-09-29 14:06:57.854411+05	\N
+4d7aca2c-6b2b-49bc-a86b-949f12dfa59a	d4156225-082e-4f0f-9b2c-85268114433a	25	7b0af658-e230-405d-a1ed-718f52973eb2	2022-09-29 14:08:09.999618+05	2022-09-29 14:08:09.999618+05	\N
+4ae25fa7-04df-43d1-82bd-7f7b91df4252	81b84c5d-9759-4b86-978a-649c8ef79660	3	7b0af658-e230-405d-a1ed-718f52973eb2	2022-09-29 14:08:10.011834+05	2022-09-29 14:08:10.011834+05	\N
+97cfde5b-1e67-486e-b81a-9818bb5a1e6e	d4156225-082e-4f0f-9b2c-85268114433a	25	68c886f4-c005-4a22-9219-f643577d0a62	2022-09-29 14:08:56.71182+05	2022-09-29 14:08:56.71182+05	\N
+155ce965-827a-48cc-8b79-1fea6b971919	81b84c5d-9759-4b86-978a-649c8ef79660	3	68c886f4-c005-4a22-9219-f643577d0a62	2022-09-29 14:08:56.723832+05	2022-09-29 14:08:56.723832+05	\N
 \.
 
 
@@ -1047,11 +1088,16 @@ f4f79932-6d84-43d7-a4dd-aa6a64588f48	d4156225-082e-4f0f-9b2c-85268114433a	25	9f1
 -- Data for Name: orders; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.orders (id, customer_id, customer_mark, order_time, payment_type, total_price, created_at, updated_at, deleted_at) FROM stdin;
-3d29c94b-1869-4d4c-a94f-180a5c9eb614	7e872c52-0d23-4086-8c45-43000b57332e	isleg market bet cykypdyr	12:00 - 16:00	nagt	1223.6	2022-09-21 21:28:30.39466+05	2022-09-21 21:28:30.39466+05	\N
-ef468ad0-747b-4c12-a195-c72b9f19dc84	89a6ac71-4495-4218-b9f9-3f2a3eab085b	isleg market bet cykypdyr	12:00 - 16:00	nagt	1223.6	2022-09-22 12:54:24.199845+05	2022-09-22 12:54:24.199845+05	\N
-e9b43b21-2947-4c41-95e6-1b81d925996b	89a6ac71-4495-4218-b9f9-3f2a3eab085b	isleg market bet cykypdyr	12:00 - 16:00	nagt	1788	2022-09-22 14:27:08.833782+05	2022-09-22 14:27:08.833782+05	\N
-9f1f4526-7ee7-4347-96fc-6fb97c1b402a	89a6ac71-4495-4218-b9f9-3f2a3eab085b	isleg market bet cykypdyr	12:00 - 16:00	nagt	1788	2022-09-22 14:45:46.386254+05	2022-09-22 14:45:46.386254+05	\N
+COPY public.orders (id, customer_id, customer_mark, order_time, payment_type, total_price, created_at, updated_at, deleted_at, order_number) FROM stdin;
+3d29c94b-1869-4d4c-a94f-180a5c9eb614	7e872c52-0d23-4086-8c45-43000b57332e	isleg market bet cykypdyr	12:00 - 16:00	nagt	1223.6	2022-09-21 21:28:30.39466+05	2022-09-21 21:28:30.39466+05	\N	1
+ef468ad0-747b-4c12-a195-c72b9f19dc84	89a6ac71-4495-4218-b9f9-3f2a3eab085b	isleg market bet cykypdyr	12:00 - 16:00	nagt	1223.6	2022-09-22 12:54:24.199845+05	2022-09-22 12:54:24.199845+05	\N	2
+e9b43b21-2947-4c41-95e6-1b81d925996b	89a6ac71-4495-4218-b9f9-3f2a3eab085b	isleg market bet cykypdyr	12:00 - 16:00	nagt	1788	2022-09-22 14:27:08.833782+05	2022-09-22 14:27:08.833782+05	\N	3
+9f1f4526-7ee7-4347-96fc-6fb97c1b402a	89a6ac71-4495-4218-b9f9-3f2a3eab085b	isleg market bet cykypdyr	12:00 - 16:00	nagt	1788	2022-09-22 14:45:46.386254+05	2022-09-22 14:45:46.386254+05	\N	4
+7728fdeb-e871-414d-b5fd-d57ee59e879c	89a6ac71-4495-4218-b9f9-3f2a3eab085b	isleg market bet cykypdyr	12:00 - 16:00	nagt	1788	2022-09-29 14:05:14.735068+05	2022-09-29 14:05:14.735068+05	\N	5
+8930edc5-7b9e-4cef-ac58-97bc8261df3a	89a6ac71-4495-4218-b9f9-3f2a3eab085b	isleg market bet cykypdyr	12:00 - 16:00	nagt	1788	2022-09-29 14:06:29.676335+05	2022-09-29 14:06:29.676335+05	\N	6
+3a8f977f-2eb9-4a4a-9bb1-51cd9a5a4fe6	89a6ac71-4495-4218-b9f9-3f2a3eab085b	isleg market bet cykypdyr	12:00 - 16:00	nagt	1788	2022-09-29 14:06:57.81957+05	2022-09-29 14:06:57.81957+05	\N	7
+7b0af658-e230-405d-a1ed-718f52973eb2	89a6ac71-4495-4218-b9f9-3f2a3eab085b	isleg market bet cykypdyr	12:00 - 16:00	nagt	1788	2022-09-29 14:08:09.972501+05	2022-09-29 14:08:09.972501+05	\N	8
+68c886f4-c005-4a22-9219-f643577d0a62	89a6ac71-4495-4218-b9f9-3f2a3eab085b	isleg market bet cykypdyr	12:00 - 16:00	nagt	1788	2022-09-29 14:08:56.681211+05	2022-09-29 14:08:56.681211+05	\N	9
 \.
 
 
@@ -1292,6 +1338,13 @@ COPY public.translation_update_password_page (id, lang_id, title, verify_passwor
 5190ca93-7007-4db4-8105-65cc3b1af868	aea98b93-7bdf-455b-9ad4-a259d69dc76e	изменить пароль	Подтвердить Пароль	ключевое слово должно быть буквой или цифрой длиной от 5 до 20	запомнить	2022-07-05 10:35:08.984141+05	2022-07-05 10:35:08.984141+05	\N	ключевое слово
 de12082b-baab-4b83-ac07-119df09d1230	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	açar sözi üýtgetmek	açar sözi tassykla	siziň açar sözüňiz 5-20 uzynlygynda harp ýa-da sandan ybarat bolmalydyr	ýatda sakla	2022-07-05 10:35:08.867617+05	2022-07-05 10:35:08.867617+05	\N	açar sözi
 \.
+
+
+--
+-- Name: orders_order_number_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.orders_order_number_seq', 9, true);
 
 
 --

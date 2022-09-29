@@ -1432,7 +1432,7 @@
 							"formdata": [
 								{
 									"key": "phone",
-									"value": "61899737",
+									"value": "+993 12 227475",
 									"type": "default"
 								}
 							]
@@ -4497,7 +4497,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NSIsImV4cCI6MTY2Mzg0MTczN30.4vbGmSILYsYqwHaeYi5_Fub2HVf-mn9fwhTTMQ6IFCA",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NSIsImV4cCI6MTY2NDQ0NDA5N30.jCwkQ7dt-0FFnkMZ-Ui_92NI7Yg9Lf66AHVuiUauAyA",
 								"type": "default"
 							}
 						],
@@ -4532,7 +4532,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NSIsImV4cCI6MTY2Mzg0MTczN30.4vbGmSILYsYqwHaeYi5_Fub2HVf-mn9fwhTTMQ6IFCA",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NSIsImV4cCI6MTY2NDQzMjc1NH0.lOcKtpKyjXACvk5-VD213k7tYYMnJuaGjK72WOerZE8",
 								"type": "default"
 							}
 						],
