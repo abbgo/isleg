@@ -8,7 +8,6 @@ import (
 	"log"
 	"net/http"
 	"strconv"
-	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/xuri/excelize/v2"
@@ -308,7 +307,7 @@ func ToOrder(c *gin.Context) {
 		}
 	}
 
-	rowOrder, err := db.Query("SELECT order_number,TO_CHAR(created_at,'DD.MM.YYYY HH:MM'),order_time,customer_mark,total_price,payment_type FROM orders WHERE id = $1 AND deleted_at IS NULL", order_id)
+	rowOrder, err := db.Query("SELECT order_number,TO_CHAR(created_at,'DD.MM.YYYY HH24:MI'),order_time,customer_mark,total_price,payment_type FROM orders WHERE id = $1 AND deleted_at IS NULL", order_id)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -344,28 +343,6 @@ func ToOrder(c *gin.Context) {
 
 	for rowsCustomer.Next() {
 		if err := rowsCustomer.Scan(&customerName, &customerPhone); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}
-
-	rowCustomerAddresses, err := db.Query("SELECT address FROM customer_address WHERE customer_id = $1 AND is_active = true AND deleted_at IS NULL", customerID)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-	defer rowCustomerAddresses.Close()
-
-	var customerSalgy string
-
-	for rowCustomerAddresses.Next() {
-		if err := rowCustomerAddresses.Scan(&customerSalgy); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
@@ -477,7 +454,7 @@ func ToOrder(c *gin.Context) {
 	f.SetCellValue("Лист1", "a6", "Sargyt No: "+strconv.Itoa(sargyt.OrderNumber))
 	f.SetCellValue("Лист1", "a9", "Ady: "+customerName)
 	f.SetCellValue("Лист1", "a10", "Telefon nomer: "+customerPhone)
-	f.SetCellValue("Лист1", "a11", "Salgy: "+customerSalgy)
+	f.SetCellValue("Лист1", "a11", "Salgy: "+order.Address)
 	f.SetCellValue("Лист1", "a12", "Bellik: "+sargyt.CustomerMark)
 	f.SetCellValue("Лист1", "B9", "Sargyt edilen senesi: "+sargyt.CreatedAt)
 	f.SetCellValue("Лист1", "b10", "Eltip bermeli wagty: "+sargyt.OrderTime)
@@ -555,6 +532,8 @@ func ToOrder(c *gin.Context) {
 
 	}
 
+	var totalPrice float64 = 0
+
 	for k, v2 := range products {
 
 		f.SetCellValue("Лист1", "a"+strconv.Itoa(16+k), v2.Name)
@@ -563,11 +542,15 @@ func ToOrder(c *gin.Context) {
 		f.SetCellValue("Лист1", "d"+strconv.Itoa(16+k), v2.Price)
 		f.SetCellValue("Лист1", "e"+strconv.Itoa(16+k), float64(v2.Amount)*v2.Price)
 
+		totalPrice = totalPrice + float64(v2.Amount)*v2.Price
+
 	}
 
-	fileName := time.Now().UnixMilli()
+	f.SetCellValue("Лист1", "d20", totalPrice)
 
-	if err := f.SaveAs("./uploads/orders/" + strconv.Itoa(int(fileName)) + ".xlsx"); err != nil {
+	// fileName := time.Now().UnixMilli()
+
+	if err := f.SaveAs("./uploads/orders/" + strconv.Itoa(int(sargyt.OrderNumber)) + ".xlsx"); err != nil {
 		fmt.Println(err)
 	}
 
