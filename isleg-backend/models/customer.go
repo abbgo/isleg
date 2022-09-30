@@ -7,22 +7,21 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/lib/pq"
 	"golang.org/x/crypto/bcrypt"
 )
 
 type Customer struct {
-	ID          uuid.UUID      `json:"id"`
-	FullName    string         `json:"full_name" binding:"required,min=3"`
-	PhoneNumber string         `json:"phone_number" binding:"required,e164,len=12"`
-	Password    string         `json:"password" binding:"required,min=5,max=25"`
-	Birthday    time.Time      `json:"birthday"`
-	Gender      string         `json:"gender"`
-	Addresses   pq.StringArray `json:"addresses"`
-	Email       string         `json:"email" binding:"email"`
-	CreatedAt   string         `json:"-"`
-	UpdatedAt   string         `json:"-"`
-	DeletedAt   string         `json:"-"`
+	ID          uuid.UUID `json:"id"`
+	FullName    string    `json:"full_name" binding:"required,min=3"`
+	PhoneNumber string    `json:"phone_number" binding:"required,e164,len=12"`
+	Password    string    `json:"password" binding:"required,min=5,max=25"`
+	Birthday    time.Time `json:"birthday"`
+	Gender      string    `json:"gender"`
+	Email       string    `json:"email" binding:"email"`
+	IsRegister  bool      `json:"is_register"`
+	CreatedAt   string    `json:"-"`
+	UpdatedAt   string    `json:"-"`
+	DeletedAt   string    `json:"-"`
 }
 
 func HashPassword(password string) (string, error) {
@@ -55,7 +54,7 @@ func ValidateCustomerRegister(phoneNumber, email string) error {
 			return errors.New("phone number must start with +993")
 		}
 
-		row, err := db.Query("SELECT phone_number FROM customers WHERE phone_number = $1 AND deleted_at IS NULL", phoneNumber)
+		row, err := db.Query("SELECT phone_number FROM customers WHERE phone_number = $1 AND is_register = true AND deleted_at IS NULL", phoneNumber)
 		if err != nil {
 			return err
 		}
@@ -74,7 +73,7 @@ func ValidateCustomerRegister(phoneNumber, email string) error {
 	}
 
 	if email != "" {
-		rowEmail, err := db.Query("SELECT email FROM customers WHERE email = $1 AND deleted_at IS NULL", email)
+		rowEmail, err := db.Query("SELECT email FROM customers WHERE email = $1 AND is_register = true AND deleted_at IS NULL", email)
 		if err != nil {
 			return err
 		}

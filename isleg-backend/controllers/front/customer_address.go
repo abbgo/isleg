@@ -1,0 +1,90 @@
+package controllers
+
+import (
+	"github/abbgo/isleg/isleg-backend/config"
+	"github/abbgo/isleg/isleg-backend/models"
+	"net/http"
+
+	"github.com/gin-gonic/gin"
+)
+
+func GetCustomerAddresses(c *gin.Context) {
+
+	db, err := config.ConnDB()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer db.Close()
+
+	customerID := c.Param("customer_id")
+
+	rowCustomer, err := db.Query("SELECT id FROM customers WHERE id = $1 AND is_register = true AND deleted_at IS NULL", customerID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer rowCustomer.Close()
+
+	var customer_id string
+
+	for rowCustomer.Next() {
+		if err := rowCustomer.Scan(&customer_id); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}
+
+	if customer_id == "" {
+		if err := rowCustomer.Scan(&customer_id); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": "customer not found",
+			})
+			return
+		}
+	}
+
+	rowsAddress, err := db.Query("SELECT address,is_active FROM customer_address WHERE customer_id = $1 AND deleted_at IS NULL", customerID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer rowsAddress.Close()
+
+	var addresses []models.CustomerAddress
+
+	for rowsAddress.Next() {
+
+		var address models.CustomerAddress
+
+		if err := rowsAddress.Scan(&address.Address, &address.IsActive); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+
+		addresses = append(addresses, address)
+
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":             true,
+		"customer_addresses": addresses,
+	})
+
+}

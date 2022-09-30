@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 14.4 (Ubuntu 14.4-1.pgdg20.04+1)
--- Dumped by pg_dump version 14.4 (Ubuntu 14.4-1.pgdg20.04+1)
+-- Dumped from database version 12.12 (Ubuntu 12.12-0ubuntu0.20.04.1)
+-- Dumped by pg_dump version 12.12 (Ubuntu 12.12-0ubuntu0.20.04.1)
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -197,6 +197,23 @@ CREATE TABLE public.company_setting (
 ALTER TABLE public.company_setting OWNER TO postgres;
 
 --
+-- Name: customer_address; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.customer_address (
+    id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
+    customer_id uuid,
+    address character varying,
+    created_at timestamp with time zone DEFAULT now(),
+    updated_at timestamp with time zone DEFAULT now(),
+    deleted_at timestamp with time zone,
+    is_active boolean DEFAULT true
+);
+
+
+ALTER TABLE public.customer_address OWNER TO postgres;
+
+--
 -- Name: customers; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -207,11 +224,11 @@ CREATE TABLE public.customers (
     password character varying,
     birthday date,
     gender character varying,
-    addresses character varying[],
     created_at timestamp with time zone DEFAULT now(),
     updated_at timestamp with time zone DEFAULT now(),
     deleted_at timestamp with time zone,
-    email character varying
+    email character varying,
+    is_register boolean DEFAULT true
 );
 
 
@@ -298,6 +315,112 @@ CREATE TABLE public.main_image (
 
 
 ALTER TABLE public.main_image OWNER TO postgres;
+
+--
+-- Name: order_dates; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.order_dates (
+    id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
+    date character varying,
+    created_at timestamp with time zone DEFAULT now(),
+    updated_at timestamp with time zone DEFAULT now(),
+    deleted_at timestamp with time zone
+);
+
+
+ALTER TABLE public.order_dates OWNER TO postgres;
+
+--
+-- Name: order_times; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.order_times (
+    id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
+    order_date_id uuid,
+    "time" character varying,
+    created_at timestamp with time zone DEFAULT now(),
+    updated_at timestamp with time zone DEFAULT now(),
+    deleted_at timestamp with time zone
+);
+
+
+ALTER TABLE public.order_times OWNER TO postgres;
+
+--
+-- Name: ordered_products; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.ordered_products (
+    id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
+    product_id uuid,
+    quantity_of_product integer,
+    order_id uuid,
+    created_at timestamp with time zone DEFAULT now(),
+    updated_at timestamp with time zone DEFAULT now(),
+    deleted_at timestamp with time zone
+);
+
+
+ALTER TABLE public.ordered_products OWNER TO postgres;
+
+--
+-- Name: orders; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.orders (
+    id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
+    customer_id uuid,
+    customer_mark character varying,
+    order_time character varying,
+    payment_type character varying,
+    total_price character varying,
+    created_at timestamp with time zone DEFAULT now(),
+    updated_at timestamp with time zone DEFAULT now(),
+    deleted_at timestamp with time zone,
+    order_number integer NOT NULL
+);
+
+
+ALTER TABLE public.orders OWNER TO postgres;
+
+--
+-- Name: orders_order_number_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.orders_order_number_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.orders_order_number_seq OWNER TO postgres;
+
+--
+-- Name: orders_order_number_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.orders_order_number_seq OWNED BY public.orders.order_number;
+
+
+--
+-- Name: payment_types; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.payment_types (
+    id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
+    lang_id uuid,
+    type character varying DEFAULT 'uytget'::character varying,
+    created_at timestamp with time zone DEFAULT now(),
+    updated_at timestamp with time zone DEFAULT now(),
+    deleted_at timestamp with time zone
+);
+
+
+ALTER TABLE public.payment_types OWNER TO postgres;
 
 --
 -- Name: products; Type: TABLE; Schema: public; Owner: postgres
@@ -390,7 +513,8 @@ CREATE TABLE public.translation_basket_page (
     your_basket character varying DEFAULT 'uytget'::character varying,
     created_at timestamp with time zone DEFAULT now(),
     updated_at timestamp with time zone DEFAULT now(),
-    deleted_at timestamp with time zone
+    deleted_at timestamp with time zone,
+    empty_the_basket character varying DEFAULT 'uytget'::character varying
 );
 
 
@@ -550,6 +674,23 @@ CREATE TABLE public.translation_my_order_page (
 ALTER TABLE public.translation_my_order_page OWNER TO postgres;
 
 --
+-- Name: translation_order_dates; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.translation_order_dates (
+    id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
+    lang_id uuid,
+    order_date_id uuid,
+    date character varying DEFAULT 'uytget'::character varying,
+    created_at timestamp with time zone DEFAULT now(),
+    updated_at timestamp with time zone DEFAULT now(),
+    deleted_at timestamp with time zone
+);
+
+
+ALTER TABLE public.translation_order_dates OWNER TO postgres;
+
+--
 -- Name: translation_order_page; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -646,6 +787,13 @@ CREATE TABLE public.translation_update_password_page (
 ALTER TABLE public.translation_update_password_page OWNER TO postgres;
 
 --
+-- Name: orders order_number; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.orders ALTER COLUMN order_number SET DEFAULT nextval('public.orders_order_number_seq'::regclass);
+
+
+--
 -- Data for Name: afisa; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -680,13 +828,10 @@ c4bcda34-7332-4ae5-8129-d7538d63fee4	Buzz	uploads/brend/67f6bc90-a0ef-4828-b17b-
 --
 
 COPY public.cart (id, product_id, customer_id, quantity_of_product, created_at, updated_at, deleted_at) FROM stdin;
-<<<<<<< HEAD
-=======
-6317032d-3dff-4d25-8147-6a23457d602d	3ca5ade3-d2ce-40ba-9be6-601105b5205a	7e872c52-0d23-4086-8c45-43000b57332e	10	2022-09-14 03:27:24.35366+05	2022-09-14 03:27:24.35366+05	\N
-4e0a54d0-4a1b-49c6-8d1c-df42539311c1	ba935176-cf8c-4684-ab24-3ff11e5f176a	7e872c52-0d23-4086-8c45-43000b57332e	23	2022-09-14 03:27:24.35366+05	2022-09-14 03:27:24.35366+05	\N
-59e2dc8f-4b14-4176-962c-cca419c93758	abc05e23-5d72-41db-969a-662442da399f	7e872c52-0d23-4086-8c45-43000b57332e	3	2022-09-14 03:27:24.35366+05	2022-09-14 03:27:24.35366+05	\N
-953bf49b-181a-401e-9bd3-ae0c4bc7b8f2	32cd4c58-c96c-4b05-8158-bc9f7f7d02d4	7e872c52-0d23-4086-8c45-43000b57332e	30	2022-09-15 02:29:15.271138+05	2022-09-15 02:29:15.271138+05	\N
->>>>>>> 350ede8c373da442a18a69a3688e2fbd2c647859
+5ccc8636-5b3f-4fca-a357-a5fc5599d0fa	d4156225-082e-4f0f-9b2c-85268114433a	7e872c52-0d23-4086-8c45-43000b57332e	10	2022-09-19 09:08:43.874904+05	2022-09-19 09:08:43.874904+05	\N
+522072a7-6dc7-407b-9767-c48586bf30b6	8df705a5-2351-4aca-b03e-3357a23840b4	7e872c52-0d23-4086-8c45-43000b57332e	23	2022-09-19 09:08:43.972128+05	2022-09-19 09:08:43.972128+05	\N
+251a4c91-862f-41ca-8445-e9cca557c3d2	b2b165a3-2261-4d67-8160-0e239ecd99b5	7e872c52-0d23-4086-8c45-43000b57332e	3	2022-09-19 09:08:43.983866+05	2022-09-19 09:08:43.983866+05	\N
+8a7f148a-2a42-405d-aac6-dea1eb802e80	a2bb8745-1f3a-4de9-ad66-11b0bb3bb754	7e872c52-0d23-4086-8c45-43000b57332e	30	2022-09-19 09:08:43.994441+05	2022-09-19 09:08:43.994441+05	\N
 \.
 
 
@@ -773,6 +918,7 @@ d2c66808-e5fe-435f-ba01-cb717f80d9e0	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	adres_
 --
 
 COPY public.company_phone (id, phone, created_at, updated_at, deleted_at) FROM stdin;
+96c30e15-274c-49a0-bcc5-e2f8deac248f	+993 12 227475	2022-09-29 12:49:06.569246+05	2022-09-29 12:49:06.569246+05	\N
 \.
 
 
@@ -786,14 +932,27 @@ COPY public.company_setting (id, logo, favicon, email, instagram, created_at, up
 
 
 --
+-- Data for Name: customer_address; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.customer_address (id, customer_id, address, created_at, updated_at, deleted_at, is_active) FROM stdin;
+dad2aaae-1b17-4494-8d85-8a8ee6e3e60f	7e872c52-0d23-4086-8c45-43000b57332e	Mir 2/2 jay 7 oy 36	2022-09-21 21:28:29.708359+05	2022-09-21 21:28:29.708359+05	\N	f
+ad9422b5-c496-4791-b1b4-7454bc10aefd	89a6ac71-4495-4218-b9f9-3f2a3eab085b	Mir 2/2 jay 7 oy 36	2022-09-22 12:54:24.177072+05	2022-09-22 12:54:24.177072+05	\N	f
+3c4e1c4f-fd51-4dd5-befe-7051b79312a6	89a6ac71-4495-4218-b9f9-3f2a3eab085b	Mir 2/2 jay 7 oy 36	2022-09-22 14:27:08.806836+05	2022-09-22 14:27:08.806836+05	\N	f
+\.
+
+
+--
 -- Data for Name: customers; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.customers (id, full_name, phone_number, password, birthday, gender, addresses, created_at, updated_at, deleted_at, email) FROM stdin;
-7e872c52-0d23-4086-8c45-43000b57332e	Muhammetmyrat	+99363747155	$2a$14$1uOYIcXK4lzyBnhm.L/dW.TD8c9ZqTzAiCsOMCCRRzxiKnDAU2gFK	\N	\N	\N	2022-08-02 23:41:59.869254+05	2022-08-02 23:41:59.869254+05	\N	m.bayramov@salam.tm
-7fafe6f8-c6b6-4bcc-9063-e98c113902c5	jjednkjwedjed	+99363747156	$2a$14$WPTcXE1j871GQ/n2i2CX9.RjyRIyR4bBqCj6b/vchJB1TjYC6v0XK	\N	\N	\N	2022-08-02 23:52:46.544849+05	2022-08-02 23:52:46.544849+05	\N	ewkdnewj@gmail.com
-38615c8c-1af5-424f-b7a3-071d38c42b86	Aly Muhammedow	+99363234587	$2a$14$Ep0/A9EAbgV/BD.UdQ6KQOU0DCpr2C8n6du8li5nPKYz.xIQb2HgC	\N	\N	\N	2022-08-23 19:59:07.331615+05	2022-08-23 19:59:07.331615+05	\N	aly@gmail.com
-9b1a0831-9943-4aa9-aa2a-3507743a5de4	Berdi	+99361235698	$2a$14$S5nCg8mlGD..q3didZiCFuaocaEPA35ugIfpovdEoM7p5I8TOTX0K	\N	\N	\N	2022-08-23 20:31:28.830324+05	2022-08-23 20:31:28.830324+05	\N	berdi@gmail.com
+COPY public.customers (id, full_name, phone_number, password, birthday, gender, created_at, updated_at, deleted_at, email, is_register) FROM stdin;
+7e872c52-0d23-4086-8c45-43000b57332e	Serdar	+99363747155	$2a$14$N11BpwBYOI72mX9nBjMNL.e0.iwFBndE2efV3Nqx0/fHj3OzNZSlq	\N	\N	2022-09-22 12:46:26.731782+05	2022-09-22 12:46:26.731782+05	\N	serdar@gmail.com	t
+7fafe6f8-c6b6-4bcc-9063-e98c113902c5	Mahri Wepayewa	+99363747156	$2a$14$N11BpwBYOI72mX9nBjMNL.e0.iwFBndE2efV3Nqx0/fHj3OzNZSlq	\N	\N	2022-09-22 12:46:26.731782+05	2022-09-22 12:46:26.731782+05	\N	mahri@gmail.com	t
+38615c8c-1af5-424f-b7a3-071d38c42b86	Aylar Siriyewa	+99363234587	$2a$14$N11BpwBYOI72mX9nBjMNL.e0.iwFBndE2efV3Nqx0/fHj3OzNZSlq	\N	\N	2022-09-22 12:46:26.731782+05	2022-09-22 12:46:26.731782+05	\N	aylar@gmail.com	t
+9b1a0831-9943-4aa9-aa2a-3507743a5de4	Rahmet	+99361235698	$2a$14$N11BpwBYOI72mX9nBjMNL.e0.iwFBndE2efV3Nqx0/fHj3OzNZSlq	\N	\N	2022-09-22 12:46:26.731782+05	2022-09-22 12:46:26.731782+05	\N	rahmet@gmail.com	t
+eb4d03d3-c201-49e6-867e-a7b6927a414c	Wepa Maksadow	+99363658741	$2a$14$N11BpwBYOI72mX9nBjMNL.e0.iwFBndE2efV3Nqx0/fHj3OzNZSlq	\N	\N	2022-09-22 12:46:26.731782+05	2022-09-22 12:46:26.731782+05	\N	wepa@gmail.com	t
+89a6ac71-4495-4218-b9f9-3f2a3eab085b	Allanur Bayramgeldiyew	+99362420377	$2a$14$fuKfelpKkU8/uzE36bx4Uu7GC8b/dx/Cc9XLVXf4TLZwwSuRXwXNm	\N	\N	2022-09-22 12:54:39.635618+05	2022-09-22 12:54:39.635618+05	\N	abb@gmail.com	t
 \.
 
 
@@ -851,11 +1010,10 @@ aea98b93-7bdf-455b-9ad4-a259d69dc76e	ru	uploads/language1c24e3a6-173e-4264-a631-
 --
 
 COPY public.likes (id, product_id, customer_id, created_at, updated_at, deleted_at) FROM stdin;
-<<<<<<< HEAD
-=======
-64d79a92-c0f4-488b-92bc-8edeaae44dd2	440507af-648f-4b56-b126-ca75d0370731	7e872c52-0d23-4086-8c45-43000b57332e	2022-09-13 12:52:04.123267+05	2022-09-13 12:52:04.123267+05	\N
-e3cd5a4b-b923-4a87-ad9c-359d9abce522	8cb36bb0-9103-4031-b83b-4180552d74ca	7e872c52-0d23-4086-8c45-43000b57332e	2022-09-15 02:07:43.636619+05	2022-09-15 02:07:43.636619+05	\N
->>>>>>> 350ede8c373da442a18a69a3688e2fbd2c647859
+7fbd52d7-ebdc-4d64-8747-07064d8e290c	0d4a6c3c-cc5d-457b-ac9a-ce60eacb94de	7e872c52-0d23-4086-8c45-43000b57332e	2022-09-17 15:07:24.825209+05	2022-09-17 15:07:24.825209+05	\N
+4e9df8f4-a3f8-4dea-82ee-5425971a75b2	b2b165a3-2261-4d67-8160-0e239ecd99b5	7e872c52-0d23-4086-8c45-43000b57332e	2022-09-17 15:07:24.825209+05	2022-09-17 15:07:24.825209+05	\N
+dacc5a07-7340-46ad-9231-628c81fe782d	bb6c3bdb-79e2-44b3-98b1-c1cee0976777	7e872c52-0d23-4086-8c45-43000b57332e	2022-09-17 15:07:37.579366+05	2022-09-17 15:07:37.579366+05	\N
+17e9980f-ec5c-4b41-ab86-53903a67b174	e3c33ead-3c30-40f1-9d28-7bb8b71b767f	7e872c52-0d23-4086-8c45-43000b57332e	2022-09-17 15:07:37.579366+05	2022-09-17 15:07:37.579366+05	\N
 \.
 
 
@@ -875,6 +1033,143 @@ af383593-cacb-4440-8144-4560c1887921	0d4a6c3c-cc5d-457b-ac9a-ce60eacb94de	upload
 489304cb-a16a-4f78-841e-797b341f224b	c866d5e4-284c-4bea-a94f-cc23f6c7e5d0	uploads/product/139044f5-bb94-4f31-9b5a-c7c28056398f.jpg	uploads/product/a45a8c58-bc17-44ad-807d-719607bdd031.jpg	uploads/product/7d873556-bfe5-4991-8cc7-0ab6609eb45e.jpg	2022-09-17 14:59:14.066244+05	2022-09-17 14:59:14.066244+05	\N
 3141d941-c1fa-41f0-b542-44090d4ba2a1	e3c33ead-3c30-40f1-9d28-7bb8b71b767f	uploads/product/ad41dd13-4b3b-442a-92a9-ea7ba39a8ffd.jpg	uploads/product/4b536ae1-bb8a-43f3-bf33-378fb2e53f58.jpg	uploads/product/e50d6762-01dd-4894-a991-0f27bb401630.jpg	2022-09-17 14:59:44.866884+05	2022-09-17 14:59:44.866884+05	\N
 24fdc6b1-afb2-4735-b406-70addc0dd8d9	8df705a5-2351-4aca-b03e-3357a23840b4	uploads/product/c0a88fd0-2374-49af-95d0-5c692c626b94.jpg	uploads/product/8a67c3a7-94fc-4831-9f90-80ae409c684f.jpg	uploads/product/c7a5b0ce-d9fc-449c-b039-726d716c62a7.jpg	2022-09-17 15:00:15.178822+05	2022-09-17 15:00:15.178822+05	\N
+\.
+
+
+--
+-- Data for Name: order_dates; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.order_dates (id, date, created_at, updated_at, deleted_at) FROM stdin;
+32646376-c93f-412b-9e75-b3a5fa70df9e	today	2022-09-28 17:35:33.772335+05	2022-09-28 17:35:33.772335+05	\N
+c1f2beca-a6b6-4971-a6a7-ed50079c6912	tomorrow	2022-09-28 17:36:46.804343+05	2022-09-28 17:36:46.804343+05	\N
+\.
+
+
+--
+-- Data for Name: order_times; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.order_times (id, order_date_id, "time", created_at, updated_at, deleted_at) FROM stdin;
+9c2261db-a8d3-4c7d-8bcb-302ac1f1f9fb	32646376-c93f-412b-9e75-b3a5fa70df9e	09:00 - 12:00	2022-09-28 17:35:33.802847+05	2022-09-28 17:35:33.802847+05	\N
+fabed2a7-f467-4ef5-846f-73c0384755b8	32646376-c93f-412b-9e75-b3a5fa70df9e	18:00 - 21:00	2022-09-28 17:35:33.802847+05	2022-09-28 17:35:33.802847+05	\N
+7d47a77a-b8f3-4e96-aa56-5ec7fb328e86	c1f2beca-a6b6-4971-a6a7-ed50079c6912	09:00 - 12:00	2022-09-28 17:36:46.825964+05	2022-09-28 17:36:46.825964+05	\N
+de31361b-9fba-48f2-9341-9e3dd08cf9fd	c1f2beca-a6b6-4971-a6a7-ed50079c6912	18:00 - 21:00	2022-09-28 17:36:46.825964+05	2022-09-28 17:36:46.825964+05	\N
+\.
+
+
+--
+-- Data for Name: ordered_products; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.ordered_products (id, product_id, quantity_of_product, order_id, created_at, updated_at, deleted_at) FROM stdin;
+777caf46-9fb8-46a8-808a-cd285ea11340	b2b165a3-2261-4d67-8160-0e239ecd99b5	12	3d29c94b-1869-4d4c-a94f-180a5c9eb614	2022-09-21 21:28:30.413438+05	2022-09-21 21:28:30.413438+05	\N
+e209c082-ae64-44c1-b235-9245a07cb79d	c866d5e4-284c-4bea-a94f-cc23f6c7e5d0	4	3d29c94b-1869-4d4c-a94f-180a5c9eb614	2022-09-21 21:28:30.437102+05	2022-09-21 21:28:30.437102+05	\N
+3c25a223-2df3-4f47-a8c5-ad70b67522d1	b2b165a3-2261-4d67-8160-0e239ecd99b5	12	ef468ad0-747b-4c12-a195-c72b9f19dc84	2022-09-22 12:54:24.210828+05	2022-09-22 12:54:24.210828+05	\N
+8d1f6c6c-6e9a-4761-9791-7f41fb37347f	c866d5e4-284c-4bea-a94f-cc23f6c7e5d0	4	ef468ad0-747b-4c12-a195-c72b9f19dc84	2022-09-22 12:54:24.22149+05	2022-09-22 12:54:24.22149+05	\N
+98ee5e13-b07c-4535-9b5b-8651eadd8795	bb6c3bdb-79e2-44b3-98b1-c1cee0976777	25	e9b43b21-2947-4c41-95e6-1b81d925996b	2022-09-22 14:27:08.845012+05	2022-09-22 14:27:08.845012+05	\N
+17685559-6510-4f87-92dc-8e3e5ad339e2	8df705a5-2351-4aca-b03e-3357a23840b4	3	e9b43b21-2947-4c41-95e6-1b81d925996b	2022-09-22 14:27:08.855567+05	2022-09-22 14:27:08.855567+05	\N
+f4f79932-6d84-43d7-a4dd-aa6a64588f48	d4156225-082e-4f0f-9b2c-85268114433a	25	9f1f4526-7ee7-4347-96fc-6fb97c1b402a	2022-09-22 14:45:46.407399+05	2022-09-22 14:45:46.407399+05	\N
+982165f4-c3fa-4922-9d42-9d28b138b438	81b84c5d-9759-4b86-978a-649c8ef79660	3	9f1f4526-7ee7-4347-96fc-6fb97c1b402a	2022-09-22 14:45:46.419832+05	2022-09-22 14:45:46.419832+05	\N
+336647b9-abd9-4a2a-a145-9e4326bdcc76	d4156225-082e-4f0f-9b2c-85268114433a	25	7728fdeb-e871-414d-b5fd-d57ee59e879c	2022-09-29 14:05:14.80837+05	2022-09-29 14:05:14.80837+05	\N
+c8a62bf5-9dfc-4aef-bdfe-8b17913d770c	81b84c5d-9759-4b86-978a-649c8ef79660	3	7728fdeb-e871-414d-b5fd-d57ee59e879c	2022-09-29 14:05:14.853259+05	2022-09-29 14:05:14.853259+05	\N
+7929584a-340c-4ec1-bb0c-8c7d9f858559	d4156225-082e-4f0f-9b2c-85268114433a	25	8930edc5-7b9e-4cef-ac58-97bc8261df3a	2022-09-29 14:06:29.698335+05	2022-09-29 14:06:29.698335+05	\N
+93bcf413-e45b-4903-ac39-a444b627d325	81b84c5d-9759-4b86-978a-649c8ef79660	3	8930edc5-7b9e-4cef-ac58-97bc8261df3a	2022-09-29 14:06:29.710636+05	2022-09-29 14:06:29.710636+05	\N
+af266256-496c-4f52-849f-ff3471ed3afd	d4156225-082e-4f0f-9b2c-85268114433a	25	3a8f977f-2eb9-4a4a-9bb1-51cd9a5a4fe6	2022-09-29 14:06:57.843088+05	2022-09-29 14:06:57.843088+05	\N
+c2b3ead0-63ff-4161-b16b-f6cded8b8a88	81b84c5d-9759-4b86-978a-649c8ef79660	3	3a8f977f-2eb9-4a4a-9bb1-51cd9a5a4fe6	2022-09-29 14:06:57.854411+05	2022-09-29 14:06:57.854411+05	\N
+4d7aca2c-6b2b-49bc-a86b-949f12dfa59a	d4156225-082e-4f0f-9b2c-85268114433a	25	7b0af658-e230-405d-a1ed-718f52973eb2	2022-09-29 14:08:09.999618+05	2022-09-29 14:08:09.999618+05	\N
+4ae25fa7-04df-43d1-82bd-7f7b91df4252	81b84c5d-9759-4b86-978a-649c8ef79660	3	7b0af658-e230-405d-a1ed-718f52973eb2	2022-09-29 14:08:10.011834+05	2022-09-29 14:08:10.011834+05	\N
+97cfde5b-1e67-486e-b81a-9818bb5a1e6e	d4156225-082e-4f0f-9b2c-85268114433a	25	68c886f4-c005-4a22-9219-f643577d0a62	2022-09-29 14:08:56.71182+05	2022-09-29 14:08:56.71182+05	\N
+155ce965-827a-48cc-8b79-1fea6b971919	81b84c5d-9759-4b86-978a-649c8ef79660	3	68c886f4-c005-4a22-9219-f643577d0a62	2022-09-29 14:08:56.723832+05	2022-09-29 14:08:56.723832+05	\N
+fca009f3-642b-45d0-b4ba-c8b5e0836a99	d4156225-082e-4f0f-9b2c-85268114433a	25	c09ef7ff-4244-422a-b2da-3e160e39f0c8	2022-09-30 16:17:12.503388+05	2022-09-30 16:17:12.503388+05	\N
+b0a20b48-5bf6-4324-9c48-71a09b92159d	81b84c5d-9759-4b86-978a-649c8ef79660	3	c09ef7ff-4244-422a-b2da-3e160e39f0c8	2022-09-30 16:17:12.562328+05	2022-09-30 16:17:12.562328+05	\N
+3187dd81-6db8-45b2-85d3-266b17e1bca2	8df705a5-2351-4aca-b03e-3357a23840b4	3	c09ef7ff-4244-422a-b2da-3e160e39f0c8	2022-09-30 16:17:12.57442+05	2022-09-30 16:17:12.57442+05	\N
+4005e7c3-2aee-4428-bc33-a144904bcffd	e3c33ead-3c30-40f1-9d28-7bb8b71b767f	3	c09ef7ff-4244-422a-b2da-3e160e39f0c8	2022-09-30 16:17:12.596612+05	2022-09-30 16:17:12.596612+05	\N
+6248a3ef-5bbe-423e-bdeb-51358cf79230	d4156225-082e-4f0f-9b2c-85268114433a	25	1499d084-b010-4724-ac40-2451a87986d9	2022-09-30 16:19:46.509965+05	2022-09-30 16:19:46.509965+05	\N
+5e311871-6462-4091-afd4-4b6178149250	81b84c5d-9759-4b86-978a-649c8ef79660	3	1499d084-b010-4724-ac40-2451a87986d9	2022-09-30 16:19:46.520869+05	2022-09-30 16:19:46.520869+05	\N
+345fefb6-c0b3-4553-8ce7-80633386855e	8df705a5-2351-4aca-b03e-3357a23840b4	3	1499d084-b010-4724-ac40-2451a87986d9	2022-09-30 16:19:46.532044+05	2022-09-30 16:19:46.532044+05	\N
+24e41b79-c337-40e0-b04b-1dc2e73b24d0	e3c33ead-3c30-40f1-9d28-7bb8b71b767f	3	1499d084-b010-4724-ac40-2451a87986d9	2022-09-30 16:19:46.542693+05	2022-09-30 16:19:46.542693+05	\N
+4d7663a3-d7ed-45ff-9eca-1272ff093582	d4156225-082e-4f0f-9b2c-85268114433a	25	4271c7d2-eeff-4948-989f-ae5e4518854f	2022-09-30 16:22:21.368957+05	2022-09-30 16:22:21.368957+05	\N
+63fd2f2e-7178-44d7-894a-1a93c6cc49d6	81b84c5d-9759-4b86-978a-649c8ef79660	3	4271c7d2-eeff-4948-989f-ae5e4518854f	2022-09-30 16:22:21.379357+05	2022-09-30 16:22:21.379357+05	\N
+41470fb9-f636-4320-ba3a-d590f56ae823	8df705a5-2351-4aca-b03e-3357a23840b4	3	4271c7d2-eeff-4948-989f-ae5e4518854f	2022-09-30 16:22:21.390021+05	2022-09-30 16:22:21.390021+05	\N
+6b7d5483-a5db-4595-840d-9c229ba8c827	e3c33ead-3c30-40f1-9d28-7bb8b71b767f	3	4271c7d2-eeff-4948-989f-ae5e4518854f	2022-09-30 16:22:21.402525+05	2022-09-30 16:22:21.402525+05	\N
+41c9f8c2-5586-437f-ae42-1201935680de	d4156225-082e-4f0f-9b2c-85268114433a	25	6fda5178-9944-4ffe-92e7-319f41323818	2022-09-30 16:28:44.074707+05	2022-09-30 16:28:44.074707+05	\N
+e887a11d-5168-48de-b76d-f071a93157eb	81b84c5d-9759-4b86-978a-649c8ef79660	3	6fda5178-9944-4ffe-92e7-319f41323818	2022-09-30 16:28:44.08603+05	2022-09-30 16:28:44.08603+05	\N
+3fff0a4c-e4c6-48d6-8be1-759c9df13268	8df705a5-2351-4aca-b03e-3357a23840b4	3	6fda5178-9944-4ffe-92e7-319f41323818	2022-09-30 16:28:44.097244+05	2022-09-30 16:28:44.097244+05	\N
+10471abf-17a6-4350-a358-fccb1a3bcab3	e3c33ead-3c30-40f1-9d28-7bb8b71b767f	3	6fda5178-9944-4ffe-92e7-319f41323818	2022-09-30 16:28:44.107886+05	2022-09-30 16:28:44.107886+05	\N
+c7e09b89-e593-4bff-a3d9-f1724e22d7aa	d4156225-082e-4f0f-9b2c-85268114433a	25	67f2638b-971c-48a9-bada-5d14b50d74bc	2022-09-30 16:29:07.397594+05	2022-09-30 16:29:07.397594+05	\N
+7965e167-3b36-422e-ade1-ce0cfb9c20f3	81b84c5d-9759-4b86-978a-649c8ef79660	3	67f2638b-971c-48a9-bada-5d14b50d74bc	2022-09-30 16:29:07.409019+05	2022-09-30 16:29:07.409019+05	\N
+2630dd99-7408-4e39-a230-16c25dd4c18f	8df705a5-2351-4aca-b03e-3357a23840b4	3	67f2638b-971c-48a9-bada-5d14b50d74bc	2022-09-30 16:29:07.420871+05	2022-09-30 16:29:07.420871+05	\N
+c36fd7f3-9e11-4df2-8147-592a9b555673	e3c33ead-3c30-40f1-9d28-7bb8b71b767f	3	67f2638b-971c-48a9-bada-5d14b50d74bc	2022-09-30 16:29:07.431699+05	2022-09-30 16:29:07.431699+05	\N
+8ee02a8d-ae7a-4490-a92e-7a09b1d87333	d4156225-082e-4f0f-9b2c-85268114433a	25	0be22e6c-0830-49eb-a500-b08b396d9c92	2022-09-30 16:31:39.658076+05	2022-09-30 16:31:39.658076+05	\N
+0098fd41-42cc-4ba0-b771-5c593f91c6dd	81b84c5d-9759-4b86-978a-649c8ef79660	3	0be22e6c-0830-49eb-a500-b08b396d9c92	2022-09-30 16:31:39.667322+05	2022-09-30 16:31:39.667322+05	\N
+276d10a7-7202-4fc7-8e83-e6e01a9ce83e	8df705a5-2351-4aca-b03e-3357a23840b4	3	0be22e6c-0830-49eb-a500-b08b396d9c92	2022-09-30 16:31:39.677826+05	2022-09-30 16:31:39.677826+05	\N
+d579b953-9b2f-42b4-8aff-7c4be2ab150b	e3c33ead-3c30-40f1-9d28-7bb8b71b767f	3	0be22e6c-0830-49eb-a500-b08b396d9c92	2022-09-30 16:31:39.691084+05	2022-09-30 16:31:39.691084+05	\N
+4d419ab4-85c3-459a-b003-aaa151252a6b	d4156225-082e-4f0f-9b2c-85268114433a	25	ad758850-26c1-4405-b20c-2a7d01df3447	2022-09-30 16:33:55.080361+05	2022-09-30 16:33:55.080361+05	\N
+f516f085-69cd-45d5-b187-8783a76fe995	81b84c5d-9759-4b86-978a-649c8ef79660	3	ad758850-26c1-4405-b20c-2a7d01df3447	2022-09-30 16:33:55.093023+05	2022-09-30 16:33:55.093023+05	\N
+e2e63ade-a3dd-4c68-a0f4-4b4ed414c72e	8df705a5-2351-4aca-b03e-3357a23840b4	3	ad758850-26c1-4405-b20c-2a7d01df3447	2022-09-30 16:33:55.103089+05	2022-09-30 16:33:55.103089+05	\N
+374ef930-ce47-409d-b6fa-94c20ee63d3b	e3c33ead-3c30-40f1-9d28-7bb8b71b767f	3	ad758850-26c1-4405-b20c-2a7d01df3447	2022-09-30 16:33:55.113321+05	2022-09-30 16:33:55.113321+05	\N
+8e8707d6-f1cc-4e04-8d3a-24253e7090ee	d4156225-082e-4f0f-9b2c-85268114433a	25	b486486f-cc0c-4aa2-b594-ba21465fafa7	2022-09-30 16:34:12.180261+05	2022-09-30 16:34:12.180261+05	\N
+89722c21-dc79-4065-9326-b01ac0df0403	81b84c5d-9759-4b86-978a-649c8ef79660	3	b486486f-cc0c-4aa2-b594-ba21465fafa7	2022-09-30 16:34:12.192195+05	2022-09-30 16:34:12.192195+05	\N
+d4b13472-7246-41da-9c31-960588bbcf89	8df705a5-2351-4aca-b03e-3357a23840b4	3	b486486f-cc0c-4aa2-b594-ba21465fafa7	2022-09-30 16:34:12.203999+05	2022-09-30 16:34:12.203999+05	\N
+f4ad51c8-1fc5-4388-84b8-0bb9f4751458	e3c33ead-3c30-40f1-9d28-7bb8b71b767f	3	b486486f-cc0c-4aa2-b594-ba21465fafa7	2022-09-30 16:34:12.213614+05	2022-09-30 16:34:12.213614+05	\N
+2c6c9339-12ee-4c5b-a946-b67bd3c97d45	d4156225-082e-4f0f-9b2c-85268114433a	25	aa004448-b5ad-4248-be73-09c46f7aa2fa	2022-09-30 16:37:51.407009+05	2022-09-30 16:37:51.407009+05	\N
+36380463-617f-4097-9561-a3be4ca4a8d9	81b84c5d-9759-4b86-978a-649c8ef79660	3	aa004448-b5ad-4248-be73-09c46f7aa2fa	2022-09-30 16:37:51.417225+05	2022-09-30 16:37:51.417225+05	\N
+06b7a726-28dd-46ea-8322-430afc6a6210	8df705a5-2351-4aca-b03e-3357a23840b4	3	aa004448-b5ad-4248-be73-09c46f7aa2fa	2022-09-30 16:37:51.428901+05	2022-09-30 16:37:51.428901+05	\N
+fa142e21-8039-463d-909f-fa4bf60ec8d7	e3c33ead-3c30-40f1-9d28-7bb8b71b767f	3	aa004448-b5ad-4248-be73-09c46f7aa2fa	2022-09-30 16:37:51.439923+05	2022-09-30 16:37:51.439923+05	\N
+66388d55-7a55-452c-87fa-35c4ea013731	d4156225-082e-4f0f-9b2c-85268114433a	25	3340c300-0d2d-4de9-af6a-244f777cd035	2022-09-30 16:38:29.907342+05	2022-09-30 16:38:29.907342+05	\N
+a270da1d-f372-4430-b896-b77db21989ba	81b84c5d-9759-4b86-978a-649c8ef79660	3	3340c300-0d2d-4de9-af6a-244f777cd035	2022-09-30 16:38:29.918482+05	2022-09-30 16:38:29.918482+05	\N
+846fe0ae-3e59-4f56-95c4-2a4bdc9ea79e	8df705a5-2351-4aca-b03e-3357a23840b4	3	3340c300-0d2d-4de9-af6a-244f777cd035	2022-09-30 16:38:29.929103+05	2022-09-30 16:38:29.929103+05	\N
+82decffc-7185-40fb-8feb-555275331311	e3c33ead-3c30-40f1-9d28-7bb8b71b767f	3	3340c300-0d2d-4de9-af6a-244f777cd035	2022-09-30 16:38:29.941543+05	2022-09-30 16:38:29.941543+05	\N
+7d5bd974-0abe-4afa-8e79-1d4a21af9f20	d4156225-082e-4f0f-9b2c-85268114433a	25	4e06d814-d2ab-4244-81aa-d86c341690ab	2022-09-30 16:39:02.562989+05	2022-09-30 16:39:02.562989+05	\N
+043406ae-a5d4-432a-8e60-928ea5ff0c0b	81b84c5d-9759-4b86-978a-649c8ef79660	3	4e06d814-d2ab-4244-81aa-d86c341690ab	2022-09-30 16:39:02.574699+05	2022-09-30 16:39:02.574699+05	\N
+6ebc0970-1ed8-43db-9d3e-067b3237e8aa	8df705a5-2351-4aca-b03e-3357a23840b4	3	4e06d814-d2ab-4244-81aa-d86c341690ab	2022-09-30 16:39:02.58548+05	2022-09-30 16:39:02.58548+05	\N
+8b6908e1-0b55-4f31-a404-804036107ad2	e3c33ead-3c30-40f1-9d28-7bb8b71b767f	3	4e06d814-d2ab-4244-81aa-d86c341690ab	2022-09-30 16:39:02.596711+05	2022-09-30 16:39:02.596711+05	\N
+8cda470b-541b-47eb-b313-f93b7797037d	d4156225-082e-4f0f-9b2c-85268114433a	25	7bf4fcbc-8526-4211-8666-8a3bf9af63c4	2022-09-30 16:48:58.062478+05	2022-09-30 16:48:58.062478+05	\N
+3ae56ef8-08a2-4174-b0b1-7c8198e2e56a	81b84c5d-9759-4b86-978a-649c8ef79660	3	7bf4fcbc-8526-4211-8666-8a3bf9af63c4	2022-09-30 16:48:58.073894+05	2022-09-30 16:48:58.073894+05	\N
+a05d1a61-1479-4762-9c85-9d11e0c8b684	8df705a5-2351-4aca-b03e-3357a23840b4	3	7bf4fcbc-8526-4211-8666-8a3bf9af63c4	2022-09-30 16:48:58.083382+05	2022-09-30 16:48:58.083382+05	\N
+0428ab7e-5d9b-4cbd-bb62-3dbb3d09f519	e3c33ead-3c30-40f1-9d28-7bb8b71b767f	3	7bf4fcbc-8526-4211-8666-8a3bf9af63c4	2022-09-30 16:48:58.094764+05	2022-09-30 16:48:58.094764+05	\N
+\.
+
+
+--
+-- Data for Name: orders; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.orders (id, customer_id, customer_mark, order_time, payment_type, total_price, created_at, updated_at, deleted_at, order_number) FROM stdin;
+3d29c94b-1869-4d4c-a94f-180a5c9eb614	7e872c52-0d23-4086-8c45-43000b57332e	isleg market bet cykypdyr	12:00 - 16:00	nagt	1223.6	2022-09-21 21:28:30.39466+05	2022-09-21 21:28:30.39466+05	\N	1
+ef468ad0-747b-4c12-a195-c72b9f19dc84	89a6ac71-4495-4218-b9f9-3f2a3eab085b	isleg market bet cykypdyr	12:00 - 16:00	nagt	1223.6	2022-09-22 12:54:24.199845+05	2022-09-22 12:54:24.199845+05	\N	2
+e9b43b21-2947-4c41-95e6-1b81d925996b	89a6ac71-4495-4218-b9f9-3f2a3eab085b	isleg market bet cykypdyr	12:00 - 16:00	nagt	1788	2022-09-22 14:27:08.833782+05	2022-09-22 14:27:08.833782+05	\N	3
+9f1f4526-7ee7-4347-96fc-6fb97c1b402a	89a6ac71-4495-4218-b9f9-3f2a3eab085b	isleg market bet cykypdyr	12:00 - 16:00	nagt	1788	2022-09-22 14:45:46.386254+05	2022-09-22 14:45:46.386254+05	\N	4
+7728fdeb-e871-414d-b5fd-d57ee59e879c	89a6ac71-4495-4218-b9f9-3f2a3eab085b	isleg market bet cykypdyr	12:00 - 16:00	nagt	1788	2022-09-29 14:05:14.735068+05	2022-09-29 14:05:14.735068+05	\N	5
+8930edc5-7b9e-4cef-ac58-97bc8261df3a	89a6ac71-4495-4218-b9f9-3f2a3eab085b	isleg market bet cykypdyr	12:00 - 16:00	nagt	1788	2022-09-29 14:06:29.676335+05	2022-09-29 14:06:29.676335+05	\N	6
+3a8f977f-2eb9-4a4a-9bb1-51cd9a5a4fe6	89a6ac71-4495-4218-b9f9-3f2a3eab085b	isleg market bet cykypdyr	12:00 - 16:00	nagt	1788	2022-09-29 14:06:57.81957+05	2022-09-29 14:06:57.81957+05	\N	7
+7b0af658-e230-405d-a1ed-718f52973eb2	89a6ac71-4495-4218-b9f9-3f2a3eab085b	isleg market bet cykypdyr	12:00 - 16:00	nagt	1788	2022-09-29 14:08:09.972501+05	2022-09-29 14:08:09.972501+05	\N	8
+68c886f4-c005-4a22-9219-f643577d0a62	89a6ac71-4495-4218-b9f9-3f2a3eab085b	isleg market bet cykypdyr	12:00 - 16:00	nagt	1788	2022-09-29 14:08:56.681211+05	2022-09-29 14:08:56.681211+05	\N	9
+c09ef7ff-4244-422a-b2da-3e160e39f0c8	89a6ac71-4495-4218-b9f9-3f2a3eab085b	isleg market bet cykypdyr	12:00 - 16:00	nagt	1788	2022-09-30 16:17:12.28516+05	2022-09-30 16:17:12.28516+05	\N	10
+1499d084-b010-4724-ac40-2451a87986d9	89a6ac71-4495-4218-b9f9-3f2a3eab085b	isleg market bet cykypdyr	12:00 - 16:00	nagt	1788	2022-09-30 16:19:46.479759+05	2022-09-30 16:19:46.479759+05	\N	11
+4271c7d2-eeff-4948-989f-ae5e4518854f	89a6ac71-4495-4218-b9f9-3f2a3eab085b	isleg market bet cykypdyr	12:00 - 16:00	nagt	1788	2022-09-30 16:22:21.342127+05	2022-09-30 16:22:21.342127+05	\N	12
+6fda5178-9944-4ffe-92e7-319f41323818	89a6ac71-4495-4218-b9f9-3f2a3eab085b	isleg market bet cykypdyr	12:00 - 16:00	nagt	1788	2022-09-30 16:28:44.051653+05	2022-09-30 16:28:44.051653+05	\N	13
+67f2638b-971c-48a9-bada-5d14b50d74bc	89a6ac71-4495-4218-b9f9-3f2a3eab085b	isleg market bet cykypdyr	12:00 - 16:00	nagt	1788	2022-09-30 16:29:07.367164+05	2022-09-30 16:29:07.367164+05	\N	14
+0be22e6c-0830-49eb-a500-b08b396d9c92	89a6ac71-4495-4218-b9f9-3f2a3eab085b	isleg market bet cykypdyr	12:00 - 16:00	nagt	1788	2022-09-30 16:31:39.632959+05	2022-09-30 16:31:39.632959+05	\N	15
+ad758850-26c1-4405-b20c-2a7d01df3447	89a6ac71-4495-4218-b9f9-3f2a3eab085b	isleg market bet cykypdyr	12:00 - 16:00	nagt	1788	2022-09-30 16:33:55.024097+05	2022-09-30 16:33:55.024097+05	\N	16
+b486486f-cc0c-4aa2-b594-ba21465fafa7	89a6ac71-4495-4218-b9f9-3f2a3eab085b	isleg market bet cykypdyr	12:00 - 16:00	nagt	1788	2022-09-30 16:34:12.15561+05	2022-09-30 16:34:12.15561+05	\N	17
+aa004448-b5ad-4248-be73-09c46f7aa2fa	89a6ac71-4495-4218-b9f9-3f2a3eab085b	isleg market bet cykypdyr	12:00 - 16:00	nagt	1788	2022-09-30 16:37:51.380433+05	2022-09-30 16:37:51.380433+05	\N	18
+3340c300-0d2d-4de9-af6a-244f777cd035	89a6ac71-4495-4218-b9f9-3f2a3eab085b	isleg market bet cykypdyr	12:00 - 16:00	nagt	1788	2022-09-30 16:38:29.875889+05	2022-09-30 16:38:29.875889+05	\N	19
+4e06d814-d2ab-4244-81aa-d86c341690ab	89a6ac71-4495-4218-b9f9-3f2a3eab085b	isleg market bet cykypdyr	12:00 - 16:00	nagt	1788	2022-09-30 16:39:02.54119+05	2022-09-30 16:39:02.54119+05	\N	20
+7bf4fcbc-8526-4211-8666-8a3bf9af63c4	89a6ac71-4495-4218-b9f9-3f2a3eab085b	isleg market bet cykypdyr	12:00 - 16:00	nagt	1788	2022-09-30 16:48:58.039309+05	2022-09-30 16:48:58.039309+05	\N	21
+\.
+
+
+--
+-- Data for Name: payment_types; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.payment_types (id, lang_id, type, created_at, updated_at, deleted_at) FROM stdin;
+83e6589c-0cb6-4267-bcc5-e06cc93b36d8	aea98b93-7bdf-455b-9ad4-a259d69dc76e	наличные	2022-09-20 14:33:50.780468+05	2022-09-20 14:33:50.780468+05	\N
+7a6a313d-8fcd-4c56-9fa5-aefb12552b82	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	töleg terminaly	2022-09-20 14:34:46.329459+05	2022-09-20 14:34:46.329459+05	\N
+cb7e8cc9-9b2e-4cd8-921f-91b3bb5e5564	aea98b93-7bdf-455b-9ad4-a259d69dc76e	платежный терминал	2022-09-20 14:34:46.359276+05	2022-09-20 14:34:46.359276+05	\N
+38696743-82e5-4644-9c86-4a99ae45f912	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	nagt_tm	2022-09-20 14:33:50.755689+05	2022-09-20 14:40:04.959827+05	\N
 \.
 
 
@@ -927,9 +1222,9 @@ COPY public.translation_afisa (id, afisa_id, lang_id, title, description, create
 -- Data for Name: translation_basket_page; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.translation_basket_page (id, lang_id, quantity_of_goods, total_price, discount, delivery, total, currency, to_order, your_basket, created_at, updated_at, deleted_at) FROM stdin;
-456dcb5a-fabb-47f8-b216-0cddd3077124	aea98b93-7bdf-455b-9ad4-a259d69dc76e	quantity_of_goods_ru	total_price_ru	discount_ru	delivery_ru	total_ru	currency_ru	to_order_ru	your_basket_ru	2022-08-30 12:36:24.978404+05	2022-08-30 12:36:37.967063+05	\N
-51b3699e-1c7b-442a-be7b-6b2ad1f111b4	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	quantity_of_goods	total_price	discount	delivery	total	currency	to_order	your_basket	2022-08-30 12:36:24.978404+05	2022-08-30 12:39:12.849615+05	\N
+COPY public.translation_basket_page (id, lang_id, quantity_of_goods, total_price, discount, delivery, total, currency, to_order, your_basket, created_at, updated_at, deleted_at, empty_the_basket) FROM stdin;
+456dcb5a-fabb-47f8-b216-0cddd3077124	aea98b93-7bdf-455b-9ad4-a259d69dc76e	quantity_of_goods_ru	total_price_ru	discount_ru	delivery_ru	total_ru	currency_ru	to_order_ru	your_basket_ru	2022-08-30 12:36:24.978404+05	2022-08-30 12:36:37.967063+05	\N	uytget
+51b3699e-1c7b-442a-be7b-6b2ad1f111b4	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	quantity_of_goods	total_price	discount	delivery	total	currency	to_order	your_basket	2022-08-30 12:36:24.978404+05	2022-09-19 14:28:12.008122+05	\N	empty_the_basket
 \.
 
 
@@ -1024,6 +1319,18 @@ ff43b90d-e22d-4364-b358-6fd56bb3a305	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	orders
 
 
 --
+-- Data for Name: translation_order_dates; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.translation_order_dates (id, lang_id, order_date_id, date, created_at, updated_at, deleted_at) FROM stdin;
+dcd0c70b-9fa2-4327-8b35-de29bd3febcb	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	32646376-c93f-412b-9e75-b3a5fa70df9e	şu gün	2022-09-28 17:35:33.812812+05	2022-09-28 17:35:33.812812+05	\N
+3338d831-f091-4574-a0bf-f9cb07dd4893	aea98b93-7bdf-455b-9ad4-a259d69dc76e	32646376-c93f-412b-9e75-b3a5fa70df9e	Cегодня	2022-09-28 17:35:33.82453+05	2022-09-28 17:35:33.82453+05	\N
+1aa5185f-9815-4e3f-9c34-718bfb587d91	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	c1f2beca-a6b6-4971-a6a7-ed50079c6912	Ertir	2022-09-28 17:36:46.836838+05	2022-09-28 17:36:46.836838+05	\N
+9e7a3752-fce2-4b66-bf3e-d915bf463f92	aea98b93-7bdf-455b-9ad4-a259d69dc76e	c1f2beca-a6b6-4971-a6a7-ed50079c6912	Завтра	2022-09-28 17:36:46.847888+05	2022-09-28 17:36:46.847888+05	\N
+\.
+
+
+--
 -- Data for Name: translation_order_page; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -1091,6 +1398,13 @@ COPY public.translation_update_password_page (id, lang_id, title, verify_passwor
 5190ca93-7007-4db4-8105-65cc3b1af868	aea98b93-7bdf-455b-9ad4-a259d69dc76e	изменить пароль	Подтвердить Пароль	ключевое слово должно быть буквой или цифрой длиной от 5 до 20	запомнить	2022-07-05 10:35:08.984141+05	2022-07-05 10:35:08.984141+05	\N	ключевое слово
 de12082b-baab-4b83-ac07-119df09d1230	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	açar sözi üýtgetmek	açar sözi tassykla	siziň açar sözüňiz 5-20 uzynlygynda harp ýa-da sandan ybarat bolmalydyr	ýatda sakla	2022-07-05 10:35:08.867617+05	2022-07-05 10:35:08.867617+05	\N	açar sözi
 \.
+
+
+--
+-- Name: orders_order_number_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.orders_order_number_seq', 21, true);
 
 
 --
@@ -1174,6 +1488,14 @@ ALTER TABLE ONLY public.company_setting
 
 
 --
+-- Name: customer_address customer_address_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.customer_address
+    ADD CONSTRAINT customer_address_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: customers customers_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1219,6 +1541,46 @@ ALTER TABLE ONLY public.likes
 
 ALTER TABLE ONLY public.main_image
     ADD CONSTRAINT main_image_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: order_dates order_dates_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.order_dates
+    ADD CONSTRAINT order_dates_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: order_times order_times_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.order_times
+    ADD CONSTRAINT order_times_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: ordered_products ordered_products_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.ordered_products
+    ADD CONSTRAINT ordered_products_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: orders orders_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.orders
+    ADD CONSTRAINT orders_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: payment_types payment_types_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.payment_types
+    ADD CONSTRAINT payment_types_pkey PRIMARY KEY (id);
 
 
 --
@@ -1318,6 +1680,14 @@ ALTER TABLE ONLY public.translation_my_order_page
 
 
 --
+-- Name: translation_order_dates translation_order_dates_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.translation_order_dates
+    ADD CONSTRAINT translation_order_dates_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: translation_order_page translation_order_page_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1355,6 +1725,22 @@ ALTER TABLE ONLY public.translation_secure
 
 ALTER TABLE ONLY public.translation_update_password_page
     ADD CONSTRAINT translation_update_password_page_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: customer_address customer_customer_address; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.customer_address
+    ADD CONSTRAINT customer_customer_address FOREIGN KEY (customer_id) REFERENCES public.customers(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: orders customers_orders; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.orders
+    ADD CONSTRAINT customers_orders FOREIGN KEY (customer_id) REFERENCES public.customers(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -1598,6 +1984,46 @@ ALTER TABLE ONLY public.translation_order_page
 
 
 --
+-- Name: payment_types languages_payment_types; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.payment_types
+    ADD CONSTRAINT languages_payment_types FOREIGN KEY (lang_id) REFERENCES public.languages(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: translation_order_dates languages_translation_order_dates; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.translation_order_dates
+    ADD CONSTRAINT languages_translation_order_dates FOREIGN KEY (lang_id) REFERENCES public.languages(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: order_times order_dates_order_times; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.order_times
+    ADD CONSTRAINT order_dates_order_times FOREIGN KEY (order_date_id) REFERENCES public.order_dates(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: translation_order_dates order_dates_translation_order_dates; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.translation_order_dates
+    ADD CONSTRAINT order_dates_translation_order_dates FOREIGN KEY (order_date_id) REFERENCES public.order_dates(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: ordered_products orders_ordered_products; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.ordered_products
+    ADD CONSTRAINT orders_ordered_products FOREIGN KEY (order_id) REFERENCES public.orders(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
 -- Name: images products_images; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1611,6 +2037,14 @@ ALTER TABLE ONLY public.images
 
 ALTER TABLE ONLY public.main_image
     ADD CONSTRAINT products_main_image FOREIGN KEY (product_id) REFERENCES public.products(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: ordered_products products_ordered_products; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.ordered_products
+    ADD CONSTRAINT products_ordered_products FOREIGN KEY (product_id) REFERENCES public.products(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --

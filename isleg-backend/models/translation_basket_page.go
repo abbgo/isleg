@@ -18,6 +18,7 @@ type TranslationBasketPage struct {
 	Currency        string    `json:"currency"`
 	ToOrder         string    `json:"to_order"`
 	YourBasket      string    `json:"your_basket"`
+	EmptyTheBasket  string    `json:"empty_the_basket"`
 	CreatedAt       string    `json:"-"`
 	UpdatedAt       string    `json:"-"`
 	DeletedAt       string    `json:"-"`

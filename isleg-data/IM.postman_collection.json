@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "510657a9-6138-40f8-a390-aa394747ab75",
+		"_postman_id": "d8e670eb-23cd-4425-8712-85499437bad8",
 		"name": "IM",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -1432,7 +1432,7 @@
 							"formdata": [
 								{
 									"key": "phone",
-									"value": "61899737",
+									"value": "+993 12 227475",
 									"type": "default"
 								}
 							]
@@ -3108,7 +3108,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"full_name\":\"Berdi\",\n    \"phone_number\":\"+99361235698\",\n    \"password\":\"12345\",\n    \"email\":\"berdi@gmail.com\"\n}",
+							"raw": "{\n    \"full_name\":\"Allanur Bayramgeldiyew\",\n    \"phone_number\":\"+99362420377\",\n    \"password\":\"12345\",\n    \"email\":\"abb@gmail.com\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -3246,7 +3246,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NSIsImV4cCI6MTY2MzQxMTAwNn0.OmZ5fjLrq9rEnL-CSpuu8IaGSn9n029j11Sa1Wqckuw",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NSIsImV4cCI6MTY2MzU2MjEzOH0.793xVgCEkg--G72auyGWIaHM7lX7hrIGt9jgN5X23Uw",
 								"type": "default"
 							}
 						],
@@ -3295,7 +3295,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NSIsImV4cCI6MTY2MzQxMTAwNn0.OmZ5fjLrq9rEnL-CSpuu8IaGSn9n029j11Sa1Wqckuw",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NSIsImV4cCI6MTY2MzU2MjEzOH0.793xVgCEkg--G72auyGWIaHM7lX7hrIGt9jgN5X23Uw",
 								"type": "default"
 							}
 						],
@@ -3572,13 +3572,13 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NSIsImV4cCI6MTY2MzE1ODMzM30.2sMX3gfwhfCkSSx8lILcE331jX7khLHI1T780bm8I0g",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NSIsImV4cCI6MTY2MzU2MjEzOH0.793xVgCEkg--G72auyGWIaHM7lX7hrIGt9jgN5X23Uw",
 								"type": "default"
 							}
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"customer_id\":\"7e872c52-0d23-4086-8c45-43000b57332e\",\n    \"products\":[\n        {\n            \"product_id\":\"3ca5ade3-d2ce-40ba-9be6-601105b5205a\",\n            \"quantity_of_product\":10\n        },\n         {\n            \"product_id\":\"ba935176-cf8c-4684-ab24-3ff11e5f176a\",\n            \"quantity_of_product\":23\n        },\n         {\n            \"product_id\":\"abc05e23-5d72-41db-969a-662442da399f\",\n            \"quantity_of_product\":3\n        },\n         {\n            \"product_id\":\"32cd4c58-c96c-4b05-8158-bc9f7f7d02d4\",\n            \"quantity_of_product\":30\n        }\n    ]\n}",
+							"raw": "{\n    \"customer_id\":\"7e872c52-0d23-4086-8c45-43000b57332e\",\n    \"products\":[\n        {\n            \"product_id\":\"d4156225-082e-4f0f-9b2c-85268114433a\",\n            \"quantity_of_product\":10\n        },\n         {\n            \"product_id\":\"8df705a5-2351-4aca-b03e-3357a23840b4\",\n            \"quantity_of_product\":23\n        },\n         {\n            \"product_id\":\"b2b165a3-2261-4d67-8160-0e239ecd99b5\",\n            \"quantity_of_product\":3\n        },\n         {\n            \"product_id\":\"a2bb8745-1f3a-4de9-ad66-11b0bb3bb754\",\n            \"quantity_of_product\":30\n        }\n    ]\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -3747,6 +3747,16 @@
 									"key": "your_basket_ru",
 									"value": "your_basket_ru",
 									"type": "default"
+								},
+								{
+									"key": "empty_the_basket_tm",
+									"value": "empty_the_basket_tm",
+									"type": "default"
+								},
+								{
+									"key": "empty_the_basket_ru",
+									"value": "empty_the_basket_ru",
+									"type": "default"
 								}
 							]
 						},
@@ -3810,6 +3820,11 @@
 								{
 									"key": "your_basket",
 									"value": "your_basket",
+									"type": "default"
+								},
+								{
+									"key": "empty_the_basket",
+									"value": "empty_the_basket",
 									"type": "default"
 								}
 							]
@@ -4337,6 +4352,307 @@
 								"api",
 								"tm",
 								"translation-my-order-page"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "PaymentTypes",
+			"item": [
+				{
+					"name": "CreatePaymentType",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "type_tm",
+									"value": "töleg terminaly",
+									"type": "default"
+								},
+								{
+									"key": "type_ru",
+									"value": "платежный терминал",
+									"type": "default"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:2406/admin/payment-type",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"admin",
+								"payment-type"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UpdatePaymentTypeByID",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "type",
+									"value": "nagt_tm",
+									"type": "default"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:2406/admin/payment-type/38696743-82e5-4644-9c86-4a99ae45f912",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"admin",
+								"payment-type",
+								"38696743-82e5-4644-9c86-4a99ae45f912"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetPaymentTypeByID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:2406/admin/payment-type/38696743-82e5-4644-9c86-4a99ae45f912",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"admin",
+								"payment-type",
+								"38696743-82e5-4644-9c86-4a99ae45f912"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetPaymentTypes",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:2406/admin/payment-types",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"admin",
+								"payment-types"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetPaymentTypesByLangID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:2406/api/tm/payment-types",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"api",
+								"tm",
+								"payment-types"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Order",
+			"item": [
+				{
+					"name": "ToOrder",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NSIsImV4cCI6MTY2NDU0MDMyNX0.kec6D9-WzLvXCUqzVlaNXbR6eSxdNMvVsCxfEqJ1JTI",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"full_name\":\"Allanur Bayramgeldiyev\",\n    \"phone_number\":\"+99362420377\",\n    \"address\":\"Mir 2/2 jay 7 oy 36\",\n    \"customer_mark\":\"isleg market bet cykypdyr\",\n    \"order_time\":\"12:00 - 16:00\",\n    \"payment_type\":\"nagt\",\n    \"total_price\":1788,\n    \"products\":[\n        {\n            \"product_id\":\"d4156225-082e-4f0f-9b2c-85268114433a\",\n            \"quantity_of_product\":25\n        },\n         {\n            \"product_id\":\"81b84c5d-9759-4b86-978a-649c8ef79660\",\n            \"quantity_of_product\":3\n        },\n         {\n            \"product_id\":\"8df705a5-2351-4aca-b03e-3357a23840b4\",\n            \"quantity_of_product\":3\n        },\n         {\n            \"product_id\":\"e3c33ead-3c30-40f1-9d28-7bb8b71b767f\",\n            \"quantity_of_product\":3\n        }\n    ]\n\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:2406/api/tm/to-order",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"api",
+								"tm",
+								"to-order"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetCustomerOrders",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NSIsImV4cCI6MTY2NDQzMjc1NH0.lOcKtpKyjXACvk5-VD213k7tYYMnJuaGjK72WOerZE8",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "localhost:2406/api/tm/orders/89a6ac71-4495-4218-b9f9-3f2a3eab085b",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"api",
+								"tm",
+								"orders",
+								"89a6ac71-4495-4218-b9f9-3f2a3eab085b"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "CustomerAddress",
+			"item": [
+				{
+					"name": "GetCustomerAddresses",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NSIsImV4cCI6MTY2Mzg0MTczN30.4vbGmSILYsYqwHaeYi5_Fub2HVf-mn9fwhTTMQ6IFCA",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "localhost:2406/api/tm/addresses/89a6ac71-4495-4218-b9f9-3f2a3eab085b",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"api",
+								"tm",
+								"addresses",
+								"89a6ac71-4495-4218-b9f9-3f2a3eab085b"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "OrderDatesAndTimes",
+			"item": [
+				{
+					"name": "CreateOrderTime",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "date",
+									"value": "tomorrow",
+									"type": "default"
+								},
+								{
+									"key": "times",
+									"value": "09:00 - 12:00",
+									"type": "default"
+								},
+								{
+									"key": "times",
+									"value": "18:00 - 21:00",
+									"type": "default"
+								},
+								{
+									"key": "translation_date_tm",
+									"value": "Ertir",
+									"type": "default"
+								},
+								{
+									"key": "translation_date_ru",
+									"value": "Завтра",
+									"type": "default"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:2406/admin/order-time",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"admin",
+								"order-time"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetOrderTime",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:2406/api/tm/order-time",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"api",
+								"tm",
+								"order-time"
 							]
 						}
 					},

@@ -42,6 +42,8 @@ func Routes() *gin.Engine {
 		back.PUT("/company-setting", backController.UpdateCompanySetting)
 		back.GET("/company-setting", backController.GetCompanySetting)
 
+		back.POST("/order-time", backController.CreateOrderTime)
+
 		back.POST("/translation-header", backController.CreateTranslationHeader)
 		back.PUT("/translation-header/:id", backController.UpdateTranslationHeaderByID)
 		back.GET("/translation-header/:id", backController.GetTranslationHeaderByID)
@@ -121,6 +123,11 @@ func Routes() *gin.Engine {
 		back.PUT("/company-address/:id", backController.UpdateCompanyAddressByID)
 		back.GET("/company-address/:id", backController.GetCompanyAddressByID)
 
+		back.POST("/payment-type", backController.CreatePaymentType)
+		back.PUT("/payment-type/:id", backController.UpdatePaymentTypeByID)
+		back.GET("/payment-type/:id", backController.GetPaymentTypeByID)
+		back.GET("/payment-types", backController.GetPaymentTypes)
+
 		back.POST("/afisa", backController.CreateAfisa)
 		back.PUT("/afisa/:id", backController.UpdateAfisaByID)
 		back.GET("/afisa/:id", backController.GetAfisaByID)
@@ -191,11 +198,17 @@ func Routes() *gin.Engine {
 		// get my order page translation
 		front.GET("/translation-my-order-page", backController.GetTranslationMyOrderPageByLangID)
 
+		// get payment ttype by lang id
+		front.GET("/payment-types", backController.GetPaymentTypesByLangID)
+
 		// homepage categories
 		front.GET("/homepage-categories", frontController.GetHomePageCategories)
 
 		// // get one category with products
 		front.GET("/:category_id/:limit/:page", backController.GetOneCategoryWithProducts)
+
+		// get order time
+		front.GET("/order-time", backController.GetOrderTime)
 
 		securedCustomer := front.Group("/").Use(middlewares.Auth())
 		{
@@ -222,6 +235,15 @@ func Routes() *gin.Engine {
 
 			// remove product from cart
 			securedCustomer.DELETE("/remove-cart/:customer_id/:product_id", frontController.RemoveCart)
+
+			// to order
+			securedCustomer.POST("/to-order", frontController.ToOrder)
+
+			// get customer orders
+			securedCustomer.GET("/orders/:customer_id", frontController.GetCustomerOrders)
+
+			// get customer orders
+			securedCustomer.GET("/addresses/:customer_id", frontController.GetCustomerAddresses)
 
 		}
 
