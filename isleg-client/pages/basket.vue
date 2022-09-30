@@ -1,17 +1,15 @@
 <template>
   <section class="basket __container">
-    <basket-products></basket-products>
-    <basket-prices @openPayment="openPayment"></basket-prices>
-    <pop-up-payment
-      :isPayment="isPayment"
-      @close="closePaymentPopup"
-    ></pop-up-payment>
+    <BasketProducts />
+    <BasketPrices @openPayment="openPayment" />
+    <LazyPopUpPayment :isPayment="isPayment" @close="closePaymentPopup" />
   </section>
 </template>
 
 <script>
-import BasketProducts from '@/components/BasketProducts.vue'
-import BasketPrices from '@/components/BasketPrices.vue'
+const BasketProducts = () => import('@/components/BasketProducts.vue')
+const BasketPrices = () => import('@/components/BasketPrices.vue')
+
 export default {
   name: 'BasketPage',
   components: { BasketProducts, BasketPrices },

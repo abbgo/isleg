@@ -1,10 +1,10 @@
 <template>
   <client-only>
-    <div class="product__box" @click.stop="$emit('productPopUp', getProduct)">
+    <div class="product__box" @click.stop="openPopUpPoduct">
       <div class="product__img">
         <img
           :src="`${imgURL}/${getProduct && getProduct.main_image.medium}`"
-          alt=""
+          alt="isleg"
         />
       </div>
       <div class="product__description">
@@ -89,6 +89,14 @@
       </div>
       <div class="product__new">täze</div>
       <div class="product__sale">-15%</div>
+      <LazyPopUpProduct
+        :isProduct="isProduct"
+        :productData="getProduct"
+        :quantity="quantity"
+        @add="basketAdd"
+        @remove="basketRemove"
+        @close="closePopUpPoduct"
+      />
     </div>
   </client-only>
 </template>
@@ -108,6 +116,7 @@ export default {
       fillColor: '#FD5E29',
       quantity: 0,
       isFavorite: false,
+      isProduct: false,
     }
   },
   computed: {
@@ -146,19 +155,6 @@ export default {
   },
   methods: {
     productLike(data) {
-      // let isAuth = this.$auth.loggedIn
-      // if (isAuth) {
-      //   this.num++
-      //   console.log(this.num)
-      //   if (this.num % 2 == 0) {
-      //     this.fillEmpty = null
-      //   } else {
-      //     this.fillEmpty = '#FD5E29'
-      //   }
-      // } else {
-      //   this.fillEmpty = null
-      //   this.$store.commit('ui/SET_OPEN_ISOPENSIGNUP')
-      // }
       const cart = JSON.parse(localStorage.getItem('lorem'))
       const array = []
       this.isFavorite = !this.isFavorite
@@ -222,6 +218,14 @@ export default {
       const findProduct = cart.cart.find((product) => product.id === data.id)
       findProduct.quantity = this.quantity
       localStorage.setItem('lorem', JSON.stringify(cart))
+    },
+    openPopUpPoduct() {
+      this.isProduct = true
+      document.body.classList.add('_lock')
+    },
+    closePopUpPoduct() {
+      this.isProduct = false
+      document.body.classList.remove('_lock')
     },
   },
 }

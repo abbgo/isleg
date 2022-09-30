@@ -1,11 +1,18 @@
 <template>
   <div class="product__chek">
     <div class="product__chek-img">
-      <img src="@/assets/img/products/product1.jpg" alt="" />
+      <img
+        :src="`${imgURL}/${
+          basketProduct &&
+          basketProduct.main_image &&
+          basketProduct.main_image.medium
+        }`"
+        alt="isleg"
+      />
     </div>
     <div class="product__chek-text">
-      <span>Набор карандашей Bianyo</span>
-      <span>120.10 manat</span>
+      <span>{{ basketProduct && basketProduct.name }}</span>
+      <span>{{ basketProduct && basketProduct.price }} manat</span>
       <div class="chek__count">
         <button
           :disabled="productTotal == 0"
@@ -24,7 +31,7 @@
             />
           </svg>
         </button>
-        <p>{{ productTotal }}</p>
+        <p>{{ basketProduct && basketProduct.quantity }}</p>
         <button @click="$store.commit('card/SET_PRODUCT_TOTAL_INCREMENT')">
           <svg
             width="10"
@@ -53,8 +60,17 @@
 <script>
 import { mapGetters } from 'vuex'
 export default {
+  props: {
+    basketProduct: {
+      type: Object,
+      default: () => {},
+    },
+  },
   computed: {
-    ...mapGetters('card', ['productTotal']),
+    ...mapGetters('card', ['imgURL', 'productTotal']),
+  },
+  mounted() {
+    console.log(this.basketProduct)
   },
 }
 </script>

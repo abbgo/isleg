@@ -6,6 +6,10 @@ const state = () => ({
   imgURL: `${process.env.IMAGE_URL}`,
   productsCategories: [],
   productCount: null,
+  fillEmpty: null,
+  fillColor: '#FD5E29',
+  quantity: 0,
+  isFavorite: false,
 })
 
 export default {

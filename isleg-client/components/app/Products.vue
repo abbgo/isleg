@@ -1,16 +1,16 @@
 <template>
   <div class="products">
-    <product-box
+    <ProductBox
       v-for="product in productsCategory.products"
       :key="product.id"
       :product="product"
       @productPopUp="productPopUp"
-    ></product-box>
+    />
   </div>
 </template>
 
 <script>
-import ProductBox from './ProductBox.vue'
+const ProductBox = () => import('./ProductBox.vue')
 export default {
   components: {
     ProductBox,
