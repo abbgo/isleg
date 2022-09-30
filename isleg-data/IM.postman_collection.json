@@ -4497,13 +4497,13 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NSIsImV4cCI6MTY2NDQ0NDA5N30.jCwkQ7dt-0FFnkMZ-Ui_92NI7Yg9Lf66AHVuiUauAyA",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NSIsImV4cCI6MTY2NDU0MDMyNX0.kec6D9-WzLvXCUqzVlaNXbR6eSxdNMvVsCxfEqJ1JTI",
 								"type": "default"
 							}
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"full_name\":\"Allanur Bayramgeldiyev\",\n    \"phone_number\":\"+99362420377\",\n    \"address\":\"Mir 2/2 jay 7 oy 36\",\n    \"customer_mark\":\"isleg market bet cykypdyr\",\n    \"order_time\":\"12:00 - 16:00\",\n    \"payment_type\":\"nagt\",\n    \"total_price\":1788,\n    \"products\":[\n        {\n            \"product_id\":\"d4156225-082e-4f0f-9b2c-85268114433a\",\n            \"quantity_of_product\":25\n        },\n         {\n            \"product_id\":\"81b84c5d-9759-4b86-978a-649c8ef79660\",\n            \"quantity_of_product\":3\n        }\n    ]\n\n}",
+							"raw": "{\n    \"full_name\":\"Allanur Bayramgeldiyev\",\n    \"phone_number\":\"+99362420377\",\n    \"address\":\"Mir 2/2 jay 7 oy 36\",\n    \"customer_mark\":\"isleg market bet cykypdyr\",\n    \"order_time\":\"12:00 - 16:00\",\n    \"payment_type\":\"nagt\",\n    \"total_price\":1788,\n    \"products\":[\n        {\n            \"product_id\":\"d4156225-082e-4f0f-9b2c-85268114433a\",\n            \"quantity_of_product\":25\n        },\n         {\n            \"product_id\":\"81b84c5d-9759-4b86-978a-649c8ef79660\",\n            \"quantity_of_product\":3\n        },\n         {\n            \"product_id\":\"8df705a5-2351-4aca-b03e-3357a23840b4\",\n            \"quantity_of_product\":3\n        },\n         {\n            \"product_id\":\"e3c33ead-3c30-40f1-9d28-7bb8b71b767f\",\n            \"quantity_of_product\":3\n        }\n    ]\n\n}",
 							"options": {
 								"raw": {
 									"language": "json"
