@@ -548,15 +548,14 @@ func ToOrder(c *gin.Context) {
 
 	f.SetCellValue("Лист1", "d20", totalPrice)
 
-	// fileName := time.Now().UnixMilli()
-
 	if err := f.SaveAs("./uploads/orders/" + strconv.Itoa(int(sargyt.OrderNumber)) + ".xlsx"); err != nil {
 		fmt.Println(err)
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"status":  true,
-		"message": "success",
+		"status":    true,
+		"message":   "success",
+		"file_path": "uploads/orders/" + strconv.Itoa(int(sargyt.OrderNumber)) + ".xlsx",
 	})
 
 }
