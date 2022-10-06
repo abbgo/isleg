@@ -1,19 +1,17 @@
 <template>
   <div class="main">
-    <the-header></the-header>
-    <main><nuxt></nuxt></main>
+    <TheHeader />
+    <main><Nuxt /></main>
     <div
       class="toast-container __container"
       style="align-items: center; z-index: 1000000"
     ></div>
-    <the-mobile-footer v-if="!mobileShow"></the-mobile-footer>
-    <the-footer v-if="mobileShow"></the-footer>
+    <TheMobileFooter v-if="!mobileShow"></TheMobileFooter>
+    <LazyTheFooter v-if="mobileShow" />
   </div>
 </template>
 <script>
-import TheMobileFooter from '~/components/TheMobileFooter.vue'
 export default {
-  components: { TheMobileFooter },
   data() {
     return {
       mobileShow: true,

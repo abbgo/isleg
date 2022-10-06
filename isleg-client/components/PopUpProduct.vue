@@ -22,29 +22,34 @@
           </svg>
         </div>
         <div class="pop-up__container">
-          <div class="product__slider" @mouseleave="$emit('currentImagePath')">
+          <div class="product__slider">
             <div class="product__slider-big">
               <figure
                 class="zoom"
-                :style="`backgroundImage: url(/img/popup/${bigSlider})`"
+                :style="`backgroundImage: url(${bigSlider})`"
                 @mousemove="imageZoom"
               >
-                <img
-                  :src="require(`@/assets/img/popup/${bigSlider}`)"
-                  id="img-1"
-                  alt=""
-                />
+                <img :src="`${bigSlider}`" id="img-1" alt="" />
               </figure>
             </div>
             <div class="product__slider-small">
+              <div class="small__slider-img">
+                <img
+                  @mouseenter="
+                    changeImagePath(`${imgURL}/${productData.main_image.large}`)
+                  "
+                  :src="`${imgURL}/${productData.main_image.small}`"
+                  alt=""
+                />
+              </div>
               <div
                 class="small__slider-img"
-                v-for="image in images"
-                :key="image.id"
+                v-for="(image, i) in productData.images"
+                :key="i"
               >
                 <img
-                  @mouseenter="$emit('changeImagePath', image.src)"
-                  :src="require(`@/assets/img/popup/${image.src}`)"
+                  @mouseenter="changeImagePath(`${imgURL}/${image.large}`)"
+                  :src="`${imgURL}/${image.small}`"
                   alt=""
                 />
               </div>
@@ -64,18 +69,8 @@
               >{{ productData && productData.price }} manat</span
             >
             <div class="product__btns">
-              <div
-                class="btn__count-box"
-                v-if="productData && productData.quantity > 0"
-              >
-                <button
-                  @click="
-                    $store.commit(
-                      'products/SET_PRODUCT_TOTAL_INCREMENT',
-                      productData
-                    )
-                  "
-                >
+              <div class="btn__count-box" v-if="quantity > 0">
+                <button @click.stop="removeFromBasket(productData)">
                   <svg
                     width="15"
                     height="4"
@@ -89,15 +84,8 @@
                     />
                   </svg>
                 </button>
-                <p>{{ productData && productData.quantity }}</p>
-                <button
-                  @click="
-                    $store.commit(
-                      'products/SET_PRODUCT_TOTAL_DICREMENT',
-                      productData
-                    )
-                  "
-                >
+                <p>{{ quantity }}</p>
+                <button @click.stop="addToBasket(productData)">
                   <svg
                     width="15"
                     height="15"
@@ -114,13 +102,9 @@
               </div>
               <button
                 class="product__add-btn"
+                style="margin-top: 0px"
                 v-else
-                @click="
-                  $store.commit(
-                    'products/SET_PRODUCT_TOTAL_DICREMENT',
-                    productData
-                  )
-                "
+                @click.stop="addToBasket(productData)"
               >
                 <svg
                   width="27"
@@ -145,19 +129,16 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 export default {
   props: {
     isProduct: {
       type: Boolean,
       default: false,
     },
-    bigSlider: {
-      type: String,
-      default: () => '',
-    },
-    images: {
-      type: Array,
-      default: () => [],
+    quantity: {
+      type: Number,
+      default: 0,
     },
     productData: {
       type: Object,
@@ -165,7 +146,20 @@ export default {
     },
   },
   data() {
-    return { product_count: 0 }
+    return {
+      bigSlider: `${process.env.IMAGE_URL}/${this.productData.main_image.large}`,
+      images: [
+        { id: 1, src: '1.jpg' },
+        { id: 2, src: '2.jpg' },
+        { id: 3, src: '3.jpg' },
+        { id: 4, src: '1.jpg' },
+        { id: 5, src: '2.jpg' },
+        { id: 6, src: '3.jpg' },
+      ],
+    }
+  },
+  computed: {
+    ...mapGetters('ui', ['imgURL']),
   },
   methods: {
     imageZoom(e) {
@@ -176,6 +170,15 @@ export default {
       let x = (offsetX / zoomer.offsetWidth) * 100
       let y = (offsetY / zoomer.offsetHeight) * 100
       zoomer.style.backgroundPosition = x + '% ' + y + '%'
+    },
+    changeImagePath(imagePath) {
+      this.bigSlider = imagePath
+    },
+    addToBasket(data) {
+      this.$emit('add', data)
+    },
+    removeFromBasket(data) {
+      this.$emit('remove', data)
     },
   },
 }
