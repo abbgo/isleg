@@ -210,6 +210,9 @@ func Routes() *gin.Engine {
 		// get order time
 		front.GET("/order-time", backController.GetOrderTime)
 
+		// search
+		front.POST("/search", frontController.Search)
+
 		securedCustomer := front.Group("/").Use(middlewares.Auth())
 		{
 			// get my information page translation
