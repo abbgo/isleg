@@ -11,6 +11,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	"github.com/gosimple/slug"
 )
 
 // struct used in function GetProductByID
@@ -367,7 +368,7 @@ func CreateProduct(c *gin.Context) {
 
 	// create translation product
 	for _, v := range languages {
-		resultTrProducts, err := db.Query("INSERT INTO translation_product (lang_id,product_id,name,description) VALUES ($1,$2,$3,$4)", v.ID, productID, c.PostForm("name_"+v.NameShort), c.PostForm("description_"+v.NameShort))
+		resultTrProducts, err := db.Query("INSERT INTO translation_product (lang_id,product_id,name,description,slug) VALUES ($1,$2,$3,$4,$5)", v.ID, productID, c.PostForm("name_"+v.NameShort), c.PostForm("description_"+v.NameShort), slug.MakeLang(c.PostForm("name_"+v.NameShort), "en"))
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
@@ -891,7 +892,7 @@ func UpdateProductByID(c *gin.Context) {
 
 	// update translation product
 	for _, v := range languages {
-		resultTrProduct, err := db.Query("UPDATE translation_product SET name = $1, description = $2, updated_at = $3 WHERE product_id = $4 AND lang_id = $5", c.PostForm("name_"+v.NameShort), c.PostForm("description_"+v.NameShort), currentTime, ID, v.ID)
+		resultTrProduct, err := db.Query("UPDATE translation_product SET name = $1, description = $2, slug = $3, updated_at = $4 WHERE product_id = $5 AND lang_id = $6", c.PostForm("name_"+v.NameShort), c.PostForm("description_"+v.NameShort), slug.MakeLang(c.PostForm("name_"+v.NameShort), "en"), currentTime, ID, v.ID)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,

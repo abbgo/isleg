@@ -45,6 +45,7 @@ type TranslationProduct struct {
 	ProductID   uuid.UUID `json:"product_id"`
 	Name        string    `json:"name"`
 	Description string    `json:"description"`
+	Slug        string    `json:"slug"`
 	CreatedAt   string    `json:"-"`
 	UpdatedAt   string    `json:"-"`
 	DeletedAt   string    `json:"-"`
