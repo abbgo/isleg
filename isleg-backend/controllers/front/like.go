@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"errors"
-	"fmt"
 	"github/abbgo/isleg/isleg-backend/config"
 	"github/abbgo/isleg/isleg-backend/models"
 	"net/http"
@@ -40,10 +39,8 @@ func AddLike(c *gin.Context) {
 	}
 	defer db.Close()
 
-	langShortName := c.Param("lang")
+	// langShortName := c.Param("lang")
 	customerID := c.PostForm("customer_id")
-
-	fmt.Println("Customer id: ", customerID)
 
 	rowCustomer, err := db.Query("SELECT id FROM customers WHERE id = $1 AND deleted_at IS NULL", customerID)
 	if err != nil {
@@ -82,10 +79,6 @@ func AddLike(c *gin.Context) {
 			"message": "product id is required",
 		})
 		return
-	}
-
-	for _, v1 := range productIds {
-		fmt.Println(v1)
 	}
 
 	for _, v := range productIds {
@@ -160,18 +153,18 @@ func AddLike(c *gin.Context) {
 
 	}
 
-	products, err := GetLikes(langShortName, customerID)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
+	// products, err := GetLikes(langShortName, customerID)
+	// if err != nil {
+	// 	c.JSON(http.StatusBadRequest, gin.H{
+	// 		"status":  false,
+	// 		"message": err.Error(),
+	// 	})
+	// 	return
+	// }
 
 	c.JSON(http.StatusOK, gin.H{
-		"status":   true,
-		"products": products,
+		"status":  true,
+		"message": "products has been successfully added to my favorites",
 	})
 
 }
