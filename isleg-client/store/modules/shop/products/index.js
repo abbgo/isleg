@@ -10,6 +10,7 @@ const state = () => ({
   fillColor: '#FD5E29',
   quantity: 0,
   isFavorite: false,
+  removedFromBasket: false
 })
 
 export default {

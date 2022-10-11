@@ -17,6 +17,7 @@
     "@nuxtjs/i18n": "^7.2.2",
     "cookie-universal-nuxt": "^2.2.1",
     "core-js": "^3.19.3",
+    "node-sass": "^7.0.3",
     "nuxt": "^2.15.8",
     "swiper": "^5.4.5",
     "vue": "^2.6.14",

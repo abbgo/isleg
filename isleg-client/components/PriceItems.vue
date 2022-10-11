@@ -5,23 +5,38 @@
     </div>
     <div class="price__texts">
       <span>Haryt mukdary:</span>
-      <span>8 sany</span>
+      <span>{{ count }} sany</span>
     </div>
     <div class="price__texts">
       <span>Doly bahasy:</span>
-      <span>120 manat</span>
+      <span>{{ totalPrice }} manat</span>
     </div>
-    <div class="price__texts">
+    <!-- <div class="price__texts">
       <span>Arzanladyş:</span>
-      <span>-23 manat</span>
-    </div>
+      <span>-{{ productsChek.discount }} manat</span>
+    </div> -->
     <div class="price__texts">
       <span>Eltip berme:</span>
-      <span>10 manat</span>
+      <span>{{ productsChek.delivery }} manat</span>
     </div>
   </div>
 </template>
 
 <script>
-export default {}
+export default {
+  props: {
+    count: {
+      type: Number,
+      default: () => 0,
+    },
+    productsChek: {
+      type: Object,
+      default: () => {},
+    },
+    totalPrice: {
+      type: Number,
+      default: () => 0,
+    },
+  },
+}
 </script>

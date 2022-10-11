@@ -31,7 +31,6 @@
           @openSignUp="openPopUp"
           :isProfile="isProfile"
           :myInformation="myInformation"
-          :myFavorites="myFavorites"
           :myOrders="myOrders"
           :logOut="logOut"
           :activeLang="activeLang"
@@ -188,7 +187,6 @@ export default {
       formData.append('adress', ['wekfdnwejk', 'wejdbkwejb'])
       try {
         const res = await this.$axios.post('/tm/register', formData)
-        console.log(res)
       } catch (e) {
         console.log(e.response)
       }

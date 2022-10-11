@@ -1,13 +1,13 @@
 <template>
   <div class="category__section">
     <ProductTitle :title="productsCategory.name" />
-    <Products :productsCategory="productsCategory" />
+    <Products :products="productsCategory.products" />
   </div>
 </template>
 
 <script>
-const ProductTitle = () => import('./ProductTitle.vue')
-const Products = () => import('./Products.vue')
+import ProductTitle from './ProductTitle.vue'
+import Products from './Products.vue'
 export default {
   components: { ProductTitle, Products },
   props: {

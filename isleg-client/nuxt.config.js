@@ -67,8 +67,6 @@ export default {
         scheme: 'refresh',
         token: {
           property: 'access_token',
-          global: true,
-          type: 'JWT',
         },
         refreshToken: {
           property: 'refresh_token',
@@ -91,8 +89,6 @@ export default {
         scheme: 'refresh',
         token: {
           property: 'access_token',
-          global: true,
-          type: 'JWT',
         },
         refreshToken: {
           property: 'refresh_token',
@@ -115,7 +111,6 @@ export default {
         scheme: 'refresh',
         token: {
           property: 'access_token',
-          global: true,
         },
         refreshToken: {
           property: 'refresh_token',

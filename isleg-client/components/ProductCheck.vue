@@ -12,12 +12,9 @@
     </div>
     <div class="product__chek-text">
       <span>{{ basketProduct && basketProduct.name }}</span>
-      <span>{{ basketProduct && basketProduct.price }} manat</span>
+      <!-- <span>{{ basketProduct && basketProduct.price }} manat</span> -->
       <div class="chek__count">
-        <button
-          :disabled="productTotal == 0"
-          @click="$store.commit('card/SET_PRODUCT_TOTAL_DICREMENT')"
-        >
+        <button @click="fromBasketRemove(basketProduct)">
           <svg
             width="8"
             height="4"
@@ -32,7 +29,7 @@
           </svg>
         </button>
         <p>{{ basketProduct && basketProduct.quantity }}</p>
-        <button @click="$store.commit('card/SET_PRODUCT_TOTAL_INCREMENT')">
+        <button @click="fromBasketAdd(basketProduct)">
           <svg
             width="10"
             height="10"
@@ -49,10 +46,10 @@
       </div>
     </div>
     <div class="product__chek-close">
-      <div class="close">
+      <div class="close" @click="$emit('popUpSureOpen', basketProduct)">
         <img src="@/assets/img/close.svg" alt="" />
       </div>
-      <span>18 manat</span>
+      <span>{{ basketProduct && basketProduct.price }} manat</span>
     </div>
   </div>
 </template>
@@ -66,11 +63,58 @@ export default {
       default: () => {},
     },
   },
+  data() {
+    return {
+      basketProductQuantity: 0,
+    }
+  },
   computed: {
     ...mapGetters('card', ['imgURL', 'productTotal']),
   },
-  mounted() {
-    console.log(this.basketProduct)
+  methods: {
+    fromBasketAdd(data) {
+      const cart = JSON.parse(localStorage.getItem('lorem'))
+      const array = []
+      this.basketProductQuantity = data.quantity
+      this.basketProductQuantity += 1
+      this.$store.commit('products/SET_PRODUCT_TOTAL_INCREMENT', {
+        data: data,
+        quantity: this.basketProductQuantity,
+      })
+      if (cart) {
+        const findProduct = cart.cart.find((product) => product.id === data.id)
+        if (findProduct) {
+          findProduct.quantity = this.basketProductQuantity
+          localStorage.setItem('lorem', JSON.stringify(cart))
+        } else {
+          cart.cart.push(data)
+          localStorage.setItem('lorem', JSON.stringify(cart))
+        }
+      } else {
+        localStorage.setItem(
+          'lorem',
+          JSON.stringify({
+            cart: [...array],
+          })
+        )
+      }
+    },
+    fromBasketRemove(data) {
+      const cart = JSON.parse(localStorage.getItem('lorem'))
+      this.basketProductQuantity = data.quantity
+      if (this.basketProductQuantity === 1) {
+        this.$emit('popUpSureOpen', data)
+      } else {
+        this.basketProductQuantity -= 1
+        this.$store.commit('products/SET_PRODUCT_TOTAL_DECREMENT', {
+          data,
+          quantity: this.basketProductQuantity,
+        })
+      }
+      const findProduct = cart.cart.find((product) => product.id === data.id)
+      findProduct.quantity = this.basketProductQuantity
+      localStorage.setItem('lorem', JSON.stringify(cart))
+    },
   },
 }
 </script>

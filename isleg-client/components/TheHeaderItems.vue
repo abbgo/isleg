@@ -33,7 +33,6 @@
       <profile-box
         :isProfileProps="isProfile"
         :information="myInformation"
-        :favorites="myFavorites"
         :orders="myOrders"
         :logOut="logOut"
         @close="$emit('closeProfilePopUp')"
@@ -60,8 +59,8 @@
         />
       </svg>
       <client-only
-        ><span class="shop__count" v-if="productCount">{{
-          productCount
+        ><span class="shop__count" v-if="productCount && productCount !== 0">{{
+          productCount > 99 ? '99+' : productCount
         }}</span></client-only
       >
       <span class="shop__span">Sebet</span>
@@ -78,10 +77,6 @@ export default {
       default: false,
     },
     myInformation: {
-      type: String,
-      default: () => '',
-    },
-    myFavorites: {
       type: String,
       default: () => '',
     },
@@ -117,11 +112,6 @@ export default {
     mouseLeave() {
       let item__border = document.getElementById('oppacity')
       item__border.classList.remove('active__item-border')
-    },
-    goFavoritesPage() {
-      this.$auth.loggedIn
-        ? this.$router.push(this.localeLocation('/favorites'))
-        : this.$emit('openSignUp')
     },
   },
 }

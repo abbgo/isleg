@@ -16,10 +16,14 @@ const SET_CLOSE_ISOPENSIGNUP = (state) => {
 const SET_OPEN_ISOPENSIGNUP = (state) => {
   state.isOpenSignUp = true
 }
+const SET_CATEGORY_PRODUCTS = (state, payload) => {
+  state.categoryProducts = payload
+}
 export default {
   SET_HEADER,
   SET_FOOTER,
   SET_BRENDS,
   SET_CLOSE_ISOPENSIGNUP,
   SET_OPEN_ISOPENSIGNUP,
+  SET_CATEGORY_PRODUCTS
 }

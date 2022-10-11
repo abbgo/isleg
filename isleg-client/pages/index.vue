@@ -1,25 +1,31 @@
 <template>
   <div>
-    <LazySliderMain
-      v-if="brends && brends.length"
-      :imgURL="imgURL"
-      :brends="brends"
-    />
+    <client-only>
+      <LazySliderMain
+        v-if="brends && brends.length"
+        :imgURL="imgURL"
+        :brends="brends"
+      />
+    </client-only>
     <section class="product__categoty __container">
-      <ProductColumn
-        v-for="productsCategory in productsCategories.filter(
-          (item) => item.products !== null
-        )"
-        :key="productsCategory.id"
-        :productsCategory="productsCategory"
-      ></ProductColumn>
+      <client-only>
+        <ProductColumn
+          v-for="productsCategory in productsCategories.filter(
+            (item) => item.products !== null
+          )"
+          :key="productsCategory.id"
+          :productsCategory="productsCategory"
+        />
+      </client-only>
     </section>
-    <LazySliderBrends />
+    <client-only>
+      <LazySliderBrends />
+    </client-only>
   </div>
 </template>
 
 <script>
-const ProductColumn = () => import('@/components/app/ProductColumn.vue')
+import ProductColumn from '@/components/app/ProductColumn.vue'
 import { mapGetters } from 'vuex'
 export default {
   name: 'IndexPage',

@@ -73,7 +73,12 @@ const brends = (state) => {
 const isOpenSignUp = (state) => {
   return state.isOpenSignUp
 }
-
+const categoryProductsName = (state) => {
+  return state.categoryProducts && state.categoryProducts.category && state.categoryProducts.category.name
+}
+const categoryProducts = (state) => {
+  return state.categoryProducts && state.categoryProducts.category && state.categoryProducts.category.products
+}
 export default {
   imgURL,
   logo,
@@ -100,4 +105,6 @@ export default {
   word,
   brends,
   isOpenSignUp,
+  categoryProductsName,
+  categoryProducts
 }

@@ -43,9 +43,7 @@
                       :key="nestedSubCategory.id"
                       @click="
                         $router.push(
-                          localeLocation(
-                            `/category/${category.id}/${nestedSubCategory.id}`
-                          )
+                          localeLocation(`/category/${nestedSubCategory.id}`)
                         )
                       "
                       >{{ nestedSubCategory.name }}</span
@@ -75,9 +73,6 @@ export default {
       type: String,
       default: () => '',
     },
-  },
-  mounted() {
-    console.log(this.categories)
   },
   methods: {
     scrollLeft() {
