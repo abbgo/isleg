@@ -91,7 +91,6 @@ export default {
           (x[6] ? '-' + x[6] : '')
     },
     postCommunication() {
-      console.log(this)
       this.$toast('wkednewj')
     },
   },

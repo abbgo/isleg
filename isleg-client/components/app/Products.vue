@@ -1,10 +1,10 @@
 <template>
   <div class="products">
     <ProductBox
-      v-for="product in productsCategory.products"
+      v-for="product in products"
       :key="product.id"
       :product="product"
-      @productPopUp="productPopUp"
+      @removeFromWishlist="removeFromWishlist"
     />
   </div>
 </template>
@@ -12,21 +12,18 @@
 <script>
 const ProductBox = () => import('./ProductBox.vue')
 export default {
+  props: {
+    products: {
+      type: Array,
+      default: () => [],
+    },
+  },
   components: {
     ProductBox,
   },
-  props: {
-    productsCategory: {
-      type: Object,
-      default: () => {},
-    },
-  },
   methods: {
-    openPop() {
-      console.log('eee')
-    },
-    productPopUp(product) {
-      this.$emit('productPopUpOpen', product)
+    removeFromWishlist(data) {
+      this.$emit('remove', data)
     },
   },
 }

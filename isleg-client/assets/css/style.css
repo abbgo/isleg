@@ -944,7 +944,7 @@ input[type*='date']::-webkit-calendar-picker-indicator {
   background: #eee;
   height: 38px;
   border-radius: 5px;
-  padding-left: 5px;
+  padding-left: 10px;
   font-size: 14px;
   width: 200px;
 }
@@ -1063,7 +1063,7 @@ input[type*='date']::-webkit-calendar-picker-indicator {
   align-items: center;
 }
 .menu__filter span svg {
-  padding-right: 2px;
+  margin-right: 8px;
 }
 .pagination__box {
   display: flex;
@@ -1141,7 +1141,7 @@ input[type*='date']::-webkit-calendar-picker-indicator {
 }
 .product__chek-text span {
   font-family: TTNormsPro;
-  font-size: 25px;
+  font-size: 22px;
   line-height: 40px;
   color: #1b3254;
 }
@@ -1184,7 +1184,7 @@ input[type*='date']::-webkit-calendar-picker-indicator {
   font-family: TTNormsPro;
   font-style: normal;
   font-weight: 500;
-  font-size: 30px;
+  font-size: 26px;
   line-height: 36px;
   color: #1b3254;
 }
@@ -1407,6 +1407,46 @@ input[type*='date']::-webkit-calendar-picker-indicator {
   width: 100%;
   padding: 20px 15px;
 }
+.pop-up__text {
+  font-family: TTNormsPro;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 20px;
+  line-height: 30px;
+  color: #1b3254;
+}
+.pop-up__action {
+  margin-top: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+.pop-up__action .btn {
+  padding: 10px;
+}
+.pop-up__btn-confirm {
+  font-family: TTNormsPro;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 16px;
+  color: #ffff;
+  border-radius: 4px;
+  background: #fd5e29;
+  width: 100px;
+  text-transform: uppercase;
+}
+.pop-up__btn-cancel {
+  font-family: TTNormsPro;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 16px;
+  color: #ffff;
+  border-radius: 4px;
+  background: #1b3254;
+  margin-right: 15px;
+  width: 100px;
+  text-transform: uppercase;
+}
 .pop-up_form {
   width: 100%;
 }
@@ -1417,9 +1457,6 @@ input[type*='date']::-webkit-calendar-picker-indicator {
   font-size: 14px;
   font-family: TTNormsPro;
   font-style: normal;
-}
-.form__input {
-  padding-bottom: 10px;
 }
 .form__input-container {
   display: flex;

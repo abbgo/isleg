@@ -21,7 +21,7 @@
         </span>
         <h4>{{ information }}</h4>
       </div>
-      <div
+      <!-- <div
         class="profile__item"
         @click="$router.push(localeLocation('/favorites'))"
       >
@@ -40,7 +40,7 @@
           </svg>
         </span>
         <h4>{{ favorites }}</h4>
-      </div>
+      </div> -->
       <div
         class="profile__item"
         @click="$router.push(localeLocation('/my-orders'))"
@@ -97,10 +97,6 @@ export default {
       default: false,
     },
     information: {
-      type: String,
-      default: () => '',
-    },
-    favorites: {
       type: String,
       default: () => '',
     },

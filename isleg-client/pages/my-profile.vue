@@ -28,7 +28,7 @@
       </div>
       <div class="form__box born__date">
         <span>Doglan senäňiz</span>
-        <label class="born__lable" for="born">{{ born }}</label>
+        <!-- <label class="born__lable" for="born">{{ born }}</label> -->
         <input
           v-model="born"
           id="born"
@@ -100,7 +100,7 @@ export default {
         },
         birthday: '',
       },
-      born: '',
+      born: 'yyyy-mm-dd',
     }
   },
   methods: {
@@ -111,7 +111,9 @@ export default {
       try {
         const res = await this.$axios.$post('/admin/company-phone', formData)
         console.log(res)
-      } catch (e) {}
+      } catch (e) {
+        console.log(e)
+      }
     },
     openChangePassword() {
       this.isChangePassword = true

@@ -137,8 +137,6 @@ export default {
               password: this.signUp.password,
             },
           })
-          console.log('response', response)
-          console.log('$auth.loggedIn', this.$auth.loggedIn)
           if (this.$auth.loggedIn) {
             const { access_token, customer_id, refresh_token } = response.data
             this.$cookies.set('access_token', access_token)

@@ -26,18 +26,16 @@
             <div class="product__slider-big">
               <figure
                 class="zoom"
-                :style="`backgroundImage: url(${bigSlider})`"
+                :style="`backgroundImage: url(${imgURL}/${bigSlider})`"
                 @mousemove="imageZoom"
               >
-                <img :src="`${bigSlider}`" id="img-1" alt="" />
+                <img :src="`${imgURL}/${bigSlider}`" id="img-1" alt="" />
               </figure>
             </div>
             <div class="product__slider-small">
               <div class="small__slider-img">
                 <img
-                  @mouseenter="
-                    changeImagePath(`${imgURL}/${productData.main_image.large}`)
-                  "
+                  @mouseenter="changeImagePath(productData.main_image.large)"
                   :src="`${imgURL}/${productData.main_image.small}`"
                   alt=""
                 />
@@ -48,7 +46,7 @@
                 :key="i"
               >
                 <img
-                  @mouseenter="changeImagePath(`${imgURL}/${image.large}`)"
+                  @mouseenter="changeImagePath(image.large)"
                   :src="`${imgURL}/${image.small}`"
                   alt=""
                 />
@@ -147,7 +145,7 @@ export default {
   },
   data() {
     return {
-      bigSlider: `${process.env.IMAGE_URL}/${this.productData.main_image.large}`,
+      bigSlider: this.productData.main_image.large,
       images: [
         { id: 1, src: '1.jpg' },
         { id: 2, src: '2.jpg' },

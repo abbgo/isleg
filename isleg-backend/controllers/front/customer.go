@@ -35,6 +35,7 @@ func RegisterCustomer(c *gin.Context) {
 		return
 	}
 
+
 	err = models.ValidateCustomerRegister(customer.PhoneNumber, customer.Email)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{

@@ -352,17 +352,17 @@ export default {
                 email: this.register.email,
               },
             })
-            console.log('response', response)
-            console.log('$auth.loggedIn', this.$auth.loggedIn)
+            console.log(response)
             if (response.status == 200) {
               const { access_token, customer_id, refresh_token } = response.data
               this.$cookies.set('access_token', access_token)
               this.$cookies.set('customer_id', customer_id)
               this.$cookies.set('refresh_token', refresh_token)
-              this.closeRegister()
+              await this.postCarts()
+              await this.postFishlists()
             }
           } catch (err) {
-            console.log(err.response)
+            console.log(err)
             if (err.response.status == 400) {
               this.$toast(this.$t('register.customerExists'))
             } else {
@@ -402,6 +402,70 @@ export default {
       this.isPhoneNumber = false
       this.isTearmsOfServices = false
       this.$v.$reset()
+    },
+    async postCarts() {
+      const customerId = await this.$cookies.get('customer_id')
+      const accessToken = await this.$cookies.get('access_token')
+      const cart = await JSON.parse(localStorage.getItem('lorem'))
+      const products = []
+      for (let i = 0; i < cart.cart.length; i++) {
+        if (cart.cart[i].quantity > 0) {
+          products.push({
+            product_id: cart.cart[i].id,
+            quantity_of_product: cart.cart[i].quantity,
+          })
+        }
+      }
+      console.log(products)
+      try {
+        const { status } = await this.$axios.$post(
+          `/${this.$i18n.locale}/add-cart`,
+          {
+            customer_id: customerId,
+            products: products,
+          },
+          {
+            headers: {
+              Authorization: accessToken,
+            },
+          }
+        )
+        console.log(status)
+        // if (status) {
+        // }
+      } catch (e) {
+        console.log(e)
+      }
+    },
+    async postFishlists() {
+      const formData = new FormData()
+      const customerId = await this.$cookies.get('customer_id')
+      const accessToken = await this.$cookies.get('access_token')
+      const cart = await JSON.parse(localStorage.getItem('lorem'))
+      const wishlists = cart.cart
+        .filter((product) => product.is_favorite === true)
+        .map((item) => item.id)
+      console.log(wishlists, customerId, accessToken)
+      formData.append('customer_id', customerId)
+      for (let i = 0; i < wishlists.length; i++) {
+        formData.append('product_ids', wishlists[i])
+      }
+      try {
+        const { status } = await this.$axios.$post(
+          `/${this.$i18n.locale}/like`,
+          formData,
+          {
+            headers: {
+              Authorization: accessToken,
+            },
+          }
+        )
+        console.log(status)
+        // if (status) {
+        // }
+      } catch (e) {
+        console.log(e)
+      }
     },
   },
 }

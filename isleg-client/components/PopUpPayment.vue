@@ -204,9 +204,6 @@ export default {
       },
     },
   },
-  mounted() {
-    console.log(this.$v)
-  },
   methods: {
     enforcePhoneFormat() {
       this.isPhoneNumber = false
@@ -233,7 +230,6 @@ export default {
       }
       payload.checked = true
       this.isPaymentForm = false
-      console.log(this.payment.paymentForm)
     },
     theDeliveryTimeChecked(payload) {
       const findItem = this.payment.paymentForm.find(
@@ -244,19 +240,15 @@ export default {
       }
       payload.checked = true
       this.isTheDeliveryTime = false
-      console.log(this.payment.theDeliveryTime)
     },
     order: async function () {
       this.$v.$touch()
-      console.log(this.payment.paymentForm)
       const paymentForm = this.payment.paymentForm.filter(
         (pay) => pay.checked == true
       )
       const theDeliveryTime = this.payment.theDeliveryTime.filter(
         (pay) => pay.checked == true
       )
-      console.log('paymentForm', paymentForm)
-      console.log('theDeliveryTime', theDeliveryTime)
       if (paymentForm.length == 0) {
         this.isPaymentForm = true
       }

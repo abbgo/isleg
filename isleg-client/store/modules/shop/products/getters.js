@@ -19,6 +19,9 @@ const quantity = (state) => {
 const isFavorite = (state) => {
   return state.isFavorite
 }
+const removedFromBasket = (state) => {
+  return state.removedFromBasket
+}
 export default {
   imgURL,
   productsCategories,
@@ -27,4 +30,5 @@ export default {
   fillColor,
   quantity,
   isFavorite,
+  removedFromBasket
 }
