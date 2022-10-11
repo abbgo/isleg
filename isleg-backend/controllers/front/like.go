@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"errors"
+	"fmt"
 	"github/abbgo/isleg/isleg-backend/config"
 	"github/abbgo/isleg/isleg-backend/models"
 	"net/http"
@@ -42,6 +43,8 @@ func AddLike(c *gin.Context) {
 	langShortName := c.Param("lang")
 	customerID := c.PostForm("customer_id")
 
+	fmt.Println("Customer id: ", customerID)
+
 	rowCustomer, err := db.Query("SELECT id FROM customers WHERE id = $1 AND deleted_at IS NULL", customerID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -79,6 +82,10 @@ func AddLike(c *gin.Context) {
 			"message": "product id is required",
 		})
 		return
+	}
+
+	for _, v1 := range productIds {
+		fmt.Println(v1)
 	}
 
 	for _, v := range productIds {
