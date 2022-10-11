@@ -654,6 +654,36 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Search",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "search",
+									"value": "e-k",
+									"type": "default"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:2406/api/tm/search",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"api",
+								"tm",
+								"search"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -861,7 +891,7 @@
 								},
 								{
 									"key": "price",
-									"value": "65",
+									"value": "67",
 									"type": "default"
 								},
 								{
@@ -927,22 +957,22 @@
 								{
 									"key": "main_small",
 									"type": "file",
-									"src": "/home/abb/go/src/github.com/abbgo/isleg/isleg-data/Saydyn suratynyn razmeri/Yazuw kagyz/small.jpg"
+									"src": "/home/abb/go/src/github.com/abbgo/isleg/isleg-data/Saydyn suratynyn razmeri/Yalong galam/small.jpg"
 								},
 								{
 									"key": "main_medium",
 									"type": "file",
-									"src": "/home/abb/go/src/github.com/abbgo/isleg/isleg-data/Saydyn suratynyn razmeri/Yazuw kagyz/medium.jpg"
+									"src": "/home/abb/go/src/github.com/abbgo/isleg/isleg-data/Saydyn suratynyn razmeri/Yalong galam/medium.jpg"
 								},
 								{
 									"key": "main_large",
 									"type": "file",
-									"src": "/home/abb/go/src/github.com/abbgo/isleg/isleg-data/Saydyn suratynyn razmeri/Yazuw kagyz/large.jpg"
+									"src": "/home/abb/go/src/github.com/abbgo/isleg/isleg-data/Saydyn suratynyn razmeri/Yalong galam/large.jpg"
 								},
 								{
 									"key": "small",
 									"type": "file",
-									"src": "/home/abb/go/src/github.com/abbgo/isleg/isleg-data/Saydyn suratynyn razmeri/Yalong galam/small.jpg"
+									"src": "/home/abb/go/src/github.com/abbgo/isleg/isleg-data/Saydyn suratynyn razmeri/Kagyz kley/small.jpg"
 								},
 								{
 									"key": "small",
@@ -952,7 +982,7 @@
 								{
 									"key": "large",
 									"type": "file",
-									"src": "/home/abb/go/src/github.com/abbgo/isleg/isleg-data/Saydyn suratynyn razmeri/Yalong galam/large.jpg"
+									"src": "/home/abb/go/src/github.com/abbgo/isleg/isleg-data/Saydyn suratynyn razmeri/Kagyz kley/large.jpg"
 								},
 								{
 									"key": "large",
