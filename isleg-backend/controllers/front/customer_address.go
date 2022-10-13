@@ -2,11 +2,16 @@ package controllers
 
 import (
 	"github/abbgo/isleg/isleg-backend/config"
-	"github/abbgo/isleg/isleg-backend/models"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
+
+type CustomerAddress struct {
+	ID       string `json:"id"`
+	Address  string `json:"address"`
+	IsActive bool   `json:"is_active"`
+}
 
 func GetCustomerAddresses(c *gin.Context) {
 
@@ -52,7 +57,7 @@ func GetCustomerAddresses(c *gin.Context) {
 		return
 	}
 
-	rowsAddress, err := db.Query("SELECT address,is_active FROM customer_address WHERE customer_id = $1 AND deleted_at IS NULL", customerID)
+	rowsAddress, err := db.Query("SELECT id,address,is_active FROM customer_address WHERE customer_id = $1 AND deleted_at IS NULL", customerID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -62,13 +67,13 @@ func GetCustomerAddresses(c *gin.Context) {
 	}
 	defer rowsAddress.Close()
 
-	var addresses []models.CustomerAddress
+	var addresses []CustomerAddress
 
 	for rowsAddress.Next() {
 
-		var address models.CustomerAddress
+		var address CustomerAddress
 
-		if err := rowsAddress.Scan(&address.Address, &address.IsActive); err != nil {
+		if err := rowsAddress.Scan(&address.ID, &address.Address, &address.IsActive); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),

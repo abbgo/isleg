@@ -251,6 +251,9 @@ func Routes() *gin.Engine {
 			// get customer informations
 			securedCustomer.GET("/my-information/:customer_id", frontController.GetCustomerInformation)
 
+			// update customer address status
+			securedCustomer.PUT("/address", frontController.UpdateCustomerAddressStatus)
+
 		}
 
 	}
