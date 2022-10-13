@@ -237,7 +237,7 @@ func Routes() *gin.Engine {
 			// securedCustomer.GET("/get-cart/:customer_id", frontController.GetCartProducts)
 
 			// remove product from cart
-			securedCustomer.DELETE("/remove-cart/:customer_id/:product_id", frontController.RemoveCart)
+			securedCustomer.DELETE("/remove-cart", frontController.RemoveCart)
 
 			// to order
 			securedCustomer.POST("/to-order", frontController.ToOrder)

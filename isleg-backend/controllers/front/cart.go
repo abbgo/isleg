@@ -325,8 +325,8 @@ func RemoveCart(c *gin.Context) {
 	}
 	defer db.Close()
 
-	customerID := c.Param("customer_id")
-	productID := c.Param("product_id")
+	customerID := c.Query("customer_id")
+	productID := c.Query("product_id")
 
 	rowCustomer, err := db.Query("SELECT id FROM customers WHERE id = $1 AND deleted_at IS NULL", customerID)
 	if err != nil {
@@ -358,45 +358,61 @@ func RemoveCart(c *gin.Context) {
 		return
 	}
 
-	rowCart, err := db.Query("SELECT product_id FROM cart WHERE customer_id = $1 AND product_id = $2 AND deleted_at IS NULL", customerID, productID)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-	defer rowCart.Close()
+	if productID != "" {
 
-	var product_id string
-
-	for rowCart.Next() {
-		if err := rowCart.Scan(&product_id); err != nil {
+		rowCart, err := db.Query("SELECT product_id FROM cart WHERE customer_id = $1 AND product_id = $2 AND deleted_at IS NULL", customerID, productID)
+		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
 			})
 			return
 		}
-	}
+		defer rowCart.Close()
 
-	if product_id == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": "this product not found in this customer",
-		})
-		return
-	}
+		var product_id string
 
-	resultCart, err := db.Query("DELETE FROM cart WHERE customer_id = $1 AND product_id = $2 AND deleted_at IS NULL", customerID, productID)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
+		for rowCart.Next() {
+			if err := rowCart.Scan(&product_id); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}
+
+		if product_id == "" {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": "this product not found in this customer",
+			})
+			return
+		}
+
+		resultCart, err := db.Query("DELETE FROM cart WHERE customer_id = $1 AND product_id = $2 AND deleted_at IS NULL", customerID, productID)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+		defer resultCart.Close()
+
+	} else {
+
+		resultCart, err := db.Query("DELETE FROM cart WHERE customer_id = $1 AND deleted_at IS NULL", customerID)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+		defer resultCart.Close()
+
 	}
-	defer resultCart.Close()
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
