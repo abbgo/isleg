@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "48a71761-99ab-41e2-ad2d-2f16b24b1474",
+		"_postman_id": "464a8c44-d0d0-428c-bad7-c0c528d315d9",
 		"name": "IM",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -3214,6 +3214,33 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "GetCustomerInformation",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NSIsImV4cCI6MTY2NTY0NjgyNH0.nq3psuJLUp3Y0M6S9O4sg2T1W-beIU57cdMsz4ieTPw",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "localhost:2406/api/tm/my-information/89a6ac71-4495-4218-b9f9-3f2a3eab085b",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"api",
+								"tm",
+								"my-information",
+								"89a6ac71-4495-4218-b9f9-3f2a3eab085b"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -3664,12 +3691,12 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NSIsImV4cCI6MTY2MzE2NDczMX0.E6R2gHpDhNmORsH0qdwTAviX92SH6lQoZXHYc7GAv5I",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NSIsImV4cCI6MTY2NTY0NDEyOX0.CHWDCM7MFZxk1QlLyatA803fioFZqFyTdqQFYyfm24U",
 								"type": "default"
 							}
 						],
 						"url": {
-							"raw": "localhost:2406/api/tm/remove-cart/7e872c52-0d23-4086-8c45-43000b57332e/3ca5ade3-d2ce-40ba-9be6-601105b5205a",
+							"raw": "localhost:2406/api/tm/remove-cart?customer_id=7e872c52-0d23-4086-8c45-43000b57332e&product_id=",
 							"host": [
 								"localhost"
 							],
@@ -3677,9 +3704,17 @@
 							"path": [
 								"api",
 								"tm",
-								"remove-cart",
-								"7e872c52-0d23-4086-8c45-43000b57332e",
-								"3ca5ade3-d2ce-40ba-9be6-601105b5205a"
+								"remove-cart"
+							],
+							"query": [
+								{
+									"key": "customer_id",
+									"value": "7e872c52-0d23-4086-8c45-43000b57332e"
+								},
+								{
+									"key": "product_id",
+									"value": ""
+								}
 							]
 						}
 					},
@@ -4594,7 +4629,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NSIsImV4cCI6MTY2Mzg0MTczN30.4vbGmSILYsYqwHaeYi5_Fub2HVf-mn9fwhTTMQ6IFCA",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NSIsImV4cCI6MTY2NTY0OTI4MH0.IvK_r2SD859PGlLTDXY7lFrmiulBz9HLU8xE5cQq1AA",
 								"type": "default"
 							}
 						],
@@ -4609,6 +4644,42 @@
 								"tm",
 								"addresses",
 								"89a6ac71-4495-4218-b9f9-3f2a3eab085b"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UpdateCustomerAddressStatus",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NSIsImV4cCI6MTY2NTY0OTI4MH0.IvK_r2SD859PGlLTDXY7lFrmiulBz9HLU8xE5cQq1AA",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "localhost:2406/api/tm/address?customer_id=89a6ac71-4495-4218-b9f9-3f2a3eab085b&address_id=3c4e1c4f-fd51-4dd5-befe-7051b79312a6",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"api",
+								"tm",
+								"address"
+							],
+							"query": [
+								{
+									"key": "customer_id",
+									"value": "89a6ac71-4495-4218-b9f9-3f2a3eab085b"
+								},
+								{
+									"key": "address_id",
+									"value": "3c4e1c4f-fd51-4dd5-befe-7051b79312a6"
+								}
 							]
 						}
 					},
