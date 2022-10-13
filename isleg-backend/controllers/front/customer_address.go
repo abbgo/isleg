@@ -45,13 +45,11 @@ func GetCustomerAddresses(c *gin.Context) {
 	}
 
 	if customer_id == "" {
-		if err := rowCustomer.Scan(&customer_id); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": "customer not found",
-			})
-			return
-		}
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "customer not found",
+		})
+		return
 	}
 
 	rowsAddress, err := db.Query("SELECT address,is_active FROM customer_address WHERE customer_id = $1 AND deleted_at IS NULL", customerID)

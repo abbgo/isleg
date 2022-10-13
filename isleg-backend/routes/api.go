@@ -213,11 +213,11 @@ func Routes() *gin.Engine {
 		// search
 		front.POST("/search", frontController.Search)
 
+		// get my information page translation
+		front.GET("/translation-my-information-page", backController.GetTranslationMyInformationPageByLangID)
+
 		securedCustomer := front.Group("/").Use(middlewares.Auth())
 		{
-			// get my information page translation
-			securedCustomer.GET("/translation-my-information-page", backController.GetTranslationMyInformationPageByLangID)
-
 			// add like if customer exists
 			securedCustomer.POST("/like", frontController.AddLike)
 
@@ -247,6 +247,9 @@ func Routes() *gin.Engine {
 
 			// get customer orders
 			securedCustomer.GET("/addresses/:customer_id", frontController.GetCustomerAddresses)
+
+			// get customer informations
+			securedCustomer.GET("/my-information/:customer_id", frontController.GetCustomerInformation)
 
 		}
 

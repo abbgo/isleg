@@ -9,11 +9,28 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/lib/pq"
 )
 
 type Login struct {
 	PhoneNumber string `json:"phone_number" binding:"required,e164,len=12"`
 	Password    string `json:"password" binding:"required,min=5,max=25"`
+}
+
+type CustomerInformation struct {
+	ID          string      `json:"id"`
+	FullName    string      `json:"full_name" binding:"required,min=3"`
+	PhoneNumber string      `json:"phone_number" binding:"required,e164,len=12"`
+	Birthday    pq.NullTime `json:"birthday"`
+	Email       string      `json:"email" binding:"email"`
+	IsRegister  bool        `json:"is_register"`
+	Addresses   []Address   `json:"addresses"`
+}
+
+type Address struct {
+	ID       string `json:"id"`
+	Address  string `json:"address"`
+	IsActive bool   `json:"is_active"`
 }
 
 func RegisterCustomer(c *gin.Context) {
@@ -34,7 +51,6 @@ func RegisterCustomer(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, err.Error())
 		return
 	}
-
 
 	err = models.ValidateCustomerRegister(customer.PhoneNumber, customer.Email)
 	if err != nil {
@@ -231,4 +247,82 @@ func LoginCustomer(c *gin.Context) {
 		"customer_id":   customerID,
 	})
 
+}
+
+func GetCustomerInformation(c *gin.Context) {
+
+	db, err := config.ConnDB()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer db.Close()
+
+	customerID := c.Param("customer_id")
+
+	rowCustomer, err := db.Query("SELECT id , full_name , phone_number , birthday , email FROM customers WHERE id = $1 AND is_register = true AND deleted_at IS NULL", customerID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer rowCustomer.Close()
+
+	var customer CustomerInformation
+
+	for rowCustomer.Next() {
+		if err := rowCustomer.Scan(&customer.ID, &customer.FullName, &customer.PhoneNumber, &customer.Birthday, &customer.Email); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}
+
+	if customer.ID == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "customer not found",
+		})
+		return
+	}
+
+	rowsCustomerAddress, err := db.Query("SELECT id , address , is_active FROM customer_address WHERE deleted_at IS NULL AND customer_id = $1", customer.ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer rowsCustomerAddress.Close()
+
+	var addresses []Address
+
+	for rowsCustomerAddress.Next() {
+		var address Address
+
+		if err := rowsCustomerAddress.Scan(&address.ID, &address.Address, &address.IsActive); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+
+		addresses = append(addresses, address)
+	}
+
+	customer.Addresses = addresses
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":                true,
+		"customer_informations": customer,
+	})
 }
