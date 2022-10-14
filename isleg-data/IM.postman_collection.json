@@ -3167,7 +3167,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"phone_number\":\"+99361235698\",\n    \"password\":\"12345\"\n}",
+							"raw": "{\n    \"phone_number\":\"+99362420377\",\n    \"password\":\"123456\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -3236,6 +3236,43 @@
 								"api",
 								"tm",
 								"my-information",
+								"89a6ac71-4495-4218-b9f9-3f2a3eab085b"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UpdateCustomerPassword",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiJhYmIyNDA2OTgiLCJleHAiOjE2NjU3MzA1MzV9.f6NXBetS0sp1shPSZmggFniHMqKbAlK9zeLr3daHMrI",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "password",
+									"value": "123456",
+									"type": "default"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:2406/api/tm/customer-password/89a6ac71-4495-4218-b9f9-3f2a3eab085b",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"api",
+								"tm",
+								"customer-password",
 								"89a6ac71-4495-4218-b9f9-3f2a3eab085b"
 							]
 						}
