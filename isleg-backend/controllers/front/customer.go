@@ -328,7 +328,7 @@ func GetCustomerInformation(c *gin.Context) {
 
 }
 
-func UpdateCustomerAddressStatus(c *gin.Context) {
+func UpdateCustomerPassword(c *gin.Context) {
 
 	db, err := config.ConnDB()
 	if err != nil {
@@ -340,8 +340,8 @@ func UpdateCustomerAddressStatus(c *gin.Context) {
 	}
 	defer db.Close()
 
-	addressID := c.Query("address_id")
-	customerID := c.Query("customer_id")
+	customerID := c.Param("customer_id")
+	password := c.PostForm("password")
 
 	rowCustomer, err := db.Query("SELECT id FROM customers WHERE id = $1 AND deleted_at IS NULL", customerID)
 	if err != nil {
@@ -368,12 +368,12 @@ func UpdateCustomerAddressStatus(c *gin.Context) {
 	if customer_id == "" {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
-			"message": "address of customer not found",
+			"message": "customer not found",
 		})
 		return
 	}
 
-	rowCusomerAddress, err := db.Query("SELECT id FROM customer_address WHERE id = $1 AND deleted_at IS NULL", addressID)
+	hashPassword, err := models.HashPassword(password)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -381,29 +381,8 @@ func UpdateCustomerAddressStatus(c *gin.Context) {
 		})
 		return
 	}
-	defer rowCusomerAddress.Close()
 
-	var address_id string
-
-	for rowCusomerAddress.Next() {
-		if err := rowCusomerAddress.Scan(&address_id); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}
-
-	if address_id == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": "address of customer not found",
-		})
-		return
-	}
-
-	resultCustomerAddress, err := db.Query("UPDATE customer_address SET is_active = true WHERE id = $1", addressID)
+	resultCustomer, err := db.Query("UPDATE customers SET password = $1 WHERE id = $2", hashPassword, customerID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -411,20 +390,11 @@ func UpdateCustomerAddressStatus(c *gin.Context) {
 		})
 		return
 	}
-	defer resultCustomerAddress.Close()
-
-	resultCustAddressIsActive, err := db.Query("UPDATE customer_address SET is_active = false WHERE id != $1 AND customer_id = $2", addressID, customerID)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-	defer resultCustAddressIsActive.Close()
+	defer resultCustomer.Close()
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
-		"message": "address status successfuly updated",
+		"message": "password of customer successfuly updated",
 	})
+
 }
