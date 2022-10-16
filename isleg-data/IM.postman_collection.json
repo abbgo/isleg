@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "464a8c44-d0d0-428c-bad7-c0c528d315d9",
+		"_postman_id": "502b9a86-7d4d-4ee0-bac0-4a5d520b4023",
 		"name": "IM",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -30,7 +30,7 @@
 								{
 									"key": "flag",
 									"type": "file",
-									"src": "/home/abb/Pictures/download (4).jpeg"
+									"src": "/home/abb/go/src/github.com/abbgo/isleg/isleg-data/Saydyn suratynyn razmeri/Bianyo galam/small.jpg"
 								}
 							],
 							"options": {
@@ -3138,7 +3138,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"full_name\":\"Allanur Bayramgeldiyew\",\n    \"phone_number\":\"+99362420377\",\n    \"password\":\"12345\",\n    \"email\":\"abb@gmail.com\"\n}",
+							"raw": "{\n    \"full_name\":\"Allanur Bayramgeldiyew\",\n    \"phone_number\":\"+99362420377\",\n    \"password\":\"12345\",\n    \"email\":\"abb@gmail.com\",\n    \"birthday\":null\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -3167,7 +3167,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"phone_number\":\"+99362420377\",\n    \"password\":\"123456\"\n}",
+							"raw": "{\n    \"phone_number\":\"+99363747155\",\n    \"password\":\"123456\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -3222,7 +3222,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NSIsImV4cCI6MTY2NTY0NjgyNH0.nq3psuJLUp3Y0M6S9O4sg2T1W-beIU57cdMsz4ieTPw",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NTYiLCJleHAiOjE2NjU5NTEyNjV9.WKKj35rXo3U_xdyudD8WcIwXN3KKrHngEIU2x-owovQ",
 								"type": "default"
 							}
 						],

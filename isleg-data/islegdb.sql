@@ -30,6 +30,58 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp" WITH SCHEMA public;
 COMMENT ON EXTENSION "uuid-ossp" IS 'generate universally unique identifiers (UUIDs)';
 
 
+--
+-- Name: after_insert_language(); Type: FUNCTION; Schema: public; Owner: postgres
+--
+
+CREATE FUNCTION public.after_insert_language() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+DECLARE language_id uuid; afisa_uuid uuid; category_uuid uuid; district_uuid uuid; order_date_uuid uuid; product_uuid uuid;
+BEGIN
+language_id = (SELECT id FROM languages ORDER BY created_at DESC LIMIT 1);
+FOR afisa_uuid IN SELECT id FROM afisa
+LOOP INSERT INTO translation_afisa (afisa_id,lang_id) VALUES (afisa_uuid,language_id); END LOOP;
+FOR category_uuid IN SELECT id FROM categories
+LOOP INSERT INTO translation_category (lang_id,category_id) VALUES (language_id,category_uuid); END LOOP;
+INSERT INTO company_address (lang_id) VALUES (language_id);
+FOR district_uuid IN SELECT id FROM district
+LOOP INSERT INTO translation_district (lang_id,district_id) VALUES (language_id,district_uuid); END LOOP;
+FOR order_date_uuid IN SELECT id FROM order_dates
+LOOP INSERT INTO translation_order_dates (lang_id,order_date_id) VALUES (language_id,order_date_uuid); END LOOP;
+INSERT INTO payment_types (lang_id) VALUES (language_id);
+FOR product_uuid IN SELECT id FROM products
+LOOP INSERT INTO translation_product (lang_id,product_id) VALUES (language_id,product_uuid); END LOOP;
+INSERT INTO translation_about (lang_id) VALUES (language_id);
+INSERT INTO translation_basket_page (lang_id) VALUES (language_id);
+INSERT INTO translation_contact (lang_id) VALUES (language_id);
+INSERT INTO translation_footer (lang_id) VALUES (language_id);
+INSERT INTO translation_header (lang_id) VALUES (language_id);
+INSERT INTO translation_my_information_page (lang_id) VALUES (language_id);
+INSERT INTO translation_my_order_page (lang_id) VALUES (language_id);
+INSERT INTO translation_order_page (lang_id) VALUES (language_id);
+INSERT INTO translation_payment (lang_id) VALUES (language_id);
+INSERT INTO translation_secure (lang_id) VALUES (language_id);
+INSERT INTO translation_update_password_page (lang_id) VALUES (language_id);
+RETURN NEW; END; $$;
+
+
+ALTER FUNCTION public.after_insert_language() OWNER TO postgres;
+
+--
+-- Name: update_updated_at(); Type: FUNCTION; Schema: public; Owner: postgres
+--
+
+CREATE FUNCTION public.update_updated_at() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$ BEGIN
+NEW.updated_at=now();
+RETURN NEW;
+END; $$;
+
+
+ALTER FUNCTION public.update_updated_at() OWNER TO postgres;
+
 SET default_tablespace = '';
 
 SET default_table_access_method = heap;
@@ -910,6 +962,7 @@ COPY public.category_shop (id, category_id, shop_id, created_at, updated_at, del
 COPY public.company_address (id, lang_id, address, created_at, updated_at, deleted_at) FROM stdin;
 75706251-06ea-41c1-905f-95ed8b4132f8	aea98b93-7bdf-455b-9ad4-a259d69dc76e	Улица Азади 23, Ашхабад	2022-06-22 18:44:50.239558+05	2022-06-22 18:44:50.239558+05	\N
 d2c66808-e5fe-435f-ba01-cb717f80d9e0	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	adres_tm	2022-06-22 18:44:50.21776+05	2022-08-22 09:33:42.14835+05	\N
+bf030883-dfe6-4836-a889-49f507de037a	55a387df-6d38-42ea-bfba-379327b53cbd	uytget	2022-10-17 02:31:43.703806+05	2022-10-17 02:31:43.703806+05	\N
 \.
 
 
@@ -936,9 +989,6 @@ COPY public.company_setting (id, logo, favicon, email, instagram, created_at, up
 --
 
 COPY public.customer_address (id, customer_id, address, created_at, updated_at, deleted_at, is_active) FROM stdin;
-dad2aaae-1b17-4494-8d85-8a8ee6e3e60f	7e872c52-0d23-4086-8c45-43000b57332e	Mir 2/2 jay 7 oy 36	2022-09-21 21:28:29.708359+05	2022-09-21 21:28:29.708359+05	\N	f
-3c4e1c4f-fd51-4dd5-befe-7051b79312a6	89a6ac71-4495-4218-b9f9-3f2a3eab085b	Mir 2/2 jay 7 oy 36	2022-09-22 14:27:08.806836+05	2022-09-22 14:27:08.806836+05	\N	t
-ad9422b5-c496-4791-b1b4-7454bc10aefd	89a6ac71-4495-4218-b9f9-3f2a3eab085b	Mir 2/2 jay 7 oy 36	2022-09-22 12:54:24.177072+05	2022-09-22 12:54:24.177072+05	\N	f
 \.
 
 
@@ -947,22 +997,8 @@ ad9422b5-c496-4791-b1b4-7454bc10aefd	89a6ac71-4495-4218-b9f9-3f2a3eab085b	Mir 2/
 --
 
 COPY public.customers (id, full_name, phone_number, password, birthday, gender, created_at, updated_at, deleted_at, email, is_register) FROM stdin;
-7e872c52-0d23-4086-8c45-43000b57332e	Serdar	+99363747155	$2a$14$N11BpwBYOI72mX9nBjMNL.e0.iwFBndE2efV3Nqx0/fHj3OzNZSlq	\N	\N	2022-09-22 12:46:26.731782+05	2022-09-22 12:46:26.731782+05	\N	serdar@gmail.com	t
-7fafe6f8-c6b6-4bcc-9063-e98c113902c5	Mahri Wepayewa	+99363747156	$2a$14$N11BpwBYOI72mX9nBjMNL.e0.iwFBndE2efV3Nqx0/fHj3OzNZSlq	\N	\N	2022-09-22 12:46:26.731782+05	2022-09-22 12:46:26.731782+05	\N	mahri@gmail.com	t
-38615c8c-1af5-424f-b7a3-071d38c42b86	Aylar Siriyewa	+99363234587	$2a$14$N11BpwBYOI72mX9nBjMNL.e0.iwFBndE2efV3Nqx0/fHj3OzNZSlq	\N	\N	2022-09-22 12:46:26.731782+05	2022-09-22 12:46:26.731782+05	\N	aylar@gmail.com	t
-9b1a0831-9943-4aa9-aa2a-3507743a5de4	Rahmet	+99361235698	$2a$14$N11BpwBYOI72mX9nBjMNL.e0.iwFBndE2efV3Nqx0/fHj3OzNZSlq	\N	\N	2022-09-22 12:46:26.731782+05	2022-09-22 12:46:26.731782+05	\N	rahmet@gmail.com	t
-eb4d03d3-c201-49e6-867e-a7b6927a414c	Wepa Maksadow	+99363658741	$2a$14$N11BpwBYOI72mX9nBjMNL.e0.iwFBndE2efV3Nqx0/fHj3OzNZSlq	\N	\N	2022-09-22 12:46:26.731782+05	2022-09-22 12:46:26.731782+05	\N	wepa@gmail.com	t
-4406f560-b979-4e7a-a296-bad88b20d731	wedkwekfjewf	+99363787878	$2a$14$.przN91vmxTSncM0mhWxNexs1U2Nb9XrpfzBfRTZT0QKAw1DLFNiu	\N	\N	2022-10-12 01:52:24.749747+05	2022-10-12 01:52:24.749747+05	\N	ewkfnewj@gmail.com	t
-8409206b-c46a-4ac6-a6fd-285aac8c53c7	wfjknwkejfwe	+99367474747	$2a$14$NagV1Uq8YOSjdSjkd1QIFOPbByfZgwLp9Obc3zsRahyjulxb25xNq	\N	\N	2022-10-12 01:55:36.31034+05	2022-10-12 01:55:36.31034+05	\N	ewdknewnewjfnej@gmail.com	t
-8a34b75e-2f2a-4987-85d3-87e98e7f6733	lkruiq34	+99367777777	$2a$14$5k0/YzSxmGu/6PpwxL3xuOnUblRx60KWZ6ogj6oCPT1ao13X595NC	\N	\N	2022-10-12 02:15:28.732008+05	2022-10-12 02:15:28.732008+05	\N	wdkneqj@gmail.com	t
-e65f3e71-eecf-4463-8528-2c1ad5dce6df	ewdjnewjnew	+99366262626	$2a$14$JHETMGowAtRdurf3GKu5YOYExT6DCF/b12pyk8lv7yJ4cW6dHx/Ia	\N	\N	2022-10-12 02:19:40.911888+05	2022-10-12 02:19:40.911888+05	\N	wedkwedewejnew@gmail.com	t
-1287f95b-fef2-4796-ace5-87465ee8efc7	ewdjnewjnew	+99366262627	$2a$14$4wpPRXEPMY1zk/rLnYhjT.AY7/4.CJTUwXBu5/aWSvMcz0iWer5VS	\N	\N	2022-10-12 02:20:37.457297+05	2022-10-12 02:20:37.457297+05	\N	wedkwedewGHJejnew@gmail.com	t
-c6916c0b-8756-43b6-b51d-46500ce04779	kmlkadnead	+99368888888	$2a$14$tEI47M9qymtVD3QSpwuFYOVtA8NIk.6DS8JdD4GtZjaKxupwrkSLm	\N	\N	2022-10-12 02:23:15.77006+05	2022-10-12 02:23:15.77006+05	\N	adkedn@gmail.com	t
-5b2b52d9-922a-4731-b3c9-6322695e6908	ewdkwede	+99364545454	$2a$14$CbXcYEFy1d8gen.9eSkiGuR5S3FnD3R8NjgBXCAgWQUDAMK4lEN12	\N	\N	2022-10-12 02:26:12.740487+05	2022-10-12 02:26:12.740487+05	\N	wedkwend@gmail.com	t
-7e3431f2-e64e-4081-99c0-861958e2e5fd	ewdkwenf	+99364548789	$2a$14$rW.UsqkclC8qkB4A9a2SL.y6sfLTiAt1EijE0gi2BIgUQEZ/bKltS	\N	\N	2022-10-12 02:28:07.856352+05	2022-10-12 02:28:07.856352+05	\N	ewfklwfelnk@gmail.com	t
-856a6c98-8c39-43d6-96b5-3870720c500c	ddedeededmwe	+99364848484	$2a$14$jm01PfnaGBm7v0vnGqOGhO9SOY8fJ.rFxFBeC.8PMPVMqD5dIbxtm	\N	\N	2022-10-12 02:30:50.540961+05	2022-10-12 02:30:50.540961+05	\N	ekwenknef@gmail.com	t
-fa3615fb-a0a1-4e82-b4fa-c3dbb48238f5	edkwenio;q43;	+99361234568	$2a$14$SQs0oA45Ogq6xY3BTLGcM.dQN5AqjRt.G5gKF.wm/2CIZL/9f/iqq	\N	\N	2022-10-12 02:35:01.711127+05	2022-10-12 02:35:01.711127+05	\N	ewdmewdjk@gmail.com	t
-89a6ac71-4495-4218-b9f9-3f2a3eab085b	Allanur Bayramgeldiyew	+99362420377	$2a$14$itnGwI2Y1ZluXXOsYtqQDOKsc9wbc.ID9cjrDQ4O4en.ss0ALgO2y	1998-06-24	\N	2022-09-22 12:54:39.635618+05	2022-09-22 12:54:39.635618+05	\N	abb@gmail.com	t
+f25a66d3-93ac-4da4-b237-d34867d5ca8f	Salam	+99363747155	$2a$14$.BqzNvzDCwmswgl4PzuYGuM/Cx2AdYFskpYl7VWa2XlS2ngjkhu1e	\N	\N	2022-10-17 00:50:48.568182+05	2022-10-17 00:50:48.568182+05	\N	salam@gmail.com	t
+1f5bc917-fc85-46cf-a1b2-7c14cfe940be	Allanur Bayramgeldiyew	+99362420377	$2a$14$4jP3cdo/xCmL.u6LEoFOJuL5vKlOmKg22cybQgnPvnbhY/xdNEi0e	\N	\N	2022-10-17 01:20:15.562427+05	2022-10-17 01:20:15.562427+05	\N	abb@gmail.com	t
 \.
 
 
@@ -1012,8 +1048,9 @@ d96e186f-8d34-447c-814e-61ef93873f84	8df705a5-2351-4aca-b03e-3357a23840b4	upload
 --
 
 COPY public.languages (id, name_short, flag, created_at, updated_at, deleted_at) FROM stdin;
-8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	tm	uploads/language17b99bd1-f52d-41db-b4e6-1ecff03e0fd0.jpeg	2022-06-15 19:53:06.041686+05	2022-06-15 19:53:06.041686+05	\N
 aea98b93-7bdf-455b-9ad4-a259d69dc76e	ru	uploads/language1c24e3a6-173e-4264-a631-f099d15495dd.jpeg	2022-06-15 19:53:21.29491+05	2022-06-15 19:53:21.29491+05	\N
+8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	tm	uploads/language17b99bd1-f52d-41db-b4e6-1ecff03e0fd0.jpeg	2022-06-15 19:53:06.041686+05	2022-10-16 18:53:27.82538+05	\N
+55a387df-6d38-42ea-bfba-379327b53cbd	fr	uploads/language/3535a022-0d14-4030-9658-1a720798ce03.jpg	2022-10-17 02:31:43.703806+05	2022-10-17 02:31:43.703806+05	\N
 \.
 
 
@@ -1022,9 +1059,8 @@ aea98b93-7bdf-455b-9ad4-a259d69dc76e	ru	uploads/language1c24e3a6-173e-4264-a631-
 --
 
 COPY public.likes (id, product_id, customer_id, created_at, updated_at, deleted_at) FROM stdin;
-05d3e7ae-d497-4cfd-8b6b-c6b334007f9e	0d4a6c3c-cc5d-457b-ac9a-ce60eacb94de	7e872c52-0d23-4086-8c45-43000b57332e	2022-10-12 01:47:35.545237+05	2022-10-12 01:47:35.545237+05	\N
-bd6ac2c4-1f1c-4e50-b092-6d1332178eda	b2b165a3-2261-4d67-8160-0e239ecd99b5	7e872c52-0d23-4086-8c45-43000b57332e	2022-10-12 01:47:35.72356+05	2022-10-12 01:47:35.72356+05	\N
-79713438-920f-4e43-927e-d5be7efb1d4a	a2bb8745-1f3a-4de9-ad66-11b0bb3bb754	7e872c52-0d23-4086-8c45-43000b57332e	2022-10-12 01:55:36.634327+05	2022-10-12 01:55:36.634327+05	\N
+d45b89a8-6676-412d-bd6c-a4e655aa41b8	a2bb8745-1f3a-4de9-ad66-11b0bb3bb754	f25a66d3-93ac-4da4-b237-d34867d5ca8f	2022-10-17 00:50:48.875499+05	2022-10-17 00:50:48.875499+05	\N
+a14b8219-81d6-4f2c-999b-d6ec8ef7fece	0d4a6c3c-cc5d-457b-ac9a-ce60eacb94de	f25a66d3-93ac-4da4-b237-d34867d5ca8f	2022-10-17 00:50:48.957722+05	2022-10-17 00:50:48.957722+05	\N
 \.
 
 
@@ -1075,72 +1111,6 @@ de31361b-9fba-48f2-9341-9e3dd08cf9fd	c1f2beca-a6b6-4971-a6a7-ed50079c6912	18:00 
 --
 
 COPY public.ordered_products (id, product_id, quantity_of_product, order_id, created_at, updated_at, deleted_at) FROM stdin;
-777caf46-9fb8-46a8-808a-cd285ea11340	b2b165a3-2261-4d67-8160-0e239ecd99b5	12	3d29c94b-1869-4d4c-a94f-180a5c9eb614	2022-09-21 21:28:30.413438+05	2022-09-21 21:28:30.413438+05	\N
-e209c082-ae64-44c1-b235-9245a07cb79d	c866d5e4-284c-4bea-a94f-cc23f6c7e5d0	4	3d29c94b-1869-4d4c-a94f-180a5c9eb614	2022-09-21 21:28:30.437102+05	2022-09-21 21:28:30.437102+05	\N
-3c25a223-2df3-4f47-a8c5-ad70b67522d1	b2b165a3-2261-4d67-8160-0e239ecd99b5	12	ef468ad0-747b-4c12-a195-c72b9f19dc84	2022-09-22 12:54:24.210828+05	2022-09-22 12:54:24.210828+05	\N
-8d1f6c6c-6e9a-4761-9791-7f41fb37347f	c866d5e4-284c-4bea-a94f-cc23f6c7e5d0	4	ef468ad0-747b-4c12-a195-c72b9f19dc84	2022-09-22 12:54:24.22149+05	2022-09-22 12:54:24.22149+05	\N
-98ee5e13-b07c-4535-9b5b-8651eadd8795	bb6c3bdb-79e2-44b3-98b1-c1cee0976777	25	e9b43b21-2947-4c41-95e6-1b81d925996b	2022-09-22 14:27:08.845012+05	2022-09-22 14:27:08.845012+05	\N
-17685559-6510-4f87-92dc-8e3e5ad339e2	8df705a5-2351-4aca-b03e-3357a23840b4	3	e9b43b21-2947-4c41-95e6-1b81d925996b	2022-09-22 14:27:08.855567+05	2022-09-22 14:27:08.855567+05	\N
-f4f79932-6d84-43d7-a4dd-aa6a64588f48	d4156225-082e-4f0f-9b2c-85268114433a	25	9f1f4526-7ee7-4347-96fc-6fb97c1b402a	2022-09-22 14:45:46.407399+05	2022-09-22 14:45:46.407399+05	\N
-982165f4-c3fa-4922-9d42-9d28b138b438	81b84c5d-9759-4b86-978a-649c8ef79660	3	9f1f4526-7ee7-4347-96fc-6fb97c1b402a	2022-09-22 14:45:46.419832+05	2022-09-22 14:45:46.419832+05	\N
-336647b9-abd9-4a2a-a145-9e4326bdcc76	d4156225-082e-4f0f-9b2c-85268114433a	25	7728fdeb-e871-414d-b5fd-d57ee59e879c	2022-09-29 14:05:14.80837+05	2022-09-29 14:05:14.80837+05	\N
-c8a62bf5-9dfc-4aef-bdfe-8b17913d770c	81b84c5d-9759-4b86-978a-649c8ef79660	3	7728fdeb-e871-414d-b5fd-d57ee59e879c	2022-09-29 14:05:14.853259+05	2022-09-29 14:05:14.853259+05	\N
-7929584a-340c-4ec1-bb0c-8c7d9f858559	d4156225-082e-4f0f-9b2c-85268114433a	25	8930edc5-7b9e-4cef-ac58-97bc8261df3a	2022-09-29 14:06:29.698335+05	2022-09-29 14:06:29.698335+05	\N
-93bcf413-e45b-4903-ac39-a444b627d325	81b84c5d-9759-4b86-978a-649c8ef79660	3	8930edc5-7b9e-4cef-ac58-97bc8261df3a	2022-09-29 14:06:29.710636+05	2022-09-29 14:06:29.710636+05	\N
-af266256-496c-4f52-849f-ff3471ed3afd	d4156225-082e-4f0f-9b2c-85268114433a	25	3a8f977f-2eb9-4a4a-9bb1-51cd9a5a4fe6	2022-09-29 14:06:57.843088+05	2022-09-29 14:06:57.843088+05	\N
-c2b3ead0-63ff-4161-b16b-f6cded8b8a88	81b84c5d-9759-4b86-978a-649c8ef79660	3	3a8f977f-2eb9-4a4a-9bb1-51cd9a5a4fe6	2022-09-29 14:06:57.854411+05	2022-09-29 14:06:57.854411+05	\N
-4d7aca2c-6b2b-49bc-a86b-949f12dfa59a	d4156225-082e-4f0f-9b2c-85268114433a	25	7b0af658-e230-405d-a1ed-718f52973eb2	2022-09-29 14:08:09.999618+05	2022-09-29 14:08:09.999618+05	\N
-4ae25fa7-04df-43d1-82bd-7f7b91df4252	81b84c5d-9759-4b86-978a-649c8ef79660	3	7b0af658-e230-405d-a1ed-718f52973eb2	2022-09-29 14:08:10.011834+05	2022-09-29 14:08:10.011834+05	\N
-97cfde5b-1e67-486e-b81a-9818bb5a1e6e	d4156225-082e-4f0f-9b2c-85268114433a	25	68c886f4-c005-4a22-9219-f643577d0a62	2022-09-29 14:08:56.71182+05	2022-09-29 14:08:56.71182+05	\N
-155ce965-827a-48cc-8b79-1fea6b971919	81b84c5d-9759-4b86-978a-649c8ef79660	3	68c886f4-c005-4a22-9219-f643577d0a62	2022-09-29 14:08:56.723832+05	2022-09-29 14:08:56.723832+05	\N
-fca009f3-642b-45d0-b4ba-c8b5e0836a99	d4156225-082e-4f0f-9b2c-85268114433a	25	c09ef7ff-4244-422a-b2da-3e160e39f0c8	2022-09-30 16:17:12.503388+05	2022-09-30 16:17:12.503388+05	\N
-b0a20b48-5bf6-4324-9c48-71a09b92159d	81b84c5d-9759-4b86-978a-649c8ef79660	3	c09ef7ff-4244-422a-b2da-3e160e39f0c8	2022-09-30 16:17:12.562328+05	2022-09-30 16:17:12.562328+05	\N
-3187dd81-6db8-45b2-85d3-266b17e1bca2	8df705a5-2351-4aca-b03e-3357a23840b4	3	c09ef7ff-4244-422a-b2da-3e160e39f0c8	2022-09-30 16:17:12.57442+05	2022-09-30 16:17:12.57442+05	\N
-4005e7c3-2aee-4428-bc33-a144904bcffd	e3c33ead-3c30-40f1-9d28-7bb8b71b767f	3	c09ef7ff-4244-422a-b2da-3e160e39f0c8	2022-09-30 16:17:12.596612+05	2022-09-30 16:17:12.596612+05	\N
-6248a3ef-5bbe-423e-bdeb-51358cf79230	d4156225-082e-4f0f-9b2c-85268114433a	25	1499d084-b010-4724-ac40-2451a87986d9	2022-09-30 16:19:46.509965+05	2022-09-30 16:19:46.509965+05	\N
-5e311871-6462-4091-afd4-4b6178149250	81b84c5d-9759-4b86-978a-649c8ef79660	3	1499d084-b010-4724-ac40-2451a87986d9	2022-09-30 16:19:46.520869+05	2022-09-30 16:19:46.520869+05	\N
-345fefb6-c0b3-4553-8ce7-80633386855e	8df705a5-2351-4aca-b03e-3357a23840b4	3	1499d084-b010-4724-ac40-2451a87986d9	2022-09-30 16:19:46.532044+05	2022-09-30 16:19:46.532044+05	\N
-24e41b79-c337-40e0-b04b-1dc2e73b24d0	e3c33ead-3c30-40f1-9d28-7bb8b71b767f	3	1499d084-b010-4724-ac40-2451a87986d9	2022-09-30 16:19:46.542693+05	2022-09-30 16:19:46.542693+05	\N
-4d7663a3-d7ed-45ff-9eca-1272ff093582	d4156225-082e-4f0f-9b2c-85268114433a	25	4271c7d2-eeff-4948-989f-ae5e4518854f	2022-09-30 16:22:21.368957+05	2022-09-30 16:22:21.368957+05	\N
-63fd2f2e-7178-44d7-894a-1a93c6cc49d6	81b84c5d-9759-4b86-978a-649c8ef79660	3	4271c7d2-eeff-4948-989f-ae5e4518854f	2022-09-30 16:22:21.379357+05	2022-09-30 16:22:21.379357+05	\N
-41470fb9-f636-4320-ba3a-d590f56ae823	8df705a5-2351-4aca-b03e-3357a23840b4	3	4271c7d2-eeff-4948-989f-ae5e4518854f	2022-09-30 16:22:21.390021+05	2022-09-30 16:22:21.390021+05	\N
-6b7d5483-a5db-4595-840d-9c229ba8c827	e3c33ead-3c30-40f1-9d28-7bb8b71b767f	3	4271c7d2-eeff-4948-989f-ae5e4518854f	2022-09-30 16:22:21.402525+05	2022-09-30 16:22:21.402525+05	\N
-41c9f8c2-5586-437f-ae42-1201935680de	d4156225-082e-4f0f-9b2c-85268114433a	25	6fda5178-9944-4ffe-92e7-319f41323818	2022-09-30 16:28:44.074707+05	2022-09-30 16:28:44.074707+05	\N
-e887a11d-5168-48de-b76d-f071a93157eb	81b84c5d-9759-4b86-978a-649c8ef79660	3	6fda5178-9944-4ffe-92e7-319f41323818	2022-09-30 16:28:44.08603+05	2022-09-30 16:28:44.08603+05	\N
-3fff0a4c-e4c6-48d6-8be1-759c9df13268	8df705a5-2351-4aca-b03e-3357a23840b4	3	6fda5178-9944-4ffe-92e7-319f41323818	2022-09-30 16:28:44.097244+05	2022-09-30 16:28:44.097244+05	\N
-10471abf-17a6-4350-a358-fccb1a3bcab3	e3c33ead-3c30-40f1-9d28-7bb8b71b767f	3	6fda5178-9944-4ffe-92e7-319f41323818	2022-09-30 16:28:44.107886+05	2022-09-30 16:28:44.107886+05	\N
-c7e09b89-e593-4bff-a3d9-f1724e22d7aa	d4156225-082e-4f0f-9b2c-85268114433a	25	67f2638b-971c-48a9-bada-5d14b50d74bc	2022-09-30 16:29:07.397594+05	2022-09-30 16:29:07.397594+05	\N
-7965e167-3b36-422e-ade1-ce0cfb9c20f3	81b84c5d-9759-4b86-978a-649c8ef79660	3	67f2638b-971c-48a9-bada-5d14b50d74bc	2022-09-30 16:29:07.409019+05	2022-09-30 16:29:07.409019+05	\N
-2630dd99-7408-4e39-a230-16c25dd4c18f	8df705a5-2351-4aca-b03e-3357a23840b4	3	67f2638b-971c-48a9-bada-5d14b50d74bc	2022-09-30 16:29:07.420871+05	2022-09-30 16:29:07.420871+05	\N
-c36fd7f3-9e11-4df2-8147-592a9b555673	e3c33ead-3c30-40f1-9d28-7bb8b71b767f	3	67f2638b-971c-48a9-bada-5d14b50d74bc	2022-09-30 16:29:07.431699+05	2022-09-30 16:29:07.431699+05	\N
-8ee02a8d-ae7a-4490-a92e-7a09b1d87333	d4156225-082e-4f0f-9b2c-85268114433a	25	0be22e6c-0830-49eb-a500-b08b396d9c92	2022-09-30 16:31:39.658076+05	2022-09-30 16:31:39.658076+05	\N
-0098fd41-42cc-4ba0-b771-5c593f91c6dd	81b84c5d-9759-4b86-978a-649c8ef79660	3	0be22e6c-0830-49eb-a500-b08b396d9c92	2022-09-30 16:31:39.667322+05	2022-09-30 16:31:39.667322+05	\N
-276d10a7-7202-4fc7-8e83-e6e01a9ce83e	8df705a5-2351-4aca-b03e-3357a23840b4	3	0be22e6c-0830-49eb-a500-b08b396d9c92	2022-09-30 16:31:39.677826+05	2022-09-30 16:31:39.677826+05	\N
-d579b953-9b2f-42b4-8aff-7c4be2ab150b	e3c33ead-3c30-40f1-9d28-7bb8b71b767f	3	0be22e6c-0830-49eb-a500-b08b396d9c92	2022-09-30 16:31:39.691084+05	2022-09-30 16:31:39.691084+05	\N
-4d419ab4-85c3-459a-b003-aaa151252a6b	d4156225-082e-4f0f-9b2c-85268114433a	25	ad758850-26c1-4405-b20c-2a7d01df3447	2022-09-30 16:33:55.080361+05	2022-09-30 16:33:55.080361+05	\N
-f516f085-69cd-45d5-b187-8783a76fe995	81b84c5d-9759-4b86-978a-649c8ef79660	3	ad758850-26c1-4405-b20c-2a7d01df3447	2022-09-30 16:33:55.093023+05	2022-09-30 16:33:55.093023+05	\N
-e2e63ade-a3dd-4c68-a0f4-4b4ed414c72e	8df705a5-2351-4aca-b03e-3357a23840b4	3	ad758850-26c1-4405-b20c-2a7d01df3447	2022-09-30 16:33:55.103089+05	2022-09-30 16:33:55.103089+05	\N
-374ef930-ce47-409d-b6fa-94c20ee63d3b	e3c33ead-3c30-40f1-9d28-7bb8b71b767f	3	ad758850-26c1-4405-b20c-2a7d01df3447	2022-09-30 16:33:55.113321+05	2022-09-30 16:33:55.113321+05	\N
-8e8707d6-f1cc-4e04-8d3a-24253e7090ee	d4156225-082e-4f0f-9b2c-85268114433a	25	b486486f-cc0c-4aa2-b594-ba21465fafa7	2022-09-30 16:34:12.180261+05	2022-09-30 16:34:12.180261+05	\N
-89722c21-dc79-4065-9326-b01ac0df0403	81b84c5d-9759-4b86-978a-649c8ef79660	3	b486486f-cc0c-4aa2-b594-ba21465fafa7	2022-09-30 16:34:12.192195+05	2022-09-30 16:34:12.192195+05	\N
-d4b13472-7246-41da-9c31-960588bbcf89	8df705a5-2351-4aca-b03e-3357a23840b4	3	b486486f-cc0c-4aa2-b594-ba21465fafa7	2022-09-30 16:34:12.203999+05	2022-09-30 16:34:12.203999+05	\N
-f4ad51c8-1fc5-4388-84b8-0bb9f4751458	e3c33ead-3c30-40f1-9d28-7bb8b71b767f	3	b486486f-cc0c-4aa2-b594-ba21465fafa7	2022-09-30 16:34:12.213614+05	2022-09-30 16:34:12.213614+05	\N
-2c6c9339-12ee-4c5b-a946-b67bd3c97d45	d4156225-082e-4f0f-9b2c-85268114433a	25	aa004448-b5ad-4248-be73-09c46f7aa2fa	2022-09-30 16:37:51.407009+05	2022-09-30 16:37:51.407009+05	\N
-36380463-617f-4097-9561-a3be4ca4a8d9	81b84c5d-9759-4b86-978a-649c8ef79660	3	aa004448-b5ad-4248-be73-09c46f7aa2fa	2022-09-30 16:37:51.417225+05	2022-09-30 16:37:51.417225+05	\N
-06b7a726-28dd-46ea-8322-430afc6a6210	8df705a5-2351-4aca-b03e-3357a23840b4	3	aa004448-b5ad-4248-be73-09c46f7aa2fa	2022-09-30 16:37:51.428901+05	2022-09-30 16:37:51.428901+05	\N
-fa142e21-8039-463d-909f-fa4bf60ec8d7	e3c33ead-3c30-40f1-9d28-7bb8b71b767f	3	aa004448-b5ad-4248-be73-09c46f7aa2fa	2022-09-30 16:37:51.439923+05	2022-09-30 16:37:51.439923+05	\N
-66388d55-7a55-452c-87fa-35c4ea013731	d4156225-082e-4f0f-9b2c-85268114433a	25	3340c300-0d2d-4de9-af6a-244f777cd035	2022-09-30 16:38:29.907342+05	2022-09-30 16:38:29.907342+05	\N
-a270da1d-f372-4430-b896-b77db21989ba	81b84c5d-9759-4b86-978a-649c8ef79660	3	3340c300-0d2d-4de9-af6a-244f777cd035	2022-09-30 16:38:29.918482+05	2022-09-30 16:38:29.918482+05	\N
-846fe0ae-3e59-4f56-95c4-2a4bdc9ea79e	8df705a5-2351-4aca-b03e-3357a23840b4	3	3340c300-0d2d-4de9-af6a-244f777cd035	2022-09-30 16:38:29.929103+05	2022-09-30 16:38:29.929103+05	\N
-82decffc-7185-40fb-8feb-555275331311	e3c33ead-3c30-40f1-9d28-7bb8b71b767f	3	3340c300-0d2d-4de9-af6a-244f777cd035	2022-09-30 16:38:29.941543+05	2022-09-30 16:38:29.941543+05	\N
-7d5bd974-0abe-4afa-8e79-1d4a21af9f20	d4156225-082e-4f0f-9b2c-85268114433a	25	4e06d814-d2ab-4244-81aa-d86c341690ab	2022-09-30 16:39:02.562989+05	2022-09-30 16:39:02.562989+05	\N
-043406ae-a5d4-432a-8e60-928ea5ff0c0b	81b84c5d-9759-4b86-978a-649c8ef79660	3	4e06d814-d2ab-4244-81aa-d86c341690ab	2022-09-30 16:39:02.574699+05	2022-09-30 16:39:02.574699+05	\N
-6ebc0970-1ed8-43db-9d3e-067b3237e8aa	8df705a5-2351-4aca-b03e-3357a23840b4	3	4e06d814-d2ab-4244-81aa-d86c341690ab	2022-09-30 16:39:02.58548+05	2022-09-30 16:39:02.58548+05	\N
-8b6908e1-0b55-4f31-a404-804036107ad2	e3c33ead-3c30-40f1-9d28-7bb8b71b767f	3	4e06d814-d2ab-4244-81aa-d86c341690ab	2022-09-30 16:39:02.596711+05	2022-09-30 16:39:02.596711+05	\N
-8cda470b-541b-47eb-b313-f93b7797037d	d4156225-082e-4f0f-9b2c-85268114433a	25	7bf4fcbc-8526-4211-8666-8a3bf9af63c4	2022-09-30 16:48:58.062478+05	2022-09-30 16:48:58.062478+05	\N
-3ae56ef8-08a2-4174-b0b1-7c8198e2e56a	81b84c5d-9759-4b86-978a-649c8ef79660	3	7bf4fcbc-8526-4211-8666-8a3bf9af63c4	2022-09-30 16:48:58.073894+05	2022-09-30 16:48:58.073894+05	\N
-a05d1a61-1479-4762-9c85-9d11e0c8b684	8df705a5-2351-4aca-b03e-3357a23840b4	3	7bf4fcbc-8526-4211-8666-8a3bf9af63c4	2022-09-30 16:48:58.083382+05	2022-09-30 16:48:58.083382+05	\N
-0428ab7e-5d9b-4cbd-bb62-3dbb3d09f519	e3c33ead-3c30-40f1-9d28-7bb8b71b767f	3	7bf4fcbc-8526-4211-8666-8a3bf9af63c4	2022-09-30 16:48:58.094764+05	2022-09-30 16:48:58.094764+05	\N
 \.
 
 
@@ -1149,27 +1119,6 @@ a05d1a61-1479-4762-9c85-9d11e0c8b684	8df705a5-2351-4aca-b03e-3357a23840b4	3	7bf4
 --
 
 COPY public.orders (id, customer_id, customer_mark, order_time, payment_type, total_price, created_at, updated_at, deleted_at, order_number) FROM stdin;
-3d29c94b-1869-4d4c-a94f-180a5c9eb614	7e872c52-0d23-4086-8c45-43000b57332e	isleg market bet cykypdyr	12:00 - 16:00	nagt	1223.6	2022-09-21 21:28:30.39466+05	2022-09-21 21:28:30.39466+05	\N	1
-ef468ad0-747b-4c12-a195-c72b9f19dc84	89a6ac71-4495-4218-b9f9-3f2a3eab085b	isleg market bet cykypdyr	12:00 - 16:00	nagt	1223.6	2022-09-22 12:54:24.199845+05	2022-09-22 12:54:24.199845+05	\N	2
-e9b43b21-2947-4c41-95e6-1b81d925996b	89a6ac71-4495-4218-b9f9-3f2a3eab085b	isleg market bet cykypdyr	12:00 - 16:00	nagt	1788	2022-09-22 14:27:08.833782+05	2022-09-22 14:27:08.833782+05	\N	3
-9f1f4526-7ee7-4347-96fc-6fb97c1b402a	89a6ac71-4495-4218-b9f9-3f2a3eab085b	isleg market bet cykypdyr	12:00 - 16:00	nagt	1788	2022-09-22 14:45:46.386254+05	2022-09-22 14:45:46.386254+05	\N	4
-7728fdeb-e871-414d-b5fd-d57ee59e879c	89a6ac71-4495-4218-b9f9-3f2a3eab085b	isleg market bet cykypdyr	12:00 - 16:00	nagt	1788	2022-09-29 14:05:14.735068+05	2022-09-29 14:05:14.735068+05	\N	5
-8930edc5-7b9e-4cef-ac58-97bc8261df3a	89a6ac71-4495-4218-b9f9-3f2a3eab085b	isleg market bet cykypdyr	12:00 - 16:00	nagt	1788	2022-09-29 14:06:29.676335+05	2022-09-29 14:06:29.676335+05	\N	6
-3a8f977f-2eb9-4a4a-9bb1-51cd9a5a4fe6	89a6ac71-4495-4218-b9f9-3f2a3eab085b	isleg market bet cykypdyr	12:00 - 16:00	nagt	1788	2022-09-29 14:06:57.81957+05	2022-09-29 14:06:57.81957+05	\N	7
-7b0af658-e230-405d-a1ed-718f52973eb2	89a6ac71-4495-4218-b9f9-3f2a3eab085b	isleg market bet cykypdyr	12:00 - 16:00	nagt	1788	2022-09-29 14:08:09.972501+05	2022-09-29 14:08:09.972501+05	\N	8
-68c886f4-c005-4a22-9219-f643577d0a62	89a6ac71-4495-4218-b9f9-3f2a3eab085b	isleg market bet cykypdyr	12:00 - 16:00	nagt	1788	2022-09-29 14:08:56.681211+05	2022-09-29 14:08:56.681211+05	\N	9
-c09ef7ff-4244-422a-b2da-3e160e39f0c8	89a6ac71-4495-4218-b9f9-3f2a3eab085b	isleg market bet cykypdyr	12:00 - 16:00	nagt	1788	2022-09-30 16:17:12.28516+05	2022-09-30 16:17:12.28516+05	\N	10
-1499d084-b010-4724-ac40-2451a87986d9	89a6ac71-4495-4218-b9f9-3f2a3eab085b	isleg market bet cykypdyr	12:00 - 16:00	nagt	1788	2022-09-30 16:19:46.479759+05	2022-09-30 16:19:46.479759+05	\N	11
-4271c7d2-eeff-4948-989f-ae5e4518854f	89a6ac71-4495-4218-b9f9-3f2a3eab085b	isleg market bet cykypdyr	12:00 - 16:00	nagt	1788	2022-09-30 16:22:21.342127+05	2022-09-30 16:22:21.342127+05	\N	12
-6fda5178-9944-4ffe-92e7-319f41323818	89a6ac71-4495-4218-b9f9-3f2a3eab085b	isleg market bet cykypdyr	12:00 - 16:00	nagt	1788	2022-09-30 16:28:44.051653+05	2022-09-30 16:28:44.051653+05	\N	13
-67f2638b-971c-48a9-bada-5d14b50d74bc	89a6ac71-4495-4218-b9f9-3f2a3eab085b	isleg market bet cykypdyr	12:00 - 16:00	nagt	1788	2022-09-30 16:29:07.367164+05	2022-09-30 16:29:07.367164+05	\N	14
-0be22e6c-0830-49eb-a500-b08b396d9c92	89a6ac71-4495-4218-b9f9-3f2a3eab085b	isleg market bet cykypdyr	12:00 - 16:00	nagt	1788	2022-09-30 16:31:39.632959+05	2022-09-30 16:31:39.632959+05	\N	15
-ad758850-26c1-4405-b20c-2a7d01df3447	89a6ac71-4495-4218-b9f9-3f2a3eab085b	isleg market bet cykypdyr	12:00 - 16:00	nagt	1788	2022-09-30 16:33:55.024097+05	2022-09-30 16:33:55.024097+05	\N	16
-b486486f-cc0c-4aa2-b594-ba21465fafa7	89a6ac71-4495-4218-b9f9-3f2a3eab085b	isleg market bet cykypdyr	12:00 - 16:00	nagt	1788	2022-09-30 16:34:12.15561+05	2022-09-30 16:34:12.15561+05	\N	17
-aa004448-b5ad-4248-be73-09c46f7aa2fa	89a6ac71-4495-4218-b9f9-3f2a3eab085b	isleg market bet cykypdyr	12:00 - 16:00	nagt	1788	2022-09-30 16:37:51.380433+05	2022-09-30 16:37:51.380433+05	\N	18
-3340c300-0d2d-4de9-af6a-244f777cd035	89a6ac71-4495-4218-b9f9-3f2a3eab085b	isleg market bet cykypdyr	12:00 - 16:00	nagt	1788	2022-09-30 16:38:29.875889+05	2022-09-30 16:38:29.875889+05	\N	19
-4e06d814-d2ab-4244-81aa-d86c341690ab	89a6ac71-4495-4218-b9f9-3f2a3eab085b	isleg market bet cykypdyr	12:00 - 16:00	nagt	1788	2022-09-30 16:39:02.54119+05	2022-09-30 16:39:02.54119+05	\N	20
-7bf4fcbc-8526-4211-8666-8a3bf9af63c4	89a6ac71-4495-4218-b9f9-3f2a3eab085b	isleg market bet cykypdyr	12:00 - 16:00	nagt	1788	2022-09-30 16:48:58.039309+05	2022-09-30 16:48:58.039309+05	\N	21
 \.
 
 
@@ -1182,6 +1131,7 @@ COPY public.payment_types (id, lang_id, type, created_at, updated_at, deleted_at
 7a6a313d-8fcd-4c56-9fa5-aefb12552b82	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	töleg terminaly	2022-09-20 14:34:46.329459+05	2022-09-20 14:34:46.329459+05	\N
 cb7e8cc9-9b2e-4cd8-921f-91b3bb5e5564	aea98b93-7bdf-455b-9ad4-a259d69dc76e	платежный терминал	2022-09-20 14:34:46.359276+05	2022-09-20 14:34:46.359276+05	\N
 38696743-82e5-4644-9c86-4a99ae45f912	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	nagt_tm	2022-09-20 14:33:50.755689+05	2022-09-20 14:40:04.959827+05	\N
+c188243d-a553-4fd3-ae05-cf8db9beb43e	55a387df-6d38-42ea-bfba-379327b53cbd	uytget	2022-10-17 02:31:43.703806+05	2022-10-17 02:31:43.703806+05	\N
 \.
 
 
@@ -1220,6 +1170,7 @@ COPY public.shops (id, owner_name, address, phone_number, running_time, created_
 COPY public.translation_about (id, lang_id, title, content, created_at, updated_at, deleted_at) FROM stdin;
 7abeb5cf-2fbb-43b9-94ca-251dd5f40d5a	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	Sizi Isleg onlaýn marketimizde hoş gördük!	Onlaýn marketimiz 2019-njy ýylyň iýul aýyndan bäri hyzmat berýär. Häzirki wagtda Size ýüzlerçe brendlere degişli bolan müňlerçe haryt görnüşlerini hödürleýäris! Haryt görnüşlerimizi sizden gelýän isleg we teklipleriň esasynda köpeltmäge dowam edýäris. Biziň maksadymyz müşderilerimize ýokary hilli hyzmat bermek bolup durýar. Indi Siz öýüňizden çykmazdan özüňizi gerekli zatlar bilen üpjün edip bilersiňiz! Munuň bilen bir hatarda Siz wagtyňyzy we transport çykdajylaryny hem tygşytlaýarsyňyz. Tölegi harytlar size gowuşandan soňra nagt ýa-da bank kartlarynyň üsti bilen amala aşyryp bilersiňiz!\n\nBiziň gapymyz hyzmatdaşlyklara we tekliplere hemişe açyk!	2022-06-25 12:07:15.62033+05	2022-06-25 12:07:15.62033+05	\N
 e50bb3d1-14a1-400e-83d9-8bc15969b914	aea98b93-7bdf-455b-9ad4-a259d69dc76e	Рады приветствовать Вас в интернет-маркете Isleg!	Мы начали работу в июле 2019 года и на сегодняшний день мы предлагаем Вам тысячи видов товаров, которые принадлежат сотням брендам. Каждый день мы работаем над увеличением ассортимента, привлечением новых компаний к сотрудничеству. Целью нашей работы является создание выгодных условий для наших клиентов-экономия времени на походы в магазины, оплата наличными или картой, доставка в удобное время, и конечно же качественная продукция по лучшим ценам!\n\nМы открыты для сотрудничества и пожеланий!	2022-06-25 12:07:15.653744+05	2022-06-25 12:07:15.653744+05	\N
+8f802660-b581-41c9-8e08-77adf0c8d9d7	55a387df-6d38-42ea-bfba-379327b53cbd	uytget	uytget	2022-10-17 02:31:43.703806+05	2022-10-17 02:31:43.703806+05	\N
 \.
 
 
@@ -1238,6 +1189,7 @@ COPY public.translation_afisa (id, afisa_id, lang_id, title, description, create
 COPY public.translation_basket_page (id, lang_id, quantity_of_goods, total_price, discount, delivery, total, currency, to_order, your_basket, created_at, updated_at, deleted_at, empty_the_basket) FROM stdin;
 456dcb5a-fabb-47f8-b216-0cddd3077124	aea98b93-7bdf-455b-9ad4-a259d69dc76e	quantity_of_goods_ru	total_price_ru	discount_ru	delivery_ru	total_ru	currency_ru	to_order_ru	your_basket_ru	2022-08-30 12:36:24.978404+05	2022-08-30 12:36:37.967063+05	\N	uytget
 51b3699e-1c7b-442a-be7b-6b2ad1f111b4	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	quantity_of_goods	total_price	discount	delivery	total	currency	to_order	your_basket	2022-08-30 12:36:24.978404+05	2022-09-19 14:28:12.008122+05	\N	empty_the_basket
+806a5f9a-7882-46f7-bd0d-a3f4cc24fb6e	55a387df-6d38-42ea-bfba-379327b53cbd	uytget	uytget	uytget	uytget	uytget	uytget	uytget	uytget	2022-10-17 02:31:43.703806+05	2022-10-17 02:31:43.703806+05	\N	uytget
 \.
 
 
@@ -1268,6 +1220,17 @@ bff34c21-04c1-4cea-bfaf-c8f9ce7e2bfe	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	02bd44
 0e400414-a80c-449d-8842-dd6667b45c73	aea98b93-7bdf-455b-9ad4-a259d69dc76e	02bd4413-8586-49ab-802e-16304e756a8b	name_ru	2022-06-16 13:43:22.681932+05	2022-06-16 13:43:22.681932+05	\N
 e099e7f6-1b97-4f70-8f29-f586ab6697d0	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	5bb9a4e7-9992-418f-b551-537844d371da	Şokolad we Keksler	2022-06-16 13:46:44.657849+05	2022-06-16 13:46:44.657849+05	\N
 415a0711-2482-44b3-8f03-923dca28bd5d	aea98b93-7bdf-455b-9ad4-a259d69dc76e	5bb9a4e7-9992-418f-b551-537844d371da	Шоколады и Кексы	2022-06-16 13:46:44.673892+05	2022-06-16 13:46:44.673892+05	\N
+1c287f79-c467-4530-aafd-77c294ac4091	55a387df-6d38-42ea-bfba-379327b53cbd	f745d171-68e6-42e2-b339-cb3c210cda55	uytget	2022-10-17 02:31:43.703806+05	2022-10-17 02:31:43.703806+05	\N
+c66cc626-d744-487d-8fc6-87ebc6a19535	55a387df-6d38-42ea-bfba-379327b53cbd	d4cb1359-6c23-4194-8e3c-21ed8cec8373	uytget	2022-10-17 02:31:43.703806+05	2022-10-17 02:31:43.703806+05	\N
+49c2be64-bb43-4696-8af6-988187f99466	55a387df-6d38-42ea-bfba-379327b53cbd	7f453dd0-7b2e-480d-a8be-fcfa23bd863e	uytget	2022-10-17 02:31:43.703806+05	2022-10-17 02:31:43.703806+05	\N
+72a79790-1880-4338-b929-0edd99c64f93	55a387df-6d38-42ea-bfba-379327b53cbd	29ed85bb-11eb-4458-bbf3-5a5644d167d6	uytget	2022-10-17 02:31:43.703806+05	2022-10-17 02:31:43.703806+05	\N
+623e54d4-b912-4ad3-8dcc-7800448d2bfb	55a387df-6d38-42ea-bfba-379327b53cbd	66772380-c161-4c45-9350-a45e765193e2	uytget	2022-10-17 02:31:43.703806+05	2022-10-17 02:31:43.703806+05	\N
+67f168de-ecf8-4885-99d5-df3c0bb9b3d6	55a387df-6d38-42ea-bfba-379327b53cbd	338906f1-dbe2-4ba7-84fc-fe7a4d7856ec	uytget	2022-10-17 02:31:43.703806+05	2022-10-17 02:31:43.703806+05	\N
+c5cc497b-2bb8-47b8-b59e-912f18b0fa4a	55a387df-6d38-42ea-bfba-379327b53cbd	45765130-7f97-4f0c-b886-f70b75e02610	uytget	2022-10-17 02:31:43.703806+05	2022-10-17 02:31:43.703806+05	\N
+63cd3daa-d15e-4bcb-b08f-f088e8ebded8	55a387df-6d38-42ea-bfba-379327b53cbd	fdc10d33-043b-4ee0-9d6e-e2a12a3e150a	uytget	2022-10-17 02:31:43.703806+05	2022-10-17 02:31:43.703806+05	\N
+53b2031b-a0da-4853-8d98-d4630b1f64b1	55a387df-6d38-42ea-bfba-379327b53cbd	02bd4413-8586-49ab-802e-16304e756a8b	uytget	2022-10-17 02:31:43.703806+05	2022-10-17 02:31:43.703806+05	\N
+7f55b5a8-fbf2-4266-a55a-6c2a52b8b63a	55a387df-6d38-42ea-bfba-379327b53cbd	5bb9a4e7-9992-418f-b551-537844d371da	uytget	2022-10-17 02:31:43.703806+05	2022-10-17 02:31:43.703806+05	\N
+77950afa-46c3-41ba-a1f5-98ef3511ad5c	55a387df-6d38-42ea-bfba-379327b53cbd	b982bd86-0a0f-4950-baad-5a131e9b728e	uytget	2022-10-17 02:31:43.703806+05	2022-10-17 02:31:43.703806+05	\N
 \.
 
 
@@ -1278,6 +1241,7 @@ e099e7f6-1b97-4f70-8f29-f586ab6697d0	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	5bb9a4
 COPY public.translation_contact (id, lang_id, full_name, email, phone, letter, company_phone, imo, company_email, instagram, created_at, updated_at, deleted_at, button_text) FROM stdin;
 f1693167-0c68-4a54-9831-56f124d629a3	aea98b93-7bdf-455b-9ad4-a259d69dc76e	at_ru	mail_ru	phone_ru	letter ru	cp ru	imo ru	ce ru	instagram ru	2022-06-27 11:29:48.050553+05	2022-06-27 11:29:48.050553+05	\N	Отправить
 73253999-7355-42b4-8700-94de76f0058a	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	at_tm	mail_tm	phone_tm	letter_tm	cp_tm	imo_tm	ce_tm	ins_tm	2022-06-27 11:29:47.914891+05	2022-06-27 11:29:47.914891+05	\N	ugrat
+ea0fe324-a8c6-4426-b132-e36b3b4c08fb	55a387df-6d38-42ea-bfba-379327b53cbd	uytget	uytget	uytget	uytget	uytget	uytget	uytget	uytget	2022-10-17 02:31:43.703806+05	2022-10-17 02:31:43.703806+05	\N	\N
 \.
 
 
@@ -1288,6 +1252,7 @@ f1693167-0c68-4a54-9831-56f124d629a3	aea98b93-7bdf-455b-9ad4-a259d69dc76e	at_ru	
 COPY public.translation_district (id, lang_id, district_id, name, created_at, updated_at, deleted_at) FROM stdin;
 ad9f94d3-05e7-43b3-aa77-7b7f3754d003	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	a58294d3-efe5-4cb7-82d3-8df8c37563c5	Parahat 2	2022-06-25 10:23:25.712337+05	2022-06-25 10:23:25.712337+05	\N
 aa1cfa48-3132-4dd4-abfb-070a2986690b	aea98b93-7bdf-455b-9ad4-a259d69dc76e	a58294d3-efe5-4cb7-82d3-8df8c37563c5	Mir 2	2022-06-25 10:23:25.774504+05	2022-06-25 10:23:25.774504+05	\N
+987bb3c7-59d3-4f2b-b5ca-6905ec581952	55a387df-6d38-42ea-bfba-379327b53cbd	a58294d3-efe5-4cb7-82d3-8df8c37563c5	uytget	2022-10-17 02:31:43.703806+05	2022-10-17 02:31:43.703806+05	\N
 \.
 
 
@@ -1298,6 +1263,7 @@ aa1cfa48-3132-4dd4-abfb-070a2986690b	aea98b93-7bdf-455b-9ad4-a259d69dc76e	a58294
 COPY public.translation_footer (id, lang_id, about, payment, contact, secure, word, created_at, updated_at, deleted_at) FROM stdin;
 84b5504f-1056-4b44-94dd-a7819148da66	aea98b93-7bdf-455b-9ad4-a259d69dc76e	О нас	Порядок доставки и оплаты	Коммуникация	Обслуживания и Политика Конфиденциальности	Все права защищены	2022-06-22 15:23:32.793161+05	2022-06-22 15:23:32.793161+05	\N
 12dc4c16-5712-4bff-a957-8e16d450b4fb	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	Biz Barada	Eltip bermek we töleg tertibi	Aragatnaşyk	Ulanyş düzgünleri we gizlinlik şertnamasy	Ähli hukuklary goraglydyr	2022-06-22 15:23:32.716064+05	2022-06-22 15:23:32.716064+05	\N
+a50a6d02-3604-467b-ae88-4a764483882f	55a387df-6d38-42ea-bfba-379327b53cbd	uytget	uytget	uytget	uytget	uytget	2022-10-17 02:31:43.703806+05	2022-10-17 02:31:43.703806+05	\N
 \.
 
 
@@ -1308,6 +1274,7 @@ COPY public.translation_footer (id, lang_id, about, payment, contact, secure, wo
 COPY public.translation_header (id, lang_id, research, phone, password, forgot_password, sign_in, sign_up, name, password_verification, verify_secure, my_information, my_favorites, my_orders, log_out, created_at, updated_at, deleted_at, basket, email, add_to_basket) FROM stdin;
 eaf206e6-d515-4bdb-9323-a047cd0edae5	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	gözleg	telefon	parol	Acar sozumi unutdym	ulgama girmek	agza bolmak	Ady	Acar sozi tassyklamak	Ulanyş Düzgünlerini we Gizlinlik Şertnamasyny okadym we kabul edýärin	maglumatym	halanlarym	sargytlarym	cykmak	2022-06-16 04:48:26.460534+05	2022-06-16 04:48:26.460534+05	\N	sebet	uytget	uytget
 9154e800-2a92-47de-b4ff-1e63b213e5f7	aea98b93-7bdf-455b-9ad4-a259d69dc76e	поиск	tелефон	пароль	забыл пароль	войти	зарегистрироваться	имя	Подтвердить Пароль	Я прочитал и принимаю Условия Обслуживания и Политика Конфиденциальности	моя информация	мои любимые	мои заказы	выйти	2022-06-16 04:48:26.491672+05	2022-06-16 04:48:26.491672+05	\N	корзина	uytget	uytget
+cc96bb49-8073-47e0-b733-c8af7cea2df4	55a387df-6d38-42ea-bfba-379327b53cbd	uytget	uytget	uytget	uytget	uytget	uytget	uytget	uytget	uytget	uytget	uytget	uytget	uytget	2022-10-17 02:31:43.703806+05	2022-10-17 02:31:43.703806+05	\N	uytget	uytget	uytget
 \.
 
 
@@ -1318,6 +1285,7 @@ eaf206e6-d515-4bdb-9323-a047cd0edae5	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	gözle
 COPY public.translation_my_information_page (id, lang_id, address, created_at, updated_at, deleted_at, birthday, update_password, save) FROM stdin;
 d294138e-b808-41ae-9ac5-1826751fda3d	aea98b93-7bdf-455b-9ad4-a259d69dc76e	ваш адрес	2022-07-04 19:28:46.603058+05	2022-07-04 19:28:46.603058+05	\N	дата рождения	изменить пароль	запомнить
 11074158-69f2-473a-b4fe-94304ff0d8a7	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	salgyňyz	2022-07-04 19:28:46.529935+05	2022-07-04 19:28:46.529935+05	\N	doglan senäň	açar sözi üýtget	ýatda sakla
+6f731337-0faf-45f0-8d2d-b378c29907ee	55a387df-6d38-42ea-bfba-379327b53cbd	uytget	2022-10-17 02:31:43.703806+05	2022-10-17 02:31:43.703806+05	\N	uytget	uytegt	uytegt
 \.
 
 
@@ -1328,6 +1296,7 @@ d294138e-b808-41ae-9ac5-1826751fda3d	aea98b93-7bdf-455b-9ad4-a259d69dc76e	ваш
 COPY public.translation_my_order_page (id, lang_id, orders, date, price, currency, image, name, brend, code, amount, total_price, created_at, updated_at, deleted_at) FROM stdin;
 6f30b588-94d8-49f5-a558-a90c2ec9150e	aea98b93-7bdf-455b-9ad4-a259d69dc76e	orders_ru	date_ru	price_ru	currency_ru	image_ru	name_ru	brend_ru	code_ru	amount_ru	total_price_ru	2022-09-02 13:04:39.394714+05	2022-09-02 13:04:39.394714+05	\N
 ff43b90d-e22d-4364-b358-6fd56bb3a305	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	orders	date	price	currency	image	name	brend	code	amount	total_price	2022-09-02 13:04:39.36328+05	2022-09-02 13:12:48.119751+05	\N
+2f318dd6-890b-46b4-a984-cb3cbbbc5299	55a387df-6d38-42ea-bfba-379327b53cbd	uytget	uytget	uytget	uytget	uytget	uytget	uytget	uytget	uytget	uytget	2022-10-17 02:31:43.703806+05	2022-10-17 02:31:43.703806+05	\N
 \.
 
 
@@ -1340,6 +1309,8 @@ dcd0c70b-9fa2-4327-8b35-de29bd3febcb	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	326463
 3338d831-f091-4574-a0bf-f9cb07dd4893	aea98b93-7bdf-455b-9ad4-a259d69dc76e	32646376-c93f-412b-9e75-b3a5fa70df9e	Cегодня	2022-09-28 17:35:33.82453+05	2022-09-28 17:35:33.82453+05	\N
 1aa5185f-9815-4e3f-9c34-718bfb587d91	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	c1f2beca-a6b6-4971-a6a7-ed50079c6912	Ertir	2022-09-28 17:36:46.836838+05	2022-09-28 17:36:46.836838+05	\N
 9e7a3752-fce2-4b66-bf3e-d915bf463f92	aea98b93-7bdf-455b-9ad4-a259d69dc76e	c1f2beca-a6b6-4971-a6a7-ed50079c6912	Завтра	2022-09-28 17:36:46.847888+05	2022-09-28 17:36:46.847888+05	\N
+e7986920-39ff-4d7a-b805-05341516d42d	55a387df-6d38-42ea-bfba-379327b53cbd	32646376-c93f-412b-9e75-b3a5fa70df9e	uytget	2022-10-17 02:31:43.703806+05	2022-10-17 02:31:43.703806+05	\N
+2b504ee9-e7aa-4472-bbee-583eb0abec44	55a387df-6d38-42ea-bfba-379327b53cbd	c1f2beca-a6b6-4971-a6a7-ed50079c6912	uytget	2022-10-17 02:31:43.703806+05	2022-10-17 02:31:43.703806+05	\N
 \.
 
 
@@ -1350,6 +1321,7 @@ dcd0c70b-9fa2-4327-8b35-de29bd3febcb	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	326463
 COPY public.translation_order_page (id, lang_id, content, type_of_payment, choose_a_delivery_time, your_address, mark, to_order, tomorrow, cash, payment_terminal, created_at, updated_at, deleted_at) FROM stdin;
 474a15e9-1a05-49aa-9a61-c92837d9c9a8	aea98b93-7bdf-455b-9ad4-a259d69dc76e	content_ru	type_of_payment_ru	choose_a_delivery_time_ru	your_address_ru	mark_ru	to_order_ru	tomorrow_ru	cash_ru	payment_terminal_ru	2022-09-01 12:47:16.802639+05	2022-09-01 12:47:16.802639+05	\N
 75810722-07fd-400e-94b4-cd230de08cbf	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	content	type_of_payment	choose_a_delivery_time	your_address	mark	to_order	tomorrow	cash	payment_terminal	2022-09-01 12:47:16.720956+05	2022-09-01 12:55:25.638676+05	\N
+17338d5e-a818-4465-9697-ad089bc1f11b	55a387df-6d38-42ea-bfba-379327b53cbd	uytget	uytget	uytget	uytget	uytget	uytget	uytget	uytget	uytget	2022-10-17 02:31:43.703806+05	2022-10-17 02:31:43.703806+05	\N
 \.
 
 
@@ -1360,6 +1332,7 @@ COPY public.translation_order_page (id, lang_id, content, type_of_payment, choos
 COPY public.translation_payment (id, lang_id, title, content, created_at, updated_at, deleted_at) FROM stdin;
 5748ec03-5278-425c-babf-f7f2bf8d2efa	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	Eltip bermek we töleg tertibi	Eltip bermek hyzmaty Aşgabat şäheriniň çägi bilen bir hatarda Büzmeýine we Änew şäherine hem elýeterlidir. Hyzmat mugt amala aşyrylýar;\nHer bir sargydyň jemi bahasy azyndan 150 manat bolmalydyr;\nSaýtdan sargyt edeniňizden soňra operator size jaň edip sargydy tassyklar (eger hemişelik müşderi bolsaňyz sargytlaryňyz islegiňize görä awtomatik usulda hem tassyklanýar);\nGirizen salgyňyz we telefon belgiňiz esasynda hyzmat amala aşyrylýar;\nSargyt tassyklanmadyk ýagdaýynda ol hasaba alynmaýar we ýerine ýetirilmeýär. Sargydyň tassyklanmagy üçin girizen telefon belgiňizden jaň kabul edip bilýändigiňize göz ýetiriň. Şeýle hem girizen salgyňyzyň dogrulygyny barlaň;\nSargydy barlap alanyňyzdan soňra töleg amala aşyrylýar. Eltip berijiniň size gowşurýan töleg resminamasynda siziň tölemeli puluňyz bellenendir. Töleg nagt we nagt däl görnüşde milli manatda amala aşyrylýar. Kabul edip tölegini geçiren harydyňyz yzyna alynmaýar;\nSargyt tassyklanandan soňra 24 sagadyň dowamynda eýesi tapylmasa ol güýjüni ýitirýär;	2022-06-25 11:37:47.362666+05	2022-06-25 11:37:47.362666+05	\N
 ea7f4c0c-4b1a-41d3-94eb-e058aba9c99f	aea98b93-7bdf-455b-9ad4-a259d69dc76e	Порядок доставки и оплаты	В настоящее время услуга по доставке осуществляется по городу Ашхабад, Бюзмеин и Анау. Услуга предоставляется бесплатно.\nМинимальный заказ должен составлять не менее 150 манат;\nПосле Вашего заказа по сайту, оператор позвонит Вам для подтверждения заказа (постоянным клиентам по их желанию подтверждение осуществляется автоматизированно);\nУслуга доставки выполняется по указанному Вами адресу и номеру телефона;\nЕсли заказ не подтвержден то данный заказ не регистрируется и не выполняется. Для подтверждения заказа, удостоверьтесь, что можете принять звонок по указанному Вами номеру телефона. Также проверьте правильность указанного Вами адреса;\nОплата выполняется после того, как Вы проверите и примите заказ. На платежном документе курьера указана сумма Вашей оплаты. Оплата выполняется наличными и через карту в национальной валюте. Принятый и оплаченный товар возврату не подлежит;\nЕсли не удается найти владельца заказа в течение 24 часов после подтверждения заказа, то данный заказ аннулируется;	2022-06-25 11:37:47.39047+05	2022-06-25 11:37:47.39047+05	\N
+a1da8202-2df0-419c-90c0-bb68e4558174	55a387df-6d38-42ea-bfba-379327b53cbd	uytget	uytget	2022-10-17 02:31:43.703806+05	2022-10-17 02:31:43.703806+05	\N
 \.
 
 
@@ -1392,6 +1365,18 @@ c5e4d0da-dbe9-46c6-87b4-3b70226ca2a9	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	3e81d4
 dcedd91a-b7e9-4e9f-ae0a-f58308e6d751	aea98b93-7bdf-455b-9ad4-a259d69dc76e	e3c33ead-3c30-40f1-9d28-7bb8b71b767f	Жидкое крем-мыло увлажняющее Aura Clean "Черничный йогурт" 1 л	Жидкое крем-мыло увлажняющее Aura Clean "Черничный йогурт" 1 л	2022-09-17 14:59:44.910924+05	2022-09-17 14:59:44.910924+05	\N	zhidkoe-krem-mylo-uvlazhniaiushchee-aura-clean-chernichnyi-iogurt-1-l
 54b061df-a71c-405e-8ddd-0155b034dcd5	aea98b93-7bdf-455b-9ad4-a259d69dc76e	8df705a5-2351-4aca-b03e-3357a23840b4	Жидкое крем-мыло увлажняющее Aura Clean "Черничный йогурт" 1 л	Жидкое крем-мыло увлажняющее Aura Clean "Черничный йогурт" 1 л	2022-09-17 15:00:15.223949+05	2022-09-17 15:00:15.223949+05	\N	zhidkoe-krem-mylo-uvlazhniaiushchee-aura-clean-chernichnyi-iogurt-1-l
 ab660f8c-5ba8-45c4-be0b-ad2ef1450d1d	aea98b93-7bdf-455b-9ad4-a259d69dc76e	3e81d4cd-c3c6-4b01-832b-383b8bea5a6a	Жидкое крем-мыло увлажняющее Aura Clean "Черничный йогурт" 1 л	Жидкое крем-мыло увлажняющее Aura Clean "Черничный йогурт" 1 л	2022-10-06 11:07:41.692074+05	2022-10-06 11:07:41.692074+05	\N	zhidkoe-krem-mylo-uvlazhniaiushchee-aura-clean-chernichnyi-iogurt-1-l
+1327fb24-9a60-47bb-aab7-10f1bee360c4	55a387df-6d38-42ea-bfba-379327b53cbd	0d4a6c3c-cc5d-457b-ac9a-ce60eacb94de	uytget	uytget	2022-10-17 02:31:43.703806+05	2022-10-17 02:31:43.703806+05	\N	uytget
+b458c6ad-96f9-4a87-8ed4-871cf86611a9	55a387df-6d38-42ea-bfba-379327b53cbd	b2b165a3-2261-4d67-8160-0e239ecd99b5	uytget	uytget	2022-10-17 02:31:43.703806+05	2022-10-17 02:31:43.703806+05	\N	uytget
+b1de5982-ee89-4dae-afb9-1116fa1259b4	55a387df-6d38-42ea-bfba-379327b53cbd	a2bb8745-1f3a-4de9-ad66-11b0bb3bb754	uytget	uytget	2022-10-17 02:31:43.703806+05	2022-10-17 02:31:43.703806+05	\N	uytget
+12b07b81-9e9c-47fe-a051-5e3f7288ecdd	55a387df-6d38-42ea-bfba-379327b53cbd	d731b17a-ae8d-4561-ad67-0f431d5c529b	uytget	uytget	2022-10-17 02:31:43.703806+05	2022-10-17 02:31:43.703806+05	\N	uytget
+f6791ed2-e2a4-4d3a-a32f-59ae4b34d832	55a387df-6d38-42ea-bfba-379327b53cbd	bb6c3bdb-79e2-44b3-98b1-c1cee0976777	uytget	uytget	2022-10-17 02:31:43.703806+05	2022-10-17 02:31:43.703806+05	\N	uytget
+dc55a19f-d194-4fd9-b3f8-66e8122f0219	55a387df-6d38-42ea-bfba-379327b53cbd	d4156225-082e-4f0f-9b2c-85268114433a	uytget	uytget	2022-10-17 02:31:43.703806+05	2022-10-17 02:31:43.703806+05	\N	uytget
+6fff60d6-4ec9-46d9-80a9-df657ec267e7	55a387df-6d38-42ea-bfba-379327b53cbd	81b84c5d-9759-4b86-978a-649c8ef79660	uytget	uytget	2022-10-17 02:31:43.703806+05	2022-10-17 02:31:43.703806+05	\N	uytget
+a4e1fdc0-0330-4238-bebf-566018205273	55a387df-6d38-42ea-bfba-379327b53cbd	660071e0-8f17-4c48-9d80-d4cac306de3a	uytget	uytget	2022-10-17 02:31:43.703806+05	2022-10-17 02:31:43.703806+05	\N	uytget
+ff0d6c88-4ec2-49f3-b8b4-a3b1861cccb9	55a387df-6d38-42ea-bfba-379327b53cbd	c866d5e4-284c-4bea-a94f-cc23f6c7e5d0	uytget	uytget	2022-10-17 02:31:43.703806+05	2022-10-17 02:31:43.703806+05	\N	uytget
+53df335e-5e07-4bc3-84cc-fb303daf047d	55a387df-6d38-42ea-bfba-379327b53cbd	e3c33ead-3c30-40f1-9d28-7bb8b71b767f	uytget	uytget	2022-10-17 02:31:43.703806+05	2022-10-17 02:31:43.703806+05	\N	uytget
+0878f53e-cd11-40c8-a16e-7a74e1c5d145	55a387df-6d38-42ea-bfba-379327b53cbd	8df705a5-2351-4aca-b03e-3357a23840b4	uytget	uytget	2022-10-17 02:31:43.703806+05	2022-10-17 02:31:43.703806+05	\N	uytget
+458efe76-79d3-4643-9c35-cffcaa33ff3e	55a387df-6d38-42ea-bfba-379327b53cbd	3e81d4cd-c3c6-4b01-832b-383b8bea5a6a	uytget	uytget	2022-10-17 02:31:43.703806+05	2022-10-17 02:31:43.703806+05	\N	uytget
 \.
 
 
@@ -1402,6 +1387,7 @@ ab660f8c-5ba8-45c4-be0b-ad2ef1450d1d	aea98b93-7bdf-455b-9ad4-a259d69dc76e	3e81d4
 COPY public.translation_secure (id, lang_id, title, content, created_at, updated_at, deleted_at) FROM stdin;
 3579a847-ce74-4fbe-b10d-8aba83867857	aea98b93-7bdf-455b-9ad4-a259d69dc76e	Пользовательское соглашение	Между Ынамдар – Интернет Маркетом (далее – “Ынамдар”) и интернет сайтом www.ynamdar.com (далее – “Сайт”), а также его клиентом (далее - “Клиент”) достигнуто соглашение по нижеследующим условиям.\n	2022-06-25 10:46:54.221498+05	2022-06-25 10:46:54.221498+05	\N
 5988b64a-82ad-4ed0-bd1b-bdd0b3b05912	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	ÖZARA YLALAŞYGY	Ynamdar - Internet Marketi (Mundan beýläk – “Ynamdar”) we www.ynamdar.com internet saýty (Mundan beýläk – “Saýt”) bilen, onuň agzasynyň (“Agza”) arasynda aşakdaky şertleri ýerine ýetirmek barada ylalaşyga gelindi.	2022-06-25 10:46:54.190131+05	2022-06-25 10:46:54.190131+05	\N
+869da7b2-efb5-40d6-ba4c-cb8bb5c12fe1	55a387df-6d38-42ea-bfba-379327b53cbd	uytget	uytget	2022-10-17 02:31:43.703806+05	2022-10-17 02:31:43.703806+05	\N
 \.
 
 
@@ -1412,6 +1398,7 @@ COPY public.translation_secure (id, lang_id, title, content, created_at, updated
 COPY public.translation_update_password_page (id, lang_id, title, verify_password, explanation, save, created_at, updated_at, deleted_at, password) FROM stdin;
 5190ca93-7007-4db4-8105-65cc3b1af868	aea98b93-7bdf-455b-9ad4-a259d69dc76e	изменить пароль	Подтвердить Пароль	ключевое слово должно быть буквой или цифрой длиной от 5 до 20	запомнить	2022-07-05 10:35:08.984141+05	2022-07-05 10:35:08.984141+05	\N	ключевое слово
 de12082b-baab-4b83-ac07-119df09d1230	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	açar sözi üýtgetmek	açar sözi tassykla	siziň açar sözüňiz 5-20 uzynlygynda harp ýa-da sandan ybarat bolmalydyr	ýatda sakla	2022-07-05 10:35:08.867617+05	2022-07-05 10:35:08.867617+05	\N	açar sözi
+06503847-0b5a-4b39-8124-6f89c7d9ece7	55a387df-6d38-42ea-bfba-379327b53cbd	uytget	uytget	uytget	uytget	2022-10-17 02:31:43.703806+05	2022-10-17 02:31:43.703806+05	\N	uytget
 \.
 
 
@@ -1740,6 +1727,293 @@ ALTER TABLE ONLY public.translation_secure
 
 ALTER TABLE ONLY public.translation_update_password_page
     ADD CONSTRAINT translation_update_password_page_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: languages after_insert_language; Type: TRIGGER; Schema: public; Owner: postgres
+--
+
+CREATE TRIGGER after_insert_language AFTER INSERT ON public.languages FOR EACH ROW EXECUTE FUNCTION public.after_insert_language();
+
+
+--
+-- Name: afisa updated_afisa_updated_at; Type: TRIGGER; Schema: public; Owner: postgres
+--
+
+CREATE TRIGGER updated_afisa_updated_at BEFORE UPDATE ON public.afisa FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
+
+
+--
+-- Name: banner updated_banner_updated_at; Type: TRIGGER; Schema: public; Owner: postgres
+--
+
+CREATE TRIGGER updated_banner_updated_at BEFORE UPDATE ON public.banner FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
+
+
+--
+-- Name: brends updated_brends_updated_at; Type: TRIGGER; Schema: public; Owner: postgres
+--
+
+CREATE TRIGGER updated_brends_updated_at BEFORE UPDATE ON public.brends FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
+
+
+--
+-- Name: cart updated_cart_updated_at; Type: TRIGGER; Schema: public; Owner: postgres
+--
+
+CREATE TRIGGER updated_cart_updated_at BEFORE UPDATE ON public.cart FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
+
+
+--
+-- Name: categories updated_categories_updated_at; Type: TRIGGER; Schema: public; Owner: postgres
+--
+
+CREATE TRIGGER updated_categories_updated_at BEFORE UPDATE ON public.categories FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
+
+
+--
+-- Name: category_product updated_category_product_updated_at; Type: TRIGGER; Schema: public; Owner: postgres
+--
+
+CREATE TRIGGER updated_category_product_updated_at BEFORE UPDATE ON public.category_product FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
+
+
+--
+-- Name: category_shop updated_category_shop_updated_at; Type: TRIGGER; Schema: public; Owner: postgres
+--
+
+CREATE TRIGGER updated_category_shop_updated_at BEFORE UPDATE ON public.category_shop FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
+
+
+--
+-- Name: company_address updated_company_address_updated_at; Type: TRIGGER; Schema: public; Owner: postgres
+--
+
+CREATE TRIGGER updated_company_address_updated_at BEFORE UPDATE ON public.company_address FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
+
+
+--
+-- Name: company_phone updated_company_phone_updated_at; Type: TRIGGER; Schema: public; Owner: postgres
+--
+
+CREATE TRIGGER updated_company_phone_updated_at BEFORE UPDATE ON public.company_phone FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
+
+
+--
+-- Name: company_setting updated_company_setting_updated_at; Type: TRIGGER; Schema: public; Owner: postgres
+--
+
+CREATE TRIGGER updated_company_setting_updated_at BEFORE UPDATE ON public.company_setting FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
+
+
+--
+-- Name: customer_address updated_customer_address_updated_at; Type: TRIGGER; Schema: public; Owner: postgres
+--
+
+CREATE TRIGGER updated_customer_address_updated_at BEFORE UPDATE ON public.customer_address FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
+
+
+--
+-- Name: customers updated_customers_updated_at; Type: TRIGGER; Schema: public; Owner: postgres
+--
+
+CREATE TRIGGER updated_customers_updated_at BEFORE UPDATE ON public.customers FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
+
+
+--
+-- Name: district updated_district_updated_at; Type: TRIGGER; Schema: public; Owner: postgres
+--
+
+CREATE TRIGGER updated_district_updated_at BEFORE UPDATE ON public.district FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
+
+
+--
+-- Name: images updated_images_updated_at; Type: TRIGGER; Schema: public; Owner: postgres
+--
+
+CREATE TRIGGER updated_images_updated_at BEFORE UPDATE ON public.images FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
+
+
+--
+-- Name: languages updated_languages_updated_at; Type: TRIGGER; Schema: public; Owner: postgres
+--
+
+CREATE TRIGGER updated_languages_updated_at BEFORE UPDATE ON public.languages FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
+
+
+--
+-- Name: likes updated_likes_updated_at; Type: TRIGGER; Schema: public; Owner: postgres
+--
+
+CREATE TRIGGER updated_likes_updated_at BEFORE UPDATE ON public.likes FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
+
+
+--
+-- Name: main_image updated_main_image_updated_at; Type: TRIGGER; Schema: public; Owner: postgres
+--
+
+CREATE TRIGGER updated_main_image_updated_at BEFORE UPDATE ON public.main_image FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
+
+
+--
+-- Name: order_dates updated_order_dates_updated_at; Type: TRIGGER; Schema: public; Owner: postgres
+--
+
+CREATE TRIGGER updated_order_dates_updated_at BEFORE UPDATE ON public.order_dates FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
+
+
+--
+-- Name: order_times updated_order_times_updated_at; Type: TRIGGER; Schema: public; Owner: postgres
+--
+
+CREATE TRIGGER updated_order_times_updated_at BEFORE UPDATE ON public.order_times FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
+
+
+--
+-- Name: ordered_products updated_ordered_products_updated_at; Type: TRIGGER; Schema: public; Owner: postgres
+--
+
+CREATE TRIGGER updated_ordered_products_updated_at BEFORE UPDATE ON public.ordered_products FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
+
+
+--
+-- Name: orders updated_orders_updated_at; Type: TRIGGER; Schema: public; Owner: postgres
+--
+
+CREATE TRIGGER updated_orders_updated_at BEFORE UPDATE ON public.orders FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
+
+
+--
+-- Name: payment_types updated_payment_types_updated_at; Type: TRIGGER; Schema: public; Owner: postgres
+--
+
+CREATE TRIGGER updated_payment_types_updated_at BEFORE UPDATE ON public.payment_types FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
+
+
+--
+-- Name: products updated_products_updated_at; Type: TRIGGER; Schema: public; Owner: postgres
+--
+
+CREATE TRIGGER updated_products_updated_at BEFORE UPDATE ON public.products FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
+
+
+--
+-- Name: shops updated_shops_updated_at; Type: TRIGGER; Schema: public; Owner: postgres
+--
+
+CREATE TRIGGER updated_shops_updated_at BEFORE UPDATE ON public.shops FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
+
+
+--
+-- Name: translation_about updated_translation_about_updated_at; Type: TRIGGER; Schema: public; Owner: postgres
+--
+
+CREATE TRIGGER updated_translation_about_updated_at BEFORE UPDATE ON public.translation_about FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
+
+
+--
+-- Name: translation_afisa updated_translation_afisa_updated_at; Type: TRIGGER; Schema: public; Owner: postgres
+--
+
+CREATE TRIGGER updated_translation_afisa_updated_at BEFORE UPDATE ON public.translation_afisa FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
+
+
+--
+-- Name: translation_basket_page updated_translation_basket_page_updated_at; Type: TRIGGER; Schema: public; Owner: postgres
+--
+
+CREATE TRIGGER updated_translation_basket_page_updated_at BEFORE UPDATE ON public.translation_basket_page FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
+
+
+--
+-- Name: translation_category updated_translation_category_updated_at; Type: TRIGGER; Schema: public; Owner: postgres
+--
+
+CREATE TRIGGER updated_translation_category_updated_at BEFORE UPDATE ON public.translation_category FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
+
+
+--
+-- Name: translation_contact updated_translation_contact_updated_at; Type: TRIGGER; Schema: public; Owner: postgres
+--
+
+CREATE TRIGGER updated_translation_contact_updated_at BEFORE UPDATE ON public.translation_contact FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
+
+
+--
+-- Name: translation_district updated_translation_district_updated_at; Type: TRIGGER; Schema: public; Owner: postgres
+--
+
+CREATE TRIGGER updated_translation_district_updated_at BEFORE UPDATE ON public.translation_district FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
+
+
+--
+-- Name: translation_footer updated_translation_footer_updated_at; Type: TRIGGER; Schema: public; Owner: postgres
+--
+
+CREATE TRIGGER updated_translation_footer_updated_at BEFORE UPDATE ON public.translation_footer FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
+
+
+--
+-- Name: translation_header updated_translation_header_updated_at; Type: TRIGGER; Schema: public; Owner: postgres
+--
+
+CREATE TRIGGER updated_translation_header_updated_at BEFORE UPDATE ON public.translation_header FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
+
+
+--
+-- Name: translation_my_information_page updated_translation_my_information_page_updated_at; Type: TRIGGER; Schema: public; Owner: postgres
+--
+
+CREATE TRIGGER updated_translation_my_information_page_updated_at BEFORE UPDATE ON public.translation_my_information_page FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
+
+
+--
+-- Name: translation_my_order_page updated_translation_my_order_page_updated_at; Type: TRIGGER; Schema: public; Owner: postgres
+--
+
+CREATE TRIGGER updated_translation_my_order_page_updated_at BEFORE UPDATE ON public.translation_my_order_page FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
+
+
+--
+-- Name: translation_order_dates updated_translation_order_dates_updated_at; Type: TRIGGER; Schema: public; Owner: postgres
+--
+
+CREATE TRIGGER updated_translation_order_dates_updated_at BEFORE UPDATE ON public.translation_order_dates FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
+
+
+--
+-- Name: translation_order_page updated_translation_order_page_updated_at; Type: TRIGGER; Schema: public; Owner: postgres
+--
+
+CREATE TRIGGER updated_translation_order_page_updated_at BEFORE UPDATE ON public.translation_order_page FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
+
+
+--
+-- Name: translation_payment updated_translation_payment_updated_at; Type: TRIGGER; Schema: public; Owner: postgres
+--
+
+CREATE TRIGGER updated_translation_payment_updated_at BEFORE UPDATE ON public.translation_payment FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
+
+
+--
+-- Name: translation_product updated_translation_product_updated_at; Type: TRIGGER; Schema: public; Owner: postgres
+--
+
+CREATE TRIGGER updated_translation_product_updated_at BEFORE UPDATE ON public.translation_product FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
+
+
+--
+-- Name: translation_secure updated_translation_secure_updated_at; Type: TRIGGER; Schema: public; Owner: postgres
+--
+
+CREATE TRIGGER updated_translation_secure_updated_at BEFORE UPDATE ON public.translation_secure FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
+
+
+--
+-- Name: translation_update_password_page updated_translation_update_password_page_updated_at; Type: TRIGGER; Schema: public; Owner: postgres
+--
+
+CREATE TRIGGER updated_translation_update_password_page_updated_at BEFORE UPDATE ON public.translation_update_password_page FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
 
 
 --
