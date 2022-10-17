@@ -38,7 +38,15 @@ func CreateTranslationHeader(c *gin.Context) {
 		})
 		return
 	}
-	defer db.Close()
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	// GET ALL LANGUAGE
 	languages, err := GetAllLanguageWithIDAndNameShort()
@@ -72,7 +80,15 @@ func CreateTranslationHeader(c *gin.Context) {
 			})
 			return
 		}
-		defer resultTrHedaer.Close()
+		defer func() {
+			if err := resultTrHedaer.Close(); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}()
 	}
 
 	c.JSON(http.StatusOK, gin.H{

@@ -14,11 +14,6 @@ import (
 	"github.com/google/uuid"
 )
 
-// type LanguageForHeader struct {
-// 	NameShort string `json:"name_short"`
-// 	Flag      string `json:"flag"`
-// }
-
 func CreateLanguage(c *gin.Context) {
 
 	db, err := config.ConnDB()

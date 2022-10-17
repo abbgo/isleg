@@ -30,17 +30,17 @@ func Routes() *gin.Engine {
 	// routes belong to admin panel
 	back := routes.Group("/admin")
 	{
-		back.POST("/language", backController.CreateLanguage)
-		back.PUT("/language/:id", backController.UpdateLanguageByID)
-		back.GET("/language/:id", backController.GetLanguageByID)
-		back.GET("/languages", backController.GetLanguages)
-		back.DELETE("/language/:id", backController.DeleteLanguageByID)
-		back.GET("/restore-language/:id", backController.RestoreLanguageByID)
-		back.DELETE("/delete-language/:id", backController.DeletePermanentlyLanguageByID)
+		back.POST("/language", backController.CreateLanguage)                             //+
+		back.PUT("/language/:id", backController.UpdateLanguageByID)                      //+
+		back.GET("/language/:id", backController.GetLanguageByID)                         //+
+		back.GET("/languages", backController.GetLanguages)                               //+
+		back.DELETE("/language/:id", backController.DeleteLanguageByID)                   //+
+		back.GET("/restore-language/:id", backController.RestoreLanguageByID)             //+
+		back.DELETE("/delete-language/:id", backController.DeletePermanentlyLanguageByID) //+
 
-		back.POST("/company-setting", backController.CreateCompanySetting)
-		back.PUT("/company-setting", backController.UpdateCompanySetting)
-		back.GET("/company-setting", backController.GetCompanySetting)
+		back.POST("/company-setting", backController.CreateCompanySetting) //+
+		back.PUT("/company-setting", backController.UpdateCompanySetting)  //+
+		back.GET("/company-setting", backController.GetCompanySetting)     //+
 
 		back.POST("/order-time", backController.CreateOrderTime)
 
