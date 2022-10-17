@@ -10,27 +10,27 @@ import (
 )
 
 type OrderDates struct {
-	ID        uuid.UUID `json:"id"`
-	Date      string    `json:"date"`
+	ID        uuid.UUID `json:"id,omitempty"`
+	Date      string    `json:"date,omitempty"`
 	CreatedAt string    `json:"-"`
 	UpdatedAt string    `json:"-"`
 	DeletedAt string    `json:"-"`
 }
 
 type OrderTimes struct {
-	ID          uuid.UUID `json:"id"`
-	OrderDateID uuid.UUID `json:"order_date_id"`
-	Time        string    `json:"time"`
+	ID          uuid.UUID `json:"id,omitempty"`
+	OrderDateID uuid.UUID `json:"order_date_id,omitempty"`
+	Time        string    `json:"time,omitempty"`
 	CreatedAt   string    `json:"-"`
 	UpdatedAt   string    `json:"-"`
 	DeletedAt   string    `json:"-"`
 }
 
 type TranslationOrderDates struct {
-	ID          uuid.UUID `json:"id"`
-	LangID      uuid.UUID `json:"lang_id"`
-	OrderDateID uuid.UUID `json:"order_date_id"`
-	Date        string    `json:"date"`
+	ID          uuid.UUID `json:"id,omitempty"`
+	LangID      uuid.UUID `json:"lang_id,omitempty"`
+	OrderDateID uuid.UUID `json:"order_date_id,omitempty"`
+	Date        string    `json:"date,omitempty"`
 	CreatedAt   string    `json:"-"`
 	UpdatedAt   string    `json:"-"`
 	DeletedAt   string    `json:"-"`

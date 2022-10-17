@@ -9,20 +9,20 @@ import (
 )
 
 type Shop struct {
-	ID          uuid.UUID `json:"id"`
-	OwnerName   string    `json:"owner_name"`
-	Address     string    `json:"address"`
-	PhoneNumber string    `json:"phone_number"`
-	RunningTime string    `json:"running_time"`
+	ID          uuid.UUID `json:"id,omitempty"`
+	OwnerName   string    `json:"owner_name,omitempty"`
+	Address     string    `json:"address,omitempty"`
+	PhoneNumber string    `json:"phone_number,omitempty"`
+	RunningTime string    `json:"running_time,omitempty"`
 	CreatedAt   string    `json:"-"`
 	UpdatedAt   string    `json:"-"`
 	DeletedAt   string    `json:"-"`
 }
 
 type CategoryShop struct {
-	ID         uuid.UUID `json:"id"`
-	CategoryID uuid.UUID `json:"category_id"`
-	ShopID     uuid.UUID `json:"shop_id"`
+	ID         uuid.UUID `json:"id,omitempty"`
+	CategoryID uuid.UUID `json:"category_id,omitempty"`
+	ShopID     uuid.UUID `json:"shop_id,omitempty"`
 	CreatedAt  string    `json:"-"`
 	UpdatedAt  string    `json:"-"`
 	DeletedAt  string    `json:"-"`

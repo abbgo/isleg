@@ -8,11 +8,11 @@ import (
 )
 
 type CompanySetting struct {
-	ID        uuid.UUID `json:"id"`
-	Logo      string    `json:"logo"`
-	Favicon   string    `json:"favicon"`
-	Email     string    `json:"email"`
-	Instagram string    `json:"instagram"`
+	ID        uuid.UUID `json:"id,omitempty"`
+	Logo      string    `json:"logo,omitempty"`
+	Favicon   string    `json:"favicon,omitempty"`
+	Email     string    `json:"email,omitempty"`
+	Instagram string    `json:"instagram,omitempty"`
 	CreatedAt string    `json:"-"`
 	UpdatedAt string    `json:"-"`
 	DeletedAt string    `json:"-"`

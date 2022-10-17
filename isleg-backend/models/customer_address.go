@@ -5,10 +5,10 @@ import (
 )
 
 type CustomerAddress struct {
-	ID         uuid.UUID `json:"id"`
-	CustomerID uuid.UUID `json:"customer_id"`
-	Address    string    `json:"address"`
-	IsActive   bool      `json:"is_active"`
+	ID         uuid.UUID `json:"id,omitempty"`
+	CustomerID uuid.UUID `json:"customer_id,omitempty"`
+	Address    string    `json:"address,omitempty"`
+	IsActive   bool      `json:"is_active,omitempty"`
 	CreatedAt  string    `json:"-"`
 	UpdatedAt  string    `json:"-"`
 	DeletedAt  string    `json:"-"`

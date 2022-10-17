@@ -5,10 +5,10 @@ import (
 )
 
 type Cart struct {
-	ID                uuid.UUID `json:"id"`
-	ProductID         uuid.UUID `json:"product_id"`
-	CustomerID        uuid.UUID `json:"customer_id"`
-	QuantityOfProduct int       `json:"quantity_of_product"`
+	ID                uuid.UUID `json:"id,omitempty"`
+	ProductID         uuid.UUID `json:"product_id,omitempty"`
+	CustomerID        uuid.UUID `json:"customer_id,omitempty"`
+	QuantityOfProduct int       `json:"quantity_of_product,omitempty"`
 	CreatedAt         string    `json:"-"`
 	UpdatedAt         string    `json:"-"`
 	DeletedAt         string    `json:"-"`

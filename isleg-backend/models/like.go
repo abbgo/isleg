@@ -8,9 +8,9 @@ import (
 )
 
 type Like struct {
-	ID         uuid.UUID `json:"id"`
-	ProductID  uuid.UUID `json:"product_id"`
-	CustomerID uuid.UUID `json:"customer_id"`
+	ID         uuid.UUID `json:"id,omitempty"`
+	ProductID  uuid.UUID `json:"product_id,omitempty"`
+	CustomerID uuid.UUID `json:"customer_id,omitempty"`
 	CreatedAt  string    `json:"-"`
 	UpdatedAt  string    `json:"-"`
 	DeletedAt  string    `json:"-"`

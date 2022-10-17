@@ -8,19 +8,19 @@ import (
 )
 
 type Afisa struct {
-	ID        uuid.UUID `json:"id"`
-	Image     string    `json:"image"`
+	ID        uuid.UUID `json:"id,omitempty"`
+	Image     string    `json:"image,omitempty"`
 	CreatedAt string    `json:"-"`
 	UpdatedAt string    `json:"-"`
 	DeletedAt string    `json:"-"`
 }
 
 type TranslationAfisa struct {
-	ID          uuid.UUID `json:"id"`
-	AfisaID     uuid.UUID `json:"afisa_id"`
-	LangID      uuid.UUID `json:"lang_id"`
-	Title       string    `json:"title"`
-	Description string    `json:"description"`
+	ID          uuid.UUID `json:"id,omitempty"`
+	AfisaID     uuid.UUID `json:"afisa_id,omitempty"`
+	LangID      uuid.UUID `json:"lang_id,omitempty"`
+	Title       string    `json:"title,omitempty"`
+	Description string    `json:"description,omitempty"`
 	CreatedAt   string    `json:"-"`
 	UpdatedAt   string    `json:"-"`
 	DeletedAt   string    `json:"-"`
