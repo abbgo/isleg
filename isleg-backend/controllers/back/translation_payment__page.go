@@ -88,7 +88,15 @@ func UpdateTranslationPaymentByID(c *gin.Context) {
 		})
 		return
 	}
-	defer db.Close()
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	ID := c.Param("id")
 
@@ -100,7 +108,15 @@ func UpdateTranslationPaymentByID(c *gin.Context) {
 		})
 		return
 	}
-	defer rowFlag.Close()
+	defer func() {
+		if err := rowFlag.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	var id string
 
@@ -144,7 +160,15 @@ func UpdateTranslationPaymentByID(c *gin.Context) {
 		})
 		return
 	}
-	defer resutlTRPayment.Close()
+	defer func() {
+		if err := resutlTRPayment.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
