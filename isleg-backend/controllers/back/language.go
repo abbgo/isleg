@@ -80,36 +80,6 @@ func CreateLanguage(c *gin.Context) {
 		}
 	}()
 
-	// GET ID OF ADDED LANGUAGE
-	lastLandID, err := db.Query("SELECT id FROM languages WHERE deleted_at IS NULL ORDER BY created_at DESC LIMIT 1")
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-	defer func() {
-		if err := lastLandID.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
-
-	var langID string
-	for lastLandID.Next() {
-		if err := lastLandID.Scan(&langID); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}
-
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
 		"message": "language successfully added",
