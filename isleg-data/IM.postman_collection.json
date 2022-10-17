@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "502b9a86-7d4d-4ee0-bac0-4a5d520b4023",
+		"_postman_id": "84ee293b-bc8c-44aa-a3c3-9281fdea1a8c",
 		"name": "IM",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -139,7 +139,7 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "localhost:2406/admin/language/6472642a-3589-4631-a218-94dd87729d4b",
+							"raw": "localhost:2406/admin/language/55a387df-6d38-42ea-bfba-379327b53cbd",
 							"host": [
 								"localhost"
 							],
@@ -147,7 +147,7 @@
 							"path": [
 								"admin",
 								"language",
-								"6472642a-3589-4631-a218-94dd87729d4b"
+								"55a387df-6d38-42ea-bfba-379327b53cbd"
 							]
 						}
 					},
@@ -179,7 +179,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "localhost:2406/admin/restore-language/aea98b93-7bdf-455b-9ad4-a259d69dc76e",
+							"raw": "localhost:2406/admin/restore-language/55a387df-6d38-42ea-bfba-379327b53cbd",
 							"host": [
 								"localhost"
 							],
@@ -187,7 +187,7 @@
 							"path": [
 								"admin",
 								"restore-language",
-								"aea98b93-7bdf-455b-9ad4-a259d69dc76e"
+								"55a387df-6d38-42ea-bfba-379327b53cbd"
 							]
 						}
 					},
