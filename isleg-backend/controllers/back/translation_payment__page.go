@@ -254,7 +254,15 @@ func GetTranslationPaymentByLangID(c *gin.Context) {
 		})
 		return
 	}
-	defer db.Close()
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	langID, err := CheckLanguage(c)
 	if err != nil {
@@ -274,9 +282,17 @@ func GetTranslationPaymentByLangID(c *gin.Context) {
 		})
 		return
 	}
-	defer paymentRow.Close()
+	defer func() {
+		if err := paymentRow.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
-	var translationPayment TrPayment
+	var translationPayment models.TranslationPayment
 
 	for paymentRow.Next() {
 		if err := paymentRow.Scan(&translationPayment.Title, &translationPayment.Content); err != nil {
