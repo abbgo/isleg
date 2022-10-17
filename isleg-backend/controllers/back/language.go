@@ -14,10 +14,10 @@ import (
 	"github.com/google/uuid"
 )
 
-type LanguageForHeader struct {
-	NameShort string `json:"name_short"`
-	Flag      string `json:"flag"`
-}
+// type LanguageForHeader struct {
+// 	NameShort string `json:"name_short"`
+// 	Flag      string `json:"flag"`
+// }
 
 func CreateLanguage(c *gin.Context) {
 
@@ -242,9 +242,17 @@ func GetLanguageByID(c *gin.Context) {
 		})
 		return
 	}
-	defer rowLanguage.Close()
+	defer func() {
+		if err := rowLanguage.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
-	var lang LanguageForHeader
+	var lang models.Language
 
 	for rowLanguage.Next() {
 		if err := rowLanguage.Scan(&lang.NameShort, &lang.Flag); err != nil {
