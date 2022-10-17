@@ -9,18 +9,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type TrContact struct {
-	FullName     string `json:"full_name"`
-	Email        string `json:"email"`
-	Phone        string `json:"phone"`
-	Letter       string `json:"letter"`
-	CompanyPhone string `json:"company_phone"`
-	Imo          string `json:"imo"`
-	CompanyEmail string `json:"company_email"`
-	Instragram   string `json:"instagram"`
-	ButtonText   string `json:"button_text"`
-}
-
 func CreateTranslationContact(c *gin.Context) {
 
 	db, err := config.ConnDB()
@@ -31,7 +19,15 @@ func CreateTranslationContact(c *gin.Context) {
 		})
 		return
 	}
-	defer db.Close()
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	// GET ALL LANGUAGE
 	languages, err := GetAllLanguageWithIDAndNameShort()
@@ -64,7 +60,15 @@ func CreateTranslationContact(c *gin.Context) {
 			})
 			return
 		}
-		defer resultTRConact.Close()
+		defer func() {
+			if err := resultTRConact.Close(); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}()
 	}
 
 	c.JSON(http.StatusOK, gin.H{
