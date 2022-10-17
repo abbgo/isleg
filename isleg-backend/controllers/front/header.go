@@ -2,6 +2,7 @@ package controllers
 
 import (
 	backController "github/abbgo/isleg/isleg-backend/controllers/back"
+	"github/abbgo/isleg/isleg-backend/models"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -10,7 +11,7 @@ import (
 type HeaderData struct {
 	LogoFavicon       backController.LogoFavicon                `json:"logo_favicon"`
 	TranslationHeader backController.TranslationHeaderForHeader `json:"translation_header"`
-	Languages         []backController.LanguageForHeader        `json:"languages"`
+	Languages         []models.Language                         `json:"languages"`
 	Categories        []backController.ResultCategory           `json:"categories"`
 }
 
