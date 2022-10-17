@@ -9,11 +9,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type TrSecure struct {
-	Title   string `json:"title"`
-	Content string `json:"content"`
-}
-
 func CreateTranslationSecure(c *gin.Context) {
 
 	db, err := config.ConnDB()
@@ -259,7 +254,15 @@ func GetTranslationSecureByLangID(c *gin.Context) {
 		})
 		return
 	}
-	defer db.Close()
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	langID, err := CheckLanguage(c)
 	if err != nil {
@@ -279,9 +282,17 @@ func GetTranslationSecureByLangID(c *gin.Context) {
 		})
 		return
 	}
-	defer secureRow.Close()
+	defer func() {
+		if err := secureRow.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
-	var translationSecure TrSecure
+	var translationSecure models.TranslationSecure
 
 	for secureRow.Next() {
 		if err := secureRow.Scan(&translationSecure.Title, &translationSecure.Content); err != nil {
