@@ -253,26 +253,36 @@ func GetTranslationFooterByID(c *gin.Context) {
 
 }
 
-func GetTranslationFooter(langID string) (TranslationFooterForFooter, error) {
+func GetTranslationFooter(langID string) (models.TranslationFooter, error) {
 
 	db, err := config.ConnDB()
 	if err != nil {
-		return TranslationFooterForFooter{}, nil
+		return models.TranslationFooter{}, err
 	}
-	defer db.Close()
+	defer func() (models.TranslationFooter, error) {
+		if err := db.Close(); err != nil {
+			return models.TranslationFooter{}, err
+		}
+		return models.TranslationFooter{}, nil
+	}()
 
-	var t TranslationFooterForFooter
+	var t models.TranslationFooter
 
 	// get translation footer where lang_id equal langID
 	row, err := db.Query("SELECT about,payment,contact,secure,word FROM translation_footer WHERE lang_id = $1 AND deleted_at IS NULL", langID)
 	if err != nil {
-		return TranslationFooterForFooter{}, err
+		return models.TranslationFooter{}, err
 	}
-	defer row.Close()
+	defer func() (models.TranslationFooter, error) {
+		if err := row.Close(); err != nil {
+			return models.TranslationFooter{}, err
+		}
+		return models.TranslationFooter{}, nil
+	}()
 
 	for row.Next() {
 		if err := row.Scan(&t.About, &t.Payment, &t.Contact, &t.Secure, &t.Word); err != nil {
-			return TranslationFooterForFooter{}, err
+			return models.TranslationFooter{}, err
 		}
 	}
 
