@@ -196,7 +196,15 @@ func GetTranslationFooterByID(c *gin.Context) {
 		})
 		return
 	}
-	defer db.Close()
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	trFootID := c.Param("id")
 
@@ -208,9 +216,17 @@ func GetTranslationFooterByID(c *gin.Context) {
 		})
 		return
 	}
-	defer rowFlag.Close()
+	defer func() {
+		if err := rowFlag.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
-	var t TranslationFooterForFooter
+	var t models.TranslationFooter
 
 	for rowFlag.Next() {
 		if err := rowFlag.Scan(&t.About, &t.Payment, &t.Contact, &t.Secure, &t.Word); err != nil {
