@@ -268,7 +268,7 @@ func GetTranslationHeaderForHeader(langID string) (models.TranslationHeader, err
 
 	db, err := config.ConnDB()
 	if err != nil {
-		return models.TranslationHeader{}, nil
+		return models.TranslationHeader{}, err
 	}
 	defer func() (models.TranslationHeader, error) {
 		if err := db.Close(); err != nil {

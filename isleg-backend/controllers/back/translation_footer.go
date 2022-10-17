@@ -9,14 +9,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type TranslationFooterForFooter struct {
-	About   string `json:"about"`
-	Payment string `json:"payment"`
-	Contact string `json:"contact"`
-	Secure  string `json:"secure"`
-	Word    string `json:"word"`
-}
-
 func CreateTranslationFooter(c *gin.Context) {
 
 	db, err := config.ConnDB()
