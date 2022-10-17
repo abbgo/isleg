@@ -642,7 +642,7 @@ func GetAllLanguageWithIDAndNameShort() ([]models.Language, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer func() ([]LanguageForHeader, error) {
+	defer func() ([]models.Language, error) {
 		if err := db.Close(); err != nil {
 			return nil, err
 		}
@@ -653,7 +653,7 @@ func GetAllLanguageWithIDAndNameShort() ([]models.Language, error) {
 	if err != nil {
 		return []models.Language{}, err
 	}
-	defer func() ([]LanguageForHeader, error) {
+	defer func() ([]models.Language, error) {
 		if err := languageRows.Close(); err != nil {
 			return nil, err
 		}
