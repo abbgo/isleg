@@ -597,27 +597,27 @@ func DeletePermanentlyLanguageByID(c *gin.Context) {
 
 }
 
-func GetAllLanguageForHeader() ([]LanguageForHeader, error) {
+func GetAllLanguageForHeader() ([]models.Language, error) {
 
 	db, err := config.ConnDB()
 	if err != nil {
 		return nil, nil
 	}
-	defer func() ([]LanguageForHeader, error) {
+	defer func() ([]models.Language, error) {
 		if err := db.Close(); err != nil {
 			return nil, err
 		}
 		return nil, err
 	}()
 
-	var ls []LanguageForHeader
+	var ls []models.Language
 
 	// GET Language For Header
 	rows, err := db.Query("SELECT name_short,flag FROM languages WHERE deleted_at IS NULL")
 	if err != nil {
 		return nil, err
 	}
-	defer func() ([]LanguageForHeader, error) {
+	defer func() ([]models.Language, error) {
 		if err := rows.Close(); err != nil {
 			return nil, err
 		}
@@ -625,7 +625,7 @@ func GetAllLanguageForHeader() ([]LanguageForHeader, error) {
 	}()
 
 	for rows.Next() {
-		var l LanguageForHeader
+		var l models.Language
 		if err := rows.Scan(&l.NameShort, &l.Flag); err != nil {
 			return nil, err
 		}
