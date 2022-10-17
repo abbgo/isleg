@@ -326,7 +326,15 @@ func DeleteLanguageByID(c *gin.Context) {
 		})
 		return
 	}
-	defer rowFlag.Close()
+	defer func() {
+		if err := rowFlag.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	var flag string
 
@@ -358,7 +366,15 @@ func DeleteLanguageByID(c *gin.Context) {
 		})
 		return
 	}
-	defer resutlTRLand.Close()
+	defer func() {
+		if err := resutlTRLand.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	resultPROC, err := db.Query("CALL after_delete_language($1)", langID)
 	if err != nil {
@@ -368,7 +384,15 @@ func DeleteLanguageByID(c *gin.Context) {
 		})
 		return
 	}
-	defer resultPROC.Close()
+	defer func() {
+		if err := resultPROC.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
