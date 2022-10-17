@@ -9,11 +9,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type TrPayment struct {
-	Title   string `json:"title"`
-	Content string `json:"content"`
-}
-
 func CreateTranslationPayment(c *gin.Context) {
 
 	db, err := config.ConnDB()
@@ -24,7 +19,15 @@ func CreateTranslationPayment(c *gin.Context) {
 		})
 		return
 	}
-	defer db.Close()
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	// GET ALL LANGUAGE
 	languages, err := GetAllLanguageWithIDAndNameShort()
@@ -57,7 +60,15 @@ func CreateTranslationPayment(c *gin.Context) {
 			})
 			return
 		}
-		defer resultTRPayment.Close()
+		defer func() {
+			if err := resultTRPayment.Close(); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}()
 	}
 
 	c.JSON(http.StatusOK, gin.H{
