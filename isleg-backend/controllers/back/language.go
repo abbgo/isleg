@@ -534,7 +534,15 @@ func DeletePermanentlyLanguageByID(c *gin.Context) {
 		})
 		return
 	}
-	defer rowFlag.Close()
+	defer func() {
+		if err := rowFlag.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	var flag string
 
@@ -572,7 +580,15 @@ func DeletePermanentlyLanguageByID(c *gin.Context) {
 		})
 		return
 	}
-	defer resultLang.Close()
+	defer func() {
+		if err := resultLang.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
