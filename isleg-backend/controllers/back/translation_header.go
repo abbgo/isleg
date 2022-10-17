@@ -264,26 +264,36 @@ func GetTranslationHeaderByID(c *gin.Context) {
 
 }
 
-func GetTranslationHeaderForHeader(langID string) (TranslationHeaderForHeader, error) {
+func GetTranslationHeaderForHeader(langID string) (models.TranslationHeader, error) {
 
 	db, err := config.ConnDB()
 	if err != nil {
-		return TranslationHeaderForHeader{}, nil
+		return models.TranslationHeader{}, nil
 	}
-	defer db.Close()
+	defer func() (models.TranslationHeader, error) {
+		if err := db.Close(); err != nil {
+			return models.TranslationHeader{}, err
+		}
+		return models.TranslationHeader{}, nil
+	}()
 
-	var t TranslationHeaderForHeader
+	var t models.TranslationHeader
 
 	// GET TranslationHeader For Header
 	row, err := db.Query("SELECT research,phone,password,forgot_password,sign_in,sign_up,name,password_verification,verify_secure,my_information,my_favorites,my_orders,log_out,basket,email,add_to_basket FROM translation_header WHERE lang_id = $1 AND deleted_at IS NULL", langID)
 	if err != nil {
-		return TranslationHeaderForHeader{}, err
+		return models.TranslationHeader{}, err
 	}
-	defer row.Close()
+	defer func() (models.TranslationHeader, error) {
+		if err := row.Close(); err != nil {
+			return models.TranslationHeader{}, err
+		}
+		return models.TranslationHeader{}, nil
+	}()
 
 	for row.Next() {
 		if err := row.Scan(&t.Research, &t.Phone, &t.Password, &t.ForgotPassword, &t.SignIn, &t.SignUp, &t.Name, &t.PasswordVerification, &t.VerifySecure, &t.MyInformation, &t.MyFavorites, &t.MyOrders, &t.LogOut, &t.Basket, &t.Email, &t.AddToBasket); err != nil {
-			return TranslationHeaderForHeader{}, err
+			return models.TranslationHeader{}, err
 		}
 	}
 
