@@ -254,7 +254,15 @@ func GetTranslationAboutByLangID(c *gin.Context) {
 		})
 		return
 	}
-	defer db.Close()
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	langID, err := CheckLanguage(c)
 	if err != nil {
@@ -274,9 +282,17 @@ func GetTranslationAboutByLangID(c *gin.Context) {
 		})
 		return
 	}
-	defer aboutRow.Close()
+	defer func() {
+		if err := aboutRow.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
-	var translationAbout TrAbout
+	var translationAbout models.TranslationAbout
 
 	for aboutRow.Next() {
 		if err := aboutRow.Scan(&translationAbout.Title, &translationAbout.Content); err != nil {
