@@ -35,7 +35,15 @@ func CreateCompanySetting(c *gin.Context) {
 		})
 		return
 	}
-	defer db.Close()
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	// GET DATA FROM REQUEST
 	email := c.PostForm("email")
@@ -82,7 +90,15 @@ func CreateCompanySetting(c *gin.Context) {
 		})
 		return
 	}
-	defer resultComSetting.Close()
+	defer func() {
+		if err := resultComSetting.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
