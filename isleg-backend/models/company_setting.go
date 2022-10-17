@@ -3,19 +3,17 @@ package models
 import (
 	"errors"
 	"github/abbgo/isleg/isleg-backend/pkg"
-
-	"github.com/google/uuid"
 )
 
 type CompanySetting struct {
-	ID        uuid.UUID `json:"id,omitempty"`
-	Logo      string    `json:"logo,omitempty"`
-	Favicon   string    `json:"favicon,omitempty"`
-	Email     string    `json:"email,omitempty"`
-	Instagram string    `json:"instagram,omitempty"`
-	CreatedAt string    `json:"-"`
-	UpdatedAt string    `json:"-"`
-	DeletedAt string    `json:"-"`
+	ID        string `json:"id,omitempty"`
+	Logo      string `json:"logo,omitempty"`
+	Favicon   string `json:"favicon,omitempty"`
+	Email     string `json:"email,omitempty"`
+	Instagram string `json:"instagram,omitempty"`
+	CreatedAt string `json:"-"`
+	UpdatedAt string `json:"-"`
+	DeletedAt string `json:"-"`
 }
 
 func ValidateCompanySettingData(email, instagram string) error {

@@ -18,13 +18,6 @@ type LogoFavicon struct {
 	Favicon string `json:"favicon"`
 }
 
-type ComSet struct {
-	Logo      string `json:"logo"`
-	Favicon   string `json:"favicon"`
-	Email     string `json:"email"`
-	Instagram string `json:"instagram"`
-}
-
 func CreateCompanySetting(c *gin.Context) {
 
 	db, err := config.ConnDB()
@@ -271,7 +264,15 @@ func GetCompanySetting(c *gin.Context) {
 		})
 		return
 	}
-	defer db.Close()
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	rowComSet, err := db.Query("SELECT logo,favicon,email,instagram FROM company_setting WHERE deleted_at IS NULL ORDER BY created_at ASC LIMIT 1")
 	if err != nil {
@@ -281,9 +282,17 @@ func GetCompanySetting(c *gin.Context) {
 		})
 		return
 	}
-	defer rowComSet.Close()
+	defer func() {
+		if err := rowComSet.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
-	var comSet ComSet
+	var comSet models.CompanySetting
 
 	for rowComSet.Next() {
 		if err := rowComSet.Scan(&comSet.Logo, &comSet.Favicon, &comSet.Email, &comSet.Instagram); err != nil {
