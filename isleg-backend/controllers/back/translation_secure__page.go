@@ -192,7 +192,15 @@ func GetTranslationSecureByID(c *gin.Context) {
 		})
 		return
 	}
-	defer db.Close()
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	ID := c.Param("id")
 
@@ -204,9 +212,17 @@ func GetTranslationSecureByID(c *gin.Context) {
 		})
 		return
 	}
-	defer rowFlag.Close()
+	defer func() {
+		if err := rowFlag.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
-	var t TrSecure
+	var t models.TranslationSecure
 
 	for rowFlag.Next() {
 		if err := rowFlag.Scan(&t.Title, &t.Content); err != nil {
