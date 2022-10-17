@@ -13,11 +13,6 @@ import (
 	"github.com/google/uuid"
 )
 
-type LogoFavicon struct {
-	Logo    string `json:"logo"`
-	Favicon string `json:"favicon"`
-}
-
 func CreateCompanySetting(c *gin.Context) {
 
 	db, err := config.ConnDB()
@@ -319,27 +314,32 @@ func GetCompanySetting(c *gin.Context) {
 
 }
 
-func GetCompanySettingForHeader() (LogoFavicon, error) {
+func GetCompanySettingForHeader() (models.CompanySetting, error) {
 
 	db, err := config.ConnDB()
 	if err != nil {
 
-		return LogoFavicon{}, nil
+		return models.CompanySetting{}, nil
 	}
-	defer db.Close()
+	defer func() (models.CompanySetting, error) {
+		if err := db.Close(); err != nil {
+			return models.CompanySetting{}, err
+		}
+		return models.CompanySetting{}, nil
+	}()
 
-	var logoFavicon LogoFavicon
+	var logoFavicon models.CompanySetting
 
 	// GET LOGO AND FAVICON
 	row, err := db.Query("SELECT logo,favicon FROM company_setting WHERE deleted_at IS NULL ORDER BY created_at ASC LIMIT 1")
 	if err != nil {
-		return LogoFavicon{}, err
+		return models.CompanySetting{}, err
 	}
 	defer row.Close()
 
 	for row.Next() {
 		if err := row.Scan(&logoFavicon.Logo, &logoFavicon.Favicon); err != nil {
-			return LogoFavicon{}, err
+			return models.CompanySetting{}, err
 		}
 	}
 
