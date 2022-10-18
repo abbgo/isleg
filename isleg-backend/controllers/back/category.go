@@ -88,6 +88,8 @@ func CreateCategory(c *gin.Context) {
 		}
 	}()
 
+	var categoryID string
+
 	var fileName string
 
 	// GET DATA FROM REQUEST
@@ -112,7 +114,15 @@ func CreateCategory(c *gin.Context) {
 			})
 			return
 		}
-		defer rowCategory.Close()
+		defer func() {
+			if err := rowCategory.Close(); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}()
 
 		var parentCategory string
 
@@ -193,7 +203,7 @@ func CreateCategory(c *gin.Context) {
 
 	// CREATE CATEGORY
 	if parentCategoryID != "" {
-		resultCateor, err := db.Query("INSERT INTO categories (parent_category_id,image,is_home_category) VALUES ($1,$2,$3)", parentCategoryID, fileName, isHomeCategory)
+		resultCateor, err := db.Query("INSERT INTO categories (parent_category_id,image,is_home_category) VALUES ($1,$2,$3) RETURNING id", parentCategoryID, fileName, isHomeCategory)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
@@ -201,9 +211,32 @@ func CreateCategory(c *gin.Context) {
 			})
 			return
 		}
-		defer resultCateor.Close()
+		defer func() {
+			if err := resultCateor.Close(); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}()
+
+		var category_id string
+
+		for resultCateor.Next() {
+			if err := resultCateor.Scan(&category_id); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}
+
+		categoryID = category_id
+
 	} else {
-		result, err := db.Query("INSERT INTO categories (image,is_home_category) VALUES ($1,$2)", fileName, isHomeCategory)
+		result, err := db.Query("INSERT INTO categories (image,is_home_category) VALUES ($1,$2) RETURNING id", fileName, isHomeCategory)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
@@ -211,34 +244,33 @@ func CreateCategory(c *gin.Context) {
 			})
 			return
 		}
-		defer result.Close()
+		defer func() {
+			if err := result.Close(); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}()
+
+		var category_id string
+
+		for result.Next() {
+			if err := result.Scan(&category_id); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}
+
+		categoryID = category_id
 	}
 
 	if fileName != "" {
 		c.SaveUploadedFile(file, "./"+fileName)
-	}
-
-	// GET ID OFF ADDED CATEGORY
-	lastCategoryID, err := db.Query("SELECT id FROM categories WHERE deleted_at IS NULL ORDER BY created_at DESC LIMIT 1")
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-	defer lastCategoryID.Close()
-
-	var categoryID string
-
-	for lastCategoryID.Next() {
-		if err := lastCategoryID.Scan(&categoryID); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
 	}
 
 	// CREATE TRANSLATION CATEGORY
@@ -251,7 +283,15 @@ func CreateCategory(c *gin.Context) {
 			})
 			return
 		}
-		defer result.Close()
+		defer func() {
+			if err := result.Close(); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}()
 	}
 
 	c.JSON(http.StatusOK, gin.H{
