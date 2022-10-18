@@ -254,7 +254,15 @@ func GetTranslationMyInformationPageByLangID(c *gin.Context) {
 		})
 		return
 	}
-	defer db.Close()
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	// GET DATA FROM ROUTE PARAMETER
 	langShortName := c.Param("lang")
@@ -278,9 +286,17 @@ func GetTranslationMyInformationPageByLangID(c *gin.Context) {
 		})
 		return
 	}
-	defer aboutRow.Close()
+	defer func() {
+		if err := aboutRow.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
-	var trMyInformationPage TrMyInformationPage
+	var trMyInformationPage models.TranslationMyInformationPage
 
 	for aboutRow.Next() {
 		if err := aboutRow.Scan(&trMyInformationPage.Address, &trMyInformationPage.Birthday, &trMyInformationPage.UpdatePassword, &trMyInformationPage.Save); err != nil {
