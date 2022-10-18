@@ -289,7 +289,15 @@ func GetShopByID(c *gin.Context) {
 		})
 		return
 	}
-	defer db.Close()
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	ID := c.Param("id")
 
@@ -301,7 +309,15 @@ func GetShopByID(c *gin.Context) {
 		})
 		return
 	}
-	defer rowShop.Close()
+	defer func() {
+		if err := rowShop.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	var shop OneShop
 
@@ -331,7 +347,15 @@ func GetShopByID(c *gin.Context) {
 		})
 		return
 	}
-	defer rowsCategoryShop.Close()
+	defer func() {
+		if err := rowsCategoryShop.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	var categories []string
 
