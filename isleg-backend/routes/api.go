@@ -249,7 +249,7 @@ func Routes() *gin.Engine {
 			securedCustomer.GET("/addresses/:customer_id", frontController.GetCustomerAddresses) // funksiyany optimize etmeli
 
 			// get customer informations
-			securedCustomer.GET("/my-information/:customer_id", frontController.GetCustomerInformation)
+			securedCustomer.GET("/my-information/:customer_id", frontController.GetCustomerInformation) // funksiyany optimize etmeli
 
 			// update customer address status
 			securedCustomer.PUT("/address", frontController.UpdateCustomerAddressStatus)
