@@ -529,7 +529,15 @@ func DeleteAfisaByID(c *gin.Context) {
 		})
 		return
 	}
-	defer db.Close()
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	ID := c.Param("id")
 
@@ -541,7 +549,15 @@ func DeleteAfisaByID(c *gin.Context) {
 		})
 		return
 	}
-	defer rowAfisa.Close()
+	defer func() {
+		if err := rowAfisa.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	var afisaID string
 
@@ -573,7 +589,15 @@ func DeleteAfisaByID(c *gin.Context) {
 		})
 		return
 	}
-	defer resultAfisa.Close()
+	defer func() {
+		if err := resultAfisa.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	resultTrAfisa, err := db.Query("UPDATE translation_afisa SET deleted_at = $1 WHERE afisa_id = $2", currentTime, ID)
 	if err != nil {
@@ -583,7 +607,15 @@ func DeleteAfisaByID(c *gin.Context) {
 		})
 		return
 	}
-	defer resultTrAfisa.Close()
+	defer func() {
+		if err := resultTrAfisa.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
