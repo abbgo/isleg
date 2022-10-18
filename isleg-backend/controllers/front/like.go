@@ -464,7 +464,15 @@ func GetLikedProductsWithoutCustomer(c *gin.Context) {
 		})
 		return
 	}
-	defer db.Close()
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	// GET DATA FROM ROUTE PARAMETER
 	langShortName := c.Param("lang")
@@ -497,7 +505,15 @@ func GetLikedProductsWithoutCustomer(c *gin.Context) {
 			})
 			return
 		}
-		defer rowProduct.Close()
+		defer func() {
+			if err := rowProduct.Close(); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}()
 
 		var product_id string
 
@@ -528,7 +544,15 @@ func GetLikedProductsWithoutCustomer(c *gin.Context) {
 		})
 		return
 	}
-	defer rowLikes.Close()
+	defer func() {
+		if err := rowLikes.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	var products []LikeProduct
 
@@ -551,7 +575,15 @@ func GetLikedProductsWithoutCustomer(c *gin.Context) {
 			})
 			return
 		}
-		defer rowMainImage.Close()
+		defer func() {
+			if err := rowMainImage.Close(); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}()
 
 		var mainImage models.MainImage
 
@@ -575,7 +607,15 @@ func GetLikedProductsWithoutCustomer(c *gin.Context) {
 			})
 			return
 		}
-		defer rowsImages.Close()
+		defer func() {
+			if err := rowsImages.Close(); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}()
 
 		var images []models.Images
 
@@ -603,7 +643,15 @@ func GetLikedProductsWithoutCustomer(c *gin.Context) {
 			})
 			return
 		}
-		defer rowTrProduct.Close()
+		defer func() {
+			if err := rowTrProduct.Close(); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}()
 
 		var trProduct models.TranslationProduct
 
