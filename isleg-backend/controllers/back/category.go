@@ -619,7 +619,15 @@ func GetCategoryByID(c *gin.Context) {
 		})
 		return
 	}
-	defer rowsTrCategory.Close()
+	defer func() {
+		if err := rowsTrCategory.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	var translations []models.TranslationCategory
 
@@ -654,7 +662,15 @@ func GetCategories(c *gin.Context) {
 		})
 		return
 	}
-	defer db.Close()
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	rowCategor, err := db.Query("SELECT id,parent_category_id,image,is_home_category FROM categories WHERE deleted_at IS NULL")
 	if err != nil {
@@ -664,7 +680,15 @@ func GetCategories(c *gin.Context) {
 		})
 		return
 	}
-	defer rowCategor.Close()
+	defer func() {
+		if err := rowCategor.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	var categories []OneCategory
 
@@ -687,12 +711,20 @@ func GetCategories(c *gin.Context) {
 			})
 			return
 		}
-		defer rowsTrCategory.Close()
+		defer func() {
+			if err := rowsTrCategory.Close(); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}()
 
-		var translations []TranslationCategory
+		var translations []models.TranslationCategory
 
 		for rowsTrCategory.Next() {
-			var translation TranslationCategory
+			var translation models.TranslationCategory
 			if err := rowsTrCategory.Scan(&translation.LangID, &translation.Name); err != nil {
 				c.JSON(http.StatusBadRequest, gin.H{
 					"status":  false,
