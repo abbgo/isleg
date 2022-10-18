@@ -751,16 +751,26 @@ func GetAllCategoryForHeader(langID string) ([]ResultCategory, error) {
 
 	db, err := config.ConnDB()
 	if err != nil {
-		return []ResultCategory{}, nil
+		return []ResultCategory{}, err
 	}
-	defer db.Close()
+	defer func() ([]ResultCategory, error) {
+		if err := db.Close(); err != nil {
+			return []ResultCategory{}, err
+		}
+		return []ResultCategory{}, nil
+	}()
 
 	// get all category where parent category id is null
 	rows, err := db.Query("SELECT categories.id,categories.image,translation_category.name FROM categories LEFT JOIN translation_category ON categories.id=translation_category.category_id WHERE translation_category.lang_id = $1 AND categories.parent_category_id IS NULL AND translation_category.deleted_at IS NULL AND categories.deleted_at IS NULL", langID)
 	if err != nil {
 		return []ResultCategory{}, err
 	}
-	defer rows.Close()
+	defer func() ([]ResultCategory, error) {
+		if err := rows.Close(); err != nil {
+			return []ResultCategory{}, err
+		}
+		return []ResultCategory{}, nil
+	}()
 
 	var results []ResultCategory
 
@@ -775,7 +785,12 @@ func GetAllCategoryForHeader(langID string) ([]ResultCategory, error) {
 		if err != nil {
 			return []ResultCategory{}, err
 		}
-		defer rowss.Close()
+		defer func() ([]ResultCategory, error) {
+			if err := rowss.Close(); err != nil {
+				return []ResultCategory{}, err
+			}
+			return []ResultCategory{}, nil
+		}()
 
 		var resuls []ResultCategor
 
@@ -790,7 +805,12 @@ func GetAllCategoryForHeader(langID string) ([]ResultCategory, error) {
 			if err != nil {
 				return []ResultCategory{}, err
 			}
-			defer rowsss.Close()
+			defer func() ([]ResultCategory, error) {
+				if err := rowsss.Close(); err != nil {
+					return []ResultCategory{}, err
+				}
+				return []ResultCategory{}, nil
+			}()
 
 			var resus []ResultCatego
 
