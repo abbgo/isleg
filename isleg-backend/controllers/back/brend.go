@@ -472,7 +472,15 @@ func RestoreBrendByID(c *gin.Context) {
 		})
 		return
 	}
-	defer db.Close()
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	ID := c.Param("id")
 
@@ -484,7 +492,15 @@ func RestoreBrendByID(c *gin.Context) {
 		})
 		return
 	}
-	defer rowBrend.Close()
+	defer func() {
+		if err := rowBrend.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	var image string
 
@@ -514,7 +530,15 @@ func RestoreBrendByID(c *gin.Context) {
 		})
 		return
 	}
-	defer resultBrends.Close()
+	defer func() {
+		if err := resultBrends.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	resultProducts, err := db.Query("UPDATE products SET deleted_at = NULL WHERE brend_id = $1", ID)
 	if err != nil {
@@ -524,7 +548,15 @@ func RestoreBrendByID(c *gin.Context) {
 		})
 		return
 	}
-	defer resultProducts.Close()
+	defer func() {
+		if err := resultProducts.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	resultTRProduct, err := db.Query("UPDATE translation_product SET deleted_at = NULL FROM products WHERE translation_product.product_id=products.id AND products.brend_id = $1", ID)
 	if err != nil {
@@ -534,7 +566,15 @@ func RestoreBrendByID(c *gin.Context) {
 		})
 		return
 	}
-	defer resultTRProduct.Close()
+	defer func() {
+		if err := resultTRProduct.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,

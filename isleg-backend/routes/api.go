@@ -100,8 +100,8 @@ func Routes() *gin.Engine {
 		back.PUT("/brend/:id", backController.UpdateBrendByID)
 		back.GET("/brend/:id", backController.GetBrendByID)
 		back.GET("/brends", backController.GetBrends)
-		back.DELETE("/brend/:id", backController.DeleteBrendByID) // funksiyany optimize etmeli
-		back.GET("/restore-brend/:id", backController.RestoreBrendByID)
+		back.DELETE("/brend/:id", backController.DeleteBrendByID)       // funksiyany optimize etmeli
+		back.GET("/restore-brend/:id", backController.RestoreBrendByID) // funksiyany optimize etmeli
 		back.DELETE("/delete-brend/:id", backController.DeletePermanentlyBrendByID)
 
 		back.POST("/product", backController.CreateProduct)
