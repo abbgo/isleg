@@ -211,7 +211,7 @@ func Routes() *gin.Engine {
 		front.GET("/order-time", backController.GetOrderTime) // funksiyany optimize etmeli
 
 		// search
-		front.POST("/search", frontController.Search)
+		front.POST("/search", frontController.Search) // funksiyany optimize etmeli
 
 		// get my information page translation
 		front.GET("/translation-my-information-page", backController.GetTranslationMyInformationPageByLangID)
@@ -219,7 +219,7 @@ func Routes() *gin.Engine {
 		securedCustomer := front.Group("/").Use(middlewares.Auth())
 		{
 			// add like if customer exists
-			securedCustomer.POST("/like", frontController.AddLike)
+			securedCustomer.POST("/like", frontController.AddLike) // funksiyany optimize etmeli
 
 			// remove like if customer exists
 			securedCustomer.DELETE("/like/:customer_id/:product_id", frontController.RemoveLike)

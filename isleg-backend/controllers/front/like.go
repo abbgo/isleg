@@ -38,7 +38,15 @@ func AddLike(c *gin.Context) {
 		})
 		return
 	}
-	defer db.Close()
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	// langShortName := c.Param("lang")
 	customerID := c.PostForm("customer_id")
@@ -51,7 +59,15 @@ func AddLike(c *gin.Context) {
 		})
 		return
 	}
-	defer rowCustomer.Close()
+	defer func() {
+		if err := rowCustomer.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	var customer_id string
 
@@ -87,7 +103,15 @@ func AddLike(c *gin.Context) {
 				})
 				return
 			}
-			defer rowProduct.Close()
+			defer func() {
+				if err := rowProduct.Close(); err != nil {
+					c.JSON(http.StatusBadRequest, gin.H{
+						"status":  false,
+						"message": err.Error(),
+					})
+					return
+				}
+			}()
 
 			var product_id string
 
@@ -117,7 +141,15 @@ func AddLike(c *gin.Context) {
 				})
 				return
 			}
-			defer rowLike.Close()
+			defer func() {
+				if err := rowLike.Close(); err != nil {
+					c.JSON(http.StatusBadRequest, gin.H{
+						"status":  false,
+						"message": err.Error(),
+					})
+					return
+				}
+			}()
 
 			var product string
 
@@ -143,7 +175,15 @@ func AddLike(c *gin.Context) {
 					})
 					return
 				}
-				defer resultLike.Close()
+				defer func() {
+					if err := resultLike.Close(); err != nil {
+						c.JSON(http.StatusBadRequest, gin.H{
+							"status":  false,
+							"message": err.Error(),
+						})
+						return
+					}
+				}()
 
 			}
 
