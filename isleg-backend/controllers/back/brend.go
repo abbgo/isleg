@@ -288,7 +288,15 @@ func GetBrends(c *gin.Context) {
 		})
 		return
 	}
-	defer db.Close()
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	rowBrends, err := db.Query("SELECT name,image FROM brends WHERE deleted_at IS NULL")
 	if err != nil {
@@ -298,12 +306,20 @@ func GetBrends(c *gin.Context) {
 		})
 		return
 	}
-	defer rowBrends.Close()
+	defer func() {
+		if err := rowBrends.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
-	var brends []OneBrend
+	var brends []models.Brend
 
 	for rowBrends.Next() {
-		var brend OneBrend
+		var brend models.Brend
 
 		if err := rowBrends.Scan(&brend.Name, &brend.Image); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
