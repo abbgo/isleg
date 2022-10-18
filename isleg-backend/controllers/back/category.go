@@ -56,17 +56,17 @@ type Brend struct {
 }
 
 type OneCategory struct {
-	ID               uuid.UUID             `json:"id"`
-	ParentCategoryID uuid.UUID             `json:"parent_category_id"`
-	Image            string                `json:"image"`
-	IsHomeCategory   bool                  `json:"is_home_category"`
-	Translations     []TranslationCategory `json:"translations"`
+	ID               string                       `json:"id"`
+	ParentCategoryID string                       `json:"parent_category_id"`
+	Image            string                       `json:"image"`
+	IsHomeCategory   bool                         `json:"is_home_category"`
+	Translations     []models.TranslationCategory `json:"translations"`
 }
 
-type TranslationCategory struct {
-	LangID string `json:"lang_id"`
-	Name   string `json:"name"`
-}
+// type TranslationCategory struct {
+// 	LangID string `json:"lang_id"`
+// 	Name   string `json:"name"`
+// }
 
 func CreateCategory(c *gin.Context) {
 
@@ -561,7 +561,15 @@ func GetCategoryByID(c *gin.Context) {
 		})
 		return
 	}
-	defer db.Close()
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	ID := c.Param("id")
 
@@ -573,7 +581,15 @@ func GetCategoryByID(c *gin.Context) {
 		})
 		return
 	}
-	defer rowCategor.Close()
+	defer func() {
+		if err := rowCategor.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	var category OneCategory
 
@@ -587,7 +603,7 @@ func GetCategoryByID(c *gin.Context) {
 		}
 	}
 
-	if category.ID == uuid.Nil {
+	if category.ID == "" {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
 			"message": "category not found",
@@ -605,10 +621,10 @@ func GetCategoryByID(c *gin.Context) {
 	}
 	defer rowsTrCategory.Close()
 
-	var translations []TranslationCategory
+	var translations []models.TranslationCategory
 
 	for rowsTrCategory.Next() {
-		var translation TranslationCategory
+		var translation models.TranslationCategory
 		if err := rowsTrCategory.Scan(&translation.LangID, &translation.Name); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
