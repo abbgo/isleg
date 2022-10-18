@@ -1811,7 +1811,15 @@ func DeletePermanentlyProductByID(c *gin.Context) {
 		})
 		return
 	}
-	defer db.Close()
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	ID := c.Param("id")
 
@@ -1823,7 +1831,15 @@ func DeletePermanentlyProductByID(c *gin.Context) {
 		})
 		return
 	}
-	defer rowProduct.Close()
+	defer func() {
+		if err := rowProduct.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	var productID string
 
@@ -1853,7 +1869,15 @@ func DeletePermanentlyProductByID(c *gin.Context) {
 		})
 		return
 	}
-	defer rowMainImage.Close()
+	defer func() {
+		if err := rowMainImage.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	var mainImage models.MainImage
 
@@ -1899,7 +1923,15 @@ func DeletePermanentlyProductByID(c *gin.Context) {
 		})
 		return
 	}
-	defer rowsImages.Close()
+	defer func() {
+		if err := rowsImages.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	var images []models.Images
 
@@ -1948,7 +1980,15 @@ func DeletePermanentlyProductByID(c *gin.Context) {
 		})
 		return
 	}
-	defer resultProduct.Close()
+	defer func() {
+		if err := resultProduct.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,

@@ -104,13 +104,13 @@ func Routes() *gin.Engine {
 		back.GET("/restore-brend/:id", backController.RestoreBrendByID)             // funksiyany optimize etmeli
 		back.DELETE("/delete-brend/:id", backController.DeletePermanentlyBrendByID) // funksiyany optimize etmeli
 
-		back.POST("/product", backController.CreateProduct)                 // funksiyany optimize etmeli
-		back.PUT("/product/:id", backController.UpdateProductByID)          // funksiyany optimize etmeli
-		back.GET("/product/:id", backController.GetProductByID)             // funksiyany optimize etmeli
-		back.GET("/products", backController.GetProducts)                   // funksiyany optimize etmeli
-		back.DELETE("/product/:id", backController.DeleteProductByID)       // funksiyany optimize etmeli
-		back.GET("/restore-product/:id", backController.RestoreProductByID) // funksiyany optimize etmeli
-		back.DELETE("/delete-product/:id", backController.DeletePermanentlyProductByID)
+		back.POST("/product", backController.CreateProduct)                             // funksiyany optimize etmeli
+		back.PUT("/product/:id", backController.UpdateProductByID)                      // funksiyany optimize etmeli
+		back.GET("/product/:id", backController.GetProductByID)                         // funksiyany optimize etmeli
+		back.GET("/products", backController.GetProducts)                               // funksiyany optimize etmeli
+		back.DELETE("/product/:id", backController.DeleteProductByID)                   // funksiyany optimize etmeli
+		back.GET("/restore-product/:id", backController.RestoreProductByID)             // funksiyany optimize etmeli
+		back.DELETE("/delete-product/:id", backController.DeletePermanentlyProductByID) // funksiyany optimie temeli
 
 		back.POST("/company-phone", backController.CreateCompanyPhone)
 		back.PUT("/company-phone/:id", backController.UpdateCompanyPhoneByID)
