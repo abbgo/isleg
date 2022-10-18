@@ -9,14 +9,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type TrUpdatePasswordPage struct {
-	Title          string `json:"title"`
-	Password       string `json:"password"`
-	VerifyPassword string `json:"verify_password"`
-	Explanation    string `json:"explanation"`
-	Save           string `json:"save"`
-}
-
 func CreateTranslationUpdatePasswordPage(c *gin.Context) {
 
 	db, err := config.ConnDB()
@@ -27,7 +19,15 @@ func CreateTranslationUpdatePasswordPage(c *gin.Context) {
 		})
 		return
 	}
-	defer db.Close()
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	// GET ALL LANGUAGE
 	languages, err := GetAllLanguageWithIDAndNameShort()
@@ -59,7 +59,15 @@ func CreateTranslationUpdatePasswordPage(c *gin.Context) {
 			})
 			return
 		}
-		defer result.Close()
+		defer func() {
+			if err := result.Close(); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}()
 	}
 
 	c.JSON(http.StatusOK, gin.H{
