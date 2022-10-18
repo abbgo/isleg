@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "84ee293b-bc8c-44aa-a3c3-9281fdea1a8c",
+		"_postman_id": "efc7015c-3efe-4573-b775-ba4b3cd6936c",
 		"name": "IM",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -209,7 +209,7 @@
 								{
 									"key": "image",
 									"type": "file",
-									"src": []
+									"src": "/home/abb/go/src/github.com/abbgo/isleg/isleg-data/Saydyn suratynyn razmeri/Kagyz kley/4-3.jpg"
 								},
 								{
 									"key": "name_tm",
@@ -223,12 +223,17 @@
 								},
 								{
 									"key": "parent_category_id",
-									"value": "02bd4413-8586-49ab-802e-16304e756a8p",
+									"value": "",
 									"type": "default"
 								},
 								{
 									"key": "is_home_category",
-									"value": "false",
+									"value": "true",
+									"type": "default"
+								},
+								{
+									"key": "name_fr",
+									"value": "NAME_FR",
 									"type": "default"
 								}
 							]

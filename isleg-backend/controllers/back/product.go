@@ -45,7 +45,15 @@ func CreateProduct(c *gin.Context) {
 		})
 		return
 	}
-	defer db.Close()
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	// validate brend id
 	brendID := c.PostForm("brend_id")
@@ -57,7 +65,15 @@ func CreateProduct(c *gin.Context) {
 		})
 		return
 	}
-	defer rowBrend.Close()
+	defer func() {
+		if err := rowBrend.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	var brend_id string
 
@@ -317,7 +333,15 @@ func CreateProduct(c *gin.Context) {
 		})
 		return
 	}
-	defer resultProducts.Close()
+	defer func() {
+		if err := resultProducts.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	// get the id of the added product
 	lastProductID, err := db.Query("SELECT id FROM products WHERE deleted_at IS NULL ORDER BY created_at DESC LIMIT 1")
@@ -328,7 +352,15 @@ func CreateProduct(c *gin.Context) {
 		})
 		return
 	}
-	defer lastProductID.Close()
+	defer func() {
+		if err := lastProductID.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	var productID string
 
@@ -350,7 +382,15 @@ func CreateProduct(c *gin.Context) {
 		})
 		return
 	}
-	defer resultMainImage.Close()
+	defer func() {
+		if err := resultMainImage.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	for i := 0; i < len(smalls); i++ {
 
@@ -362,7 +402,15 @@ func CreateProduct(c *gin.Context) {
 			})
 			return
 		}
-		defer resultImages.Close()
+		defer func() {
+			if err := resultImages.Close(); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}()
 
 	}
 
@@ -376,7 +424,15 @@ func CreateProduct(c *gin.Context) {
 			})
 			return
 		}
-		defer resultTrProducts.Close()
+		defer func() {
+			if err := resultTrProducts.Close(); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}()
 	}
 
 	// get all category id from request
@@ -398,7 +454,15 @@ func CreateProduct(c *gin.Context) {
 			})
 			return
 		}
-		defer rawCategory.Close()
+		defer func() {
+			if err := rawCategory.Close(); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}()
 
 		var categoryID string
 
@@ -431,7 +495,15 @@ func CreateProduct(c *gin.Context) {
 			})
 			return
 		}
-		defer resultCategoryProduct.Close()
+		defer func() {
+			if err := resultCategoryProduct.Close(); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}()
 	}
 
 	c.JSON(http.StatusOK, gin.H{
