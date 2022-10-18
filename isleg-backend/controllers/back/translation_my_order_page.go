@@ -254,7 +254,15 @@ func GetTranslationMyOrderPageByLangID(c *gin.Context) {
 		})
 		return
 	}
-	defer db.Close()
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	// GET DATA FROM ROUTE PARAMETER
 	langShortName := c.Param("lang")
@@ -278,9 +286,17 @@ func GetTranslationMyOrderPageByLangID(c *gin.Context) {
 		})
 		return
 	}
-	defer rowTrMyOrderPage.Close()
+	defer func() {
+		if err := rowTrMyOrderPage.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
-	var t TrMyOrderPage
+	var t models.TranslationMyOrderPage
 
 	for rowTrMyOrderPage.Next() {
 		if err := rowTrMyOrderPage.Scan(&t.Orders, &t.Date, &t.Price, &t.Currency, &t.Image, &t.Name, &t.Brend, &t.Code, &t.Amount, &t.TotalPrice); err != nil {
