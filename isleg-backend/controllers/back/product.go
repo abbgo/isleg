@@ -1567,7 +1567,15 @@ func DeleteProductByID(c *gin.Context) {
 		})
 		return
 	}
-	defer db.Close()
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	ID := c.Param("id")
 
@@ -1579,7 +1587,15 @@ func DeleteProductByID(c *gin.Context) {
 		})
 		return
 	}
-	defer rowProduct.Close()
+	defer func() {
+		if err := rowProduct.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	var productID string
 
@@ -1611,7 +1627,15 @@ func DeleteProductByID(c *gin.Context) {
 		})
 		return
 	}
-	defer resultProduct.Close()
+	defer func() {
+		if err := resultProduct.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	resultCategoryProduct, err := db.Query("UPDATE category_product SET deleted_at = $1 WHERE product_id = $2", currentTime, ID)
 	if err != nil {
@@ -1621,7 +1645,15 @@ func DeleteProductByID(c *gin.Context) {
 		})
 		return
 	}
-	defer resultCategoryProduct.Close()
+	defer func() {
+		if err := resultCategoryProduct.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	resultTRProduct, err := db.Query("UPDATE translation_product SET deleted_at = $1 WHERE product_id = $2", currentTime, ID)
 	if err != nil {
@@ -1631,7 +1663,15 @@ func DeleteProductByID(c *gin.Context) {
 		})
 		return
 	}
-	defer resultTRProduct.Close()
+	defer func() {
+		if err := resultTRProduct.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
