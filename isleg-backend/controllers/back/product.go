@@ -523,7 +523,15 @@ func UpdateProductByID(c *gin.Context) {
 		})
 		return
 	}
-	defer db.Close()
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	ID := c.Param("id")
 	var mainSmall, mainMedium, mainLarge string
@@ -536,7 +544,15 @@ func UpdateProductByID(c *gin.Context) {
 		})
 		return
 	}
-	defer rowProduct.Close()
+	defer func() {
+		if err := rowProduct.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	// var product ProductImage
 	var id string
@@ -569,7 +585,15 @@ func UpdateProductByID(c *gin.Context) {
 		})
 		return
 	}
-	defer rowBrend.Close()
+	defer func() {
+		if err := rowBrend.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	var brend_id string
 
@@ -720,7 +744,15 @@ func UpdateProductByID(c *gin.Context) {
 		})
 		return
 	}
-	defer rowMainImage.Close()
+	defer func() {
+		if err := rowMainImage.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	var mainImage models.MainImage
 
@@ -831,7 +863,15 @@ func UpdateProductByID(c *gin.Context) {
 		})
 		return
 	}
-	defer rowImages.Close()
+	defer func() {
+		if err := rowImages.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	var images []models.Images
 
@@ -892,7 +932,15 @@ func UpdateProductByID(c *gin.Context) {
 			})
 			return
 		}
-		defer resultImages.Close()
+		defer func() {
+			if err := resultImages.Close(); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}()
 
 		for _, v := range smallFiles {
 			extension := filepath.Ext(v.Filename)
@@ -934,7 +982,15 @@ func UpdateProductByID(c *gin.Context) {
 				})
 				return
 			}
-			defer resultImages.Close()
+			defer func() {
+				if err := resultImages.Close(); err != nil {
+					c.JSON(http.StatusBadRequest, gin.H{
+						"status":  false,
+						"message": err.Error(),
+					})
+					return
+				}
+			}()
 
 		}
 
@@ -950,7 +1006,15 @@ func UpdateProductByID(c *gin.Context) {
 		})
 		return
 	}
-	defer resultProducts.Close()
+	defer func() {
+		if err := resultProducts.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	resultMainImage, err := db.Query("UPDATE main_image SET small = $1 , medium = $2 , large = $3 , updated_at = $4 WHERE product_id = $5", mainSmall, mainMedium, mainLarge, currentTime, ID)
 	if err != nil {
@@ -960,7 +1024,15 @@ func UpdateProductByID(c *gin.Context) {
 		})
 		return
 	}
-	defer resultMainImage.Close()
+	defer func() {
+		if err := resultMainImage.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	// update translation product
 	for _, v := range languages {
@@ -972,7 +1044,15 @@ func UpdateProductByID(c *gin.Context) {
 			})
 			return
 		}
-		defer resultTrProduct.Close()
+		defer func() {
+			if err := resultTrProduct.Close(); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}()
 	}
 
 	// get all category id from request
@@ -994,7 +1074,15 @@ func UpdateProductByID(c *gin.Context) {
 			})
 			return
 		}
-		defer rawCategory.Close()
+		defer func() {
+			if err := rawCategory.Close(); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}()
 
 		var categoryID string
 
@@ -1026,7 +1114,15 @@ func UpdateProductByID(c *gin.Context) {
 		})
 		return
 	}
-	defer resultCategoryProduct.Close()
+	defer func() {
+		if err := resultCategoryProduct.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	for _, v := range categories {
 		resultCategProduct, err := db.Query("INSERT INTO category_product (category_id,product_id,updated_at) VALUES ($1,$2,$3)", v, ID, currentTime)
@@ -1037,7 +1133,15 @@ func UpdateProductByID(c *gin.Context) {
 			})
 			return
 		}
-		defer resultCategProduct.Close()
+		defer func() {
+			if err := resultCategProduct.Close(); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}()
 	}
 
 	c.JSON(http.StatusOK, gin.H{
