@@ -495,7 +495,15 @@ func DeleteShopByID(c *gin.Context) {
 		})
 		return
 	}
-	defer db.Close()
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	ID := c.Param("id")
 
@@ -507,7 +515,15 @@ func DeleteShopByID(c *gin.Context) {
 		})
 		return
 	}
-	defer rowShop.Close()
+	defer func() {
+		if err := rowShop.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	var shopID string
 
@@ -539,7 +555,15 @@ func DeleteShopByID(c *gin.Context) {
 		})
 		return
 	}
-	defer resultShop.Close()
+	defer func() {
+		if err := resultShop.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	resultCategoryShop, err := db.Query("UPDATE category_shop SET deleted_at = $1 WHERE shop_id = $2", currentTime, ID)
 	if err != nil {
@@ -549,7 +573,15 @@ func DeleteShopByID(c *gin.Context) {
 		})
 		return
 	}
-	defer resultCategoryShop.Close()
+	defer func() {
+		if err := resultCategoryShop.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
