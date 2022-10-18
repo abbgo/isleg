@@ -333,7 +333,15 @@ func GetAfisaByID(c *gin.Context) {
 		})
 		return
 	}
-	defer db.Close()
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	ID := c.Param("id")
 
@@ -345,7 +353,15 @@ func GetAfisaByID(c *gin.Context) {
 		})
 		return
 	}
-	defer rowAfisa.Close()
+	defer func() {
+		if err := rowAfisa.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	var afisa OneAfisa
 
@@ -375,12 +391,20 @@ func GetAfisaByID(c *gin.Context) {
 		})
 		return
 	}
-	defer rowsTrAfisa.Close()
+	defer func() {
+		if err := rowsTrAfisa.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
-	var translations []TranslationAfisa
+	var translations []models.TranslationAfisa
 
 	for rowsTrAfisa.Next() {
-		var translation TranslationAfisa
+		var translation models.TranslationAfisa
 		if err := rowsTrAfisa.Scan(&translation.LangID, &translation.Title, &translation.Description); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,

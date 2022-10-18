@@ -130,7 +130,7 @@ func Routes() *gin.Engine {
 
 		back.POST("/afisa", backController.CreateAfisa)        // funksiyany optimize etmeli
 		back.PUT("/afisa/:id", backController.UpdateAfisaByID) // funksiyany optimize etmeli
-		back.GET("/afisa/:id", backController.GetAfisaByID)
+		back.GET("/afisa/:id", backController.GetAfisaByID)    // funksiyany optimize etmeli
 		back.GET("/afisas", backController.GetAfisas)
 		back.DELETE("/afisa/:id", backController.DeleteAfisaByID)
 		back.GET("/restore-afisa/:id", backController.RestoreAfisaByID)
