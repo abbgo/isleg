@@ -23,7 +23,15 @@ func GetCustomerAddresses(c *gin.Context) {
 		})
 		return
 	}
-	defer db.Close()
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	customerID := c.Param("customer_id")
 
@@ -35,7 +43,15 @@ func GetCustomerAddresses(c *gin.Context) {
 		})
 		return
 	}
-	defer rowCustomer.Close()
+	defer func() {
+		if err := rowCustomer.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	var customer_id string
 
@@ -65,7 +81,15 @@ func GetCustomerAddresses(c *gin.Context) {
 		})
 		return
 	}
-	defer rowsAddress.Close()
+	defer func() {
+		if err := rowsAddress.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	var addresses []CustomerAddress
 
