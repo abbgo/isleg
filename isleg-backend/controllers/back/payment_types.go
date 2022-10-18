@@ -24,7 +24,15 @@ func CreatePaymentType(c *gin.Context) {
 		})
 		return
 	}
-	defer db.Close()
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	// GET ALL LANGUAGE
 	languages, err := GetAllLanguageWithIDAndNameShort()
@@ -57,7 +65,15 @@ func CreatePaymentType(c *gin.Context) {
 			})
 			return
 		}
-		defer resultComAddres.Close()
+		defer func() {
+			if err := resultComAddres.Close(); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}()
 	}
 
 	c.JSON(http.StatusOK, gin.H{
