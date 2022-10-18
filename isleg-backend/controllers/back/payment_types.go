@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"github/abbgo/isleg/isleg-backend/config"
+	"github/abbgo/isleg/isleg-backend/models"
 	"net/http"
 	"time"
 
@@ -256,7 +257,15 @@ func GetPaymentTypes(c *gin.Context) {
 		})
 		return
 	}
-	defer db.Close()
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	rowsPaymentType, err := db.Query("SELECT lang_id,type FROM payment_types WHERE deleted_at IS NULL")
 	if err != nil {
@@ -266,12 +275,20 @@ func GetPaymentTypes(c *gin.Context) {
 		})
 		return
 	}
-	defer rowsPaymentType.Close()
+	defer func() {
+		if err := rowsPaymentType.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
-	var paymentTypes []PaymentTypes
+	var paymentTypes []models.PaymentTypes
 
 	for rowsPaymentType.Next() {
-		var paymentType PaymentTypes
+		var paymentType models.PaymentTypes
 
 		if err := rowsPaymentType.Scan(&paymentType.LangID, &paymentType.Type); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
