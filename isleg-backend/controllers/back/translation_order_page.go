@@ -187,7 +187,15 @@ func GetTranslationOrderPageByID(c *gin.Context) {
 		})
 		return
 	}
-	defer db.Close()
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	ID := c.Param("id")
 
@@ -199,9 +207,17 @@ func GetTranslationOrderPageByID(c *gin.Context) {
 		})
 		return
 	}
-	defer rowTrOrderPage.Close()
+	defer func() {
+		if err := rowTrOrderPage.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
-	var t TrOrderPage
+	var t models.TranslationOrderPage
 
 	for rowTrOrderPage.Next() {
 		if err := rowTrOrderPage.Scan(&t.Content, &t.TypeOfPayment, &t.ChooseADeliveryTime, &t.YourAddress, &t.Mark, &t.ToOrder, &t.Tomorrow, &t.Cash, &t.PaymentTerminal); err != nil {
