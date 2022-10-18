@@ -63,7 +63,15 @@ func GetHomePageCategories(c *gin.Context) {
 		})
 		return
 	}
-	defer db.Close()
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	langID, err := backController.CheckLanguage(c)
 	if err != nil {
@@ -83,7 +91,15 @@ func GetHomePageCategories(c *gin.Context) {
 		})
 		return
 	}
-	defer categoryRows.Close()
+	defer func() {
+		if err := categoryRows.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	var homePageCategories []HomePageCategory
 
@@ -106,7 +122,15 @@ func GetHomePageCategories(c *gin.Context) {
 			})
 			return
 		}
-		defer productRows.Close()
+		defer func() {
+			if err := productRows.Close(); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}()
 
 		var products []Product
 
@@ -128,7 +152,15 @@ func GetHomePageCategories(c *gin.Context) {
 				})
 				return
 			}
-			defer rowMainImage.Close()
+			defer func() {
+				if err := rowMainImage.Close(); err != nil {
+					c.JSON(http.StatusBadRequest, gin.H{
+						"status":  false,
+						"message": err.Error(),
+					})
+					return
+				}
+			}()
 
 			var mainImage models.MainImage
 
@@ -152,7 +184,15 @@ func GetHomePageCategories(c *gin.Context) {
 				})
 				return
 			}
-			defer rowsImages.Close()
+			defer func() {
+				if err := rowsImages.Close(); err != nil {
+					c.JSON(http.StatusBadRequest, gin.H{
+						"status":  false,
+						"message": err.Error(),
+					})
+					return
+				}
+			}()
 
 			var images []models.Images
 
@@ -181,7 +221,15 @@ func GetHomePageCategories(c *gin.Context) {
 				})
 				return
 			}
-			defer brendRows.Close()
+			defer func() {
+				if err := brendRows.Close(); err != nil {
+					c.JSON(http.StatusBadRequest, gin.H{
+						"status":  false,
+						"message": err.Error(),
+					})
+					return
+				}
+			}()
 
 			var brend Brend
 			for brendRows.Next() {

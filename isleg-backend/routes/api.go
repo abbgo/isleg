@@ -151,9 +151,9 @@ func Routes() *gin.Engine {
 	// customer routes
 	customer := routes.Group("/api/auth")
 	{
-		customer.POST("/register", frontController.RegisterCustomer)
-		customer.POST("/login", frontController.LoginCustomer)
-		customer.POST("/refresh", auth.Refresh)
+		customer.POST("/register", frontController.RegisterCustomer) // funksiyany optimize etmeli
+		customer.POST("/login", frontController.LoginCustomer)       // funksiyany optimize etmeli
+		customer.POST("/refresh", auth.Refresh)                      //+
 	}
 
 	// routes belong to front
