@@ -254,7 +254,15 @@ func GetTranslationBasketPageByLangID(c *gin.Context) {
 		})
 		return
 	}
-	defer db.Close()
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	// GET DATA FROM ROUTE PARAMETER
 	langShortName := c.Param("lang")
@@ -278,9 +286,17 @@ func GetTranslationBasketPageByLangID(c *gin.Context) {
 		})
 		return
 	}
-	defer rowTRBasketPage.Close()
+	defer func() {
+		if err := rowTRBasketPage.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
-	var t TrBasketPage
+	var t models.TranslationBasketPage
 
 	for rowTRBasketPage.Next() {
 		if err := rowTRBasketPage.Scan(&t.QuantityOfGoods, &t.TotalPrice, &t.Discount, &t.Delivery, &t.Total, &t.Currency, &t.ToOrder, &t.YourBasket, &t.EmptyTheBasket); err != nil {
