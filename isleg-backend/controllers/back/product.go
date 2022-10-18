@@ -1372,7 +1372,15 @@ func GetProducts(c *gin.Context) {
 		})
 		return
 	}
-	defer db.Close()
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	rowsProduct, err := db.Query("SELECT id,brend_id,price,old_price,amount,product_code,limit_amount,is_new FROM products WHERE deleted_at IS NULL")
 	if err != nil {
@@ -1382,7 +1390,15 @@ func GetProducts(c *gin.Context) {
 		})
 		return
 	}
-	defer rowsProduct.Close()
+	defer func() {
+		if err := rowsProduct.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	var products []OneProduct
 	// var ids []string
@@ -1406,7 +1422,15 @@ func GetProducts(c *gin.Context) {
 			})
 			return
 		}
-		defer rowMainImage.Close()
+		defer func() {
+			if err := rowMainImage.Close(); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}()
 
 		for rowMainImage.Next() {
 			if err := rowMainImage.Scan(&product.MainImage.Small, &product.MainImage.Medium, &product.MainImage.Large); err != nil {
@@ -1426,7 +1450,15 @@ func GetProducts(c *gin.Context) {
 			})
 			return
 		}
-		defer rowsImages.Close()
+		defer func() {
+			if err := rowsImages.Close(); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}()
 
 		var images []models.Images
 
@@ -1454,7 +1486,15 @@ func GetProducts(c *gin.Context) {
 			})
 			return
 		}
-		defer rowsCategoryProduct.Close()
+		defer func() {
+			if err := rowsCategoryProduct.Close(); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}()
 
 		var categories []string
 
@@ -1481,13 +1521,21 @@ func GetProducts(c *gin.Context) {
 			})
 			return
 		}
-		defer rowTranslationProduct.Close()
+		defer func() {
+			if err := rowTranslationProduct.Close(); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}()
 
-		var translations []TranslationProduct
+		var translations []models.TranslationProduct
 
 		for rowTranslationProduct.Next() {
-			var translation TranslationProduct
-			if err := rowTranslationProduct.Scan(&translation.LanguageID, &translation.Name, &translation.Description); err != nil {
+			var translation models.TranslationProduct
+			if err := rowTranslationProduct.Scan(&translation.LangID, &translation.Name, &translation.Description); err != nil {
 				c.JSON(http.StatusBadRequest, gin.H{
 					"status":  false,
 					"message": err.Error(),
