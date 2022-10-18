@@ -434,7 +434,15 @@ func GetAfisas(c *gin.Context) {
 		})
 		return
 	}
-	defer db.Close()
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	rowsAfisa, err := db.Query("SELECT id,image FROM afisa WHERE deleted_at IS NULL")
 	if err != nil {
@@ -444,7 +452,15 @@ func GetAfisas(c *gin.Context) {
 		})
 		return
 	}
-	defer rowsAfisa.Close()
+	defer func() {
+		if err := rowsAfisa.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	var afisas []OneAfisa
 
@@ -466,12 +482,20 @@ func GetAfisas(c *gin.Context) {
 			})
 			return
 		}
-		defer rowsTrAfisa.Close()
+		defer func() {
+			if err := rowsTrAfisa.Close(); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}()
 
-		var translations []TranslationAfisa
+		var translations []models.TranslationAfisa
 
 		for rowsTrAfisa.Next() {
-			var translation TranslationAfisa
+			var translation models.TranslationAfisa
 			if err := rowsTrAfisa.Scan(&translation.LangID, &translation.Title, &translation.Description); err != nil {
 				c.JSON(http.StatusBadRequest, gin.H{
 					"status":  false,
