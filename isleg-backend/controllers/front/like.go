@@ -229,7 +229,15 @@ func RemoveLike(c *gin.Context) {
 		})
 		return
 	}
-	defer db.Close()
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	customerID := c.Param("customer_id")
 	productID := c.Param("product_id")
@@ -242,7 +250,15 @@ func RemoveLike(c *gin.Context) {
 		})
 		return
 	}
-	defer rowCustomer.Close()
+	defer func() {
+		if err := rowCustomer.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	var customer_id string
 
@@ -272,7 +288,15 @@ func RemoveLike(c *gin.Context) {
 		})
 		return
 	}
-	defer rowLike.Close()
+	defer func() {
+		if err := rowLike.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	var product_id string
 
@@ -302,7 +326,15 @@ func RemoveLike(c *gin.Context) {
 		})
 		return
 	}
-	defer resultLike.Close()
+	defer func() {
+		if err := resultLike.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
