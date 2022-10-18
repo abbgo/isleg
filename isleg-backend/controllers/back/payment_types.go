@@ -7,13 +7,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 )
-
-type PaymentTypes struct {
-	LangID uuid.UUID `json:"lang_id"`
-	Type   string    `json:"type"`
-}
 
 func CreatePaymentType(c *gin.Context) {
 
@@ -318,7 +312,15 @@ func GetPaymentTypesByLangID(c *gin.Context) {
 		})
 		return
 	}
-	defer db.Close()
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	// GET DATA FROM ROUTE PARAMETER
 	langShortName := c.Param("lang")
@@ -341,7 +343,15 @@ func GetPaymentTypesByLangID(c *gin.Context) {
 		})
 		return
 	}
-	defer rowsPaymentType.Close()
+	defer func() {
+		if err := rowsPaymentType.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	var paymentTypes []string
 
