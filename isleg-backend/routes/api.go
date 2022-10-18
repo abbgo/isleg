@@ -128,8 +128,8 @@ func Routes() *gin.Engine {
 		back.GET("/payment-type/:id", backController.GetPaymentTypeByID)    //+
 		back.GET("/payment-types", backController.GetPaymentTypes)          //+
 
-		back.POST("/afisa", backController.CreateAfisa) // funksiyany optimize etmeli
-		back.PUT("/afisa/:id", backController.UpdateAfisaByID)
+		back.POST("/afisa", backController.CreateAfisa)        // funksiyany optimize etmeli
+		back.PUT("/afisa/:id", backController.UpdateAfisaByID) // funksiyany optimize etmeli
 		back.GET("/afisa/:id", backController.GetAfisaByID)
 		back.GET("/afisas", backController.GetAfisas)
 		back.DELETE("/afisa/:id", backController.DeleteAfisaByID)
