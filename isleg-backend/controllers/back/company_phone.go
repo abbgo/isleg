@@ -20,7 +20,15 @@ func CreateCompanyPhone(c *gin.Context) {
 		})
 		return
 	}
-	defer db.Close()
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	// GET DATA FROM REQUEST
 	phone := c.PostForm("phone")
@@ -68,7 +76,15 @@ func CreateCompanyPhone(c *gin.Context) {
 		})
 		return
 	}
-	defer resultComPhone.Close()
+	defer func() {
+		if err := resultComPhone.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
