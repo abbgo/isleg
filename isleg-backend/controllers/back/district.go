@@ -18,7 +18,15 @@ func CreateDistrict(c *gin.Context) {
 		})
 		return
 	}
-	defer db.Close()
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	// GET ALL LANGUAGE
 	languages, err := GetAllLanguageWithIDAndNameShort()
@@ -60,7 +68,15 @@ func CreateDistrict(c *gin.Context) {
 		})
 		return
 	}
-	defer resultDistrict.Close()
+	defer func() {
+		if err := resultDistrict.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	// get id off added district
 	lastDistrictID, err := db.Query("SELECT id FROM district ORDER BY created_at DESC LIMIT 1")
@@ -71,7 +87,15 @@ func CreateDistrict(c *gin.Context) {
 		})
 		return
 	}
-	defer lastDistrictID.Close()
+	defer func() {
+		if err := lastDistrictID.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	var districtID string
 
@@ -95,7 +119,15 @@ func CreateDistrict(c *gin.Context) {
 			})
 			return
 		}
-		defer resultTRDistrict.Close()
+		defer func() {
+			if err := resultTRDistrict.Close(); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}()
 	}
 
 	c.JSON(http.StatusOK, gin.H{
