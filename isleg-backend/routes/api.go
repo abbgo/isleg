@@ -231,7 +231,7 @@ func Routes() *gin.Engine {
 			securedCustomer.GET("/likes-without-customer", frontController.GetLikedProductsWithoutCustomer) // funksiyany optimize etmeli
 
 			// add product to cart
-			securedCustomer.POST("/add-cart", frontController.AddCart)
+			securedCustomer.POST("/add-cart", frontController.AddCart) // funksiyany optimize etmeli
 
 			// get product of cart
 			// securedCustomer.GET("/get-cart/:customer_id", frontController.GetCartProducts)

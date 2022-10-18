@@ -46,7 +46,15 @@ func AddCart(c *gin.Context) {
 		})
 		return
 	}
-	defer db.Close()
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	// langShortName := c.Param("lang")
 	var cart Cart
@@ -64,7 +72,15 @@ func AddCart(c *gin.Context) {
 		})
 		return
 	}
-	defer rowCustomer.Close()
+	defer func() {
+		if err := rowCustomer.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	var customer_id string
 
@@ -114,7 +130,15 @@ func AddCart(c *gin.Context) {
 			})
 			return
 		}
-		defer rowProduct.Close()
+		defer func() {
+			if err := rowProduct.Close(); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}()
 
 		var product_id string
 
@@ -144,7 +168,15 @@ func AddCart(c *gin.Context) {
 			})
 			return
 		}
-		defer rowCart.Close()
+		defer func() {
+			if err := rowCart.Close(); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}()
 
 		var productId string
 
@@ -168,7 +200,15 @@ func AddCart(c *gin.Context) {
 				})
 				return
 			}
-			defer resultCartInsert.Close()
+			defer func() {
+				if err := resultCartInsert.Close(); err != nil {
+					c.JSON(http.StatusBadRequest, gin.H{
+						"status":  false,
+						"message": err.Error(),
+					})
+					return
+				}
+			}()
 
 		} else {
 
@@ -180,7 +220,15 @@ func AddCart(c *gin.Context) {
 				})
 				return
 			}
-			defer reultCartUpdate.Close()
+			defer func() {
+				if err := reultCartUpdate.Close(); err != nil {
+					c.JSON(http.StatusBadRequest, gin.H{
+						"status":  false,
+						"message": err.Error(),
+					})
+					return
+				}
+			}()
 
 		}
 
