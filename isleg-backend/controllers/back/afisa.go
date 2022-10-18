@@ -13,15 +13,9 @@ import (
 )
 
 type OneAfisa struct {
-	ID           string             `json:"id"`
-	Image        string             `json:"image"`
-	Translations []TranslationAfisa `json:"translations"`
-}
-
-type TranslationAfisa struct {
-	LangID      string `json:"lang_id"`
-	Title       string `json:"title"`
-	Description string `json:"description"`
+	ID           string                    `json:"id"`
+	Image        string                    `json:"image"`
+	Translations []models.TranslationAfisa `json:"translations"`
 }
 
 func CreateAfisa(c *gin.Context) {
@@ -34,7 +28,15 @@ func CreateAfisa(c *gin.Context) {
 		})
 		return
 	}
-	defer db.Close()
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	var fileName string
 
@@ -87,7 +89,15 @@ func CreateAfisa(c *gin.Context) {
 		})
 		return
 	}
-	defer resultAFisa.Close()
+	defer func() {
+		if err := resultAFisa.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	if fileName != "" {
 		c.SaveUploadedFile(file, "./"+fileName)
@@ -102,7 +112,15 @@ func CreateAfisa(c *gin.Context) {
 		})
 		return
 	}
-	defer lastAfisaID.Close()
+	defer func() {
+		if err := lastAfisaID.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	var afisaID string
 
@@ -126,7 +144,15 @@ func CreateAfisa(c *gin.Context) {
 			})
 			return
 		}
-		defer resultTRAfisa.Close()
+		defer func() {
+			if err := resultTRAfisa.Close(); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}()
 	}
 
 	c.JSON(http.StatusOK, gin.H{
