@@ -702,7 +702,15 @@ func DeletePermanentlyShopByID(c *gin.Context) {
 		})
 		return
 	}
-	defer db.Close()
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	ID := c.Param("id")
 
@@ -714,7 +722,15 @@ func DeletePermanentlyShopByID(c *gin.Context) {
 		})
 		return
 	}
-	defer rowShop.Close()
+	defer func() {
+		if err := rowShop.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	var shopID string
 
@@ -744,7 +760,15 @@ func DeletePermanentlyShopByID(c *gin.Context) {
 		})
 		return
 	}
-	defer resultShop.Close()
+	defer func() {
+		if err := resultShop.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
