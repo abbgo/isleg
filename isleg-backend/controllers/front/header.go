@@ -9,10 +9,10 @@ import (
 )
 
 type HeaderData struct {
-	LogoFavicon       backController.LogoFavicon                `json:"logo_favicon"`
-	TranslationHeader backController.TranslationHeaderForHeader `json:"translation_header"`
-	Languages         []models.Language                         `json:"languages"`
-	Categories        []backController.ResultCategory           `json:"categories"`
+	LogoFavicon       models.CompanySetting           `json:"logo_favicon"`
+	TranslationHeader models.TranslationHeader        `json:"translation_header"`
+	Languages         []models.Language               `json:"languages"`
+	Categories        []backController.ResultCategory `json:"categories"`
 }
 
 func GetHeaderData(c *gin.Context) {
