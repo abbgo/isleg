@@ -737,7 +737,15 @@ func DeletePermanentlyAfisaByID(c *gin.Context) {
 		})
 		return
 	}
-	defer db.Close()
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	ID := c.Param("id")
 
@@ -749,7 +757,15 @@ func DeletePermanentlyAfisaByID(c *gin.Context) {
 		})
 		return
 	}
-	defer rowAfisa.Close()
+	defer func() {
+		if err := rowAfisa.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	var afisaID, image string
 
@@ -789,7 +805,15 @@ func DeletePermanentlyAfisaByID(c *gin.Context) {
 		})
 		return
 	}
-	defer resultAfisa.Close()
+	defer func() {
+		if err := resultAfisa.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
