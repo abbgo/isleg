@@ -20,7 +20,15 @@ func Search(c *gin.Context) {
 		})
 		return
 	}
-	defer db.Close()
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	// GET DATA FROM ROUTE PARAMETER
 	langShortName := c.Param("lang")
@@ -45,7 +53,15 @@ func Search(c *gin.Context) {
 		})
 		return
 	}
-	defer rowsProduct.Close()
+	defer func() {
+		if err := rowsProduct.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	var products []LikeProduct
 
@@ -68,7 +84,15 @@ func Search(c *gin.Context) {
 			})
 			return
 		}
-		defer rowMainImage.Close()
+		defer func() {
+			if err := rowMainImage.Close(); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}()
 
 		for rowMainImage.Next() {
 			if err := rowMainImage.Scan(&product.MainImage.Small, &product.MainImage.Medium, &product.MainImage.Large); err != nil {
@@ -88,7 +112,15 @@ func Search(c *gin.Context) {
 			})
 			return
 		}
-		defer rowsImages.Close()
+		defer func() {
+			if err := rowsImages.Close(); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}()
 
 		var images []models.Images
 
@@ -116,7 +148,15 @@ func Search(c *gin.Context) {
 			})
 			return
 		}
-		defer rowTranslationProduct.Close()
+		defer func() {
+			if err := rowTranslationProduct.Close(); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}()
 
 		var translation models.TranslationProduct
 
