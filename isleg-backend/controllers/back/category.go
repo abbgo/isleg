@@ -1200,7 +1200,15 @@ func RestoreCategoryByID(c *gin.Context) {
 		})
 		return
 	}
-	defer db.Close()
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	ID := c.Param("id")
 
@@ -1212,7 +1220,15 @@ func RestoreCategoryByID(c *gin.Context) {
 		})
 		return
 	}
-	defer rowCategor.Close()
+	defer func() {
+		if err := rowCategor.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	var category_id string
 
@@ -1242,7 +1258,15 @@ func RestoreCategoryByID(c *gin.Context) {
 		})
 		return
 	}
-	defer rESUTCate.Close()
+	defer func() {
+		if err := rESUTCate.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	resultTrCateg, err := db.Query("UPDATE translation_category SET deleted_at = NULL WHERE category_id = $1", ID)
 	if err != nil {
@@ -1252,7 +1276,15 @@ func RestoreCategoryByID(c *gin.Context) {
 		})
 		return
 	}
-	defer resultTrCateg.Close()
+	defer func() {
+		if err := resultTrCateg.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	resultCt, err := db.Query("UPDATE categories SET deleted_at = NULL WHERE parent_category_id = $1", ID)
 	if err != nil {
@@ -1262,7 +1294,15 @@ func RestoreCategoryByID(c *gin.Context) {
 		})
 		return
 	}
-	defer resultCt.Close()
+	defer func() {
+		if err := resultCt.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	rowChildCategory, err := db.Query("SELECT id FROM categories WHERE parent_category_id = $1", ID)
 	if err != nil {
@@ -1272,7 +1312,15 @@ func RestoreCategoryByID(c *gin.Context) {
 		})
 		return
 	}
-	defer rowChildCategory.Close()
+	defer func() {
+		if err := rowChildCategory.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	var childCategoryIDS []string
 
@@ -1298,7 +1346,15 @@ func RestoreCategoryByID(c *gin.Context) {
 			})
 			return
 		}
-		defer resultTRCategory.Close()
+		defer func() {
+			if err := resultTRCategory.Close(); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}()
 
 		resultCateProd, err := db.Query("UPDATE category_product SET deleted_at = NULL WHERE category_id = $1", v)
 		if err != nil {
@@ -1308,7 +1364,15 @@ func RestoreCategoryByID(c *gin.Context) {
 			})
 			return
 		}
-		defer resultCateProd.Close()
+		defer func() {
+			if err := resultCateProd.Close(); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}()
 
 		resultProd, err := db.Query("UPDATE products SET deleted_at = NULL FROM category_product WHERE category_product.product_id = products.id AND category_product.category_id = $1", v)
 		if err != nil {
@@ -1318,7 +1382,15 @@ func RestoreCategoryByID(c *gin.Context) {
 			})
 			return
 		}
-		defer resultProd.Close()
+		defer func() {
+			if err := resultProd.Close(); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}()
 
 		resultTRProduct, err := db.Query("UPDATE translation_product SET deleted_at = NULL FROM products,category_product WHERE translation_product.product_id = products.id AND category_product.product_id = products.id  AND category_product.category_id = $1", v)
 		if err != nil {
@@ -1328,7 +1400,15 @@ func RestoreCategoryByID(c *gin.Context) {
 			})
 			return
 		}
-		defer resultTRProduct.Close()
+		defer func() {
+			if err := resultTRProduct.Close(); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}()
 
 		resultCateShop, err := db.Query("UPDATE category_shop SET deleted_at = NULL WHERE category_id = $1", v)
 		if err != nil {
@@ -1338,7 +1418,15 @@ func RestoreCategoryByID(c *gin.Context) {
 			})
 			return
 		}
-		defer resultCateShop.Close()
+		defer func() {
+			if err := resultCateShop.Close(); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}()
 
 		resultSHops, err := db.Query("UPDATE shops SET deleted_at = NULL FROM category_shop WHERE category_shop.shop_id = shops.id AND category_shop.category_id = $1", v)
 		if err != nil {
@@ -1348,7 +1436,15 @@ func RestoreCategoryByID(c *gin.Context) {
 			})
 			return
 		}
-		defer resultSHops.Close()
+		defer func() {
+			if err := resultSHops.Close(); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}()
 	}
 
 	resutlCategPro, err := db.Query("UPDATE category_product SET deleted_at = NULL WHERE category_id = $1", ID)
@@ -1359,7 +1455,15 @@ func RestoreCategoryByID(c *gin.Context) {
 		})
 		return
 	}
-	defer resutlCategPro.Close()
+	defer func() {
+		if err := resutlCategPro.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	resultProd, err := db.Query("UPDATE products SET deleted_at = NULL FROM category_product WHERE category_product.product_id = products.id AND category_product.category_id = $1", ID)
 	if err != nil {
@@ -1369,7 +1473,15 @@ func RestoreCategoryByID(c *gin.Context) {
 		})
 		return
 	}
-	defer resultProd.Close()
+	defer func() {
+		if err := resultProd.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	resultTRProd, err := db.Query("UPDATE translation_product SET deleted_at = NULL FROM products,category_product WHERE translation_product.product_id = products.id AND category_product.product_id = products.id  AND category_product.category_id = $1", ID)
 	if err != nil {
@@ -1379,7 +1491,15 @@ func RestoreCategoryByID(c *gin.Context) {
 		})
 		return
 	}
-	defer resultTRProd.Close()
+	defer func() {
+		if err := resultTRProd.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	resultCategShop, err := db.Query("UPDATE category_shop SET deleted_at = NULL WHERE category_id = $1", ID)
 	if err != nil {
@@ -1389,7 +1509,15 @@ func RestoreCategoryByID(c *gin.Context) {
 		})
 		return
 	}
-	defer resultCategShop.Close()
+	defer func() {
+		if err := resultCategShop.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	resutShops, err := db.Query("UPDATE shops SET deleted_at = NULL FROM category_shop WHERE category_shop.shop_id = shops.id AND category_shop.category_id = $1", ID)
 	if err != nil {
@@ -1399,7 +1527,15 @@ func RestoreCategoryByID(c *gin.Context) {
 		})
 		return
 	}
-	defer resutShops.Close()
+	defer func() {
+		if err := resutShops.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
