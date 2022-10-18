@@ -593,7 +593,15 @@ func DeletePermanentlyBrendByID(c *gin.Context) {
 		})
 		return
 	}
-	defer db.Close()
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	ID := c.Param("id")
 
@@ -605,7 +613,15 @@ func DeletePermanentlyBrendByID(c *gin.Context) {
 		})
 		return
 	}
-	defer rowBrend.Close()
+	defer func() {
+		if err := rowBrend.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	var image string
 
@@ -643,7 +659,15 @@ func DeletePermanentlyBrendByID(c *gin.Context) {
 		})
 		return
 	}
-	defer rowsMainImage.Close()
+	defer func() {
+		if err := rowsMainImage.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	var mainImages []models.MainImage
 
@@ -695,7 +719,15 @@ func DeletePermanentlyBrendByID(c *gin.Context) {
 		})
 		return
 	}
-	defer rowsImages.Close()
+	defer func() {
+		if err := rowsImages.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	var images []models.Images
 
@@ -739,7 +771,15 @@ func DeletePermanentlyBrendByID(c *gin.Context) {
 		})
 		return
 	}
-	defer resultBrends.Close()
+	defer func() {
+		if err := resultBrends.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
