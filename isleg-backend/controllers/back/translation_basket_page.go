@@ -9,18 +9,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type TrBasketPage struct {
-	QuantityOfGoods string `json:"quantity_of_goods"`
-	TotalPrice      string `json:"total_price"`
-	Discount        string `json:"discount"`
-	Delivery        string `json:"delivery"`
-	Total           string `json:"total"`
-	Currency        string `json:"currency"`
-	ToOrder         string `json:"to_order"`
-	YourBasket      string `json:"your_basket"`
-	EmptyTheBasket  string `json:"empty_the_basket"`
-}
-
 func CreateTranslationBasketPage(c *gin.Context) {
 
 	db, err := config.ConnDB()
@@ -31,7 +19,15 @@ func CreateTranslationBasketPage(c *gin.Context) {
 		})
 		return
 	}
-	defer db.Close()
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	// GET ALL LANGUAGE
 	languages, err := GetAllLanguageWithIDAndNameShort()
@@ -64,7 +60,15 @@ func CreateTranslationBasketPage(c *gin.Context) {
 			})
 			return
 		}
-		defer resultTrBasketPage.Close()
+		defer func() {
+			if err := resultTrBasketPage.Close(); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}()
 	}
 
 	c.JSON(http.StatusOK, gin.H{
