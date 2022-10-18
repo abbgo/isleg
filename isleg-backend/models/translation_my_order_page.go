@@ -8,18 +8,18 @@ import (
 )
 
 type TranslationMyOrderPage struct {
-	ID         uuid.UUID `json:"id"`
-	LangID     uuid.UUID `json:"lang_id"`
-	Orders     string    `json:"orders"`
-	Date       string    `json:"date"`
-	Price      string    `json:"price"`
-	Currency   string    `json:"currency"`
-	Image      string    `json:"image"`
-	Name       string    `json:"name"`
-	Brend      string    `json:"brend"`
-	Code       string    `json:"code"`
-	Amount     string    `json:"amount"`
-	TotalPrice string    `json:"total_price"`
+	ID         uuid.UUID `json:"id,omitempty"`
+	LangID     uuid.UUID `json:"lang_id,omitempty"`
+	Orders     string    `json:"orders,omitempty"`
+	Date       string    `json:"date,omitempty"`
+	Price      string    `json:"price,omitempty"`
+	Currency   string    `json:"currency,omitempty"`
+	Image      string    `json:"image,omitempty"`
+	Name       string    `json:"name,omitempty"`
+	Brend      string    `json:"brend,omitempty"`
+	Code       string    `json:"code,omitempty"`
+	Amount     string    `json:"amount,omitempty"`
+	TotalPrice string    `json:"total_price,omitempty"`
 	CreatedAt  string    `json:"-"`
 	UpdatedAt  string    `json:"-"`
 	DeletedAt  string    `json:"-"`
