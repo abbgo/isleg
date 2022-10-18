@@ -400,7 +400,15 @@ func GetShops(c *gin.Context) {
 		})
 		return
 	}
-	defer db.Close()
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	rowsShop, err := db.Query("SELECT id,owner_name,address,phone_number,running_time FROM shops WHERE deleted_at IS NULL")
 	if err != nil {
@@ -410,7 +418,15 @@ func GetShops(c *gin.Context) {
 		})
 		return
 	}
-	defer rowsShop.Close()
+	defer func() {
+		if err := rowsShop.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	var shops []OneShop
 
@@ -432,7 +448,15 @@ func GetShops(c *gin.Context) {
 			})
 			return
 		}
-		defer rowsCategoryShop.Close()
+		defer func() {
+			if err := rowsCategoryShop.Close(); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}()
 
 		var categories []string
 
