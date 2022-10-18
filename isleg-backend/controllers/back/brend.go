@@ -792,9 +792,14 @@ func GetAllBrendForHomePage() ([]BrendForHomePage, error) {
 
 	db, err := config.ConnDB()
 	if err != nil {
-		return []BrendForHomePage{}, nil
+		return []BrendForHomePage{}, err
 	}
-	defer db.Close()
+	defer func() ([]BrendForHomePage, error) {
+		if err := db.Close(); err != nil {
+			return []BrendForHomePage{}, err
+		}
+		return []BrendForHomePage{}, nil
+	}()
 
 	var brends []BrendForHomePage
 
@@ -803,7 +808,12 @@ func GetAllBrendForHomePage() ([]BrendForHomePage, error) {
 	if err != nil {
 		return []BrendForHomePage{}, err
 	}
-	defer rows.Close()
+	defer func() ([]BrendForHomePage, error) {
+		if err := rows.Close(); err != nil {
+			return []BrendForHomePage{}, err
+		}
+		return []BrendForHomePage{}, nil
+	}()
 
 	for rows.Next() {
 		var brend BrendForHomePage
