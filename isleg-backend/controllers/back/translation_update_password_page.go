@@ -186,7 +186,15 @@ func GetTranslationUpdatePasswordPageByID(c *gin.Context) {
 		})
 		return
 	}
-	defer db.Close()
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	ID := c.Param("id")
 
@@ -198,9 +206,17 @@ func GetTranslationUpdatePasswordPageByID(c *gin.Context) {
 		})
 		return
 	}
-	defer rowFlag.Close()
+	defer func() {
+		if err := rowFlag.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
-	var t TrUpdatePasswordPage
+	var t models.TranslationUpdatePasswordPage
 
 	for rowFlag.Next() {
 		if err := rowFlag.Scan(&t.Title, &t.VerifyPassword, &t.Explanation, &t.Save, &t.Password); err != nil {
