@@ -9,18 +9,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type TrOrderPage struct {
-	Content             string `json:"content"`
-	TypeOfPayment       string `json:"type_of_payment"`
-	ChooseADeliveryTime string `json:"choose_a_delivery_time"`
-	YourAddress         string `json:"your_address"`
-	Mark                string `json:"mark"`
-	ToOrder             string `json:"to_order"`
-	Tomorrow            string `json:"tomorrow"`
-	Cash                string `json:"cash"`
-	PaymentTerminal     string `json:"payment_terminal"`
-}
-
 func CreateTranslationOrderPage(c *gin.Context) {
 
 	db, err := config.ConnDB()
@@ -31,7 +19,15 @@ func CreateTranslationOrderPage(c *gin.Context) {
 		})
 		return
 	}
-	defer db.Close()
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	// GET ALL LANGUAGE
 	languages, err := GetAllLanguageWithIDAndNameShort()
@@ -64,7 +60,15 @@ func CreateTranslationOrderPage(c *gin.Context) {
 			})
 			return
 		}
-		defer resultTrOrderPage.Close()
+		defer func() {
+			if err := resultTrOrderPage.Close(); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}()
 	}
 
 	c.JSON(http.StatusOK, gin.H{
