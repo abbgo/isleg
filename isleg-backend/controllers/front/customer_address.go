@@ -126,7 +126,15 @@ func UpdateCustomerAddressStatus(c *gin.Context) {
 		})
 		return
 	}
-	defer db.Close()
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	addressID := c.Query("address_id")
 	customerID := c.Query("customer_id")
@@ -139,7 +147,15 @@ func UpdateCustomerAddressStatus(c *gin.Context) {
 		})
 		return
 	}
-	defer rowCustomer.Close()
+	defer func() {
+		if err := rowCustomer.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	var customer_id string
 
@@ -169,7 +185,15 @@ func UpdateCustomerAddressStatus(c *gin.Context) {
 		})
 		return
 	}
-	defer rowCusomerAddress.Close()
+	defer func() {
+		if err := rowCusomerAddress.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	var address_id string
 
@@ -199,7 +223,15 @@ func UpdateCustomerAddressStatus(c *gin.Context) {
 		})
 		return
 	}
-	defer resultCustomerAddress.Close()
+	defer func() {
+		if err := resultCustomerAddress.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	resultCustAddressIsActive, err := db.Query("UPDATE customer_address SET is_active = false WHERE id != $1 AND customer_id = $2", addressID, customerID)
 	if err != nil {
@@ -209,7 +241,15 @@ func UpdateCustomerAddressStatus(c *gin.Context) {
 		})
 		return
 	}
-	defer resultCustAddressIsActive.Close()
+	defer func() {
+		if err := resultCustAddressIsActive.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
