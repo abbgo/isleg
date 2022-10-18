@@ -208,7 +208,7 @@ func Routes() *gin.Engine {
 		front.GET("/:category_id/:limit/:page", backController.GetOneCategoryWithProducts) // funksiyany gowy optimize etmeli
 
 		// get order time
-		front.GET("/order-time", backController.GetOrderTime)
+		front.GET("/order-time", backController.GetOrderTime) // funksiyany optimize etmeli
 
 		// search
 		front.POST("/search", frontController.Search)

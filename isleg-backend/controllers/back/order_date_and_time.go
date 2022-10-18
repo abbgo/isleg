@@ -179,7 +179,15 @@ func GetOrderTime(c *gin.Context) {
 		})
 		return
 	}
-	defer db.Close()
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	langID, err := CheckLanguage(c)
 	if err != nil {
@@ -220,7 +228,15 @@ func GetOrderTime(c *gin.Context) {
 		})
 		return
 	}
-	defer rowsOrderDate.Close()
+	defer func() {
+		if err := rowsOrderDate.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	var orderDateAndTimes []OrderDateAndTime
 
@@ -245,7 +261,15 @@ func GetOrderTime(c *gin.Context) {
 				})
 				return
 			}
-			defer rowsOrderTime.Close()
+			defer func() {
+				if err := rowsOrderTime.Close(); err != nil {
+					c.JSON(http.StatusBadRequest, gin.H{
+						"status":  false,
+						"message": err.Error(),
+					})
+					return
+				}
+			}()
 
 			var orderTimes []OrderTime
 
@@ -278,7 +302,15 @@ func GetOrderTime(c *gin.Context) {
 					})
 					return
 				}
-				defer rowsOrderTime.Close()
+				defer func() {
+					if err := rowsOrderTime.Close(); err != nil {
+						c.JSON(http.StatusBadRequest, gin.H{
+							"status":  false,
+							"message": err.Error(),
+						})
+						return
+					}
+				}()
 
 				var orderTimes []OrderTime
 
@@ -309,7 +341,15 @@ func GetOrderTime(c *gin.Context) {
 					})
 					return
 				}
-				defer rowsOrderTime.Close()
+				defer func() {
+					if err := rowsOrderTime.Close(); err != nil {
+						c.JSON(http.StatusBadRequest, gin.H{
+							"status":  false,
+							"message": err.Error(),
+						})
+						return
+					}
+				}()
 
 				var orderTimes []OrderTime
 
