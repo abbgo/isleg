@@ -218,7 +218,15 @@ func GetCompanyPhoneByID(c *gin.Context) {
 		})
 		return
 	}
-	defer db.Close()
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	ID := c.Param("id")
 
@@ -230,7 +238,15 @@ func GetCompanyPhoneByID(c *gin.Context) {
 		})
 		return
 	}
-	defer rowComPhone.Close()
+	defer func() {
+		if err := rowComPhone.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	var phoneNumber string
 
