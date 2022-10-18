@@ -1554,7 +1554,15 @@ func DeletePermanentlyCategoryByID(c *gin.Context) {
 		})
 		return
 	}
-	defer db.Close()
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	ID := c.Param("id")
 
@@ -1566,7 +1574,15 @@ func DeletePermanentlyCategoryByID(c *gin.Context) {
 		})
 		return
 	}
-	defer rowCategor.Close()
+	defer func() {
+		if err := rowCategor.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	var category_id, image string
 
@@ -1606,7 +1622,15 @@ func DeletePermanentlyCategoryByID(c *gin.Context) {
 		})
 		return
 	}
-	defer rowsMainImageProduct.Close()
+	defer func() {
+		if err := rowsMainImageProduct.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	var mainImages []models.MainImage
 
@@ -1659,7 +1683,15 @@ func DeletePermanentlyCategoryByID(c *gin.Context) {
 		})
 		return
 	}
-	defer rowsImagesProduct.Close()
+	defer func() {
+		if err := rowsImagesProduct.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	var images []models.Images
 
@@ -1704,7 +1736,15 @@ func DeletePermanentlyCategoryByID(c *gin.Context) {
 		})
 		return
 	}
-	defer resultProduct.Close()
+	defer func() {
+		if err := resultProduct.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	rowChildCategory, err := db.Query("SELECT id FROM categories WHERE parent_category_id = $1", ID)
 	if err != nil {
@@ -1714,7 +1754,15 @@ func DeletePermanentlyCategoryByID(c *gin.Context) {
 		})
 		return
 	}
-	defer rowChildCategory.Close()
+	defer func() {
+		if err := rowChildCategory.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	var childCategoryIDS []string
 
@@ -1740,7 +1788,15 @@ func DeletePermanentlyCategoryByID(c *gin.Context) {
 			})
 			return
 		}
-		defer rowPrdcs.Close()
+		defer func() {
+			if err := rowPrdcs.Close(); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}()
 
 		var childMainImages []models.MainImage
 
@@ -1793,7 +1849,15 @@ func DeletePermanentlyCategoryByID(c *gin.Context) {
 			})
 			return
 		}
-		defer rowsChildImagesProduct.Close()
+		defer func() {
+			if err := rowsChildImagesProduct.Close(); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}()
 
 		var childImages []models.Images
 
@@ -1838,7 +1902,15 @@ func DeletePermanentlyCategoryByID(c *gin.Context) {
 			})
 			return
 		}
-		defer childresultProduct.Close()
+		defer func() {
+			if err := childresultProduct.Close(); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}()
 
 	}
 
@@ -1850,7 +1922,15 @@ func DeletePermanentlyCategoryByID(c *gin.Context) {
 		})
 		return
 	}
-	defer resutCateg.Close()
+	defer func() {
+		if err := resutCateg.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
