@@ -33,7 +33,15 @@ func CreateOrderTime(c *gin.Context) {
 		})
 		return
 	}
-	defer db.Close()
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	languages, err := GetAllLanguageWithIDAndNameShort()
 	if err != nil {
@@ -65,7 +73,15 @@ func CreateOrderTime(c *gin.Context) {
 		})
 		return
 	}
-	defer resultOrderDates.Close()
+	defer func() {
+		if err := resultOrderDates.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	lastOrderDateID, err := db.Query("SELECT id FROM order_dates ORDER BY created_at DESC LIMIT 1")
 	if err != nil {
@@ -75,7 +91,15 @@ func CreateOrderTime(c *gin.Context) {
 		})
 		return
 	}
-	defer lastOrderDateID.Close()
+	defer func() {
+		if err := lastOrderDateID.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	var orderDateID string
 
@@ -106,7 +130,15 @@ func CreateOrderTime(c *gin.Context) {
 		})
 		return
 	}
-	defer resultOrderTimes.Close()
+	defer func() {
+		if err := resultOrderTimes.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	for _, v := range languages {
 
@@ -118,7 +150,15 @@ func CreateOrderTime(c *gin.Context) {
 			})
 			return
 		}
-		defer resultTrOrderDates.Close()
+		defer func() {
+			if err := resultTrOrderDates.Close(); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}()
 
 	}
 

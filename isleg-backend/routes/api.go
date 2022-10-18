@@ -42,7 +42,7 @@ func Routes() *gin.Engine {
 		back.PUT("/company-setting", backController.UpdateCompanySetting)  //+
 		back.GET("/company-setting", backController.GetCompanySetting)     //+
 
-		back.POST("/order-time", backController.CreateOrderTime)
+		back.POST("/order-time", backController.CreateOrderTime) // funksiyany optimize etmeli
 
 		back.POST("/translation-header", backController.CreateTranslationHeader)        //+
 		back.PUT("/translation-header/:id", backController.UpdateTranslationHeaderByID) //+
@@ -202,7 +202,7 @@ func Routes() *gin.Engine {
 		front.GET("/payment-types", backController.GetPaymentTypesByLangID)
 
 		// homepage categories
-		front.GET("/homepage-categories", frontController.GetHomePageCategories)
+		front.GET("/homepage-categories", frontController.GetHomePageCategories) // funksiyany optimize etmeli
 
 		// // get one category with products
 		front.GET("/:category_id/:limit/:page", backController.GetOneCategoryWithProducts) // funksiyany gowy optimize etmeli
