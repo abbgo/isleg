@@ -18,11 +18,6 @@ type BrendForHomePage struct {
 	Image string    `json:"image"`
 }
 
-type OneBrend struct {
-	Name  string `json:"name"`
-	Image string `json:"image"`
-}
-
 func CreateBrend(c *gin.Context) {
 
 	db, err := config.ConnDB()
@@ -226,7 +221,15 @@ func GetBrendByID(c *gin.Context) {
 		})
 		return
 	}
-	defer db.Close()
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	ID := c.Param("id")
 
@@ -238,9 +241,17 @@ func GetBrendByID(c *gin.Context) {
 		})
 		return
 	}
-	defer rowBrend.Close()
+	defer func() {
+		if err := rowBrend.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
-	var brend OneBrend
+	var brend models.Brend
 
 	for rowBrend.Next() {
 		if err := rowBrend.Scan(&brend.Name, &brend.Image); err != nil {
