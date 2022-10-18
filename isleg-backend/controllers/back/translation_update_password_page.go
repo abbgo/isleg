@@ -253,7 +253,15 @@ func GetTranslationUpdatePasswordPageByLangID(c *gin.Context) {
 		})
 		return
 	}
-	defer db.Close()
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	langID, err := CheckLanguage(c)
 	if err != nil {
@@ -273,9 +281,17 @@ func GetTranslationUpdatePasswordPageByLangID(c *gin.Context) {
 		})
 		return
 	}
-	defer aboutRow.Close()
+	defer func() {
+		if err := aboutRow.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
-	var trUpdatePasswordPage TrUpdatePasswordPage
+	var trUpdatePasswordPage models.TranslationUpdatePasswordPage
 
 	for aboutRow.Next() {
 		if err := aboutRow.Scan(&trUpdatePasswordPage.Title, &trUpdatePasswordPage.Password, &trUpdatePasswordPage.VerifyPassword, &trUpdatePasswordPage.Explanation, &trUpdatePasswordPage.Save); err != nil {
