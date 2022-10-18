@@ -6,34 +6,33 @@ import (
 	"strings"
 
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 )
 
 type OrderDates struct {
-	ID        uuid.UUID `json:"id,omitempty"`
-	Date      string    `json:"date,omitempty"`
-	CreatedAt string    `json:"-"`
-	UpdatedAt string    `json:"-"`
-	DeletedAt string    `json:"-"`
+	ID        string `json:"id,omitempty"`
+	Date      string `json:"date,omitempty"`
+	CreatedAt string `json:"-"`
+	UpdatedAt string `json:"-"`
+	DeletedAt string `json:"-"`
 }
 
 type OrderTimes struct {
-	ID          uuid.UUID `json:"id,omitempty"`
-	OrderDateID uuid.UUID `json:"order_date_id,omitempty"`
-	Time        string    `json:"time,omitempty"`
-	CreatedAt   string    `json:"-"`
-	UpdatedAt   string    `json:"-"`
-	DeletedAt   string    `json:"-"`
+	ID          string `json:"id,omitempty"`
+	OrderDateID string `json:"order_date_id,omitempty"`
+	Time        string `json:"time,omitempty"`
+	CreatedAt   string `json:"-"`
+	UpdatedAt   string `json:"-"`
+	DeletedAt   string `json:"-"`
 }
 
 type TranslationOrderDates struct {
-	ID          uuid.UUID `json:"id,omitempty"`
-	LangID      uuid.UUID `json:"lang_id,omitempty"`
-	OrderDateID uuid.UUID `json:"order_date_id,omitempty"`
-	Date        string    `json:"date,omitempty"`
-	CreatedAt   string    `json:"-"`
-	UpdatedAt   string    `json:"-"`
-	DeletedAt   string    `json:"-"`
+	ID          string `json:"id,omitempty"`
+	LangID      string `json:"lang_id,omitempty"`
+	OrderDateID string `json:"order_date_id,omitempty"`
+	Date        string `json:"date,omitempty"`
+	CreatedAt   string `json:"-"`
+	UpdatedAt   string `json:"-"`
+	DeletedAt   string `json:"-"`
 }
 
 func ValidateOrderDateAndTime(date string, times []string, languages []Language, dataNames []string, context *gin.Context) error {

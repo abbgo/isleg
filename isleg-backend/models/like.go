@@ -3,17 +3,15 @@ package models
 import (
 	"errors"
 	"github/abbgo/isleg/isleg-backend/config"
-
-	"github.com/google/uuid"
 )
 
 type Like struct {
-	ID         uuid.UUID `json:"id,omitempty"`
-	ProductID  uuid.UUID `json:"product_id,omitempty"`
-	CustomerID uuid.UUID `json:"customer_id,omitempty"`
-	CreatedAt  string    `json:"-"`
-	UpdatedAt  string    `json:"-"`
-	DeletedAt  string    `json:"-"`
+	ID         string `json:"id,omitempty"`
+	ProductID  string `json:"product_id,omitempty"`
+	CustomerID string `json:"customer_id,omitempty"`
+	CreatedAt  string `json:"-"`
+	UpdatedAt  string `json:"-"`
+	DeletedAt  string `json:"-"`
 }
 
 func ValidateCustomerLike(customerID string, productIDs []string) error {

@@ -5,13 +5,12 @@ import (
 	"github/abbgo/isleg/isleg-backend/config"
 	"strings"
 
-	"github.com/google/uuid"
 	"github.com/lib/pq"
 	"golang.org/x/crypto/bcrypt"
 )
 
 type Customer struct {
-	ID          uuid.UUID   `json:"id,omitempty"`
+	ID          string      `json:"id,omitempty"`
 	FullName    string      `json:"full_name,omitempty" binding:"required,min=3"`
 	PhoneNumber string      `json:"phone_number,omitempty" binding:"required,e164,len=12"`
 	Password    string      `json:"password,omitempty" binding:"required,min=5,max=25"`
