@@ -92,9 +92,9 @@ func Routes() *gin.Engine {
 		back.PUT("/category/:id", backController.UpdateCategoryByID)
 		back.GET("/category/:id", backController.GetCategoryByID)
 		back.GET("/categories", backController.GetCategories)
-		back.DELETE("/category/:id", backController.DeleteCategoryByID)       // funksiyany gowy optimize etmeli
-		back.GET("/restore-category/:id", backController.RestoreCategoryByID) // funksiyany gowy optimize etmeli
-		back.DELETE("/delete-category/:id", backController.DeletePermanentlyCategoryByID)
+		back.DELETE("/category/:id", backController.DeleteCategoryByID)                   // funksiyany gowy optimize etmeli
+		back.GET("/restore-category/:id", backController.RestoreCategoryByID)             // funksiyany gowy optimize etmeli
+		back.DELETE("/delete-category/:id", backController.DeletePermanentlyCategoryByID) // funksiyany gowy optimize etmeli
 
 		back.POST("/brend", backController.CreateBrend)
 		back.PUT("/brend/:id", backController.UpdateBrendByID)
@@ -205,7 +205,7 @@ func Routes() *gin.Engine {
 		front.GET("/homepage-categories", frontController.GetHomePageCategories)
 
 		// // get one category with products
-		front.GET("/:category_id/:limit/:page", backController.GetOneCategoryWithProducts)
+		front.GET("/:category_id/:limit/:page", backController.GetOneCategoryWithProducts) // funksiyany gowy optimize etmeli
 
 		// get order time
 		front.GET("/order-time", backController.GetOrderTime)
