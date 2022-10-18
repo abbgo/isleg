@@ -63,11 +63,6 @@ type OneCategory struct {
 	Translations     []models.TranslationCategory `json:"translations"`
 }
 
-// type TranslationCategory struct {
-// 	LangID string `json:"lang_id"`
-// 	Name   string `json:"name"`
-// }
-
 func CreateCategory(c *gin.Context) {
 
 	db, err := config.ConnDB()

@@ -23,11 +23,6 @@ type OneBrend struct {
 	Image string `json:"image"`
 }
 
-// type ProductImages struct {
-// 	MainImage string         `json:"main_image"`
-// 	Images    pq.StringArray `json:"images"`
-// }
-
 func CreateBrend(c *gin.Context) {
 
 	db, err := config.ConnDB()
@@ -38,7 +33,15 @@ func CreateBrend(c *gin.Context) {
 		})
 		return
 	}
-	defer db.Close()
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	// GET DATA FROM REQUEST
 	name := c.PostForm("name")
@@ -71,7 +74,15 @@ func CreateBrend(c *gin.Context) {
 		})
 		return
 	}
-	defer result.Close()
+	defer func() {
+		if err := result.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,

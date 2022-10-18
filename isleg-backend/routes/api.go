@@ -88,10 +88,10 @@ func Routes() *gin.Engine {
 		back.PUT("/translation-my-order-page/:id", backController.UpdateTranslationMyOrderPageByID) //+
 		back.GET("/translation-my-order-page/:id", backController.GetTranslationMyOrderPageByID)    //+
 
-		back.POST("/category", backController.CreateCategory)
-		back.PUT("/category/:id", backController.UpdateCategoryByID)
-		back.GET("/category/:id", backController.GetCategoryByID)
-		back.GET("/categories", backController.GetCategories)
+		back.POST("/category", backController.CreateCategory)                             //+
+		back.PUT("/category/:id", backController.UpdateCategoryByID)                      //+
+		back.GET("/category/:id", backController.GetCategoryByID)                         //+
+		back.GET("/categories", backController.GetCategories)                             //+
 		back.DELETE("/category/:id", backController.DeleteCategoryByID)                   // funksiyany gowy optimize etmeli
 		back.GET("/restore-category/:id", backController.RestoreCategoryByID)             // funksiyany gowy optimize etmeli
 		back.DELETE("/delete-category/:id", backController.DeletePermanentlyCategoryByID) // funksiyany gowy optimize etmeli
