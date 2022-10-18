@@ -7,10 +7,10 @@ import (
 )
 
 type TranslationSecure struct {
-	ID        string `json:"id"`
-	LangID    string `json:"lang_id"`
-	Title     string `json:"title"`
-	Content   string `json:"content"`
+	ID        string `json:"id,omitempty"`
+	LangID    string `json:"lang_id,omitempty"`
+	Title     string `json:"title,omitempty"`
+	Content   string `json:"content,omitempty"`
 	CreatedAt string `json:"-"`
 	UpdatedAt string `json:"-"`
 	DeletedAt string `json:"-"`
