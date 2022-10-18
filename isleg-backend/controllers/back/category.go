@@ -311,7 +311,15 @@ func UpdateCategoryByID(c *gin.Context) {
 		})
 		return
 	}
-	defer db.Close()
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	ID := c.Param("id")
 	var fileName string
@@ -334,7 +342,15 @@ func UpdateCategoryByID(c *gin.Context) {
 		})
 		return
 	}
-	defer rowCategor.Close()
+	defer func() {
+		if err := rowCategor.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	var category_id, image string
 
@@ -367,7 +383,15 @@ func UpdateCategoryByID(c *gin.Context) {
 			})
 			return
 		}
-		defer rowCategory.Close()
+		defer func() {
+			if err := rowCategory.Close(); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}()
 
 		var parentCategory string
 
@@ -466,7 +490,15 @@ func UpdateCategoryByID(c *gin.Context) {
 			})
 			return
 		}
-		defer result.Close()
+		defer func() {
+			if err := result.Close(); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}()
 	} else {
 		resultCat, err := db.Query("UPDATE categories SET image = $1, is_home_category = $2 , updated_at = $4 WHERE id = $3", fileName, isHomeCategory, ID, currentTime)
 		if err != nil {
@@ -476,7 +508,15 @@ func UpdateCategoryByID(c *gin.Context) {
 			})
 			return
 		}
-		defer resultCat.Close()
+		defer func() {
+			if err := resultCat.Close(); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}()
 	}
 
 	if fileName != "" {
@@ -493,7 +533,15 @@ func UpdateCategoryByID(c *gin.Context) {
 			})
 			return
 		}
-		defer resultTRCate.Close()
+		defer func() {
+			if err := resultTRCate.Close(); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}()
 	}
 
 	c.JSON(http.StatusOK, gin.H{
