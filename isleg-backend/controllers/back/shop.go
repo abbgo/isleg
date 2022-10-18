@@ -29,7 +29,15 @@ func CreateShop(c *gin.Context) {
 		})
 		return
 	}
-	defer db.Close()
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	ownerName := c.PostForm("owner_name")
 	address := c.PostForm("address")
@@ -53,7 +61,15 @@ func CreateShop(c *gin.Context) {
 		})
 		return
 	}
-	defer resultShops.Close()
+	defer func() {
+		if err := resultShops.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	// get the id of the added shop
 	lastShopID, err := db.Query("SELECT id FROM shops ORDER BY created_at DESC LIMIT 1")
@@ -64,7 +80,15 @@ func CreateShop(c *gin.Context) {
 		})
 		return
 	}
-	defer lastShopID.Close()
+	defer func() {
+		if err := lastShopID.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	var shopID string
 
@@ -98,7 +122,15 @@ func CreateShop(c *gin.Context) {
 			})
 			return
 		}
-		defer resultCategorySHop.Close()
+		defer func() {
+			if err := resultCategorySHop.Close(); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}()
 	}
 
 	c.JSON(http.StatusOK, gin.H{

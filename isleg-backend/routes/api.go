@@ -136,9 +136,9 @@ func Routes() *gin.Engine {
 		back.GET("/restore-afisa/:id", backController.RestoreAfisaByID)             // funksiyany optimize etmeli
 		back.DELETE("/delete-afisa/:id", backController.DeletePermanentlyAfisaByID) // funksiyany optimize etmeli
 
-		back.POST("/district", backController.CreateDistrict)
+		back.POST("/district", backController.CreateDistrict) // funksiyany optimize etmeli
 
-		back.POST("/shop", backController.CreateShop)
+		back.POST("/shop", backController.CreateShop) // funksiyany optimize etmeli
 		back.PUT("/shop/:id", backController.UpdateShopByID)
 		back.GET("/shop/:id", backController.GetShopByID)
 		back.GET("/shops", backController.GetShops)
