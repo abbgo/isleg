@@ -371,7 +371,15 @@ func RemoveCart(c *gin.Context) {
 		})
 		return
 	}
-	defer db.Close()
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	customerID := c.Query("customer_id")
 	productID := c.Query("product_id")
@@ -384,7 +392,15 @@ func RemoveCart(c *gin.Context) {
 		})
 		return
 	}
-	defer rowCustomer.Close()
+	defer func() {
+		if err := rowCustomer.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	var customer_id string
 
@@ -416,7 +432,15 @@ func RemoveCart(c *gin.Context) {
 			})
 			return
 		}
-		defer rowCart.Close()
+		defer func() {
+			if err := rowCart.Close(); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}()
 
 		var product_id string
 
@@ -446,7 +470,15 @@ func RemoveCart(c *gin.Context) {
 			})
 			return
 		}
-		defer resultCart.Close()
+		defer func() {
+			if err := resultCart.Close(); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}()
 
 	} else {
 
@@ -458,7 +490,15 @@ func RemoveCart(c *gin.Context) {
 			})
 			return
 		}
-		defer resultCart.Close()
+		defer func() {
+			if err := resultCart.Close(); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}()
 
 	}
 
