@@ -183,7 +183,15 @@ func GetCompanyAddressByID(c *gin.Context) {
 		})
 		return
 	}
-	defer db.Close()
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	ID := c.Param("id")
 
@@ -195,7 +203,15 @@ func GetCompanyAddressByID(c *gin.Context) {
 		})
 		return
 	}
-	defer rowComAddress.Close()
+	defer func() {
+		if err := rowComAddress.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	var adress string
 
