@@ -9,13 +9,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type TrMyInformationPage struct {
-	Birthday       string `json:"birthday"`
-	Address        string `json:"address"`
-	UpdatePassword string `json:"update_password"`
-	Save           string `json:"save"`
-}
-
 func CreateTranslationMyInformationPage(c *gin.Context) {
 
 	db, err := config.ConnDB()
@@ -26,7 +19,15 @@ func CreateTranslationMyInformationPage(c *gin.Context) {
 		})
 		return
 	}
-	defer db.Close()
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	// GET ALL LANGUAGE
 	languages, err := GetAllLanguageWithIDAndNameShort()
@@ -59,7 +60,15 @@ func CreateTranslationMyInformationPage(c *gin.Context) {
 			})
 			return
 		}
-		defer resutlTRMyInfPage.Close()
+		defer func() {
+			if err := resutlTRMyInfPage.Close(); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}()
 	}
 
 	c.JSON(http.StatusOK, gin.H{
