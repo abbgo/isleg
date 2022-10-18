@@ -7,12 +7,12 @@ import (
 )
 
 type TranslationMyInformationPage struct {
-	ID             string `json:"id"`
-	LangID         string `json:"lang_id"`
-	Birthday       string `json:"birthday"`
-	Address        string `json:"address"`
-	UpdatePassword string `json:"update_password"`
-	Save           string `json:"save"`
+	ID             string `json:"id,omitempty"`
+	LangID         string `json:"lang_id,omitempty"`
+	Birthday       string `json:"birthday,omitempty"`
+	Address        string `json:"address,omitempty"`
+	UpdatePassword string `json:"update_password,omitempty"`
+	Save           string `json:"save,omitempty"`
 	CreatedAt      string `json:"-"`
 	UpdatedAt      string `json:"-"`
 	DeletedAt      string `json:"-"`
