@@ -43,7 +43,15 @@ func RegisterCustomer(c *gin.Context) {
 		})
 		return
 	}
-	defer db.Close()
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	var customer models.Customer
 
@@ -80,7 +88,15 @@ func RegisterCustomer(c *gin.Context) {
 		})
 		return
 	}
-	defer rowCustomer.Close()
+	defer func() {
+		if err := rowCustomer.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	var phone_number string
 
@@ -104,7 +120,15 @@ func RegisterCustomer(c *gin.Context) {
 			})
 			return
 		}
-		defer resultCustomer.Close()
+		defer func() {
+			if err := resultCustomer.Close(); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}()
 
 	} else {
 
@@ -116,7 +140,15 @@ func RegisterCustomer(c *gin.Context) {
 			})
 			return
 		}
-		defer resultCustomers.Close()
+		defer func() {
+			if err := resultCustomers.Close(); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}()
 
 	}
 
@@ -128,7 +160,15 @@ func RegisterCustomer(c *gin.Context) {
 		})
 		return
 	}
-	defer row.Close()
+	defer func() {
+		if err := row.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	var customerID string
 
