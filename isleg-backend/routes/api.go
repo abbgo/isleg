@@ -138,8 +138,8 @@ func Routes() *gin.Engine {
 
 		back.POST("/district", backController.CreateDistrict) // funksiyany optimize etmeli
 
-		back.POST("/shop", backController.CreateShop) // funksiyany optimize etmeli
-		back.PUT("/shop/:id", backController.UpdateShopByID)
+		back.POST("/shop", backController.CreateShop)        // funksiyany optimize etmeli
+		back.PUT("/shop/:id", backController.UpdateShopByID) // funksiyany optimize etmeli
 		back.GET("/shop/:id", backController.GetShopByID)
 		back.GET("/shops", backController.GetShops)
 		back.DELETE("/shop/:id", backController.DeleteShopByID)

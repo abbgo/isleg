@@ -150,7 +150,15 @@ func UpdateShopByID(c *gin.Context) {
 		})
 		return
 	}
-	defer db.Close()
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	ID := c.Param("id")
 
@@ -162,7 +170,15 @@ func UpdateShopByID(c *gin.Context) {
 		})
 		return
 	}
-	defer rowShop.Close()
+	defer func() {
+		if err := rowShop.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	var shopID string
 
@@ -208,7 +224,15 @@ func UpdateShopByID(c *gin.Context) {
 		})
 		return
 	}
-	defer resultShop.Close()
+	defer func() {
+		if err := resultShop.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	resultCategoryShop, err := db.Query("DELETE FROM category_shop WHERE shop_id = $1", ID)
 	if err != nil {
@@ -218,7 +242,15 @@ func UpdateShopByID(c *gin.Context) {
 		})
 		return
 	}
-	defer resultCategoryShop.Close()
+	defer func() {
+		if err := resultCategoryShop.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	for _, v := range categories {
 		resultCatShop, err := db.Query("INSERT INTO category_shop (category_id,shop_id,updated_at) VALUES ($1,$2,$3)", v, ID, currentTime)
@@ -229,7 +261,15 @@ func UpdateShopByID(c *gin.Context) {
 			})
 			return
 		}
-		defer resultCatShop.Close()
+		defer func() {
+			if err := resultCatShop.Close(); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}()
 	}
 
 	c.JSON(http.StatusOK, gin.H{
