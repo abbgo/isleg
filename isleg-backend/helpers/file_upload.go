@@ -4,17 +4,10 @@ import (
 	"errors"
 	"os"
 	"path/filepath"
-	"regexp"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 )
-
-// Verify e-mail address
-func IsEmailValid(e string) bool {
-	emailRegex := regexp.MustCompile(`^[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,4}$`)
-	return emailRegex.MatchString(e)
-}
 
 // File upload
 func FileUpload(fileName, path string, context *gin.Context) (string, error) {

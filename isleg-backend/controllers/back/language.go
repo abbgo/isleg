@@ -7,7 +7,6 @@ import (
 	"net/http"
 	"os"
 	"strings"
-	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -285,6 +284,7 @@ func GetLanguages(c *gin.Context) {
 
 func DeleteLanguageByID(c *gin.Context) {
 
+	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -303,8 +303,10 @@ func DeleteLanguageByID(c *gin.Context) {
 		}
 	}()
 
+	// get id of language from request parameter
 	langID := c.Param("id")
 
+	// Check if there is a language, id equal to langID and get flag of language
 	rowFlag, err := db.Query("SELECT flag FROM languages WHERE id = $1 AND deleted_at IS NULL", langID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -343,27 +345,8 @@ func DeleteLanguageByID(c *gin.Context) {
 		return
 	}
 
-	currentTime := time.Now()
-
-	resutlTRLand, err := db.Query("UPDATE languages SET deleted_at = $1 WHERE id = $2", currentTime, langID)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-	defer func() {
-		if err := resutlTRLand.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
-
-	resultPROC, err := db.Query("CALL after_delete_language($1)", langID)
+	// set current time to deleted_at row of language, used delete_language procedure
+	resultPROC, err := db.Query("CALL delete_language($1)", langID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,

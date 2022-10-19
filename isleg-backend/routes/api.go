@@ -34,7 +34,7 @@ func Routes() *gin.Engine {
 		back.PUT("/language/:id", backController.UpdateLanguageByID)                      // fully ready
 		back.GET("/language/:id", backController.GetLanguageByID)                         // fully ready
 		back.GET("/languages", backController.GetLanguages)                               // fully ready
-		back.DELETE("/language/:id", backController.DeleteLanguageByID)                   //+
+		back.DELETE("/language/:id", backController.DeleteLanguageByID)                   // fully ready
 		back.GET("/restore-language/:id", backController.RestoreLanguageByID)             //+
 		back.DELETE("/delete-language/:id", backController.DeletePermanentlyLanguageByID) //+
 
