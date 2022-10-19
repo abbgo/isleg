@@ -9,12 +9,13 @@ import (
 	"github.com/google/uuid"
 )
 
-// email validate
+// Verify e-mail address
 func IsEmailValid(e string) bool {
 	emailRegex := regexp.MustCompile(`^[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,4}$`)
 	return emailRegex.MatchString(e)
 }
 
+// File upload
 func FileUpload(fileName, path string, context *gin.Context) (string, error) {
 
 	file, err := context.FormFile(fileName)

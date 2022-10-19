@@ -14,8 +14,10 @@ import (
 	"github.com/google/uuid"
 )
 
+// create new language
 func CreateLanguage(c *gin.Context) {
 
+	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -34,10 +36,10 @@ func CreateLanguage(c *gin.Context) {
 		}
 	}()
 
-	// GET DATA FROM REQUEST
+	// get the short name of the language from request
 	nameShort := c.PostForm("name_short")
 
-	// VALIDATE DATA
+	// verify language short name
 	if nameShort == "" {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -46,7 +48,7 @@ func CreateLanguage(c *gin.Context) {
 		return
 	}
 
-	// FILE UPLOAD
+	// upload image of language
 	newFileName, err := pkg.FileUpload("flag", "language", c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -56,7 +58,7 @@ func CreateLanguage(c *gin.Context) {
 		return
 	}
 
-	// CREATE LANGUAGE
+	// add language to database , used after_insert_language trigger
 	resultLang, err := db.Query("INSERT INTO languages (name_short,flag) VALUES ($1,$2)", strings.ToLower(nameShort), "uploads/language/"+newFileName)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -77,7 +79,7 @@ func CreateLanguage(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
-		"message": "language successfully added",
+		"message": "Language added successfully",
 	})
 
 }
