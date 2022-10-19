@@ -266,6 +266,7 @@ func GetLanguageByID(c *gin.Context) {
 }
 
 func GetLanguages(c *gin.Context) {
+
 	languages, err := GetAllLanguageForHeader()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -585,6 +586,7 @@ func DeletePermanentlyLanguageByID(c *gin.Context) {
 
 func GetAllLanguageForHeader() ([]models.Language, error) {
 
+	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
 		return nil, nil
@@ -598,7 +600,7 @@ func GetAllLanguageForHeader() ([]models.Language, error) {
 
 	var ls []models.Language
 
-	// GET Language For Header
+	// get name_short,flag of all languages from database
 	rows, err := db.Query("SELECT name_short,flag FROM languages WHERE deleted_at IS NULL")
 	if err != nil {
 		return nil, err
