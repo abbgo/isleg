@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "efc7015c-3efe-4573-b775-ba4b3cd6936c",
+		"_postman_id": "0fb458a2-a77c-4c64-aa31-bd56c2e7c412",
 		"name": "IM",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -18,13 +18,13 @@
 							"formdata": [
 								{
 									"key": "name_short",
-									"value": "tr",
+									"value": "pl",
 									"type": "default"
 								},
 								{
 									"key": "flag",
 									"type": "file",
-									"src": "/home/abb/go/src/github.com/abbgo/isleg/isleg-data/Saydyn suratynyn razmeri/Kagyz kley/medium.jpg"
+									"src": "/home/abb/go/src/github.com/abbgo/isleg/isleg-data/Saydyn suratynyn razmeri/Yazuw kagyz/large.jpg"
 								}
 							],
 							"options": {
@@ -63,18 +63,18 @@
 								},
 								{
 									"key": "name_short",
-									"value": "tr",
+									"value": "pl",
 									"type": "default"
 								},
 								{
 									"key": "flag",
 									"type": "file",
-									"src": "/home/abb/go/src/github.com/abbgo/isleg/isleg-data/Saydyn suratynyn razmeri/Kagyz kley/large.jpg"
+									"src": "/home/abb/go/src/github.com/abbgo/isleg/isleg-data/Saydyn suratynyn razmeri/Yazuw kagyz/small.jpg"
 								}
 							]
 						},
 						"url": {
-							"raw": "localhost:2406/admin/language/198695b5-579a-4f80-ac10-8380e17e5d98",
+							"raw": "localhost:2406/admin/language/b62a1c1c-0a29-4756-8e9d-5c9680758d18",
 							"host": [
 								"localhost"
 							],
@@ -82,7 +82,7 @@
 							"path": [
 								"admin",
 								"language",
-								"198695b5-579a-4f80-ac10-8380e17e5d98"
+								"b62a1c1c-0a29-4756-8e9d-5c9680758d18"
 							]
 						}
 					},
@@ -3221,7 +3221,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NTYiLCJleHAiOjE2NjU5NTEyNjV9.WKKj35rXo3U_xdyudD8WcIwXN3KKrHngEIU2x-owovQ",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NTYiLCJleHAiOjE2NjYyMTIxNTZ9.JCWhaeIOSMN_tpfiD1U3nIEUp3MWzMO9ibevFXsSMhI",
 								"type": "default"
 							}
 						],
