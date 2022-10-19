@@ -5,12 +5,9 @@ import (
 	"github/abbgo/isleg/isleg-backend/helpers"
 	"github/abbgo/isleg/isleg-backend/models"
 	"net/http"
-	"os"
-	"path/filepath"
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 )
 
 func CreateCompanySetting(c *gin.Context) {
@@ -96,6 +93,7 @@ func CreateCompanySetting(c *gin.Context) {
 
 func UpdateCompanySetting(c *gin.Context) {
 
+	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -114,10 +112,13 @@ func UpdateCompanySetting(c *gin.Context) {
 		}
 	}()
 
+	// get data from request
 	email := c.PostForm("email")
 	instagram := c.PostForm("instagram")
+
 	var logoName, faviconName string
 
+	// Check if there is a company_setting and get logo and favicon
 	rowComSet, err := db.Query("SELECT logo,favicon FROM company_setting WHERE deleted_at IS NULL ORDER BY created_at ASC LIMIT 1")
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -156,6 +157,7 @@ func UpdateCompanySetting(c *gin.Context) {
 		return
 	}
 
+	// validate email and instagram
 	err = models.ValidateCompanySettingData(email, instagram)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -165,65 +167,29 @@ func UpdateCompanySetting(c *gin.Context) {
 		return
 	}
 
-	fileLogo, err := c.FormFile("logo")
+	// upload logo
+	logoName, err = helpers.FileUploadForUpdate("logo", "setting", logo, c)
 	if err != nil {
-		logoName = logo
-	} else {
-		extensionFile := filepath.Ext(fileLogo.Filename)
-
-		if extensionFile != ".jpg" && extensionFile != ".jpeg" && extensionFile != ".png" && extensionFile != ".gif" {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": "the file must be an image",
-			})
-			return
-		}
-
-		newFileName := uuid.New().String() + extensionFile
-		c.SaveUploadedFile(fileLogo, "./uploads/setting/"+newFileName)
-
-		if err := os.Remove("./" + logo); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-
-		logoName = "uploads/setting/" + newFileName
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
 	}
 
-	fileFavicon, err := c.FormFile("favicon")
+	// upload favicon
+	faviconName, err = helpers.FileUploadForUpdate("favicon", "setting", favicon, c)
 	if err != nil {
-		faviconName = favicon
-	} else {
-		extensionFile := filepath.Ext(fileFavicon.Filename)
-
-		if extensionFile != ".jpg" && extensionFile != ".jpeg" && extensionFile != ".png" && extensionFile != ".gif" {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": "the file must be an image",
-			})
-			return
-		}
-
-		newFileName := uuid.New().String() + extensionFile
-		c.SaveUploadedFile(fileFavicon, "./uploads/setting/"+newFileName)
-
-		if err := os.Remove("./" + favicon); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-
-		faviconName = "uploads/setting/" + newFileName
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
 	}
 
 	currentTime := time.Now()
 
-	resultComPSETTING, err := db.Query("UPDATE company_setting SET logo = $1,favicon=$2,email=$3,instagram=$4,updated_at=$5", logoName, faviconName, email, instagram, currentTime)
+	resultComPSETTING, err := db.Query("UPDATE company_setting SET logo = $1,favicon=$2,email=$3,instagram=$4,updated_at=$5", "uploads/setting/"+logoName, "uploads/setting/"+faviconName, email, instagram, currentTime)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,

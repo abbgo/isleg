@@ -29,7 +29,7 @@ func FileUpload(fileName, path string, context *gin.Context) (string, error) {
 		return "", err
 	}
 
-	return newFileName, nil
+	return "uploads/" + path + "/" + newFileName, nil
 
 }
 
@@ -62,7 +62,7 @@ func FileUploadForUpdate(fileName, path, oldFileName string, context *gin.Contex
 			return "", err
 		}
 
-		return newFileName, nil
+		return "uploads/" + path + "/" + newFileName, nil
 
 	}
 

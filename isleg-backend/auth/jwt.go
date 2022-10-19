@@ -4,6 +4,7 @@ import (
 	"errors"
 	"net/http"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
@@ -20,7 +21,7 @@ type JWTClaim struct {
 func GenerateAccessToken(phoneNumber string) (accessTokenString string, err error) {
 
 	// expirationTime := time.Now().Add(1 * time.Hour)
-	expirationTime := time.Now().Add(10 * time.Second)
+	expirationTime := time.Now().Add(5 * time.Second)
 
 	claims := &JWTClaim{
 		PhoneNumber: phoneNumber,
@@ -37,7 +38,7 @@ func GenerateAccessToken(phoneNumber string) (accessTokenString string, err erro
 func GenerateRefreshToken(phoneNumber string) (refreshTokenString string, err error) {
 
 	// expirationTime := time.Now().Add(5 * time.Hour)
-	expirationTime := time.Now().Add(20 * time.Second)
+	expirationTime := time.Now().Add(10 * time.Second)
 
 	claims := &JWTClaim{
 		PhoneNumber: phoneNumber,
@@ -53,7 +54,8 @@ func GenerateRefreshToken(phoneNumber string) (refreshTokenString string, err er
 
 func Refresh(c *gin.Context) {
 
-	tokenString := c.GetHeader("RefershToken")
+	tokenStr := c.GetHeader("RefershToken")
+	tokenString := strings.Split(tokenStr, " ")[1]
 	if tokenString == "" {
 		c.JSON(401, gin.H{"message": "request does not contain an access token"})
 		c.Abort()
@@ -118,7 +120,7 @@ func ValidateToken(signedToken string) (err error) {
 		},
 	)
 	if err != nil {
-		return
+		return err
 	}
 	claims, ok := token.Claims.(*JWTClaim)
 	if !ok {
@@ -129,7 +131,7 @@ func ValidateToken(signedToken string) (err error) {
 		err = errors.New("token expired")
 		return
 	}
-	return
+	return nil
 }
 
 // func ValidateRefreshToken(signedToken string) (err error) {

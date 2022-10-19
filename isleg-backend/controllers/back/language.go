@@ -56,7 +56,7 @@ func CreateLanguage(c *gin.Context) {
 	}
 
 	// add language to database , used after_insert_language trigger
-	resultLang, err := db.Query("INSERT INTO languages (name_short,flag) VALUES ($1,$2)", strings.ToLower(nameShort), "uploads/language/"+newFileName)
+	resultLang, err := db.Query("INSERT INTO languages (name_short,flag) VALUES ($1,$2)", strings.ToLower(nameShort), newFileName)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -169,7 +169,7 @@ func UpdateLanguageByID(c *gin.Context) {
 	}
 
 	// update language in database
-	resultLang, err := db.Query("UPDATE languages SET name_short = $1 , flag = $2  WHERE id = $3", nameShort, "uploads/language/"+fileName, langID)
+	resultLang, err := db.Query("UPDATE languages SET name_short = $1 , flag = $2  WHERE id = $3", nameShort, fileName, langID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
