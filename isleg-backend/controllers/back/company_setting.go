@@ -15,6 +15,7 @@ import (
 
 func CreateCompanySetting(c *gin.Context) {
 
+	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -33,11 +34,11 @@ func CreateCompanySetting(c *gin.Context) {
 		}
 	}()
 
-	// GET DATA FROM REQUEST
+	// get email and instagram of company_setting from request
 	email := c.PostForm("email")
 	instagram := c.PostForm("instagram")
 
-	// VALIDATE DATA
+	// validate email and instagram
 	err = models.ValidateCompanySettingData(email, instagram)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -47,9 +48,7 @@ func CreateCompanySetting(c *gin.Context) {
 		return
 	}
 
-	// FILE UPLOAD
-
-	// LOGO
+	// upload logo
 	newFileNameLogo, err := helpers.FileUpload("logo", "setting", c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -59,7 +58,7 @@ func CreateCompanySetting(c *gin.Context) {
 		return
 	}
 
-	// FAVICON
+	// upload favicon
 	newFileNameFavicon, err := helpers.FileUpload("favicon", "setting", c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -69,7 +68,7 @@ func CreateCompanySetting(c *gin.Context) {
 		return
 	}
 
-	// CREATE COMPANY SETTING
+	// add data to database
 	resultComSetting, err := db.Query("INSERT INTO company_setting (logo,favicon,email,instagram) VALUES ($1,$2,$3,$4)", "uploads/setting/"+newFileNameLogo, "uploads/setting/"+newFileNameFavicon, email, instagram)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
