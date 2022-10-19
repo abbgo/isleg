@@ -2,8 +2,8 @@ package controllers
 
 import (
 	"github/abbgo/isleg/isleg-backend/config"
+	"github/abbgo/isleg/isleg-backend/helpers"
 	"github/abbgo/isleg/isleg-backend/models"
-	"github/abbgo/isleg/isleg-backend/pkg"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -50,7 +50,7 @@ func CreateCompanySetting(c *gin.Context) {
 	// FILE UPLOAD
 
 	// LOGO
-	newFileNameLogo, err := pkg.FileUpload("logo", "setting", c)
+	newFileNameLogo, err := helpers.FileUpload("logo", "setting", c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -60,7 +60,7 @@ func CreateCompanySetting(c *gin.Context) {
 	}
 
 	// FAVICON
-	newFileNameFavicon, err := pkg.FileUpload("favicon", "setting", c)
+	newFileNameFavicon, err := helpers.FileUpload("favicon", "setting", c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,

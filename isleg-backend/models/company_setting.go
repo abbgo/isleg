@@ -2,7 +2,7 @@ package models
 
 import (
 	"errors"
-	"github/abbgo/isleg/isleg-backend/pkg"
+	"github/abbgo/isleg/isleg-backend/helpers"
 )
 
 type CompanySetting struct {
@@ -18,7 +18,7 @@ type CompanySetting struct {
 
 func ValidateCompanySettingData(email, instagram string) error {
 
-	emailResult := pkg.IsEmailValid(email)
+	emailResult := helpers.IsEmailValid(email)
 	if email == "" || !emailResult {
 		return errors.New("email address is required or it doesn't match")
 	}

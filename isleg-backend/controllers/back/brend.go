@@ -2,8 +2,8 @@ package controllers
 
 import (
 	"github/abbgo/isleg/isleg-backend/config"
+	"github/abbgo/isleg/isleg-backend/helpers"
 	"github/abbgo/isleg/isleg-backend/models"
-	"github/abbgo/isleg/isleg-backend/pkg"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -51,7 +51,7 @@ func CreateBrend(c *gin.Context) {
 	}
 
 	// FILE UPLOAD
-	newFileName, err := pkg.FileUpload("image", "brend", c)
+	newFileName, err := helpers.FileUpload("image", "brend", c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,

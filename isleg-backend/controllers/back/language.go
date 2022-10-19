@@ -2,8 +2,8 @@ package controllers
 
 import (
 	"github/abbgo/isleg/isleg-backend/config"
+	"github/abbgo/isleg/isleg-backend/helpers"
 	"github/abbgo/isleg/isleg-backend/models"
-	"github/abbgo/isleg/isleg-backend/pkg"
 	"net/http"
 	"os"
 	"strings"
@@ -47,7 +47,7 @@ func CreateLanguage(c *gin.Context) {
 	}
 
 	// upload image of language
-	newFileName, err := pkg.FileUpload("flag", "language", c)
+	newFileName, err := helpers.FileUpload("flag", "language", c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -160,7 +160,7 @@ func UpdateLanguageByID(c *gin.Context) {
 	}
 
 	// upload image of language
-	fileName, err = pkg.FileUploadForUpdate("flag", "language", flag, c)
+	fileName, err = helpers.FileUploadForUpdate("flag", "language", flag, c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
