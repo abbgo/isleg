@@ -462,6 +462,7 @@ func RestoreLanguageByID(c *gin.Context) {
 
 func DeletePermanentlyLanguageByID(c *gin.Context) {
 
+	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -480,8 +481,10 @@ func DeletePermanentlyLanguageByID(c *gin.Context) {
 		}
 	}()
 
+	// get id of language from request parameter
 	langID := c.Param("id")
 
+	// Check if there is a language, id equal to langID and get image of language from database
 	rowFlag, err := db.Query("SELECT flag FROM languages WHERE id = $1 AND deleted_at IS NOT NULL", langID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -520,6 +523,7 @@ func DeletePermanentlyLanguageByID(c *gin.Context) {
 		return
 	}
 
+	// remove image of language
 	if err := os.Remove("./" + flag); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
