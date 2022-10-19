@@ -39,7 +39,7 @@ func Routes() *gin.Engine {
 		back.DELETE("/delete-language/:id", backController.DeletePermanentlyLanguageByID) // fully ready
 
 		back.POST("/company-setting", backController.CreateCompanySetting) // fully ready
-		back.PUT("/company-setting", backController.UpdateCompanySetting)  //+
+		back.PUT("/company-setting", backController.UpdateCompanySetting)  // fully ready
 		back.GET("/company-setting", backController.GetCompanySetting)     //+
 
 		back.POST("/order-time", backController.CreateOrderTime) // funksiyany optimize etmeli

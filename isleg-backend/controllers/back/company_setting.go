@@ -5,7 +5,6 @@ import (
 	"github/abbgo/isleg/isleg-backend/helpers"
 	"github/abbgo/isleg/isleg-backend/models"
 	"net/http"
-	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -187,9 +186,8 @@ func UpdateCompanySetting(c *gin.Context) {
 		return
 	}
 
-	currentTime := time.Now()
-
-	resultComPSETTING, err := db.Query("UPDATE company_setting SET logo = $1,favicon=$2,email=$3,instagram=$4,updated_at=$5", "uploads/setting/"+logoName, "uploads/setting/"+faviconName, email, instagram, currentTime)
+	// update data in database
+	resultComPSETTING, err := db.Query("UPDATE company_setting SET logo = $1,favicon=$2,email=$3,instagram=$4", logoName, faviconName, email, instagram)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
