@@ -197,6 +197,7 @@ func UpdateLanguageByID(c *gin.Context) {
 
 func GetLanguageByID(c *gin.Context) {
 
+	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -215,8 +216,10 @@ func GetLanguageByID(c *gin.Context) {
 		}
 	}()
 
+	// get id of language from parameter
 	langID := c.Param("id")
 
+	// get  name_short and flag of language from database
 	rowLanguage, err := db.Query("SELECT name_short,flag FROM languages WHERE id = $1 AND deleted_at IS NULL", langID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{

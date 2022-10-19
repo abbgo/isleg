@@ -31,8 +31,8 @@ func Routes() *gin.Engine {
 	back := routes.Group("/admin")
 	{
 		back.POST("/language", backController.CreateLanguage)                             // fully ready
-		back.PUT("/language/:id", backController.UpdateLanguageByID)                      //+
-		back.GET("/language/:id", backController.GetLanguageByID)                         //+
+		back.PUT("/language/:id", backController.UpdateLanguageByID)                      // fully ready
+		back.GET("/language/:id", backController.GetLanguageByID)                         // fully ready
 		back.GET("/languages", backController.GetLanguages)                               //+
 		back.DELETE("/language/:id", backController.DeleteLanguageByID)                   //+
 		back.GET("/restore-language/:id", backController.RestoreLanguageByID)             //+
