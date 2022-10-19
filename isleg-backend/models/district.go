@@ -1,11 +1,12 @@
 package models
 
 type District struct {
-	ID        string  `json:"id,omitempty"`
-	Price     float64 `json:"price,omitempty"`
-	CreatedAt string  `json:"-"`
-	UpdatedAt string  `json:"-"`
-	DeletedAt string  `json:"-"`
+	ID                  string                `json:"id,omitempty"`
+	Price               float64               `json:"price,omitempty"`
+	CreatedAt           string                `json:"-"`
+	UpdatedAt           string                `json:"-"`
+	DeletedAt           string                `json:"-"`
+	TranslationDistrict []TranslationDistrict `json:"translation_district,omitempty"`
 }
 
 type TranslationDistrict struct {

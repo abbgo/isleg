@@ -9,11 +9,13 @@ import (
 )
 
 type OrderDates struct {
-	ID        string `json:"id,omitempty"`
-	Date      string `json:"date,omitempty"`
-	CreatedAt string `json:"-"`
-	UpdatedAt string `json:"-"`
-	DeletedAt string `json:"-"`
+	ID                    string                  `json:"id,omitempty"`
+	Date                  string                  `json:"date,omitempty"`
+	CreatedAt             string                  `json:"-"`
+	UpdatedAt             string                  `json:"-"`
+	DeletedAt             string                  `json:"-"`
+	TranslationOrderDates []TranslationOrderDates `json:"translation_order_dates,omitempty"`
+	OrderTimes            []OrderTimes            `json:"order_times,omitempty"`
 }
 
 type OrderTimes struct {

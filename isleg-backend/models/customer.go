@@ -10,17 +10,18 @@ import (
 )
 
 type Customer struct {
-	ID          string      `json:"id,omitempty"`
-	FullName    string      `json:"full_name,omitempty" binding:"required,min=3"`
-	PhoneNumber string      `json:"phone_number,omitempty" binding:"required,e164,len=12"`
-	Password    string      `json:"password,omitempty" binding:"required,min=5,max=25"`
-	Birthday    pq.NullTime `json:"birthday,omitempty"`
-	Gender      string      `json:"gender,omitempty"`
-	Email       string      `json:"email,omitempty" binding:"email"`
-	IsRegister  bool        `json:"is_register,omitempty"`
-	CreatedAt   string      `json:"-"`
-	UpdatedAt   string      `json:"-"`
-	DeletedAt   string      `json:"-"`
+	ID              string            `json:"id,omitempty"`
+	FullName        string            `json:"full_name,omitempty" binding:"required,min=3"`
+	PhoneNumber     string            `json:"phone_number,omitempty" binding:"required,e164,len=12"`
+	Password        string            `json:"password,omitempty" binding:"required,min=5,max=25"`
+	Birthday        pq.NullTime       `json:"birthday,omitempty"`
+	Gender          string            `json:"gender,omitempty"`
+	Email           string            `json:"email,omitempty" binding:"email"`
+	IsRegister      bool              `json:"is_register,omitempty"`
+	CreatedAt       string            `json:"-"`
+	UpdatedAt       string            `json:"-"`
+	DeletedAt       string            `json:"-"`
+	CustomerAddress []CustomerAddress `json:"customer_address,omitempty"`
 }
 
 func HashPassword(password string) (string, error) {

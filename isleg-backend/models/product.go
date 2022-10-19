@@ -1,17 +1,20 @@
 package models
 
 type Product struct {
-	ID          string  `json:"id,omitempty"`
-	BrendID     string  `json:"brend_id,omitempty"`
-	Price       float64 `json:"price,omitempty"`
-	OldPrice    float64 `json:"old_price,omitempty"`
-	Amount      uint    `json:"amount,omitempty"`
-	ProductCode string  `json:"product_code,omitempty"`
-	LimitAmount uint    `json:"limit_amount,omitempty"`
-	IsNew       bool    `json:"is_new,omitempty"`
-	CreatedAt   string  `json:"-"`
-	UpdatedAt   string  `json:"-"`
-	DeletedAt   string  `json:"-"`
+	ID                 string             `json:"id,omitempty"`
+	BrendID            string             `json:"brend_id,omitempty"`
+	Price              float64            `json:"price,omitempty"`
+	OldPrice           float64            `json:"old_price,omitempty"`
+	Amount             uint               `json:"amount,omitempty"`
+	ProductCode        string             `json:"product_code,omitempty"`
+	LimitAmount        uint               `json:"limit_amount,omitempty"`
+	IsNew              bool               `json:"is_new,omitempty"`
+	CreatedAt          string             `json:"-"`
+	UpdatedAt          string             `json:"-"`
+	DeletedAt          string             `json:"-"`
+	MainImage          MainImage          `json:"main_image,omitempty"`
+	Images             []Images           `json:"images,omitempty"`
+	TranslationProduct TranslationProduct `json:"translation_product,omitempty"`
 }
 
 type MainImage struct {
