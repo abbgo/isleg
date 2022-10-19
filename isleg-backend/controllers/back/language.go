@@ -306,8 +306,8 @@ func DeleteLanguageByID(c *gin.Context) {
 	// get id of language from request parameter
 	langID := c.Param("id")
 
-	// Check if there is a language, id equal to langID and get flag of language
-	rowFlag, err := db.Query("SELECT flag FROM languages WHERE id = $1 AND deleted_at IS NULL", langID)
+	// Check if there is a language, id equal to langID
+	rowFlag, err := db.Query("SELECT id FROM languages WHERE id = $1 AND deleted_at IS NULL", langID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -325,10 +325,10 @@ func DeleteLanguageByID(c *gin.Context) {
 		}
 	}()
 
-	var flag string
+	var id string
 
 	for rowFlag.Next() {
-		if err := rowFlag.Scan(&flag); err != nil {
+		if err := rowFlag.Scan(&id); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
@@ -337,7 +337,7 @@ func DeleteLanguageByID(c *gin.Context) {
 		}
 	}
 
-	if flag == "" {
+	if id == "" {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
 			"message": "language not found",
@@ -373,6 +373,7 @@ func DeleteLanguageByID(c *gin.Context) {
 
 func RestoreLanguageByID(c *gin.Context) {
 
+	//initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -391,9 +392,11 @@ func RestoreLanguageByID(c *gin.Context) {
 		}
 	}()
 
+	// get id of language from request parameter
 	langID := c.Param("id")
 
-	rowFlag, err := db.Query("SELECT flag FROM languages WHERE id = $1 AND deleted_at IS NOT NULL", langID)
+	// Check if there is a language, id equal to langID
+	rowFlag, err := db.Query("SELECT id FROM languages WHERE id = $1 AND deleted_at IS NOT NULL", langID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -411,10 +414,10 @@ func RestoreLanguageByID(c *gin.Context) {
 		}
 	}()
 
-	var flag string
+	var id string
 
 	for rowFlag.Next() {
-		if err := rowFlag.Scan(&flag); err != nil {
+		if err := rowFlag.Scan(&id); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
@@ -423,7 +426,7 @@ func RestoreLanguageByID(c *gin.Context) {
 		}
 	}
 
-	if flag == "" {
+	if id == "" {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
 			"message": "language not found",
@@ -431,25 +434,8 @@ func RestoreLanguageByID(c *gin.Context) {
 		return
 	}
 
-	resultLang, err := db.Query("UPDATE languages SET deleted_at = NULL WHERE id = $1", langID)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-	defer func() {
-		if err := resultLang.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
-
-	resultPROC, err := db.Query("CALL after_restore_language($1)", langID)
+	// set null to deleted_at row of language, used restore_language procedure
+	resultPROC, err := db.Query("CALL restore_language($1)", langID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
