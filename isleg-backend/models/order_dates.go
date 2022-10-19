@@ -14,8 +14,8 @@ type OrderDates struct {
 	CreatedAt             string                  `json:"-"`
 	UpdatedAt             string                  `json:"-"`
 	DeletedAt             string                  `json:"-"`
-	TranslationOrderDates []TranslationOrderDates `json:"translation_order_dates,omitempty"`
-	OrderTimes            []OrderTimes            `json:"order_times,omitempty"`
+	TranslationOrderDates []TranslationOrderDates `json:"translation_order_dates,omitempty"` // one to many
+	OrderTimes            []OrderTimes            `json:"order_times,omitempty"`             // one to many
 }
 
 type OrderTimes struct {

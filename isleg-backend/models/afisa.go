@@ -12,7 +12,7 @@ type Afisa struct {
 	CreatedAt        string             `json:"-"`
 	UpdatedAt        string             `json:"-"`
 	DeletedAt        string             `json:"-"`
-	TranslationAfisa []TranslationAfisa `json:"translation_afisa,omitempty"`
+	TranslationAfisa []TranslationAfisa `json:"translation_afisa,omitempty"` // one to many
 }
 
 type TranslationAfisa struct {

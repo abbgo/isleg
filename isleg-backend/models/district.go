@@ -6,7 +6,7 @@ type District struct {
 	CreatedAt           string                `json:"-"`
 	UpdatedAt           string                `json:"-"`
 	DeletedAt           string                `json:"-"`
-	TranslationDistrict []TranslationDistrict `json:"translation_district,omitempty"`
+	TranslationDistrict []TranslationDistrict `json:"translation_district,omitempty"` // one to many
 }
 
 type TranslationDistrict struct {

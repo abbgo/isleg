@@ -8,7 +8,7 @@ type Category struct {
 	CreatedAt           string                `json:"-"`
 	UpdatedAt           string                `json:"-"`
 	DeletedAt           string                `json:"-"`
-	TranslationCategory []TranslationCategory `json:"translation_category,omitempty"`
+	TranslationCategory []TranslationCategory `json:"translation_category,omitempty"` // one to many
 }
 
 type TranslationCategory struct {

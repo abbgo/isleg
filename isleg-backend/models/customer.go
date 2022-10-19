@@ -21,7 +21,7 @@ type Customer struct {
 	CreatedAt       string            `json:"-"`
 	UpdatedAt       string            `json:"-"`
 	DeletedAt       string            `json:"-"`
-	CustomerAddress []CustomerAddress `json:"customer_address,omitempty"`
+	CustomerAddress []CustomerAddress `json:"customer_address,omitempty"` // one to many
 }
 
 func HashPassword(password string) (string, error) {
