@@ -6,12 +6,10 @@ import (
 	"github/abbgo/isleg/isleg-backend/pkg"
 	"net/http"
 	"os"
-	"path/filepath"
 	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 )
 
 // create new language
@@ -86,6 +84,7 @@ func CreateLanguage(c *gin.Context) {
 
 func UpdateLanguageByID(c *gin.Context) {
 
+	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -104,10 +103,15 @@ func UpdateLanguageByID(c *gin.Context) {
 		}
 	}()
 
+	// get language id from paramter
 	langID := c.Param("id")
+
+	// get the short name of the language from request
 	nameShort := c.PostForm("name_short")
+
 	var fileName string
 
+	// Check if there is a language, id equal to langID
 	rowFlag, err := db.Query("SELECT flag FROM languages WHERE id = $1 AND deleted_at IS NULL", langID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -146,6 +150,7 @@ func UpdateLanguageByID(c *gin.Context) {
 		return
 	}
 
+	// verify language short name
 	if nameShort == "" {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -154,37 +159,18 @@ func UpdateLanguageByID(c *gin.Context) {
 		return
 	}
 
-	file, err := c.FormFile("flag")
+	// upload image of language
+	fileName, err = pkg.FileUploadForUpdate("flag", "language", flag, c)
 	if err != nil {
-		fileName = flag
-	} else {
-		extensionFile := filepath.Ext(file.Filename)
-
-		if extensionFile != ".jpg" && extensionFile != ".jpeg" && extensionFile != ".png" && extensionFile != ".gif" {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": "the file must be an image",
-			})
-			return
-		}
-
-		newFileName := uuid.New().String() + extensionFile
-		c.SaveUploadedFile(file, "./uploads/language/"+newFileName)
-
-		if err := os.Remove("./" + flag); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-
-		fileName = "uploads/language/" + newFileName
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
 	}
 
-	currentTime := time.Now()
-
-	resultLang, err := db.Query("UPDATE languages SET name_short = $1 , flag = $2 , updated_at = $4 WHERE id = $3", nameShort, fileName, langID, currentTime)
+	// update language in database
+	resultLang, err := db.Query("UPDATE languages SET name_short = $1 , flag = $2  WHERE id = $3", nameShort, "uploads/language/"+fileName, langID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,

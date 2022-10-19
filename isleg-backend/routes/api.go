@@ -30,7 +30,7 @@ func Routes() *gin.Engine {
 	// routes belong to admin panel
 	back := routes.Group("/admin")
 	{
-		back.POST("/language", backController.CreateLanguage)                             //+
+		back.POST("/language", backController.CreateLanguage)                             // fully ready
 		back.PUT("/language/:id", backController.UpdateLanguageByID)                      //+
 		back.GET("/language/:id", backController.GetLanguageByID)                         //+
 		back.GET("/languages", backController.GetLanguages)                               //+

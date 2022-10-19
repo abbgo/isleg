@@ -2,6 +2,7 @@ package pkg
 
 import (
 	"errors"
+	"os"
 	"path/filepath"
 	"regexp"
 
@@ -31,8 +32,45 @@ func FileUpload(fileName, path string, context *gin.Context) (string, error) {
 	}
 
 	newFileName := uuid.New().String() + extensionFile
-	context.SaveUploadedFile(file, "./uploads/"+path+"/"+newFileName)
+	if err := context.SaveUploadedFile(file, "./uploads/"+path+"/"+newFileName); err != nil {
+		return "", err
+	}
 
 	return newFileName, nil
+
+}
+
+// File upload for update function
+func FileUploadForUpdate(fileName, path, oldFileName string, context *gin.Context) (string, error) {
+
+	var newFileName string
+
+	file, err := context.FormFile(fileName)
+	if err != nil {
+
+		newFileName = oldFileName
+		return newFileName, nil
+
+	} else {
+
+		extensionFile := filepath.Ext(file.Filename)
+
+		// VALIDATE IMAGE
+		if extensionFile != ".jpg" && extensionFile != ".jpeg" && extensionFile != ".png" && extensionFile != ".gif" {
+			return "", errors.New("the file must be an image")
+		}
+
+		newFileName = uuid.New().String() + extensionFile
+		if err := context.SaveUploadedFile(file, "./uploads/"+path+"/"+newFileName); err != nil {
+			return "", err
+		}
+
+		if err := os.Remove("./" + oldFileName); err != nil {
+			return "", err
+		}
+
+		return newFileName, nil
+
+	}
 
 }
