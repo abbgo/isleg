@@ -41,11 +41,6 @@ func ValidateOrderDateAndTime(date string, times []string, languages []Language,
 
 	hourAndMinute := regexp.MustCompile("([01]?[0-9]|2[0-3]):[0-5][0-9]")
 
-	// _, err := time.Parse("2006-01-02", date)
-	// if err != nil {
-	// 	return err
-	// }
-
 	if date != "today" && date != "tomorrow" {
 		return errors.New("the date should be today or tomorrow")
 	}

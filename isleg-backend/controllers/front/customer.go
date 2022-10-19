@@ -197,19 +197,19 @@ func RegisterCustomer(c *gin.Context) {
 		return
 	}
 
-	refreshTokenString, err := auth.GenerateRefreshToken(customer.PhoneNumber)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
-		c.Abort()
-		return
-	}
+	// refreshTokenString, err := auth.GenerateRefreshToken(customer.PhoneNumber)
+	// if err != nil {
+	// 	c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
+	// 	c.Abort()
+	// 	return
+	// }
 
 	c.JSON(http.StatusOK, gin.H{
-		"status":        true,
-		"message":       "customer successfully added",
-		"access_token":  accessTokenString,
-		"refresh_token": refreshTokenString,
-		"customer_id":   customerID,
+		"status":       true,
+		"message":      "customer successfully added",
+		"access_token": accessTokenString,
+		// "refresh_token": refreshTokenString,
+		"customer_id": customerID,
 	})
 
 }
@@ -290,17 +290,17 @@ func LoginCustomer(c *gin.Context) {
 		return
 	}
 
-	refreshTokenString, err := auth.GenerateRefreshToken(customer.PhoneNumber)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		c.Abort()
-		return
-	}
+	// refreshTokenString, err := auth.GenerateRefreshToken(customer.PhoneNumber)
+	// if err != nil {
+	// 	c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+	// 	c.Abort()
+	// 	return
+	// }
 
 	c.JSON(http.StatusOK, gin.H{
-		"access_token":  accessTokenString,
-		"refresh_token": refreshTokenString,
-		"customer_id":   customerID,
+		"access_token": accessTokenString,
+		// "refresh_token": refreshTokenString,
+		"customer_id": customerID,
 	})
 
 }

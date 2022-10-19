@@ -1,7 +1,6 @@
 package routes
 
 import (
-	"github/abbgo/isleg/isleg-backend/auth"
 	backController "github/abbgo/isleg/isleg-backend/controllers/back"
 	frontController "github/abbgo/isleg/isleg-backend/controllers/front"
 	"github/abbgo/isleg/isleg-backend/middlewares"
@@ -40,7 +39,7 @@ func Routes() *gin.Engine {
 
 		back.POST("/company-setting", backController.CreateCompanySetting) // fully ready
 		back.PUT("/company-setting", backController.UpdateCompanySetting)  // fully ready
-		back.GET("/company-setting", backController.GetCompanySetting)     //+
+		back.GET("/company-setting", backController.GetCompanySetting)     // fully ready
 
 		back.POST("/order-time", backController.CreateOrderTime) // funksiyany optimize etmeli
 
@@ -153,7 +152,7 @@ func Routes() *gin.Engine {
 	{
 		customer.POST("/register", frontController.RegisterCustomer) // funksiyany optimize etmeli
 		customer.POST("/login", frontController.LoginCustomer)       // funksiyany optimize etmeli
-		customer.POST("/refresh", auth.Refresh)                      //+
+		// customer.POST("/refresh", auth.Refresh)                      //+
 	}
 
 	// routes belong to front

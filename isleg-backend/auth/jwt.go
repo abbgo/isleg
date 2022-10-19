@@ -2,13 +2,10 @@ package auth
 
 import (
 	"errors"
-	"net/http"
 	"os"
-	"strings"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
-	"github.com/gin-gonic/gin"
 )
 
 var jwtKey = []byte(os.Getenv("JWT_SECRET_KEY"))
@@ -21,7 +18,7 @@ type JWTClaim struct {
 func GenerateAccessToken(phoneNumber string) (accessTokenString string, err error) {
 
 	// expirationTime := time.Now().Add(1 * time.Hour)
-	expirationTime := time.Now().Add(5 * time.Second)
+	expirationTime := time.Now().Add(10 * time.Second)
 
 	claims := &JWTClaim{
 		PhoneNumber: phoneNumber,
@@ -35,81 +32,89 @@ func GenerateAccessToken(phoneNumber string) (accessTokenString string, err erro
 
 }
 
-func GenerateRefreshToken(phoneNumber string) (refreshTokenString string, err error) {
+// func GenerateRefreshToken(phoneNumber string) (refreshTokenString string, err error) {
 
-	// expirationTime := time.Now().Add(5 * time.Hour)
-	expirationTime := time.Now().Add(10 * time.Second)
+// 	// expirationTime := time.Now().Add(5 * time.Hour)
+// 	expirationTime := time.Now().Add(10 * time.Hour)
 
-	claims := &JWTClaim{
-		PhoneNumber: phoneNumber,
-		StandardClaims: jwt.StandardClaims{
-			ExpiresAt: expirationTime.Unix(),
-		},
-	}
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	refreshTokenString, err = token.SignedString(jwtKey)
-	return
+// 	claims := &JWTClaim{
+// 		PhoneNumber: phoneNumber,
+// 		StandardClaims: jwt.StandardClaims{
+// 			ExpiresAt: expirationTime.Unix(),
+// 		},
+// 	}
+// 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+// 	refreshTokenString, err = token.SignedString(jwtKey)
+// 	return
 
-}
+// }
 
-func Refresh(c *gin.Context) {
+// func Refresh(c *gin.Context) {
 
-	tokenStr := c.GetHeader("RefershToken")
-	tokenString := strings.Split(tokenStr, " ")[1]
-	if tokenString == "" {
-		c.JSON(401, gin.H{"message": "request does not contain an access token"})
-		c.Abort()
-		return
-	}
+// 	tokenStr := c.GetHeader("RefreshToken")
+// 	fmt.Println("resfresh token: ", tokenStr)
+// 	// tokenString := strings.Split(tokenStr, " ")[1]
+// 	if tokenStr == "" {
+// 		c.JSON(401, gin.H{
+// 			"message": "request does not contain an refresh token",
+// 		})
+// 		// c.Abort()
+// 		return
+// 	}
 
-	token, err := jwt.ParseWithClaims(
-		tokenString,
-		&JWTClaim{},
-		func(token *jwt.Token) (interface{}, error) {
-			return []byte(jwtKey), nil
-		},
-	)
+// 	token, err := jwt.ParseWithClaims(
+// 		tokenStr,
+// 		&JWTClaim{},
+// 		func(token *jwt.Token) (interface{}, error) {
+// 			return []byte(jwtKey), nil
+// 		},
+// 	)
 
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
-		c.Abort()
-		return
-	}
+// 	if err != nil {
+// 		c.JSON(http.StatusBadRequest, gin.H{
+// 			"message": err.Error(),
+// 		})
+// 		// c.Abort()
+// 		return
+// 	}
 
-	claims, ok := token.Claims.(*JWTClaim)
+// 	claims, ok := token.Claims.(*JWTClaim)
 
-	if !ok {
-		c.JSON(http.StatusBadRequest, gin.H{"message": errors.New("couldn't parse claims")})
-		c.Abort()
-		return
-	}
+// 	if !ok {
+// 		c.JSON(http.StatusBadRequest, gin.H{
+// 			"message": errors.New("couldn't parse claims")})
+// 		// c.Abort()
+// 		return
+// 	}
 
-	if claims.ExpiresAt < time.Now().Local().Unix() {
-		c.JSON(http.StatusBadRequest, gin.H{"message": errors.New("token expired")})
-		c.Abort()
-		return
-	}
+// 	if claims.ExpiresAt < time.Now().Local().Unix() {
+// 		c.JSON(http.StatusBadRequest, gin.H{
+// 			"message": errors.New("token expired"),
+// 		})
+// 		// c.Abort()
+// 		return
+// 	}
 
-	accessTokenString, err := GenerateAccessToken(claims.PhoneNumber)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
-		c.Abort()
-		return
-	}
+// 	accessTokenString, err := GenerateAccessToken(claims.PhoneNumber)
+// 	if err != nil {
+// 		c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
+// 		// c.Abort()
+// 		return
+// 	}
 
-	refreshTokenString, err := GenerateRefreshToken(claims.PhoneNumber)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
-		c.Abort()
-		return
-	}
+// 	refreshTokenString, err := GenerateRefreshToken(claims.PhoneNumber)
+// 	if err != nil {
+// 		c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
+// 		// c.Abort()
+// 		return
+// 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"access_token":  accessTokenString,
-		"refresh_token": refreshTokenString,
-	})
+// 	c.JSON(http.StatusOK, gin.H{
+// 		"access_token":  accessTokenString,
+// 		"refresh_token": refreshTokenString,
+// 	})
 
-}
+// }
 
 func ValidateToken(signedToken string) (err error) {
 	token, err := jwt.ParseWithClaims(
@@ -120,7 +125,7 @@ func ValidateToken(signedToken string) (err error) {
 		},
 	)
 	if err != nil {
-		return err
+		return errors.New("yalnyslyk")
 	}
 	claims, ok := token.Claims.(*JWTClaim)
 	if !ok {

@@ -16,13 +16,13 @@ func Auth() gin.HandlerFunc {
 		fmt.Println("gelen token: ", tokenStr)
 		if tokenString == "" {
 			context.JSON(401, gin.H{"message": "request does not contain an access token"})
-			context.Abort()
+			// context.Abort()
 			return
 		}
 		err := auth.ValidateToken(tokenString)
 		if err != nil {
 			context.JSON(401, gin.H{"message": err.Error()})
-			context.Abort()
+			// context.Abort()
 			return
 		}
 		context.Next()
