@@ -214,6 +214,7 @@ func UpdateCompanySetting(c *gin.Context) {
 
 func GetCompanySetting(c *gin.Context) {
 
+	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -232,6 +233,7 @@ func GetCompanySetting(c *gin.Context) {
 		}
 	}()
 
+	// get data from database
 	rowComSet, err := db.Query("SELECT logo,favicon,email,instagram FROM company_setting WHERE deleted_at IS NULL ORDER BY created_at ASC LIMIT 1")
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
