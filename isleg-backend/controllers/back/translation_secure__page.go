@@ -182,6 +182,7 @@ func UpdateTranslationSecureByID(c *gin.Context) {
 
 func GetTranslationSecureByID(c *gin.Context) {
 
+	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -200,9 +201,11 @@ func GetTranslationSecureByID(c *gin.Context) {
 		}
 	}()
 
+	// get id of translation secure table from request parameter
 	ID := c.Param("id")
 
-	rowFlag, err := db.Query("SELECT title,content FROM translation_secure WHERE id = $1 AND deleted_at IS NULL", ID)
+	// check id and get data
+	rowFlag, err := db.Query("SELECT id,title,content FROM translation_secure WHERE id = $1 AND deleted_at IS NULL", ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -223,7 +226,7 @@ func GetTranslationSecureByID(c *gin.Context) {
 	var t models.TranslationSecure
 
 	for rowFlag.Next() {
-		if err := rowFlag.Scan(&t.Title, &t.Content); err != nil {
+		if err := rowFlag.Scan(&t.ID, &t.Title, &t.Content); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
@@ -232,7 +235,7 @@ func GetTranslationSecureByID(c *gin.Context) {
 		}
 	}
 
-	if t.Title == "" {
+	if t.ID == "" {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
 			"message": "record not found",
