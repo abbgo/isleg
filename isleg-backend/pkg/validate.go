@@ -20,3 +20,15 @@ func ValidateTranslations(languages []models.Language, dataNames []string, conte
 	return nil
 
 }
+
+func ValidateTranslationsForUpdate(dataNames []string, context *gin.Context) error {
+
+	for _, dataName := range dataNames {
+		if context.PostForm(dataName) == "" {
+			return errors.New(dataName + " is required")
+		}
+	}
+
+	return nil
+
+}

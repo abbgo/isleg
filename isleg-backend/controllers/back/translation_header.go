@@ -5,7 +5,6 @@ import (
 	"github/abbgo/isleg/isleg-backend/models"
 	"github/abbgo/isleg/isleg-backend/pkg"
 	"net/http"
-	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -102,6 +101,7 @@ func CreateTranslationHeader(c *gin.Context) {
 
 func UpdateTranslationHeaderByID(c *gin.Context) {
 
+	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -120,8 +120,10 @@ func UpdateTranslationHeaderByID(c *gin.Context) {
 		}
 	}()
 
+	// get id of translation_header table from request parameter
 	trHead := c.Param("id")
 
+	// check id
 	rowFlag, err := db.Query("SELECT id FROM translation_header WHERE id = $1 AND deleted_at IS NULL", trHead)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -163,7 +165,7 @@ func UpdateTranslationHeaderByID(c *gin.Context) {
 	dataNames := []string{"research", "phone", "password", "forgot_password", "sign_in", "sign_up", "name", "password_verification", "verify_secure", "my_information", "my_favorites", "my_orders", "log_out", "basket", "email", "add_to_basket"}
 
 	// VALIDATE DATA
-	err = models.ValidateTranslationHeaderUpdate(dataNames, c)
+	err = pkg.ValidateTranslationsForUpdate(dataNames, c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -172,9 +174,8 @@ func UpdateTranslationHeaderByID(c *gin.Context) {
 		return
 	}
 
-	currentTime := time.Now()
-
-	resultTrHedaer, err := db.Query("UPDATE translation_header SET research = $1 , phone = $2, password = $3,forgot_password = $4,sign_in = $5,sign_up = $6,name = $7,password_verification = $8,verify_secure = $9, my_information = $10, my_favorites = $11, my_orders = $12, log_out = $13, basket = $14 , email = $17, add_to_basket = $18 , updated_at = $16 WHERE id = $15", c.PostForm("research"), c.PostForm("phone"), c.PostForm("password"), c.PostForm("forgot_password"), c.PostForm("sign_in"), c.PostForm("sign_up"), c.PostForm("name"), c.PostForm("password_verification"), c.PostForm("verify_secure"), c.PostForm("my_information"), c.PostForm("my_favorites"), c.PostForm("my_orders"), c.PostForm("log_out"), c.PostForm("basket"), id, currentTime, c.PostForm("email"), c.PostForm("add_to_basket"))
+	// update translation_header table data
+	resultTrHedaer, err := db.Query("UPDATE translation_header SET research = $1 , phone = $2, password = $3,forgot_password = $4,sign_in = $5,sign_up = $6,name = $7,password_verification = $8,verify_secure = $9, my_information = $10, my_favorites = $11, my_orders = $12, log_out = $13, basket = $14 , email = $16, add_to_basket = $17 WHERE id = $15", c.PostForm("research"), c.PostForm("phone"), c.PostForm("password"), c.PostForm("forgot_password"), c.PostForm("sign_in"), c.PostForm("sign_up"), c.PostForm("name"), c.PostForm("password_verification"), c.PostForm("verify_secure"), c.PostForm("my_information"), c.PostForm("my_favorites"), c.PostForm("my_orders"), c.PostForm("log_out"), c.PostForm("basket"), id, c.PostForm("email"), c.PostForm("add_to_basket"))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -194,7 +195,7 @@ func UpdateTranslationHeaderByID(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
-		"message": "translation header successfully updated",
+		"message": "data successfully updated",
 	})
 
 }
