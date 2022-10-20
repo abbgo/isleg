@@ -181,6 +181,7 @@ func UpdateTranslationBasketPageByID(c *gin.Context) {
 
 func GetTranslationBasketPageByID(c *gin.Context) {
 
+	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -199,9 +200,11 @@ func GetTranslationBasketPageByID(c *gin.Context) {
 		}
 	}()
 
+	// get id from request parameter
 	ID := c.Param("id")
 
-	rowTRBasketPage, err := db.Query("SELECT quantity_of_goods,total_price,discount,delivery,total,currency,to_order,your_basket,empty_the_basket FROM translation_basket_page WHERE id = $1 AND deleted_at IS NULL", ID)
+	// check id and get data from database
+	rowTRBasketPage, err := db.Query("SELECT id,quantity_of_goods,total_price,discount,delivery,total,currency,to_order,your_basket,empty_the_basket FROM translation_basket_page WHERE id = $1 AND deleted_at IS NULL", ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -222,7 +225,7 @@ func GetTranslationBasketPageByID(c *gin.Context) {
 	var t models.TranslationBasketPage
 
 	for rowTRBasketPage.Next() {
-		if err := rowTRBasketPage.Scan(&t.QuantityOfGoods, &t.TotalPrice, &t.Discount, &t.Delivery, &t.Total, &t.Currency, &t.ToOrder, &t.YourBasket, &t.EmptyTheBasket); err != nil {
+		if err := rowTRBasketPage.Scan(&t.ID, &t.QuantityOfGoods, &t.TotalPrice, &t.Discount, &t.Delivery, &t.Total, &t.Currency, &t.ToOrder, &t.YourBasket, &t.EmptyTheBasket); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
@@ -231,7 +234,7 @@ func GetTranslationBasketPageByID(c *gin.Context) {
 		}
 	}
 
-	if t.QuantityOfGoods == "" {
+	if t.ID == "" {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
 			"message": "record not found",
