@@ -5,7 +5,6 @@ import (
 	"github/abbgo/isleg/isleg-backend/models"
 	"github/abbgo/isleg/isleg-backend/pkg"
 	"net/http"
-	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -82,6 +81,7 @@ func CreateTranslationBasketPage(c *gin.Context) {
 
 func UpdateTranslationBasketPageByID(c *gin.Context) {
 
+	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -100,8 +100,10 @@ func UpdateTranslationBasketPageByID(c *gin.Context) {
 		}
 	}()
 
+	// get id from request parameter
 	ID := c.Param("id")
 
+	// check id
 	rowTRBasketPage, err := db.Query("SELECT id FROM translation_basket_page WHERE id = $1 AND deleted_at IS NULL", ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -143,7 +145,7 @@ func UpdateTranslationBasketPageByID(c *gin.Context) {
 	dataNames := []string{"quantity_of_goods", "total_price", "discount", "delivery", "total", "currency", "to_order", "your_basket", "empty_the_basket"}
 
 	// VALIDATE DATA
-	err = models.ValidateTranslationBasketPageUpdate(dataNames, c)
+	err = pkg.ValidateTranslationsForUpdate(dataNames, c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -152,9 +154,7 @@ func UpdateTranslationBasketPageByID(c *gin.Context) {
 		return
 	}
 
-	currentTime := time.Now()
-
-	resultTrBasketPage, err := db.Query("UPDATE translation_basket_page SET quantity_of_goods = $1, total_price = $2 , discount = $3, delivery = $4 , total = $5 , currency = $6 , to_order = $7, your_basket = $8 , empty_the_basket = $9 , updated_at = $10 WHERE id = $11", c.PostForm("quantity_of_goods"), c.PostForm("total_price"), c.PostForm("discount"), c.PostForm("delivery"), c.PostForm("total"), c.PostForm("currency"), c.PostForm("to_order"), c.PostForm("your_basket"), c.PostForm("empty_the_basket"), currentTime, id)
+	resultTrBasketPage, err := db.Query("UPDATE translation_basket_page SET quantity_of_goods = $1, total_price = $2 , discount = $3, delivery = $4 , total = $5 , currency = $6 , to_order = $7, your_basket = $8 , empty_the_basket = $9  WHERE id = $10", c.PostForm("quantity_of_goods"), c.PostForm("total_price"), c.PostForm("discount"), c.PostForm("delivery"), c.PostForm("total"), c.PostForm("currency"), c.PostForm("to_order"), c.PostForm("your_basket"), c.PostForm("empty_the_basket"), id)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -174,7 +174,7 @@ func UpdateTranslationBasketPageByID(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
-		"message": "translation basket page successfully updated",
+		"message": "data successfully updated",
 	})
 
 }
