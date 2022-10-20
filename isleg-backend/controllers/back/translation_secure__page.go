@@ -5,7 +5,6 @@ import (
 	"github/abbgo/isleg/isleg-backend/models"
 	"github/abbgo/isleg/isleg-backend/pkg"
 	"net/http"
-	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -82,6 +81,7 @@ func CreateTranslationSecure(c *gin.Context) {
 
 func UpdateTranslationSecureByID(c *gin.Context) {
 
+	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -100,8 +100,10 @@ func UpdateTranslationSecureByID(c *gin.Context) {
 		}
 	}()
 
+	// get id of translation secure from request parameter
 	ID := c.Param("id")
 
+	// check id of translation secure table
 	rowFlag, err := db.Query("SELECT id FROM translation_secure WHERE id = $1 AND deleted_at IS NULL", ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -143,7 +145,7 @@ func UpdateTranslationSecureByID(c *gin.Context) {
 	dataNames := []string{"title", "content"}
 
 	// VALIDATE DATA
-	err = models.ValidateTranslationSecureUpdate(dataNames, c)
+	err = pkg.ValidateTranslationsForUpdate(dataNames, c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -152,9 +154,8 @@ func UpdateTranslationSecureByID(c *gin.Context) {
 		return
 	}
 
-	currentTime := time.Now()
-
-	resultTRSecure, err := db.Query("UPDATE translation_secure SET title = $1, content = $2 , updated_at = $4  WHERE id = $3", c.PostForm("title"), c.PostForm("content"), id, currentTime)
+	// update data of table
+	resultTRSecure, err := db.Query("UPDATE translation_secure SET title = $1, content = $2 WHERE id = $3", c.PostForm("title"), c.PostForm("content"), id)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -174,7 +175,7 @@ func UpdateTranslationSecureByID(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
-		"message": "translation secure successfully updated",
+		"message": "data successfully updated",
 	})
 
 }
