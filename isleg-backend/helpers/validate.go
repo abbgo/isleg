@@ -1,6 +1,8 @@
 package helpers
 
-import "regexp"
+import (
+	"regexp"
+)
 
 // Verify e-mail address
 func IsEmailValid(e string) bool {

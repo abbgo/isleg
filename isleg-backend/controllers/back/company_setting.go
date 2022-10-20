@@ -2,8 +2,8 @@ package controllers
 
 import (
 	"github/abbgo/isleg/isleg-backend/config"
-	"github/abbgo/isleg/isleg-backend/helpers"
 	"github/abbgo/isleg/isleg-backend/models"
+	"github/abbgo/isleg/isleg-backend/pkg"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -45,7 +45,7 @@ func CreateCompanySetting(c *gin.Context) {
 	}
 
 	// upload logo
-	newFileNameLogo, err := helpers.FileUpload("logo", "setting", c)
+	newFileNameLogo, err := pkg.FileUpload("logo", "setting", c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -55,7 +55,7 @@ func CreateCompanySetting(c *gin.Context) {
 	}
 
 	// upload favicon
-	newFileNameFavicon, err := helpers.FileUpload("favicon", "setting", c)
+	newFileNameFavicon, err := pkg.FileUpload("favicon", "setting", c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -167,7 +167,7 @@ func UpdateCompanySetting(c *gin.Context) {
 	}
 
 	// upload logo
-	logoName, err = helpers.FileUploadForUpdate("logo", "setting", logo, c)
+	logoName, err = pkg.FileUploadForUpdate("logo", "setting", logo, c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -177,7 +177,7 @@ func UpdateCompanySetting(c *gin.Context) {
 	}
 
 	// upload favicon
-	faviconName, err = helpers.FileUploadForUpdate("favicon", "setting", favicon, c)
+	faviconName, err = pkg.FileUploadForUpdate("favicon", "setting", favicon, c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,

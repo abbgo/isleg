@@ -4,8 +4,6 @@ import (
 	"errors"
 	"regexp"
 	"strings"
-
-	"github.com/gin-gonic/gin"
 )
 
 type OrderDates struct {
@@ -37,20 +35,12 @@ type TranslationOrderDates struct {
 	DeletedAt   string `json:"-"`
 }
 
-func ValidateOrderDateAndTime(date string, times []string, languages []Language, dataNames []string, context *gin.Context) error {
+func ValidateOrderDateAndTime(date string, times []string) error {
 
 	hourAndMinute := regexp.MustCompile("([01]?[0-9]|2[0-3]):[0-5][0-9]")
 
 	if date != "today" && date != "tomorrow" {
 		return errors.New("the date should be today or tomorrow")
-	}
-
-	for _, dataName := range dataNames {
-		for _, v := range languages {
-			if context.PostForm(dataName+"_"+v.NameShort) == "" {
-				return errors.New(dataName + "_" + v.NameShort + " is required")
-			}
-		}
 	}
 
 	for _, v := range times {

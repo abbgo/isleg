@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github/abbgo/isleg/isleg-backend/config"
 	"github/abbgo/isleg/isleg-backend/models"
+	"github/abbgo/isleg/isleg-backend/pkg"
 	"net/http"
 	"time"
 
@@ -59,7 +60,15 @@ func CreateOrderTime(c *gin.Context) {
 	dataNames := []string{"translation_date"}
 
 	// validate data
-	if err := models.ValidateOrderDateAndTime(date, times, languages, dataNames, c); err != nil {
+	if err := models.ValidateOrderDateAndTime(date, times); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	if err := pkg.ValidateTranslations(languages, dataNames, c); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
 			"message": err.Error(),
