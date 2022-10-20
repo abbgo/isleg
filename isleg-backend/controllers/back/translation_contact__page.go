@@ -182,6 +182,7 @@ func UpdateTranslationContactByID(c *gin.Context) {
 
 func GetTranslationContactByID(c *gin.Context) {
 
+	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -199,10 +200,11 @@ func GetTranslationContactByID(c *gin.Context) {
 			return
 		}
 	}()
-
+	// get id of translation contact from request parameter
 	ID := c.Param("id")
 
-	rowFlag, err := db.Query("SELECT full_name,email,phone,letter,company_phone,imo,company_email,instagram,button_text FROM translation_contact WHERE id = $1 AND deleted_at IS NULL", ID)
+	// check id and get data from database
+	rowFlag, err := db.Query("SELECT id,full_name,email,phone,letter,company_phone,imo,company_email,instagram,button_text FROM translation_contact WHERE id = $1 AND deleted_at IS NULL", ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -223,7 +225,7 @@ func GetTranslationContactByID(c *gin.Context) {
 	var t models.TranslationContact
 
 	for rowFlag.Next() {
-		if err := rowFlag.Scan(&t.FullName, &t.Email, &t.Phone, &t.Letter, &t.CompanyPhone, &t.Imo, &t.CompanyEmail, &t.Instragram, &t.ButtonText); err != nil {
+		if err := rowFlag.Scan(&t.ID, &t.FullName, &t.Email, &t.Phone, &t.Letter, &t.CompanyPhone, &t.Imo, &t.CompanyEmail, &t.Instragram, &t.ButtonText); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
@@ -232,7 +234,7 @@ func GetTranslationContactByID(c *gin.Context) {
 		}
 	}
 
-	if t.FullName == "" {
+	if t.ID == "" {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
 			"message": "record not found",
