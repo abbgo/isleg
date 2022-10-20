@@ -1,5 +1,11 @@
 package models
 
+import (
+	"errors"
+	"github/abbgo/isleg/isleg-backend/config"
+	"strconv"
+)
+
 type Category struct {
 	ID                  string                `json:"id,omitempty"`
 	ParentCategoryID    string                `json:"parent_category_id,omitempty"`
@@ -19,4 +25,65 @@ type TranslationCategory struct {
 	CreatedAt  string `json:"-"`
 	UpdatedAt  string `json:"-"`
 	DeletedAt  string `json:"-"`
+}
+
+func ValidateCategory(isHomeCategory, parentCategoryID, fileName string) (bool, string, error) {
+
+	// initialize database connection
+	db, err := config.ConnDB()
+	if err != nil {
+		return false, "", err
+	}
+	defer func() (bool, string, error) {
+		if err := db.Close(); err != nil {
+			return false, "", err
+		}
+		return false, "", nil
+	}()
+
+	// validate is home category
+	is_home_category, err := strconv.ParseBool(isHomeCategory)
+	if err != nil {
+		return false, "", err
+	}
+
+	// validate parentCategoryID
+	if parentCategoryID != "" {
+
+		if fileName != "" {
+			return false, "", errors.New("child cannot be an image of the category")
+		}
+
+		rowCategory, err := db.Query("SELECT id FROM categories WHERE id = $1 AND deleted_at IS NULL", parentCategoryID)
+		if err != nil {
+			return false, "", err
+		}
+		defer func() (bool, string, error) {
+			if err := rowCategory.Close(); err != nil {
+				return false, "", err
+			}
+			return false, "", nil
+		}()
+
+		var parentCategory string
+
+		for rowCategory.Next() {
+			if err := rowCategory.Scan(&parentCategory); err != nil {
+				return false, "", err
+			}
+		}
+
+		if parentCategory == "" {
+			return false, "", errors.New("parent category not found")
+		}
+
+		return is_home_category, parentCategory, nil
+	} else {
+		if fileName == "" {
+			return false, "", errors.New("parent category image is required")
+		}
+	}
+
+	return is_home_category, "", nil
+
 }

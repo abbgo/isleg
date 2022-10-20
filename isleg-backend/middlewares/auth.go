@@ -11,9 +11,11 @@ import (
 func Auth() gin.HandlerFunc {
 	return func(context *gin.Context) {
 		tokenStr := context.GetHeader("Authorization")
+		fmt.Println("gelen token: ", tokenStr)
+
 		tokenString := strings.Split(tokenStr, " ")[1]
 
-		fmt.Println("gelen token: ", tokenStr)
+		// fmt.Println("gelen token: ", tokenStr)
 		if tokenString == "" {
 			context.JSON(401, gin.H{"message": "request does not contain an access token"})
 			// context.Abort()

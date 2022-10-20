@@ -3,6 +3,7 @@ package controllers
 import (
 	"github/abbgo/isleg/isleg-backend/config"
 	"github/abbgo/isleg/isleg-backend/models"
+	"github/abbgo/isleg/isleg-backend/pkg"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -65,6 +66,7 @@ type OneCategory struct {
 
 func CreateCategory(c *gin.Context) {
 
+	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -83,13 +85,15 @@ func CreateCategory(c *gin.Context) {
 		}
 	}()
 
-	var categoryID string
-
-	var fileName string
+	var categoryID, fileName string
+	var parent_category_id interface{}
 
 	// GET DATA FROM REQUEST
 	isHomeCategoryStr := c.PostForm("is_home_category")
-	isHomeCategory, err := strconv.ParseBool(isHomeCategoryStr)
+	parentCategoryIDStr := c.PostForm("parent_category_id")
+
+	// GET ALL LANGUAGE
+	languages, err := GetAllLanguageWithIDAndNameShort()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -98,51 +102,10 @@ func CreateCategory(c *gin.Context) {
 		return
 	}
 
-	parentCategoryID := c.PostForm("parent_category_id")
+	dataNames := []string{"name"}
 
-	if parentCategoryID != "" {
-		rowCategory, err := db.Query("SELECT id FROM categories WHERE id = $1 AND deleted_at IS NULL", parentCategoryID)
-		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-		defer func() {
-			if err := rowCategory.Close(); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
-				return
-			}
-		}()
-
-		var parentCategory string
-
-		for rowCategory.Next() {
-			if err := rowCategory.Scan(&parentCategory); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
-				return
-			}
-		}
-
-		if parentCategory == "" {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": "parent category not found",
-			})
-			return
-		}
-	}
-
-	// GET ALL LANGUAGE
-	languages, err := GetAllLanguageWithIDAndNameShort()
-	if err != nil {
+	// VALIDATE translation category
+	if err := pkg.ValidateTranslations(languages, dataNames, c); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
 			"message": err.Error(),
@@ -167,105 +130,60 @@ func CreateCategory(c *gin.Context) {
 
 		newFileName := uuid.New().String() + extension
 		fileName = "uploads/category/" + newFileName
-	}
 
-	// VALIDATE DATA
-	for _, v := range languages {
-		if c.PostForm("name_"+v.NameShort) == "" {
+		if err := c.SaveUploadedFile(file, "./"+fileName); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
-				"message": "name_" + v.NameShort + " is required",
+				"message": err.Error(),
 			})
 			return
 		}
 	}
 
-	if parentCategoryID == "" && fileName == "" {
+	// validate other data of category
+	isHomeCategory, parentCategoryID, err := models.ValidateCategory(isHomeCategoryStr, parentCategoryIDStr, fileName)
+	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
-			"message": "parent category image is required",
-		})
-		return
-	}
-
-	if parentCategoryID != "" && fileName != "" {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": "child cannot be an image of the category",
+			"message": err.Error(),
 		})
 		return
 	}
 
 	// CREATE CATEGORY
 	if parentCategoryID != "" {
-		resultCateor, err := db.Query("INSERT INTO categories (parent_category_id,image,is_home_category) VALUES ($1,$2,$3) RETURNING id", parentCategoryID, fileName, isHomeCategory)
-		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-		defer func() {
-			if err := resultCateor.Close(); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
-				return
-			}
-		}()
-
-		var category_id string
-
-		for resultCateor.Next() {
-			if err := resultCateor.Scan(&category_id); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
-				return
-			}
-		}
-
-		categoryID = category_id
-
+		parent_category_id = parentCategoryID
 	} else {
-		result, err := db.Query("INSERT INTO categories (image,is_home_category) VALUES ($1,$2) RETURNING id", fileName, isHomeCategory)
-		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-		defer func() {
-			if err := result.Close(); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
-				return
-			}
-		}()
-
-		var category_id string
-
-		for result.Next() {
-			if err := result.Scan(&category_id); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
-				return
-			}
-		}
-
-		categoryID = category_id
+		parent_category_id = nil
 	}
 
-	if fileName != "" {
-		c.SaveUploadedFile(file, "./"+fileName)
+	// add data to categories table
+	resultCateor, err := db.Query("INSERT INTO categories (parent_category_id,image,is_home_category) VALUES ($1,$2,$3) RETURNING id", parent_category_id, fileName, isHomeCategory)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer func() {
+		if err := resultCateor.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
+
+	for resultCateor.Next() {
+		if err := resultCateor.Scan(&categoryID); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
 	}
 
 	// CREATE TRANSLATION CATEGORY
@@ -291,7 +209,7 @@ func CreateCategory(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
-		"message": "category successfully added",
+		"message": "data successfully added",
 	})
 
 }
