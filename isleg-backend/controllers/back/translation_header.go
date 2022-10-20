@@ -30,6 +30,7 @@ type TranslationHeaderForHeader struct {
 
 func CreateTranslationHeader(c *gin.Context) {
 
+	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{

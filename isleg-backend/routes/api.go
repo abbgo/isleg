@@ -41,7 +41,7 @@ func Routes() *gin.Engine {
 		back.PUT("/company-setting", backController.UpdateCompanySetting)  // fully ready
 		back.GET("/company-setting", backController.GetCompanySetting)     // fully ready
 
-		back.POST("/order-time", backController.CreateOrderTime) // funksiyany optimize etmeli
+		back.POST("/order-time", backController.CreateOrderTime) // fully ready
 
 		back.POST("/translation-header", backController.CreateTranslationHeader)        //+
 		back.PUT("/translation-header/:id", backController.UpdateTranslationHeaderByID) //+
