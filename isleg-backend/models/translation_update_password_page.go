@@ -1,11 +1,5 @@
 package models
 
-import (
-	"errors"
-
-	"github.com/gin-gonic/gin"
-)
-
 type TranslationUpdatePasswordPage struct {
 	ID             string `json:"id,omitempty"`
 	LangID         string `json:"lang_id,omitempty"`
@@ -17,16 +11,4 @@ type TranslationUpdatePasswordPage struct {
 	CreatedAt      string `json:"-"`
 	UpdatedAt      string `json:"-"`
 	DeletedAt      string `json:"-"`
-}
-
-func ValidateTranslationUpdatePasswordPageUpdate(dataNames []string, context *gin.Context) error {
-
-	for _, dataName := range dataNames {
-		if context.PostForm(dataName) == "" {
-			return errors.New(dataName + " is required")
-		}
-	}
-
-	return nil
-
 }

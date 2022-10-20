@@ -5,7 +5,6 @@ import (
 	"github/abbgo/isleg/isleg-backend/models"
 	"github/abbgo/isleg/isleg-backend/pkg"
 	"net/http"
-	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -82,6 +81,7 @@ func CreateTranslationUpdatePasswordPage(c *gin.Context) {
 
 func UpdateTranslationUpdatePasswordPageByID(c *gin.Context) {
 
+	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -100,8 +100,10 @@ func UpdateTranslationUpdatePasswordPageByID(c *gin.Context) {
 		}
 	}()
 
+	// get id of translation update password page from request data
 	ID := c.Param("id")
 
+	// check id
 	rowFlag, err := db.Query("SELECT id FROM translation_update_password_page WHERE id = $1 AND deleted_at IS NULL", ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -143,7 +145,7 @@ func UpdateTranslationUpdatePasswordPageByID(c *gin.Context) {
 	dataNames := []string{"title", "password", "verify_password", "explanation", "save"}
 
 	// VALIDATE DATA
-	err = models.ValidateTranslationUpdatePasswordPageUpdate(dataNames, c)
+	err = pkg.ValidateTranslationsForUpdate(dataNames, c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -152,9 +154,7 @@ func UpdateTranslationUpdatePasswordPageByID(c *gin.Context) {
 		return
 	}
 
-	currentTime := time.Now()
-
-	result, err := db.Query("UPDATE translation_update_password_page SET title = $1, verify_password = $2 , explanation = $3 , save = $4 , password = $5 , updated_at = $7 WHERE id = $6", c.PostForm("title"), c.PostForm("verify_password"), c.PostForm("explanation"), c.PostForm("save"), c.PostForm("password"), id, currentTime)
+	result, err := db.Query("UPDATE translation_update_password_page SET title = $1, verify_password = $2 , explanation = $3 , save = $4 , password = $5 WHERE id = $6", c.PostForm("title"), c.PostForm("verify_password"), c.PostForm("explanation"), c.PostForm("save"), c.PostForm("password"), id)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -174,7 +174,7 @@ func UpdateTranslationUpdatePasswordPageByID(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
-		"message": "translation_update_password_page successfully updated",
+		"message": "data successfully updated",
 	})
 
 }
