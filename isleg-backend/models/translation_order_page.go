@@ -1,11 +1,5 @@
 package models
 
-import (
-	"errors"
-
-	"github.com/gin-gonic/gin"
-)
-
 type TranslationOrderPage struct {
 	ID                  string `json:"id,omitempty"`
 	LangID              string `json:"lang_id,omitempty"`
@@ -21,16 +15,4 @@ type TranslationOrderPage struct {
 	CreatedAt           string `json:"-"`
 	UpdatedAt           string `json:"-"`
 	DeletedAt           string `json:"-"`
-}
-
-func ValidateTranslationOrderPageUpdate(dataNames []string, context *gin.Context) error {
-
-	for _, dataName := range dataNames {
-		if context.PostForm(dataName) == "" {
-			return errors.New(dataName + " is required")
-		}
-	}
-
-	return nil
-
 }
