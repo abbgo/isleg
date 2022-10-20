@@ -234,7 +234,7 @@ func GetCompanySetting(c *gin.Context) {
 	}()
 
 	// get data from database
-	rowComSet, err := db.Query("SELECT logo,favicon,email,instagram FROM company_setting WHERE deleted_at IS NULL ORDER BY created_at ASC LIMIT 1")
+	rowComSet, err := db.Query("SELECT id,logo,favicon,email,instagram FROM company_setting WHERE deleted_at IS NULL ORDER BY created_at ASC LIMIT 1")
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -255,7 +255,7 @@ func GetCompanySetting(c *gin.Context) {
 	var comSet models.CompanySetting
 
 	for rowComSet.Next() {
-		if err := rowComSet.Scan(&comSet.Logo, &comSet.Favicon, &comSet.Email, &comSet.Instagram); err != nil {
+		if err := rowComSet.Scan(&comSet.ID, &comSet.Logo, &comSet.Favicon, &comSet.Email, &comSet.Instagram); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
@@ -264,7 +264,7 @@ func GetCompanySetting(c *gin.Context) {
 		}
 	}
 
-	if comSet.Logo == "" || comSet.Favicon == "" || comSet.Email == "" || comSet.Instagram == "" {
+	if comSet.ID == "" {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
 			"message": "record not found",
