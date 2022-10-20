@@ -48,7 +48,7 @@ func Routes() *gin.Engine {
 		back.GET("/translation-header/:id", backController.GetTranslationHeaderByID)    // fully ready
 
 		back.POST("/translation-footer", backController.CreateTranslationFooter)        // fully ready
-		back.PUT("/translation-footer/:id", backController.UpdateTranslationFooterByID) //+
+		back.PUT("/translation-footer/:id", backController.UpdateTranslationFooterByID) // fully ready
 		back.GET("/translation-footer/:id", backController.GetTranslationFooterByID)    //+
 
 		back.POST("/translation-secure", backController.CreateTranslationSecure)        //+

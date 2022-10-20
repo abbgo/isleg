@@ -5,7 +5,6 @@ import (
 	"github/abbgo/isleg/isleg-backend/models"
 	"github/abbgo/isleg/isleg-backend/pkg"
 	"net/http"
-	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -83,6 +82,7 @@ func CreateTranslationFooter(c *gin.Context) {
 
 func UpdateTranslationFooterByID(c *gin.Context) {
 
+	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -101,8 +101,10 @@ func UpdateTranslationFooterByID(c *gin.Context) {
 		}
 	}()
 
+	// get id of translation footer from request parameter
 	trFootID := c.Param("id")
 
+	// check id
 	rowFlag, err := db.Query("SELECT id FROM translation_footer WHERE id = $1 AND deleted_at IS NULL", trFootID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -144,7 +146,7 @@ func UpdateTranslationFooterByID(c *gin.Context) {
 	dataNames := []string{"about", "payment", "contact", "secure", "word"}
 
 	// VALIDATE DATA
-	err = models.ValidateTranslationFooterUpdate(dataNames, c)
+	err = pkg.ValidateTranslationsForUpdate(dataNames, c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -153,9 +155,8 @@ func UpdateTranslationFooterByID(c *gin.Context) {
 		return
 	}
 
-	currentTime := time.Now()
-
-	rsultTRFooter, err := db.Query("UPDATE translation_footer SET about = $1, payment = $2, contact = $3, secure = $4, word = $5 , updated_at = $7 WHERE id = $6", c.PostForm("about"), c.PostForm("payment"), c.PostForm("contact"), c.PostForm("secure"), c.PostForm("word"), id, currentTime)
+	// update data of translation footer
+	rsultTRFooter, err := db.Query("UPDATE translation_footer SET about = $1, payment = $2, contact = $3, secure = $4, word = $5 WHERE id = $6", c.PostForm("about"), c.PostForm("payment"), c.PostForm("contact"), c.PostForm("secure"), c.PostForm("word"), id)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -175,7 +176,7 @@ func UpdateTranslationFooterByID(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
-		"message": "translation footer successfully updated",
+		"message": "data successfully updated",
 	})
 
 }
