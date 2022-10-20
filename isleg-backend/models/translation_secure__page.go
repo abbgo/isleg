@@ -16,20 +16,6 @@ type TranslationSecure struct {
 	DeletedAt string `json:"-"`
 }
 
-func ValidateTranslationSecureData(languages []Language, dataNames []string, context *gin.Context) error {
-
-	for _, dataName := range dataNames {
-		for _, v := range languages {
-			if context.PostForm(dataName+"_"+v.NameShort) == "" {
-				return errors.New(dataName + "_" + v.NameShort + " is required")
-			}
-		}
-	}
-
-	return nil
-
-}
-
 func ValidateTranslationSecureUpdate(dataNames []string, context *gin.Context) error {
 
 	for _, dataName := range dataNames {
