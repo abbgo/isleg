@@ -182,6 +182,7 @@ func UpdateTranslationMyOrderPageByID(c *gin.Context) {
 
 func GetTranslationMyOrderPageByID(c *gin.Context) {
 
+	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -200,9 +201,11 @@ func GetTranslationMyOrderPageByID(c *gin.Context) {
 		}
 	}()
 
+	// get id from request parameter
 	ID := c.Param("id")
 
-	rowTrMyOrderPage, err := db.Query("SELECT orders,date,price,currency,image,name,brend,code,amount,total_price FROM translation_my_order_page WHERE id = $1 AND deleted_at IS NULL", ID)
+	// check id and get data from database
+	rowTrMyOrderPage, err := db.Query("SELECT id,orders,date,price,currency,image,name,brend,code,amount,total_price FROM translation_my_order_page WHERE id = $1 AND deleted_at IS NULL", ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -223,7 +226,7 @@ func GetTranslationMyOrderPageByID(c *gin.Context) {
 	var t models.TranslationMyOrderPage
 
 	for rowTrMyOrderPage.Next() {
-		if err := rowTrMyOrderPage.Scan(&t.Orders, &t.Date, &t.Price, &t.Currency, &t.Image, &t.Name, &t.Brend, &t.Code, &t.Amount, &t.TotalPrice); err != nil {
+		if err := rowTrMyOrderPage.Scan(&t.ID, &t.Orders, &t.Date, &t.Price, &t.Currency, &t.Image, &t.Name, &t.Brend, &t.Code, &t.Amount, &t.TotalPrice); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
@@ -232,7 +235,7 @@ func GetTranslationMyOrderPageByID(c *gin.Context) {
 		}
 	}
 
-	if t.Orders == "" {
+	if t.ID == "" {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
 			"message": "record not found",
