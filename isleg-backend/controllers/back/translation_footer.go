@@ -183,6 +183,7 @@ func UpdateTranslationFooterByID(c *gin.Context) {
 
 func GetTranslationFooterByID(c *gin.Context) {
 
+	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -201,8 +202,10 @@ func GetTranslationFooterByID(c *gin.Context) {
 		}
 	}()
 
+	// get id of translation footer from request parameter
 	trFootID := c.Param("id")
 
+	//check id and get data from table
 	rowFlag, err := db.Query("SELECT about,payment,contact,secure,word FROM translation_footer WHERE id = $1 AND deleted_at IS NULL", trFootID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
