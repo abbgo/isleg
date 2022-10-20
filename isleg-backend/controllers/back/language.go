@@ -219,7 +219,7 @@ func GetLanguageByID(c *gin.Context) {
 	langID := c.Param("id")
 
 	// get  name_short and flag of language from database
-	rowLanguage, err := db.Query("SELECT name_short,flag FROM languages WHERE id = $1 AND deleted_at IS NULL", langID)
+	rowLanguage, err := db.Query("SELECT id,name_short,flag FROM languages WHERE id = $1 AND deleted_at IS NULL", langID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -240,7 +240,7 @@ func GetLanguageByID(c *gin.Context) {
 	var lang models.Language
 
 	for rowLanguage.Next() {
-		if err := rowLanguage.Scan(&lang.NameShort, &lang.Flag); err != nil {
+		if err := rowLanguage.Scan(&lang.ID, &lang.NameShort, &lang.Flag); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
@@ -249,7 +249,7 @@ func GetLanguageByID(c *gin.Context) {
 		}
 	}
 
-	if lang.NameShort == "" || lang.Flag == "" {
+	if lang.ID == "" {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
 			"message": "language not found",
