@@ -3,6 +3,7 @@ package controllers
 import (
 	"github/abbgo/isleg/isleg-backend/config"
 	"github/abbgo/isleg/isleg-backend/models"
+	"github/abbgo/isleg/isleg-backend/pkg"
 	"net/http"
 	"time"
 
@@ -11,6 +12,7 @@ import (
 
 func CreateTranslationBasketPage(c *gin.Context) {
 
+	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -42,7 +44,7 @@ func CreateTranslationBasketPage(c *gin.Context) {
 	dataNames := []string{"quantity_of_goods", "total_price", "discount", "delivery", "total", "currency", "to_order", "your_basket", "empty_the_basket"}
 
 	// VALIDATE DATA
-	if err = models.ValidateTranslationBasketPageData(languages, dataNames, c); err != nil {
+	if err = pkg.ValidateTranslations(languages, dataNames, c); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
 			"message": err.Error(),
@@ -73,7 +75,7 @@ func CreateTranslationBasketPage(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
-		"message": "translation basket page successfully added",
+		"message": "data successfully added",
 	})
 
 }
