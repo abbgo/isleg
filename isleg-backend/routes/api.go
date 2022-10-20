@@ -84,7 +84,7 @@ func Routes() *gin.Engine {
 		back.GET("/translation-order-page/:id", backController.GetTranslationOrderPageByID)    // fully ready
 
 		back.POST("/translation-my-order-page", backController.CreateTranslationMyOrderPage)        // fully ready
-		back.PUT("/translation-my-order-page/:id", backController.UpdateTranslationMyOrderPageByID) //+
+		back.PUT("/translation-my-order-page/:id", backController.UpdateTranslationMyOrderPageByID) // fully ready
 		back.GET("/translation-my-order-page/:id", backController.GetTranslationMyOrderPageByID)    //+
 
 		back.POST("/category", backController.CreateCategory)                             //+
