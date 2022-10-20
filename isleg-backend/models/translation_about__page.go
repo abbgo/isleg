@@ -16,20 +16,6 @@ type TranslationAbout struct {
 	DeletedAt string `json:"-"`
 }
 
-func ValidateTranslationAboutData(languages []Language, dataNames []string, context *gin.Context) error {
-
-	for _, dataName := range dataNames {
-		for _, v := range languages {
-			if context.PostForm(dataName+"_"+v.NameShort) == "" {
-				return errors.New(dataName + "_" + v.NameShort + " is required")
-			}
-		}
-	}
-
-	return nil
-
-}
-
 func ValidateTranslationAboutUpdate(dataNames []string, context *gin.Context) error {
 
 	for _, dataName := range dataNames {
