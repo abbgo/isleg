@@ -181,6 +181,7 @@ func UpdateTranslationUpdatePasswordPageByID(c *gin.Context) {
 
 func GetTranslationUpdatePasswordPageByID(c *gin.Context) {
 
+	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -199,9 +200,11 @@ func GetTranslationUpdatePasswordPageByID(c *gin.Context) {
 		}
 	}()
 
+	// get id from request parameter
 	ID := c.Param("id")
 
-	rowFlag, err := db.Query("SELECT title,verify_password,explanation,save,password FROM translation_update_password_page WHERE id = $1 AND deleted_at IS NULL", ID)
+	// check id and get data
+	rowFlag, err := db.Query("SELECT id,title,verify_password,explanation,save,password FROM translation_update_password_page WHERE id = $1 AND deleted_at IS NULL", ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -222,7 +225,7 @@ func GetTranslationUpdatePasswordPageByID(c *gin.Context) {
 	var t models.TranslationUpdatePasswordPage
 
 	for rowFlag.Next() {
-		if err := rowFlag.Scan(&t.Title, &t.VerifyPassword, &t.Explanation, &t.Save, &t.Password); err != nil {
+		if err := rowFlag.Scan(&t.ID, &t.Title, &t.VerifyPassword, &t.Explanation, &t.Save, &t.Password); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
@@ -231,7 +234,7 @@ func GetTranslationUpdatePasswordPageByID(c *gin.Context) {
 		}
 	}
 
-	if t.Title == "" {
+	if t.ID == "" {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
 			"message": "record not found",
