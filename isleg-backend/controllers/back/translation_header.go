@@ -202,6 +202,7 @@ func UpdateTranslationHeaderByID(c *gin.Context) {
 
 func GetTranslationHeaderByID(c *gin.Context) {
 
+	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -220,9 +221,11 @@ func GetTranslationHeaderByID(c *gin.Context) {
 		}
 	}()
 
+	// get id of translation header from request parameter
 	trHead := c.Param("id")
 
-	rowFlag, err := db.Query("SELECT research,phone,password,forgot_password,sign_in,sign_up,name,password_verification,verify_secure,my_information,my_favorites,my_orders,log_out,basket,email,add_to_basket FROM translation_header WHERE id = $1 AND deleted_at IS NULL", trHead)
+	// check id and get data
+	rowFlag, err := db.Query("SELECT id,research,phone,password,forgot_password,sign_in,sign_up,name,password_verification,verify_secure,my_information,my_favorites,my_orders,log_out,basket,email,add_to_basket FROM translation_header WHERE id = $1 AND deleted_at IS NULL", trHead)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -243,7 +246,7 @@ func GetTranslationHeaderByID(c *gin.Context) {
 	var t models.TranslationHeader
 
 	for rowFlag.Next() {
-		if err := rowFlag.Scan(&t.Research, &t.Phone, &t.Password, &t.ForgotPassword, &t.SignIn, &t.SignUp, &t.Name, &t.PasswordVerification, &t.VerifySecure, &t.MyInformation, &t.MyFavorites, &t.MyOrders, &t.LogOut, &t.Basket, &t.Email, &t.AddToBasket); err != nil {
+		if err := rowFlag.Scan(&t.ID, &t.Research, &t.Phone, &t.Password, &t.ForgotPassword, &t.SignIn, &t.SignUp, &t.Name, &t.PasswordVerification, &t.VerifySecure, &t.MyInformation, &t.MyFavorites, &t.MyOrders, &t.LogOut, &t.Basket, &t.Email, &t.AddToBasket); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
@@ -252,7 +255,7 @@ func GetTranslationHeaderByID(c *gin.Context) {
 		}
 	}
 
-	if t.Research == "" {
+	if t.ID == "" {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
 			"message": "record not found",
