@@ -3,6 +3,7 @@ package controllers
 import (
 	"github/abbgo/isleg/isleg-backend/config"
 	"github/abbgo/isleg/isleg-backend/models"
+	"github/abbgo/isleg/isleg-backend/pkg"
 	"net/http"
 	"time"
 
@@ -11,6 +12,7 @@ import (
 
 func CreateTranslationUpdatePasswordPage(c *gin.Context) {
 
+	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -42,7 +44,7 @@ func CreateTranslationUpdatePasswordPage(c *gin.Context) {
 	dataNames := []string{"title", "password", "verify_password", "explanation", "save"}
 
 	// VALIDATE DATA
-	if err = models.ValidateTranslationUpdatePasswordPageData(languages, dataNames, c); err != nil {
+	if err = pkg.ValidateTranslations(languages, dataNames, c); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
 			"message": err.Error(),
@@ -50,6 +52,7 @@ func CreateTranslationUpdatePasswordPage(c *gin.Context) {
 		return
 	}
 
+	// add data in database
 	for _, v := range languages {
 		result, err := db.Query("INSERT INTO translation_update_password_page (lang_id,title,password,verify_password,explanation,save) VALUES ($1,$2,$3,$4,$5,$6)", v.ID, c.PostForm("title_"+v.NameShort), c.PostForm("password_"+v.NameShort), c.PostForm("verify_password_"+v.NameShort), c.PostForm("explanation_"+v.NameShort), c.PostForm("save_"+v.NameShort))
 		if err != nil {
@@ -72,7 +75,7 @@ func CreateTranslationUpdatePasswordPage(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
-		"message": "translation update password page successfully added",
+		"message": "data successfully added",
 	})
 
 }
