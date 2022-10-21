@@ -58,11 +58,11 @@ func ValidateCategory(isHomeCategory, parentCategoryID, fileName string) (bool, 
 		if err != nil {
 			return false, "", err
 		}
-		defer func() (bool, string, error) {
+		defer func() (bool, string, string, error) {
 			if err := rowCategory.Close(); err != nil {
-				return false, "", err
+				return false, "", "", err
 			}
-			return false, "", nil
+			return false, "", "", nil
 		}()
 
 		var parentCategory string
@@ -85,5 +85,82 @@ func ValidateCategory(isHomeCategory, parentCategoryID, fileName string) (bool, 
 	}
 
 	return is_home_category, "", nil
+
+}
+
+func ValidateCategoryForUpdate(isHomeCategory, categoryID, parentCategoryID string) (bool, string, string, error) {
+
+	// initialize database connection
+	db, err := config.ConnDB()
+	if err != nil {
+		return false, "", "", err
+	}
+	defer func() (bool, string, string, error) {
+		if err := db.Close(); err != nil {
+			return false, "", "", err
+		}
+		return false, "", "", nil
+	}()
+
+	// validate is home category
+	is_home_category, err := strconv.ParseBool(isHomeCategory)
+	if err != nil {
+		return false, "", "", err
+	}
+
+	// validate id and get image of category
+	rowCategor, err := db.Query("SELECT id,image FROM categories WHERE id = $1 AND deleted_at IS NULL", categoryID)
+	if err != nil {
+		return false, "", "", err
+	}
+	defer func() (bool, string, string, error) {
+		if err := rowCategor.Close(); err != nil {
+			return false, "", "", err
+		}
+		return false, "", "", nil
+	}()
+
+	var category_id, image string
+
+	for rowCategor.Next() {
+		if err := rowCategor.Scan(&category_id, &image); err != nil {
+			return false, "", "", err
+		}
+	}
+
+	if category_id == "" {
+		return false, "", "", errors.New("category not found")
+	}
+
+	// validate parentCategoryID
+	if parentCategoryID != "" {
+
+		rowCategory, err := db.Query("SELECT id FROM categories WHERE id = $1 AND deleted_at IS NULL", parentCategoryID)
+		if err != nil {
+			return false, "", "", err
+		}
+		defer func() (bool, string, string, error) {
+			if err := rowCategory.Close(); err != nil {
+				return false, "", "", err
+			}
+			return false, "", "", nil
+		}()
+
+		var parentCategory string
+
+		for rowCategory.Next() {
+			if err := rowCategory.Scan(&parentCategory); err != nil {
+				return false, "", "", err
+			}
+		}
+
+		if parentCategory == "" {
+			return false, "", "", errors.New("parent category not found")
+		}
+
+		return is_home_category, parentCategory, image, nil
+	}
+
+	return is_home_category, "", image, nil
 
 }

@@ -89,7 +89,7 @@ func Routes() *gin.Engine {
 		back.GET("/translation-my-order-page/:id", backController.GetTranslationMyOrderPageByID)    // fully ready
 
 		back.POST("/category", backController.CreateCategory)                             // fully ready
-		back.PUT("/category/:id", backController.UpdateCategoryByID)                      //+
+		back.PUT("/category/:id", backController.UpdateCategoryByID)                      // fully ready
 		back.GET("/category/:id", backController.GetCategoryByID)                         //+
 		back.GET("/categories", backController.GetCategories)                             //+
 		back.DELETE("/category/:id", backController.DeleteCategoryByID)                   // funksiyany gowy optimize etmeli
