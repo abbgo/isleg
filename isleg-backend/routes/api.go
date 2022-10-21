@@ -96,7 +96,7 @@ func Routes() *gin.Engine {
 		back.GET("/restore-category/:id", backController.RestoreCategoryByID)             // fully ready
 		back.DELETE("/delete-category/:id", backController.DeletePermanentlyCategoryByID) // fully ready
 
-		back.POST("/brend", backController.CreateBrend)                             //+
+		back.POST("/brend", backController.CreateBrend)                             // fully ready
 		back.PUT("/brend/:id", backController.UpdateBrendByID)                      //+
 		back.GET("/brend/:id", backController.GetBrendByID)                         //+
 		back.GET("/brends", backController.GetBrends)                               //+

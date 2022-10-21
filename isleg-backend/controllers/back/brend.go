@@ -20,6 +20,7 @@ type BrendForHomePage struct {
 
 func CreateBrend(c *gin.Context) {
 
+	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -81,7 +82,7 @@ func CreateBrend(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
-		"message": "brend successfully added",
+		"message": "data successfully added",
 	})
 
 }
