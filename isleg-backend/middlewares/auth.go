@@ -11,7 +11,7 @@ import (
 func Auth() gin.HandlerFunc {
 	return func(context *gin.Context) {
 		tokenStr := context.GetHeader("Authorization")
-		fmt.Println("gelen token: ", tokenStr)
+		fmt.Println("access token: ", tokenStr)
 
 		tokenString := strings.Split(tokenStr, " ")[1]
 
