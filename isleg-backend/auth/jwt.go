@@ -22,7 +22,7 @@ type JWTClaim struct {
 func GenerateAccessToken(phoneNumber string) (accessTokenString string, err error) {
 
 	// expirationTime := time.Now().Add(1 * time.Hour)
-	expirationTime := time.Now().Add(10 * time.Second)
+	expirationTime := time.Now().Add(5 * time.Second)
 
 	claims := &JWTClaim{
 		PhoneNumber: phoneNumber,
@@ -39,7 +39,7 @@ func GenerateAccessToken(phoneNumber string) (accessTokenString string, err erro
 func GenerateRefreshToken(phoneNumber string) (refreshTokenString string, err error) {
 
 	// expirationTime := time.Now().Add(5 * time.Hour)
-	expirationTime := time.Now().Add(10 * time.Hour)
+	expirationTime := time.Now().Add(10 * time.Second)
 
 	claims := &JWTClaim{
 		PhoneNumber: phoneNumber,
@@ -75,7 +75,7 @@ func Refresh(c *gin.Context) {
 	)
 
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
+		c.JSON(403, gin.H{
 			"message": err.Error(),
 		})
 		// c.Abort()
@@ -92,7 +92,7 @@ func Refresh(c *gin.Context) {
 	}
 
 	if claims.ExpiresAt < time.Now().Local().Unix() {
-		c.JSON(http.StatusBadRequest, gin.H{
+		c.JSON(403, gin.H{
 			"message": errors.New("token expired"),
 		})
 		// c.Abort()
@@ -114,6 +114,7 @@ func Refresh(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
+		"status":        true,
 		"access_token":  accessTokenString,
 		"refresh_token": refreshTokenString,
 	})
@@ -129,7 +130,7 @@ func ValidateToken(signedToken string) (err error) {
 		},
 	)
 	if err != nil {
-		return errors.New("yalnyslyk")
+		return err
 	}
 	claims, ok := token.Claims.(*JWTClaim)
 	if !ok {
