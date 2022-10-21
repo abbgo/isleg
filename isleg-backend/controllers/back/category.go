@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"github/abbgo/isleg/isleg-backend/config"
 	"github/abbgo/isleg/isleg-backend/models"
 	"github/abbgo/isleg/isleg-backend/pkg"
@@ -54,14 +55,6 @@ type Product struct {
 type Brend struct {
 	ID   string `json:"id"`
 	Name string `json:"name"`
-}
-
-type OneCategory struct {
-	ID               string                       `json:"id"`
-	ParentCategoryID string                       `json:"parent_category_id"`
-	Image            string                       `json:"image"`
-	IsHomeCategory   bool                         `json:"is_home_category"`
-	Translations     []models.TranslationCategory `json:"translations"`
 }
 
 func CreateCategory(c *gin.Context) {
@@ -265,6 +258,8 @@ func UpdateCategoryByID(c *gin.Context) {
 		return
 	}
 
+	fmt.Println("image: ", image)
+
 	// FILE UPLOAD
 	file, errFile := c.FormFile("image")
 	if errFile != nil {
@@ -283,7 +278,27 @@ func UpdateCategoryByID(c *gin.Context) {
 		newFileName := uuid.New().String() + extension
 		fileName = "uploads/category/" + newFileName
 
+		if image != "" {
+			if err := os.Remove("./" + image); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}
+
+		if err := c.SaveUploadedFile(file, "./"+fileName); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+
 	}
+
+	fmt.Println("file name: ", fileName)
 
 	dataNames := []string{"name"}
 
@@ -304,23 +319,7 @@ func UpdateCategoryByID(c *gin.Context) {
 	}
 
 	if parentCategoryID != "" && fileName != "" {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": "child cannot be an image of the category",
-		})
-		return
-	}
-
-	if fileName != "" {
-		if err := os.Remove("./" + image); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-
-		if err := c.SaveUploadedFile(file, "./"+fileName); err != nil {
+		if err := os.Remove("./" + fileName); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
@@ -385,6 +384,7 @@ func UpdateCategoryByID(c *gin.Context) {
 
 func GetCategoryByID(c *gin.Context) {
 
+	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -403,8 +403,10 @@ func GetCategoryByID(c *gin.Context) {
 		}
 	}()
 
+	// get id from request parameter
 	ID := c.Param("id")
 
+	// check id and get data from daabase
 	rowCategor, err := db.Query("SELECT id,parent_category_id,image,is_home_category FROM categories WHERE id = $1 AND deleted_at IS NULL", ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -423,7 +425,7 @@ func GetCategoryByID(c *gin.Context) {
 		}
 	}()
 
-	var category OneCategory
+	var category models.Category
 
 	for rowCategor.Next() {
 		if err := rowCategor.Scan(&category.ID, &category.ParentCategoryID, &category.Image, &category.IsHomeCategory); err != nil {
@@ -475,7 +477,7 @@ func GetCategoryByID(c *gin.Context) {
 		translations = append(translations, translation)
 	}
 
-	category.Translations = translations
+	category.TranslationCategory = translations
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":   true,
