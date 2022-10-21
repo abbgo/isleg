@@ -4,11 +4,13 @@ import (
 	"errors"
 	"github/abbgo/isleg/isleg-backend/config"
 	"strconv"
+
+	"gopkg.in/guregu/null.v4"
 )
 
 type Category struct {
 	ID                  string                `json:"id,omitempty"`
-	ParentCategoryID    string                `json:"parent_category_id,omitempty"`
+	ParentCategoryID    null.String           `json:"parent_category_id,omitempty"`
 	Image               string                `json:"image,omitempty"`
 	IsHomeCategory      bool                  `json:"is_home_category,omitempty"`
 	CreatedAt           string                `json:"-"`
