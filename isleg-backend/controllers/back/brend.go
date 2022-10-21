@@ -419,6 +419,7 @@ func DeleteBrendByID(c *gin.Context) {
 
 func RestoreBrendByID(c *gin.Context) {
 
+	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -437,9 +438,11 @@ func RestoreBrendByID(c *gin.Context) {
 		}
 	}()
 
+	// get id from request parameter
 	ID := c.Param("id")
 
-	rowBrend, err := db.Query("SELECT image FROM brends WHERE id = $1 AND deleted_at IS NOT NULL", ID)
+	// check id
+	rowBrend, err := db.Query("SELECT id FROM brends WHERE id = $1 AND deleted_at IS NOT NULL", ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -457,10 +460,10 @@ func RestoreBrendByID(c *gin.Context) {
 		}
 	}()
 
-	var image string
+	var id string
 
 	for rowBrend.Next() {
-		if err := rowBrend.Scan(&image); err != nil {
+		if err := rowBrend.Scan(&id); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
@@ -469,7 +472,7 @@ func RestoreBrendByID(c *gin.Context) {
 		}
 	}
 
-	if image == "" {
+	if id == "" {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
 			"message": "record not found",
@@ -477,7 +480,7 @@ func RestoreBrendByID(c *gin.Context) {
 		return
 	}
 
-	resultBrends, err := db.Query("UPDATE brends SET deleted_at = NULL WHERE id = $1", ID)
+	resultProc, err := db.Query("CALL restore_brend($1)", ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -486,7 +489,7 @@ func RestoreBrendByID(c *gin.Context) {
 		return
 	}
 	defer func() {
-		if err := resultBrends.Close(); err != nil {
+		if err := resultProc.Close(); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
@@ -495,45 +498,63 @@ func RestoreBrendByID(c *gin.Context) {
 		}
 	}()
 
-	resultProducts, err := db.Query("UPDATE products SET deleted_at = NULL WHERE brend_id = $1", ID)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-	defer func() {
-		if err := resultProducts.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
+	// resultBrends, err := db.Query("UPDATE brends SET deleted_at = NULL WHERE id = $1", ID)
+	// if err != nil {
+	// 	c.JSON(http.StatusBadRequest, gin.H{
+	// 		"status":  false,
+	// 		"message": err.Error(),
+	// 	})
+	// 	return
+	// }
+	// defer func() {
+	// 	if err := resultBrends.Close(); err != nil {
+	// 		c.JSON(http.StatusBadRequest, gin.H{
+	// 			"status":  false,
+	// 			"message": err.Error(),
+	// 		})
+	// 		return
+	// 	}
+	// }()
 
-	resultTRProduct, err := db.Query("UPDATE translation_product SET deleted_at = NULL FROM products WHERE translation_product.product_id=products.id AND products.brend_id = $1", ID)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-	defer func() {
-		if err := resultTRProduct.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
+	// resultProducts, err := db.Query("UPDATE products SET deleted_at = NULL WHERE brend_id = $1", ID)
+	// if err != nil {
+	// 	c.JSON(http.StatusBadRequest, gin.H{
+	// 		"status":  false,
+	// 		"message": err.Error(),
+	// 	})
+	// 	return
+	// }
+	// defer func() {
+	// 	if err := resultProducts.Close(); err != nil {
+	// 		c.JSON(http.StatusBadRequest, gin.H{
+	// 			"status":  false,
+	// 			"message": err.Error(),
+	// 		})
+	// 		return
+	// 	}
+	// }()
+
+	// resultTRProduct, err := db.Query("UPDATE translation_product SET deleted_at = NULL FROM products WHERE translation_product.product_id=products.id AND products.brend_id = $1", ID)
+	// if err != nil {
+	// 	c.JSON(http.StatusBadRequest, gin.H{
+	// 		"status":  false,
+	// 		"message": err.Error(),
+	// 	})
+	// 	return
+	// }
+	// defer func() {
+	// 	if err := resultTRProduct.Close(); err != nil {
+	// 		c.JSON(http.StatusBadRequest, gin.H{
+	// 			"status":  false,
+	// 			"message": err.Error(),
+	// 		})
+	// 		return
+	// 	}
+	// }()
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
-		"message": "brend successfully restored",
+		"message": "data successfully restored",
 	})
 
 }
