@@ -31,6 +31,29 @@ COMMENT ON EXTENSION "uuid-ossp" IS 'generate universally unique identifiers (UU
 
 
 --
+-- Name: after_delete_category(uuid); Type: PROCEDURE; Schema: public; Owner: postgres
+--
+
+CREATE PROCEDURE public.after_delete_category(cat_id uuid)
+    LANGUAGE plpgsql
+    AS $$
+DECLARE category_uuid uuid;
+BEGIN
+FOR category_uuid IN SELECT id FROM categories WHERE parent_category_id = cat_id
+LOOP UPDATE translation_category SET deleted_at = now() WHERE category_id = category_uuid;
+UPDATE category_product SET deleted_at = now() WHERE category_id = category_uuid;
+UPDATE products SET deleted_at = now() FROM category_product WHERE category_product.product_id = products.id AND category_product.category_id = category_uuid;
+UPDATE translation_product SET deleted_at = now() FROM products,category_product WHERE translation_product.product_id = products.id AND category_product.product_id = products.id  AND category_product.category_id = category_uuid;
+UPDATE main_image SET deleted_at = now() FROM products,category_product WHERE main_image.product_id = products.id AND category_product.product_id = products.id  AND category_product.category_id = category_uuid;
+UPDATE images SET deleted_at = now() FROM products,category_product WHERE images.product_id = products.id AND category_product.product_id = products.id  AND category_product.category_id = category_uuid;
+UPDATE category_shop SET deleted_at = now() WHERE category_id = category_uuid;
+UPDATE shops SET deleted_at = now() FROM category_shop WHERE category_shop.shop_id = shops.id AND category_shop.category_id = category_uuid; END LOOP; END;
+$$;
+
+
+ALTER PROCEDURE public.after_delete_category(cat_id uuid) OWNER TO postgres;
+
+--
 -- Name: after_insert_language(); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
@@ -69,6 +92,70 @@ RETURN NEW; END; $$;
 ALTER FUNCTION public.after_insert_language() OWNER TO postgres;
 
 --
+-- Name: after_restore_category(uuid); Type: PROCEDURE; Schema: public; Owner: postgres
+--
+
+CREATE PROCEDURE public.after_restore_category(cat_id uuid)
+    LANGUAGE plpgsql
+    AS $$
+DECLARE category_uuid uuid;
+BEGIN
+FOR category_uuid IN SELECT id FROM categories WHERE parent_category_id = cat_id
+LOOP UPDATE translation_category SET deleted_at = NULL WHERE category_id = category_uuid;
+UPDATE category_product SET deleted_at = NULL WHERE category_id = category_uuid;
+UPDATE products SET deleted_at = NULL FROM category_product WHERE category_product.product_id = products.id AND category_product.category_id = category_uuid;
+UPDATE translation_product SET deleted_at = NULL FROM products,category_product WHERE translation_product.product_id = products.id AND category_product.product_id = products.id  AND category_product.category_id = category_uuid;
+UPDATE main_image SET deleted_at = NULL FROM products,category_product WHERE main_image.product_id = products.id AND category_product.product_id = products.id  AND category_product.category_id = category_uuid;
+UPDATE images SET deleted_at = NULL FROM products,category_product WHERE images.product_id = products.id AND category_product.product_id = products.id  AND category_product.category_id = category_uuid;
+UPDATE category_shop SET deleted_at = NULL WHERE category_id = category_uuid;
+UPDATE shops SET deleted_at = NULL FROM category_shop WHERE category_shop.shop_id = shops.id AND category_shop.category_id = category_uuid;
+END LOOP; END; $$;
+
+
+ALTER PROCEDURE public.after_restore_category(cat_id uuid) OWNER TO postgres;
+
+--
+-- Name: delete_brend(uuid); Type: PROCEDURE; Schema: public; Owner: postgres
+--
+
+CREATE PROCEDURE public.delete_brend(b_id uuid)
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+UPDATE brends SET deleted_at = now() WHERE id = b_id;
+UPDATE products SET deleted_at = now() WHERE brend_id = b_id;
+UPDATE translation_product SET deleted_at = now() FROM products WHERE translation_product.product_id=products.id AND products.brend_id = b_id;
+UPDATE main_image SET deleted_at = now() FROM products WHERE main_image.product_id=products.id AND products.brend_id = b_id;
+UPDATE images SET deleted_at = now() FROM products WHERE images.product_id=products.id AND products.brend_id = b_id;
+END; $$;
+
+
+ALTER PROCEDURE public.delete_brend(b_id uuid) OWNER TO postgres;
+
+--
+-- Name: delete_category(uuid); Type: PROCEDURE; Schema: public; Owner: postgres
+--
+
+CREATE PROCEDURE public.delete_category(category_uuid uuid)
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+UPDATE categories SET deleted_at = now() WHERE id = category_uuid;
+UPDATE translation_category SET deleted_at = now() WHERE category_id = category_uuid;
+UPDATE categories SET deleted_at = now() WHERE parent_category_id = category_uuid;
+UPDATE category_product SET deleted_at = now() WHERE category_id = category_uuid;
+UPDATE products SET deleted_at = now() FROM category_product WHERE category_product.product_id = products.id AND category_product.category_id = category_uuid;
+UPDATE translation_product SET deleted_at = now() FROM products,category_product WHERE translation_product.product_id = products.id AND category_product.product_id = products.id  AND category_product.category_id = category_uuid;
+UPDATE category_shop SET deleted_at = now() WHERE category_id = category_uuid;
+UPDATE shops SET deleted_at = now() FROM category_shop WHERE category_shop.shop_id = shops.id AND category_shop.category_id = category_uuid;
+UPDATE main_image SET deleted_at = now() FROM products,category_product WHERE main_image.product_id = products.id AND category_product.product_id = products.id  AND category_product.category_id = category_uuid;
+UPDATE images SET deleted_at = now() FROM products,category_product WHERE images.product_id = products.id AND category_product.product_id = products.id  AND category_product.category_id = category_uuid;
+END; $$;
+
+
+ALTER PROCEDURE public.delete_category(category_uuid uuid) OWNER TO postgres;
+
+--
 -- Name: delete_language(uuid); Type: PROCEDURE; Schema: public; Owner: postgres
 --
 
@@ -99,6 +186,47 @@ END; $$;
 
 
 ALTER PROCEDURE public.delete_language(language_id uuid) OWNER TO postgres;
+
+--
+-- Name: restore_brend(uuid); Type: PROCEDURE; Schema: public; Owner: postgres
+--
+
+CREATE PROCEDURE public.restore_brend(b_id uuid)
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+UPDATE brends SET deleted_at = NULL WHERE id = b_id;
+UPDATE products SET deleted_at = NULL WHERE brend_id = b_id;
+UPDATE translation_product SET deleted_at = NULL FROM products WHERE translation_product.product_id=products.id AND products.brend_id = b_id;
+UPDATE main_image SET deleted_at = NULL FROM products WHERE main_image.product_id=products.id AND products.brend_id = b_id;
+UPDATE images SET deleted_at = NULL FROM products WHERE images.product_id=products.id AND products.brend_id = b_id;
+END; $$;
+
+
+ALTER PROCEDURE public.restore_brend(b_id uuid) OWNER TO postgres;
+
+--
+-- Name: restore_category(uuid); Type: PROCEDURE; Schema: public; Owner: postgres
+--
+
+CREATE PROCEDURE public.restore_category(cat_id uuid)
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+UPDATE categories SET deleted_at = NULL WHERE id = cat_id;
+UPDATE translation_category SET deleted_at = NULL WHERE category_id = cat_id;
+UPDATE categories SET deleted_at = NULL WHERE parent_category_id = cat_id;
+UPDATE category_product SET deleted_at = NULL WHERE category_id = cat_id;
+UPDATE products SET deleted_at = NULL FROM category_product WHERE category_product.product_id = products.id AND category_product.category_id = cat_id;
+UPDATE translation_product SET deleted_at = NULL FROM products,category_product WHERE translation_product.product_id = products.id AND category_product.product_id = products.id  AND category_product.category_id = cat_id;
+UPDATE main_image SET deleted_at = NULL FROM products,category_product WHERE main_image.product_id = products.id AND category_product.product_id = products.id  AND category_product.category_id = cat_id;
+UPDATE images SET deleted_at = NULL FROM products,category_product WHERE images.product_id = products.id AND category_product.product_id = products.id  AND category_product.category_id = cat_id;
+UPDATE category_shop SET deleted_at = NULL WHERE category_id = cat_id;
+UPDATE shops SET deleted_at = NULL FROM category_shop WHERE category_shop.shop_id = shops.id AND category_shop.category_id = cat_id;
+END; $$;
+
+
+ALTER PROCEDURE public.restore_category(cat_id uuid) OWNER TO postgres;
 
 --
 -- Name: restore_language(uuid); Type: PROCEDURE; Schema: public; Owner: postgres
@@ -936,7 +1064,7 @@ ddccb2dc-9697-4f4e-acf5-26b8bc2c8b72	Tut	uploads/brend4f68381a-aa73-4168-90b3-66
 fdd259c2-794a-42b9-a3ad-9e91502af23e	Koka Kola	uploads/brend75f655c6-bcf5-47b2-ba01-d112cba64e81.jpg	2022-07-12 17:54:39.242004+05	2022-07-12 17:54:39.242004+05	\N
 f53a27b4-7810-4d8f-bd45-edad405d92b9	Maral Koke	uploads/brend7827fcfe-f8a9-4747-8c34-b55af2488b29.jpeg	2022-07-12 17:57:46.472194+05	2022-07-12 17:57:46.472194+05	\N
 46b13f0a-d584-4ad3-b270-437ecdc51449	Taze Ay	uploads/brend993b6484-657d-4662-abe2-922170abe75b.jpeg	2022-07-12 18:16:12.889441+05	2022-07-12 18:16:12.889441+05	\N
-c4bcda34-7332-4ae5-8129-d7538d63fee4	Buzz	uploads/brend/67f6bc90-a0ef-4828-b17b-8b00e930f1f1.jpeg	2022-08-12 10:36:10.886455+05	2022-08-12 10:36:10.886455+05	\N
+c4bcda34-7332-4ae5-8129-d7538d63fee4	Golden Eagle	uploads/brend/7a425220-7200-4eda-9013-c2d10eca4c89.jpg	2022-08-12 10:36:10.886455+05	2022-10-22 02:53:49.519217+05	\N
 \.
 
 
@@ -945,6 +1073,9 @@ c4bcda34-7332-4ae5-8129-d7538d63fee4	Buzz	uploads/brend/67f6bc90-a0ef-4828-b17b-
 --
 
 COPY public.cart (id, product_id, customer_id, quantity_of_product, created_at, updated_at, deleted_at) FROM stdin;
+d3ab09c6-b976-43bd-95cf-d7584746d540	0d4a6c3c-cc5d-457b-ac9a-ce60eacb94de	f25a66d3-93ac-4da4-b237-d34867d5ca8f	1	2022-10-22 02:39:50.988017+05	2022-10-22 02:39:50.988017+05	\N
+4a52b546-0d4a-4a13-80af-7175d3c135c0	bb6c3bdb-79e2-44b3-98b1-c1cee0976777	f25a66d3-93ac-4da4-b237-d34867d5ca8f	1	2022-10-22 02:39:51.105734+05	2022-10-22 02:39:51.105734+05	\N
+f2442927-9039-45d0-8245-9e32aa5d9ac9	d731b17a-ae8d-4561-ad67-0f431d5c529b	f25a66d3-93ac-4da4-b237-d34867d5ca8f	1	2022-10-22 02:39:51.12484+05	2022-10-22 02:39:51.12484+05	\N
 \.
 
 
@@ -955,11 +1086,6 @@ COPY public.cart (id, product_id, customer_id, quantity_of_product, created_at, 
 COPY public.categories (id, parent_category_id, image, is_home_category, created_at, updated_at, deleted_at) FROM stdin;
 f745d171-68e6-42e2-b339-cb3c210cda55	b982bd86-0a0f-4950-baad-5a131e9b728e		f	2022-06-16 13:45:48.828786+05	2022-06-16 13:45:48.828786+05	\N
 d4cb1359-6c23-4194-8e3c-21ed8cec8373	5bb9a4e7-9992-418f-b551-537844d371da		f	2022-06-16 13:48:04.517774+05	2022-06-16 13:48:04.517774+05	\N
-7f453dd0-7b2e-480d-a8be-fcfa23bd863e	29ed85bb-11eb-4458-bbf3-5a5644d167d6		t	2022-06-20 09:43:07.336084+05	2022-06-20 09:43:07.336084+05	\N
-29ed85bb-11eb-4458-bbf3-5a5644d167d6	\N	uploads/categoryeaae1626-7e9f-4db9-abf6-f454ade813d3.jpeg	f	2022-06-20 09:41:17.575565+05	2022-06-20 09:41:17.575565+05	\N
-66772380-c161-4c45-9350-a45e765193e2	29ed85bb-11eb-4458-bbf3-5a5644d167d6		t	2022-06-20 09:45:34.38667+05	2022-06-20 09:45:34.38667+05	\N
-338906f1-dbe2-4ba7-84fc-fe7a4d7856ec	29ed85bb-11eb-4458-bbf3-5a5644d167d6		t	2022-06-20 09:46:01.119337+05	2022-06-20 09:46:01.119337+05	\N
-45765130-7f97-4f0c-b886-f70b75e02610	29ed85bb-11eb-4458-bbf3-5a5644d167d6		t	2022-06-20 10:11:06.648938+05	2022-06-20 10:11:06.648938+05	\N
 fdc10d33-043b-4ee0-9d6e-e2a12a3e150a	5bb9a4e7-9992-418f-b551-537844d371da		f	2022-06-16 13:47:18.854741+05	2022-06-16 13:47:18.854741+05	\N
 02bd4413-8586-49ab-802e-16304e756a8b	\N	uploads/category0684921b-251d-405f-8b30-30964be0b3d2.jpeg	f	2022-06-16 13:43:22.644619+05	2022-06-16 13:43:22.644619+05	\N
 5bb9a4e7-9992-418f-b551-537844d371da	02bd4413-8586-49ab-802e-16304e756a8b		f	2022-06-16 13:46:44.575803+05	2022-06-16 13:46:44.575803+05	\N
@@ -972,6 +1098,12 @@ d8ded28c-d4fb-4c11-a84c-4d4f81a22e28	\N	uploads/category/e80980fb-d4eb-4353-9f72
 cdb681a2-98e4-4716-a136-a5e4888e9c32	\N	uploads/category/cbab3616-8f46-44c1-92af-178516cd7dd0.jpg	f	2022-10-21 03:28:30.755427+05	2022-10-21 11:09:53.88461+05	\N
 a4277afa-1c92-4f4e-809e-dfbb54ddbc9b	\N	uploads/category/e15eebcd-07fa-4020-be24-447366836e2e.jpg	f	2022-10-21 11:48:26.196782+05	2022-10-21 11:48:26.196782+05	\N
 849a1c59-45fb-429b-8fe3-a6e34a6dafaa	7605172f-7a12-4781-a892-6e3b5cf11490	uploads/category/7dc0bb7f-6624-474b-a93c-06362e05bdb5.jpg	f	2022-10-21 11:48:48.606943+05	2022-10-21 12:15:12.803389+05	\N
+bdabc7aa-a567-48d5-a1d9-b1ff61c6af4b	417a385e-6a74-44f3-a536-405eb8251978		f	2022-10-21 22:28:26.592037+05	2022-10-21 22:28:26.592037+05	\N
+29ed85bb-11eb-4458-bbf3-5a5644d167d6	\N	uploads/categoryeaae1626-7e9f-4db9-abf6-f454ade813d3.jpeg	f	2022-06-20 09:41:17.575565+05	2022-10-22 01:26:07.073419+05	\N
+7f453dd0-7b2e-480d-a8be-fcfa23bd863e	29ed85bb-11eb-4458-bbf3-5a5644d167d6		t	2022-06-20 09:43:07.336084+05	2022-10-22 01:26:07.073419+05	\N
+66772380-c161-4c45-9350-a45e765193e2	29ed85bb-11eb-4458-bbf3-5a5644d167d6		t	2022-06-20 09:45:34.38667+05	2022-10-22 01:26:07.073419+05	\N
+338906f1-dbe2-4ba7-84fc-fe7a4d7856ec	29ed85bb-11eb-4458-bbf3-5a5644d167d6		t	2022-06-20 09:46:01.119337+05	2022-10-22 01:26:07.073419+05	\N
+45765130-7f97-4f0c-b886-f70b75e02610	29ed85bb-11eb-4458-bbf3-5a5644d167d6		t	2022-06-20 10:11:06.648938+05	2022-10-22 01:26:07.073419+05	\N
 \.
 
 
@@ -982,23 +1114,8 @@ a4277afa-1c92-4f4e-809e-dfbb54ddbc9b	\N	uploads/category/e15eebcd-07fa-4020-be24
 COPY public.category_product (id, category_id, product_id, created_at, updated_at, deleted_at) FROM stdin;
 d82042be-0468-446f-a06e-c569fc6967de	f745d171-68e6-42e2-b339-cb3c210cda55	0d4a6c3c-cc5d-457b-ac9a-ce60eacb94de	2022-09-17 14:54:57.077351+05	2022-09-17 14:54:57.077351+05	\N
 715c66a2-32b6-449b-8ed1-2f656ed07c2f	d4cb1359-6c23-4194-8e3c-21ed8cec8373	0d4a6c3c-cc5d-457b-ac9a-ce60eacb94de	2022-09-17 14:54:57.085055+05	2022-09-17 14:54:57.085055+05	\N
-7b67d6b8-6c31-48c7-bb98-e5645af6ad9d	7f453dd0-7b2e-480d-a8be-fcfa23bd863e	0d4a6c3c-cc5d-457b-ac9a-ce60eacb94de	2022-09-17 14:54:57.09628+05	2022-09-17 14:54:57.09628+05	\N
 703562cb-0dc5-4ea8-bb9b-a632150d9406	d4cb1359-6c23-4194-8e3c-21ed8cec8373	b2b165a3-2261-4d67-8160-0e239ecd99b5	2022-09-17 14:55:35.543212+05	2022-09-17 14:55:35.543212+05	\N
-de77f0ce-1f16-4610-b62f-d8bd50339cd8	7f453dd0-7b2e-480d-a8be-fcfa23bd863e	b2b165a3-2261-4d67-8160-0e239ecd99b5	2022-09-17 14:55:35.552501+05	2022-09-17 14:55:35.552501+05	\N
-599b6d48-0077-4960-86f9-947addb08210	29ed85bb-11eb-4458-bbf3-5a5644d167d6	b2b165a3-2261-4d67-8160-0e239ecd99b5	2022-09-17 14:55:35.563229+05	2022-09-17 14:55:35.563229+05	\N
-8199e176-7f47-4421-8f14-2fd116564d80	7f453dd0-7b2e-480d-a8be-fcfa23bd863e	a2bb8745-1f3a-4de9-ad66-11b0bb3bb754	2022-09-17 14:56:05.486473+05	2022-09-17 14:56:05.486473+05	\N
-c43bf0b8-a01d-41fd-9614-2e75cd19b413	29ed85bb-11eb-4458-bbf3-5a5644d167d6	a2bb8745-1f3a-4de9-ad66-11b0bb3bb754	2022-09-17 14:56:05.497232+05	2022-09-17 14:56:05.497232+05	\N
-3c4747b8-1925-43a0-959c-b7c2279f84fd	66772380-c161-4c45-9350-a45e765193e2	a2bb8745-1f3a-4de9-ad66-11b0bb3bb754	2022-09-17 14:56:05.507917+05	2022-09-17 14:56:05.507917+05	\N
-1ddb4057-86f2-436e-a0be-f09d1ff807b3	29ed85bb-11eb-4458-bbf3-5a5644d167d6	d731b17a-ae8d-4561-ad67-0f431d5c529b	2022-09-17 14:56:36.24299+05	2022-09-17 14:56:36.24299+05	\N
-401e2f12-c159-4a9f-9365-ae3a5729fa07	66772380-c161-4c45-9350-a45e765193e2	d731b17a-ae8d-4561-ad67-0f431d5c529b	2022-09-17 14:56:36.252888+05	2022-09-17 14:56:36.252888+05	\N
-76bd693b-0d60-4613-beed-79fee34431b0	338906f1-dbe2-4ba7-84fc-fe7a4d7856ec	d731b17a-ae8d-4561-ad67-0f431d5c529b	2022-09-17 14:56:36.263964+05	2022-09-17 14:56:36.263964+05	\N
-5b934855-c387-4039-8029-108464f90297	66772380-c161-4c45-9350-a45e765193e2	bb6c3bdb-79e2-44b3-98b1-c1cee0976777	2022-09-17 14:57:07.276145+05	2022-09-17 14:57:07.276145+05	\N
-3f5f53c8-b03d-4868-bbc1-7dfe2466000f	338906f1-dbe2-4ba7-84fc-fe7a4d7856ec	bb6c3bdb-79e2-44b3-98b1-c1cee0976777	2022-09-17 14:57:07.288945+05	2022-09-17 14:57:07.288945+05	\N
-1d9851c7-5fe4-47c9-9d9b-b300777610dc	45765130-7f97-4f0c-b886-f70b75e02610	bb6c3bdb-79e2-44b3-98b1-c1cee0976777	2022-09-17 14:57:07.298188+05	2022-09-17 14:57:07.298188+05	\N
-9664b220-8b44-489d-a4cd-b925b2136a0a	338906f1-dbe2-4ba7-84fc-fe7a4d7856ec	d4156225-082e-4f0f-9b2c-85268114433a	2022-09-17 14:57:34.665141+05	2022-09-17 14:57:34.665141+05	\N
-8913356d-d03e-4aba-b2d7-c175c82eea3f	45765130-7f97-4f0c-b886-f70b75e02610	d4156225-082e-4f0f-9b2c-85268114433a	2022-09-17 14:57:34.676377+05	2022-09-17 14:57:34.676377+05	\N
 7529cbf9-7d44-4e8d-a39f-308e9d85b40f	fdc10d33-043b-4ee0-9d6e-e2a12a3e150a	d4156225-082e-4f0f-9b2c-85268114433a	2022-09-17 14:57:34.687184+05	2022-09-17 14:57:34.687184+05	\N
-3ab03ec7-2fb0-44e4-b5c9-c0cbf4c42fa3	45765130-7f97-4f0c-b886-f70b75e02610	81b84c5d-9759-4b86-978a-649c8ef79660	2022-09-17 14:58:10.07692+05	2022-09-17 14:58:10.07692+05	\N
 0740063b-0d3a-46f5-987c-072fdf0ad3cf	fdc10d33-043b-4ee0-9d6e-e2a12a3e150a	81b84c5d-9759-4b86-978a-649c8ef79660	2022-09-17 14:58:10.086907+05	2022-09-17 14:58:10.086907+05	\N
 9dca9955-b2eb-4d2c-b4a9-ddbcfd251f56	02bd4413-8586-49ab-802e-16304e756a8b	81b84c5d-9759-4b86-978a-649c8ef79660	2022-09-17 14:58:10.098298+05	2022-09-17 14:58:10.098298+05	\N
 80623747-b1b4-49d6-ba3a-eb7703a830c6	fdc10d33-043b-4ee0-9d6e-e2a12a3e150a	660071e0-8f17-4c48-9d80-d4cac306de3a	2022-09-17 14:58:40.166259+05	2022-09-17 14:58:40.166259+05	\N
@@ -1016,6 +1133,21 @@ d9e3f447-0a02-4788-8ecb-ef02d266db02	d4cb1359-6c23-4194-8e3c-21ed8cec8373	8df705
 c55cc88b-5651-4fa2-91fd-c85c53b2fed7	b982bd86-0a0f-4950-baad-5a131e9b728e	3e81d4cd-c3c6-4b01-832b-383b8bea5a6a	2022-10-06 11:07:41.731753+05	2022-10-06 11:07:41.731753+05	\N
 9eff8362-8c57-4b7a-a8bd-695cf30d3dcc	f745d171-68e6-42e2-b339-cb3c210cda55	3e81d4cd-c3c6-4b01-832b-383b8bea5a6a	2022-10-06 11:07:41.792463+05	2022-10-06 11:07:41.792463+05	\N
 d90750b0-0672-4805-a8fc-9fe46f3ff7b4	d4cb1359-6c23-4194-8e3c-21ed8cec8373	3e81d4cd-c3c6-4b01-832b-383b8bea5a6a	2022-10-06 11:07:41.802468+05	2022-10-06 11:07:41.802468+05	\N
+7b67d6b8-6c31-48c7-bb98-e5645af6ad9d	7f453dd0-7b2e-480d-a8be-fcfa23bd863e	0d4a6c3c-cc5d-457b-ac9a-ce60eacb94de	2022-09-17 14:54:57.09628+05	2022-10-22 01:26:07.108522+05	\N
+de77f0ce-1f16-4610-b62f-d8bd50339cd8	7f453dd0-7b2e-480d-a8be-fcfa23bd863e	b2b165a3-2261-4d67-8160-0e239ecd99b5	2022-09-17 14:55:35.552501+05	2022-10-22 01:26:07.108522+05	\N
+8199e176-7f47-4421-8f14-2fd116564d80	7f453dd0-7b2e-480d-a8be-fcfa23bd863e	a2bb8745-1f3a-4de9-ad66-11b0bb3bb754	2022-09-17 14:56:05.486473+05	2022-10-22 01:26:07.108522+05	\N
+3c4747b8-1925-43a0-959c-b7c2279f84fd	66772380-c161-4c45-9350-a45e765193e2	a2bb8745-1f3a-4de9-ad66-11b0bb3bb754	2022-09-17 14:56:05.507917+05	2022-10-22 01:26:07.108522+05	\N
+401e2f12-c159-4a9f-9365-ae3a5729fa07	66772380-c161-4c45-9350-a45e765193e2	d731b17a-ae8d-4561-ad67-0f431d5c529b	2022-09-17 14:56:36.252888+05	2022-10-22 01:26:07.108522+05	\N
+5b934855-c387-4039-8029-108464f90297	66772380-c161-4c45-9350-a45e765193e2	bb6c3bdb-79e2-44b3-98b1-c1cee0976777	2022-09-17 14:57:07.276145+05	2022-10-22 01:26:07.108522+05	\N
+76bd693b-0d60-4613-beed-79fee34431b0	338906f1-dbe2-4ba7-84fc-fe7a4d7856ec	d731b17a-ae8d-4561-ad67-0f431d5c529b	2022-09-17 14:56:36.263964+05	2022-10-22 01:26:07.108522+05	\N
+3f5f53c8-b03d-4868-bbc1-7dfe2466000f	338906f1-dbe2-4ba7-84fc-fe7a4d7856ec	bb6c3bdb-79e2-44b3-98b1-c1cee0976777	2022-09-17 14:57:07.288945+05	2022-10-22 01:26:07.108522+05	\N
+9664b220-8b44-489d-a4cd-b925b2136a0a	338906f1-dbe2-4ba7-84fc-fe7a4d7856ec	d4156225-082e-4f0f-9b2c-85268114433a	2022-09-17 14:57:34.665141+05	2022-10-22 01:26:07.108522+05	\N
+1d9851c7-5fe4-47c9-9d9b-b300777610dc	45765130-7f97-4f0c-b886-f70b75e02610	bb6c3bdb-79e2-44b3-98b1-c1cee0976777	2022-09-17 14:57:07.298188+05	2022-10-22 01:26:07.108522+05	\N
+8913356d-d03e-4aba-b2d7-c175c82eea3f	45765130-7f97-4f0c-b886-f70b75e02610	d4156225-082e-4f0f-9b2c-85268114433a	2022-09-17 14:57:34.676377+05	2022-10-22 01:26:07.108522+05	\N
+3ab03ec7-2fb0-44e4-b5c9-c0cbf4c42fa3	45765130-7f97-4f0c-b886-f70b75e02610	81b84c5d-9759-4b86-978a-649c8ef79660	2022-09-17 14:58:10.07692+05	2022-10-22 01:26:07.108522+05	\N
+599b6d48-0077-4960-86f9-947addb08210	29ed85bb-11eb-4458-bbf3-5a5644d167d6	b2b165a3-2261-4d67-8160-0e239ecd99b5	2022-09-17 14:55:35.563229+05	2022-10-22 01:26:07.073419+05	\N
+c43bf0b8-a01d-41fd-9614-2e75cd19b413	29ed85bb-11eb-4458-bbf3-5a5644d167d6	a2bb8745-1f3a-4de9-ad66-11b0bb3bb754	2022-09-17 14:56:05.497232+05	2022-10-22 01:26:07.073419+05	\N
+1ddb4057-86f2-436e-a0be-f09d1ff807b3	29ed85bb-11eb-4458-bbf3-5a5644d167d6	d731b17a-ae8d-4561-ad67-0f431d5c529b	2022-09-17 14:56:36.24299+05	2022-10-22 01:26:07.073419+05	\N
 \.
 
 
@@ -1097,20 +1229,6 @@ a58294d3-efe5-4cb7-82d3-8df8c37563c5	15	2022-06-25 10:23:25.640364+05	2022-06-25
 --
 
 COPY public.images (id, product_id, small, large, created_at, updated_at, deleted_at) FROM stdin;
-b59f96d5-fa50-47cf-873a-dbe1a6e15302	0d4a6c3c-cc5d-457b-ac9a-ce60eacb94de	uploads/product/df8b0be2-7147-4ae6-8ba4-176c90aa817b.jpg	uploads/product/adca811e-07ce-4a65-9514-41a7dead8fc3.jpg	2022-09-17 14:54:57.029637+05	2022-09-17 14:54:57.029637+05	\N
-2362835c-9c11-49fe-861b-81c3f29c767f	0d4a6c3c-cc5d-457b-ac9a-ce60eacb94de	uploads/product/0ea9466b-fd9b-4292-b3c9-0104acbaed0c.jpg	uploads/product/81d1781c-4701-40ea-91c4-4609b05de9e7.jpg	2022-09-17 14:54:57.040741+05	2022-09-17 14:54:57.040741+05	\N
-ae50cccd-3a73-45ce-8fc8-b95e0f0b91bc	b2b165a3-2261-4d67-8160-0e239ecd99b5	uploads/product/a3cceed2-4af8-4017-9099-bf08231d921d.jpg	uploads/product/2d006bc4-8018-497e-9f4f-0a908fc11eaf.jpg	2022-09-17 14:55:35.496799+05	2022-09-17 14:55:35.496799+05	\N
-34e6d0f9-97fc-4590-a59f-5fc2107ccdbf	b2b165a3-2261-4d67-8160-0e239ecd99b5	uploads/product/83b2761e-d5a7-44b0-886d-a2ac7ce1aeae.jpg	uploads/product/de2d464f-b447-4fe5-b33e-8db764ee90ce.jpg	2022-09-17 14:55:35.507566+05	2022-09-17 14:55:35.507566+05	\N
-ff4883cb-6f14-4c18-b080-56876b24e0a9	a2bb8745-1f3a-4de9-ad66-11b0bb3bb754	uploads/product/f18dea7c-1df0-48bc-a887-eb7b3b3b6f41.jpg	uploads/product/48cdeb99-d3b0-4bad-9365-01bdbcb9e88a.jpg	2022-09-17 14:56:05.441685+05	2022-09-17 14:56:05.441685+05	\N
-06073ec4-b58e-4fba-877d-6aae1339d084	a2bb8745-1f3a-4de9-ad66-11b0bb3bb754	uploads/product/3e6a4832-663f-4b21-b3e4-f637245590a2.jpg	uploads/product/b37e6ed9-401c-465f-9d50-f990b74a9e93.jpg	2022-09-17 14:56:05.452041+05	2022-09-17 14:56:05.452041+05	\N
-b2964c6f-e49e-4d55-833b-7146dbe8e9f0	d731b17a-ae8d-4561-ad67-0f431d5c529b	uploads/product/fd6516a1-d696-4fcf-a5ee-89c6f5b48cb5.jpg	uploads/product/af06206e-e7de-438b-b135-70a9348eb873.jpg	2022-09-17 14:56:36.186395+05	2022-09-17 14:56:36.186395+05	\N
-0f72550f-4127-421f-bf4d-83e7d5d0c667	d731b17a-ae8d-4561-ad67-0f431d5c529b	uploads/product/c148beac-f6f2-43c8-b4c4-8ddae87cf1b8.jpg	uploads/product/2975a2c4-f978-40fa-9798-b30a71c8c908.jpg	2022-09-17 14:56:36.197707+05	2022-09-17 14:56:36.197707+05	\N
-541a60b2-e164-45f1-8238-b430f9a4f696	bb6c3bdb-79e2-44b3-98b1-c1cee0976777	uploads/product/f9484719-a04c-482a-b9cb-d4477d67171e.jpg	uploads/product/56d9c5d4-89ac-45e7-80a5-d4420a1ba1e4.jpg	2022-09-17 14:57:07.232409+05	2022-09-17 14:57:07.232409+05	\N
-01234b03-8ebe-4bd9-9296-5411d8b602d6	bb6c3bdb-79e2-44b3-98b1-c1cee0976777	uploads/product/f8a3e4a8-1363-49de-95d8-7ea99578bb36.jpg	uploads/product/7d443731-50ee-4e9b-9552-562282763df1.jpg	2022-09-17 14:57:07.242703+05	2022-09-17 14:57:07.242703+05	\N
-f8c2dd64-75f1-4617-8237-22aa6fde2faa	d4156225-082e-4f0f-9b2c-85268114433a	uploads/product/fe06f4f8-13da-49d5-aeec-4a05bd9155c4.jpg	uploads/product/5db94dda-c1f5-4d99-a0f1-a005be127383.jpg	2022-09-17 14:57:34.620044+05	2022-09-17 14:57:34.620044+05	\N
-394d0cde-5f52-4228-a615-574acec7e51a	d4156225-082e-4f0f-9b2c-85268114433a	uploads/product/c29e7734-e8cd-453f-8583-74f77b76f425.jpg	uploads/product/ac6306f5-0193-413f-9838-7daed09d7fb5.jpg	2022-09-17 14:57:34.631937+05	2022-09-17 14:57:34.631937+05	\N
-b1575796-5322-4983-ae21-bb84725a4f75	81b84c5d-9759-4b86-978a-649c8ef79660	uploads/product/1ff26530-a022-4a3f-90e9-8c4a3a2d5f2e.jpg	uploads/product/10b3062a-71cc-49b3-9eae-4410745a7685.jpg	2022-09-17 14:58:10.031274+05	2022-09-17 14:58:10.031274+05	\N
-21f8e93a-ea3a-4596-899a-1982d8956dcb	81b84c5d-9759-4b86-978a-649c8ef79660	uploads/product/3bebc440-4f7f-4c34-abd1-c7151f41823d.jpg	uploads/product/1cfabb12-a0ce-4a11-b937-149f03fc95c2.jpg	2022-09-17 14:58:10.042467+05	2022-09-17 14:58:10.042467+05	\N
 843515aa-4fef-4ef3-9570-61bf600a9357	660071e0-8f17-4c48-9d80-d4cac306de3a	uploads/product/d629fe21-e9a8-4c39-941d-ea222b0ce204.jpg	uploads/product/2e752914-f145-4f09-a35d-272db51b3083.jpg	2022-09-17 14:58:40.120625+05	2022-09-17 14:58:40.120625+05	\N
 2957da00-07b2-4f26-9504-44f1c50da3e8	660071e0-8f17-4c48-9d80-d4cac306de3a	uploads/product/0b9ffad0-fcd9-4a36-b661-15bcff855593.jpg	uploads/product/fc1d5b8d-bd84-411e-af20-b5a306966579.jpg	2022-09-17 14:58:40.131788+05	2022-09-17 14:58:40.131788+05	\N
 e6c8f3db-35cf-404b-a3e9-cc71b7976292	c866d5e4-284c-4bea-a94f-cc23f6c7e5d0	uploads/product/40330079-629d-4146-a2b3-366e38cb2763.jpg	uploads/product/3344dd28-0808-4c4c-a3ed-ef877924f498.jpg	2022-09-17 14:59:14.077892+05	2022-09-17 14:59:14.077892+05	\N
@@ -1121,6 +1239,20 @@ d96e186f-8d34-447c-814e-61ef93873f84	8df705a5-2351-4aca-b03e-3357a23840b4	upload
 81a68f8d-31c4-4b6b-ab15-72aea698abc3	8df705a5-2351-4aca-b03e-3357a23840b4	uploads/product/d2d8dd0c-b452-4566-b98e-a9ffab10fb13.jpg	uploads/product/a940f01a-5e38-43b6-99dc-a742e388ffe5.jpg	2022-09-17 15:00:15.200605+05	2022-09-17 15:00:15.200605+05	\N
 83279012-42f0-4367-a44a-6bd59ddb249c	3e81d4cd-c3c6-4b01-832b-383b8bea5a6a	uploads/product/1d54f24c-599d-46a6-ab14-c2bb565cc059.jpg	uploads/product/5fda4077-e81d-4e72-b899-f33103512859.jpg	2022-10-06 11:07:41.569383+05	2022-10-06 11:07:41.569383+05	\N
 68f44447-1c5f-457c-a47a-2a281ea9c0dd	3e81d4cd-c3c6-4b01-832b-383b8bea5a6a	uploads/product/8db0d212-5797-47a9-97e5-f08ceb7a293f.jpg	uploads/product/042697cc-588d-4286-a226-a94992fe942d.jpg	2022-10-06 11:07:41.646964+05	2022-10-06 11:07:41.646964+05	\N
+b59f96d5-fa50-47cf-873a-dbe1a6e15302	0d4a6c3c-cc5d-457b-ac9a-ce60eacb94de	uploads/product/df8b0be2-7147-4ae6-8ba4-176c90aa817b.jpg	uploads/product/adca811e-07ce-4a65-9514-41a7dead8fc3.jpg	2022-09-17 14:54:57.029637+05	2022-10-22 01:26:07.108522+05	\N
+2362835c-9c11-49fe-861b-81c3f29c767f	0d4a6c3c-cc5d-457b-ac9a-ce60eacb94de	uploads/product/0ea9466b-fd9b-4292-b3c9-0104acbaed0c.jpg	uploads/product/81d1781c-4701-40ea-91c4-4609b05de9e7.jpg	2022-09-17 14:54:57.040741+05	2022-10-22 01:26:07.108522+05	\N
+ae50cccd-3a73-45ce-8fc8-b95e0f0b91bc	b2b165a3-2261-4d67-8160-0e239ecd99b5	uploads/product/a3cceed2-4af8-4017-9099-bf08231d921d.jpg	uploads/product/2d006bc4-8018-497e-9f4f-0a908fc11eaf.jpg	2022-09-17 14:55:35.496799+05	2022-10-22 01:26:07.108522+05	\N
+34e6d0f9-97fc-4590-a59f-5fc2107ccdbf	b2b165a3-2261-4d67-8160-0e239ecd99b5	uploads/product/83b2761e-d5a7-44b0-886d-a2ac7ce1aeae.jpg	uploads/product/de2d464f-b447-4fe5-b33e-8db764ee90ce.jpg	2022-09-17 14:55:35.507566+05	2022-10-22 01:26:07.108522+05	\N
+ff4883cb-6f14-4c18-b080-56876b24e0a9	a2bb8745-1f3a-4de9-ad66-11b0bb3bb754	uploads/product/f18dea7c-1df0-48bc-a887-eb7b3b3b6f41.jpg	uploads/product/48cdeb99-d3b0-4bad-9365-01bdbcb9e88a.jpg	2022-09-17 14:56:05.441685+05	2022-10-22 01:26:07.108522+05	\N
+b2964c6f-e49e-4d55-833b-7146dbe8e9f0	d731b17a-ae8d-4561-ad67-0f431d5c529b	uploads/product/fd6516a1-d696-4fcf-a5ee-89c6f5b48cb5.jpg	uploads/product/af06206e-e7de-438b-b135-70a9348eb873.jpg	2022-09-17 14:56:36.186395+05	2022-10-22 01:26:07.108522+05	\N
+0f72550f-4127-421f-bf4d-83e7d5d0c667	d731b17a-ae8d-4561-ad67-0f431d5c529b	uploads/product/c148beac-f6f2-43c8-b4c4-8ddae87cf1b8.jpg	uploads/product/2975a2c4-f978-40fa-9798-b30a71c8c908.jpg	2022-09-17 14:56:36.197707+05	2022-10-22 01:26:07.108522+05	\N
+b1575796-5322-4983-ae21-bb84725a4f75	81b84c5d-9759-4b86-978a-649c8ef79660	uploads/product/1ff26530-a022-4a3f-90e9-8c4a3a2d5f2e.jpg	uploads/product/10b3062a-71cc-49b3-9eae-4410745a7685.jpg	2022-09-17 14:58:10.031274+05	2022-10-22 01:26:07.108522+05	\N
+f8c2dd64-75f1-4617-8237-22aa6fde2faa	d4156225-082e-4f0f-9b2c-85268114433a	uploads/product/fe06f4f8-13da-49d5-aeec-4a05bd9155c4.jpg	uploads/product/5db94dda-c1f5-4d99-a0f1-a005be127383.jpg	2022-09-17 14:57:34.620044+05	2022-10-22 02:53:49.519217+05	\N
+394d0cde-5f52-4228-a615-574acec7e51a	d4156225-082e-4f0f-9b2c-85268114433a	uploads/product/c29e7734-e8cd-453f-8583-74f77b76f425.jpg	uploads/product/ac6306f5-0193-413f-9838-7daed09d7fb5.jpg	2022-09-17 14:57:34.631937+05	2022-10-22 02:53:49.519217+05	\N
+06073ec4-b58e-4fba-877d-6aae1339d084	a2bb8745-1f3a-4de9-ad66-11b0bb3bb754	uploads/product/3e6a4832-663f-4b21-b3e4-f637245590a2.jpg	uploads/product/b37e6ed9-401c-465f-9d50-f990b74a9e93.jpg	2022-09-17 14:56:05.452041+05	2022-10-22 01:26:07.108522+05	\N
+21f8e93a-ea3a-4596-899a-1982d8956dcb	81b84c5d-9759-4b86-978a-649c8ef79660	uploads/product/3bebc440-4f7f-4c34-abd1-c7151f41823d.jpg	uploads/product/1cfabb12-a0ce-4a11-b937-149f03fc95c2.jpg	2022-09-17 14:58:10.042467+05	2022-10-22 01:26:07.108522+05	\N
+541a60b2-e164-45f1-8238-b430f9a4f696	bb6c3bdb-79e2-44b3-98b1-c1cee0976777	uploads/product/f9484719-a04c-482a-b9cb-d4477d67171e.jpg	uploads/product/56d9c5d4-89ac-45e7-80a5-d4420a1ba1e4.jpg	2022-09-17 14:57:07.232409+05	2022-10-22 01:26:07.108522+05	\N
+01234b03-8ebe-4bd9-9296-5411d8b602d6	bb6c3bdb-79e2-44b3-98b1-c1cee0976777	uploads/product/f8a3e4a8-1363-49de-95d8-7ea99578bb36.jpg	uploads/product/7d443731-50ee-4e9b-9552-562282763df1.jpg	2022-09-17 14:57:07.242703+05	2022-10-22 01:26:07.108522+05	\N
 \.
 
 
@@ -1144,6 +1276,7 @@ b62a1c1c-0a29-4756-8e9d-5c9680758d18	pl	uploads/language/uploads/language/5726ef
 COPY public.likes (id, product_id, customer_id, created_at, updated_at, deleted_at) FROM stdin;
 d45b89a8-6676-412d-bd6c-a4e655aa41b8	a2bb8745-1f3a-4de9-ad66-11b0bb3bb754	f25a66d3-93ac-4da4-b237-d34867d5ca8f	2022-10-17 00:50:48.875499+05	2022-10-17 00:50:48.875499+05	\N
 a14b8219-81d6-4f2c-999b-d6ec8ef7fece	0d4a6c3c-cc5d-457b-ac9a-ce60eacb94de	f25a66d3-93ac-4da4-b237-d34867d5ca8f	2022-10-17 00:50:48.957722+05	2022-10-17 00:50:48.957722+05	\N
+ded6953a-f3ae-4463-82e5-998f114abf8d	b2b165a3-2261-4d67-8160-0e239ecd99b5	f25a66d3-93ac-4da4-b237-d34867d5ca8f	2022-10-22 02:39:51.17081+05	2022-10-22 02:39:51.17081+05	\N
 \.
 
 
@@ -1152,18 +1285,18 @@ a14b8219-81d6-4f2c-999b-d6ec8ef7fece	0d4a6c3c-cc5d-457b-ac9a-ce60eacb94de	f25a66
 --
 
 COPY public.main_image (id, product_id, small, medium, large, created_at, updated_at, deleted_at) FROM stdin;
-af383593-cacb-4440-8144-4560c1887921	0d4a6c3c-cc5d-457b-ac9a-ce60eacb94de	uploads/product/0bb0fc0e-6b9a-48cb-a005-067818339a9a.jpg	uploads/product/a07bf6d8-837d-4743-9752-3a5a2b178b4d.jpg	uploads/product/3d48f030-4edb-4510-af2f-4688667f4e0b.jpg	2022-09-17 14:54:57.018537+05	2022-09-17 14:54:57.018537+05	\N
-045bb7ae-6d64-4366-acdd-7f342a7600a2	b2b165a3-2261-4d67-8160-0e239ecd99b5	uploads/product/a7c19215-5db7-4ebb-b373-a8b58b678def.jpg	uploads/product/58fae77e-a7d4-4f4b-bdfd-399e1e7994e8.jpg	uploads/product/22c2eb3b-cf3e-4369-b08f-92a6f8665bdd.jpg	2022-09-17 14:55:35.485706+05	2022-09-17 14:55:35.485706+05	\N
-85d25308-e2a0-40f7-ab57-4dd081e59ed8	a2bb8745-1f3a-4de9-ad66-11b0bb3bb754	uploads/product/061bb6bc-d603-4a28-8737-246018133728.jpg	uploads/product/1e562ca8-31bf-4712-af03-feb1654bf1f1.jpg	uploads/product/cba805fa-8c99-4992-9315-60071832bb59.jpg	2022-09-17 14:56:05.43168+05	2022-09-17 14:56:05.43168+05	\N
-0b9cc77d-87fd-4603-bf2d-e7203adeb4e8	d731b17a-ae8d-4561-ad67-0f431d5c529b	uploads/product/a2d59c2f-e312-4541-b4a7-79fc679c5e0c.jpg	uploads/product/87aa78b0-6f8a-4b37-a7f6-790e77398e8b.jpg	uploads/product/5d7e8980-f050-4936-9198-eaa3f3236370.jpg	2022-09-17 14:56:36.174972+05	2022-09-17 14:56:36.174972+05	\N
-7ab33a3b-0195-4024-a035-e54268762d3b	bb6c3bdb-79e2-44b3-98b1-c1cee0976777	uploads/product/bf635780-dc34-4478-b936-8e073eefa79e.jpg	uploads/product/ea2ce473-4110-4129-8d5e-0fa456d10530.jpg	uploads/product/a92d33a6-8180-4355-8f4b-bd23079177a4.jpg	2022-09-17 14:57:07.221569+05	2022-09-17 14:57:07.221569+05	\N
-7982b9f8-bfca-42f5-b13a-37b1ed41e1a2	d4156225-082e-4f0f-9b2c-85268114433a	uploads/product/706c3355-01f9-4648-850c-eacc3557f435.jpg	uploads/product/e585a68a-d6c3-4a1f-8660-041cade9899e.jpg	uploads/product/03902970-8446-4180-9200-902a6aa7fa23.jpg	2022-09-17 14:57:34.609435+05	2022-09-17 14:57:34.609435+05	\N
-286f3f21-8750-499f-b35c-9de67b236316	81b84c5d-9759-4b86-978a-649c8ef79660	uploads/product/bc78c4bb-35f7-4873-88eb-af1c985e9f34.jpg	uploads/product/356b93e2-be40-4ed0-bf77-b229210de3e7.jpg	uploads/product/d7641dc6-6e2a-4d21-9403-98c872f93b25.jpg	2022-09-17 14:58:10.020986+05	2022-09-17 14:58:10.020986+05	\N
 9ddabe0c-bad0-493e-b084-a5d6d96e894d	660071e0-8f17-4c48-9d80-d4cac306de3a	uploads/product/64e1692d-bdd3-4081-88d5-74c8cc71ae51.jpg	uploads/product/74278164-f5c5-423f-8d84-ba7a122a8171.jpg	uploads/product/018a0b4a-8593-4287-93b3-37aaa1a04f0f.jpg	2022-09-17 14:58:40.111413+05	2022-09-17 14:58:40.111413+05	\N
 489304cb-a16a-4f78-841e-797b341f224b	c866d5e4-284c-4bea-a94f-cc23f6c7e5d0	uploads/product/139044f5-bb94-4f31-9b5a-c7c28056398f.jpg	uploads/product/a45a8c58-bc17-44ad-807d-719607bdd031.jpg	uploads/product/7d873556-bfe5-4991-8cc7-0ab6609eb45e.jpg	2022-09-17 14:59:14.066244+05	2022-09-17 14:59:14.066244+05	\N
 3141d941-c1fa-41f0-b542-44090d4ba2a1	e3c33ead-3c30-40f1-9d28-7bb8b71b767f	uploads/product/ad41dd13-4b3b-442a-92a9-ea7ba39a8ffd.jpg	uploads/product/4b536ae1-bb8a-43f3-bf33-378fb2e53f58.jpg	uploads/product/e50d6762-01dd-4894-a991-0f27bb401630.jpg	2022-09-17 14:59:44.866884+05	2022-09-17 14:59:44.866884+05	\N
 24fdc6b1-afb2-4735-b406-70addc0dd8d9	8df705a5-2351-4aca-b03e-3357a23840b4	uploads/product/c0a88fd0-2374-49af-95d0-5c692c626b94.jpg	uploads/product/8a67c3a7-94fc-4831-9f90-80ae409c684f.jpg	uploads/product/c7a5b0ce-d9fc-449c-b039-726d716c62a7.jpg	2022-09-17 15:00:15.178822+05	2022-09-17 15:00:15.178822+05	\N
 ea8b26f1-1e34-4587-9b72-3747e29930cf	3e81d4cd-c3c6-4b01-832b-383b8bea5a6a	uploads/product/5938e42c-700a-48c3-8461-ad3df445dac1.jpg	uploads/product/9ac3b3f6-6d4b-4be0-8a98-4d1b10f4d954.jpg	uploads/product/5516cc1d-8f21-4006-b353-b41518ef1bef.jpg	2022-10-06 11:07:41.522494+05	2022-10-06 11:07:41.522494+05	\N
+af383593-cacb-4440-8144-4560c1887921	0d4a6c3c-cc5d-457b-ac9a-ce60eacb94de	uploads/product/0bb0fc0e-6b9a-48cb-a005-067818339a9a.jpg	uploads/product/a07bf6d8-837d-4743-9752-3a5a2b178b4d.jpg	uploads/product/3d48f030-4edb-4510-af2f-4688667f4e0b.jpg	2022-09-17 14:54:57.018537+05	2022-10-22 01:26:07.108522+05	\N
+045bb7ae-6d64-4366-acdd-7f342a7600a2	b2b165a3-2261-4d67-8160-0e239ecd99b5	uploads/product/a7c19215-5db7-4ebb-b373-a8b58b678def.jpg	uploads/product/58fae77e-a7d4-4f4b-bdfd-399e1e7994e8.jpg	uploads/product/22c2eb3b-cf3e-4369-b08f-92a6f8665bdd.jpg	2022-09-17 14:55:35.485706+05	2022-10-22 01:26:07.108522+05	\N
+85d25308-e2a0-40f7-ab57-4dd081e59ed8	a2bb8745-1f3a-4de9-ad66-11b0bb3bb754	uploads/product/061bb6bc-d603-4a28-8737-246018133728.jpg	uploads/product/1e562ca8-31bf-4712-af03-feb1654bf1f1.jpg	uploads/product/cba805fa-8c99-4992-9315-60071832bb59.jpg	2022-09-17 14:56:05.43168+05	2022-10-22 01:26:07.108522+05	\N
+0b9cc77d-87fd-4603-bf2d-e7203adeb4e8	d731b17a-ae8d-4561-ad67-0f431d5c529b	uploads/product/a2d59c2f-e312-4541-b4a7-79fc679c5e0c.jpg	uploads/product/87aa78b0-6f8a-4b37-a7f6-790e77398e8b.jpg	uploads/product/5d7e8980-f050-4936-9198-eaa3f3236370.jpg	2022-09-17 14:56:36.174972+05	2022-10-22 01:26:07.108522+05	\N
+7ab33a3b-0195-4024-a035-e54268762d3b	bb6c3bdb-79e2-44b3-98b1-c1cee0976777	uploads/product/bf635780-dc34-4478-b936-8e073eefa79e.jpg	uploads/product/ea2ce473-4110-4129-8d5e-0fa456d10530.jpg	uploads/product/a92d33a6-8180-4355-8f4b-bd23079177a4.jpg	2022-09-17 14:57:07.221569+05	2022-10-22 01:26:07.108522+05	\N
+286f3f21-8750-499f-b35c-9de67b236316	81b84c5d-9759-4b86-978a-649c8ef79660	uploads/product/bc78c4bb-35f7-4873-88eb-af1c985e9f34.jpg	uploads/product/356b93e2-be40-4ed0-bf77-b229210de3e7.jpg	uploads/product/d7641dc6-6e2a-4d21-9403-98c872f93b25.jpg	2022-09-17 14:58:10.020986+05	2022-10-22 01:26:07.108522+05	\N
+7982b9f8-bfca-42f5-b13a-37b1ed41e1a2	d4156225-082e-4f0f-9b2c-85268114433a	uploads/product/706c3355-01f9-4648-850c-eacc3557f435.jpg	uploads/product/e585a68a-d6c3-4a1f-8660-041cade9899e.jpg	uploads/product/03902970-8446-4180-9200-902a6aa7fa23.jpg	2022-09-17 14:57:34.609435+05	2022-10-22 02:53:49.519217+05	\N
 \.
 
 
@@ -1225,18 +1358,18 @@ f55dc383-4e8e-4e78-9cd6-981bf79cf925	b62a1c1c-0a29-4756-8e9d-5c9680758d18	uytget
 --
 
 COPY public.products (id, brend_id, price, old_price, amount, product_code, created_at, updated_at, deleted_at, limit_amount, is_new) FROM stdin;
-0d4a6c3c-cc5d-457b-ac9a-ce60eacb94de	214be879-65c3-4710-86b4-3fc3bce2e974	65	68	1000	151fwe51we	2022-09-17 14:54:56.989242+05	2022-09-17 14:54:56.989242+05	\N	100	f
-b2b165a3-2261-4d67-8160-0e239ecd99b5	ddccb2dc-9697-4f4e-acf5-26b8bc2c8b72	65	68	1000	151fwe51we	2022-09-17 14:55:35.441733+05	2022-09-17 14:55:35.441733+05	\N	100	f
-a2bb8745-1f3a-4de9-ad66-11b0bb3bb754	fdd259c2-794a-42b9-a3ad-9e91502af23e	65	68	1000	151fwe51we	2022-09-17 14:56:05.406905+05	2022-09-17 14:56:05.406905+05	\N	100	f
-d731b17a-ae8d-4561-ad67-0f431d5c529b	f53a27b4-7810-4d8f-bd45-edad405d92b9	65	68	1000	151fwe51we	2022-09-17 14:56:36.153769+05	2022-09-17 14:56:36.153769+05	\N	100	f
-bb6c3bdb-79e2-44b3-98b1-c1cee0976777	46b13f0a-d584-4ad3-b270-437ecdc51449	65	68	1000	151fwe51we	2022-09-17 14:57:07.191142+05	2022-09-17 14:57:07.191142+05	\N	100	f
-d4156225-082e-4f0f-9b2c-85268114433a	c4bcda34-7332-4ae5-8129-d7538d63fee4	65	68	1000	151fwe51we	2022-09-17 14:57:34.582228+05	2022-09-17 14:57:34.582228+05	\N	100	f
-81b84c5d-9759-4b86-978a-649c8ef79660	214be879-65c3-4710-86b4-3fc3bce2e974	65	68	1000	151fwe51we	2022-09-17 14:58:09.998335+05	2022-09-17 14:58:09.998335+05	\N	100	f
 660071e0-8f17-4c48-9d80-d4cac306de3a	ddccb2dc-9697-4f4e-acf5-26b8bc2c8b72	65	68	1000	151fwe51we	2022-09-17 14:58:40.084476+05	2022-09-17 14:58:40.084476+05	\N	100	f
 c866d5e4-284c-4bea-a94f-cc23f6c7e5d0	fdd259c2-794a-42b9-a3ad-9e91502af23e	65	68	1000	151fwe51we	2022-09-17 14:59:14.037001+05	2022-09-17 14:59:14.037001+05	\N	100	f
 e3c33ead-3c30-40f1-9d28-7bb8b71b767f	f53a27b4-7810-4d8f-bd45-edad405d92b9	65	68	1000	151fwe51we	2022-09-17 14:59:44.837302+05	2022-09-17 14:59:44.837302+05	\N	100	f
 8df705a5-2351-4aca-b03e-3357a23840b4	46b13f0a-d584-4ad3-b270-437ecdc51449	65	68	1000	151fwe51we	2022-09-17 15:00:15.148583+05	2022-09-17 15:00:15.148583+05	\N	100	f
 3e81d4cd-c3c6-4b01-832b-383b8bea5a6a	46b13f0a-d584-4ad3-b270-437ecdc51449	67	68	1000	151fwe51we	2022-10-06 11:07:41.410248+05	2022-10-06 11:07:41.410248+05	\N	100	f
+0d4a6c3c-cc5d-457b-ac9a-ce60eacb94de	214be879-65c3-4710-86b4-3fc3bce2e974	65	68	1000	151fwe51we	2022-09-17 14:54:56.989242+05	2022-10-22 01:26:07.108522+05	\N	100	f
+b2b165a3-2261-4d67-8160-0e239ecd99b5	ddccb2dc-9697-4f4e-acf5-26b8bc2c8b72	65	68	1000	151fwe51we	2022-09-17 14:55:35.441733+05	2022-10-22 01:26:07.108522+05	\N	100	f
+a2bb8745-1f3a-4de9-ad66-11b0bb3bb754	fdd259c2-794a-42b9-a3ad-9e91502af23e	65	68	1000	151fwe51we	2022-09-17 14:56:05.406905+05	2022-10-22 01:26:07.108522+05	\N	100	f
+d731b17a-ae8d-4561-ad67-0f431d5c529b	f53a27b4-7810-4d8f-bd45-edad405d92b9	65	68	1000	151fwe51we	2022-09-17 14:56:36.153769+05	2022-10-22 01:26:07.108522+05	\N	100	f
+bb6c3bdb-79e2-44b3-98b1-c1cee0976777	46b13f0a-d584-4ad3-b270-437ecdc51449	65	68	1000	151fwe51we	2022-09-17 14:57:07.191142+05	2022-10-22 01:26:07.108522+05	\N	100	f
+81b84c5d-9759-4b86-978a-649c8ef79660	214be879-65c3-4710-86b4-3fc3bce2e974	65	68	1000	151fwe51we	2022-09-17 14:58:09.998335+05	2022-10-22 01:26:07.108522+05	\N	100	f
+d4156225-082e-4f0f-9b2c-85268114433a	c4bcda34-7332-4ae5-8129-d7538d63fee4	65	68	1000	151fwe51we	2022-09-17 14:57:34.582228+05	2022-10-22 02:53:49.519217+05	\N	100	f
 \.
 
 
@@ -1289,18 +1422,8 @@ COPY public.translation_basket_page (id, lang_id, quantity_of_goods, total_price
 COPY public.translation_category (id, lang_id, category_id, name, created_at, updated_at, deleted_at) FROM stdin;
 21520180-13e2-4c2b-a5f9-866c2e59ba87	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	f745d171-68e6-42e2-b339-cb3c210cda55	Kiçi paket kofeler	2022-06-16 13:45:48.889727+05	2022-06-16 13:45:48.889727+05	\N
 ee2f97fb-8c6c-4e38-bdb3-bf769bc95d3b	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	d4cb1359-6c23-4194-8e3c-21ed8cec8373	Batonçikler	2022-06-16 13:48:04.581888+05	2022-06-16 13:48:04.581888+05	\N
-85469cf2-f48a-4e73-800d-ebf599aaeaba	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	29ed85bb-11eb-4458-bbf3-5a5644d167d6	Arzanladyş we Aksiýalar	2022-06-20 09:41:17.756928+05	2022-06-20 09:41:17.756928+05	\N
-8a91bcb0-fcce-4a4f-80ff-a2896c0cc36a	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	7f453dd0-7b2e-480d-a8be-fcfa23bd863e	Arzanladyşdaky harytlar	2022-06-20 09:43:07.368782+05	2022-06-20 09:43:07.368782+05	\N
-34f4cdb5-04b9-48c0-b5b0-0045a02aa094	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	66772380-c161-4c45-9350-a45e765193e2	Aksiýadaky harytlar	2022-06-20 09:45:34.450534+05	2022-06-20 09:45:34.450534+05	\N
-e224ecfc-6daa-4df5-8112-74846fc44867	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	338906f1-dbe2-4ba7-84fc-fe7a4d7856ec	Sowgatlyk toplumlar	2022-06-20 09:46:01.148565+05	2022-06-20 09:46:01.148565+05	\N
-3b756a33-bf2c-4d04-af57-962a3226d00b	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	45765130-7f97-4f0c-b886-f70b75e02610	Täze harytlar	2022-06-20 10:11:06.719528+05	2022-06-20 10:11:06.719528+05	\N
 ab35a97a-dfd1-4100-8e84-d34e74e9a02e	aea98b93-7bdf-455b-9ad4-a259d69dc76e	f745d171-68e6-42e2-b339-cb3c210cda55	Кофе в пакетиках	2022-06-16 13:45:48.906024+05	2022-06-16 13:45:48.906024+05	\N
 ea104eaf-c3fd-4f2d-88bf-dffc14d48dc5	aea98b93-7bdf-455b-9ad4-a259d69dc76e	d4cb1359-6c23-4194-8e3c-21ed8cec8373	Батончики	2022-06-16 13:48:04.597499+05	2022-06-16 13:48:04.597499+05	\N
-bbdd06a4-2dce-4c99-bf05-cf4e911776c7	aea98b93-7bdf-455b-9ad4-a259d69dc76e	29ed85bb-11eb-4458-bbf3-5a5644d167d6	Распродажи и Акции	2022-06-20 09:41:17.941489+05	2022-06-20 09:41:17.941489+05	\N
-ce573dfd-6af8-4e64-8260-8746a090acd7	aea98b93-7bdf-455b-9ad4-a259d69dc76e	7f453dd0-7b2e-480d-a8be-fcfa23bd863e	Продукция со скидкой	2022-06-20 09:43:07.377729+05	2022-06-20 09:43:07.377729+05	\N
-713cc05f-6a9d-4dae-88b5-dde2e564480c	aea98b93-7bdf-455b-9ad4-a259d69dc76e	66772380-c161-4c45-9350-a45e765193e2	Продукция в категории Акции	2022-06-20 09:45:34.466904+05	2022-06-20 09:45:34.466904+05	\N
-53959762-0b63-4100-ae13-4bbf8c015fec	aea98b93-7bdf-455b-9ad4-a259d69dc76e	338906f1-dbe2-4ba7-84fc-fe7a4d7856ec	Подарочные наборы	2022-06-20 09:46:01.408239+05	2022-06-20 09:46:01.408239+05	\N
-2d22961c-ef08-4238-ae54-c00593c0073c	aea98b93-7bdf-455b-9ad4-a259d69dc76e	45765130-7f97-4f0c-b886-f70b75e02610	Новые продукты	2022-06-20 10:11:06.735056+05	2022-06-20 10:11:06.735056+05	\N
 4eef5d40-9aad-4101-b36b-9026dd3dfb51	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	b982bd86-0a0f-4950-baad-5a131e9b728e	name_tm	2022-06-16 13:44:16.499713+05	2022-06-16 13:44:16.499713+05	\N
 10a8b5ec-a3ca-448d-975b-83b3a7a8c0d2	aea98b93-7bdf-455b-9ad4-a259d69dc76e	b982bd86-0a0f-4950-baad-5a131e9b728e	name_ru	2022-06-16 13:44:16.515874+05	2022-06-16 13:44:16.515874+05	\N
 4eb6bcbf-91f2-4505-a27e-cc3f96f2b829	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	fdc10d33-043b-4ee0-9d6e-e2a12a3e150a	Plitkalar	2022-06-16 13:47:18.888998+05	2022-06-16 13:47:18.888998+05	\N
@@ -1311,11 +1434,6 @@ e099e7f6-1b97-4f70-8f29-f586ab6697d0	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	5bb9a4
 415a0711-2482-44b3-8f03-923dca28bd5d	aea98b93-7bdf-455b-9ad4-a259d69dc76e	5bb9a4e7-9992-418f-b551-537844d371da	Шоколады и Кексы	2022-06-16 13:46:44.673892+05	2022-06-16 13:46:44.673892+05	\N
 1c287f79-c467-4530-aafd-77c294ac4091	55a387df-6d38-42ea-bfba-379327b53cbd	f745d171-68e6-42e2-b339-cb3c210cda55	uytget	2022-10-17 02:31:43.703806+05	2022-10-17 11:32:22.801107+05	\N
 c66cc626-d744-487d-8fc6-87ebc6a19535	55a387df-6d38-42ea-bfba-379327b53cbd	d4cb1359-6c23-4194-8e3c-21ed8cec8373	uytget	2022-10-17 02:31:43.703806+05	2022-10-17 11:32:22.801107+05	\N
-49c2be64-bb43-4696-8af6-988187f99466	55a387df-6d38-42ea-bfba-379327b53cbd	7f453dd0-7b2e-480d-a8be-fcfa23bd863e	uytget	2022-10-17 02:31:43.703806+05	2022-10-17 11:32:22.801107+05	\N
-72a79790-1880-4338-b929-0edd99c64f93	55a387df-6d38-42ea-bfba-379327b53cbd	29ed85bb-11eb-4458-bbf3-5a5644d167d6	uytget	2022-10-17 02:31:43.703806+05	2022-10-17 11:32:22.801107+05	\N
-623e54d4-b912-4ad3-8dcc-7800448d2bfb	55a387df-6d38-42ea-bfba-379327b53cbd	66772380-c161-4c45-9350-a45e765193e2	uytget	2022-10-17 02:31:43.703806+05	2022-10-17 11:32:22.801107+05	\N
-67f168de-ecf8-4885-99d5-df3c0bb9b3d6	55a387df-6d38-42ea-bfba-379327b53cbd	338906f1-dbe2-4ba7-84fc-fe7a4d7856ec	uytget	2022-10-17 02:31:43.703806+05	2022-10-17 11:32:22.801107+05	\N
-c5cc497b-2bb8-47b8-b59e-912f18b0fa4a	55a387df-6d38-42ea-bfba-379327b53cbd	45765130-7f97-4f0c-b886-f70b75e02610	uytget	2022-10-17 02:31:43.703806+05	2022-10-17 11:32:22.801107+05	\N
 63cd3daa-d15e-4bcb-b08f-f088e8ebded8	55a387df-6d38-42ea-bfba-379327b53cbd	fdc10d33-043b-4ee0-9d6e-e2a12a3e150a	uytget	2022-10-17 02:31:43.703806+05	2022-10-17 11:32:22.801107+05	\N
 53b2031b-a0da-4853-8d98-d4630b1f64b1	55a387df-6d38-42ea-bfba-379327b53cbd	02bd4413-8586-49ab-802e-16304e756a8b	uytget	2022-10-17 02:31:43.703806+05	2022-10-17 11:32:22.801107+05	\N
 7f55b5a8-fbf2-4266-a55a-6c2a52b8b63a	55a387df-6d38-42ea-bfba-379327b53cbd	5bb9a4e7-9992-418f-b551-537844d371da	uytget	2022-10-17 02:31:43.703806+05	2022-10-17 11:32:22.801107+05	\N
@@ -1325,11 +1443,6 @@ d71a47b2-f7c4-4bae-8fca-8c945579e09b	aea98b93-7bdf-455b-9ad4-a259d69dc76e	760517
 1423ae8b-850b-47f3-a6fb-93ea15648405	55a387df-6d38-42ea-bfba-379327b53cbd	7605172f-7a12-4781-a892-6e3b5cf11490	NAME_FR	2022-10-18 11:09:26.79722+05	2022-10-18 11:09:26.79722+05	\N
 98a6ba52-a644-4069-b03c-0a6bf6388ddd	198695b5-579a-4f80-ac10-8380e17e5d98	f745d171-68e6-42e2-b339-cb3c210cda55	uytget	2022-10-19 11:00:40.050132+05	2022-10-19 12:55:44.565405+05	\N
 f819bc8c-792c-4688-baf5-50fb1531ad2e	198695b5-579a-4f80-ac10-8380e17e5d98	d4cb1359-6c23-4194-8e3c-21ed8cec8373	uytget	2022-10-19 11:00:40.050132+05	2022-10-19 12:55:44.565405+05	\N
-2c625f79-ad57-48ae-a87b-67f69d947d41	198695b5-579a-4f80-ac10-8380e17e5d98	7f453dd0-7b2e-480d-a8be-fcfa23bd863e	uytget	2022-10-19 11:00:40.050132+05	2022-10-19 12:55:44.565405+05	\N
-3e895146-5077-4e2d-9d03-8a59bff095c6	198695b5-579a-4f80-ac10-8380e17e5d98	29ed85bb-11eb-4458-bbf3-5a5644d167d6	uytget	2022-10-19 11:00:40.050132+05	2022-10-19 12:55:44.565405+05	\N
-9e55e45f-cb53-49b1-a445-a44ed8e76faa	198695b5-579a-4f80-ac10-8380e17e5d98	66772380-c161-4c45-9350-a45e765193e2	uytget	2022-10-19 11:00:40.050132+05	2022-10-19 12:55:44.565405+05	\N
-ddc67ec8-ad5e-4d81-a714-734748d23e26	198695b5-579a-4f80-ac10-8380e17e5d98	338906f1-dbe2-4ba7-84fc-fe7a4d7856ec	uytget	2022-10-19 11:00:40.050132+05	2022-10-19 12:55:44.565405+05	\N
-de3f2982-1850-4dd5-be06-aa66de1300d1	198695b5-579a-4f80-ac10-8380e17e5d98	45765130-7f97-4f0c-b886-f70b75e02610	uytget	2022-10-19 11:00:40.050132+05	2022-10-19 12:55:44.565405+05	\N
 b3f670f8-e22d-472e-bb2f-5c5a548e29e9	198695b5-579a-4f80-ac10-8380e17e5d98	fdc10d33-043b-4ee0-9d6e-e2a12a3e150a	uytget	2022-10-19 11:00:40.050132+05	2022-10-19 12:55:44.565405+05	\N
 3995129d-88f4-4085-9b2a-e21932161f23	198695b5-579a-4f80-ac10-8380e17e5d98	02bd4413-8586-49ab-802e-16304e756a8b	uytget	2022-10-19 11:00:40.050132+05	2022-10-19 12:55:44.565405+05	\N
 d5c65d5b-6769-4c06-93c7-b78ad123a924	198695b5-579a-4f80-ac10-8380e17e5d98	5bb9a4e7-9992-418f-b551-537844d371da	uytget	2022-10-19 11:00:40.050132+05	2022-10-19 12:55:44.565405+05	\N
@@ -1337,11 +1450,6 @@ d5c65d5b-6769-4c06-93c7-b78ad123a924	198695b5-579a-4f80-ac10-8380e17e5d98	5bb9a4
 7b643341-1396-4f55-9dc2-aaf14f63572d	198695b5-579a-4f80-ac10-8380e17e5d98	7605172f-7a12-4781-a892-6e3b5cf11490	uytget	2022-10-19 11:00:40.050132+05	2022-10-19 12:55:44.565405+05	\N
 10ada4ab-ead3-4123-8825-c7b4be23c2c4	b62a1c1c-0a29-4756-8e9d-5c9680758d18	f745d171-68e6-42e2-b339-cb3c210cda55	uytget	2022-10-20 01:44:26.912355+05	2022-10-20 01:44:26.912355+05	\N
 4a713859-2a34-43ad-9570-fa7f7547b41d	b62a1c1c-0a29-4756-8e9d-5c9680758d18	d4cb1359-6c23-4194-8e3c-21ed8cec8373	uytget	2022-10-20 01:44:26.912355+05	2022-10-20 01:44:26.912355+05	\N
-44ccdd47-b8e3-46a9-827d-9e7e4ab9fe8e	b62a1c1c-0a29-4756-8e9d-5c9680758d18	7f453dd0-7b2e-480d-a8be-fcfa23bd863e	uytget	2022-10-20 01:44:26.912355+05	2022-10-20 01:44:26.912355+05	\N
-bbf190d2-e0e9-41ec-af82-68715e98b057	b62a1c1c-0a29-4756-8e9d-5c9680758d18	29ed85bb-11eb-4458-bbf3-5a5644d167d6	uytget	2022-10-20 01:44:26.912355+05	2022-10-20 01:44:26.912355+05	\N
-1bfbf71e-e81b-4142-affc-7bcd6c3d31a3	b62a1c1c-0a29-4756-8e9d-5c9680758d18	66772380-c161-4c45-9350-a45e765193e2	uytget	2022-10-20 01:44:26.912355+05	2022-10-20 01:44:26.912355+05	\N
-a121d39a-1a3f-4142-ac4d-9cbd87733027	b62a1c1c-0a29-4756-8e9d-5c9680758d18	338906f1-dbe2-4ba7-84fc-fe7a4d7856ec	uytget	2022-10-20 01:44:26.912355+05	2022-10-20 01:44:26.912355+05	\N
-3e5fb890-f005-4f07-9793-5bc79166c306	b62a1c1c-0a29-4756-8e9d-5c9680758d18	45765130-7f97-4f0c-b886-f70b75e02610	uytget	2022-10-20 01:44:26.912355+05	2022-10-20 01:44:26.912355+05	\N
 e3a7ce6e-ad96-4d53-a9c8-1edd7d3f6123	b62a1c1c-0a29-4756-8e9d-5c9680758d18	fdc10d33-043b-4ee0-9d6e-e2a12a3e150a	uytget	2022-10-20 01:44:26.912355+05	2022-10-20 01:44:26.912355+05	\N
 199363e0-6044-44f9-8b11-7293b509e0cb	b62a1c1c-0a29-4756-8e9d-5c9680758d18	02bd4413-8586-49ab-802e-16304e756a8b	uytget	2022-10-20 01:44:26.912355+05	2022-10-20 01:44:26.912355+05	\N
 7e39ab42-0e0d-495a-b6e2-6d80503236bd	b62a1c1c-0a29-4756-8e9d-5c9680758d18	5bb9a4e7-9992-418f-b551-537844d371da	uytget	2022-10-20 01:44:26.912355+05	2022-10-20 01:44:26.912355+05	\N
@@ -1364,6 +1472,11 @@ c26ca683-a991-452d-a734-316e9d98959b	198695b5-579a-4f80-ac10-8380e17e5d98	b1bae1
 c1a3bf99-9bb3-46f7-b883-5be9dbca1564	b62a1c1c-0a29-4756-8e9d-5c9680758d18	b1bae1ce-4295-4268-bf2d-71c8761e5679	name_pl	2022-10-21 03:26:21.950506+05	2022-10-21 03:26:21.950506+05	\N
 ecbe74d3-aea6-4209-85e5-a0ac9beac84d	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	d8ded28c-d4fb-4c11-a84c-4d4f81a22e28	Name_tm	2022-10-21 03:28:14.66099+05	2022-10-21 03:28:14.66099+05	\N
 3bbec4b4-693f-4079-be36-154c74feab05	aea98b93-7bdf-455b-9ad4-a259d69dc76e	d8ded28c-d4fb-4c11-a84c-4d4f81a22e28	Name_ru	2022-10-21 03:28:14.679857+05	2022-10-21 03:28:14.679857+05	\N
+8a91bcb0-fcce-4a4f-80ff-a2896c0cc36a	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	7f453dd0-7b2e-480d-a8be-fcfa23bd863e	Arzanladyşdaky harytlar	2022-06-20 09:43:07.368782+05	2022-10-22 01:26:07.108522+05	\N
+ce573dfd-6af8-4e64-8260-8746a090acd7	aea98b93-7bdf-455b-9ad4-a259d69dc76e	7f453dd0-7b2e-480d-a8be-fcfa23bd863e	Продукция со скидкой	2022-06-20 09:43:07.377729+05	2022-10-22 01:26:07.108522+05	\N
+49c2be64-bb43-4696-8af6-988187f99466	55a387df-6d38-42ea-bfba-379327b53cbd	7f453dd0-7b2e-480d-a8be-fcfa23bd863e	uytget	2022-10-17 02:31:43.703806+05	2022-10-22 01:26:07.108522+05	\N
+2c625f79-ad57-48ae-a87b-67f69d947d41	198695b5-579a-4f80-ac10-8380e17e5d98	7f453dd0-7b2e-480d-a8be-fcfa23bd863e	uytget	2022-10-19 11:00:40.050132+05	2022-10-22 01:26:07.108522+05	\N
+44ccdd47-b8e3-46a9-827d-9e7e4ab9fe8e	b62a1c1c-0a29-4756-8e9d-5c9680758d18	7f453dd0-7b2e-480d-a8be-fcfa23bd863e	uytget	2022-10-20 01:44:26.912355+05	2022-10-22 01:26:07.108522+05	\N
 0451777f-8681-4d54-b562-5aea3bfddb22	55a387df-6d38-42ea-bfba-379327b53cbd	d8ded28c-d4fb-4c11-a84c-4d4f81a22e28	NAME_FR	2022-10-21 03:28:14.700081+05	2022-10-21 03:28:14.700081+05	\N
 78b0a57d-7838-4d9c-9f8c-26fbbf4edfe8	198695b5-579a-4f80-ac10-8380e17e5d98	d8ded28c-d4fb-4c11-a84c-4d4f81a22e28	name_tr	2022-10-21 03:28:14.720587+05	2022-10-21 03:28:14.720587+05	\N
 0aa92e51-c95b-443e-ad7e-6ca2c043f890	b62a1c1c-0a29-4756-8e9d-5c9680758d18	d8ded28c-d4fb-4c11-a84c-4d4f81a22e28	name_pl	2022-10-21 03:28:14.73378+05	2022-10-21 03:28:14.73378+05	\N
@@ -1382,6 +1495,31 @@ ff67a77c-a31e-4761-96e1-804936f88c51	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	849a1c
 99e80b09-8738-452a-ba4e-d8bf68238bc0	55a387df-6d38-42ea-bfba-379327b53cbd	849a1c59-45fb-429b-8fe3-a6e34a6dafaa	name_fr	2022-10-21 11:48:48.665756+05	2022-10-21 12:15:12.89389+05	\N
 35fa0235-38a9-4953-9a13-bc609e3b23d7	198695b5-579a-4f80-ac10-8380e17e5d98	849a1c59-45fb-429b-8fe3-a6e34a6dafaa	name_tr	2022-10-21 11:48:48.67566+05	2022-10-21 12:15:12.905776+05	\N
 7214b362-eb97-4e16-b650-af5515e05941	b62a1c1c-0a29-4756-8e9d-5c9680758d18	849a1c59-45fb-429b-8fe3-a6e34a6dafaa	name_pl	2022-10-21 11:48:48.686741+05	2022-10-21 12:15:12.915902+05	\N
+032fd254-f202-4fff-8650-e6a5dcb81fd5	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	bdabc7aa-a567-48d5-a1d9-b1ff61c6af4b	Name_tm	2022-10-21 22:28:26.651906+05	2022-10-21 22:28:26.651906+05	\N
+5f102237-f6f9-4464-872e-61edce3a6a7e	aea98b93-7bdf-455b-9ad4-a259d69dc76e	bdabc7aa-a567-48d5-a1d9-b1ff61c6af4b	Name_ru	2022-10-21 22:28:26.66675+05	2022-10-21 22:28:26.66675+05	\N
+aab84f8a-0ba2-4104-bdf6-f142fb5fe3b7	55a387df-6d38-42ea-bfba-379327b53cbd	bdabc7aa-a567-48d5-a1d9-b1ff61c6af4b	NAME_FR	2022-10-21 22:28:26.681302+05	2022-10-21 22:28:26.681302+05	\N
+2bccde95-68aa-46f7-a9a6-079319371699	198695b5-579a-4f80-ac10-8380e17e5d98	bdabc7aa-a567-48d5-a1d9-b1ff61c6af4b	name_tr	2022-10-21 22:28:26.702262+05	2022-10-21 22:28:26.702262+05	\N
+5e7067dc-1f01-4234-8066-0bb6cb3a433b	b62a1c1c-0a29-4756-8e9d-5c9680758d18	bdabc7aa-a567-48d5-a1d9-b1ff61c6af4b	name_pl	2022-10-21 22:28:26.725956+05	2022-10-21 22:28:26.725956+05	\N
+e224ecfc-6daa-4df5-8112-74846fc44867	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	338906f1-dbe2-4ba7-84fc-fe7a4d7856ec	Sowgatlyk toplumlar	2022-06-20 09:46:01.148565+05	2022-10-22 01:26:07.108522+05	\N
+53959762-0b63-4100-ae13-4bbf8c015fec	aea98b93-7bdf-455b-9ad4-a259d69dc76e	338906f1-dbe2-4ba7-84fc-fe7a4d7856ec	Подарочные наборы	2022-06-20 09:46:01.408239+05	2022-10-22 01:26:07.108522+05	\N
+67f168de-ecf8-4885-99d5-df3c0bb9b3d6	55a387df-6d38-42ea-bfba-379327b53cbd	338906f1-dbe2-4ba7-84fc-fe7a4d7856ec	uytget	2022-10-17 02:31:43.703806+05	2022-10-22 01:26:07.108522+05	\N
+ddc67ec8-ad5e-4d81-a714-734748d23e26	198695b5-579a-4f80-ac10-8380e17e5d98	338906f1-dbe2-4ba7-84fc-fe7a4d7856ec	uytget	2022-10-19 11:00:40.050132+05	2022-10-22 01:26:07.108522+05	\N
+a121d39a-1a3f-4142-ac4d-9cbd87733027	b62a1c1c-0a29-4756-8e9d-5c9680758d18	338906f1-dbe2-4ba7-84fc-fe7a4d7856ec	uytget	2022-10-20 01:44:26.912355+05	2022-10-22 01:26:07.108522+05	\N
+85469cf2-f48a-4e73-800d-ebf599aaeaba	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	29ed85bb-11eb-4458-bbf3-5a5644d167d6	Arzanladyş we Aksiýalar	2022-06-20 09:41:17.756928+05	2022-10-22 01:26:07.073419+05	\N
+bbdd06a4-2dce-4c99-bf05-cf4e911776c7	aea98b93-7bdf-455b-9ad4-a259d69dc76e	29ed85bb-11eb-4458-bbf3-5a5644d167d6	Распродажи и Акции	2022-06-20 09:41:17.941489+05	2022-10-22 01:26:07.073419+05	\N
+72a79790-1880-4338-b929-0edd99c64f93	55a387df-6d38-42ea-bfba-379327b53cbd	29ed85bb-11eb-4458-bbf3-5a5644d167d6	uytget	2022-10-17 02:31:43.703806+05	2022-10-22 01:26:07.073419+05	\N
+3e895146-5077-4e2d-9d03-8a59bff095c6	198695b5-579a-4f80-ac10-8380e17e5d98	29ed85bb-11eb-4458-bbf3-5a5644d167d6	uytget	2022-10-19 11:00:40.050132+05	2022-10-22 01:26:07.073419+05	\N
+bbf190d2-e0e9-41ec-af82-68715e98b057	b62a1c1c-0a29-4756-8e9d-5c9680758d18	29ed85bb-11eb-4458-bbf3-5a5644d167d6	uytget	2022-10-20 01:44:26.912355+05	2022-10-22 01:26:07.073419+05	\N
+34f4cdb5-04b9-48c0-b5b0-0045a02aa094	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	66772380-c161-4c45-9350-a45e765193e2	Aksiýadaky harytlar	2022-06-20 09:45:34.450534+05	2022-10-22 01:26:07.108522+05	\N
+713cc05f-6a9d-4dae-88b5-dde2e564480c	aea98b93-7bdf-455b-9ad4-a259d69dc76e	66772380-c161-4c45-9350-a45e765193e2	Продукция в категории Акции	2022-06-20 09:45:34.466904+05	2022-10-22 01:26:07.108522+05	\N
+623e54d4-b912-4ad3-8dcc-7800448d2bfb	55a387df-6d38-42ea-bfba-379327b53cbd	66772380-c161-4c45-9350-a45e765193e2	uytget	2022-10-17 02:31:43.703806+05	2022-10-22 01:26:07.108522+05	\N
+9e55e45f-cb53-49b1-a445-a44ed8e76faa	198695b5-579a-4f80-ac10-8380e17e5d98	66772380-c161-4c45-9350-a45e765193e2	uytget	2022-10-19 11:00:40.050132+05	2022-10-22 01:26:07.108522+05	\N
+1bfbf71e-e81b-4142-affc-7bcd6c3d31a3	b62a1c1c-0a29-4756-8e9d-5c9680758d18	66772380-c161-4c45-9350-a45e765193e2	uytget	2022-10-20 01:44:26.912355+05	2022-10-22 01:26:07.108522+05	\N
+3b756a33-bf2c-4d04-af57-962a3226d00b	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	45765130-7f97-4f0c-b886-f70b75e02610	Täze harytlar	2022-06-20 10:11:06.719528+05	2022-10-22 01:26:07.108522+05	\N
+2d22961c-ef08-4238-ae54-c00593c0073c	aea98b93-7bdf-455b-9ad4-a259d69dc76e	45765130-7f97-4f0c-b886-f70b75e02610	Новые продукты	2022-06-20 10:11:06.735056+05	2022-10-22 01:26:07.108522+05	\N
+c5cc497b-2bb8-47b8-b59e-912f18b0fa4a	55a387df-6d38-42ea-bfba-379327b53cbd	45765130-7f97-4f0c-b886-f70b75e02610	uytget	2022-10-17 02:31:43.703806+05	2022-10-22 01:26:07.108522+05	\N
+de3f2982-1850-4dd5-be06-aa66de1300d1	198695b5-579a-4f80-ac10-8380e17e5d98	45765130-7f97-4f0c-b886-f70b75e02610	uytget	2022-10-19 11:00:40.050132+05	2022-10-22 01:26:07.108522+05	\N
+3e5fb890-f005-4f07-9793-5bc79166c306	b62a1c1c-0a29-4756-8e9d-5c9680758d18	45765130-7f97-4f0c-b886-f70b75e02610	uytget	2022-10-20 01:44:26.912355+05	2022-10-22 01:26:07.108522+05	\N
 \.
 
 
@@ -1512,21 +1650,13 @@ aaf32df7-2667-4589-92b5-42493afbf1db	198695b5-579a-4f80-ac10-8380e17e5d98	uytget
 --
 
 COPY public.translation_product (id, lang_id, product_id, name, description, created_at, updated_at, deleted_at, slug) FROM stdin;
-2edb91d0-4d17-4128-9bf8-0eb594418ee5	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	0d4a6c3c-cc5d-457b-ac9a-ce60eacb94de	Nemlendiriji suwuk sabyn Aura Clean "Черничный йогурт" 1 ltr	Nemlendiriji suwuk sabyn Aura Clean "Черничный йогурт" 1 ltr	2022-09-17 14:54:57.051301+05	2022-09-17 14:54:57.051301+05	\N	nemlendiriji-suwuk-sabyn-aura-clean-chernichnyi-iogurt-1-ltr
-2756e684-ad6a-4e95-89f8-75b509f63290	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	b2b165a3-2261-4d67-8160-0e239ecd99b5	Nemlendiriji suwuk sabyn Aura Clean "Черничный йогурт" 1 ltr	Nemlendiriji suwuk sabyn Aura Clean "Черничный йогурт" 1 ltr	2022-09-17 14:55:35.51906+05	2022-09-17 14:55:35.51906+05	\N	nemlendiriji-suwuk-sabyn-aura-clean-chernichnyi-iogurt-1-ltr
-1f038393-3955-4cef-a6a1-a1cf087173c5	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	a2bb8745-1f3a-4de9-ad66-11b0bb3bb754	Nemlendiriji suwuk sabyn Aura Clean "Черничный йогурт" 1 ltr	Nemlendiriji suwuk sabyn Aura Clean "Черничный йогурт" 1 ltr	2022-09-17 14:56:05.464418+05	2022-09-17 14:56:05.464418+05	\N	nemlendiriji-suwuk-sabyn-aura-clean-chernichnyi-iogurt-1-ltr
-ad74bc57-3cd1-4c50-9287-a6a21b4beca4	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	d731b17a-ae8d-4561-ad67-0f431d5c529b	Nemlendiriji suwuk sabyn Aura Clean "Черничный йогурт" 1 ltr	Nemlendiriji suwuk sabyn Aura Clean "Черничный йогурт" 1 ltr	2022-09-17 14:56:36.207944+05	2022-09-17 14:56:36.207944+05	\N	nemlendiriji-suwuk-sabyn-aura-clean-chernichnyi-iogurt-1-ltr
-e12a74a8-f5c4-4dcd-b8c7-038a8d27624d	aea98b93-7bdf-455b-9ad4-a259d69dc76e	0d4a6c3c-cc5d-457b-ac9a-ce60eacb94de	Жидкое крем-мыло увлажняющее Aura Clean "Черничный йогурт" 1 л	Жидкое крем-мыло увлажняющее Aura Clean "Черничный йогурт" 1 л	2022-09-17 14:54:57.063296+05	2022-09-17 14:54:57.063296+05	\N	zhidkoe-krem-mylo-uvlazhniaiushchee-aura-clean-chernichnyi-iogurt-1-l
-33011809-8da8-4563-8dd0-22ca01e5caee	aea98b93-7bdf-455b-9ad4-a259d69dc76e	b2b165a3-2261-4d67-8160-0e239ecd99b5	Жидкое крем-мыло увлажняющее Aura Clean "Черничный йогурт" 1 л	Жидкое крем-мыло увлажняющее Aura Clean "Черничный йогурт" 1 л	2022-09-17 14:55:35.530179+05	2022-09-17 14:55:35.530179+05	\N	zhidkoe-krem-mylo-uvlazhniaiushchee-aura-clean-chernichnyi-iogurt-1-l
-c499a61c-948d-41d4-9dad-9d12ea7324d4	aea98b93-7bdf-455b-9ad4-a259d69dc76e	a2bb8745-1f3a-4de9-ad66-11b0bb3bb754	Жидкое крем-мыло увлажняющее Aura Clean "Черничный йогурт" 1 л	Жидкое крем-мыло увлажняющее Aura Clean "Черничный йогурт" 1 л	2022-09-17 14:56:05.475198+05	2022-09-17 14:56:05.475198+05	\N	zhidkoe-krem-mylo-uvlazhniaiushchee-aura-clean-chernichnyi-iogurt-1-l
-ceeb7241-e4b8-4fa0-b99f-80ba9c141589	aea98b93-7bdf-455b-9ad4-a259d69dc76e	d731b17a-ae8d-4561-ad67-0f431d5c529b	Жидкое крем-мыло увлажняющее Aura Clean "Черничный йогурт" 1 л	Жидкое крем-мыло увлажняющее Aura Clean "Черничный йогурт" 1 л	2022-09-17 14:56:36.219444+05	2022-09-17 14:56:36.219444+05	\N	zhidkoe-krem-mylo-uvlazhniaiushchee-aura-clean-chernichnyi-iogurt-1-l
-e156d07d-c7e9-40da-8480-93512f474f80	aea98b93-7bdf-455b-9ad4-a259d69dc76e	bb6c3bdb-79e2-44b3-98b1-c1cee0976777	Жидкое крем-мыло увлажняющее Aura Clean "Черничный йогурт" 1 л	Жидкое крем-мыло увлажняющее Aura Clean "Черничный йогурт" 1 л	2022-09-17 14:57:07.264006+05	2022-09-17 14:57:07.264006+05	\N	zhidkoe-krem-mylo-uvlazhniaiushchee-aura-clean-chernichnyi-iogurt-1-l
-ce61fdba-2628-4f09-aff2-27ce8ac6b37c	aea98b93-7bdf-455b-9ad4-a259d69dc76e	d4156225-082e-4f0f-9b2c-85268114433a	Жидкое крем-мыло увлажняющее Aura Clean "Черничный йогурт" 1 л	Жидкое крем-мыло увлажняющее Aura Clean "Черничный йогурт" 1 л	2022-09-17 14:57:34.654635+05	2022-09-17 14:57:34.654635+05	\N	zhidkoe-krem-mylo-uvlazhniaiushchee-aura-clean-chernichnyi-iogurt-1-l
-66d53b03-1f2b-4a7a-bc86-dd90baaec6ef	aea98b93-7bdf-455b-9ad4-a259d69dc76e	81b84c5d-9759-4b86-978a-649c8ef79660	Жидкое крем-мыло увлажняющее Aura Clean "Черничный йогурт" 1 л	Жидкое крем-мыло увлажняющее Aura Clean "Черничный йогурт" 1 л	2022-09-17 14:58:10.064659+05	2022-09-17 14:58:10.064659+05	\N	zhidkoe-krem-mylo-uvlazhniaiushchee-aura-clean-chernichnyi-iogurt-1-l
+2edb91d0-4d17-4128-9bf8-0eb594418ee5	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	0d4a6c3c-cc5d-457b-ac9a-ce60eacb94de	Nemlendiriji suwuk sabyn Aura Clean "Черничный йогурт" 1 ltr	Nemlendiriji suwuk sabyn Aura Clean "Черничный йогурт" 1 ltr	2022-09-17 14:54:57.051301+05	2022-10-22 01:26:07.108522+05	\N	nemlendiriji-suwuk-sabyn-aura-clean-chernichnyi-iogurt-1-ltr
+e12a74a8-f5c4-4dcd-b8c7-038a8d27624d	aea98b93-7bdf-455b-9ad4-a259d69dc76e	0d4a6c3c-cc5d-457b-ac9a-ce60eacb94de	Жидкое крем-мыло увлажняющее Aura Clean "Черничный йогурт" 1 л	Жидкое крем-мыло увлажняющее Aura Clean "Черничный йогурт" 1 л	2022-09-17 14:54:57.063296+05	2022-10-22 01:26:07.108522+05	\N	zhidkoe-krem-mylo-uvlazhniaiushchee-aura-clean-chernichnyi-iogurt-1-l
+65875507-77b2-42a9-9923-45508ae8b156	b62a1c1c-0a29-4756-8e9d-5c9680758d18	81b84c5d-9759-4b86-978a-649c8ef79660	uytget	uytget	2022-10-20 01:44:26.912355+05	2022-10-22 01:26:07.108522+05	\N	uytget
+e156d07d-c7e9-40da-8480-93512f474f80	aea98b93-7bdf-455b-9ad4-a259d69dc76e	bb6c3bdb-79e2-44b3-98b1-c1cee0976777	Жидкое крем-мыло увлажняющее Aura Clean "Черничный йогурт" 1 л	Жидкое крем-мыло увлажняющее Aura Clean "Черничный йогурт" 1 л	2022-09-17 14:57:07.264006+05	2022-10-22 01:26:07.108522+05	\N	zhidkoe-krem-mylo-uvlazhniaiushchee-aura-clean-chernichnyi-iogurt-1-l
 9bc5a5be-72d2-4494-ac02-dd20954a83ab	aea98b93-7bdf-455b-9ad4-a259d69dc76e	660071e0-8f17-4c48-9d80-d4cac306de3a	Жидкое крем-мыло увлажняющее Aura Clean "Черничный йогурт" 1 л	Жидкое крем-мыло увлажняющее Aura Clean "Черничный йогурт" 1 л	2022-09-17 14:58:40.15465+05	2022-09-17 14:58:40.15465+05	\N	zhidkoe-krem-mylo-uvlazhniaiushchee-aura-clean-chernichnyi-iogurt-1-l
-5aa614ae-8c7d-47d7-867e-44c3d4d2015c	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	bb6c3bdb-79e2-44b3-98b1-c1cee0976777	Nemlendiriji suwuk sabyn Aura Clean "Черничный йогурт" 1 ltr	Nemlendiriji suwuk sabyn Aura Clean "Черничный йогурт" 1 ltr	2022-09-17 14:57:07.254121+05	2022-09-17 14:57:07.254121+05	\N	nemlendiriji-suwuk-sabyn-aura-clean-chernichnyi-iogurt-1-ltr
-e008099d-ff03-4182-86ce-d91ca984ca76	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	d4156225-082e-4f0f-9b2c-85268114433a	Nemlendiriji suwuk sabyn Aura Clean "Черничный йогурт" 1 ltr	Nemlendiriji suwuk sabyn Aura Clean "Черничный йогурт" 1 ltr	2022-09-17 14:57:34.642037+05	2022-09-17 14:57:34.642037+05	\N	nemlendiriji-suwuk-sabyn-aura-clean-chernichnyi-iogurt-1-ltr
-8965478c-0afe-4b65-af05-0d151c8dd462	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	81b84c5d-9759-4b86-978a-649c8ef79660	Nemlendiriji suwuk sabyn Aura Clean "Черничный йогурт" 1 ltr	Nemlendiriji suwuk sabyn Aura Clean "Черничный йогурт" 1 ltr	2022-09-17 14:58:10.054293+05	2022-09-17 14:58:10.054293+05	\N	nemlendiriji-suwuk-sabyn-aura-clean-chernichnyi-iogurt-1-ltr
+dc55a19f-d194-4fd9-b3f8-66e8122f0219	55a387df-6d38-42ea-bfba-379327b53cbd	d4156225-082e-4f0f-9b2c-85268114433a	uytget	uytget	2022-10-17 02:31:43.703806+05	2022-10-22 02:53:49.519217+05	\N	uytget
+1bd8d363-04cd-4ab0-b03e-086ae6179d78	198695b5-579a-4f80-ac10-8380e17e5d98	d4156225-082e-4f0f-9b2c-85268114433a	uytget	uytget	2022-10-19 11:00:40.050132+05	2022-10-22 02:53:49.519217+05	\N	uytget
 3ec435d8-394a-4002-959e-c2d61d242307	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	660071e0-8f17-4c48-9d80-d4cac306de3a	Nemlendiriji suwuk sabyn Aura Clean "Черничный йогурт" 1 ltr	Nemlendiriji suwuk sabyn Aura Clean "Черничный йогурт" 1 ltr	2022-09-17 14:58:40.143451+05	2022-09-17 14:58:40.143451+05	\N	nemlendiriji-suwuk-sabyn-aura-clean-chernichnyi-iogurt-1-ltr
 8a7fc25f-4776-498c-818d-95b9fb34fd2d	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	c866d5e4-284c-4bea-a94f-cc23f6c7e5d0	Nemlendiriji suwuk sabyn Aura Clean "Черничный йогурт" 1 ltr	Nemlendiriji suwuk sabyn Aura Clean "Черничный йогурт" 1 ltr	2022-09-17 14:59:14.099998+05	2022-09-17 14:59:14.099998+05	\N	nemlendiriji-suwuk-sabyn-aura-clean-chernichnyi-iogurt-1-ltr
 8f666b20-35be-41df-b276-472ae2d5dd3d	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	e3c33ead-3c30-40f1-9d28-7bb8b71b767f	Nemlendiriji suwuk sabyn Aura Clean "Черничный йогурт" 1 ltr	Nemlendiriji suwuk sabyn Aura Clean "Черничный йогурт" 1 ltr	2022-09-17 14:59:44.899731+05	2022-09-17 14:59:44.899731+05	\N	nemlendiriji-suwuk-sabyn-aura-clean-chernichnyi-iogurt-1-ltr
@@ -1535,43 +1665,51 @@ c5e4d0da-dbe9-46c6-87b4-3b70226ca2a9	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	3e81d4
 925e8b5a-eec6-4f0b-8f46-9718a8f4f653	aea98b93-7bdf-455b-9ad4-a259d69dc76e	c866d5e4-284c-4bea-a94f-cc23f6c7e5d0	Жидкое крем-мыло увлажняющее Aura Clean "Черничный йогурт" 1 л	Жидкое крем-мыло увлажняющее Aura Clean "Черничный йогурт" 1 л	2022-09-17 14:59:14.111821+05	2022-09-17 14:59:14.111821+05	\N	zhidkoe-krem-mylo-uvlazhniaiushchee-aura-clean-chernichnyi-iogurt-1-l
 dcedd91a-b7e9-4e9f-ae0a-f58308e6d751	aea98b93-7bdf-455b-9ad4-a259d69dc76e	e3c33ead-3c30-40f1-9d28-7bb8b71b767f	Жидкое крем-мыло увлажняющее Aura Clean "Черничный йогурт" 1 л	Жидкое крем-мыло увлажняющее Aura Clean "Черничный йогурт" 1 л	2022-09-17 14:59:44.910924+05	2022-09-17 14:59:44.910924+05	\N	zhidkoe-krem-mylo-uvlazhniaiushchee-aura-clean-chernichnyi-iogurt-1-l
 54b061df-a71c-405e-8ddd-0155b034dcd5	aea98b93-7bdf-455b-9ad4-a259d69dc76e	8df705a5-2351-4aca-b03e-3357a23840b4	Жидкое крем-мыло увлажняющее Aura Clean "Черничный йогурт" 1 л	Жидкое крем-мыло увлажняющее Aura Clean "Черничный йогурт" 1 л	2022-09-17 15:00:15.223949+05	2022-09-17 15:00:15.223949+05	\N	zhidkoe-krem-mylo-uvlazhniaiushchee-aura-clean-chernichnyi-iogurt-1-l
+535e4de6-ad74-4f19-bda4-4f09baf299f9	b62a1c1c-0a29-4756-8e9d-5c9680758d18	d4156225-082e-4f0f-9b2c-85268114433a	uytget	uytget	2022-10-20 01:44:26.912355+05	2022-10-22 02:53:49.519217+05	\N	uytget
 ab660f8c-5ba8-45c4-be0b-ad2ef1450d1d	aea98b93-7bdf-455b-9ad4-a259d69dc76e	3e81d4cd-c3c6-4b01-832b-383b8bea5a6a	Жидкое крем-мыло увлажняющее Aura Clean "Черничный йогурт" 1 л	Жидкое крем-мыло увлажняющее Aura Clean "Черничный йогурт" 1 л	2022-10-06 11:07:41.692074+05	2022-10-06 11:07:41.692074+05	\N	zhidkoe-krem-mylo-uvlazhniaiushchee-aura-clean-chernichnyi-iogurt-1-l
-1327fb24-9a60-47bb-aab7-10f1bee360c4	55a387df-6d38-42ea-bfba-379327b53cbd	0d4a6c3c-cc5d-457b-ac9a-ce60eacb94de	uytget	uytget	2022-10-17 02:31:43.703806+05	2022-10-17 11:32:22.801107+05	\N	uytget
-b458c6ad-96f9-4a87-8ed4-871cf86611a9	55a387df-6d38-42ea-bfba-379327b53cbd	b2b165a3-2261-4d67-8160-0e239ecd99b5	uytget	uytget	2022-10-17 02:31:43.703806+05	2022-10-17 11:32:22.801107+05	\N	uytget
-b1de5982-ee89-4dae-afb9-1116fa1259b4	55a387df-6d38-42ea-bfba-379327b53cbd	a2bb8745-1f3a-4de9-ad66-11b0bb3bb754	uytget	uytget	2022-10-17 02:31:43.703806+05	2022-10-17 11:32:22.801107+05	\N	uytget
-12b07b81-9e9c-47fe-a051-5e3f7288ecdd	55a387df-6d38-42ea-bfba-379327b53cbd	d731b17a-ae8d-4561-ad67-0f431d5c529b	uytget	uytget	2022-10-17 02:31:43.703806+05	2022-10-17 11:32:22.801107+05	\N	uytget
-f6791ed2-e2a4-4d3a-a32f-59ae4b34d832	55a387df-6d38-42ea-bfba-379327b53cbd	bb6c3bdb-79e2-44b3-98b1-c1cee0976777	uytget	uytget	2022-10-17 02:31:43.703806+05	2022-10-17 11:32:22.801107+05	\N	uytget
-dc55a19f-d194-4fd9-b3f8-66e8122f0219	55a387df-6d38-42ea-bfba-379327b53cbd	d4156225-082e-4f0f-9b2c-85268114433a	uytget	uytget	2022-10-17 02:31:43.703806+05	2022-10-17 11:32:22.801107+05	\N	uytget
-6fff60d6-4ec9-46d9-80a9-df657ec267e7	55a387df-6d38-42ea-bfba-379327b53cbd	81b84c5d-9759-4b86-978a-649c8ef79660	uytget	uytget	2022-10-17 02:31:43.703806+05	2022-10-17 11:32:22.801107+05	\N	uytget
 a4e1fdc0-0330-4238-bebf-566018205273	55a387df-6d38-42ea-bfba-379327b53cbd	660071e0-8f17-4c48-9d80-d4cac306de3a	uytget	uytget	2022-10-17 02:31:43.703806+05	2022-10-17 11:32:22.801107+05	\N	uytget
 ff0d6c88-4ec2-49f3-b8b4-a3b1861cccb9	55a387df-6d38-42ea-bfba-379327b53cbd	c866d5e4-284c-4bea-a94f-cc23f6c7e5d0	uytget	uytget	2022-10-17 02:31:43.703806+05	2022-10-17 11:32:22.801107+05	\N	uytget
 53df335e-5e07-4bc3-84cc-fb303daf047d	55a387df-6d38-42ea-bfba-379327b53cbd	e3c33ead-3c30-40f1-9d28-7bb8b71b767f	uytget	uytget	2022-10-17 02:31:43.703806+05	2022-10-17 11:32:22.801107+05	\N	uytget
 0878f53e-cd11-40c8-a16e-7a74e1c5d145	55a387df-6d38-42ea-bfba-379327b53cbd	8df705a5-2351-4aca-b03e-3357a23840b4	uytget	uytget	2022-10-17 02:31:43.703806+05	2022-10-17 11:32:22.801107+05	\N	uytget
 458efe76-79d3-4643-9c35-cffcaa33ff3e	55a387df-6d38-42ea-bfba-379327b53cbd	3e81d4cd-c3c6-4b01-832b-383b8bea5a6a	uytget	uytget	2022-10-17 02:31:43.703806+05	2022-10-17 11:32:22.801107+05	\N	uytget
-4241288e-3c3e-4853-9a43-32eef9867cd8	198695b5-579a-4f80-ac10-8380e17e5d98	0d4a6c3c-cc5d-457b-ac9a-ce60eacb94de	uytget	uytget	2022-10-19 11:00:40.050132+05	2022-10-19 12:55:44.565405+05	\N	uytget
-c2a16cb7-56ec-45d9-86bc-57834fbae5da	198695b5-579a-4f80-ac10-8380e17e5d98	b2b165a3-2261-4d67-8160-0e239ecd99b5	uytget	uytget	2022-10-19 11:00:40.050132+05	2022-10-19 12:55:44.565405+05	\N	uytget
-2f9185aa-968c-46fa-a942-f20fc28291c9	198695b5-579a-4f80-ac10-8380e17e5d98	a2bb8745-1f3a-4de9-ad66-11b0bb3bb754	uytget	uytget	2022-10-19 11:00:40.050132+05	2022-10-19 12:55:44.565405+05	\N	uytget
-fdba8cdd-2eeb-415a-a744-f4219966db66	198695b5-579a-4f80-ac10-8380e17e5d98	d731b17a-ae8d-4561-ad67-0f431d5c529b	uytget	uytget	2022-10-19 11:00:40.050132+05	2022-10-19 12:55:44.565405+05	\N	uytget
-70894bc5-12cf-4910-9631-ece1658d1449	198695b5-579a-4f80-ac10-8380e17e5d98	bb6c3bdb-79e2-44b3-98b1-c1cee0976777	uytget	uytget	2022-10-19 11:00:40.050132+05	2022-10-19 12:55:44.565405+05	\N	uytget
-1bd8d363-04cd-4ab0-b03e-086ae6179d78	198695b5-579a-4f80-ac10-8380e17e5d98	d4156225-082e-4f0f-9b2c-85268114433a	uytget	uytget	2022-10-19 11:00:40.050132+05	2022-10-19 12:55:44.565405+05	\N	uytget
-a56de9a0-8e03-4bd7-b09a-fa3be1d9b001	198695b5-579a-4f80-ac10-8380e17e5d98	81b84c5d-9759-4b86-978a-649c8ef79660	uytget	uytget	2022-10-19 11:00:40.050132+05	2022-10-19 12:55:44.565405+05	\N	uytget
 cd06d549-1037-4cec-8d83-5e2e5a8ffeae	198695b5-579a-4f80-ac10-8380e17e5d98	660071e0-8f17-4c48-9d80-d4cac306de3a	uytget	uytget	2022-10-19 11:00:40.050132+05	2022-10-19 12:55:44.565405+05	\N	uytget
 f8db1561-1f73-4323-9521-7b9a340b2bd4	198695b5-579a-4f80-ac10-8380e17e5d98	c866d5e4-284c-4bea-a94f-cc23f6c7e5d0	uytget	uytget	2022-10-19 11:00:40.050132+05	2022-10-19 12:55:44.565405+05	\N	uytget
 3e58887c-4a35-439b-b4bc-9a7c90aa8bb7	198695b5-579a-4f80-ac10-8380e17e5d98	e3c33ead-3c30-40f1-9d28-7bb8b71b767f	uytget	uytget	2022-10-19 11:00:40.050132+05	2022-10-19 12:55:44.565405+05	\N	uytget
 677b11d4-3fd6-4116-953c-4cbba1d506c7	198695b5-579a-4f80-ac10-8380e17e5d98	8df705a5-2351-4aca-b03e-3357a23840b4	uytget	uytget	2022-10-19 11:00:40.050132+05	2022-10-19 12:55:44.565405+05	\N	uytget
 547e7dbe-1d97-4d70-9250-27836e222977	198695b5-579a-4f80-ac10-8380e17e5d98	3e81d4cd-c3c6-4b01-832b-383b8bea5a6a	uytget	uytget	2022-10-19 11:00:40.050132+05	2022-10-19 12:55:44.565405+05	\N	uytget
-73e9e605-25e6-44fa-b91c-f0745e8285e5	b62a1c1c-0a29-4756-8e9d-5c9680758d18	0d4a6c3c-cc5d-457b-ac9a-ce60eacb94de	uytget	uytget	2022-10-20 01:44:26.912355+05	2022-10-20 01:44:26.912355+05	\N	uytget
-5abc86ef-4ec1-45d0-a671-497b029597e3	b62a1c1c-0a29-4756-8e9d-5c9680758d18	b2b165a3-2261-4d67-8160-0e239ecd99b5	uytget	uytget	2022-10-20 01:44:26.912355+05	2022-10-20 01:44:26.912355+05	\N	uytget
-9ff13666-abf2-4179-9f36-de152c95478d	b62a1c1c-0a29-4756-8e9d-5c9680758d18	a2bb8745-1f3a-4de9-ad66-11b0bb3bb754	uytget	uytget	2022-10-20 01:44:26.912355+05	2022-10-20 01:44:26.912355+05	\N	uytget
-0577ae3a-d145-4a22-9d4e-a13fc9136c2c	b62a1c1c-0a29-4756-8e9d-5c9680758d18	d731b17a-ae8d-4561-ad67-0f431d5c529b	uytget	uytget	2022-10-20 01:44:26.912355+05	2022-10-20 01:44:26.912355+05	\N	uytget
-4ae2447a-d920-47b0-a248-e8db464c1796	b62a1c1c-0a29-4756-8e9d-5c9680758d18	bb6c3bdb-79e2-44b3-98b1-c1cee0976777	uytget	uytget	2022-10-20 01:44:26.912355+05	2022-10-20 01:44:26.912355+05	\N	uytget
-535e4de6-ad74-4f19-bda4-4f09baf299f9	b62a1c1c-0a29-4756-8e9d-5c9680758d18	d4156225-082e-4f0f-9b2c-85268114433a	uytget	uytget	2022-10-20 01:44:26.912355+05	2022-10-20 01:44:26.912355+05	\N	uytget
-65875507-77b2-42a9-9923-45508ae8b156	b62a1c1c-0a29-4756-8e9d-5c9680758d18	81b84c5d-9759-4b86-978a-649c8ef79660	uytget	uytget	2022-10-20 01:44:26.912355+05	2022-10-20 01:44:26.912355+05	\N	uytget
 198df259-91ee-40ea-8ace-19519e6e53e7	b62a1c1c-0a29-4756-8e9d-5c9680758d18	660071e0-8f17-4c48-9d80-d4cac306de3a	uytget	uytget	2022-10-20 01:44:26.912355+05	2022-10-20 01:44:26.912355+05	\N	uytget
 6c9720a9-7ead-4918-a5d8-b5a1e1ad81c5	b62a1c1c-0a29-4756-8e9d-5c9680758d18	c866d5e4-284c-4bea-a94f-cc23f6c7e5d0	uytget	uytget	2022-10-20 01:44:26.912355+05	2022-10-20 01:44:26.912355+05	\N	uytget
 f162152a-0262-4e87-813c-0c932399dc47	b62a1c1c-0a29-4756-8e9d-5c9680758d18	e3c33ead-3c30-40f1-9d28-7bb8b71b767f	uytget	uytget	2022-10-20 01:44:26.912355+05	2022-10-20 01:44:26.912355+05	\N	uytget
 8b6acc76-e3e1-4f43-8b3c-e8f7245fda1c	b62a1c1c-0a29-4756-8e9d-5c9680758d18	8df705a5-2351-4aca-b03e-3357a23840b4	uytget	uytget	2022-10-20 01:44:26.912355+05	2022-10-20 01:44:26.912355+05	\N	uytget
 e43a09fb-e429-42fd-b630-cd5a484ee850	b62a1c1c-0a29-4756-8e9d-5c9680758d18	3e81d4cd-c3c6-4b01-832b-383b8bea5a6a	uytget	uytget	2022-10-20 01:44:26.912355+05	2022-10-20 01:44:26.912355+05	\N	uytget
+b458c6ad-96f9-4a87-8ed4-871cf86611a9	55a387df-6d38-42ea-bfba-379327b53cbd	b2b165a3-2261-4d67-8160-0e239ecd99b5	uytget	uytget	2022-10-17 02:31:43.703806+05	2022-10-22 01:26:07.108522+05	\N	uytget
+c2a16cb7-56ec-45d9-86bc-57834fbae5da	198695b5-579a-4f80-ac10-8380e17e5d98	b2b165a3-2261-4d67-8160-0e239ecd99b5	uytget	uytget	2022-10-19 11:00:40.050132+05	2022-10-22 01:26:07.108522+05	\N	uytget
+5abc86ef-4ec1-45d0-a671-497b029597e3	b62a1c1c-0a29-4756-8e9d-5c9680758d18	b2b165a3-2261-4d67-8160-0e239ecd99b5	uytget	uytget	2022-10-20 01:44:26.912355+05	2022-10-22 01:26:07.108522+05	\N	uytget
+1327fb24-9a60-47bb-aab7-10f1bee360c4	55a387df-6d38-42ea-bfba-379327b53cbd	0d4a6c3c-cc5d-457b-ac9a-ce60eacb94de	uytget	uytget	2022-10-17 02:31:43.703806+05	2022-10-22 01:26:07.108522+05	\N	uytget
+4241288e-3c3e-4853-9a43-32eef9867cd8	198695b5-579a-4f80-ac10-8380e17e5d98	0d4a6c3c-cc5d-457b-ac9a-ce60eacb94de	uytget	uytget	2022-10-19 11:00:40.050132+05	2022-10-22 01:26:07.108522+05	\N	uytget
+73e9e605-25e6-44fa-b91c-f0745e8285e5	b62a1c1c-0a29-4756-8e9d-5c9680758d18	0d4a6c3c-cc5d-457b-ac9a-ce60eacb94de	uytget	uytget	2022-10-20 01:44:26.912355+05	2022-10-22 01:26:07.108522+05	\N	uytget
+b1de5982-ee89-4dae-afb9-1116fa1259b4	55a387df-6d38-42ea-bfba-379327b53cbd	a2bb8745-1f3a-4de9-ad66-11b0bb3bb754	uytget	uytget	2022-10-17 02:31:43.703806+05	2022-10-22 01:26:07.108522+05	\N	uytget
+2f9185aa-968c-46fa-a942-f20fc28291c9	198695b5-579a-4f80-ac10-8380e17e5d98	a2bb8745-1f3a-4de9-ad66-11b0bb3bb754	uytget	uytget	2022-10-19 11:00:40.050132+05	2022-10-22 01:26:07.108522+05	\N	uytget
+9ff13666-abf2-4179-9f36-de152c95478d	b62a1c1c-0a29-4756-8e9d-5c9680758d18	a2bb8745-1f3a-4de9-ad66-11b0bb3bb754	uytget	uytget	2022-10-20 01:44:26.912355+05	2022-10-22 01:26:07.108522+05	\N	uytget
+12b07b81-9e9c-47fe-a051-5e3f7288ecdd	55a387df-6d38-42ea-bfba-379327b53cbd	d731b17a-ae8d-4561-ad67-0f431d5c529b	uytget	uytget	2022-10-17 02:31:43.703806+05	2022-10-22 01:26:07.108522+05	\N	uytget
+fdba8cdd-2eeb-415a-a744-f4219966db66	198695b5-579a-4f80-ac10-8380e17e5d98	d731b17a-ae8d-4561-ad67-0f431d5c529b	uytget	uytget	2022-10-19 11:00:40.050132+05	2022-10-22 01:26:07.108522+05	\N	uytget
+6fff60d6-4ec9-46d9-80a9-df657ec267e7	55a387df-6d38-42ea-bfba-379327b53cbd	81b84c5d-9759-4b86-978a-649c8ef79660	uytget	uytget	2022-10-17 02:31:43.703806+05	2022-10-22 01:26:07.108522+05	\N	uytget
+a56de9a0-8e03-4bd7-b09a-fa3be1d9b001	198695b5-579a-4f80-ac10-8380e17e5d98	81b84c5d-9759-4b86-978a-649c8ef79660	uytget	uytget	2022-10-19 11:00:40.050132+05	2022-10-22 01:26:07.108522+05	\N	uytget
+ce61fdba-2628-4f09-aff2-27ce8ac6b37c	aea98b93-7bdf-455b-9ad4-a259d69dc76e	d4156225-082e-4f0f-9b2c-85268114433a	Жидкое крем-мыло увлажняющее Aura Clean "Черничный йогурт" 1 л	Жидкое крем-мыло увлажняющее Aura Clean "Черничный йогурт" 1 л	2022-09-17 14:57:34.654635+05	2022-10-22 02:53:49.519217+05	\N	zhidkoe-krem-mylo-uvlazhniaiushchee-aura-clean-chernichnyi-iogurt-1-l
+e008099d-ff03-4182-86ce-d91ca984ca76	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	d4156225-082e-4f0f-9b2c-85268114433a	Nemlendiriji suwuk sabyn Aura Clean "Черничный йогурт" 1 ltr	Nemlendiriji suwuk sabyn Aura Clean "Черничный йогурт" 1 ltr	2022-09-17 14:57:34.642037+05	2022-10-22 02:53:49.519217+05	\N	nemlendiriji-suwuk-sabyn-aura-clean-chernichnyi-iogurt-1-ltr
+2756e684-ad6a-4e95-89f8-75b509f63290	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	b2b165a3-2261-4d67-8160-0e239ecd99b5	Nemlendiriji suwuk sabyn Aura Clean "Черничный йогурт" 1 ltr	Nemlendiriji suwuk sabyn Aura Clean "Черничный йогурт" 1 ltr	2022-09-17 14:55:35.51906+05	2022-10-22 01:26:07.108522+05	\N	nemlendiriji-suwuk-sabyn-aura-clean-chernichnyi-iogurt-1-ltr
+33011809-8da8-4563-8dd0-22ca01e5caee	aea98b93-7bdf-455b-9ad4-a259d69dc76e	b2b165a3-2261-4d67-8160-0e239ecd99b5	Жидкое крем-мыло увлажняющее Aura Clean "Черничный йогурт" 1 л	Жидкое крем-мыло увлажняющее Aura Clean "Черничный йогурт" 1 л	2022-09-17 14:55:35.530179+05	2022-10-22 01:26:07.108522+05	\N	zhidkoe-krem-mylo-uvlazhniaiushchee-aura-clean-chernichnyi-iogurt-1-l
+0577ae3a-d145-4a22-9d4e-a13fc9136c2c	b62a1c1c-0a29-4756-8e9d-5c9680758d18	d731b17a-ae8d-4561-ad67-0f431d5c529b	uytget	uytget	2022-10-20 01:44:26.912355+05	2022-10-22 01:26:07.108522+05	\N	uytget
+ad74bc57-3cd1-4c50-9287-a6a21b4beca4	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	d731b17a-ae8d-4561-ad67-0f431d5c529b	Nemlendiriji suwuk sabyn Aura Clean "Черничный йогурт" 1 ltr	Nemlendiriji suwuk sabyn Aura Clean "Черничный йогурт" 1 ltr	2022-09-17 14:56:36.207944+05	2022-10-22 01:26:07.108522+05	\N	nemlendiriji-suwuk-sabyn-aura-clean-chernichnyi-iogurt-1-ltr
+ceeb7241-e4b8-4fa0-b99f-80ba9c141589	aea98b93-7bdf-455b-9ad4-a259d69dc76e	d731b17a-ae8d-4561-ad67-0f431d5c529b	Жидкое крем-мыло увлажняющее Aura Clean "Черничный йогурт" 1 л	Жидкое крем-мыло увлажняющее Aura Clean "Черничный йогурт" 1 л	2022-09-17 14:56:36.219444+05	2022-10-22 01:26:07.108522+05	\N	zhidkoe-krem-mylo-uvlazhniaiushchee-aura-clean-chernichnyi-iogurt-1-l
+1f038393-3955-4cef-a6a1-a1cf087173c5	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	a2bb8745-1f3a-4de9-ad66-11b0bb3bb754	Nemlendiriji suwuk sabyn Aura Clean "Черничный йогурт" 1 ltr	Nemlendiriji suwuk sabyn Aura Clean "Черничный йогурт" 1 ltr	2022-09-17 14:56:05.464418+05	2022-10-22 01:26:07.108522+05	\N	nemlendiriji-suwuk-sabyn-aura-clean-chernichnyi-iogurt-1-ltr
+c499a61c-948d-41d4-9dad-9d12ea7324d4	aea98b93-7bdf-455b-9ad4-a259d69dc76e	a2bb8745-1f3a-4de9-ad66-11b0bb3bb754	Жидкое крем-мыло увлажняющее Aura Clean "Черничный йогурт" 1 л	Жидкое крем-мыло увлажняющее Aura Clean "Черничный йогурт" 1 л	2022-09-17 14:56:05.475198+05	2022-10-22 01:26:07.108522+05	\N	zhidkoe-krem-mylo-uvlazhniaiushchee-aura-clean-chernichnyi-iogurt-1-l
+f6791ed2-e2a4-4d3a-a32f-59ae4b34d832	55a387df-6d38-42ea-bfba-379327b53cbd	bb6c3bdb-79e2-44b3-98b1-c1cee0976777	uytget	uytget	2022-10-17 02:31:43.703806+05	2022-10-22 01:26:07.108522+05	\N	uytget
+70894bc5-12cf-4910-9631-ece1658d1449	198695b5-579a-4f80-ac10-8380e17e5d98	bb6c3bdb-79e2-44b3-98b1-c1cee0976777	uytget	uytget	2022-10-19 11:00:40.050132+05	2022-10-22 01:26:07.108522+05	\N	uytget
+66d53b03-1f2b-4a7a-bc86-dd90baaec6ef	aea98b93-7bdf-455b-9ad4-a259d69dc76e	81b84c5d-9759-4b86-978a-649c8ef79660	Жидкое крем-мыло увлажняющее Aura Clean "Черничный йогурт" 1 л	Жидкое крем-мыло увлажняющее Aura Clean "Черничный йогурт" 1 л	2022-09-17 14:58:10.064659+05	2022-10-22 01:26:07.108522+05	\N	zhidkoe-krem-mylo-uvlazhniaiushchee-aura-clean-chernichnyi-iogurt-1-l
+8965478c-0afe-4b65-af05-0d151c8dd462	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	81b84c5d-9759-4b86-978a-649c8ef79660	Nemlendiriji suwuk sabyn Aura Clean "Черничный йогурт" 1 ltr	Nemlendiriji suwuk sabyn Aura Clean "Черничный йогурт" 1 ltr	2022-09-17 14:58:10.054293+05	2022-10-22 01:26:07.108522+05	\N	nemlendiriji-suwuk-sabyn-aura-clean-chernichnyi-iogurt-1-ltr
+4ae2447a-d920-47b0-a248-e8db464c1796	b62a1c1c-0a29-4756-8e9d-5c9680758d18	bb6c3bdb-79e2-44b3-98b1-c1cee0976777	uytget	uytget	2022-10-20 01:44:26.912355+05	2022-10-22 01:26:07.108522+05	\N	uytget
+5aa614ae-8c7d-47d7-867e-44c3d4d2015c	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	bb6c3bdb-79e2-44b3-98b1-c1cee0976777	Nemlendiriji suwuk sabyn Aura Clean "Черничный йогурт" 1 ltr	Nemlendiriji suwuk sabyn Aura Clean "Черничный йогурт" 1 ltr	2022-09-17 14:57:07.254121+05	2022-10-22 01:26:07.108522+05	\N	nemlendiriji-suwuk-sabyn-aura-clean-chernichnyi-iogurt-1-ltr
 \.
 
 
