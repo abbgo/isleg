@@ -8,7 +8,7 @@ import (
 
 type Category struct {
 	ID                  string                `json:"id,omitempty"`
-	ParentCategoryID    *string               `json:"parent_category_id,omitempty"`
+	ParentCategoryID    string                `json:"parent_category_id,omitempty"`
 	Image               string                `json:"image,omitempty"`
 	IsHomeCategory      bool                  `json:"is_home_category,omitempty"`
 	CreatedAt           string                `json:"-"`

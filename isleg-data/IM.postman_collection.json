@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "b5834856-65b7-435a-8ee8-ec09169a5452",
+		"_postman_id": "57f3207d-ae99-40e3-bbbb-0303a7c0aa2a",
 		"name": "IM",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -203,7 +203,7 @@
 								{
 									"key": "image",
 									"type": "file",
-									"src": "/home/abb/go/src/github.com/abbgo/isleg/isleg-data/Saydyn suratynyn razmeri/Bic galam/large.jpg"
+									"src": []
 								},
 								{
 									"key": "name_tm",
@@ -217,7 +217,7 @@
 								},
 								{
 									"key": "parent_category_id",
-									"value": "",
+									"value": "417a385e-6a74-44f3-a536-405eb8251978",
 									"type": "default"
 								},
 								{
@@ -267,7 +267,7 @@
 								{
 									"key": "image",
 									"type": "file",
-									"src": "/home/abb/Pictures/download (4).jpeg"
+									"src": []
 								},
 								{
 									"key": "name_tm",
@@ -281,18 +281,33 @@
 								},
 								{
 									"key": "parent_category_id",
-									"value": "",
+									"value": "7605172f-7a12-4781-a892-6e3b5cf11490",
 									"type": "default"
 								},
 								{
 									"key": "is_home_category",
 									"value": "false",
 									"type": "default"
+								},
+								{
+									"key": "name_fr",
+									"value": "name_fr",
+									"type": "default"
+								},
+								{
+									"key": "name_tr",
+									"value": "name_tr",
+									"type": "default"
+								},
+								{
+									"key": "name_pl",
+									"value": "name_pl",
+									"type": "default"
 								}
 							]
 						},
 						"url": {
-							"raw": "localhost:2406/admin/category/02bd4413-8586-49ab-802e-16304e756a8b",
+							"raw": "localhost:2406/admin/category/849a1c59-45fb-429b-8fe3-a6e34a6dafaa",
 							"host": [
 								"localhost"
 							],
@@ -300,7 +315,7 @@
 							"path": [
 								"admin",
 								"category",
-								"02bd4413-8586-49ab-802e-16304e756a8b"
+								"849a1c59-45fb-429b-8fe3-a6e34a6dafaa"
 							]
 						}
 					},
@@ -331,7 +346,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "localhost:2406/admin/category/4af3388b-2738-4ff6-b42e-927cb0ff897f",
+							"raw": "localhost:2406/admin/category/7f453dd0-7b2e-480d-a8be-fcfa23bd863e",
 							"host": [
 								"localhost"
 							],
@@ -339,7 +354,7 @@
 							"path": [
 								"admin",
 								"category",
-								"4af3388b-2738-4ff6-b42e-927cb0ff897f"
+								"7f453dd0-7b2e-480d-a8be-fcfa23bd863e"
 							]
 						}
 					},

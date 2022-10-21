@@ -488,6 +488,7 @@ func GetCategoryByID(c *gin.Context) {
 
 func GetCategories(c *gin.Context) {
 
+	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -506,6 +507,7 @@ func GetCategories(c *gin.Context) {
 		}
 	}()
 
+	// get data from deatabase
 	rowCategor, err := db.Query("SELECT id,parent_category_id,image,is_home_category FROM categories WHERE deleted_at IS NULL")
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -524,10 +526,10 @@ func GetCategories(c *gin.Context) {
 		}
 	}()
 
-	var categories []OneCategory
+	var categories []models.Category
 
 	for rowCategor.Next() {
-		var category OneCategory
+		var category models.Category
 
 		if err := rowCategor.Scan(&category.ID, &category.ParentCategoryID, &category.Image, &category.IsHomeCategory); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
@@ -569,7 +571,7 @@ func GetCategories(c *gin.Context) {
 			translations = append(translations, translation)
 		}
 
-		category.Translations = translations
+		category.TranslationCategory = translations
 
 		categories = append(categories, category)
 	}
