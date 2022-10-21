@@ -6,7 +6,6 @@ import (
 	"github/abbgo/isleg/isleg-backend/pkg"
 	"net/http"
 	"os"
-	"path/filepath"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -89,6 +88,7 @@ func CreateBrend(c *gin.Context) {
 
 func UpdateBrendByID(c *gin.Context) {
 
+	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -107,10 +107,14 @@ func UpdateBrendByID(c *gin.Context) {
 		}
 	}()
 
+	// get id from reequest parameter
 	ID := c.Param("id")
+
+	// get data from request
 	name := c.PostForm("name")
 	var fileName string
 
+	// check id and get image of brend
 	rowBrend, err := db.Query("SELECT image FROM brends WHERE id = $1 AND deleted_at IS NULL", ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -149,6 +153,7 @@ func UpdateBrendByID(c *gin.Context) {
 		return
 	}
 
+	// validate data
 	if name == "" {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -157,37 +162,17 @@ func UpdateBrendByID(c *gin.Context) {
 		return
 	}
 
-	file, err := c.FormFile("image")
+	fileName, err = pkg.FileUploadForUpdate("image", "brend", image, c)
 	if err != nil {
-		fileName = image
-	} else {
-		extensionFile := filepath.Ext(file.Filename)
-
-		if extensionFile != ".jpg" && extensionFile != ".jpeg" && extensionFile != ".png" && extensionFile != ".gif" {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": "the file must be an image",
-			})
-			return
-		}
-
-		newFileName := uuid.New().String() + extensionFile
-		c.SaveUploadedFile(file, "./uploads/brend/"+newFileName)
-
-		if err := os.Remove("./" + image); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-
-		fileName = "uploads/brend/" + newFileName
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
 	}
 
-	currentTime := time.Now()
-
-	resultBrend, err := db.Query("UPDATE brends SET name = $1 , image = $2 , updated_at = $4 WHERE id = $3", name, fileName, ID, currentTime)
+	// update data
+	resultBrend, err := db.Query("UPDATE brends SET name = $1 , image = $2 WHERE id = $3", name, fileName, ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -207,7 +192,7 @@ func UpdateBrendByID(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
-		"message": "brend successfully updated",
+		"message": "data successfully updated",
 	})
 
 }
