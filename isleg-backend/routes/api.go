@@ -21,7 +21,7 @@ func Routes() *gin.Engine {
 	routes.Use(cors.New(cors.Config{
 		// AllowOrigins:     []string{"https://foo.com"},
 		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE"},
-		AllowHeaders:     []string{"Origin", "Content-Length", "Content-Type", "RefershToken", "Authorization"},
+		AllowHeaders:     []string{"Origin", "Content-Length", "Content-Type", "RefreshToken", "Authorization"},
 		AllowCredentials: true,
 		AllowAllOrigins:  true,
 		MaxAge:           12 * time.Hour,
@@ -97,8 +97,8 @@ func Routes() *gin.Engine {
 		back.DELETE("/delete-category/:id", backController.DeletePermanentlyCategoryByID) // fully ready
 
 		back.POST("/brend", backController.CreateBrend)                             // fully ready
-		back.PUT("/brend/:id", backController.UpdateBrendByID)                      //+
-		back.GET("/brend/:id", backController.GetBrendByID)                         //+
+		back.PUT("/brend/:id", backController.UpdateBrendByID)                      // fully ready
+		back.GET("/brend/:id", backController.GetBrendByID)                         // fully ready
 		back.GET("/brends", backController.GetBrends)                               //+
 		back.DELETE("/brend/:id", backController.DeleteBrendByID)                   // funksiyany optimize etmeli
 		back.GET("/restore-brend/:id", backController.RestoreBrendByID)             // funksiyany optimize etmeli

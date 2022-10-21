@@ -199,6 +199,7 @@ func UpdateBrendByID(c *gin.Context) {
 
 func GetBrendByID(c *gin.Context) {
 
+	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -217,9 +218,11 @@ func GetBrendByID(c *gin.Context) {
 		}
 	}()
 
+	// get id from request paramter
 	ID := c.Param("id")
 
-	rowBrend, err := db.Query("SELECT name,image FROM brends WHERE id = $1 AND deleted_at IS NULL", ID)
+	// check id and get data from database
+	rowBrend, err := db.Query("SELECT id,name,image FROM brends WHERE id = $1 AND deleted_at IS NULL", ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -240,7 +243,7 @@ func GetBrendByID(c *gin.Context) {
 	var brend models.Brend
 
 	for rowBrend.Next() {
-		if err := rowBrend.Scan(&brend.Name, &brend.Image); err != nil {
+		if err := rowBrend.Scan(&brend.ID, &brend.Name, &brend.Image); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
@@ -249,7 +252,7 @@ func GetBrendByID(c *gin.Context) {
 		}
 	}
 
-	if brend.Name == "" || brend.Image == "" {
+	if brend.ID == "" {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
 			"message": "record not found",
