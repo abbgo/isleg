@@ -561,6 +561,7 @@ func RestoreBrendByID(c *gin.Context) {
 
 func DeletePermanentlyBrendByID(c *gin.Context) {
 
+	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -579,8 +580,10 @@ func DeletePermanentlyBrendByID(c *gin.Context) {
 		}
 	}()
 
+	// get id from request parameter
 	ID := c.Param("id")
 
+	// check id and get image of brend
 	rowBrend, err := db.Query("SELECT image FROM brends WHERE id = $1 AND deleted_at IS NOT NULL", ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -759,7 +762,7 @@ func DeletePermanentlyBrendByID(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
-		"message": "brend successfully deleted",
+		"message": "data successfully deleted",
 	})
 
 }
