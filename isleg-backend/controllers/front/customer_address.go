@@ -145,7 +145,16 @@ func UpdateCustomerAddressStatus(c *gin.Context) {
 	}()
 
 	addressID := c.Query("address_id")
-	customerID := c.Query("customer_id")
+
+	custID, hasCustomer := c.Get("customer_id")
+	if !hasCustomer {
+		c.JSON(http.StatusBadRequest, "customer_id is required")
+		return
+	}
+	customerID, ok := custID.(string)
+	if !ok {
+		c.JSON(http.StatusBadRequest, "customer_id must be string")
+	}
 
 	rowCustomer, err := db.Query("SELECT id FROM customers WHERE id = $1 AND deleted_at IS NULL", customerID)
 	if err != nil {
