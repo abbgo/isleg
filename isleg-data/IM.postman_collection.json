@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "53c1a15e-fb9d-4a34-be93-7d5a99c44512",
+		"_postman_id": "8a331eea-91b7-4c06-ab8d-a39f62c69622",
 		"name": "IM",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -910,7 +910,7 @@
 							"formdata": [
 								{
 									"key": "brend_id",
-									"value": "46b13f0a-d584-4ad3-b270-437ecdc51449",
+									"value": "fdd259c2-794a-42b9-a3ad-9e91502af23e",
 									"type": "default"
 								},
 								{
@@ -960,12 +960,12 @@
 								},
 								{
 									"key": "category_id",
-									"value": "f745d171-68e6-42e2-b339-cb3c210cda55",
+									"value": "a4277afa-1c92-4f4e-809e-dfbb54ddbc9b",
 									"type": "default"
 								},
 								{
 									"key": "category_id",
-									"value": "d4cb1359-6c23-4194-8e3c-21ed8cec8373",
+									"value": "338906f1-dbe2-4ba7-84fc-fe7a4d7856ec",
 									"type": "default"
 								},
 								{
@@ -996,22 +996,52 @@
 								{
 									"key": "small",
 									"type": "file",
-									"src": "/home/abb/go/src/github.com/abbgo/isleg/isleg-data/Saydyn suratynyn razmeri/Kagyz kley/small.jpg"
+									"src": "/home/abb/go/src/github.com/abbgo/isleg/isleg-data/Saydyn suratynyn razmeri/Bic galam/small.jpg"
 								},
 								{
 									"key": "small",
 									"type": "file",
-									"src": "/home/abb/go/src/github.com/abbgo/isleg/isleg-data/Saydyn suratynyn razmeri/Kagyz kley/small.jpg"
+									"src": "/home/abb/go/src/github.com/abbgo/isleg/isleg-data/Saydyn suratynyn razmeri/Bic galam/small.jpg"
 								},
 								{
 									"key": "large",
 									"type": "file",
-									"src": "/home/abb/go/src/github.com/abbgo/isleg/isleg-data/Saydyn suratynyn razmeri/Kagyz kley/large.jpg"
+									"src": "/home/abb/go/src/github.com/abbgo/isleg/isleg-data/Saydyn suratynyn razmeri/Bic galam/large.jpg"
 								},
 								{
 									"key": "large",
 									"type": "file",
-									"src": "/home/abb/go/src/github.com/abbgo/isleg/isleg-data/Saydyn suratynyn razmeri/Kagyz kley/large.jpg"
+									"src": "/home/abb/go/src/github.com/abbgo/isleg/isleg-data/Saydyn suratynyn razmeri/Bic galam/large.jpg"
+								},
+								{
+									"key": "name_fr",
+									"value": "name_fr",
+									"type": "default"
+								},
+								{
+									"key": "name_tr",
+									"value": "name_tr",
+									"type": "default"
+								},
+								{
+									"key": "name_pl",
+									"value": "name_pl",
+									"type": "default"
+								},
+								{
+									"key": "description_fr",
+									"value": "description_fr",
+									"type": "default"
+								},
+								{
+									"key": "description_tr",
+									"value": "description_tr",
+									"type": "default"
+								},
+								{
+									"key": "description_pl",
+									"value": "description_pl",
+									"type": "default"
 								}
 							]
 						},
