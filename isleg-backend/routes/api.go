@@ -255,7 +255,7 @@ func Routes() *gin.Engine {
 			securedCustomer.PUT("/address", frontController.UpdateCustomerAddressStatus) // funksiyany optimize etmeli
 
 			// update customer password
-			securedCustomer.PUT("/customer-password/:customer_id", frontController.UpdateCustomerPassword) //+
+			securedCustomer.PUT("/customer-password", frontController.UpdateCustomerPassword) //+
 
 		}
 
