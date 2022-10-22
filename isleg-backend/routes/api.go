@@ -222,7 +222,7 @@ func Routes() *gin.Engine {
 			securedCustomer.POST("/like", frontController.AddLike) // funksiyany optimize etmeli
 
 			// remove like if customer exists
-			securedCustomer.DELETE("/like/:customer_id/:product_id", frontController.RemoveLike) // funksiyany optimize etmeli
+			securedCustomer.DELETE("/like/:product_id", frontController.RemoveLike) // funksiyany optimize etmeli
 
 			// get like products if customer exists
 			// securedCustomer.GET("/likes/:customer_id", frontController.GetLikes)
