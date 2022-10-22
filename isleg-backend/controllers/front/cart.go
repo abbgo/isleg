@@ -386,7 +386,16 @@ func RemoveCart(c *gin.Context) {
 		}
 	}()
 
-	customerID := c.Query("customer_id")
+	custID, hasCustomer := c.Get("customer_id")
+	if !hasCustomer {
+		c.JSON(http.StatusBadRequest, "customer_id is required")
+		return
+	}
+	customerID, ok := custID.(string)
+	if !ok {
+		c.JSON(http.StatusBadRequest, "customer_id must be string")
+	}
+
 	productID := c.Query("product_id")
 
 	rowCustomer, err := db.Query("SELECT id FROM customers WHERE id = $1 AND deleted_at IS NULL", customerID)
