@@ -11,11 +11,6 @@ import (
 	"github.com/google/uuid"
 )
 
-type Cart struct {
-	CustomerID string        `json:"customer_id"`
-	Products   []CartProduct `json:"products"`
-}
-
 type CartProduct struct {
 	ProductID         string `json:"product_id" binding:"required"`
 	QuantityOfProduct int    `json:"quantity_of_product" binding:"required"`
@@ -56,15 +51,25 @@ func AddCart(c *gin.Context) {
 		}
 	}()
 
+	custID, hasCustomer := c.Get("customer_id")
+	if !hasCustomer {
+		c.JSON(http.StatusBadRequest, "customer_id is required")
+		return
+	}
+	customerID, ok := custID.(string)
+	if !ok {
+		c.JSON(http.StatusBadRequest, "customer_id must be string")
+	}
+
 	// langShortName := c.Param("lang")
-	var cart Cart
+	var cart []CartProduct
 
 	if err := c.BindJSON(&cart); err != nil {
 		c.JSON(http.StatusBadRequest, err.Error())
 		return
 	}
 
-	rowCustomer, err := db.Query("SELECT id FROM customers WHERE id = $1 AND deleted_at IS NULL", cart.CustomerID)
+	rowCustomer, err := db.Query("SELECT id FROM customers WHERE id = $1 AND deleted_at IS NULL", customerID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -102,7 +107,7 @@ func AddCart(c *gin.Context) {
 		return
 	}
 
-	for k, v := range cart.Products {
+	for k, v := range cart {
 
 		if v.QuantityOfProduct < 1 {
 			c.JSON(http.StatusBadRequest, gin.H{
@@ -112,7 +117,7 @@ func AddCart(c *gin.Context) {
 			return
 		}
 
-		for _, x := range cart.Products[(k + 1):] {
+		for _, x := range cart[(k + 1):] {
 			if v.ProductID == x.ProductID {
 				c.JSON(http.StatusBadRequest, gin.H{
 					"status":  false,
@@ -160,7 +165,7 @@ func AddCart(c *gin.Context) {
 			return
 		}
 
-		rowCart, err := db.Query("SELECT product_id FROM cart WHERE customer_id = $1 AND product_id = $2 AND deleted_at IS NULL", cart.CustomerID, v.ProductID)
+		rowCart, err := db.Query("SELECT product_id FROM cart WHERE customer_id = $1 AND product_id = $2 AND deleted_at IS NULL", customerID, v.ProductID)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
@@ -192,7 +197,7 @@ func AddCart(c *gin.Context) {
 
 		if productId == "" {
 
-			resultCartInsert, err := db.Query("INSERT INTO cart (customer_id,product_id,quantity_of_product) VALUES ($1,$2,$3)", cart.CustomerID, v.ProductID, v.QuantityOfProduct)
+			resultCartInsert, err := db.Query("INSERT INTO cart (customer_id,product_id,quantity_of_product) VALUES ($1,$2,$3)", customerID, v.ProductID, v.QuantityOfProduct)
 			if err != nil {
 				c.JSON(http.StatusBadRequest, gin.H{
 					"status":  false,
@@ -212,7 +217,7 @@ func AddCart(c *gin.Context) {
 
 		} else {
 
-			reultCartUpdate, err := db.Query("UPDATE cart SET quantity_of_product = $1 WHERE customer_id = $2 AND product_id = $3 AND deleted_at IS NULL", v.QuantityOfProduct, cart.CustomerID, v.ProductID)
+			reultCartUpdate, err := db.Query("UPDATE cart SET quantity_of_product = $1 WHERE customer_id = $2 AND product_id = $3 AND deleted_at IS NULL", v.QuantityOfProduct, customerID, v.ProductID)
 			if err != nil {
 				c.JSON(http.StatusBadRequest, gin.H{
 					"status":  false,
