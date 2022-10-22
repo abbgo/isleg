@@ -3,6 +3,7 @@ package controllers
 import (
 	"github/abbgo/isleg/isleg-backend/config"
 	"github/abbgo/isleg/isleg-backend/models"
+	"github/abbgo/isleg/isleg-backend/pkg"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -12,6 +13,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/gosimple/slug"
+	"github.com/lib/pq"
 )
 
 // struct used in function GetProductByID
@@ -32,6 +34,7 @@ type OneProduct struct {
 
 func CreateProduct(c *gin.Context) {
 
+	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -50,120 +53,17 @@ func CreateProduct(c *gin.Context) {
 		}
 	}()
 
-	// validate brend id
+	// validate data
 	brendID := c.PostForm("brend_id")
-	rowBrend, err := db.Query("SELECT id FROM brends WHERE id = $1 AND deleted_at IS NULL", brendID)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-	defer func() {
-		if err := rowBrend.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
-
-	var brend_id string
-
-	for rowBrend.Next() {
-		if err := rowBrend.Scan(&brend_id); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}
-
-	if brend_id == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": "brend not found",
-		})
-		return
-	}
-
-	// validate data from request
 	priceStr := c.PostForm("price")
-	price, err := strconv.ParseFloat(priceStr, 64)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-
 	oldPriceStr := c.PostForm("old_price")
-	var oldPrice float64
-	if oldPriceStr != "" {
-		oldPrice, err = strconv.ParseFloat(oldPriceStr, 64)
-		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-
-		if oldPrice < price {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": "cannot be less than oldPrice Price",
-			})
-			return
-		}
-
-	} else {
-		oldPrice = 0
-	}
-
 	amountStr := c.PostForm("amount")
-	amount, err := strconv.ParseUint(amountStr, 10, 64)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-
 	limitAmountStr := c.PostForm("limit_amount")
-	limitAmount, err := strconv.ParseUint(limitAmountStr, 10, 64)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-
-	if limitAmount > amount {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": "cannot be less than limit_amount amount",
-		})
-		return
-	}
-
 	productCode := c.PostForm("product_code")
-	if productCode == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": "product code is required",
-		})
-		return
-	}
-
 	isNewStr := c.PostForm("is_new")
-	isNew, err := strconv.ParseBool(isNewStr)
+	categories, _ := c.GetPostFormArray("category_id")
+
+	price, oldPrice, amount, limitAmount, isNew, err := models.ValidateProductModel(brendID, priceStr, oldPriceStr, amountStr, limitAmountStr, productCode, isNewStr, categories)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -182,24 +82,15 @@ func CreateProduct(c *gin.Context) {
 		return
 	}
 
+	dataNames := []string{"name", "description"}
+
 	// validate name and description
-	for _, v := range languages {
-		if c.PostForm("name_"+v.NameShort) == "" {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": "name_" + v.NameShort + " is required",
-			})
-			return
-		}
-	}
-	for _, v := range languages {
-		if c.PostForm("description_"+v.NameShort) == "" {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": "description_" + v.NameShort + " is required",
-			})
-			return
-		}
+	if err := pkg.ValidateTranslations(languages, dataNames, c); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
 	}
 
 	// file upload
@@ -211,7 +102,7 @@ func CreateProduct(c *gin.Context) {
 		return
 	}
 
-	mainSamllFile, err := c.FormFile("main_small")
+	mainSamll, err := pkg.FileUpload("main_small", "product", c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -220,19 +111,7 @@ func CreateProduct(c *gin.Context) {
 		return
 	}
 
-	extMainSamll := filepath.Ext(mainSamllFile.Filename)
-	if extMainSamll != ".jpg" && extMainSamll != ".jpeg" && extMainSamll != ".png" && extMainSamll != ".gif" {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": "the file must be an image.",
-		})
-		return
-	}
-
-	mainSamll := uuid.New().String() + extMainSamll
-	c.SaveUploadedFile(mainSamllFile, "./uploads/product/"+mainSamll)
-
-	mainMediumFile, err := c.FormFile("main_medium")
+	mainMedium, err := pkg.FileUpload("main_medium", "product", c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -241,19 +120,7 @@ func CreateProduct(c *gin.Context) {
 		return
 	}
 
-	extMainMedium := filepath.Ext(mainMediumFile.Filename)
-	if extMainMedium != ".jpg" && extMainMedium != ".jpeg" && extMainMedium != ".png" && extMainMedium != ".gif" {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": "the file must be an image.",
-		})
-		return
-	}
-
-	mainMedium := uuid.New().String() + extMainMedium
-	c.SaveUploadedFile(mainMediumFile, "./uploads/product/"+mainMedium)
-
-	mainLargeFile, err := c.FormFile("main_large")
+	mainLarge, err := pkg.FileUpload("main_large", "product", c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -262,22 +129,27 @@ func CreateProduct(c *gin.Context) {
 		return
 	}
 
-	extMainLarge := filepath.Ext(mainLargeFile.Filename)
-	if extMainLarge != ".jpg" && extMainLarge != ".jpeg" && extMainLarge != ".png" && extMainLarge != ".gif" {
-		c.JSON(http.StatusBadRequest, gin.H{
+	// upload small images of product
+	smalls, err := pkg.MultipartFileUpload("small", "product", c)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{
 			"status":  false,
-			"message": "the file must be an image.",
+			"message": err.Error(),
 		})
 		return
 	}
 
-	mainLarge := uuid.New().String() + extMainLarge
-	c.SaveUploadedFile(mainLargeFile, "./uploads/product/"+mainLarge)
+	// upload large images of product
+	larges, err := pkg.MultipartFileUpload("large", "product", c)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
 
-	smallFiles := c.Request.MultipartForm.File["small"]
-	largeFiles := c.Request.MultipartForm.File["large"]
-
-	if len(smallFiles) != len(largeFiles) {
+	if len(smalls) != len(larges) {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
 			"message": "images are incomplete",
@@ -285,42 +157,8 @@ func CreateProduct(c *gin.Context) {
 		return
 	}
 
-	var smalls []string
-
-	for _, v := range smallFiles {
-		extension := filepath.Ext(v.Filename)
-		//validate image
-		if extension != ".jpg" && extension != ".jpeg" && extension != ".png" && extension != ".gif" {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": "the file must be an image.",
-			})
-			return
-		}
-		fileName := uuid.New().String() + extension
-		c.SaveUploadedFile(v, "./uploads/product/"+fileName)
-		smalls = append(smalls, "uploads/product/"+fileName)
-	}
-
-	var larges []string
-
-	for _, v := range largeFiles {
-		extension := filepath.Ext(v.Filename)
-		//validate image
-		if extension != ".jpg" && extension != ".jpeg" && extension != ".png" && extension != ".gif" {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": "the file must be an image.",
-			})
-			return
-		}
-		fileName := uuid.New().String() + extension
-		c.SaveUploadedFile(v, "./uploads/product/"+fileName)
-		larges = append(larges, "uploads/product/"+fileName)
-	}
-
 	// create product
-	resultProducts, err := db.Query("INSERT INTO products (brend_id,price,old_price,amount,product_code,limit_amount,is_new) VALUES ($1,$2,$3,$4,$5,$6,$7)", brendID, price, oldPrice, amount, productCode, limitAmount, isNew)
+	resultProducts, err := db.Query("INSERT INTO products (brend_id,price,old_price,amount,product_code,limit_amount,is_new) VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING id", brendID, price, oldPrice, amount, productCode, limitAmount, isNew)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{
 			"status":  false,
@@ -338,29 +176,10 @@ func CreateProduct(c *gin.Context) {
 		}
 	}()
 
-	// get the id of the added product
-	lastProductID, err := db.Query("SELECT id FROM products WHERE deleted_at IS NULL ORDER BY created_at DESC LIMIT 1")
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-	defer func() {
-		if err := lastProductID.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
-
 	var productID string
 
-	for lastProductID.Next() {
-		if err := lastProductID.Scan(&productID); err != nil {
+	for resultProducts.Next() {
+		if err := resultProducts.Scan(&productID); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
@@ -369,7 +188,7 @@ func CreateProduct(c *gin.Context) {
 		}
 	}
 
-	resultMainImage, err := db.Query("INSERT INTO main_image (product_id,small,medium,large) VALUES ($1,$2,$3,$4)", productID, "uploads/product/"+mainSamll, "uploads/product/"+mainMedium, "uploads/product/"+mainLarge)
+	resultMainImage, err := db.Query("INSERT INTO main_image (product_id,small,medium,large) VALUES ($1,$2,$3,$4)", productID, mainSamll, mainMedium, mainLarge)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -387,27 +206,24 @@ func CreateProduct(c *gin.Context) {
 		}
 	}()
 
-	for i := 0; i < len(smalls); i++ {
-
-		resultImages, err := db.Query("INSERT INTO images (product_id,small,large) VALUES ($1,$2,$3)", productID, smalls[i], larges[i])
-		if err != nil {
+	// create images of product
+	resultImages, err := db.Query("INSERT INTO images (product_id,small,large) VALUES ($1,unnest($2::varchar[]),unnest($3::varchar[]))", productID, pq.Array(smalls), pq.Array(larges))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer func() {
+		if err := resultImages.Close(); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
 			})
 			return
 		}
-		defer func() {
-			if err := resultImages.Close(); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
-				return
-			}
-		}()
-
-	}
+	}()
 
 	// create translation product
 	for _, v := range languages {
@@ -430,80 +246,28 @@ func CreateProduct(c *gin.Context) {
 		}()
 	}
 
-	// get all category id from request
-	categories, _ := c.GetPostFormArray("category_id")
-	if len(categories) == 0 {
+	// create category product
+	resultCategoryProduct, err := db.Query("INSERT INTO category_product (category_id,product_id) VALUES (unnest($1::uuid[]),$2)", pq.Array(categories), productID)
+	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
-			"message": "product category is required",
+			"message": err.Error(),
 		})
 		return
 	}
-
-	for _, v := range categories {
-		rawCategory, err := db.Query("SELECT id FROM categories WHERE id = $1 AND deleted_at IS NULL", v)
-		if err != nil {
+	defer func() {
+		if err := resultCategoryProduct.Close(); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
 			})
 			return
 		}
-		defer func() {
-			if err := rawCategory.Close(); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
-				return
-			}
-		}()
-
-		var categoryID string
-
-		for rawCategory.Next() {
-			if err := rawCategory.Scan(&categoryID); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
-				return
-			}
-		}
-
-		if categoryID == "" {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": "category not found",
-			})
-			return
-		}
-	}
-
-	// create category product
-	for _, v := range categories {
-		resultCategoryProduct, err := db.Query("INSERT INTO category_product (category_id,product_id) VALUES ($1,$2)", v, productID)
-		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-		defer func() {
-			if err := resultCategoryProduct.Close(); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
-				return
-			}
-		}()
-	}
+	}()
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
-		"message": "product successfully added",
+		"message": "data successfully added",
 	})
 
 }
