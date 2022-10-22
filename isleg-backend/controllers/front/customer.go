@@ -190,14 +190,14 @@ func RegisterCustomer(c *gin.Context) {
 		return
 	}
 
-	accessTokenString, err := auth.GenerateAccessToken(customer.PhoneNumber)
+	accessTokenString, err := auth.GenerateAccessToken(customer.PhoneNumber, customerID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
 		c.Abort()
 		return
 	}
 
-	refreshTokenString, err := auth.GenerateRefreshToken(customer.PhoneNumber)
+	refreshTokenString, err := auth.GenerateRefreshToken(customer.PhoneNumber, customerID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
 		c.Abort()
@@ -283,14 +283,14 @@ func LoginCustomer(c *gin.Context) {
 		return
 	}
 
-	accessTokenString, err := auth.GenerateAccessToken(customer.Password)
+	accessTokenString, err := auth.GenerateAccessToken(customer.Password, customerID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		c.Abort()
 		return
 	}
 
-	refreshTokenString, err := auth.GenerateRefreshToken(customer.PhoneNumber)
+	refreshTokenString, err := auth.GenerateRefreshToken(customer.PhoneNumber, customerID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		c.Abort()
@@ -300,7 +300,7 @@ func LoginCustomer(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"access_token":  accessTokenString,
 		"refresh_token": refreshTokenString,
-		"customer_id":   customerID,
+		// "customer_id":   customerID,
 	})
 
 }

@@ -28,6 +28,19 @@ type LikeProduct struct {
 	TranslationProduct models.TranslationProduct `json:"translation_product"`
 }
 
+func Test(c *gin.Context) {
+	customerID, ok := c.Get("customer_id")
+	if !ok {
+		c.JSON(http.StatusBadRequest, "customer_id is required")
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":      true,
+		"customer_id": customerID,
+	})
+}
+
 func AddLike(c *gin.Context) {
 
 	db, err := config.ConnDB()

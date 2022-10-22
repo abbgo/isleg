@@ -218,6 +218,7 @@ func Routes() *gin.Engine {
 
 		securedCustomer := front.Group("/").Use(middlewares.Auth())
 		{
+			securedCustomer.GET("/test", frontController.Test)
 			// add like if customer exists
 			securedCustomer.POST("/like", frontController.AddLike) // funksiyany optimize etmeli
 
