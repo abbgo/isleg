@@ -49,16 +49,15 @@ func AddLike(c *gin.Context) {
 	}()
 
 	// langShortName := c.Param("lang")
-	customerID, ok := c.Get("customer_id")
-	if !ok {
+	custID, hasCustomer := c.Get("customer_id")
+	if !hasCustomer {
 		c.JSON(http.StatusBadRequest, "customer_id is required")
 		return
 	}
-
-	c.JSON(http.StatusOK, gin.H{
-		"status":      true,
-		"customer_id": customerID,
-	})
+	customerID, ok := custID.(string)
+	if !ok {
+		c.JSON(http.StatusBadRequest, "customer_id must be string")
+	}
 
 	rowCustomer, err := db.Query("SELECT id FROM customers WHERE id = $1 AND deleted_at IS NULL", customerID)
 	if err != nil {
@@ -248,7 +247,16 @@ func RemoveLike(c *gin.Context) {
 		}
 	}()
 
-	customerID := c.Param("customer_id")
+	custID, hasCustomer := c.Get("customer_id")
+	if !hasCustomer {
+		c.JSON(http.StatusBadRequest, "customer_id is required")
+		return
+	}
+	customerID, ok := custID.(string)
+	if !ok {
+		c.JSON(http.StatusBadRequest, "customer_id must be string")
+	}
+
 	productID := c.Param("product_id")
 
 	rowCustomer, err := db.Query("SELECT id FROM customers WHERE id = $1 AND deleted_at IS NULL", customerID)
