@@ -724,7 +724,15 @@ func GetCustomerOrders(c *gin.Context) {
 		}
 	}()
 
-	customerID := c.Param("customer_id")
+	custID, hasCustomer := c.Get("customer_id")
+	if !hasCustomer {
+		c.JSON(http.StatusBadRequest, "customer_id is required")
+		return
+	}
+	customerID, ok := custID.(string)
+	if !ok {
+		c.JSON(http.StatusBadRequest, "customer_id must be string")
+	}
 
 	// GET DATA FROM ROUTE PARAMETER
 	langShortName := c.Param("lang")
