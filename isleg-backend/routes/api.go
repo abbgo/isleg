@@ -243,10 +243,10 @@ func Routes() *gin.Engine {
 			securedCustomer.POST("/to-order", frontController.ToOrder) // funksiyany optimize etmeli
 
 			// get customer orders
-			securedCustomer.GET("/orders/:customer_id", frontController.GetCustomerOrders) // funksiyany optimize etmeli
+			securedCustomer.GET("/orders", frontController.GetCustomerOrders) // funksiyany optimize etmeli
 
 			// get customer orders
-			securedCustomer.GET("/addresses/:customer_id", frontController.GetCustomerAddresses) // funksiyany optimize etmeli
+			securedCustomer.GET("/addresses", frontController.GetCustomerAddresses) // funksiyany optimize etmeli
 
 			// get customer informations
 			securedCustomer.GET("/my-information/:customer_id", frontController.GetCustomerInformation) // funksiyany optimize etmeli
