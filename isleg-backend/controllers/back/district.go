@@ -10,6 +10,7 @@ import (
 
 func CreateDistrict(c *gin.Context) {
 
+	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -60,7 +61,7 @@ func CreateDistrict(c *gin.Context) {
 	}
 
 	// create district
-	resultDistrict, err := db.Query("INSERT INTO district (price) VALUES ($1)", price)
+	resultDistrict, err := db.Query("INSERT INTO district (price) VALUES ($1) RETURNING id", price)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -78,29 +79,10 @@ func CreateDistrict(c *gin.Context) {
 		}
 	}()
 
-	// get id off added district
-	lastDistrictID, err := db.Query("SELECT id FROM district ORDER BY created_at DESC LIMIT 1")
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-	defer func() {
-		if err := lastDistrictID.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
-
 	var districtID string
 
-	for lastDistrictID.Next() {
-		if err := lastDistrictID.Scan(&districtID); err != nil {
+	for resultDistrict.Next() {
+		if err := resultDistrict.Scan(&districtID); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
@@ -132,7 +114,7 @@ func CreateDistrict(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
-		"message": "district successfully added",
+		"message": "data successfully added",
 	})
 
 }
