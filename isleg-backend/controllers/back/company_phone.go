@@ -516,6 +516,7 @@ func RestoreCompanyPhoneByID(c *gin.Context) {
 
 func DeletePermanentlyCompanyPhoneByID(c *gin.Context) {
 
+	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -534,8 +535,10 @@ func DeletePermanentlyCompanyPhoneByID(c *gin.Context) {
 		}
 	}()
 
+	// get id from request parameter
 	ID := c.Param("id")
 
+	//check id
 	rowCompanyPhone, err := db.Query("SELECT id FROM company_phone WHERE id = $1 AND deleted_at IS NOT NULL", ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -574,6 +577,7 @@ func DeletePermanentlyCompanyPhoneByID(c *gin.Context) {
 		return
 	}
 
+	// delete category phone
 	resultComPhone, err := db.Query("DELETE FROM company_phone WHERE id = $1", ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -594,7 +598,7 @@ func DeletePermanentlyCompanyPhoneByID(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
-		"message": "company phone successfully deleted",
+		"message": "data successfully deleted",
 	})
 
 }
