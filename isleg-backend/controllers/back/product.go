@@ -7,7 +7,6 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
-	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -989,6 +988,7 @@ func GetProducts(c *gin.Context) {
 
 func DeleteProductByID(c *gin.Context) {
 
+	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -1007,8 +1007,10 @@ func DeleteProductByID(c *gin.Context) {
 		}
 	}()
 
+	// get id from request parameter
 	ID := c.Param("id")
 
+	// check id
 	rowProduct, err := db.Query("SELECT id FROM products WHERE id = $1 AND deleted_at IS NULL", ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -1047,9 +1049,7 @@ func DeleteProductByID(c *gin.Context) {
 		return
 	}
 
-	currentTime := time.Now()
-
-	resultProduct, err := db.Query("UPDATE products SET deleted_at = $1 WHERE id = $2", currentTime, ID)
+	resultProc, err := db.Query("CALL delete_product($1)", ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -1058,43 +1058,7 @@ func DeleteProductByID(c *gin.Context) {
 		return
 	}
 	defer func() {
-		if err := resultProduct.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
-
-	resultCategoryProduct, err := db.Query("UPDATE category_product SET deleted_at = $1 WHERE product_id = $2", currentTime, ID)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-	defer func() {
-		if err := resultCategoryProduct.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
-
-	resultTRProduct, err := db.Query("UPDATE translation_product SET deleted_at = $1 WHERE product_id = $2", currentTime, ID)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-	defer func() {
-		if err := resultTRProduct.Close(); err != nil {
+		if err := resultProc.Close(); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
@@ -1105,13 +1069,14 @@ func DeleteProductByID(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
-		"message": "product successfully deleted",
+		"message": "data successfully deleted",
 	})
 
 }
 
 func RestoreProductByID(c *gin.Context) {
 
+	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -1130,8 +1095,10 @@ func RestoreProductByID(c *gin.Context) {
 		}
 	}()
 
+	// get id from request parameter
 	ID := c.Param("id")
 
+	// check id
 	rowProduct, err := db.Query("SELECT id FROM products WHERE id = $1 AND deleted_at IS NOT NULL", ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -1170,7 +1137,7 @@ func RestoreProductByID(c *gin.Context) {
 		return
 	}
 
-	resultProduct, err := db.Query("UPDATE products SET deleted_at = NULL WHERE id = $1", ID)
+	resultProc, err := db.Query("CALL restore_product($1)", ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -1179,43 +1146,7 @@ func RestoreProductByID(c *gin.Context) {
 		return
 	}
 	defer func() {
-		if err := resultProduct.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
-
-	resultCategoryProduct, err := db.Query("UPDATE category_product SET deleted_at = NULL WHERE product_id = $1", ID)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-	defer func() {
-		if err := resultCategoryProduct.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
-
-	resultTrProduct, err := db.Query("UPDATE translation_product SET deleted_at = NULL WHERE product_id = $1", ID)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-	defer func() {
-		if err := resultTrProduct.Close(); err != nil {
+		if err := resultProc.Close(); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
@@ -1226,13 +1157,14 @@ func RestoreProductByID(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
-		"message": "product successfully restored",
+		"message": "data successfully restored",
 	})
 
 }
 
 func DeletePermanentlyProductByID(c *gin.Context) {
 
+	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -1251,8 +1183,10 @@ func DeletePermanentlyProductByID(c *gin.Context) {
 		}
 	}()
 
+	// get id from request parameter
 	ID := c.Param("id")
 
+	// check id
 	rowProduct, err := db.Query("SELECT id FROM products WHERE id = $1 AND deleted_at IS NOT NULL", ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -1291,6 +1225,7 @@ func DeletePermanentlyProductByID(c *gin.Context) {
 		return
 	}
 
+	// get main image of product
 	rowMainImage, err := db.Query("SELECT small,medium,large FROM main_image WHERE product_id = $1", productID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -1321,6 +1256,7 @@ func DeletePermanentlyProductByID(c *gin.Context) {
 		}
 	}
 
+	// remove main image of product
 	if err := os.Remove("./" + mainImage.Small); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -1345,6 +1281,7 @@ func DeletePermanentlyProductByID(c *gin.Context) {
 		return
 	}
 
+	// get images of product
 	rowsImages, err := db.Query("SELECT small,large FROM images WHERE product_id = $1", productID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -1379,6 +1316,7 @@ func DeletePermanentlyProductByID(c *gin.Context) {
 		images = append(images, image)
 	}
 
+	// remove images of product
 	if len(images) != 0 {
 
 		for _, v := range images {
@@ -1422,7 +1360,7 @@ func DeletePermanentlyProductByID(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
-		"message": "product successfully deleted",
+		"message": "data successfully deleted",
 	})
 
 }
