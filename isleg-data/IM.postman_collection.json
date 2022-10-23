@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "8a331eea-91b7-4c06-ab8d-a39f62c69622",
+		"_postman_id": "42d16283-2ca1-4071-92e5-51fc52f73e89",
 		"name": "IM",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -1069,7 +1069,7 @@
 							"formdata": [
 								{
 									"key": "brend_id",
-									"value": "ddccb2dc-9697-4f4e-acf5-26b8bc2c8b72",
+									"value": "46b13f0a-d584-4ad3-b270-437ecdc51449",
 									"type": "default"
 								},
 								{
@@ -1093,21 +1093,6 @@
 									"type": "default"
 								},
 								{
-									"key": "main_image",
-									"type": "file",
-									"src": "/home/abb/Pictures/Isleg geljegimiz (1).jpg"
-								},
-								{
-									"key": "images",
-									"type": "file",
-									"src": "/home/abb/Pictures/download (3).jpeg"
-								},
-								{
-									"key": "images",
-									"type": "file",
-									"src": "/home/abb/Pictures/images.jpeg"
-								},
-								{
 									"key": "name_tm",
 									"value": "name_tm",
 									"type": "default"
@@ -1129,12 +1114,12 @@
 								},
 								{
 									"key": "category_id",
-									"value": "45765130-7f97-4f0c-b886-f70b75e02610",
+									"value": "417a385e-6a74-44f3-a536-405eb8251978",
 									"type": "default"
 								},
 								{
 									"key": "category_id",
-									"value": "5bb9a4e7-9992-418f-b551-537844d371da",
+									"value": "02bd4413-8586-49ab-802e-16304e756a8b",
 									"type": "default"
 								},
 								{
@@ -1150,42 +1135,72 @@
 								{
 									"key": "main_small",
 									"type": "file",
-									"src": "/home/abb/Pictures/download.jpeg"
+									"src": "/home/abb/go/src/github.com/abbgo/isleg/isleg-data/Saydyn suratynyn razmeri/Bic galam/small.jpg"
 								},
 								{
 									"key": "main_medium",
 									"type": "file",
-									"src": "/home/abb/Pictures/download.jpeg"
+									"src": "/home/abb/go/src/github.com/abbgo/isleg/isleg-data/Saydyn suratynyn razmeri/Bic galam/medium.jpg"
 								},
 								{
 									"key": "main_large",
 									"type": "file",
-									"src": "/home/abb/Pictures/download.jpeg"
+									"src": "/home/abb/go/src/github.com/abbgo/isleg/isleg-data/Saydyn suratynyn razmeri/Bic galam/large.jpg"
 								},
 								{
 									"key": "small",
 									"type": "file",
-									"src": "/home/abb/Pictures/download (1).jpeg"
+									"src": "/home/abb/go/src/github.com/abbgo/isleg/isleg-data/Saydyn suratynyn razmeri/Bic galam/small.jpg"
 								},
 								{
 									"key": "small",
 									"type": "file",
-									"src": "/home/abb/Pictures/download (2).jpeg"
+									"src": "/home/abb/go/src/github.com/abbgo/isleg/isleg-data/Saydyn suratynyn razmeri/Bic galam/small.jpg"
 								},
 								{
 									"key": "large",
 									"type": "file",
-									"src": "/home/abb/Pictures/download (1).jpeg"
+									"src": "/home/abb/go/src/github.com/abbgo/isleg/isleg-data/Saydyn suratynyn razmeri/Bic galam/large.jpg"
 								},
 								{
 									"key": "large",
 									"type": "file",
-									"src": "/home/abb/Pictures/download (2).jpeg"
+									"src": "/home/abb/go/src/github.com/abbgo/isleg/isleg-data/Saydyn suratynyn razmeri/Bic galam/large.jpg"
+								},
+								{
+									"key": "name_fr",
+									"value": "name_fr",
+									"type": "default"
+								},
+								{
+									"key": "name_tr",
+									"value": "name_tr",
+									"type": "default"
+								},
+								{
+									"key": "name_pl",
+									"value": "name_pl",
+									"type": "default"
+								},
+								{
+									"key": "description_fr",
+									"value": "description_fr",
+									"type": "default"
+								},
+								{
+									"key": "description_tr",
+									"value": "description_tr",
+									"type": "default"
+								},
+								{
+									"key": "description_pl",
+									"value": "description_pl",
+									"type": "default"
 								}
 							]
 						},
 						"url": {
-							"raw": "localhost:2406/admin/product/61882979-a4bd-4934-b51b-3f7df53c7870",
+							"raw": "localhost:2406/admin/product/e3c33ead-3c30-40f1-9d28-7bb8b71b767f",
 							"host": [
 								"localhost"
 							],
@@ -1193,7 +1208,7 @@
 							"path": [
 								"admin",
 								"product",
-								"61882979-a4bd-4934-b51b-3f7df53c7870"
+								"e3c33ead-3c30-40f1-9d28-7bb8b71b767f"
 							]
 						}
 					},
@@ -1244,7 +1259,7 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "localhost:2406/admin/product/61882979-a4bd-4934-b51b-3f7df53c7870",
+							"raw": "localhost:2406/admin/product/660071e0-8f17-4c48-9d80-d4cac306de3a",
 							"host": [
 								"localhost"
 							],
@@ -1252,7 +1267,7 @@
 							"path": [
 								"admin",
 								"product",
-								"61882979-a4bd-4934-b51b-3f7df53c7870"
+								"660071e0-8f17-4c48-9d80-d4cac306de3a"
 							]
 						}
 					},
@@ -1264,7 +1279,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "localhost:2406/admin/restore-product/ff3ef680-3f35-4424-bc08-6fbb9c065675",
+							"raw": "localhost:2406/admin/restore-product/660071e0-8f17-4c48-9d80-d4cac306de3a",
 							"host": [
 								"localhost"
 							],
@@ -1272,7 +1287,7 @@
 							"path": [
 								"admin",
 								"restore-product",
-								"ff3ef680-3f35-4424-bc08-6fbb9c065675"
+								"660071e0-8f17-4c48-9d80-d4cac306de3a"
 							]
 						}
 					},
@@ -3720,13 +3735,13 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NSIsImV4cCI6MTY2MzU2MjEzOH0.793xVgCEkg--G72auyGWIaHM7lX7hrIGt9jgN5X23Uw",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NTYiLCJjdXN0b21lcl9pZCI6ImYyNWE2NmQzLTkzYWMtNGRhNC1iMjM3LWQzNDg2N2Q1Y2E4ZiIsImV4cCI6MTY2NjU1MTM1Nn0.3-LqKPDRTh4J5p0S5mGfilG0qHyhmNvVyoJ4CorhGKs",
 								"type": "default"
 							}
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"customer_id\":\"7e872c52-0d23-4086-8c45-43000b57332e\",\n    \"products\":[\n        {\n            \"product_id\":\"d4156225-082e-4f0f-9b2c-85268114433a\",\n            \"quantity_of_product\":10\n        },\n         {\n            \"product_id\":\"8df705a5-2351-4aca-b03e-3357a23840b4\",\n            \"quantity_of_product\":23\n        },\n         {\n            \"product_id\":\"b2b165a3-2261-4d67-8160-0e239ecd99b5\",\n            \"quantity_of_product\":3\n        }\n    ]\n}",
+							"raw": "{\n    \"products\":[\n        {\n            \"product_id\":\"d4156225-082e-4f0f-9b2c-85268114433a\",\n            \"quantity_of_product\":10\n        },\n         {\n            \"product_id\":\"8df705a5-2351-4aca-b03e-3357a23840b4\",\n            \"quantity_of_product\":23\n        },\n         {\n            \"product_id\":\"b2b165a3-2261-4d67-8160-0e239ecd99b5\",\n            \"quantity_of_product\":3\n        }\n    ]\n}\n",
 							"options": {
 								"raw": {
 									"language": "json"
