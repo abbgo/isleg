@@ -4,7 +4,6 @@ import (
 	"github/abbgo/isleg/isleg-backend/config"
 	"net/http"
 	"strconv"
-	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -12,6 +11,7 @@ import (
 
 func CreateCompanyPhone(c *gin.Context) {
 
+	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -42,22 +42,22 @@ func CreateCompanyPhone(c *gin.Context) {
 		return
 	}
 
-	trimPhone := strings.Trim(phone, "+")
+	// trimPhone := strings.Trim(phone, "+")
 
-	phones := strings.Split(trimPhone, " ")
+	// phones := strings.Split(trimPhone, " ")
 
-	for _, v := range phones {
+	// for _, v := range phones {
 
-		_, err = strconv.Atoi(v)
-		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
+	// 	_, err = strconv.Atoi(v)
+	// 	if err != nil {
+	// 		c.JSON(http.StatusBadRequest, gin.H{
+	// 			"status":  false,
+	// 			"message": err.Error(),
+	// 		})
+	// 		return
+	// 	}
 
-	}
+	// }
 
 	// if len(phone) != 8 {
 	// 	c.JSON(http.StatusBadRequest, gin.H{
@@ -88,7 +88,7 @@ func CreateCompanyPhone(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
-		"message": "company phone successfully added",
+		"message": "data successfully added",
 	})
 
 }
