@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"errors"
-	"fmt"
 	"github/abbgo/isleg/isleg-backend/config"
 	"github/abbgo/isleg/isleg-backend/models"
 	"net/http"
@@ -98,7 +97,6 @@ func AddLike(c *gin.Context) {
 	}
 
 	productIds, ok := c.GetPostFormArray("product_ids")
-	fmt.Println(productIds)
 	if ok {
 
 		for _, v := range productIds {

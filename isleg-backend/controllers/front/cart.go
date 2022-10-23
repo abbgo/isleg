@@ -11,6 +11,10 @@ import (
 	"github.com/google/uuid"
 )
 
+type DataForAddCart struct {
+	Products []CartProduct `json:"products"`
+}
+
 type CartProduct struct {
 	ProductID         string `json:"product_id" binding:"required"`
 	QuantityOfProduct int    `json:"quantity_of_product" binding:"required"`
@@ -62,7 +66,7 @@ func AddCart(c *gin.Context) {
 	}
 
 	// langShortName := c.Param("lang")
-	var cart []CartProduct
+	var cart DataForAddCart
 
 	if err := c.BindJSON(&cart); err != nil {
 		c.JSON(http.StatusBadRequest, err.Error())
@@ -107,7 +111,7 @@ func AddCart(c *gin.Context) {
 		return
 	}
 
-	for k, v := range cart {
+	for k, v := range cart.Products {
 
 		if v.QuantityOfProduct < 1 {
 			c.JSON(http.StatusBadRequest, gin.H{
@@ -117,7 +121,7 @@ func AddCart(c *gin.Context) {
 			return
 		}
 
-		for _, x := range cart[(k + 1):] {
+		for _, x := range cart.Products[(k + 1):] {
 			if v.ProductID == x.ProductID {
 				c.JSON(http.StatusBadRequest, gin.H{
 					"status":  false,
