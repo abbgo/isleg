@@ -139,7 +139,7 @@
             {{ $t('register.checkedIsRequired') }}
           </span>
           <div class="pop-up__btns">
-            <button class="right__btn" @click="signUp">
+            <button :disabled="disabled" class="right__btn" @click="signUp">
               {{ userSignUp }}
             </button>
             <button type="button" @click="openSignUp" class="left_btn">
@@ -191,6 +191,7 @@ export default {
   },
   data() {
     return {
+      disabled: false,
       show: true,
       showPass: true,
       inValidEmail: false,
@@ -338,6 +339,7 @@ export default {
           this.$v.register.password.$model ==
             this.$v.register.repeatPassword.$model
         ) {
+          this.disabled = true
           const formData = new FormData()
           formData.append('full_name', this.register.name)
           formData.append('phone_number', this.register.phone_number)
@@ -352,14 +354,16 @@ export default {
                 email: this.register.email,
               },
             })
+            console.log(this.$auth.loggedIn, this.$store.$auth)
             console.log(response)
-            if (response.status == 200) {
+            if (response.status === 200) {
               const { access_token, customer_id, refresh_token } = response.data
               this.$cookies.set('access_token', access_token)
               this.$cookies.set('customer_id', customer_id)
               this.$cookies.set('refresh_token', refresh_token)
               await this.postCarts()
               await this.postFishlists()
+              this.closeRegister()
             }
           } catch (err) {
             console.log(err)
@@ -368,6 +372,8 @@ export default {
             } else {
               this.$toast(this.$t('register.error'))
             }
+          } finally {
+            this.disabled = false
           }
         } else {
           if (this.checkValidate == false) {
@@ -407,13 +413,15 @@ export default {
       const customerId = await this.$cookies.get('customer_id')
       const accessToken = await this.$cookies.get('access_token')
       const cart = await JSON.parse(localStorage.getItem('lorem'))
-      const products = []
-      for (let i = 0; i < cart.cart.length; i++) {
-        if (cart.cart[i].quantity > 0) {
-          products.push({
-            product_id: cart.cart[i].id,
-            quantity_of_product: cart.cart[i].quantity,
-          })
+      let products = []
+      if (cart) {
+        for (let i = 0; i < cart.cart.length; i++) {
+          if (cart.cart[i].quantity > 0) {
+            products.push({
+              product_id: cart.cart[i].id,
+              quantity_of_product: cart.cart[i].quantity,
+            })
+          }
         }
       }
       console.log(products)
@@ -442,13 +450,16 @@ export default {
       const customerId = await this.$cookies.get('customer_id')
       const accessToken = await this.$cookies.get('access_token')
       const cart = await JSON.parse(localStorage.getItem('lorem'))
-      const wishlists = cart.cart
-        .filter((product) => product.is_favorite === true)
-        .map((item) => item.id)
-      console.log(wishlists, customerId, accessToken)
-      formData.append('customer_id', customerId)
-      for (let i = 0; i < wishlists.length; i++) {
-        formData.append('product_ids', wishlists[i])
+      let wishlists = []
+      if (cart) {
+        wishlists = cart.cart
+          .filter((product) => product.is_favorite === true)
+          .map((item) => item.id)
+        console.log(wishlists, customerId, accessToken)
+        formData.append('customer_id', customerId)
+        for (let i = 0; i < wishlists.length; i++) {
+          formData.append('product_ids', wishlists[i])
+        }
       }
       try {
         const { status } = await this.$axios.$post(

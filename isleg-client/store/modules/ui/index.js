@@ -12,6 +12,7 @@ const state = () => ({
   footerDatas: null,
   brends: null,
   categoryProducts: null,
+  myProfile: null,
 })
 
 export default {

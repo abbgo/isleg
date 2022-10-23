@@ -62,7 +62,12 @@ export default {
     baseURL: process.env.BASE_API,
   },
   auth: {
+    redirect: {
+      logout: '/',
+      home: '/',
+    },
     strategies: {
+      localStorage: false,
       userRegister: {
         scheme: 'refresh',
         token: {
@@ -71,7 +76,6 @@ export default {
         refreshToken: {
           property: 'refresh_token',
           data: 'refresh_token',
-          maxAge: 60,
         },
         user: {
           property: 'user',
@@ -79,11 +83,10 @@ export default {
         },
         endpoints: {
           login: { url: '/auth/register', method: 'post' },
-          refresh: { url: '/auth/refresh', method: 'post' },
+          // refresh: { url: '/auth/refresh', method: 'post' },
           user: false,
           logout: false,
         },
-        // autoLogout: false
       },
       userLogin: {
         scheme: 'refresh',
@@ -93,7 +96,6 @@ export default {
         refreshToken: {
           property: 'refresh_token',
           data: 'refresh_token',
-          maxAge: 60,
         },
         user: {
           property: 'user',
@@ -101,11 +103,10 @@ export default {
         },
         endpoints: {
           login: { url: '/auth/login', method: 'post' },
-          refresh: { url: '/auth/refresh', method: 'post' },
+          // refresh: { url: '/auth/refresh', method: 'post' },
           user: false,
           logout: false,
         },
-        // autoLogout: false
       },
       admin: {
         scheme: 'refresh',
@@ -123,11 +124,10 @@ export default {
         },
         endpoints: {
           login: { url: '/api/auth/login', method: 'post' },
-          refresh: { url: '/api/auth/refresh', method: 'post' },
-          user: { url: '/api/auth/user', method: 'get' },
+          // refresh: { url: '/api/auth/refresh', method: 'post' },
+          // user: { url: '/api/auth/user', method: 'get' },
           logout: false,
         },
-        // autoLogout: false
       },
     },
   },

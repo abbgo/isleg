@@ -79,6 +79,9 @@ const categoryProductsName = (state) => {
 const categoryProducts = (state) => {
   return state.categoryProducts && state.categoryProducts.category && state.categoryProducts.category.products
 }
+const myProfile = (state) => {
+  return state.myProfile
+}
 export default {
   imgURL,
   logo,
@@ -106,5 +109,6 @@ export default {
   brends,
   isOpenSignUp,
   categoryProductsName,
-  categoryProducts
+  categoryProducts,
+  myProfile
 }

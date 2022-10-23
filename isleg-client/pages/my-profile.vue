@@ -4,33 +4,37 @@
     <div class="communication_form">
       <div class="form__box">
         <span>Doly adyňyz</span>
-        <input type="text" placeholder="Doly adyňyz" />
+        <input
+          type="text"
+          v-model="myProfileDatas.fillName"
+          placeholder="Doly adyňyz"
+        />
       </div>
       <div class="form__box">
         <span>Email</span>
-        <input type="text" placeholder="Email" />
+        <input type="text" v-model="myProfileDatas.email" placeholder="Email" />
       </div>
       <div class="form__box">
         <span>Telefon</span>
-        <input type="text" placeholder="+993" />
-      </div>
-      <div class="form__box">
-        <span>Açar sözi</span>
-        <input type="text" placeholder="Açar sözi" />
+        <input
+          type="text"
+          v-model="myProfileDatas.phone_number"
+          placeholder="+993"
+        />
       </div>
       <div class="form__box">
         <span>Salgyňyz</span>
-        <input type="text" placeholder="Salgyňyz" />
-      </div>
-      <div class="form__box">
-        <span>Hatynyz</span>
-        <textarea type="text" placeholder="Hatynyz" />
+        <input
+          type="text"
+          v-model="myProfileDatas.address"
+          placeholder="Salgyňyz"
+        />
       </div>
       <div class="form__box born__date">
         <span>Doglan senäňiz</span>
         <!-- <label class="born__lable" for="born">{{ born }}</label> -->
         <input
-          v-model="born"
+          v-model="myProfileDatas.birthday"
           id="born"
           type="date"
           placeholder="Doglan senäňiz"
@@ -39,11 +43,23 @@
       <div class="form__box sex__input">
         <span>Jynsy</span>
         <div>
-          <input class="custom" id="male" name="sex" type="radio" />
+          <input
+            class="custom"
+            v-model="myProfileDatas.male.boy"
+            id="male"
+            name="sex"
+            type="radio"
+          />
           <label for="male">Erkek</label>
         </div>
         <div>
-          <input class="custom" id="woman" name="sex" type="radio" />
+          <input
+            class="custom"
+            v-model="myProfileDatas.male.girl"
+            id="woman"
+            name="sex"
+            type="radio"
+          />
           <label for="woman"> Aýal</label>
         </div>
       </div>
@@ -70,7 +86,7 @@
         </button>
       </div>
       <div class="datas__right">
-        <button class="product__add-btn send__btn" @click="post">
+        <button class="product__add-btn send__btn" @click="postMyInformation">
           <h4>Ýatda sakla</h4>
         </button>
       </div>
@@ -83,37 +99,121 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+import { getMyProfile, getRefreshToken } from '@/api/myProfile.api'
 export default {
   data() {
     return {
       isChangePassword: false,
       myProfileDatas: {
         fillName: '',
-        phone_number: '+993 6',
-        password: '',
+        phone_number: '',
         email: '',
         address: '',
-        text: '',
         male: {
           boy: false,
           girl: false,
         },
-        birthday: '',
+        birthday: null,
       },
-      born: 'yyyy-mm-dd',
     }
   },
+  async fetch() {
+    await this.fetchMyProfile()
+  },
+  computed: {
+    ...mapGetters('ui', ['myProfile']),
+  },
   methods: {
-    async post() {
-      const access_token = this.$cookies.set('access_token', access_token)
-      const customer_id = this.$cookies.set('customer_id', customer_id)
-      const refresh_token = this.$cookies.set('refresh_token', refresh_token)
+    async fetchMyProfile() {
+      const customerId = await this.$cookies.get('customer_id')
+      const accessToken = await this.$cookies.get('access_token')
+      const refreshToken = await this.$cookies.get('refresh_token')
+      console.log(customerId, accessToken)
       try {
-        const res = await this.$axios.$post('/admin/company-phone', formData)
-        console.log(res)
-      } catch (e) {
-        console.log(e)
+        const { customer_informations, status } = (
+          await getMyProfile({
+            url: `${this.$i18n.locale}/my-information/${customerId}`,
+            accessToken: `Bearer ${accessToken}`,
+          })
+        ).data
+        console.log(customer_informations, status)
+        if (status) {
+          this.myProfileDatas.fillName = customer_informations.full_name
+          this.myProfileDatas.phone_number = customer_informations.phone_number
+          this.myProfileDatas.email = customer_informations.email
+          this.myProfileDatas.birthday = new Date(
+            customer_informations.birthday.Time
+          )
+        }
+      } catch (error) {
+        console.log('getMyProfile1', error.response.status)
+        if (error?.response?.status === 403) {
+          try {
+            const { access_token, refresh_token, status } = (
+              await getRefreshToken({
+                url: `auth/refresh`,
+                refreshToken: `Bearer ${refreshToken}`,
+              })
+            ).data
+            console.log(access_token, refresh_token, status)
+            if (status) {
+              this.$cookies.set('access_token', access_token)
+              this.$cookies.set('refresh_token', refresh_token)
+              try {
+                const { customer_informations, status } = (
+                  await getMyProfile({
+                    url: `${this.$i18n.locale}/my-information/${customerId}`,
+                    accessToken: `Bearer ${access_token}`,
+                  })
+                ).data
+                console.log(customer_informations, status)
+                //   if (status) {
+                //     routes.value = data.filter((item) => (item.id = item.uuid)) || []
+                //     selected.route = routes.value[0] || {}
+                //     if (routes.value.length) {
+                //       for (let i = 0; i < routes.value.length; i++) {
+                //         routes.value[i]['isEdit'] = false
+                //       }
+                //     }
+                //   }
+              } catch (error) {
+                console.log('getMyProfile2', error)
+              }
+            }
+          } catch (error) {
+            console.log('ref', error.response.status)
+            if (error.response.status === 403) {
+              await this.$auth.logout()
+              await this.$cookies.remove('access_token')
+              await this.$cookies.remove('customer_id')
+              await this.$cookies.remove('refresh_token')
+              await this.$router.push(this.localeLocation('/'))
+            }
+          }
+        }
       }
+    },
+    async postMyInformation() {
+      // const access_token = this.$cookies.set('access_token', access_token)
+      // const customer_id = this.$cookies.set('customer_id', customer_id)
+      // const refresh_token = this.$cookies.set('refresh_token', refresh_token)
+      // try {
+      //   const { customer_informations, status } = (
+      //     await myInformation({
+      //       url: `${this.$i18n.locale}/my-information/${customerId}`,
+      //       accessToken: `Bearer ${accessToken}`,
+      //     })
+      //   ).data
+      //   console.log(customer_informations, status)
+      //   if (status) {
+      //     this.myProfileDatas.fillName = customer_informations.full_name
+      //     this.myProfileDatas.phone_number = customer_informations.phone_number
+      //     this.myProfileDatas.email = customer_informations.email
+      //   }
+      // } catch (error) {
+      //   console.log('getMyProfile1', error.response.status)
+      // }
     },
     openChangePassword() {
       this.isChangePassword = true

@@ -53,7 +53,12 @@
             <button class="left_btn" @click="openRegister">
               {{ userSignUp }}
             </button>
-            <button type="button" class="right__btn" @click="logIn">
+            <button
+              type="button"
+              :disabled="disabled"
+              class="right__btn"
+              @click="logIn"
+            >
               {{ signIn }}
             </button>
           </div>
@@ -94,6 +99,7 @@ export default {
   },
   data() {
     return {
+      disabled: false,
       showPass: true,
       isPhoneNumber: false,
       signUp: {
@@ -130,6 +136,7 @@ export default {
     async logIn() {
       this.$v.$touch()
       if (this.signUp.phone_number.length >= 12) {
+        this.disabled = true
         try {
           let response = await this.$auth.loginWith('userLogin', {
             data: {
@@ -137,11 +144,16 @@ export default {
               password: this.signUp.password,
             },
           })
-          if (this.$auth.loggedIn) {
+          console.log(response)
+          console.log(this.$auth.loggedIn, this.$store.$auth)
+          if (response.status === 200) {
             const { access_token, customer_id, refresh_token } = response.data
+            console.log(access_token, customer_id, refresh_token)
             this.$cookies.set('access_token', access_token)
             this.$cookies.set('customer_id', customer_id)
             this.$cookies.set('refresh_token', refresh_token)
+            await this.postCarts()
+            await this.postFishlists()
             this.$router.push({ name: this.$route.name })
             this.closeSignUp()
             this.$toast(this.$t('register.success.logIn'))
@@ -155,6 +167,8 @@ export default {
               this.$toast(this.$t('register.error'))
             }
           }
+        } finally {
+          this.disabled = false
         }
       } else {
         this.isPhoneNumber = true
@@ -173,6 +187,72 @@ export default {
       this.signUp.password = ''
       this.isPhoneNumber = false
       this.$v.$reset()
+    },
+    async postCarts() {
+      const customerId = await this.$cookies.get('customer_id')
+      const accessToken = await this.$cookies.get('access_token')
+      console.log('accessToken', accessToken)
+      let products = []
+      const cart = await JSON.parse(localStorage.getItem('lorem'))
+      if (cart) {
+        for (let i = 0; i < cart.cart.length; i++) {
+          if (cart.cart[i].quantity > 0) {
+            products.push({
+              product_id: cart.cart[i].id,
+              quantity_of_product: cart.cart[i].quantity,
+            })
+          }
+        }
+      }
+      console.log(products)
+      try {
+        const res = await this.$axios.$post(
+          `/${this.$i18n.locale}/add-cart`,
+          {
+            customer_id: customerId,
+            products: products,
+          },
+          {
+            headers: {
+              Authorization: accessToken,
+            },
+          }
+        )
+        console.log(res)
+      } catch (e) {
+        console.log(e)
+      }
+    },
+    async postFishlists() {
+      const formData = new FormData()
+      const customerId = await this.$cookies.get('customer_id')
+      const accessToken = await this.$cookies.get('access_token')
+      console.log('accessToken', accessToken)
+      let wishlists = []
+      const cart = await JSON.parse(localStorage.getItem('lorem'))
+      if (cart) {
+        wishlists = cart.cart
+          .filter((product) => product.is_favorite === true)
+          .map((item) => item.id)
+      }
+      formData.append('customer_id', customerId)
+      for (let i = 0; i < wishlists.length; i++) {
+        formData.append('product_ids', wishlists[i])
+      }
+      try {
+        const res = await this.$axios.$post(
+          `/${this.$i18n.locale}/like`,
+          formData,
+          {
+            headers: {
+              Authorization: accessToken,
+            },
+          }
+        )
+        console.log(res)
+      } catch (e) {
+        console.log(e)
+      }
     },
   },
 }

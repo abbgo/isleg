@@ -70,8 +70,8 @@
               <div class="btn__count-box" v-if="quantity > 0">
                 <button @click.stop="removeFromBasket(productData)">
                   <svg
-                    width="15"
-                    height="4"
+                    width="10"
+                    height="2"
                     viewBox="0 0 25 4"
                     fill="none"
                     xmlns="http://www.w3.org/2000/svg"
@@ -85,8 +85,8 @@
                 <p>{{ quantity }}</p>
                 <button @click.stop="addToBasket(productData)">
                   <svg
-                    width="15"
-                    height="15"
+                    width="10"
+                    height="10"
                     viewBox="0 0 23 23"
                     fill="none"
                     xmlns="http://www.w3.org/2000/svg"

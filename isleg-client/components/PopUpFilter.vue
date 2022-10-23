@@ -73,8 +73,8 @@
       </div>
       <div class="range__title">Brendlar</div>
       <div class="range__company" :class="{ active: brend }">
-        <span @click="brend = !brend" class="brend__active"
-          ><h4>Brends</h4>
+        <span @click="brend = !brend" class="brend__active">
+          <h4>Brends</h4>
           <img src="/img/select.svg" alt="" />
         </span>
         <div class="brend__items">

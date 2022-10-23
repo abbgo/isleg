@@ -80,14 +80,14 @@ export default {
       this.isSure = false
       document.body.classList.remove('_lock')
     },
-    confirm() {
-      const cart = JSON.parse(localStorage.getItem('lorem'))
-      cart.cart = cart.cart.filter(
+    async confirm() {
+      const cart = await JSON.parse(localStorage.getItem('lorem'))
+      cart.cart = await cart.cart.filter(
         (product) => product.id !== this.productRemoveItem.id
       )
       this.products = cart.cart
       localStorage.setItem('lorem', JSON.stringify(cart))
-      this.$store.commit(
+      await this.$store.commit(
         'products/SET_BASKET_PRODUCT_COUNT',
         this.productRemoveItem.quantity
       )
