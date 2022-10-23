@@ -211,6 +211,7 @@ func UpdateCompanyPhoneByID(c *gin.Context) {
 
 func GetCompanyPhoneByID(c *gin.Context) {
 
+	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -229,8 +230,10 @@ func GetCompanyPhoneByID(c *gin.Context) {
 		}
 	}()
 
+	// get id from request parameter
 	ID := c.Param("id")
 
+	// check id and get data from database
 	rowComPhone, err := db.Query("SELECT phone FROM company_phone WHERE id = $1 AND deleted_at IS NULL", ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
