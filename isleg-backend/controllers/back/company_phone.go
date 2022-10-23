@@ -3,7 +3,6 @@ package controllers
 import (
 	"github/abbgo/isleg/isleg-backend/config"
 	"net/http"
-	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -341,6 +340,7 @@ func GetCompanyPhones(c *gin.Context) {
 
 func DeleteCompanyPhoneByID(c *gin.Context) {
 
+	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -359,8 +359,10 @@ func DeleteCompanyPhoneByID(c *gin.Context) {
 		}
 	}()
 
+	// get id from request parameter
 	ID := c.Param("id")
 
+	// check id
 	rowComPhone, err := db.Query("SELECT id FROM company_phone WHERE id = $1 AND deleted_at IS NULL", ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -399,9 +401,7 @@ func DeleteCompanyPhoneByID(c *gin.Context) {
 		return
 	}
 
-	currentTime := time.Now()
-
-	resultComPhone, err := db.Query("UPDATE company_phone SET deleted_at = $1 WHERE id = $2", currentTime, ID)
+	resultComPhone, err := db.Query("UPDATE company_phone SET deleted_at = now() WHERE id = $2", ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -421,7 +421,7 @@ func DeleteCompanyPhoneByID(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
-		"message": "company phone successfully deleted",
+		"message": "data successfully deleted",
 	})
 
 }
