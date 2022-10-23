@@ -793,6 +793,7 @@ func GetProductByID(c *gin.Context) {
 
 func GetProducts(c *gin.Context) {
 
+	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -829,11 +830,11 @@ func GetProducts(c *gin.Context) {
 		}
 	}()
 
-	var products []OneProduct
+	var products []models.Product
 	// var ids []string
 
 	for rowsProduct.Next() {
-		var product OneProduct
+		var product models.Product
 
 		if err := rowsProduct.Scan(&product.ID, &product.BrendID, &product.Price, &product.OldPrice, &product.Amount, &product.ProductCode, &product.LimitAmount, &product.IsNew); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
@@ -974,7 +975,7 @@ func GetProducts(c *gin.Context) {
 			translations = append(translations, translation)
 		}
 
-		product.Translations = translations
+		product.TranslationProduct = translations
 
 		products = append(products, product)
 	}
