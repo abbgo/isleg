@@ -3,22 +3,15 @@ package controllers
 import (
 	"github/abbgo/isleg/isleg-backend/config"
 	"github/abbgo/isleg/isleg-backend/models"
+	"github/abbgo/isleg/isleg-backend/pkg"
 	"net/http"
-	"time"
 
 	"github.com/gin-gonic/gin"
 )
 
-type TranslationFooterForFooter struct {
-	About   string `json:"about"`
-	Payment string `json:"payment"`
-	Contact string `json:"contact"`
-	Secure  string `json:"secure"`
-	Word    string `json:"word"`
-}
-
 func CreateTranslationFooter(c *gin.Context) {
 
+	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -27,7 +20,15 @@ func CreateTranslationFooter(c *gin.Context) {
 		})
 		return
 	}
-	defer db.Close()
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	// GET ALL LANGUAGE
 	languages, err := GetAllLanguageWithIDAndNameShort()
@@ -42,7 +43,7 @@ func CreateTranslationFooter(c *gin.Context) {
 	dataNames := []string{"about", "payment", "contact", "secure", "word"}
 
 	// VALIDATE DATA
-	err = models.ValidateTranslationFooterData(languages, dataNames, c)
+	err = pkg.ValidateTranslations(languages, dataNames, c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -61,18 +62,27 @@ func CreateTranslationFooter(c *gin.Context) {
 			})
 			return
 		}
-		defer resultTRFooter.Close()
+		defer func() {
+			if err := resultTRFooter.Close(); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}()
 	}
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
-		"message": "translation footer successfully added",
+		"message": "data successfully added",
 	})
 
 }
 
 func UpdateTranslationFooterByID(c *gin.Context) {
 
+	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -81,10 +91,20 @@ func UpdateTranslationFooterByID(c *gin.Context) {
 		})
 		return
 	}
-	defer db.Close()
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
+	// get id of translation footer from request parameter
 	trFootID := c.Param("id")
 
+	// check id
 	rowFlag, err := db.Query("SELECT id FROM translation_footer WHERE id = $1 AND deleted_at IS NULL", trFootID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -93,7 +113,15 @@ func UpdateTranslationFooterByID(c *gin.Context) {
 		})
 		return
 	}
-	defer rowFlag.Close()
+	defer func() {
+		if err := rowFlag.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	var id string
 
@@ -118,7 +146,7 @@ func UpdateTranslationFooterByID(c *gin.Context) {
 	dataNames := []string{"about", "payment", "contact", "secure", "word"}
 
 	// VALIDATE DATA
-	err = models.ValidateTranslationFooterUpdate(dataNames, c)
+	err = pkg.ValidateTranslationsForUpdate(dataNames, c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -127,9 +155,8 @@ func UpdateTranslationFooterByID(c *gin.Context) {
 		return
 	}
 
-	currentTime := time.Now()
-
-	rsultTRFooter, err := db.Query("UPDATE translation_footer SET about = $1, payment = $2, contact = $3, secure = $4, word = $5 , updated_at = $7 WHERE id = $6", c.PostForm("about"), c.PostForm("payment"), c.PostForm("contact"), c.PostForm("secure"), c.PostForm("word"), id, currentTime)
+	// update data of translation footer
+	rsultTRFooter, err := db.Query("UPDATE translation_footer SET about = $1, payment = $2, contact = $3, secure = $4, word = $5 WHERE id = $6", c.PostForm("about"), c.PostForm("payment"), c.PostForm("contact"), c.PostForm("secure"), c.PostForm("word"), id)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -137,17 +164,26 @@ func UpdateTranslationFooterByID(c *gin.Context) {
 		})
 		return
 	}
-	defer rsultTRFooter.Close()
+	defer func() {
+		if err := rsultTRFooter.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
-		"message": "translation footer successfully updated",
+		"message": "data successfully updated",
 	})
 
 }
 
 func GetTranslationFooterByID(c *gin.Context) {
 
+	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -156,10 +192,20 @@ func GetTranslationFooterByID(c *gin.Context) {
 		})
 		return
 	}
-	defer db.Close()
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
+	// get id of translation footer from request parameter
 	trFootID := c.Param("id")
 
+	//check id and get data from table
 	rowFlag, err := db.Query("SELECT about,payment,contact,secure,word FROM translation_footer WHERE id = $1 AND deleted_at IS NULL", trFootID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -168,9 +214,17 @@ func GetTranslationFooterByID(c *gin.Context) {
 		})
 		return
 	}
-	defer rowFlag.Close()
+	defer func() {
+		if err := rowFlag.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
-	var t TranslationFooterForFooter
+	var t models.TranslationFooter
 
 	for rowFlag.Next() {
 		if err := rowFlag.Scan(&t.About, &t.Payment, &t.Contact, &t.Secure, &t.Word); err != nil {
@@ -197,26 +251,36 @@ func GetTranslationFooterByID(c *gin.Context) {
 
 }
 
-func GetTranslationFooter(langID string) (TranslationFooterForFooter, error) {
+func GetTranslationFooter(langID string) (models.TranslationFooter, error) {
 
 	db, err := config.ConnDB()
 	if err != nil {
-		return TranslationFooterForFooter{}, nil
+		return models.TranslationFooter{}, err
 	}
-	defer db.Close()
+	defer func() (models.TranslationFooter, error) {
+		if err := db.Close(); err != nil {
+			return models.TranslationFooter{}, err
+		}
+		return models.TranslationFooter{}, nil
+	}()
 
-	var t TranslationFooterForFooter
+	var t models.TranslationFooter
 
 	// get translation footer where lang_id equal langID
 	row, err := db.Query("SELECT about,payment,contact,secure,word FROM translation_footer WHERE lang_id = $1 AND deleted_at IS NULL", langID)
 	if err != nil {
-		return TranslationFooterForFooter{}, err
+		return models.TranslationFooter{}, err
 	}
-	defer row.Close()
+	defer func() (models.TranslationFooter, error) {
+		if err := row.Close(); err != nil {
+			return models.TranslationFooter{}, err
+		}
+		return models.TranslationFooter{}, nil
+	}()
 
 	for row.Next() {
 		if err := row.Scan(&t.About, &t.Payment, &t.Contact, &t.Secure, &t.Word); err != nil {
-			return TranslationFooterForFooter{}, err
+			return models.TranslationFooter{}, err
 		}
 	}
 

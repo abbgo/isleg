@@ -2,17 +2,12 @@ package controllers
 
 import (
 	"github/abbgo/isleg/isleg-backend/config"
+	"github/abbgo/isleg/isleg-backend/models"
 	"net/http"
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 )
-
-type PaymentTypes struct {
-	LangID uuid.UUID `json:"lang_id"`
-	Type   string    `json:"type"`
-}
 
 func CreatePaymentType(c *gin.Context) {
 
@@ -24,7 +19,15 @@ func CreatePaymentType(c *gin.Context) {
 		})
 		return
 	}
-	defer db.Close()
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	// GET ALL LANGUAGE
 	languages, err := GetAllLanguageWithIDAndNameShort()
@@ -57,7 +60,15 @@ func CreatePaymentType(c *gin.Context) {
 			})
 			return
 		}
-		defer resultComAddres.Close()
+		defer func() {
+			if err := resultComAddres.Close(); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}()
 	}
 
 	c.JSON(http.StatusOK, gin.H{
@@ -77,7 +88,15 @@ func UpdatePaymentTypeByID(c *gin.Context) {
 		})
 		return
 	}
-	defer db.Close()
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	ID := c.Param("id")
 
@@ -89,7 +108,15 @@ func UpdatePaymentTypeByID(c *gin.Context) {
 		})
 		return
 	}
-	defer rowPaymentType.Close()
+	defer func() {
+		if err := rowPaymentType.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	var id string
 
@@ -130,7 +157,15 @@ func UpdatePaymentTypeByID(c *gin.Context) {
 		})
 		return
 	}
-	defer resultPaymentType.Close()
+	defer func() {
+		if err := resultPaymentType.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
@@ -149,7 +184,15 @@ func GetPaymentTypeByID(c *gin.Context) {
 		})
 		return
 	}
-	defer db.Close()
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	ID := c.Param("id")
 
@@ -161,7 +204,15 @@ func GetPaymentTypeByID(c *gin.Context) {
 		})
 		return
 	}
-	defer rowPaymentType.Close()
+	defer func() {
+		if err := rowPaymentType.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	var paymentType string
 
@@ -200,7 +251,15 @@ func GetPaymentTypes(c *gin.Context) {
 		})
 		return
 	}
-	defer db.Close()
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	rowsPaymentType, err := db.Query("SELECT lang_id,type FROM payment_types WHERE deleted_at IS NULL")
 	if err != nil {
@@ -210,12 +269,20 @@ func GetPaymentTypes(c *gin.Context) {
 		})
 		return
 	}
-	defer rowsPaymentType.Close()
+	defer func() {
+		if err := rowsPaymentType.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
-	var paymentTypes []PaymentTypes
+	var paymentTypes []models.PaymentTypes
 
 	for rowsPaymentType.Next() {
-		var paymentType PaymentTypes
+		var paymentType models.PaymentTypes
 
 		if err := rowsPaymentType.Scan(&paymentType.LangID, &paymentType.Type); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
@@ -245,7 +312,15 @@ func GetPaymentTypesByLangID(c *gin.Context) {
 		})
 		return
 	}
-	defer db.Close()
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	// GET DATA FROM ROUTE PARAMETER
 	langShortName := c.Param("lang")
@@ -268,7 +343,15 @@ func GetPaymentTypesByLangID(c *gin.Context) {
 		})
 		return
 	}
-	defer rowsPaymentType.Close()
+	defer func() {
+		if err := rowsPaymentType.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	var paymentTypes []string
 

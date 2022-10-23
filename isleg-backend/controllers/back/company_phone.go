@@ -20,7 +20,15 @@ func CreateCompanyPhone(c *gin.Context) {
 		})
 		return
 	}
-	defer db.Close()
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	// GET DATA FROM REQUEST
 	phone := c.PostForm("phone")
@@ -68,7 +76,15 @@ func CreateCompanyPhone(c *gin.Context) {
 		})
 		return
 	}
-	defer resultComPhone.Close()
+	defer func() {
+		if err := resultComPhone.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
@@ -87,7 +103,15 @@ func UpdateCompanyPhoneByID(c *gin.Context) {
 		})
 		return
 	}
-	defer db.Close()
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	ID := c.Param("id")
 
@@ -99,7 +123,15 @@ func UpdateCompanyPhoneByID(c *gin.Context) {
 		})
 		return
 	}
-	defer rowCompanyPhone.Close()
+	defer func() {
+		if err := rowCompanyPhone.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	var comPhoneID string
 
@@ -159,7 +191,15 @@ func UpdateCompanyPhoneByID(c *gin.Context) {
 		})
 		return
 	}
-	defer resultComPhone.Close()
+	defer func() {
+		if err := resultComPhone.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
@@ -178,7 +218,15 @@ func GetCompanyPhoneByID(c *gin.Context) {
 		})
 		return
 	}
-	defer db.Close()
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	ID := c.Param("id")
 
@@ -190,7 +238,15 @@ func GetCompanyPhoneByID(c *gin.Context) {
 		})
 		return
 	}
-	defer rowComPhone.Close()
+	defer func() {
+		if err := rowComPhone.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	var phoneNumber string
 
@@ -229,7 +285,15 @@ func GetCompanyPhones(c *gin.Context) {
 		})
 		return
 	}
-	defer db.Close()
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	var companyPhones []string
 
@@ -242,7 +306,15 @@ func GetCompanyPhones(c *gin.Context) {
 		})
 		return
 	}
-	defer rows.Close()
+	defer func() {
+		if err := rows.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	for rows.Next() {
 		var companyPhone string
@@ -273,7 +345,15 @@ func DeleteCompanyPhoneByID(c *gin.Context) {
 		})
 		return
 	}
-	defer db.Close()
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	ID := c.Param("id")
 
@@ -285,7 +365,15 @@ func DeleteCompanyPhoneByID(c *gin.Context) {
 		})
 		return
 	}
-	defer rowComPhone.Close()
+	defer func() {
+		if err := rowComPhone.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	var comPhoneID string
 
@@ -317,7 +405,15 @@ func DeleteCompanyPhoneByID(c *gin.Context) {
 		})
 		return
 	}
-	defer resultComPhone.Close()
+	defer func() {
+		if err := resultComPhone.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
@@ -336,7 +432,15 @@ func RestoreCompanyPhoneByID(c *gin.Context) {
 		})
 		return
 	}
-	defer db.Close()
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	ID := c.Param("id")
 
@@ -348,7 +452,15 @@ func RestoreCompanyPhoneByID(c *gin.Context) {
 		})
 		return
 	}
-	defer rowComPhone.Close()
+	defer func() {
+		if err := rowComPhone.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	var comPhoneID string
 
@@ -378,7 +490,15 @@ func RestoreCompanyPhoneByID(c *gin.Context) {
 		})
 		return
 	}
-	defer resultComPhone.Close()
+	defer func() {
+		if err := resultComPhone.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
@@ -397,7 +517,15 @@ func DeletePermanentlyCompanyPhoneByID(c *gin.Context) {
 		})
 		return
 	}
-	defer db.Close()
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	ID := c.Param("id")
 
@@ -409,7 +537,15 @@ func DeletePermanentlyCompanyPhoneByID(c *gin.Context) {
 		})
 		return
 	}
-	defer rowCompanyPhone.Close()
+	defer func() {
+		if err := rowCompanyPhone.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	var comPhoneID string
 
@@ -439,7 +575,15 @@ func DeletePermanentlyCompanyPhoneByID(c *gin.Context) {
 		})
 		return
 	}
-	defer resultComPhone.Close()
+	defer func() {
+		if err := resultComPhone.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,

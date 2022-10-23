@@ -4,28 +4,26 @@ import (
 	"errors"
 	"github/abbgo/isleg/isleg-backend/config"
 	"strconv"
-
-	"github.com/google/uuid"
 )
 
 type Shop struct {
-	ID          uuid.UUID `json:"id"`
-	OwnerName   string    `json:"owner_name"`
-	Address     string    `json:"address"`
-	PhoneNumber string    `json:"phone_number"`
-	RunningTime string    `json:"running_time"`
-	CreatedAt   string    `json:"-"`
-	UpdatedAt   string    `json:"-"`
-	DeletedAt   string    `json:"-"`
+	ID          string `json:"id,omitempty"`
+	OwnerName   string `json:"owner_name,omitempty"`
+	Address     string `json:"address,omitempty"`
+	PhoneNumber string `json:"phone_number,omitempty"`
+	RunningTime string `json:"running_time,omitempty"`
+	CreatedAt   string `json:"-"`
+	UpdatedAt   string `json:"-"`
+	DeletedAt   string `json:"-"`
 }
 
 type CategoryShop struct {
-	ID         uuid.UUID `json:"id"`
-	CategoryID uuid.UUID `json:"category_id"`
-	ShopID     uuid.UUID `json:"shop_id"`
-	CreatedAt  string    `json:"-"`
-	UpdatedAt  string    `json:"-"`
-	DeletedAt  string    `json:"-"`
+	ID         string `json:"id,omitempty"`
+	CategoryID string `json:"category_id,omitempty"`
+	ShopID     string `json:"shop_id,omitempty"`
+	CreatedAt  string `json:"-"`
+	UpdatedAt  string `json:"-"`
+	DeletedAt  string `json:"-"`
 }
 
 func ValidateShopData(ownerName, address, phoneNumber, runningTime string, categories []string) error {

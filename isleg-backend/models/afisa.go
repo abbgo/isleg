@@ -4,26 +4,26 @@ import (
 	"errors"
 
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 )
 
 type Afisa struct {
-	ID        uuid.UUID `json:"id"`
-	Image     string    `json:"image"`
-	CreatedAt string    `json:"-"`
-	UpdatedAt string    `json:"-"`
-	DeletedAt string    `json:"-"`
+	ID               string             `json:"id,omitempty"`
+	Image            string             `json:"image,omitempty"`
+	CreatedAt        string             `json:"-"`
+	UpdatedAt        string             `json:"-"`
+	DeletedAt        string             `json:"-"`
+	TranslationAfisa []TranslationAfisa `json:"translation_afisa,omitempty"` // one to many
 }
 
 type TranslationAfisa struct {
-	ID          uuid.UUID `json:"id"`
-	AfisaID     uuid.UUID `json:"afisa_id"`
-	LangID      uuid.UUID `json:"lang_id"`
-	Title       string    `json:"title"`
-	Description string    `json:"description"`
-	CreatedAt   string    `json:"-"`
-	UpdatedAt   string    `json:"-"`
-	DeletedAt   string    `json:"-"`
+	ID          string `json:"id,omitempty"`
+	AfisaID     string `json:"afisa_id,omitempty"`
+	LangID      string `json:"lang_id,omitempty"`
+	Title       string `json:"title,omitempty"`
+	Description string `json:"description,omitempty"`
+	CreatedAt   string `json:"-"`
+	UpdatedAt   string `json:"-"`
+	DeletedAt   string `json:"-"`
 }
 
 func ValidateAfisaData(languages []Language, dataNames []string, context *gin.Context) error {

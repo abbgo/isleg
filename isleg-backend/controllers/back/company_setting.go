@@ -5,28 +5,13 @@ import (
 	"github/abbgo/isleg/isleg-backend/models"
 	"github/abbgo/isleg/isleg-backend/pkg"
 	"net/http"
-	"os"
-	"path/filepath"
-	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 )
-
-type LogoFavicon struct {
-	Logo    string `json:"logo"`
-	Favicon string `json:"favicon"`
-}
-
-type ComSet struct {
-	Logo      string `json:"logo"`
-	Favicon   string `json:"favicon"`
-	Email     string `json:"email"`
-	Instagram string `json:"instagram"`
-}
 
 func CreateCompanySetting(c *gin.Context) {
 
+	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -35,13 +20,21 @@ func CreateCompanySetting(c *gin.Context) {
 		})
 		return
 	}
-	defer db.Close()
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
-	// GET DATA FROM REQUEST
+	// get email and instagram of company_setting from request
 	email := c.PostForm("email")
 	instagram := c.PostForm("instagram")
 
-	// VALIDATE DATA
+	// validate email and instagram
 	err = models.ValidateCompanySettingData(email, instagram)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -51,9 +44,7 @@ func CreateCompanySetting(c *gin.Context) {
 		return
 	}
 
-	// FILE UPLOAD
-
-	// LOGO
+	// upload logo
 	newFileNameLogo, err := pkg.FileUpload("logo", "setting", c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -63,7 +54,7 @@ func CreateCompanySetting(c *gin.Context) {
 		return
 	}
 
-	// FAVICON
+	// upload favicon
 	newFileNameFavicon, err := pkg.FileUpload("favicon", "setting", c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -73,7 +64,7 @@ func CreateCompanySetting(c *gin.Context) {
 		return
 	}
 
-	// CREATE COMPANY SETTING
+	// add data to database
 	resultComSetting, err := db.Query("INSERT INTO company_setting (logo,favicon,email,instagram) VALUES ($1,$2,$3,$4)", "uploads/setting/"+newFileNameLogo, "uploads/setting/"+newFileNameFavicon, email, instagram)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -82,7 +73,15 @@ func CreateCompanySetting(c *gin.Context) {
 		})
 		return
 	}
-	defer resultComSetting.Close()
+	defer func() {
+		if err := resultComSetting.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
@@ -93,6 +92,7 @@ func CreateCompanySetting(c *gin.Context) {
 
 func UpdateCompanySetting(c *gin.Context) {
 
+	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -101,12 +101,23 @@ func UpdateCompanySetting(c *gin.Context) {
 		})
 		return
 	}
-	defer db.Close()
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
+	// get data from request
 	email := c.PostForm("email")
 	instagram := c.PostForm("instagram")
+
 	var logoName, faviconName string
 
+	// Check if there is a company_setting and get logo and favicon
 	rowComSet, err := db.Query("SELECT logo,favicon FROM company_setting WHERE deleted_at IS NULL ORDER BY created_at ASC LIMIT 1")
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -115,7 +126,15 @@ func UpdateCompanySetting(c *gin.Context) {
 		})
 		return
 	}
-	defer rowComSet.Close()
+	defer func() {
+		if err := rowComSet.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	var logo, favicon string
 
@@ -137,6 +156,7 @@ func UpdateCompanySetting(c *gin.Context) {
 		return
 	}
 
+	// validate email and instagram
 	err = models.ValidateCompanySettingData(email, instagram)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -146,65 +166,8 @@ func UpdateCompanySetting(c *gin.Context) {
 		return
 	}
 
-	fileLogo, err := c.FormFile("logo")
-	if err != nil {
-		logoName = logo
-	} else {
-		extensionFile := filepath.Ext(fileLogo.Filename)
-
-		if extensionFile != ".jpg" && extensionFile != ".jpeg" && extensionFile != ".png" && extensionFile != ".gif" {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": "the file must be an image",
-			})
-			return
-		}
-
-		newFileName := uuid.New().String() + extensionFile
-		c.SaveUploadedFile(fileLogo, "./uploads/setting/"+newFileName)
-
-		if err := os.Remove("./" + logo); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-
-		logoName = "uploads/setting/" + newFileName
-	}
-
-	fileFavicon, err := c.FormFile("favicon")
-	if err != nil {
-		faviconName = favicon
-	} else {
-		extensionFile := filepath.Ext(fileFavicon.Filename)
-
-		if extensionFile != ".jpg" && extensionFile != ".jpeg" && extensionFile != ".png" && extensionFile != ".gif" {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": "the file must be an image",
-			})
-			return
-		}
-
-		newFileName := uuid.New().String() + extensionFile
-		c.SaveUploadedFile(fileFavicon, "./uploads/setting/"+newFileName)
-
-		if err := os.Remove("./" + favicon); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-
-		faviconName = "uploads/setting/" + newFileName
-	}
-
-	currentTime := time.Now()
-
-	resultComPSETTING, err := db.Query("UPDATE company_setting SET logo = $1,favicon=$2,email=$3,instagram=$4,updated_at=$5", logoName, faviconName, email, instagram, currentTime)
+	// upload logo
+	logoName, err = pkg.FileUploadForUpdate("logo", "setting", logo, c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -212,7 +175,35 @@ func UpdateCompanySetting(c *gin.Context) {
 		})
 		return
 	}
-	defer resultComPSETTING.Close()
+
+	// upload favicon
+	faviconName, err = pkg.FileUploadForUpdate("favicon", "setting", favicon, c)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	// update data in database
+	resultComPSETTING, err := db.Query("UPDATE company_setting SET logo = $1,favicon=$2,email=$3,instagram=$4", logoName, faviconName, email, instagram)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer func() {
+		if err := resultComPSETTING.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
@@ -223,6 +214,7 @@ func UpdateCompanySetting(c *gin.Context) {
 
 func GetCompanySetting(c *gin.Context) {
 
+	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -231,9 +223,18 @@ func GetCompanySetting(c *gin.Context) {
 		})
 		return
 	}
-	defer db.Close()
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
-	rowComSet, err := db.Query("SELECT logo,favicon,email,instagram FROM company_setting WHERE deleted_at IS NULL ORDER BY created_at ASC LIMIT 1")
+	// get data from database
+	rowComSet, err := db.Query("SELECT id,logo,favicon,email,instagram FROM company_setting WHERE deleted_at IS NULL ORDER BY created_at ASC LIMIT 1")
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -241,12 +242,20 @@ func GetCompanySetting(c *gin.Context) {
 		})
 		return
 	}
-	defer rowComSet.Close()
+	defer func() {
+		if err := rowComSet.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
-	var comSet ComSet
+	var comSet models.CompanySetting
 
 	for rowComSet.Next() {
-		if err := rowComSet.Scan(&comSet.Logo, &comSet.Favicon, &comSet.Email, &comSet.Instagram); err != nil {
+		if err := rowComSet.Scan(&comSet.ID, &comSet.Logo, &comSet.Favicon, &comSet.Email, &comSet.Instagram); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
@@ -255,7 +264,7 @@ func GetCompanySetting(c *gin.Context) {
 		}
 	}
 
-	if comSet.Logo == "" || comSet.Favicon == "" || comSet.Email == "" || comSet.Instagram == "" {
+	if comSet.ID == "" {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
 			"message": "record not found",
@@ -270,27 +279,32 @@ func GetCompanySetting(c *gin.Context) {
 
 }
 
-func GetCompanySettingForHeader() (LogoFavicon, error) {
+func GetCompanySettingForHeader() (models.CompanySetting, error) {
 
 	db, err := config.ConnDB()
 	if err != nil {
 
-		return LogoFavicon{}, nil
+		return models.CompanySetting{}, nil
 	}
-	defer db.Close()
+	defer func() (models.CompanySetting, error) {
+		if err := db.Close(); err != nil {
+			return models.CompanySetting{}, err
+		}
+		return models.CompanySetting{}, nil
+	}()
 
-	var logoFavicon LogoFavicon
+	var logoFavicon models.CompanySetting
 
 	// GET LOGO AND FAVICON
 	row, err := db.Query("SELECT logo,favicon FROM company_setting WHERE deleted_at IS NULL ORDER BY created_at ASC LIMIT 1")
 	if err != nil {
-		return LogoFavicon{}, err
+		return models.CompanySetting{}, err
 	}
 	defer row.Close()
 
 	for row.Next() {
 		if err := row.Scan(&logoFavicon.Logo, &logoFavicon.Favicon); err != nil {
-			return LogoFavicon{}, err
+			return models.CompanySetting{}, err
 		}
 	}
 

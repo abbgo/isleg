@@ -13,15 +13,9 @@ import (
 )
 
 type OneAfisa struct {
-	ID           string             `json:"id"`
-	Image        string             `json:"image"`
-	Translations []TranslationAfisa `json:"translations"`
-}
-
-type TranslationAfisa struct {
-	LangID      string `json:"lang_id"`
-	Title       string `json:"title"`
-	Description string `json:"description"`
+	ID           string                    `json:"id"`
+	Image        string                    `json:"image"`
+	Translations []models.TranslationAfisa `json:"translations"`
 }
 
 func CreateAfisa(c *gin.Context) {
@@ -34,7 +28,15 @@ func CreateAfisa(c *gin.Context) {
 		})
 		return
 	}
-	defer db.Close()
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	var fileName string
 
@@ -87,7 +89,15 @@ func CreateAfisa(c *gin.Context) {
 		})
 		return
 	}
-	defer resultAFisa.Close()
+	defer func() {
+		if err := resultAFisa.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	if fileName != "" {
 		c.SaveUploadedFile(file, "./"+fileName)
@@ -102,7 +112,15 @@ func CreateAfisa(c *gin.Context) {
 		})
 		return
 	}
-	defer lastAfisaID.Close()
+	defer func() {
+		if err := lastAfisaID.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	var afisaID string
 
@@ -126,7 +144,15 @@ func CreateAfisa(c *gin.Context) {
 			})
 			return
 		}
-		defer resultTRAfisa.Close()
+		defer func() {
+			if err := resultTRAfisa.Close(); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}()
 	}
 
 	c.JSON(http.StatusOK, gin.H{
@@ -146,7 +172,15 @@ func UpdateAfisaByID(c *gin.Context) {
 		})
 		return
 	}
-	defer db.Close()
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	ID := c.Param("id")
 	var fileName string
@@ -159,7 +193,15 @@ func UpdateAfisaByID(c *gin.Context) {
 		})
 		return
 	}
-	defer rowAfisa.Close()
+	defer func() {
+		if err := rowAfisa.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	var afisaID, image string
 
@@ -240,7 +282,15 @@ func UpdateAfisaByID(c *gin.Context) {
 		})
 		return
 	}
-	defer resultAfisa.Close()
+	defer func() {
+		if err := resultAfisa.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	if fileName != "" {
 		c.SaveUploadedFile(file, "./"+fileName)
@@ -255,7 +305,15 @@ func UpdateAfisaByID(c *gin.Context) {
 			})
 			return
 		}
-		defer resultTRAfisa.Close()
+		defer func() {
+			if err := resultTRAfisa.Close(); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}()
 	}
 
 	c.JSON(http.StatusOK, gin.H{
@@ -275,7 +333,15 @@ func GetAfisaByID(c *gin.Context) {
 		})
 		return
 	}
-	defer db.Close()
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	ID := c.Param("id")
 
@@ -287,7 +353,15 @@ func GetAfisaByID(c *gin.Context) {
 		})
 		return
 	}
-	defer rowAfisa.Close()
+	defer func() {
+		if err := rowAfisa.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	var afisa OneAfisa
 
@@ -317,12 +391,20 @@ func GetAfisaByID(c *gin.Context) {
 		})
 		return
 	}
-	defer rowsTrAfisa.Close()
+	defer func() {
+		if err := rowsTrAfisa.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
-	var translations []TranslationAfisa
+	var translations []models.TranslationAfisa
 
 	for rowsTrAfisa.Next() {
-		var translation TranslationAfisa
+		var translation models.TranslationAfisa
 		if err := rowsTrAfisa.Scan(&translation.LangID, &translation.Title, &translation.Description); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
@@ -352,7 +434,15 @@ func GetAfisas(c *gin.Context) {
 		})
 		return
 	}
-	defer db.Close()
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	rowsAfisa, err := db.Query("SELECT id,image FROM afisa WHERE deleted_at IS NULL")
 	if err != nil {
@@ -362,7 +452,15 @@ func GetAfisas(c *gin.Context) {
 		})
 		return
 	}
-	defer rowsAfisa.Close()
+	defer func() {
+		if err := rowsAfisa.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	var afisas []OneAfisa
 
@@ -384,12 +482,20 @@ func GetAfisas(c *gin.Context) {
 			})
 			return
 		}
-		defer rowsTrAfisa.Close()
+		defer func() {
+			if err := rowsTrAfisa.Close(); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}()
 
-		var translations []TranslationAfisa
+		var translations []models.TranslationAfisa
 
 		for rowsTrAfisa.Next() {
-			var translation TranslationAfisa
+			var translation models.TranslationAfisa
 			if err := rowsTrAfisa.Scan(&translation.LangID, &translation.Title, &translation.Description); err != nil {
 				c.JSON(http.StatusBadRequest, gin.H{
 					"status":  false,
@@ -423,7 +529,15 @@ func DeleteAfisaByID(c *gin.Context) {
 		})
 		return
 	}
-	defer db.Close()
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	ID := c.Param("id")
 
@@ -435,7 +549,15 @@ func DeleteAfisaByID(c *gin.Context) {
 		})
 		return
 	}
-	defer rowAfisa.Close()
+	defer func() {
+		if err := rowAfisa.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	var afisaID string
 
@@ -467,7 +589,15 @@ func DeleteAfisaByID(c *gin.Context) {
 		})
 		return
 	}
-	defer resultAfisa.Close()
+	defer func() {
+		if err := resultAfisa.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	resultTrAfisa, err := db.Query("UPDATE translation_afisa SET deleted_at = $1 WHERE afisa_id = $2", currentTime, ID)
 	if err != nil {
@@ -477,7 +607,15 @@ func DeleteAfisaByID(c *gin.Context) {
 		})
 		return
 	}
-	defer resultTrAfisa.Close()
+	defer func() {
+		if err := resultTrAfisa.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
@@ -496,7 +634,15 @@ func RestoreAfisaByID(c *gin.Context) {
 		})
 		return
 	}
-	defer db.Close()
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	ID := c.Param("id")
 
@@ -508,7 +654,15 @@ func RestoreAfisaByID(c *gin.Context) {
 		})
 		return
 	}
-	defer rowAfisa.Close()
+	defer func() {
+		if err := rowAfisa.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	var afisaID string
 
@@ -538,7 +692,15 @@ func RestoreAfisaByID(c *gin.Context) {
 		})
 		return
 	}
-	defer resultAfisa.Close()
+	defer func() {
+		if err := resultAfisa.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	resultTrAfisa, err := db.Query("UPDATE translation_afisa SET deleted_at = NULL WHERE afisa_id = $1", ID)
 	if err != nil {
@@ -548,7 +710,15 @@ func RestoreAfisaByID(c *gin.Context) {
 		})
 		return
 	}
-	defer resultTrAfisa.Close()
+	defer func() {
+		if err := resultTrAfisa.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
@@ -567,7 +737,15 @@ func DeletePermanentlyAfisaByID(c *gin.Context) {
 		})
 		return
 	}
-	defer db.Close()
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	ID := c.Param("id")
 
@@ -579,7 +757,15 @@ func DeletePermanentlyAfisaByID(c *gin.Context) {
 		})
 		return
 	}
-	defer rowAfisa.Close()
+	defer func() {
+		if err := rowAfisa.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	var afisaID, image string
 
@@ -619,7 +805,15 @@ func DeletePermanentlyAfisaByID(c *gin.Context) {
 		})
 		return
 	}
-	defer resultAfisa.Close()
+	defer func() {
+		if err := resultAfisa.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,

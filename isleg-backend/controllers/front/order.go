@@ -48,7 +48,15 @@ func ToOrder(c *gin.Context) {
 		})
 		return
 	}
-	defer db.Close()
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	// GET DATA FROM ROUTE PARAMETER
 	langShortName := c.Param("lang")
@@ -78,7 +86,15 @@ func ToOrder(c *gin.Context) {
 		})
 		return
 	}
-	defer rowCustomer.Close()
+	defer func() {
+		if err := rowCustomer.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	var customerPhoneNumber string
 	var customerID string
@@ -103,7 +119,15 @@ func ToOrder(c *gin.Context) {
 			})
 			return
 		}
-		defer rowsCustomerAddress.Close()
+		defer func() {
+			if err := rowsCustomerAddress.Close(); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}()
 
 		var customerAddress string
 
@@ -127,7 +151,15 @@ func ToOrder(c *gin.Context) {
 				})
 				return
 			}
-			defer resultCustomerAddres.Close()
+			defer func() {
+				if err := resultCustomerAddres.Close(); err != nil {
+					c.JSON(http.StatusBadRequest, gin.H{
+						"status":  false,
+						"message": err.Error(),
+					})
+					return
+				}
+			}()
 
 		}
 
@@ -141,7 +173,15 @@ func ToOrder(c *gin.Context) {
 			})
 			return
 		}
-		defer resultCustomer.Close()
+		defer func() {
+			if err := resultCustomer.Close(); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}()
 
 		lastCustomerID, err := db.Query("SELECT id FROM customers ORDER BY created_at DESC LIMIT 1")
 		if err != nil {
@@ -151,7 +191,15 @@ func ToOrder(c *gin.Context) {
 			})
 			return
 		}
-		defer lastCustomerID.Close()
+		defer func() {
+			if err := lastCustomerID.Close(); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}()
 
 		var customer_id string
 
@@ -173,7 +221,15 @@ func ToOrder(c *gin.Context) {
 			})
 			return
 		}
-		defer resultCustomerAddress.Close()
+		defer func() {
+			if err := resultCustomerAddress.Close(); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}()
 
 		customerID = customer_id
 
@@ -187,7 +243,15 @@ func ToOrder(c *gin.Context) {
 		})
 		return
 	}
-	defer resultOrders.Close()
+	defer func() {
+		if err := resultOrders.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	lastOrderID, err := db.Query("SELECT id FROM orders ORDER BY created_at DESC LIMIT 1")
 	if err != nil {
@@ -197,7 +261,15 @@ func ToOrder(c *gin.Context) {
 		})
 		return
 	}
-	defer lastOrderID.Close()
+	defer func() {
+		if err := lastOrderID.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	var order_id string
 
@@ -229,7 +301,15 @@ func ToOrder(c *gin.Context) {
 			})
 			return
 		}
-		defer rowProduct.Close()
+		defer func() {
+			if err := rowProduct.Close(); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}()
 
 		var product_id string
 
@@ -259,7 +339,15 @@ func ToOrder(c *gin.Context) {
 			})
 			return
 		}
-		defer resultOrderedProduct.Close()
+		defer func() {
+			if err := resultOrderedProduct.Close(); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}()
 
 	}
 
@@ -271,7 +359,15 @@ func ToOrder(c *gin.Context) {
 		})
 		return
 	}
-	defer rowCompanyPhone.Close()
+	defer func() {
+		if err := rowCompanyPhone.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	var companyPhone string
 
@@ -293,7 +389,15 @@ func ToOrder(c *gin.Context) {
 		})
 		return
 	}
-	defer rowCompanySetting.Close()
+	defer func() {
+		if err := rowCompanySetting.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	var email, instagram string
 
@@ -315,7 +419,15 @@ func ToOrder(c *gin.Context) {
 		})
 		return
 	}
-	defer rowOrder.Close()
+	defer func() {
+		if err := rowOrder.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	var sargyt models.Orders
 
@@ -337,7 +449,15 @@ func ToOrder(c *gin.Context) {
 		})
 		return
 	}
-	defer rowsCustomer.Close()
+	defer func() {
+		if err := rowsCustomer.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	var customerName, customerPhone string
 
@@ -359,7 +479,15 @@ func ToOrder(c *gin.Context) {
 		})
 		return
 	}
-	defer rowsOrderedProducts.Close()
+	defer func() {
+		if err := rowsOrderedProducts.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	var orderedProducts []models.OrderedProducts
 
@@ -393,7 +521,15 @@ func ToOrder(c *gin.Context) {
 			})
 			return
 		}
-		defer row.Close()
+		defer func() {
+			if err := row.Close(); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}()
 
 		for row.Next() {
 			if err := row.Scan(&product.Price, &product.ProductCode); err != nil {
@@ -413,7 +549,15 @@ func ToOrder(c *gin.Context) {
 			})
 			return
 		}
-		defer rowTr.Close()
+		defer func() {
+			if err := rowTr.Close(); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}()
 
 		for rowTr.Next() {
 			if err := rowTr.Scan(&product.Name); err != nil {
@@ -570,9 +714,25 @@ func GetCustomerOrders(c *gin.Context) {
 		})
 		return
 	}
-	defer db.Close()
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
-	customerID := c.Param("customer_id")
+	custID, hasCustomer := c.Get("customer_id")
+	if !hasCustomer {
+		c.JSON(http.StatusBadRequest, "customer_id is required")
+		return
+	}
+	customerID, ok := custID.(string)
+	if !ok {
+		c.JSON(http.StatusBadRequest, "customer_id must be string")
+	}
 
 	// GET DATA FROM ROUTE PARAMETER
 	langShortName := c.Param("lang")
@@ -595,7 +755,15 @@ func GetCustomerOrders(c *gin.Context) {
 		})
 		return
 	}
-	defer rowCustomer.Close()
+	defer func() {
+		if err := rowCustomer.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	var customer_id string
 
@@ -627,7 +795,15 @@ func GetCustomerOrders(c *gin.Context) {
 		})
 		return
 	}
-	defer rowsOrders.Close()
+	defer func() {
+		if err := rowsOrders.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	var orders []GetOrder
 
@@ -650,7 +826,15 @@ func GetCustomerOrders(c *gin.Context) {
 			})
 			return
 		}
-		defer rowsOrderedProducts.Close()
+		defer func() {
+			if err := rowsOrderedProducts.Close(); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}()
 
 		var products []ProductOfCart
 
@@ -673,7 +857,15 @@ func GetCustomerOrders(c *gin.Context) {
 				})
 				return
 			}
-			defer rowProduct.Close()
+			defer func() {
+				if err := rowProduct.Close(); err != nil {
+					c.JSON(http.StatusBadRequest, gin.H{
+						"status":  false,
+						"message": err.Error(),
+					})
+					return
+				}
+			}()
 
 			for rowProduct.Next() {
 				if err := rowProduct.Scan(&product.BrendID, &product.Price, &product.OldPrice, &product.Amount, &product.ProductCode, &product.LimitAmount, &product.IsNew); err != nil {
@@ -693,7 +885,15 @@ func GetCustomerOrders(c *gin.Context) {
 				})
 				return
 			}
-			defer rowMainImage.Close()
+			defer func() {
+				if err := rowMainImage.Close(); err != nil {
+					c.JSON(http.StatusBadRequest, gin.H{
+						"status":  false,
+						"message": err.Error(),
+					})
+					return
+				}
+			}()
 
 			var mainImage models.MainImage
 
@@ -717,7 +917,15 @@ func GetCustomerOrders(c *gin.Context) {
 				})
 				return
 			}
-			defer rowsImages.Close()
+			defer func() {
+				if err := rowsImages.Close(); err != nil {
+					c.JSON(http.StatusBadRequest, gin.H{
+						"status":  false,
+						"message": err.Error(),
+					})
+					return
+				}
+			}()
 
 			var images []models.Images
 
@@ -745,7 +953,15 @@ func GetCustomerOrders(c *gin.Context) {
 				})
 				return
 			}
-			defer rowTrProduct.Close()
+			defer func() {
+				if err := rowTrProduct.Close(); err != nil {
+					c.JSON(http.StatusBadRequest, gin.H{
+						"status":  false,
+						"message": err.Error(),
+					})
+					return
+				}
+			}()
 
 			var trProduct models.TranslationProduct
 

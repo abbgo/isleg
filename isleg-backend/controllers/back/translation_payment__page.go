@@ -3,19 +3,15 @@ package controllers
 import (
 	"github/abbgo/isleg/isleg-backend/config"
 	"github/abbgo/isleg/isleg-backend/models"
+	"github/abbgo/isleg/isleg-backend/pkg"
 	"net/http"
-	"time"
 
 	"github.com/gin-gonic/gin"
 )
 
-type TrPayment struct {
-	Title   string `json:"title"`
-	Content string `json:"content"`
-}
-
 func CreateTranslationPayment(c *gin.Context) {
 
+	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -24,7 +20,15 @@ func CreateTranslationPayment(c *gin.Context) {
 		})
 		return
 	}
-	defer db.Close()
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	// GET ALL LANGUAGE
 	languages, err := GetAllLanguageWithIDAndNameShort()
@@ -39,7 +43,7 @@ func CreateTranslationPayment(c *gin.Context) {
 	dataNames := []string{"title", "content"}
 
 	// VALIDATE DATA
-	if err = models.ValidateTranslationPaymentData(languages, dataNames, c); err != nil {
+	if err = pkg.ValidateTranslations(languages, dataNames, c); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
 			"message": err.Error(),
@@ -57,18 +61,27 @@ func CreateTranslationPayment(c *gin.Context) {
 			})
 			return
 		}
-		defer resultTRPayment.Close()
+		defer func() {
+			if err := resultTRPayment.Close(); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}()
 	}
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
-		"message": "translation payment successfully added",
+		"message": "data successfully added",
 	})
 
 }
 
 func UpdateTranslationPaymentByID(c *gin.Context) {
 
+	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -77,10 +90,20 @@ func UpdateTranslationPaymentByID(c *gin.Context) {
 		})
 		return
 	}
-	defer db.Close()
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
+	// get id of translation payment from request parameter
 	ID := c.Param("id")
 
+	// check id
 	rowFlag, err := db.Query("SELECT id FROM translation_payment WHERE id = $1 AND deleted_at IS NULL", ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -89,7 +112,15 @@ func UpdateTranslationPaymentByID(c *gin.Context) {
 		})
 		return
 	}
-	defer rowFlag.Close()
+	defer func() {
+		if err := rowFlag.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	var id string
 
@@ -114,7 +145,7 @@ func UpdateTranslationPaymentByID(c *gin.Context) {
 	dataNames := []string{"title", "content"}
 
 	// VALIDATE DATA
-	err = models.ValidateTranslationPaymentUpdate(dataNames, c)
+	err = pkg.ValidateTranslationsForUpdate(dataNames, c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -123,9 +154,8 @@ func UpdateTranslationPaymentByID(c *gin.Context) {
 		return
 	}
 
-	currentTime := time.Now()
-
-	resutlTRPayment, err := db.Query("UPDATE translation_payment SET title = $1, content = $2 , updated_at = $4 WHERE id = $3", c.PostForm("title"), c.PostForm("content"), id, currentTime)
+	// update data
+	resutlTRPayment, err := db.Query("UPDATE translation_payment SET title = $1, content = $2 WHERE id = $3", c.PostForm("title"), c.PostForm("content"), id)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -133,17 +163,26 @@ func UpdateTranslationPaymentByID(c *gin.Context) {
 		})
 		return
 	}
-	defer resutlTRPayment.Close()
+	defer func() {
+		if err := resutlTRPayment.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
-		"message": "translation payment successfully updated",
+		"message": "data successfully updated",
 	})
 
 }
 
 func GetTranslationPaymentByID(c *gin.Context) {
 
+	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -152,11 +191,21 @@ func GetTranslationPaymentByID(c *gin.Context) {
 		})
 		return
 	}
-	defer db.Close()
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
+	// get id of translation payment from request parameter
 	ID := c.Param("id")
 
-	rowFlag, err := db.Query("SELECT title,content FROM translation_payment WHERE id = $1 AND deleted_at IS NULL", ID)
+	// check id and get data from database
+	rowFlag, err := db.Query("SELECT id,title,content FROM translation_payment WHERE id = $1 AND deleted_at IS NULL", ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -164,12 +213,20 @@ func GetTranslationPaymentByID(c *gin.Context) {
 		})
 		return
 	}
-	defer rowFlag.Close()
+	defer func() {
+		if err := rowFlag.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
-	var t TrPayment
+	var t models.TranslationPayment
 
 	for rowFlag.Next() {
-		if err := rowFlag.Scan(&t.Title, &t.Content); err != nil {
+		if err := rowFlag.Scan(&t.ID, &t.Title, &t.Content); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
@@ -178,7 +235,7 @@ func GetTranslationPaymentByID(c *gin.Context) {
 		}
 	}
 
-	if t.Title == "" {
+	if t.ID == "" {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
 			"message": "record not found",
@@ -203,7 +260,15 @@ func GetTranslationPaymentByLangID(c *gin.Context) {
 		})
 		return
 	}
-	defer db.Close()
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	langID, err := CheckLanguage(c)
 	if err != nil {
@@ -223,9 +288,17 @@ func GetTranslationPaymentByLangID(c *gin.Context) {
 		})
 		return
 	}
-	defer paymentRow.Close()
+	defer func() {
+		if err := paymentRow.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
-	var translationPayment TrPayment
+	var translationPayment models.TranslationPayment
 
 	for paymentRow.Next() {
 		if err := paymentRow.Scan(&translationPayment.Title, &translationPayment.Content); err != nil {

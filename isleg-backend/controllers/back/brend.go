@@ -6,8 +6,6 @@ import (
 	"github/abbgo/isleg/isleg-backend/pkg"
 	"net/http"
 	"os"
-	"path/filepath"
-	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -18,18 +16,9 @@ type BrendForHomePage struct {
 	Image string    `json:"image"`
 }
 
-type OneBrend struct {
-	Name  string `json:"name"`
-	Image string `json:"image"`
-}
-
-// type ProductImages struct {
-// 	MainImage string         `json:"main_image"`
-// 	Images    pq.StringArray `json:"images"`
-// }
-
 func CreateBrend(c *gin.Context) {
 
+	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -38,7 +27,15 @@ func CreateBrend(c *gin.Context) {
 		})
 		return
 	}
-	defer db.Close()
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	// GET DATA FROM REQUEST
 	name := c.PostForm("name")
@@ -71,17 +68,26 @@ func CreateBrend(c *gin.Context) {
 		})
 		return
 	}
-	defer result.Close()
+	defer func() {
+		if err := result.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
-		"message": "brend successfully added",
+		"message": "data successfully added",
 	})
 
 }
 
 func UpdateBrendByID(c *gin.Context) {
 
+	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -90,12 +96,24 @@ func UpdateBrendByID(c *gin.Context) {
 		})
 		return
 	}
-	defer db.Close()
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
+	// get id from reequest parameter
 	ID := c.Param("id")
+
+	// get data from request
 	name := c.PostForm("name")
 	var fileName string
 
+	// check id and get image of brend
 	rowBrend, err := db.Query("SELECT image FROM brends WHERE id = $1 AND deleted_at IS NULL", ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -104,7 +122,15 @@ func UpdateBrendByID(c *gin.Context) {
 		})
 		return
 	}
-	defer rowBrend.Close()
+	defer func() {
+		if err := rowBrend.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	var image string
 
@@ -126,6 +152,7 @@ func UpdateBrendByID(c *gin.Context) {
 		return
 	}
 
+	// validate data
 	if name == "" {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -134,37 +161,7 @@ func UpdateBrendByID(c *gin.Context) {
 		return
 	}
 
-	file, err := c.FormFile("image")
-	if err != nil {
-		fileName = image
-	} else {
-		extensionFile := filepath.Ext(file.Filename)
-
-		if extensionFile != ".jpg" && extensionFile != ".jpeg" && extensionFile != ".png" && extensionFile != ".gif" {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": "the file must be an image",
-			})
-			return
-		}
-
-		newFileName := uuid.New().String() + extensionFile
-		c.SaveUploadedFile(file, "./uploads/brend/"+newFileName)
-
-		if err := os.Remove("./" + image); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-
-		fileName = "uploads/brend/" + newFileName
-	}
-
-	currentTime := time.Now()
-
-	resultBrend, err := db.Query("UPDATE brends SET name = $1 , image = $2 , updated_at = $4 WHERE id = $3", name, fileName, ID, currentTime)
+	fileName, err = pkg.FileUploadForUpdate("image", "brend", image, c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -172,17 +169,36 @@ func UpdateBrendByID(c *gin.Context) {
 		})
 		return
 	}
-	defer resultBrend.Close()
+
+	// update data
+	resultBrend, err := db.Query("UPDATE brends SET name = $1 , image = $2 WHERE id = $3", name, fileName, ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer func() {
+		if err := resultBrend.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
-		"message": "brend successfully updated",
+		"message": "data successfully updated",
 	})
 
 }
 
 func GetBrendByID(c *gin.Context) {
 
+	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -191,11 +207,21 @@ func GetBrendByID(c *gin.Context) {
 		})
 		return
 	}
-	defer db.Close()
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
+	// get id from request paramter
 	ID := c.Param("id")
 
-	rowBrend, err := db.Query("SELECT name,image FROM brends WHERE id = $1 AND deleted_at IS NULL", ID)
+	// check id and get data from database
+	rowBrend, err := db.Query("SELECT id,name,image FROM brends WHERE id = $1 AND deleted_at IS NULL", ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -203,12 +229,20 @@ func GetBrendByID(c *gin.Context) {
 		})
 		return
 	}
-	defer rowBrend.Close()
+	defer func() {
+		if err := rowBrend.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
-	var brend OneBrend
+	var brend models.Brend
 
 	for rowBrend.Next() {
-		if err := rowBrend.Scan(&brend.Name, &brend.Image); err != nil {
+		if err := rowBrend.Scan(&brend.ID, &brend.Name, &brend.Image); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
@@ -217,7 +251,7 @@ func GetBrendByID(c *gin.Context) {
 		}
 	}
 
-	if brend.Name == "" || brend.Image == "" {
+	if brend.ID == "" {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
 			"message": "record not found",
@@ -234,6 +268,7 @@ func GetBrendByID(c *gin.Context) {
 
 func GetBrends(c *gin.Context) {
 
+	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -242,9 +277,18 @@ func GetBrends(c *gin.Context) {
 		})
 		return
 	}
-	defer db.Close()
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
-	rowBrends, err := db.Query("SELECT name,image FROM brends WHERE deleted_at IS NULL")
+	// get data from database
+	rowBrends, err := db.Query("SELECT id,name,image FROM brends WHERE deleted_at IS NULL")
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -252,14 +296,22 @@ func GetBrends(c *gin.Context) {
 		})
 		return
 	}
-	defer rowBrends.Close()
+	defer func() {
+		if err := rowBrends.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
-	var brends []OneBrend
+	var brends []models.Brend
 
 	for rowBrends.Next() {
-		var brend OneBrend
+		var brend models.Brend
 
-		if err := rowBrends.Scan(&brend.Name, &brend.Image); err != nil {
+		if err := rowBrends.Scan(&brend.ID, &brend.Name, &brend.Image); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
@@ -279,6 +331,7 @@ func GetBrends(c *gin.Context) {
 
 func DeleteBrendByID(c *gin.Context) {
 
+	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -287,11 +340,21 @@ func DeleteBrendByID(c *gin.Context) {
 		})
 		return
 	}
-	defer db.Close()
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
+	// get id from request parameter
 	ID := c.Param("id")
 
-	rowBrend, err := db.Query("SELECT image FROM brends WHERE id = $1 AND deleted_at IS NULL", ID)
+	// check id and get image of brend
+	rowBrend, err := db.Query("SELECT id FROM brends WHERE id = $1 AND deleted_at IS NULL", ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -299,12 +362,20 @@ func DeleteBrendByID(c *gin.Context) {
 		})
 		return
 	}
-	defer rowBrend.Close()
+	defer func() {
+		if err := rowBrend.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
-	var image string
+	var id string
 
 	for rowBrend.Next() {
-		if err := rowBrend.Scan(&image); err != nil {
+		if err := rowBrend.Scan(&id); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
@@ -313,7 +384,7 @@ func DeleteBrendByID(c *gin.Context) {
 		}
 	}
 
-	if image == "" {
+	if id == "" {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
 			"message": "record not found",
@@ -321,9 +392,7 @@ func DeleteBrendByID(c *gin.Context) {
 		return
 	}
 
-	currentTime := time.Now()
-
-	resultBrends, err := db.Query("UPDATE brends SET deleted_at = $1 WHERE id = $2", currentTime, ID)
+	resultProc, err := db.Query("CALL delete_brend($1)", ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -331,37 +400,26 @@ func DeleteBrendByID(c *gin.Context) {
 		})
 		return
 	}
-	defer resultBrends.Close()
-
-	resultProducts, err := db.Query("UPDATE products SET deleted_at = $1 WHERE brend_id = $2", currentTime, ID)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-	defer resultProducts.Close()
-
-	resultTRProduct, err := db.Query("UPDATE translation_product SET deleted_at = $1 FROM products WHERE translation_product.product_id=products.id AND products.brend_id = $2", currentTime, ID)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-	defer resultTRProduct.Close()
+	defer func() {
+		if err := resultProc.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
-		"message": "brend successfully deleted",
+		"message": "data successfully deleted",
 	})
 
 }
 
 func RestoreBrendByID(c *gin.Context) {
 
+	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -370,11 +428,21 @@ func RestoreBrendByID(c *gin.Context) {
 		})
 		return
 	}
-	defer db.Close()
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
+	// get id from request parameter
 	ID := c.Param("id")
 
-	rowBrend, err := db.Query("SELECT image FROM brends WHERE id = $1 AND deleted_at IS NOT NULL", ID)
+	// check id
+	rowBrend, err := db.Query("SELECT id FROM brends WHERE id = $1 AND deleted_at IS NOT NULL", ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -382,12 +450,20 @@ func RestoreBrendByID(c *gin.Context) {
 		})
 		return
 	}
-	defer rowBrend.Close()
+	defer func() {
+		if err := rowBrend.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
-	var image string
+	var id string
 
 	for rowBrend.Next() {
-		if err := rowBrend.Scan(&image); err != nil {
+		if err := rowBrend.Scan(&id); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
@@ -396,7 +472,7 @@ func RestoreBrendByID(c *gin.Context) {
 		}
 	}
 
-	if image == "" {
+	if id == "" {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
 			"message": "record not found",
@@ -404,7 +480,7 @@ func RestoreBrendByID(c *gin.Context) {
 		return
 	}
 
-	resultBrends, err := db.Query("UPDATE brends SET deleted_at = NULL WHERE id = $1", ID)
+	resultProc, err := db.Query("CALL restore_brend($1)", ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -412,37 +488,80 @@ func RestoreBrendByID(c *gin.Context) {
 		})
 		return
 	}
-	defer resultBrends.Close()
+	defer func() {
+		if err := resultProc.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
-	resultProducts, err := db.Query("UPDATE products SET deleted_at = NULL WHERE brend_id = $1", ID)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-	defer resultProducts.Close()
+	// resultBrends, err := db.Query("UPDATE brends SET deleted_at = NULL WHERE id = $1", ID)
+	// if err != nil {
+	// 	c.JSON(http.StatusBadRequest, gin.H{
+	// 		"status":  false,
+	// 		"message": err.Error(),
+	// 	})
+	// 	return
+	// }
+	// defer func() {
+	// 	if err := resultBrends.Close(); err != nil {
+	// 		c.JSON(http.StatusBadRequest, gin.H{
+	// 			"status":  false,
+	// 			"message": err.Error(),
+	// 		})
+	// 		return
+	// 	}
+	// }()
 
-	resultTRProduct, err := db.Query("UPDATE translation_product SET deleted_at = NULL FROM products WHERE translation_product.product_id=products.id AND products.brend_id = $1", ID)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-	defer resultTRProduct.Close()
+	// resultProducts, err := db.Query("UPDATE products SET deleted_at = NULL WHERE brend_id = $1", ID)
+	// if err != nil {
+	// 	c.JSON(http.StatusBadRequest, gin.H{
+	// 		"status":  false,
+	// 		"message": err.Error(),
+	// 	})
+	// 	return
+	// }
+	// defer func() {
+	// 	if err := resultProducts.Close(); err != nil {
+	// 		c.JSON(http.StatusBadRequest, gin.H{
+	// 			"status":  false,
+	// 			"message": err.Error(),
+	// 		})
+	// 		return
+	// 	}
+	// }()
+
+	// resultTRProduct, err := db.Query("UPDATE translation_product SET deleted_at = NULL FROM products WHERE translation_product.product_id=products.id AND products.brend_id = $1", ID)
+	// if err != nil {
+	// 	c.JSON(http.StatusBadRequest, gin.H{
+	// 		"status":  false,
+	// 		"message": err.Error(),
+	// 	})
+	// 	return
+	// }
+	// defer func() {
+	// 	if err := resultTRProduct.Close(); err != nil {
+	// 		c.JSON(http.StatusBadRequest, gin.H{
+	// 			"status":  false,
+	// 			"message": err.Error(),
+	// 		})
+	// 		return
+	// 	}
+	// }()
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
-		"message": "brend successfully restored",
+		"message": "data successfully restored",
 	})
 
 }
 
 func DeletePermanentlyBrendByID(c *gin.Context) {
 
+	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -451,10 +570,20 @@ func DeletePermanentlyBrendByID(c *gin.Context) {
 		})
 		return
 	}
-	defer db.Close()
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
+	// get id from request parameter
 	ID := c.Param("id")
 
+	// check id and get image of brend
 	rowBrend, err := db.Query("SELECT image FROM brends WHERE id = $1 AND deleted_at IS NOT NULL", ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -463,7 +592,15 @@ func DeletePermanentlyBrendByID(c *gin.Context) {
 		})
 		return
 	}
-	defer rowBrend.Close()
+	defer func() {
+		if err := rowBrend.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	var image string
 
@@ -501,7 +638,15 @@ func DeletePermanentlyBrendByID(c *gin.Context) {
 		})
 		return
 	}
-	defer rowsMainImage.Close()
+	defer func() {
+		if err := rowsMainImage.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	var mainImages []models.MainImage
 
@@ -553,7 +698,15 @@ func DeletePermanentlyBrendByID(c *gin.Context) {
 		})
 		return
 	}
-	defer rowsImages.Close()
+	defer func() {
+		if err := rowsImages.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	var images []models.Images
 
@@ -597,11 +750,19 @@ func DeletePermanentlyBrendByID(c *gin.Context) {
 		})
 		return
 	}
-	defer resultBrends.Close()
+	defer func() {
+		if err := resultBrends.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
-		"message": "brend successfully deleted",
+		"message": "data successfully deleted",
 	})
 
 }
@@ -610,9 +771,14 @@ func GetAllBrendForHomePage() ([]BrendForHomePage, error) {
 
 	db, err := config.ConnDB()
 	if err != nil {
-		return []BrendForHomePage{}, nil
+		return []BrendForHomePage{}, err
 	}
-	defer db.Close()
+	defer func() ([]BrendForHomePage, error) {
+		if err := db.Close(); err != nil {
+			return []BrendForHomePage{}, err
+		}
+		return []BrendForHomePage{}, nil
+	}()
 
 	var brends []BrendForHomePage
 
@@ -621,7 +787,12 @@ func GetAllBrendForHomePage() ([]BrendForHomePage, error) {
 	if err != nil {
 		return []BrendForHomePage{}, err
 	}
-	defer rows.Close()
+	defer func() ([]BrendForHomePage, error) {
+		if err := rows.Close(); err != nil {
+			return []BrendForHomePage{}, err
+		}
+		return []BrendForHomePage{}, nil
+	}()
 
 	for rows.Next() {
 		var brend BrendForHomePage

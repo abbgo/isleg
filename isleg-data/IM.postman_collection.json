@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "d8e670eb-23cd-4425-8712-85499437bad8",
+		"_postman_id": "8a331eea-91b7-4c06-ab8d-a39f62c69622",
 		"name": "IM",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -17,20 +17,14 @@
 							"mode": "formdata",
 							"formdata": [
 								{
-									"key": "",
-									"value": "",
-									"type": "default",
-									"disabled": true
-								},
-								{
 									"key": "name_short",
-									"value": "fr",
+									"value": "tr",
 									"type": "default"
 								},
 								{
 									"key": "flag",
 									"type": "file",
-									"src": "/home/abb/Pictures/download (4).jpeg"
+									"src": "/home/abb/go/src/github.com/abbgo/isleg/isleg-data/Saydyn suratynyn razmeri/Kagyz kley/medium.jpg"
 								}
 							],
 							"options": {
@@ -69,18 +63,18 @@
 								},
 								{
 									"key": "name_short",
-									"value": "ru",
+									"value": "tr",
 									"type": "default"
 								},
 								{
 									"key": "flag",
 									"type": "file",
-									"src": "/home/abb/Pictures/profile.jpeg"
+									"src": "/home/abb/go/src/github.com/abbgo/isleg/isleg-data/Saydyn suratynyn razmeri/Kagyz kley/large.jpg"
 								}
 							]
 						},
 						"url": {
-							"raw": "localhost:2406/admin/language/aea98b93-7bdf-455b-9ad4-a259d69dc76e",
+							"raw": "localhost:2406/admin/language/198695b5-579a-4f80-ac10-8380e17e5d98",
 							"host": [
 								"localhost"
 							],
@@ -88,7 +82,7 @@
 							"path": [
 								"admin",
 								"language",
-								"aea98b93-7bdf-455b-9ad4-a259d69dc76e"
+								"198695b5-579a-4f80-ac10-8380e17e5d98"
 							]
 						}
 					},
@@ -119,7 +113,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "localhost:2406/admin/language/8723c1c7-aa6d-429f-b8af-ee9ace61f0d7",
+							"raw": "localhost:2406/admin/language/198695b5-579a-4f80-ac10-8380e17e5d98",
 							"host": [
 								"localhost"
 							],
@@ -127,7 +121,7 @@
 							"path": [
 								"admin",
 								"language",
-								"8723c1c7-aa6d-429f-b8af-ee9ace61f0d7"
+								"198695b5-579a-4f80-ac10-8380e17e5d98"
 							]
 						}
 					},
@@ -139,7 +133,7 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "localhost:2406/admin/language/6472642a-3589-4631-a218-94dd87729d4b",
+							"raw": "localhost:2406/admin/language/198695b5-579a-4f80-ac10-8380e17e5d98",
 							"host": [
 								"localhost"
 							],
@@ -147,7 +141,7 @@
 							"path": [
 								"admin",
 								"language",
-								"6472642a-3589-4631-a218-94dd87729d4b"
+								"198695b5-579a-4f80-ac10-8380e17e5d98"
 							]
 						}
 					},
@@ -179,7 +173,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "localhost:2406/admin/restore-language/aea98b93-7bdf-455b-9ad4-a259d69dc76e",
+							"raw": "localhost:2406/admin/restore-language/198695b5-579a-4f80-ac10-8380e17e5d98",
 							"host": [
 								"localhost"
 							],
@@ -187,7 +181,7 @@
 							"path": [
 								"admin",
 								"restore-language",
-								"aea98b93-7bdf-455b-9ad4-a259d69dc76e"
+								"198695b5-579a-4f80-ac10-8380e17e5d98"
 							]
 						}
 					},
@@ -223,12 +217,27 @@
 								},
 								{
 									"key": "parent_category_id",
-									"value": "02bd4413-8586-49ab-802e-16304e756a8p",
+									"value": "417a385e-6a74-44f3-a536-405eb8251978",
 									"type": "default"
 								},
 								{
 									"key": "is_home_category",
 									"value": "false",
+									"type": "default"
+								},
+								{
+									"key": "name_fr",
+									"value": "NAME_FR",
+									"type": "default"
+								},
+								{
+									"key": "name_tr",
+									"value": "name_tr",
+									"type": "default"
+								},
+								{
+									"key": "name_pl",
+									"value": "name_pl",
 									"type": "default"
 								}
 							]
@@ -258,7 +267,7 @@
 								{
 									"key": "image",
 									"type": "file",
-									"src": "/home/abb/Pictures/download (4).jpeg"
+									"src": []
 								},
 								{
 									"key": "name_tm",
@@ -272,18 +281,33 @@
 								},
 								{
 									"key": "parent_category_id",
-									"value": "",
+									"value": "7605172f-7a12-4781-a892-6e3b5cf11490",
 									"type": "default"
 								},
 								{
 									"key": "is_home_category",
 									"value": "false",
 									"type": "default"
+								},
+								{
+									"key": "name_fr",
+									"value": "name_fr",
+									"type": "default"
+								},
+								{
+									"key": "name_tr",
+									"value": "name_tr",
+									"type": "default"
+								},
+								{
+									"key": "name_pl",
+									"value": "name_pl",
+									"type": "default"
 								}
 							]
 						},
 						"url": {
-							"raw": "localhost:2406/admin/category/02bd4413-8586-49ab-802e-16304e756a8b",
+							"raw": "localhost:2406/admin/category/849a1c59-45fb-429b-8fe3-a6e34a6dafaa",
 							"host": [
 								"localhost"
 							],
@@ -291,7 +315,7 @@
 							"path": [
 								"admin",
 								"category",
-								"02bd4413-8586-49ab-802e-16304e756a8b"
+								"849a1c59-45fb-429b-8fe3-a6e34a6dafaa"
 							]
 						}
 					},
@@ -322,7 +346,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "localhost:2406/admin/category/4af3388b-2738-4ff6-b42e-927cb0ff897f",
+							"raw": "localhost:2406/admin/category/7f453dd0-7b2e-480d-a8be-fcfa23bd863e",
 							"host": [
 								"localhost"
 							],
@@ -330,7 +354,7 @@
 							"path": [
 								"admin",
 								"category",
-								"4af3388b-2738-4ff6-b42e-927cb0ff897f"
+								"7f453dd0-7b2e-480d-a8be-fcfa23bd863e"
 							]
 						}
 					},
@@ -342,7 +366,7 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "localhost:2406/admin/category/4af3388b-2738-4ff6-b42e-927cb0ff897f",
+							"raw": "localhost:2406/admin/category/29ed85bb-11eb-4458-bbf3-5a5644d167d6",
 							"host": [
 								"localhost"
 							],
@@ -350,7 +374,7 @@
 							"path": [
 								"admin",
 								"category",
-								"4af3388b-2738-4ff6-b42e-927cb0ff897f"
+								"29ed85bb-11eb-4458-bbf3-5a5644d167d6"
 							]
 						}
 					},
@@ -382,7 +406,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "localhost:2406/admin/restore-category/4af3388b-2738-4ff6-b42e-927cb0ff897f",
+							"raw": "localhost:2406/admin/restore-category/29ed85bb-11eb-4458-bbf3-5a5644d167d6",
 							"host": [
 								"localhost"
 							],
@@ -390,7 +414,7 @@
 							"path": [
 								"admin",
 								"restore-category",
-								"4af3388b-2738-4ff6-b42e-927cb0ff897f"
+								"29ed85bb-11eb-4458-bbf3-5a5644d167d6"
 							]
 						}
 					},
@@ -753,12 +777,12 @@
 								{
 									"key": "image",
 									"type": "file",
-									"src": "/home/abb/Pictures/download (1).jpeg"
+									"src": "/home/abb/go/src/github.com/abbgo/isleg/isleg-data/Saydyn suratynyn razmeri/Kagyz kley/4-3.jpg"
 								}
 							]
 						},
 						"url": {
-							"raw": "localhost:2406/admin/brend/c2f11fea-8057-4a7c-b290-c97d1d90ac59",
+							"raw": "localhost:2406/admin/brend/c4bcda34-7332-4ae5-8129-d7538d63fee4",
 							"host": [
 								"localhost"
 							],
@@ -766,7 +790,7 @@
 							"path": [
 								"admin",
 								"brend",
-								"c2f11fea-8057-4a7c-b290-c97d1d90ac59"
+								"c4bcda34-7332-4ae5-8129-d7538d63fee4"
 							]
 						}
 					},
@@ -778,7 +802,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "localhost:2406/admin/brend/6a31c50a-704f-4b0d-80ae-240ca3094cda",
+							"raw": "localhost:2406/admin/brend/c4bcda34-7332-4ae5-8129-d7538d63fee4",
 							"host": [
 								"localhost"
 							],
@@ -786,7 +810,7 @@
 							"path": [
 								"admin",
 								"brend",
-								"6a31c50a-704f-4b0d-80ae-240ca3094cda"
+								"c4bcda34-7332-4ae5-8129-d7538d63fee4"
 							]
 						}
 					},
@@ -817,7 +841,7 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "localhost:2406/admin/brend/6a31c50a-704f-4b0d-80ae-240ca3094cda",
+							"raw": "localhost:2406/admin/brend/c4bcda34-7332-4ae5-8129-d7538d63fee4",
 							"host": [
 								"localhost"
 							],
@@ -825,7 +849,7 @@
 							"path": [
 								"admin",
 								"brend",
-								"6a31c50a-704f-4b0d-80ae-240ca3094cda"
+								"c4bcda34-7332-4ae5-8129-d7538d63fee4"
 							]
 						}
 					},
@@ -837,7 +861,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "localhost:2406/admin/restore-brend/6a31c50a-704f-4b0d-80ae-240ca3094cda",
+							"raw": "localhost:2406/admin/restore-brend/c4bcda34-7332-4ae5-8129-d7538d63fee4",
 							"host": [
 								"localhost"
 							],
@@ -845,7 +869,7 @@
 							"path": [
 								"admin",
 								"restore-brend",
-								"6a31c50a-704f-4b0d-80ae-240ca3094cda"
+								"c4bcda34-7332-4ae5-8129-d7538d63fee4"
 							]
 						}
 					},
@@ -886,7 +910,7 @@
 							"formdata": [
 								{
 									"key": "brend_id",
-									"value": "46b13f0a-d584-4ad3-b270-437ecdc51449",
+									"value": "fdd259c2-794a-42b9-a3ad-9e91502af23e",
 									"type": "default"
 								},
 								{
@@ -936,12 +960,12 @@
 								},
 								{
 									"key": "category_id",
-									"value": "f745d171-68e6-42e2-b339-cb3c210cda55",
+									"value": "a4277afa-1c92-4f4e-809e-dfbb54ddbc9b",
 									"type": "default"
 								},
 								{
 									"key": "category_id",
-									"value": "d4cb1359-6c23-4194-8e3c-21ed8cec8373",
+									"value": "338906f1-dbe2-4ba7-84fc-fe7a4d7856ec",
 									"type": "default"
 								},
 								{
@@ -972,22 +996,52 @@
 								{
 									"key": "small",
 									"type": "file",
-									"src": "/home/abb/go/src/github.com/abbgo/isleg/isleg-data/Saydyn suratynyn razmeri/Kagyz kley/small.jpg"
+									"src": "/home/abb/go/src/github.com/abbgo/isleg/isleg-data/Saydyn suratynyn razmeri/Bic galam/small.jpg"
 								},
 								{
 									"key": "small",
 									"type": "file",
-									"src": "/home/abb/go/src/github.com/abbgo/isleg/isleg-data/Saydyn suratynyn razmeri/Kagyz kley/small.jpg"
+									"src": "/home/abb/go/src/github.com/abbgo/isleg/isleg-data/Saydyn suratynyn razmeri/Bic galam/small.jpg"
 								},
 								{
 									"key": "large",
 									"type": "file",
-									"src": "/home/abb/go/src/github.com/abbgo/isleg/isleg-data/Saydyn suratynyn razmeri/Kagyz kley/large.jpg"
+									"src": "/home/abb/go/src/github.com/abbgo/isleg/isleg-data/Saydyn suratynyn razmeri/Bic galam/large.jpg"
 								},
 								{
 									"key": "large",
 									"type": "file",
-									"src": "/home/abb/go/src/github.com/abbgo/isleg/isleg-data/Saydyn suratynyn razmeri/Kagyz kley/large.jpg"
+									"src": "/home/abb/go/src/github.com/abbgo/isleg/isleg-data/Saydyn suratynyn razmeri/Bic galam/large.jpg"
+								},
+								{
+									"key": "name_fr",
+									"value": "name_fr",
+									"type": "default"
+								},
+								{
+									"key": "name_tr",
+									"value": "name_tr",
+									"type": "default"
+								},
+								{
+									"key": "name_pl",
+									"value": "name_pl",
+									"type": "default"
+								},
+								{
+									"key": "description_fr",
+									"value": "description_fr",
+									"type": "default"
+								},
+								{
+									"key": "description_tr",
+									"value": "description_tr",
+									"type": "default"
+								},
+								{
+									"key": "description_pl",
+									"value": "description_pl",
+									"type": "default"
 								}
 							]
 						},
@@ -3138,7 +3192,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"full_name\":\"Allanur Bayramgeldiyew\",\n    \"phone_number\":\"+99362420377\",\n    \"password\":\"12345\",\n    \"email\":\"abb@gmail.com\"\n}",
+							"raw": "{\n    \"full_name\":\"Allanur Bayramgeldiyew\",\n    \"phone_number\":\"+99362420377\",\n    \"password\":\"12345\",\n    \"email\":\"abb@gmail.com\",\n    \"birthday\":null\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -3167,7 +3221,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"phone_number\":\"+99361235698\",\n    \"password\":\"12345\"\n}",
+							"raw": "{\n    \"phone_number\":\"+99363747155\",\n    \"password\":\"123456\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -3210,6 +3264,70 @@
 								"api",
 								"tem",
 								"refresh"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetCustomerInformation",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NTYiLCJleHAiOjE2NjU5NTEyNjV9.WKKj35rXo3U_xdyudD8WcIwXN3KKrHngEIU2x-owovQ",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "localhost:2406/api/tm/my-information/89a6ac71-4495-4218-b9f9-3f2a3eab085b",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"api",
+								"tm",
+								"my-information",
+								"89a6ac71-4495-4218-b9f9-3f2a3eab085b"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UpdateCustomerPassword",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiJhYmIyNDA2OTgiLCJleHAiOjE2NjU3MzA1MzV9.f6NXBetS0sp1shPSZmggFniHMqKbAlK9zeLr3daHMrI",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "password",
+									"value": "123456",
+									"type": "default"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:2406/api/tm/customer-password/89a6ac71-4495-4218-b9f9-3f2a3eab085b",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"api",
+								"tm",
+								"customer-password",
+								"89a6ac71-4495-4218-b9f9-3f2a3eab085b"
 							]
 						}
 					},
@@ -3276,7 +3394,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NSIsImV4cCI6MTY2MzU2MjEzOH0.793xVgCEkg--G72auyGWIaHM7lX7hrIGt9jgN5X23Uw",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NSIsImV4cCI6MTY2NTUyMjkyOX0.S56L4y9NZmnAphuC4huuD4ZgkeKGWGpfKx7ztnXm_m0",
 								"type": "default"
 							}
 						],
@@ -3290,12 +3408,12 @@
 								},
 								{
 									"key": "product_ids",
-									"value": "bb6c3bdb-79e2-44b3-98b1-c1cee0976777",
+									"value": "0d4a6c3c-cc5d-457b-ac9a-ce60eacb94de",
 									"type": "default"
 								},
 								{
 									"key": "product_ids",
-									"value": "e3c33ead-3c30-40f1-9d28-7bb8b71b767f",
+									"value": "b2b165a3-2261-4d67-8160-0e239ecd99b5",
 									"type": "default"
 								}
 							]
@@ -3608,7 +3726,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"customer_id\":\"7e872c52-0d23-4086-8c45-43000b57332e\",\n    \"products\":[\n        {\n            \"product_id\":\"d4156225-082e-4f0f-9b2c-85268114433a\",\n            \"quantity_of_product\":10\n        },\n         {\n            \"product_id\":\"8df705a5-2351-4aca-b03e-3357a23840b4\",\n            \"quantity_of_product\":23\n        },\n         {\n            \"product_id\":\"b2b165a3-2261-4d67-8160-0e239ecd99b5\",\n            \"quantity_of_product\":3\n        },\n         {\n            \"product_id\":\"a2bb8745-1f3a-4de9-ad66-11b0bb3bb754\",\n            \"quantity_of_product\":30\n        }\n    ]\n}",
+							"raw": "{\n    \"customer_id\":\"7e872c52-0d23-4086-8c45-43000b57332e\",\n    \"products\":[\n        {\n            \"product_id\":\"d4156225-082e-4f0f-9b2c-85268114433a\",\n            \"quantity_of_product\":10\n        },\n         {\n            \"product_id\":\"8df705a5-2351-4aca-b03e-3357a23840b4\",\n            \"quantity_of_product\":23\n        },\n         {\n            \"product_id\":\"b2b165a3-2261-4d67-8160-0e239ecd99b5\",\n            \"quantity_of_product\":3\n        }\n    ]\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -3664,12 +3782,12 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NSIsImV4cCI6MTY2MzE2NDczMX0.E6R2gHpDhNmORsH0qdwTAviX92SH6lQoZXHYc7GAv5I",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NSIsImV4cCI6MTY2NTY0NDEyOX0.CHWDCM7MFZxk1QlLyatA803fioFZqFyTdqQFYyfm24U",
 								"type": "default"
 							}
 						],
 						"url": {
-							"raw": "localhost:2406/api/tm/remove-cart/7e872c52-0d23-4086-8c45-43000b57332e/3ca5ade3-d2ce-40ba-9be6-601105b5205a",
+							"raw": "localhost:2406/api/tm/remove-cart?customer_id=7e872c52-0d23-4086-8c45-43000b57332e&product_id=",
 							"host": [
 								"localhost"
 							],
@@ -3677,9 +3795,17 @@
 							"path": [
 								"api",
 								"tm",
-								"remove-cart",
-								"7e872c52-0d23-4086-8c45-43000b57332e",
-								"3ca5ade3-d2ce-40ba-9be6-601105b5205a"
+								"remove-cart"
+							],
+							"query": [
+								{
+									"key": "customer_id",
+									"value": "7e872c52-0d23-4086-8c45-43000b57332e"
+								},
+								{
+									"key": "product_id",
+									"value": ""
+								}
 							]
 						}
 					},
@@ -4594,7 +4720,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NSIsImV4cCI6MTY2Mzg0MTczN30.4vbGmSILYsYqwHaeYi5_Fub2HVf-mn9fwhTTMQ6IFCA",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NSIsImV4cCI6MTY2NTY0OTI4MH0.IvK_r2SD859PGlLTDXY7lFrmiulBz9HLU8xE5cQq1AA",
 								"type": "default"
 							}
 						],
@@ -4609,6 +4735,42 @@
 								"tm",
 								"addresses",
 								"89a6ac71-4495-4218-b9f9-3f2a3eab085b"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UpdateCustomerAddressStatus",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NSIsImV4cCI6MTY2NTY0OTI4MH0.IvK_r2SD859PGlLTDXY7lFrmiulBz9HLU8xE5cQq1AA",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "localhost:2406/api/tm/address?customer_id=89a6ac71-4495-4218-b9f9-3f2a3eab085b&address_id=3c4e1c4f-fd51-4dd5-befe-7051b79312a6",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"api",
+								"tm",
+								"address"
+							],
+							"query": [
+								{
+									"key": "customer_id",
+									"value": "89a6ac71-4495-4218-b9f9-3f2a3eab085b"
+								},
+								{
+									"key": "address_id",
+									"value": "3c4e1c4f-fd51-4dd5-befe-7051b79312a6"
+								}
 							]
 						}
 					},

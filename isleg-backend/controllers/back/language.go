@@ -6,22 +6,15 @@ import (
 	"github/abbgo/isleg/isleg-backend/pkg"
 	"net/http"
 	"os"
-	"path/filepath"
 	"strings"
-	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
-	"github.com/lib/pq"
 )
 
-type LanguageForHeader struct {
-	NameShort string `json:"name_short"`
-	Flag      string `json:"flag"`
-}
-
+// create new language
 func CreateLanguage(c *gin.Context) {
 
+	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -30,12 +23,20 @@ func CreateLanguage(c *gin.Context) {
 		})
 		return
 	}
-	defer db.Close()
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
-	// GET DATA FROM REQUEST
+	// get the short name of the language from request
 	nameShort := c.PostForm("name_short")
 
-	// VALIDATE DATA
+	// verify language short name
 	if nameShort == "" {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -44,7 +45,7 @@ func CreateLanguage(c *gin.Context) {
 		return
 	}
 
-	// FILE UPLOAD
+	// upload image of language
 	newFileName, err := pkg.FileUpload("flag", "language", c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -54,8 +55,8 @@ func CreateLanguage(c *gin.Context) {
 		return
 	}
 
-	// CREATE LANGUAGE
-	resultLang, err := db.Query("INSERT INTO languages (name_short,flag) VALUES ($1,$2)", strings.ToLower(nameShort), "uploads/language/"+newFileName)
+	// add language to database , used after_insert_language trigger
+	resultLang, err := db.Query("INSERT INTO languages (name_short,flag) VALUES ($1,$2)", strings.ToLower(nameShort), newFileName)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -63,362 +64,26 @@ func CreateLanguage(c *gin.Context) {
 		})
 		return
 	}
-	defer resultLang.Close()
-
-	// GET ID OF ADDED LANGUAGE
-	lastLandID, err := db.Query("SELECT id FROM languages WHERE deleted_at IS NULL ORDER BY created_at DESC LIMIT 1")
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-	defer lastLandID.Close()
-
-	var langID string
-	for lastLandID.Next() {
-		if err := lastLandID.Scan(&langID); err != nil {
+	defer func() {
+		if err := resultLang.Close(); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
 			})
 			return
 		}
-	}
-
-	resultPaymentType, err := db.Query("INSERT INTO payment_types (lang_id) VALUES ($1)", langID)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-	defer resultPaymentType.Close()
-
-	rowsOrderDateID, err := db.Query("SELECT id FROM order_dates WHERE deleted_at IS NULL")
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-	defer rowsOrderDateID.Close()
-
-	var orderDateIDs []string
-
-	for rowsOrderDateID.Next() {
-		var orderDateID string
-
-		if err := rowsOrderDateID.Scan(&orderDateID); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-
-		orderDateIDs = append(orderDateIDs, orderDateID)
-	}
-
-	resultTrOrderDates, err := db.Query("INSERT INTO translation_order_dates (lang_id,order_date_id) VALUES ($1,unnest($2::uuid[]))", langID, pq.Array(orderDateIDs))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-	defer resultTrOrderDates.Close()
-
-	resultTrMyOrderPage, err := db.Query("INSERT INTO translation_my_order_page (lang_id) VALUES ($1)", langID)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-	defer resultTrMyOrderPage.Close()
-
-	resultTrOrderPage, err := db.Query("INSERT INTO translation_order_page (lang_id) VALUES ($1)", langID)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-	defer resultTrOrderPage.Close()
-
-	resultTrBasketPage, err := db.Query("INSERT INTO translation_basket_page (lang_id) VALUES ($1)", langID)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-	defer resultTrBasketPage.Close()
-
-	// CREATE TRANSLATION HEADER
-	resultTrHeader, err := db.Query("INSERT INTO translation_header (lang_id) VALUES ($1)", langID)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-	defer resultTrHeader.Close()
-
-	// CREATE TRANSLATION FOOTER
-	resultTrFooter, err := db.Query("INSERT INTO translation_footer (lang_id) VALUES ($1)", langID)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-	defer resultTrFooter.Close()
-
-	// CREATE TRANSLATION secure
-	resultTRSecure, err := db.Query("INSERT INTO translation_secure (lang_id) VALUES ($1)", langID)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-	defer resultTRSecure.Close()
-
-	// CREATE TRANSLATION payment
-	resultTRPayment, err := db.Query("INSERT INTO translation_payment (lang_id) VALUES ($1)", langID)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-	defer resultTRPayment.Close()
-
-	// CREATE TRANSLATION about
-	resultTRABout, err := db.Query("INSERT INTO translation_about (lang_id) VALUES ($1)", langID)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-	defer resultTRABout.Close()
-
-	// CREATE company address
-	resultComAddress, err := db.Query("INSERT INTO company_address (lang_id) VALUES ($1)", langID)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-	defer resultComAddress.Close()
-
-	// CREATE translation_contact
-	resultTRContact, err := db.Query("INSERT INTO translation_contact (lang_id) VALUES ($1)", langID)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-	defer resultTRContact.Close()
-
-	// CREATE translation_my_information_page
-	resultTRMyInfPage, err := db.Query("INSERT INTO translation_my_information_page (lang_id) VALUES ($1)", langID)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-	defer resultTRMyInfPage.Close()
-
-	// CREATE translation_update_password_page
-	resultUpdMyPass, err := db.Query("INSERT INTO translation_update_password_page (lang_id) VALUES ($1)", langID)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-	defer resultUpdMyPass.Close()
-
-	// GET ID OF ALL CATEGORIES
-	var categoryIDs []string
-	categoryRows, err := db.Query("SELECT id FROM categories ORDER BY created_at ASC")
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-	defer categoryRows.Close()
-
-	for categoryRows.Next() {
-		var categoryID string
-		if err := categoryRows.Scan(&categoryID); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-		categoryIDs = append(categoryIDs, categoryID)
-	}
-
-	// CREATE TRANSLATION CATEGORY
-	for _, v := range categoryIDs {
-		resultTRCategory, err := db.Query("INSERT INTO translation_category (lang_id,category_id) VALUES ($1,$2)", langID, v)
-		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-		defer resultTRCategory.Close()
-	}
-
-	// GET ID OF ALL PRODUCTS
-	var productIDs []string
-	productRows, err := db.Query("SELECT id FROM products ORDER BY created_at ASC")
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-	defer productRows.Close()
-
-	for productRows.Next() {
-		var productID string
-		if err := productRows.Scan(&productID); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-		productIDs = append(productIDs, productID)
-	}
-
-	// CREATE TRANSLATION product
-	for _, v := range productIDs {
-		resultTRProduct, err := db.Query("INSERT INTO translation_product (lang_id,product_id) VALUES ($1,$2)", langID, v)
-		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-		defer resultTRProduct.Close()
-	}
-
-	// GET ID OF ALL AFISAS
-	var afisaIDs []string
-	afisaRows, err := db.Query("SELECT id FROM afisa ORDER BY created_at ASC")
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-	defer afisaRows.Close()
-
-	for afisaRows.Next() {
-		var afisaID string
-		if err := afisaRows.Scan(&afisaID); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-		afisaIDs = append(afisaIDs, afisaID)
-	}
-
-	// CREATE TRANSLATION afisa
-	for _, v := range afisaIDs {
-		resultTRAfisa, err := db.Query("INSERT INTO translation_afisa (lang_id,afisa_id) VALUES ($1,$2)", langID, v)
-		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-		defer resultTRAfisa.Close()
-	}
-
-	// GET ID  OF ALL DISTRICTS
-	var districtIDs []string
-	districtRows, err := db.Query("SELECT id FROM district ORDER BY created_at ASC")
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-	defer districtRows.Close()
-
-	for districtRows.Next() {
-		var districtID string
-		if err := districtRows.Scan(&districtID); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-		districtIDs = append(districtIDs, districtID)
-	}
-
-	// CREATE TRANSLATION district
-	for _, v := range districtIDs {
-		resultTRDistrict, err := db.Query("INSERT INTO translation_district (lang_id,district_id) VALUES ($1,$2)", langID, v)
-		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-		defer resultTRDistrict.Close()
-	}
+	}()
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
-		"message": "language successfully added",
+		"message": "Language added successfully",
 	})
 
 }
 
 func UpdateLanguageByID(c *gin.Context) {
 
+	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -427,12 +92,25 @@ func UpdateLanguageByID(c *gin.Context) {
 		})
 		return
 	}
-	defer db.Close()
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
+	// get language id from paramter
 	langID := c.Param("id")
+
+	// get the short name of the language from request
 	nameShort := c.PostForm("name_short")
+
 	var fileName string
 
+	// Check if there is a language, id equal to langID
 	rowFlag, err := db.Query("SELECT flag FROM languages WHERE id = $1 AND deleted_at IS NULL", langID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -441,7 +119,15 @@ func UpdateLanguageByID(c *gin.Context) {
 		})
 		return
 	}
-	defer rowFlag.Close()
+	defer func() {
+		if err := rowFlag.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	var flag string
 
@@ -463,6 +149,7 @@ func UpdateLanguageByID(c *gin.Context) {
 		return
 	}
 
+	// verify language short name
 	if nameShort == "" {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -471,37 +158,8 @@ func UpdateLanguageByID(c *gin.Context) {
 		return
 	}
 
-	file, err := c.FormFile("flag")
-	if err != nil {
-		fileName = flag
-	} else {
-		extensionFile := filepath.Ext(file.Filename)
-
-		if extensionFile != ".jpg" && extensionFile != ".jpeg" && extensionFile != ".png" && extensionFile != ".gif" {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": "the file must be an image",
-			})
-			return
-		}
-
-		newFileName := uuid.New().String() + extensionFile
-		c.SaveUploadedFile(file, "./uploads/language/"+newFileName)
-
-		if err := os.Remove("./" + flag); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-
-		fileName = "uploads/language/" + newFileName
-	}
-
-	currentTime := time.Now()
-
-	resultLang, err := db.Query("UPDATE languages SET name_short = $1 , flag = $2 , updated_at = $4 WHERE id = $3", nameShort, fileName, langID, currentTime)
+	// upload image of language
+	fileName, err = pkg.FileUploadForUpdate("flag", "language", flag, c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -509,7 +167,25 @@ func UpdateLanguageByID(c *gin.Context) {
 		})
 		return
 	}
-	defer resultLang.Close()
+
+	// update language in database
+	resultLang, err := db.Query("UPDATE languages SET name_short = $1 , flag = $2  WHERE id = $3", nameShort, fileName, langID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer func() {
+		if err := resultLang.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
@@ -520,6 +196,7 @@ func UpdateLanguageByID(c *gin.Context) {
 
 func GetLanguageByID(c *gin.Context) {
 
+	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -528,11 +205,21 @@ func GetLanguageByID(c *gin.Context) {
 		})
 		return
 	}
-	defer db.Close()
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
+	// get id of language from parameter
 	langID := c.Param("id")
 
-	rowLanguage, err := db.Query("SELECT name_short,flag FROM languages WHERE id = $1 AND deleted_at IS NULL", langID)
+	// get  name_short and flag of language from database
+	rowLanguage, err := db.Query("SELECT id,name_short,flag FROM languages WHERE id = $1 AND deleted_at IS NULL", langID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -540,12 +227,20 @@ func GetLanguageByID(c *gin.Context) {
 		})
 		return
 	}
-	defer rowLanguage.Close()
+	defer func() {
+		if err := rowLanguage.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
-	var lang LanguageForHeader
+	var lang models.Language
 
 	for rowLanguage.Next() {
-		if err := rowLanguage.Scan(&lang.NameShort, &lang.Flag); err != nil {
+		if err := rowLanguage.Scan(&lang.ID, &lang.NameShort, &lang.Flag); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
@@ -554,7 +249,7 @@ func GetLanguageByID(c *gin.Context) {
 		}
 	}
 
-	if lang.NameShort == "" || lang.Flag == "" {
+	if lang.ID == "" {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
 			"message": "language not found",
@@ -570,6 +265,7 @@ func GetLanguageByID(c *gin.Context) {
 }
 
 func GetLanguages(c *gin.Context) {
+
 	languages, err := GetAllLanguageForHeader()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -588,6 +284,7 @@ func GetLanguages(c *gin.Context) {
 
 func DeleteLanguageByID(c *gin.Context) {
 
+	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -596,11 +293,21 @@ func DeleteLanguageByID(c *gin.Context) {
 		})
 		return
 	}
-	defer db.Close()
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
+	// get id of language from request parameter
 	langID := c.Param("id")
 
-	rowFlag, err := db.Query("SELECT flag FROM languages WHERE id = $1 AND deleted_at IS NULL", langID)
+	// Check if there is a language, id equal to langID
+	rowFlag, err := db.Query("SELECT id FROM languages WHERE id = $1 AND deleted_at IS NULL", langID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -608,12 +315,20 @@ func DeleteLanguageByID(c *gin.Context) {
 		})
 		return
 	}
-	defer rowFlag.Close()
+	defer func() {
+		if err := rowFlag.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
-	var flag string
+	var id string
 
 	for rowFlag.Next() {
-		if err := rowFlag.Scan(&flag); err != nil {
+		if err := rowFlag.Scan(&id); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
@@ -622,7 +337,7 @@ func DeleteLanguageByID(c *gin.Context) {
 		}
 	}
 
-	if flag == "" {
+	if id == "" {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
 			"message": "language not found",
@@ -630,9 +345,8 @@ func DeleteLanguageByID(c *gin.Context) {
 		return
 	}
 
-	currentTime := time.Now()
-
-	resutlTRLand, err := db.Query("UPDATE languages SET deleted_at = $1 WHERE id = $2", currentTime, langID)
+	// set current time to deleted_at row of language, used delete_language procedure
+	resultPROC, err := db.Query("CALL delete_language($1)", langID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -640,187 +354,15 @@ func DeleteLanguageByID(c *gin.Context) {
 		})
 		return
 	}
-	defer resutlTRLand.Close()
-
-	resultPaymentType, err := db.Query("UPDATE payment_types SET deleted_at = $1 WHERE lang_id = $2", currentTime, langID)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-	defer resultPaymentType.Close()
-
-	resultTrOrderDates, err := db.Query("UPDATE translation_order_dates SET deleted_at = $1 WHERE lang_id = $2", currentTime, langID)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-	defer resultTrOrderDates.Close()
-
-	resultTrMyOrderPage, err := db.Query("UPDATE translation_my_order_page SET deleted_at = $1 WHERE lang_id = $2", currentTime, langID)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-	defer resultTrMyOrderPage.Close()
-
-	resultTrOrderPage, err := db.Query("UPDATE translation_order_page SET deleted_at = $1 WHERE lang_id = $2", currentTime, langID)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-	defer resultTrOrderPage.Close()
-
-	resultTrBasketPage, err := db.Query("UPDATE translation_basket_page SET deleted_at = $1 WHERE lang_id = $2", currentTime, langID)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-	defer resultTrBasketPage.Close()
-
-	resultTRHeader, err := db.Query("UPDATE translation_header SET deleted_at = $1 WHERE lang_id = $2", currentTime, langID)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-	defer resultTRHeader.Close()
-
-	resultTRFooter, err := db.Query("UPDATE translation_footer SET deleted_at = $1 WHERE lang_id = $2", currentTime, langID)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-	defer resultTRFooter.Close()
-
-	resulttTrSECURE, err := db.Query("UPDATE translation_secure SET deleted_at = $1 WHERE lang_id = $2", currentTime, langID)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-	defer resulttTrSECURE.Close()
-
-	resultTRPayment, err := db.Query("UPDATE translation_payment SET deleted_at = $1 WHERE lang_id = $2", currentTime, langID)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-	defer resultTRPayment.Close()
-
-	resultTRABout, err := db.Query("UPDATE translation_about SET deleted_at = $1 WHERE lang_id = $2", currentTime, langID)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-	defer resultTRABout.Close()
-
-	resultComAdddres, err := db.Query("UPDATE company_address SET deleted_at = $1 WHERE lang_id = $2", currentTime, langID)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-	defer resultComAdddres.Close()
-
-	resultTRContact, err := db.Query("UPDATE translation_contact SET deleted_at = $1 WHERE lang_id = $2", currentTime, langID)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-	defer resultTRContact.Close()
-
-	resultMyInfPage, err := db.Query("UPDATE translation_my_information_page SET deleted_at = $1 WHERE lang_id = $2", currentTime, langID)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-	defer resultMyInfPage.Close()
-
-	resultTraUpdatePassPage, err := db.Query("UPDATE translation_update_password_page SET deleted_at = $1 WHERE lang_id = $2", currentTime, langID)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-	defer resultTraUpdatePassPage.Close()
-
-	resultTRCategory, err := db.Query("UPDATE translation_category SET deleted_at = $1 WHERE lang_id = $2", currentTime, langID)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-	defer resultTRCategory.Close()
-
-	resultTRProduct, err := db.Query("UPDATE translation_product SET deleted_at = $1 WHERE lang_id = $2", currentTime, langID)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-	defer resultTRProduct.Close()
-
-	resultTRAfisa, err := db.Query("UPDATE translation_afisa SET deleted_at = $1 WHERE lang_id = $2", currentTime, langID)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-	defer resultTRAfisa.Close()
-
-	resultTrDistrict, err := db.Query("UPDATE translation_district SET deleted_at = $1 WHERE lang_id = $2", currentTime, langID)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-	defer resultTrDistrict.Close()
+	defer func() {
+		if err := resultPROC.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
@@ -831,6 +373,7 @@ func DeleteLanguageByID(c *gin.Context) {
 
 func RestoreLanguageByID(c *gin.Context) {
 
+	//initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -839,11 +382,21 @@ func RestoreLanguageByID(c *gin.Context) {
 		})
 		return
 	}
-	defer db.Close()
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
+	// get id of language from request parameter
 	langID := c.Param("id")
 
-	rowFlag, err := db.Query("SELECT flag FROM languages WHERE id = $1 AND deleted_at IS NOT NULL", langID)
+	// Check if there is a language, id equal to langID
+	rowFlag, err := db.Query("SELECT id FROM languages WHERE id = $1 AND deleted_at IS NOT NULL", langID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -851,12 +404,20 @@ func RestoreLanguageByID(c *gin.Context) {
 		})
 		return
 	}
-	defer rowFlag.Close()
+	defer func() {
+		if err := rowFlag.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
-	var flag string
+	var id string
 
 	for rowFlag.Next() {
-		if err := rowFlag.Scan(&flag); err != nil {
+		if err := rowFlag.Scan(&id); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
@@ -865,7 +426,7 @@ func RestoreLanguageByID(c *gin.Context) {
 		}
 	}
 
-	if flag == "" {
+	if id == "" {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
 			"message": "language not found",
@@ -873,7 +434,8 @@ func RestoreLanguageByID(c *gin.Context) {
 		return
 	}
 
-	resultLang, err := db.Query("UPDATE languages SET deleted_at = NULL WHERE id = $1", langID)
+	// set null to deleted_at row of language, used restore_language procedure
+	resultPROC, err := db.Query("CALL restore_language($1)", langID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -881,187 +443,15 @@ func RestoreLanguageByID(c *gin.Context) {
 		})
 		return
 	}
-	defer resultLang.Close()
-
-	resultPaymentType, err := db.Query("UPDATE payment_types SET deleted_at = NULL WHERE lang_id = $1", langID)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-	defer resultPaymentType.Close()
-
-	resultOrderDates, err := db.Query("UPDATE translation_order_dates SET deleted_at = NULL WHERE lang_id = $1", langID)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-	defer resultOrderDates.Close()
-
-	resultTrMyOrderPage, err := db.Query("UPDATE translation_my_order_page SET deleted_at = NULL WHERE lang_id = $1", langID)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-	defer resultTrMyOrderPage.Close()
-
-	resultTrBasketPage, err := db.Query("UPDATE translation_basket_page SET deleted_at = NULL WHERE lang_id = $1", langID)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-	defer resultTrBasketPage.Close()
-
-	resultTrOrderPage, err := db.Query("UPDATE translation_order_page SET deleted_at = NULL WHERE lang_id = $1", langID)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-	defer resultTrOrderPage.Close()
-
-	resultTRHeader, err := db.Query("UPDATE translation_header SET deleted_at = NULL WHERE lang_id = $1", langID)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-	defer resultTRHeader.Close()
-
-	resultTRFooter, err := db.Query("UPDATE translation_footer SET deleted_at = NULL WHERE lang_id = $1", langID)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-	defer resultTRFooter.Close()
-
-	resultTRSecure, err := db.Query("UPDATE translation_secure SET deleted_at = NULL WHERE lang_id = $1", langID)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-	defer resultTRSecure.Close()
-
-	resultTrPayment, err := db.Query("UPDATE translation_payment SET deleted_at = NULL WHERE lang_id = $1", langID)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-	defer resultTrPayment.Close()
-
-	resultTRABut, err := db.Query("UPDATE translation_about SET deleted_at = NULL WHERE lang_id = $1", langID)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-	defer resultTRABut.Close()
-
-	resultComAddres, err := db.Query("UPDATE company_address SET deleted_at = NULL WHERE lang_id = $1", langID)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-	defer resultComAddres.Close()
-
-	resultTRContact, err := db.Query("UPDATE translation_contact SET deleted_at = NULL WHERE lang_id = $1", langID)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-	defer resultTRContact.Close()
-
-	resultMyInfPage, err := db.Query("UPDATE translation_my_information_page SET deleted_at = NULL WHERE lang_id = $1", langID)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-	defer resultMyInfPage.Close()
-
-	resultUpPassPage, err := db.Query("UPDATE translation_update_password_page SET deleted_at = NULL WHERE lang_id = $1", langID)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-	defer resultUpPassPage.Close()
-
-	resultTrCategory, err := db.Query("UPDATE translation_category SET deleted_at = NULL WHERE lang_id = $1", langID)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-	defer resultTrCategory.Close()
-
-	resultTRProduct, err := db.Query("UPDATE translation_product SET deleted_at = NULL WHERE lang_id = $1", langID)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-	defer resultTRProduct.Close()
-
-	resultTRAfisa, err := db.Query("UPDATE translation_afisa SET deleted_at = NULL WHERE lang_id = $1", langID)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-	defer resultTRAfisa.Close()
-
-	resultTrDistrcit, err := db.Query("UPDATE translation_district SET deleted_at = NULL WHERE lang_id = $1", langID)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-	defer resultTrDistrcit.Close()
+	defer func() {
+		if err := resultPROC.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
@@ -1072,6 +462,7 @@ func RestoreLanguageByID(c *gin.Context) {
 
 func DeletePermanentlyLanguageByID(c *gin.Context) {
 
+	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -1080,10 +471,20 @@ func DeletePermanentlyLanguageByID(c *gin.Context) {
 		})
 		return
 	}
-	defer db.Close()
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
+	// get id of language from request parameter
 	langID := c.Param("id")
 
+	// Check if there is a language, id equal to langID and get image of language from database
 	rowFlag, err := db.Query("SELECT flag FROM languages WHERE id = $1 AND deleted_at IS NOT NULL", langID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -1092,7 +493,15 @@ func DeletePermanentlyLanguageByID(c *gin.Context) {
 		})
 		return
 	}
-	defer rowFlag.Close()
+	defer func() {
+		if err := rowFlag.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	var flag string
 
@@ -1114,6 +523,7 @@ func DeletePermanentlyLanguageByID(c *gin.Context) {
 		return
 	}
 
+	// remove image of language
 	if err := os.Remove("./" + flag); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -1130,7 +540,15 @@ func DeletePermanentlyLanguageByID(c *gin.Context) {
 		})
 		return
 	}
-	defer resultLang.Close()
+	defer func() {
+		if err := resultLang.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
@@ -1139,27 +557,38 @@ func DeletePermanentlyLanguageByID(c *gin.Context) {
 
 }
 
-func GetAllLanguageForHeader() ([]LanguageForHeader, error) {
+func GetAllLanguageForHeader() ([]models.Language, error) {
 
+	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
-		return []LanguageForHeader{}, nil
+		return nil, nil
 	}
-	defer db.Close()
+	defer func() ([]models.Language, error) {
+		if err := db.Close(); err != nil {
+			return nil, err
+		}
+		return nil, err
+	}()
 
-	var ls []LanguageForHeader
+	var ls []models.Language
 
-	// GET Language For Header
+	// get name_short,flag of all languages from database
 	rows, err := db.Query("SELECT name_short,flag FROM languages WHERE deleted_at IS NULL")
 	if err != nil {
-		return []LanguageForHeader{}, err
+		return nil, err
 	}
-	defer rows.Close()
+	defer func() ([]models.Language, error) {
+		if err := rows.Close(); err != nil {
+			return nil, err
+		}
+		return nil, err
+	}()
 
 	for rows.Next() {
-		var l LanguageForHeader
+		var l models.Language
 		if err := rows.Scan(&l.NameShort, &l.Flag); err != nil {
-			return []LanguageForHeader{}, err
+			return nil, err
 		}
 		ls = append(ls, l)
 	}
@@ -1172,15 +601,25 @@ func GetAllLanguageWithIDAndNameShort() ([]models.Language, error) {
 
 	db, err := config.ConnDB()
 	if err != nil {
-		return []models.Language{}, nil
+		return nil, err
 	}
-	defer db.Close()
+	defer func() ([]models.Language, error) {
+		if err := db.Close(); err != nil {
+			return nil, err
+		}
+		return nil, err
+	}()
 
 	languageRows, err := db.Query("SELECT id,name_short FROM languages WHERE deleted_at IS NULL ORDER BY created_at ASC")
 	if err != nil {
 		return []models.Language{}, err
 	}
-	defer languageRows.Close()
+	defer func() ([]models.Language, error) {
+		if err := languageRows.Close(); err != nil {
+			return nil, err
+		}
+		return nil, err
+	}()
 
 	var languages []models.Language
 
@@ -1202,7 +641,12 @@ func GetLangID(langShortName string) (string, error) {
 	if err != nil {
 		return "", nil
 	}
-	defer db.Close()
+	defer func() (string, error) {
+		if err := db.Close(); err != nil {
+			return "", err
+		}
+		return "", nil
+	}()
 
 	var langID string
 
@@ -1210,7 +654,12 @@ func GetLangID(langShortName string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	defer row.Close()
+	defer func() (string, error) {
+		if err := row.Close(); err != nil {
+			return "", err
+		}
+		return "", nil
+	}()
 
 	for row.Next() {
 		if err := row.Scan(&langID); err != nil {

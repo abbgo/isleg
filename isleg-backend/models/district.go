@@ -1,20 +1,19 @@
 package models
 
-import "github.com/google/uuid"
-
 type District struct {
-	ID        uuid.UUID `json:"id"`
-	Price     float64   `json:"price"`
-	CreatedAt string    `json:"-"`
-	UpdatedAt string    `json:"-"`
-	DeletedAt string    `json:"-"`
+	ID                  string                `json:"id,omitempty"`
+	Price               float64               `json:"price,omitempty"`
+	CreatedAt           string                `json:"-"`
+	UpdatedAt           string                `json:"-"`
+	DeletedAt           string                `json:"-"`
+	TranslationDistrict []TranslationDistrict `json:"translation_district,omitempty"` // one to many
 }
 
 type TranslationDistrict struct {
-	ID         uuid.UUID `json:"id"`
-	LangID     uuid.UUID `json:"lang_id"`
-	DistrictID uuid.UUID `json:"district_id"`
-	CreatedAt  string    `json:"-"`
-	UpdatedAt  string    `json:"-"`
-	DeletedAt  string    `json:"-"`
+	ID         string `json:"id,omitempty"`
+	LangID     string `json:"lang_id,omitempty"`
+	DistrictID string `json:"district_id,omitempty"`
+	CreatedAt  string `json:"-"`
+	UpdatedAt  string `json:"-"`
+	DeletedAt  string `json:"-"`
 }

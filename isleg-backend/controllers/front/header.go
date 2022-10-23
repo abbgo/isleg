@@ -2,16 +2,17 @@ package controllers
 
 import (
 	backController "github/abbgo/isleg/isleg-backend/controllers/back"
+	"github/abbgo/isleg/isleg-backend/models"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
 
 type HeaderData struct {
-	LogoFavicon       backController.LogoFavicon                `json:"logo_favicon"`
-	TranslationHeader backController.TranslationHeaderForHeader `json:"translation_header"`
-	Languages         []backController.LanguageForHeader        `json:"languages"`
-	Categories        []backController.ResultCategory           `json:"categories"`
+	LogoFavicon       models.CompanySetting           `json:"logo_favicon"`
+	TranslationHeader models.TranslationHeader        `json:"translation_header"`
+	Languages         []models.Language               `json:"languages"`
+	Categories        []backController.ResultCategory `json:"categories"`
 }
 
 func GetHeaderData(c *gin.Context) {
