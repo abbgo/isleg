@@ -16,20 +16,6 @@ import (
 )
 
 // struct used in function GetProductByID
-type OneProduct struct {
-	ID           string                      `json:"id"`
-	BrendID      string                      `json:"brend_id"`
-	Price        float64                     `json:"price"`
-	OldPrice     float64                     `json:"old_price"`
-	Amount       uint                        `json:"amount"`
-	ProductCode  string                      `json:"product_code"`
-	MainImage    models.MainImage            `json:"main_image"`
-	Images       []models.Images             `json:"images"`
-	Categories   []string                    `json:"categories"`
-	Translations []models.TranslationProduct `json:"translations"`
-	LimitAmount  uint                        `json:"limit_amount"`
-	IsNew        bool                        `json:"is_new"`
-}
 
 func CreateProduct(c *gin.Context) {
 
@@ -589,6 +575,7 @@ func UpdateProductByID(c *gin.Context) {
 
 func GetProductByID(c *gin.Context) {
 
+	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -607,6 +594,7 @@ func GetProductByID(c *gin.Context) {
 		}
 	}()
 
+	// get id from request parameter
 	ID := c.Param("id")
 
 	rowProduct, err := db.Query("SELECT id,brend_id,price,old_price,amount,product_code,limit_amount,is_new FROM products WHERE id = $1 AND deleted_at IS NULL", ID)
@@ -627,7 +615,7 @@ func GetProductByID(c *gin.Context) {
 		}
 	}()
 
-	var product OneProduct
+	var product models.Product
 
 	for rowProduct.Next() {
 		if err := rowProduct.Scan(&product.ID, &product.BrendID, &product.Price, &product.OldPrice, &product.Amount, &product.ProductCode, &product.LimitAmount, &product.IsNew); err != nil {
@@ -794,7 +782,7 @@ func GetProductByID(c *gin.Context) {
 		translations = append(translations, translation)
 	}
 
-	product.Translations = translations
+	product.TranslationProduct = translations
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
