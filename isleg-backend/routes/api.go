@@ -119,9 +119,9 @@ func Routes() *gin.Engine {
 		back.GET("/restore-company-phone/:id", backController.RestoreCompanyPhoneByID)             // fully ready
 		back.DELETE("/delete-company-phone/:id", backController.DeletePermanentlyCompanyPhoneByID) // fully ready
 
-		back.POST("/company-address", backController.CreateCompanyAddress)        //+
-		back.PUT("/company-address/:id", backController.UpdateCompanyAddressByID) //+
-		back.GET("/company-address/:id", backController.GetCompanyAddressByID)    //+
+		back.POST("/company-address", backController.CreateCompanyAddress)        // fully ready
+		back.PUT("/company-address/:id", backController.UpdateCompanyAddressByID) // fully ready
+		back.GET("/company-address/:id", backController.GetCompanyAddressByID)    // fully ready
 
 		back.POST("/payment-type", backController.CreatePaymentType)        //+
 		back.PUT("/payment-type/:id", backController.UpdatePaymentTypeByID) //+

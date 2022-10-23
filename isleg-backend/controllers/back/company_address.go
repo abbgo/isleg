@@ -3,13 +3,13 @@ package controllers
 import (
 	"github/abbgo/isleg/isleg-backend/config"
 	"net/http"
-	"time"
 
 	"github.com/gin-gonic/gin"
 )
 
 func CreateCompanyAddress(c *gin.Context) {
 
+	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -72,13 +72,14 @@ func CreateCompanyAddress(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
-		"message": "company address successfully added",
+		"message": "data successfully added",
 	})
 
 }
 
 func UpdateCompanyAddressByID(c *gin.Context) {
 
+	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -97,8 +98,10 @@ func UpdateCompanyAddressByID(c *gin.Context) {
 		}
 	}()
 
+	// get id from request parameter
 	ID := c.Param("id")
 
+	//check id
 	rowComAddress, err := db.Query("SELECT id FROM company_address WHERE id = $1 AND deleted_at IS NULL", ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -146,9 +149,7 @@ func UpdateCompanyAddressByID(c *gin.Context) {
 		return
 	}
 
-	currentTime := time.Now()
-
-	resultComAddres, err := db.Query("UPDATE company_address SET address = $1, updated_at = $2 WHERE id = $3", address, currentTime, id)
+	resultComAddres, err := db.Query("UPDATE company_address SET address = $1 WHERE id = $3", address, id)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -168,13 +169,14 @@ func UpdateCompanyAddressByID(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
-		"message": "company address successfully updated",
+		"message": "data successfully updated",
 	})
 
 }
 
 func GetCompanyAddressByID(c *gin.Context) {
 
+	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -193,8 +195,10 @@ func GetCompanyAddressByID(c *gin.Context) {
 		}
 	}()
 
+	// get id from request parameter
 	ID := c.Param("id")
 
+	// check id and get data from database
 	rowComAddress, err := db.Query("SELECT address FROM company_address WHERE id = $1 AND deleted_at IS NULL", ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
