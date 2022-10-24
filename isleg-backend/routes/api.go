@@ -143,8 +143,8 @@ func Routes() *gin.Engine {
 		back.GET("/shop/:id", backController.GetShopByID)                         // fully ready
 		back.GET("/shops", backController.GetShops)                               // fully ready
 		back.DELETE("/shop/:id", backController.DeleteShopByID)                   // fully ready
-		back.GET("/restore-shop/:id", backController.RestoreShopByID)             // funksiyany optimize etmeli
-		back.DELETE("/delete-shop/:id", backController.DeletePermanentlyShopByID) // funksiyany optimize etmeli
+		back.GET("/restore-shop/:id", backController.RestoreShopByID)             // fully ready
+		back.DELETE("/delete-shop/:id", backController.DeletePermanentlyShopByID) // fully ready
 
 	}
 

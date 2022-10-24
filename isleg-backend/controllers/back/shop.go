@@ -629,6 +629,7 @@ func RestoreShopByID(c *gin.Context) {
 
 func DeletePermanentlyShopByID(c *gin.Context) {
 
+	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -647,8 +648,10 @@ func DeletePermanentlyShopByID(c *gin.Context) {
 		}
 	}()
 
+	// get id from request parameter
 	ID := c.Param("id")
 
+	// check id
 	rowShop, err := db.Query("SELECT id FROM shops WHERE id = $1 AND deleted_at IS NOT NULL", ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -707,7 +710,7 @@ func DeletePermanentlyShopByID(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
-		"message": "shop successfully deleted",
+		"message": "data successfully deleted",
 	})
 
 }
