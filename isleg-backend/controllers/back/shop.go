@@ -541,6 +541,7 @@ func DeleteShopByID(c *gin.Context) {
 
 func RestoreShopByID(c *gin.Context) {
 
+	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -559,8 +560,10 @@ func RestoreShopByID(c *gin.Context) {
 		}
 	}()
 
+	// get id from request
 	ID := c.Param("id")
 
+	// check id
 	rowShop, err := db.Query("SELECT id FROM shops WHERE id = $1 AND deleted_at IS NOT NULL", ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -599,7 +602,7 @@ func RestoreShopByID(c *gin.Context) {
 		return
 	}
 
-	resultShop, err := db.Query("UPDATE shops SET deleted_at = NULL WHERE id = $1", ID)
+	resultProc, err := db.Query("CALL restore_shop($1)", ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -608,7 +611,7 @@ func RestoreShopByID(c *gin.Context) {
 		return
 	}
 	defer func() {
-		if err := resultShop.Close(); err != nil {
+		if err := resultProc.Close(); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
@@ -617,26 +620,9 @@ func RestoreShopByID(c *gin.Context) {
 		}
 	}()
 
-	resultCategoryShop, err := db.Query("UPDATE category_shop SET deleted_at = NULL WHERE shop_id = $1", ID)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-	defer func() {
-		if err := resultCategoryShop.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
-		"message": "shop successfully restored",
+		"message": "data successfully restored",
 	})
 
 }
