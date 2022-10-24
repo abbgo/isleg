@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
+	"github.com/lib/pq"
 )
 
 type OneShop struct {
@@ -21,6 +21,7 @@ type OneShop struct {
 
 func CreateShop(c *gin.Context) {
 
+	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -53,7 +54,7 @@ func CreateShop(c *gin.Context) {
 		return
 	}
 
-	resultShops, err := db.Query("INSERT INTO shops (owner_name,address,phone_number,running_time) VALUES ($1,$2,$3,$4)", ownerName, address, phoneNumber, runningTime)
+	resultShops, err := db.Query("INSERT INTO shops (owner_name,address,phone_number,running_time) VALUES ($1,$2,$3,$4) RETURNING id", ownerName, address, phoneNumber, runningTime)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -71,29 +72,10 @@ func CreateShop(c *gin.Context) {
 		}
 	}()
 
-	// get the id of the added shop
-	lastShopID, err := db.Query("SELECT id FROM shops ORDER BY created_at DESC LIMIT 1")
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-	defer func() {
-		if err := lastShopID.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
-
 	var shopID string
 
-	for lastShopID.Next() {
-		if err := lastShopID.Scan(&shopID); err != nil {
+	for resultShops.Next() {
+		if err := resultShops.Scan(&shopID); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
@@ -103,39 +85,27 @@ func CreateShop(c *gin.Context) {
 	}
 
 	// create category shop
-	for _, v := range categories {
-		vUUID, err := uuid.Parse(v)
-		if v != "" {
-			if err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
-				return
-			}
-		}
-		resultCategorySHop, err := db.Query("INSERT INTO category_shop (category_id,shop_id) VALUES ($1,$2)", vUUID, shopID)
-		if err != nil {
+	resultCategorySHop, err := db.Query("INSERT INTO category_shop (category_id,shop_id) VALUES (unnest($1::uuid[]),$2)", pq.Array(categories), shopID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer func() {
+		if err := resultCategorySHop.Close(); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
 			})
 			return
 		}
-		defer func() {
-			if err := resultCategorySHop.Close(); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
-				return
-			}
-		}()
-	}
+	}()
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
-		"message": "shop successfully added",
+		"message": "data successfully added",
 	})
 
 }

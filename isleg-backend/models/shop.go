@@ -51,9 +51,9 @@ func ValidateShopData(ownerName, address, phoneNumber, runningTime string, categ
 		return err
 	}
 
-	if len(phoneNumber) != 8 {
-		return errors.New("the length of the phone number must be 8")
-	}
+	// if len(phoneNumber) != 8 {
+	// 	return errors.New("the length of the phone number must be 8")
+	// }
 
 	if runningTime == "" {
 		return errors.New("running time is required")
