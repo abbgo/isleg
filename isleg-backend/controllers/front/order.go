@@ -164,7 +164,7 @@ func ToOrder(c *gin.Context) {
 
 	} else {
 
-		resultCustomer, err := db.Query("INSERT INTO customers (full_name,phone_number,is_register) VALUES ($1,$2,$3)", order.FullName, order.PhoneNumber, false)
+		resultCustomer, err := db.Query("INSERT INTO customers (full_name,phone_number,is_register) VALUES ($1,$2,$3) RETURNING id", order.FullName, order.PhoneNumber, false)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
@@ -182,28 +182,10 @@ func ToOrder(c *gin.Context) {
 			}
 		}()
 
-		lastCustomerID, err := db.Query("SELECT id FROM customers ORDER BY created_at DESC LIMIT 1")
-		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-		defer func() {
-			if err := lastCustomerID.Close(); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
-				return
-			}
-		}()
-
 		var customer_id string
 
-		for lastCustomerID.Next() {
-			if err := lastCustomerID.Scan(&customer_id); err != nil {
+		for resultCustomer.Next() {
+			if err := resultCustomer.Scan(&customer_id); err != nil {
 				c.JSON(http.StatusBadRequest, gin.H{
 					"status":  false,
 					"message": err.Error(),
@@ -234,7 +216,7 @@ func ToOrder(c *gin.Context) {
 
 	}
 
-	resultOrders, err := db.Query("INSERT INTO orders (customer_id,customer_mark,order_time,payment_type,total_price) VALUES ($1,$2,$3,$4,$5)", customerID, order.CustomerMark, order.OrderTime, order.PaymentType, order.TotalPrice)
+	resultOrders, err := db.Query("INSERT INTO orders (customer_id,customer_mark,order_time,payment_type,total_price) VALUES ($1,$2,$3,$4,$5) RETURNING id", customerID, order.CustomerMark, order.OrderTime, order.PaymentType, order.TotalPrice)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -252,28 +234,10 @@ func ToOrder(c *gin.Context) {
 		}
 	}()
 
-	lastOrderID, err := db.Query("SELECT id FROM orders ORDER BY created_at DESC LIMIT 1")
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-	defer func() {
-		if err := lastOrderID.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
-
 	var order_id string
 
-	for lastOrderID.Next() {
-		if err := lastOrderID.Scan(&order_id); err != nil {
+	for resultOrders.Next() {
+		if err := resultOrders.Scan(&order_id); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
@@ -340,6 +304,24 @@ func ToOrder(c *gin.Context) {
 		}
 		defer func() {
 			if err := resultOrderedProduct.Close(); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}()
+
+		resultProduct, err := db.Query("UPDATE products SET amount = amount - $1 WHERE id = $2", v.QuantityOfProduct, v.ProductID)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+		defer func() {
+			if err := resultProduct.Close(); err != nil {
 				c.JSON(http.StatusBadRequest, gin.H{
 					"status":  false,
 					"message": err.Error(),
