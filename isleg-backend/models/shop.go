@@ -7,14 +7,15 @@ import (
 )
 
 type Shop struct {
-	ID          string `json:"id,omitempty"`
-	OwnerName   string `json:"owner_name,omitempty"`
-	Address     string `json:"address,omitempty"`
-	PhoneNumber string `json:"phone_number,omitempty"`
-	RunningTime string `json:"running_time,omitempty"`
-	CreatedAt   string `json:"-"`
-	UpdatedAt   string `json:"-"`
-	DeletedAt   string `json:"-"`
+	ID          string   `json:"id,omitempty"`
+	OwnerName   string   `json:"owner_name,omitempty"`
+	Address     string   `json:"address,omitempty"`
+	PhoneNumber string   `json:"phone_number,omitempty"`
+	RunningTime string   `json:"running_time,omitempty"`
+	CreatedAt   string   `json:"-"`
+	UpdatedAt   string   `json:"-"`
+	DeletedAt   string   `json:"-"`
+	Categories  []string `json:"categories,omitempty"`
 }
 
 type CategoryShop struct {

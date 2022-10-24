@@ -10,15 +10,6 @@ import (
 	"github.com/lib/pq"
 )
 
-type OneShop struct {
-	ID          string   `json:"id"`
-	OwnerName   string   `json:"owner_name"`
-	Address     string   `json:"address"`
-	PhoneNumber string   `json:"phone_number"`
-	RunningTime string   `json:"running_time"`
-	Categories  []string `json:"categories"`
-}
-
 func CreateShop(c *gin.Context) {
 
 	// initialize database connection
@@ -112,6 +103,7 @@ func CreateShop(c *gin.Context) {
 
 func UpdateShopByID(c *gin.Context) {
 
+	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -130,8 +122,10 @@ func UpdateShopByID(c *gin.Context) {
 		}
 	}()
 
+	// get id from request parameter
 	ID := c.Param("id")
 
+	// check id
 	rowShop, err := db.Query("SELECT id FROM shops WHERE id = $1 AND deleted_at IS NULL", ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -184,9 +178,7 @@ func UpdateShopByID(c *gin.Context) {
 		return
 	}
 
-	currentTime := time.Now()
-
-	resultShop, err := db.Query("UPDATE shops SET owner_name = $1 , address = $2 , phone_number = $3 , running_time = $4 , updated_at = $5 WHERE id = $6", ownerName, address, phoneNumber, runningTime, currentTime, ID)
+	resultShop, err := db.Query("UPDATE shops SET owner_name = $1 , address = $2 , phone_number = $3 , running_time = $4 WHERE id = $5", ownerName, address, phoneNumber, runningTime, ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -222,35 +214,36 @@ func UpdateShopByID(c *gin.Context) {
 		}
 	}()
 
-	for _, v := range categories {
-		resultCatShop, err := db.Query("INSERT INTO category_shop (category_id,shop_id,updated_at) VALUES ($1,$2,$3)", v, ID, currentTime)
-		if err != nil {
+	// for _, v := range categories {
+	resultCatShop, err := db.Query("INSERT INTO category_shop (category_id,shop_id) VALUES (unnest($1::uuid[]),$2)", pq.Array(categories), ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer func() {
+		if err := resultCatShop.Close(); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
 			})
 			return
 		}
-		defer func() {
-			if err := resultCatShop.Close(); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
-				return
-			}
-		}()
-	}
+	}()
+	// }
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
-		"message": "shop successfully updated",
+		"message": "data successfully updated",
 	})
 
 }
 
 func GetShopByID(c *gin.Context) {
 
+	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -269,8 +262,10 @@ func GetShopByID(c *gin.Context) {
 		}
 	}()
 
+	// get id from requets parameter
 	ID := c.Param("id")
 
+	// check id and get data from database
 	rowShop, err := db.Query("SELECT id,owner_name,address,phone_number,running_time FROM shops WHERE id = $1 AND deleted_at IS NULL", ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -289,7 +284,7 @@ func GetShopByID(c *gin.Context) {
 		}
 	}()
 
-	var shop OneShop
+	var shop models.Shop
 
 	for rowShop.Next() {
 		if err := rowShop.Scan(&shop.ID, &shop.OwnerName, &shop.Address, &shop.PhoneNumber, &shop.RunningTime); err != nil {
