@@ -3,7 +3,6 @@ package controllers
 import (
 	"github/abbgo/isleg/isleg-backend/auth"
 	"github/abbgo/isleg/isleg-backend/config"
-	"time"
 
 	"github/abbgo/isleg/isleg-backend/models"
 	"net/http"
@@ -35,6 +34,7 @@ type Address struct {
 
 func RegisterCustomer(c *gin.Context) {
 
+	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -78,8 +78,9 @@ func RegisterCustomer(c *gin.Context) {
 		return
 	}
 
-	currentTime := time.Now()
-
+	// On registrasiya bolman haryt sargyt eden adamlar is_register false bolyar ,
+	// solar sayta registrasiya boljak bolsa Olaryn taze at familiyasyny telefon belgisini
+	// we parolyny baza yazdyrmak ucin database - den sol customer - leri tapyp update etmeli
 	rowCustomer, err := db.Query("SELECT phone_number FROM customers WHERE phone_number = $1 AND is_register = false AND deleted_at IS NULL", customer.PhoneNumber)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{
@@ -110,9 +111,11 @@ func RegisterCustomer(c *gin.Context) {
 		}
 	}
 
+	var customerID string
+
 	if phone_number != "" {
 
-		resultCustomer, err := db.Query("UPDATE customers SET full_name = $1 , password = $2 , email = $3 , is_register = $4 , created_at = $5 , updated_at = $6 WHERE phone_number = $7", customer.FullName, hashPassword, customer.Email, true, currentTime, currentTime, customer.PhoneNumber)
+		resultCustomer, err := db.Query("UPDATE customers SET full_name = $1 , password = $2 , email = $3 , is_register = $4 WHERE phone_number = $5 RETURNING id", customer.FullName, hashPassword, customer.Email, true, customer.PhoneNumber)
 		if err != nil {
 			c.JSON(http.StatusNotFound, gin.H{
 				"status":  false,
@@ -130,9 +133,19 @@ func RegisterCustomer(c *gin.Context) {
 			}
 		}()
 
+		for resultCustomer.Next() {
+			if err := resultCustomer.Scan(&customerID); err != nil {
+				c.JSON(http.StatusNotFound, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}
+
 	} else {
 
-		resultCustomers, err := db.Query("INSERT INTO customers (full_name,phone_number,password,email,is_register) VALUES ($1,$2,$3,$4,$5)", customer.FullName, customer.PhoneNumber, hashPassword, customer.Email, true)
+		resultCustomers, err := db.Query("INSERT INTO customers (full_name,phone_number,password,email,is_register) VALUES ($1,$2,$3,$4,$5) RETURNING id", customer.FullName, customer.PhoneNumber, hashPassword, customer.Email, true)
 		if err != nil {
 			c.JSON(http.StatusNotFound, gin.H{
 				"status":  false,
@@ -150,44 +163,16 @@ func RegisterCustomer(c *gin.Context) {
 			}
 		}()
 
-	}
-
-	row, err := db.Query("SELECT id FROM customers WHERE deleted_at IS NULL ORDER BY created_at ASC LIMIT 1")
-	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-	defer func() {
-		if err := row.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
+		for resultCustomers.Next() {
+			if err := resultCustomers.Scan(&customerID); err != nil {
+				c.JSON(http.StatusNotFound, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
 		}
-	}()
 
-	var customerID string
-
-	for row.Next() {
-		if err := row.Scan(&customerID); err != nil {
-			c.JSON(http.StatusNotFound, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}
-
-	if customerID == "" {
-		c.JSON(http.StatusNotFound, gin.H{
-			"status":  false,
-			"message": "record not found",
-		})
-		return
 	}
 
 	accessTokenString, err := auth.GenerateAccessToken(customer.PhoneNumber, customerID)
