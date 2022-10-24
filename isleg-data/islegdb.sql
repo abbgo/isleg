@@ -221,6 +221,21 @@ END; $$;
 ALTER PROCEDURE public.delete_product(p_id uuid) OWNER TO postgres;
 
 --
+-- Name: delete_shop(uuid); Type: PROCEDURE; Schema: public; Owner: postgres
+--
+
+CREATE PROCEDURE public.delete_shop(s_id uuid)
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+UPDATE shops SET deleted_at = now() WHERE id = s_id;
+UPDATE category_shop SET deleted_at = now() WHERE shop_id = s_id;
+END; $$;
+
+
+ALTER PROCEDURE public.delete_shop(s_id uuid) OWNER TO postgres;
+
+--
 -- Name: restore_afisa(uuid); Type: PROCEDURE; Schema: public; Owner: postgres
 --
 
@@ -325,6 +340,21 @@ END; $$;
 
 
 ALTER PROCEDURE public.restore_product(p_id uuid) OWNER TO postgres;
+
+--
+-- Name: restore_shop(uuid); Type: PROCEDURE; Schema: public; Owner: postgres
+--
+
+CREATE PROCEDURE public.restore_shop(s_id uuid)
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+UPDATE shops SET deleted_at = NULL WHERE id = s_id;
+UPDATE category_shop SET deleted_at = NULL WHERE shop_id = s_id;
+END; $$;
+
+
+ALTER PROCEDURE public.restore_shop(s_id uuid) OWNER TO postgres;
 
 --
 -- Name: update_updated_at(); Type: FUNCTION; Schema: public; Owner: postgres
@@ -1224,6 +1254,8 @@ c2754715-f455-469d-8332-22a4e7a7a8ed	02bd4413-8586-49ab-802e-16304e756a8b	e3c33e
 --
 
 COPY public.category_shop (id, category_id, shop_id, created_at, updated_at, deleted_at) FROM stdin;
+90d117a2-910e-4b74-a278-a722ca51a46c	b982bd86-0a0f-4950-baad-5a131e9b728e	a789cd15-3fa4-49d3-bda0-eb47bafdc61f	2022-10-24 13:23:29.189664+05	2022-10-24 13:23:29.189664+05	\N
+f2e6470c-3feb-4e81-82f7-c2d0298f1a7d	cdb681a2-98e4-4716-a136-a5e4888e9c32	a789cd15-3fa4-49d3-bda0-eb47bafdc61f	2022-10-24 13:23:29.189664+05	2022-10-24 13:23:29.189664+05	\N
 \.
 
 
@@ -1265,6 +1297,7 @@ COPY public.company_setting (id, logo, favicon, email, instagram, created_at, up
 COPY public.customer_address (id, customer_id, address, created_at, updated_at, deleted_at, is_active) FROM stdin;
 6cbdf2b6-a0fd-4bdf-a2d6-1899f36f361a	fec81bff-8264-403f-b2ba-58afd53c821b	jkebdhwej	2022-10-24 02:21:24.168988+05	2022-10-24 02:21:24.168988+05	\N	f
 fcfb981d-b578-4b41-9c86-7b92f0c5fe14	655c5504-1547-4daf-abe0-80b4116684f0	dcmnsdk	2022-10-24 02:23:26.42299+05	2022-10-24 02:23:26.42299+05	\N	f
+243d3411-68a3-413a-ab67-cedef7ad6551	1f5bc917-fc85-46cf-a1b2-7c14cfe940be	Mir 2/2 jay 7 oy 36	2022-10-24 11:16:38.435106+05	2022-10-24 11:16:38.435106+05	\N	f
 \.
 
 
@@ -1273,7 +1306,6 @@ fcfb981d-b578-4b41-9c86-7b92f0c5fe14	655c5504-1547-4daf-abe0-80b4116684f0	dcmnsd
 --
 
 COPY public.customers (id, full_name, phone_number, password, birthday, gender, created_at, updated_at, deleted_at, email, is_register) FROM stdin;
-f25a66d3-93ac-4da4-b237-d34867d5ca8f	Salam	+99363747155	$2a$14$.BqzNvzDCwmswgl4PzuYGuM/Cx2AdYFskpYl7VWa2XlS2ngjkhu1e	\N	\N	2022-10-17 00:50:48.568182+05	2022-10-17 00:50:48.568182+05	\N	salam@gmail.com	t
 1f5bc917-fc85-46cf-a1b2-7c14cfe940be	Allanur Bayramgeldiyew	+99362420377	$2a$14$4jP3cdo/xCmL.u6LEoFOJuL5vKlOmKg22cybQgnPvnbhY/xdNEi0e	\N	\N	2022-10-17 01:20:15.562427+05	2022-10-17 01:20:15.562427+05	\N	abb@gmail.com	t
 f89518a7-cb3d-46fd-81cf-a0d334ca6d4d	Salam	+99363747156	$2a$14$1bmblLxYRUIgPGCc86MYb.MupBJ5eQ6b7I4hnAuInYSCtFDKi0VVq	\N	\N	2022-10-21 02:23:56.055341+05	2022-10-21 02:23:56.055341+05	\N	jsdjewb@gmail.com	t
 c0534c60-137d-4e80-a0c2-57e355b0bf35	jdjwnedkjwenf	+99363747157	$2a$14$TZldeIc0GGJpM/x3O3Sh7u.pgdxP9gCD.U6UwGwphHptecq/Gu/da	\N	\N	2022-10-21 02:26:35.510969+05	2022-10-21 02:26:35.510969+05	\N	wednwefn@gmail.com	t
@@ -1284,6 +1316,8 @@ d3aa02fb-12ca-4615-aa91-b6f5247dd3d6	ewdjbew	+99363747153	$2a$14$0DZ0MU7ZltOItfZ
 2c222c2d-4d34-4023-88fb-0018e56a96f7	edbewjh@gmail.com	+99364454465	$2a$14$7uTwETTKruVStLdsaE..SOG4Hd7K7lvzqgw4r68A5hBEf0lT02uQe	\N	\N	2022-10-21 02:56:36.54818+05	2022-10-21 02:56:36.54818+05	\N	123456@gmail.com	t
 fec81bff-8264-403f-b2ba-58afd53c821b	jkwedhw3	+99362323232	\N	\N	\N	2022-10-24 02:21:23.927414+05	2022-10-24 02:21:23.927414+05	\N	\N	f
 655c5504-1547-4daf-abe0-80b4116684f0	jsdfne	+99362321231	\N	\N	\N	2022-10-24 02:23:26.392303+05	2022-10-24 02:23:26.392303+05	\N	\N	f
+f25a66d3-93ac-4da4-b237-d34867d5ca8f	Salam	+99362111111	$2a$14$L0vGymLsVyGTFCMUUo0poOMWzamcBDO0ajua.A2bMih4FcvnPyIjS	1998-06-24	\N	2022-10-17 00:50:48.568182+05	2022-10-24 12:00:37.896099+05	\N	salam@gmail.com	t
+48c02978-22fe-42e7-a292-1190f407e08a	Allanur Bayramgeldiyew	+99365259874	$2a$14$xKig.NqzRICqV6SCK2YsoO1AUWUE5et8caH/.0lagl2hf5c7YmpXa	\N	\N	2022-10-24 14:05:05.267965+05	2022-10-24 14:05:05.267965+05	\N	df7wef84e@gmail.com	t
 \.
 
 
@@ -1409,6 +1443,10 @@ f4290ceb-9743-448e-abc8-a7a39b784664	8df705a5-2351-4aca-b03e-3357a23840b4	1	ed6f
 a4e19672-ec52-4d51-9175-563d4e86f6e1	b2b165a3-2261-4d67-8160-0e239ecd99b5	3	ed6f4a78-b4fa-4035-a8e0-d884c65a5889	2022-10-24 02:21:24.293498+05	2022-10-24 02:21:24.293498+05	\N
 02ec1f62-996f-4ff2-8497-b4da23cfdce0	8df705a5-2351-4aca-b03e-3357a23840b4	1	2698cad6-a4f2-493d-b86d-d3d1659c1896	2022-10-24 02:23:26.457082+05	2022-10-24 02:23:26.457082+05	\N
 c72e2d77-4b2c-4cdc-8fae-8da97845ab7e	b2b165a3-2261-4d67-8160-0e239ecd99b5	3	2698cad6-a4f2-493d-b86d-d3d1659c1896	2022-10-24 02:23:26.478042+05	2022-10-24 02:23:26.478042+05	\N
+c8a0cd47-4056-41d7-9a3c-34bdc7674014	d4156225-082e-4f0f-9b2c-85268114433a	25	f767105b-51b9-47a2-a161-1646934f5acd	2022-10-24 11:16:38.481312+05	2022-10-24 11:16:38.481312+05	\N
+671aa93d-dbbb-4770-b895-f537aa605f11	81b84c5d-9759-4b86-978a-649c8ef79660	3	f767105b-51b9-47a2-a161-1646934f5acd	2022-10-24 11:16:38.492814+05	2022-10-24 11:16:38.492814+05	\N
+cc02eb93-96ab-4176-b072-380626ef1be5	8df705a5-2351-4aca-b03e-3357a23840b4	3	f767105b-51b9-47a2-a161-1646934f5acd	2022-10-24 11:16:38.503666+05	2022-10-24 11:16:38.503666+05	\N
+974bc5f8-a43f-4316-8ff8-ba9ab05f18bc	e3c33ead-3c30-40f1-9d28-7bb8b71b767f	3	f767105b-51b9-47a2-a161-1646934f5acd	2022-10-24 11:16:38.514362+05	2022-10-24 11:16:38.514362+05	\N
 \.
 
 
@@ -1419,6 +1457,7 @@ c72e2d77-4b2c-4cdc-8fae-8da97845ab7e	b2b165a3-2261-4d67-8160-0e239ecd99b5	3	2698
 COPY public.orders (id, customer_id, customer_mark, order_time, payment_type, total_price, created_at, updated_at, deleted_at, order_number) FROM stdin;
 ed6f4a78-b4fa-4035-a8e0-d884c65a5889	fec81bff-8264-403f-b2ba-58afd53c821b	ajkedbhewj	18:00 - 21:00	nagt_tm	845	2022-10-24 02:21:24.249433+05	2022-10-24 02:21:24.249433+05	\N	22
 2698cad6-a4f2-493d-b86d-d3d1659c1896	655c5504-1547-4daf-abe0-80b4116684f0	jenew	18:00 - 21:00	nagt_tm	845	2022-10-24 02:23:26.441517+05	2022-10-24 02:23:26.441517+05	\N	23
+f767105b-51b9-47a2-a161-1646934f5acd	1f5bc917-fc85-46cf-a1b2-7c14cfe940be	isleg market bet cykypdyr	12:00 - 16:00	nagt	1788	2022-10-24 11:16:38.47027+05	2022-10-24 11:16:38.47027+05	\N	24
 \.
 
 
@@ -1464,6 +1503,9 @@ e3c33ead-3c30-40f1-9d28-7bb8b71b767f	46b13f0a-d584-4ad3-b270-437ecdc51449	46	46.
 --
 
 COPY public.shops (id, owner_name, address, phone_number, running_time, created_at, updated_at, deleted_at) FROM stdin;
+263a86a7-ee3f-4ec1-9933-d925bbb9e206	Owez Myradow	Asgabat saher Mir 2/2 jay 2 magazyn 23	+99362420387	7:00-21:00	2022-10-24 13:22:34.682812+05	2022-10-24 13:22:34.682812+05	\N
+4cbec734-efd3-40cf-81a6-f145769da9a0	Owez Myradow	Asgabat saher Mir 2/2 jay 2 magazyn 23	+99362420387	7:00-21:00	2022-10-24 13:23:08.286246+05	2022-10-24 13:23:08.286246+05	\N
+a789cd15-3fa4-49d3-bda0-eb47bafdc61f	Owez Myradow	Asgabat saher Mir 2/2 jay 2 magazyn 23	+99362420387	7:00-21:00	2022-10-24 13:23:29.106899+05	2022-10-24 13:23:29.106899+05	\N
 \.
 
 
@@ -1839,7 +1881,7 @@ d9747bdd-a010-470a-8e2a-2d1dc54faf21	b62a1c1c-0a29-4756-8e9d-5c9680758d18	uytget
 -- Name: orders_order_number_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.orders_order_number_seq', 23, true);
+SELECT pg_catalog.setval('public.orders_order_number_seq', 24, true);
 
 
 --

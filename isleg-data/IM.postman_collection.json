@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "42d16283-2ca1-4071-92e5-51fc52f73e89",
+		"_postman_id": "e3e77f0f-f310-4d40-bbbd-33f729e8142e",
 		"name": "IM",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -3207,7 +3207,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"full_name\":\"Allanur Bayramgeldiyew\",\n    \"phone_number\":\"+99362420377\",\n    \"password\":\"12345\",\n    \"email\":\"abb@gmail.com\",\n    \"birthday\":null\n}",
+							"raw": "{\n    \"full_name\":\"Allanur Bayramgeldiyew\",\n    \"phone_number\":\"+99365259874\",\n    \"password\":\"12345\",\n    \"email\":\"df7wef84e@gmail.com\",\n    \"birthday\":null\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -3291,12 +3291,12 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NTYiLCJleHAiOjE2NjU5NTEyNjV9.WKKj35rXo3U_xdyudD8WcIwXN3KKrHngEIU2x-owovQ",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NTYiLCJjdXN0b21lcl9pZCI6ImYyNWE2NmQzLTkzYWMtNGRhNC1iMjM3LWQzNDg2N2Q1Y2E4ZiIsImV4cCI6MTY2NjU5NjQ0N30.j5PGhF30a1s0IiP_6fIqLUEdL6L-H3lP6kkjI-WxEmQ",
 								"type": "default"
 							}
 						],
 						"url": {
-							"raw": "localhost:2406/api/tm/my-information/89a6ac71-4495-4218-b9f9-3f2a3eab085b",
+							"raw": "localhost:2406/api/tm/my-information",
 							"host": [
 								"localhost"
 							],
@@ -3304,8 +3304,7 @@
 							"path": [
 								"api",
 								"tm",
-								"my-information",
-								"89a6ac71-4495-4218-b9f9-3f2a3eab085b"
+								"my-information"
 							]
 						}
 					},
@@ -3343,6 +3342,41 @@
 								"tm",
 								"customer-password",
 								"89a6ac71-4495-4218-b9f9-3f2a3eab085b"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UpdateCustomerInformation",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NTYiLCJjdXN0b21lcl9pZCI6ImYyNWE2NmQzLTkzYWMtNGRhNC1iMjM3LWQzNDg2N2Q1Y2E4ZiIsImV4cCI6MTY2NjU5NjQ0N30.j5PGhF30a1s0IiP_6fIqLUEdL6L-H3lP6kkjI-WxEmQ",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"full_name\": \"Salam\",\n    \"phone_number\": \"+99362111111\",\n    \"password\":\"123456\",\n    \"birthday\": \"1998-06-24TT00:00:00Z\",\n    \"email\": \"salam@gmail.com\",\n    \"is_register\": false,\n    \"addresses\": null\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:2406/api/tm/my-information",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"api",
+								"tm",
+								"my-information"
 							]
 						}
 					},
@@ -3535,7 +3569,7 @@
 								},
 								{
 									"key": "phone_number",
-									"value": "62420387",
+									"value": "+99362420387",
 									"type": "default"
 								},
 								{
@@ -3545,12 +3579,12 @@
 								},
 								{
 									"key": "category_id",
-									"value": "33cf0893-ff6e-40b3-b50f-2a3e926eca70",
+									"value": "b982bd86-0a0f-4950-baad-5a131e9b728e",
 									"type": "default"
 								},
 								{
 									"key": "category_id",
-									"value": "f745d171-68e6-42e2-b339-cb3c210cda55",
+									"value": "cdb681a2-98e4-4716-a136-a5e4888e9c32",
 									"type": "default"
 								}
 							]
@@ -3630,7 +3664,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "localhost:2406/admin/shop/0d4f9096-9cd7-4d72-afa5-e460de11e77e",
+							"raw": "localhost:2406/admin/shop/a789cd15-3fa4-49d3-bda0-eb47bafdc61f",
 							"host": [
 								"localhost"
 							],
@@ -3638,7 +3672,7 @@
 							"path": [
 								"admin",
 								"shop",
-								"0d4f9096-9cd7-4d72-afa5-e460de11e77e"
+								"a789cd15-3fa4-49d3-bda0-eb47bafdc61f"
 							]
 						}
 					},
@@ -4703,7 +4737,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NSIsImV4cCI6MTY2NDQzMjc1NH0.lOcKtpKyjXACvk5-VD213k7tYYMnJuaGjK72WOerZE8",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NTYiLCJjdXN0b21lcl9pZCI6ImYyNWE2NmQzLTkzYWMtNGRhNC1iMjM3LWQzNDg2N2Q1Y2E4ZiIsImV4cCI6MTY2NjU5NjQ0N30.j5PGhF30a1s0IiP_6fIqLUEdL6L-H3lP6kkjI-WxEmQ",
 								"type": "default"
 							}
 						],
