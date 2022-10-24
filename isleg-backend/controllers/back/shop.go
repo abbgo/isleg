@@ -357,6 +357,7 @@ func GetShopByID(c *gin.Context) {
 
 func GetShops(c *gin.Context) {
 
+	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -375,6 +376,7 @@ func GetShops(c *gin.Context) {
 		}
 	}()
 
+	// get data from database
 	rowsShop, err := db.Query("SELECT id,owner_name,address,phone_number,running_time FROM shops WHERE deleted_at IS NULL")
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -393,10 +395,10 @@ func GetShops(c *gin.Context) {
 		}
 	}()
 
-	var shops []OneShop
+	var shops []models.Shop
 
 	for rowsShop.Next() {
-		var shop OneShop
+		var shop models.Shop
 		if err := rowsShop.Scan(&shop.ID, &shop.OwnerName, &shop.Address, &shop.PhoneNumber, &shop.RunningTime); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
