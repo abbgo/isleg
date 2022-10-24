@@ -219,6 +219,9 @@ func Routes() *gin.Engine {
 		// to order
 		front.POST("/to-order", frontController.ToOrder) // fully ready
 
+		// to order
+		front.POST("/send-mail", frontController.SendMail) // fully ready
+
 		securedCustomer := front.Group("/").Use(middlewares.Auth())
 		{
 			// add like if customer exists
