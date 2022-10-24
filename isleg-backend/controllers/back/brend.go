@@ -8,13 +8,7 @@ import (
 	"os"
 
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 )
-
-type BrendForHomePage struct {
-	ID    uuid.UUID `json:"id"`
-	Image string    `json:"image"`
-}
 
 func CreateBrend(c *gin.Context) {
 
@@ -767,37 +761,37 @@ func DeletePermanentlyBrendByID(c *gin.Context) {
 
 }
 
-func GetAllBrendForHomePage() ([]BrendForHomePage, error) {
+func GetAllBrendForHomePage() ([]models.Brend, error) {
 
 	db, err := config.ConnDB()
 	if err != nil {
-		return []BrendForHomePage{}, err
+		return []models.Brend{}, err
 	}
-	defer func() ([]BrendForHomePage, error) {
+	defer func() ([]models.Brend, error) {
 		if err := db.Close(); err != nil {
-			return []BrendForHomePage{}, err
+			return []models.Brend{}, err
 		}
-		return []BrendForHomePage{}, nil
+		return []models.Brend{}, nil
 	}()
 
-	var brends []BrendForHomePage
+	var brends []models.Brend
 
 	// get all brends
 	rows, err := db.Query("SELECT id,image FROM brends WHERE deleted_at IS NULL")
 	if err != nil {
-		return []BrendForHomePage{}, err
+		return []models.Brend{}, err
 	}
-	defer func() ([]BrendForHomePage, error) {
+	defer func() ([]models.Brend, error) {
 		if err := rows.Close(); err != nil {
-			return []BrendForHomePage{}, err
+			return []models.Brend{}, err
 		}
-		return []BrendForHomePage{}, nil
+		return []models.Brend{}, nil
 	}()
 
 	for rows.Next() {
-		var brend BrendForHomePage
+		var brend models.Brend
 		if err := rows.Scan(&brend.ID, &brend.Image); err != nil {
-			return []BrendForHomePage{}, err
+			return []models.Brend{}, err
 		}
 
 		brends = append(brends, brend)

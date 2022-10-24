@@ -22,6 +22,7 @@ type Product struct {
 	Images             []Images             `json:"images,omitempty"`              // one to many
 	TranslationProduct []TranslationProduct `json:"translation_product,omitempty"` // one to many
 	Categories         []string             `json:"categories,omitempty"`
+	Brend              Brend                `json:"brend,omitempty"`
 }
 
 type MainImage struct {

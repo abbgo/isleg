@@ -160,49 +160,49 @@ func Routes() *gin.Engine {
 	front := routes.Group("/api/:lang")
 	{
 		// get header data
-		front.GET("/header", frontController.GetHeaderData)
+		front.GET("/header", frontController.GetHeaderData) // fully ready
 
 		// get footer data
-		front.GET("/footer", frontController.GetFooterData)
+		front.GET("/footer", frontController.GetFooterData) // fully ready
 
 		// get all brend
-		front.GET("/brends", frontController.GetBrends)
+		front.GET("/brends", frontController.GetBrends) // fully ready
 
 		// get company phone numbers
-		front.GET("/company-phones", backController.GetCompanyPhones)
+		front.GET("/company-phones", backController.GetCompanyPhones) // fully ready
 
 		// get company address
-		front.GET("/company-address", backController.GetCompanyAddress)
+		front.GET("/company-address", backController.GetCompanyAddress) // fully ready
 
 		// get Terms of Service and Privacy Policy page translation
-		front.GET("/translation-secure", backController.GetTranslationSecureByLangID)
+		front.GET("/translation-secure", backController.GetTranslationSecureByLangID) // fully ready
 
 		// get Delivery and payment order page translation
-		front.GET("/translation-payment", backController.GetTranslationPaymentByLangID)
+		front.GET("/translation-payment", backController.GetTranslationPaymentByLangID) // fully ready
 
 		// get about us page translation
-		front.GET("/translation-about", backController.GetTranslationAboutByLangID)
+		front.GET("/translation-about", backController.GetTranslationAboutByLangID) // fully ready
 
 		// get contact us page translation
-		front.GET("/translation-contact", backController.GetTranslationContactByLangID)
+		front.GET("/translation-contact", backController.GetTranslationContactByLangID) // fully ready
 
 		// get update password page translation
-		front.GET("/translation-update-password-page", backController.GetTranslationUpdatePasswordPageByLangID)
+		front.GET("/translation-update-password-page", backController.GetTranslationUpdatePasswordPageByLangID) // fully ready
 
 		// get basket page translation
-		front.GET("/translation-basket-page", backController.GetTranslationBasketPageByLangID)
+		front.GET("/translation-basket-page", backController.GetTranslationBasketPageByLangID) // fully ready
 
 		// get order page translation
-		front.GET("/translation-order-page", backController.GetTranslationOrderPageByLangID)
+		front.GET("/translation-order-page", backController.GetTranslationOrderPageByLangID) // fully ready
 
 		// get my order page translation
-		front.GET("/translation-my-order-page", backController.GetTranslationMyOrderPageByLangID)
+		front.GET("/translation-my-order-page", backController.GetTranslationMyOrderPageByLangID) // fully ready
 
 		// get payment ttype by lang id
-		front.GET("/payment-types", backController.GetPaymentTypesByLangID)
+		front.GET("/payment-types", backController.GetPaymentTypesByLangID) // fully ready
 
 		// homepage categories
-		front.GET("/homepage-categories", frontController.GetHomePageCategories) // funksiyany optimize etmeli
+		front.GET("/homepage-categories", frontController.GetHomePageCategories) // fully ready
 
 		// // get one category with products
 		front.GET("/:category_id/:limit/:page", backController.GetOneCategoryWithProducts) // funksiyany gowy optimize etmeli
