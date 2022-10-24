@@ -3,7 +3,6 @@ package models
 import (
 	"errors"
 	"github/abbgo/isleg/isleg-backend/config"
-	"strconv"
 )
 
 type Shop struct {
@@ -46,15 +45,6 @@ func ValidateShopData(ownerName, address, phoneNumber, runningTime string, categ
 	if phoneNumber == "" {
 		return errors.New("phoneNumber is required")
 	}
-
-	_, err = strconv.Atoi(phoneNumber)
-	if err != nil {
-		return err
-	}
-
-	// if len(phoneNumber) != 8 {
-	// 	return errors.New("the length of the phone number must be 8")
-	// }
 
 	if runningTime == "" {
 		return errors.New("running time is required")
