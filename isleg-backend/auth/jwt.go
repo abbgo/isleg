@@ -76,7 +76,6 @@ func Refresh(c *gin.Context) {
 		c.JSON(403, gin.H{
 			"message": err.Error(),
 		})
-		// c.Abort()
 		return
 	}
 
@@ -85,7 +84,6 @@ func Refresh(c *gin.Context) {
 	if !ok {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message": errors.New("couldn't parse claims")})
-		// c.Abort()
 		return
 	}
 
@@ -93,21 +91,18 @@ func Refresh(c *gin.Context) {
 		c.JSON(403, gin.H{
 			"message": errors.New("token expired"),
 		})
-		// c.Abort()
 		return
 	}
 
 	accessTokenString, err := GenerateAccessToken(claims.PhoneNumber, claims.CustomerID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
-		// c.Abort()
 		return
 	}
 
 	refreshTokenString, err := GenerateRefreshToken(claims.PhoneNumber, claims.CustomerID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
-		// c.Abort()
 		return
 	}
 

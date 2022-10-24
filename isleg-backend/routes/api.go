@@ -153,7 +153,7 @@ func Routes() *gin.Engine {
 	{
 		customer.POST("/register", frontController.RegisterCustomer) // fully ready
 		customer.POST("/login", frontController.LoginCustomer)       // fully ready
-		customer.POST("/refresh", auth.Refresh)                      //+
+		customer.POST("/refresh", auth.Refresh)                      // fully ready
 	}
 
 	// routes belong to front
