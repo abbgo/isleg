@@ -32,10 +32,9 @@ type GetOrder struct {
 }
 
 type OrderedProduct struct {
-	Name        string  `json:"name"`
-	Price       float64 `json:"price"`
-	ProductCode string  `json:"product_code"`
-	Amount      uint    `json:"amount"`
+	Name   string  `json:"name"`
+	Price  float64 `json:"price"`
+	Amount uint    `json:"amount"`
 }
 
 func ToOrder(c *gin.Context) {
@@ -513,7 +512,7 @@ func ToOrder(c *gin.Context) {
 
 		product.Amount = v.QuantityOfProduct
 
-		row, err := db.Query("SELECT price,product_code FROM products WHERE id= $1 AND deleted_at IS NULL", v.ProductID)
+		row, err := db.Query("SELECT price FROM products WHERE id= $1 AND deleted_at IS NULL", v.ProductID)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
@@ -532,7 +531,7 @@ func ToOrder(c *gin.Context) {
 		}()
 
 		for row.Next() {
-			if err := row.Scan(&product.Price, &product.ProductCode); err != nil {
+			if err := row.Scan(&product.Price); err != nil {
 				c.JSON(http.StatusBadRequest, gin.H{
 					"status":  false,
 					"message": err.Error(),
@@ -682,7 +681,6 @@ func ToOrder(c *gin.Context) {
 
 		f.SetCellValue("Лист1", "a"+strconv.Itoa(16+k), v2.Name)
 		f.SetCellValue("Лист1", "b"+strconv.Itoa(16+k), v2.Amount)
-		f.SetCellValue("Лист1", "c"+strconv.Itoa(16+k), v2.ProductCode)
 		f.SetCellValue("Лист1", "d"+strconv.Itoa(16+k), v2.Price)
 		f.SetCellValue("Лист1", "e"+strconv.Itoa(16+k), float64(v2.Amount)*v2.Price)
 
@@ -849,7 +847,7 @@ func GetCustomerOrders(c *gin.Context) {
 				return
 			}
 
-			rowProduct, err := db.Query("SELECT brend_id,price,old_price,amount,product_code,limit_amount,is_new FROM products WHERE id = $1 AND deleted_at IS NULL", product.ID)
+			rowProduct, err := db.Query("SELECT brend_id,price,old_price,amount,limit_amount,is_new FROM products WHERE id = $1 AND deleted_at IS NULL", product.ID)
 			if err != nil {
 				c.JSON(http.StatusBadRequest, gin.H{
 					"status":  false,
@@ -868,7 +866,7 @@ func GetCustomerOrders(c *gin.Context) {
 			}()
 
 			for rowProduct.Next() {
-				if err := rowProduct.Scan(&product.BrendID, &product.Price, &product.OldPrice, &product.Amount, &product.ProductCode, &product.LimitAmount, &product.IsNew); err != nil {
+				if err := rowProduct.Scan(&product.BrendID, &product.Price, &product.OldPrice, &product.Amount, &product.LimitAmount, &product.IsNew); err != nil {
 					c.JSON(http.StatusBadRequest, gin.H{
 						"status":  false,
 						"message": err.Error(),

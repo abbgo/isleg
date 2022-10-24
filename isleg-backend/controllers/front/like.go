@@ -19,7 +19,6 @@ type LikeProduct struct {
 	Price              float64                   `json:"price"`
 	OldPrice           float64                   `json:"old_price"`
 	Amount             uint                      `json:"amount"`
-	ProductCode        string                    `json:"product_code"`
 	LimitAmount        uint                      `json:"limit_amount"`
 	IsNew              bool                      `json:"is_new"`
 	MainImage          models.MainImage          `json:"main_image"`
@@ -395,7 +394,7 @@ func GetLikes(langShortName, customerID string) ([]LikeProduct, error) {
 		return []LikeProduct{}, errors.New("customer not found")
 	}
 
-	rowsProduct, err := db.Query("SELECT p.id,p.brend_id,p.price,p.old_price,p.amount,p.product_code,p.limit_amount,p.is_new FROM products p LEFT JOIN likes l ON l.product_id = p.id WHERE l.customer_id = $1 AND l.deleted_at IS NULL AND p.deleted_at IS NULL", customerID)
+	rowsProduct, err := db.Query("SELECT p.id,p.brend_id,p.price,p.old_price,p.amount,p.limit_amount,p.is_new FROM products p LEFT JOIN likes l ON l.product_id = p.id WHERE l.customer_id = $1 AND l.deleted_at IS NULL AND p.deleted_at IS NULL", customerID)
 	if err != nil {
 		return []LikeProduct{}, err
 	}
@@ -406,7 +405,7 @@ func GetLikes(langShortName, customerID string) ([]LikeProduct, error) {
 	for rowsProduct.Next() {
 		var product LikeProduct
 
-		if err := rowsProduct.Scan(&product.ID, &product.BrendID, &product.Price, &product.OldPrice, &product.Amount, &product.ProductCode, &product.LimitAmount, &product.IsNew); err != nil {
+		if err := rowsProduct.Scan(&product.ID, &product.BrendID, &product.Price, &product.OldPrice, &product.Amount, &product.LimitAmount, &product.IsNew); err != nil {
 			return []LikeProduct{}, err
 		}
 
@@ -551,7 +550,7 @@ func GetLikedProductsWithoutCustomer(c *gin.Context) {
 		}
 	}
 
-	rowLikes, err := db.Query("SELECT id,brend_id,price,old_price,amount,product_code,limit_amount,is_new FROM products WHERE id = ANY($1) AND deleted_at IS NULL", pq.Array(productIds))
+	rowLikes, err := db.Query("SELECT id,brend_id,price,old_price,amount,limit_amount,is_new FROM products WHERE id = ANY($1) AND deleted_at IS NULL", pq.Array(productIds))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -574,7 +573,7 @@ func GetLikedProductsWithoutCustomer(c *gin.Context) {
 	for rowLikes.Next() {
 		var product LikeProduct
 
-		if err := rowLikes.Scan(&product.ID, &product.BrendID, &product.Price, &product.OldPrice, &product.Amount, &product.ProductCode, &product.LimitAmount, &product.IsNew); err != nil {
+		if err := rowLikes.Scan(&product.ID, &product.BrendID, &product.Price, &product.OldPrice, &product.Amount, &product.LimitAmount, &product.IsNew); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),

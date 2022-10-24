@@ -12,7 +12,6 @@ type Product struct {
 	Price              float64              `json:"price,omitempty"`
 	OldPrice           float64              `json:"old_price,omitempty"`
 	Amount             uint                 `json:"amount,omitempty"`
-	ProductCode        string               `json:"product_code,omitempty"`
 	LimitAmount        uint                 `json:"limit_amount,omitempty"`
 	IsNew              bool                 `json:"is_new,omitempty"`
 	CreatedAt          string               `json:"-"`
@@ -67,7 +66,7 @@ type CategoryProduct struct {
 	DeletedAt  string `json:"-"`
 }
 
-func ValidateProductModel(productID, brendID, priceStr, oldPriceStr, amountStr, limitAmountStr, productCode, isNewStr string, categories []string) ([]Images, MainImage, float64, float64, uint64, uint64, bool, error) {
+func ValidateProductModel(productID, brendID, priceStr, oldPriceStr, amountStr, limitAmountStr, isNewStr string, categories []string) ([]Images, MainImage, float64, float64, uint64, uint64, bool, error) {
 
 	// initialize database connection
 	db, err := config.ConnDB()
@@ -116,11 +115,6 @@ func ValidateProductModel(productID, brendID, priceStr, oldPriceStr, amountStr, 
 	isNew, err := strconv.ParseBool(isNewStr)
 	if err != nil {
 		return []Images{}, MainImage{}, 0, 0, 0, 0, false, err
-	}
-
-	// validatte code of product
-	if productCode == "" {
-		return []Images{}, MainImage{}, 0, 0, 0, 0, false, errors.New("product code is required")
 	}
 
 	// validate limit amount of product
