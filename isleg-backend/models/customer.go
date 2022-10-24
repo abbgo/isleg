@@ -3,6 +3,8 @@ package models
 import (
 	"errors"
 	"github/abbgo/isleg/isleg-backend/config"
+	"strconv"
+	"strings"
 
 	"golang.org/x/crypto/bcrypt"
 	"gopkg.in/guregu/null.v4"
@@ -54,14 +56,18 @@ func ValidateCustomerRegister(phoneNumber, email string) error {
 	}()
 
 	if phoneNumber != "" {
-		// if !strings.HasPrefix(phoneNumber, "+993") {
-		// 	return errors.New("phone number must start with +993")
-		// }
+		if !strings.HasPrefix(phoneNumber, "+993") {
+			return errors.New("phone number must start with +993")
+		}
 
-		// _, err := strconv.Atoi(strings.Trim(phoneNumber, "+"))
-		// if err != nil {
-		// 	return err
-		// }
+		_, err := strconv.Atoi(strings.Trim(phoneNumber, "+"))
+		if err != nil {
+			return err
+		}
+
+		if len(phoneNumber) != 12 {
+			return errors.New("phone number must be 12 in length")
+		}
 
 		row, err := db.Query("SELECT phone_number FROM customers WHERE phone_number = $1 AND is_register = true AND deleted_at IS NULL", phoneNumber)
 		if err != nil {
@@ -122,14 +128,21 @@ func ValidateCustomerRegister(phoneNumber, email string) error {
 
 }
 
-// func ValidateCustomerLogin(phoneNumber string) error {
+func ValidateCustomerLogin(phoneNumber string) error {
 
-// 	if phoneNumber != "" {
-// 		if !strings.HasPrefix(phoneNumber, "+993") {
-// 			return errors.New("phone number must start with +993")
-// 		}
-// 	}
+	if !strings.HasPrefix(phoneNumber, "+993") {
+		return errors.New("phone number must start with +993")
+	}
 
-// 	return nil
+	_, err := strconv.Atoi(strings.Trim(phoneNumber, "+"))
+	if err != nil {
+		return err
+	}
 
-// }
+	if len(phoneNumber) != 12 {
+		return errors.New("phone number must be 12 in length")
+	}
+
+	return nil
+
+}
