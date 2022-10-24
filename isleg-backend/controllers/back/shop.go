@@ -4,7 +4,6 @@ import (
 	"github/abbgo/isleg/isleg-backend/config"
 	"github/abbgo/isleg/isleg-backend/models"
 	"net/http"
-	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/lib/pq"
@@ -454,6 +453,7 @@ func GetShops(c *gin.Context) {
 
 func DeleteShopByID(c *gin.Context) {
 
+	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -472,8 +472,10 @@ func DeleteShopByID(c *gin.Context) {
 		}
 	}()
 
+	// get id from request parameter
 	ID := c.Param("id")
 
+	// check id
 	rowShop, err := db.Query("SELECT id FROM shops WHERE id = $1 AND deleted_at IS NULL", ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -512,9 +514,7 @@ func DeleteShopByID(c *gin.Context) {
 		return
 	}
 
-	currentTime := time.Now()
-
-	resultShop, err := db.Query("UPDATE shops SET deleted_at = $1 WHERE id = $2", currentTime, ID)
+	resultProc, err := db.Query("CALL delete_shop($1)", ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -523,25 +523,7 @@ func DeleteShopByID(c *gin.Context) {
 		return
 	}
 	defer func() {
-		if err := resultShop.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
-
-	resultCategoryShop, err := db.Query("UPDATE category_shop SET deleted_at = $1 WHERE shop_id = $2", currentTime, ID)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-	defer func() {
-		if err := resultCategoryShop.Close(); err != nil {
+		if err := resultProc.Close(); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
@@ -552,7 +534,7 @@ func DeleteShopByID(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
-		"message": "shop successfully deleted",
+		"message": "data successfully deleted",
 	})
 
 }
