@@ -217,7 +217,7 @@ func Routes() *gin.Engine {
 		front.GET("/translation-my-information-page", backController.GetTranslationMyInformationPageByLangID)
 
 		// to order
-		front.POST("/to-order", frontController.ToOrder) // funksiyany optimize etmeli
+		front.POST("/to-order", frontController.ToOrder) // fully ready
 
 		securedCustomer := front.Group("/").Use(middlewares.Auth())
 		{
