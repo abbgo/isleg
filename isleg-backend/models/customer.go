@@ -3,7 +3,6 @@ package models
 import (
 	"errors"
 	"github/abbgo/isleg/isleg-backend/config"
-	"strings"
 
 	"golang.org/x/crypto/bcrypt"
 	"gopkg.in/guregu/null.v4"
@@ -123,14 +122,14 @@ func ValidateCustomerRegister(phoneNumber, email string) error {
 
 }
 
-func ValidateCustomerLogin(phoneNumber string) error {
+// func ValidateCustomerLogin(phoneNumber string) error {
 
-	if phoneNumber != "" {
-		if !strings.HasPrefix(phoneNumber, "+993") {
-			return errors.New("phone number must start with +993")
-		}
-	}
+// 	if phoneNumber != "" {
+// 		if !strings.HasPrefix(phoneNumber, "+993") {
+// 			return errors.New("phone number must start with +993")
+// 		}
+// 	}
 
-	return nil
+// 	return nil
 
-}
+// }

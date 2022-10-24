@@ -152,7 +152,7 @@ func Routes() *gin.Engine {
 	customer := routes.Group("/api/auth")
 	{
 		customer.POST("/register", frontController.RegisterCustomer) // fully ready
-		customer.POST("/login", frontController.LoginCustomer)       // funksiyany optimize etmeli
+		customer.POST("/login", frontController.LoginCustomer)       // fully ready
 		customer.POST("/refresh", auth.Refresh)                      //+
 	}
 

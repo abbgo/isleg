@@ -201,6 +201,7 @@ func RegisterCustomer(c *gin.Context) {
 
 func LoginCustomer(c *gin.Context) {
 
+	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -226,11 +227,11 @@ func LoginCustomer(c *gin.Context) {
 		return
 	}
 
-	err = models.ValidateCustomerLogin(customer.PhoneNumber)
-	if err != nil {
-		c.AbortWithStatusJSON(500, gin.H{"message": err.Error()})
-		return
-	}
+	// err = models.ValidateCustomerLogin(customer.PhoneNumber)
+	// if err != nil {
+	// 	c.AbortWithStatusJSON(500, gin.H{"message": err.Error()})
+	// 	return
+	// }
 
 	// check if email exists and password is correct
 	row, err := db.Query("SELECT id,password FROM customers WHERE phone_number = $1 AND is_register = true AND deleted_at IS NULL", customer.PhoneNumber)
@@ -257,7 +258,7 @@ func LoginCustomer(c *gin.Context) {
 		}
 	}
 
-	if oldPassword == "" || customerID == "" {
+	if customerID == "" {
 		c.JSON(http.StatusUnauthorized, gin.H{"message": "this client does not exist"})
 		return
 	}
