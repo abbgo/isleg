@@ -6,8 +6,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/lib/pq"
 	"golang.org/x/crypto/bcrypt"
+	"gopkg.in/guregu/null.v4"
 )
 
 type Customer struct {
@@ -15,7 +15,7 @@ type Customer struct {
 	FullName        string            `json:"full_name,omitempty" binding:"required,min=3"`
 	PhoneNumber     string            `json:"phone_number,omitempty" binding:"required,e164,len=12"`
 	Password        string            `json:"password,omitempty" binding:"required,min=5,max=25"`
-	Birthday        pq.NullTime       `json:"birthday,omitempty"`
+	Birthday        null.Time         `json:"birthday,omitempty"`
 	Gender          string            `json:"gender,omitempty"`
 	Email           string            `json:"email,omitempty" binding:"email"`
 	IsRegister      bool              `json:"is_register,omitempty"`

@@ -216,6 +216,9 @@ func Routes() *gin.Engine {
 		// get my information page translation
 		front.GET("/translation-my-information-page", backController.GetTranslationMyInformationPageByLangID)
 
+		// to order
+		front.POST("/to-order", frontController.ToOrder) // funksiyany optimize etmeli
+
 		securedCustomer := front.Group("/").Use(middlewares.Auth())
 		{
 			// add like if customer exists
@@ -239,9 +242,6 @@ func Routes() *gin.Engine {
 			// remove product from cart
 			securedCustomer.DELETE("/remove-cart", frontController.RemoveCart) // funksiyany optimize etmeli
 
-			// to order
-			securedCustomer.POST("/to-order", frontController.ToOrder) // funksiyany optimize etmeli
-
 			// get customer orders
 			securedCustomer.GET("/orders", frontController.GetCustomerOrders) // funksiyany optimize etmeli
 
@@ -251,11 +251,14 @@ func Routes() *gin.Engine {
 			// get customer informations
 			securedCustomer.GET("/my-information", frontController.GetCustomerInformation) // funksiyany optimize etmeli
 
+			// get customer informations
+			securedCustomer.PUT("/my-information", frontController.UpdateCustomerInformation) // funksiyany optimize etmeli
+
 			// update customer address status
 			securedCustomer.PUT("/address", frontController.UpdateCustomerAddressStatus) // funksiyany optimize etmeli
 
 			// update customer password
-			securedCustomer.PUT("/customer-password", frontController.UpdateCustomerPassword) //+
+			// securedCustomer.PUT("/customer-password", frontController.UpdateCustomerPassword) //+
 
 		}
 
