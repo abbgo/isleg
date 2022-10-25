@@ -400,6 +400,7 @@ func GetCustomerInformation(c *gin.Context) {
 	})
 
 }
+
 func UpdateCustomerInformation(c *gin.Context) {
 
 	db, err := config.ConnDB()
@@ -475,16 +476,7 @@ func UpdateCustomerInformation(c *gin.Context) {
 		return
 	}
 
-	hashedPassword, err := models.HashPassword(customer.Password)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-
-	resultCustomer, err := db.Query("UPDATE customers SET full_name = $1, phone_number = $2, email = $3, birthday = $4, password = $5 WHERE id = $6", customer.FullName, customer.PhoneNumber, customer.Email, customer.Birthday, hashedPassword, customerID)
+	resultCustomer, err := db.Query("UPDATE customers SET full_name = $1, phone_number = $2, email = $3, birthday = $4 WHERE id = $5", customer.FullName, customer.PhoneNumber, customer.Email, customer.Birthday, customerID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -509,106 +501,106 @@ func UpdateCustomerInformation(c *gin.Context) {
 
 }
 
-// func UpdateCustomerPassword(c *gin.Context) {
+func UpdateCustomerPassword(c *gin.Context) {
 
-// 	db, err := config.ConnDB()
-// 	if err != nil {
-// 		c.JSON(http.StatusBadRequest, gin.H{
-// 			"status":  false,
-// 			"message": err.Error(),
-// 		})
-// 		return
-// 	}
-// 	defer func() {
-// 		if err := db.Close(); err != nil {
-// 			c.JSON(http.StatusBadRequest, gin.H{
-// 				"status":  false,
-// 				"message": err.Error(),
-// 			})
-// 			return
-// 		}
-// 	}()
+	db, err := config.ConnDB()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
-// 	custID, hasCustomer := c.Get("customer_id")
-// 	if !hasCustomer {
-// 		c.JSON(http.StatusBadRequest, "customer_id is required")
-// 		return
-// 	}
-// 	customerID, ok := custID.(string)
-// 	if !ok {
-// 		c.JSON(http.StatusBadRequest, "customer_id must be string")
-// 	}
+	custID, hasCustomer := c.Get("customer_id")
+	if !hasCustomer {
+		c.JSON(http.StatusBadRequest, "customer_id is required")
+		return
+	}
+	customerID, ok := custID.(string)
+	if !ok {
+		c.JSON(http.StatusBadRequest, "customer_id must be string")
+	}
 
-// 	password := c.PostForm("password")
+	password := c.PostForm("password")
 
-// 	rowCustomer, err := db.Query("SELECT id FROM customers WHERE id = $1 AND deleted_at IS NULL", customerID)
-// 	if err != nil {
-// 		c.JSON(http.StatusBadRequest, gin.H{
-// 			"status":  false,
-// 			"message": err.Error(),
-// 		})
-// 		return
-// 	}
-// 	defer func() {
-// 		if err := rowCustomer.Close(); err != nil {
-// 			c.JSON(http.StatusBadRequest, gin.H{
-// 				"status":  false,
-// 				"message": err.Error(),
-// 			})
-// 			return
-// 		}
-// 	}()
+	rowCustomer, err := db.Query("SELECT id FROM customers WHERE id = $1 AND deleted_at IS NULL", customerID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer func() {
+		if err := rowCustomer.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
-// 	var customer_id string
+	var customer_id string
 
-// 	for rowCustomer.Next() {
-// 		if err := rowCustomer.Scan(&customer_id); err != nil {
-// 			c.JSON(http.StatusBadRequest, gin.H{
-// 				"status":  false,
-// 				"message": err.Error(),
-// 			})
-// 			return
-// 		}
-// 	}
+	for rowCustomer.Next() {
+		if err := rowCustomer.Scan(&customer_id); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}
 
-// 	if customer_id == "" {
-// 		c.JSON(http.StatusBadRequest, gin.H{
-// 			"status":  false,
-// 			"message": "customer not found",
-// 		})
-// 		return
-// 	}
+	if customer_id == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "customer not found",
+		})
+		return
+	}
 
-// 	hashPassword, err := models.HashPassword(password)
-// 	if err != nil {
-// 		c.JSON(http.StatusBadRequest, gin.H{
-// 			"status":  false,
-// 			"message": err.Error(),
-// 		})
-// 		return
-// 	}
+	hashPassword, err := models.HashPassword(password)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
 
-// 	resultCustomer, err := db.Query("UPDATE customers SET password = $1 WHERE id = $2", hashPassword, customerID)
-// 	if err != nil {
-// 		c.JSON(http.StatusBadRequest, gin.H{
-// 			"status":  false,
-// 			"message": err.Error(),
-// 		})
-// 		return
-// 	}
-// 	defer func() {
-// 		if err := resultCustomer.Close(); err != nil {
-// 			c.JSON(http.StatusBadRequest, gin.H{
-// 				"status":  false,
-// 				"message": err.Error(),
-// 			})
-// 			return
-// 		}
-// 	}()
+	resultCustomer, err := db.Query("UPDATE customers SET password = $1 WHERE id = $2", hashPassword, customerID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer func() {
+		if err := resultCustomer.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
-// 	c.JSON(http.StatusOK, gin.H{
-// 		"status":  true,
-// 		"message": "password of customer successfuly updated",
-// 	})
+	c.JSON(http.StatusOK, gin.H{
+		"status":  true,
+		"message": "password of customer successfuly updated",
+	})
 
-// }
+}
