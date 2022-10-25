@@ -240,7 +240,7 @@ func Routes() *gin.Engine {
 			securedCustomer.POST("/add-cart", frontController.AddCart) // funksiyany optimize etmeli
 
 			// get product of cart
-			// securedCustomer.GET("/get-cart/:customer_id", frontController.GetCartProducts)
+			securedCustomer.GET("/get-cart/:customer_id", frontController.GetCustomerCartProducts)
 
 			// remove product from cart
 			securedCustomer.DELETE("/remove-cart", frontController.RemoveCart) // funksiyany optimize etmeli

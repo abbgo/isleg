@@ -65,6 +65,7 @@ func AddCart(c *gin.Context) {
 	}
 
 	langShortName := c.Param("lang")
+
 	var cart DataForAddCart
 
 	if err := c.BindJSON(&cart); err != nil {
@@ -366,6 +367,36 @@ func GetCartProducts(langShortName, customerID string) ([]ProductOfCart, error) 
 	}
 
 	return products, nil
+
+}
+
+func GetCustomerCartProducts(c *gin.Context) {
+
+	custID, hasCustomer := c.Get("customer_id")
+	if !hasCustomer {
+		c.JSON(http.StatusBadRequest, "customer_id is required")
+		return
+	}
+	customerID, ok := custID.(string)
+	if !ok {
+		c.JSON(http.StatusBadRequest, "customer_id must be string")
+	}
+
+	langShortName := c.Param("lang")
+
+	products, err := GetCartProducts(langShortName, customerID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":   true,
+		"products": products,
+	})
 
 }
 
