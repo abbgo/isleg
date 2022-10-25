@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "d2a71513-f57f-4969-9f9e-65cd2e38c027",
+		"_postman_id": "5b9d9655-b0ff-45bf-a59a-cf347aacdb84",
 		"name": "IM",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -4115,36 +4115,6 @@
 								{
 									"key": "to_order_ru",
 									"value": "to_order_ru",
-									"type": "default"
-								},
-								{
-									"key": "tomorrow_tm",
-									"value": "tomorrow_tm",
-									"type": "default"
-								},
-								{
-									"key": "tomorrow_ru",
-									"value": "tomorrow_ru",
-									"type": "default"
-								},
-								{
-									"key": "cash_tm",
-									"value": "cash_tm",
-									"type": "default"
-								},
-								{
-									"key": "cash_ru",
-									"value": "cash_ru",
-									"type": "default"
-								},
-								{
-									"key": "payment_terminal_tm",
-									"value": "payment_terminal_tm",
-									"type": "default"
-								},
-								{
-									"key": "payment_terminal_ru",
-									"value": "payment_terminal_ru",
 									"type": "default"
 								}
 							]
