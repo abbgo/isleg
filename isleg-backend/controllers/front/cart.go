@@ -64,7 +64,7 @@ func AddCart(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, "customer_id must be string")
 	}
 
-	// langShortName := c.Param("lang")
+	langShortName := c.Param("lang")
 	var cart DataForAddCart
 
 	if err := c.BindJSON(&cart); err != nil {
@@ -242,18 +242,18 @@ func AddCart(c *gin.Context) {
 
 	}
 
-	// products, err := GetCartProducts(langShortName, cart.CustomerID)
-	// if err != nil {
-	// 	c.JSON(http.StatusBadRequest, gin.H{
-	// 		"status":  false,
-	// 		"message": err.Error(),
-	// 	})
-	// 	return
-	// }
+	products, err := GetCartProducts(langShortName, customerID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"status":  true,
-		"message": "products have been successfully added to cart",
+		"status":   true,
+		"products": products,
 	})
 
 }
