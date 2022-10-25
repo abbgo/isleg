@@ -50,6 +50,7 @@ func AddLike(c *gin.Context) {
 	}()
 
 	langShortName := c.Param("lang")
+
 	custID, hasCustomer := c.Get("customer_id")
 	if !hasCustomer {
 		c.JSON(http.StatusBadRequest, "customer_id is required")
@@ -474,6 +475,36 @@ func GetLikes(langShortName, customerID string) ([]LikeProduct, error) {
 	}
 
 	return products, nil
+
+}
+
+func GetCustomerLikes(c *gin.Context) {
+
+	langShortName := c.Param("lang")
+
+	custID, hasCustomer := c.Get("customer_id")
+	if !hasCustomer {
+		c.JSON(http.StatusBadRequest, "customer_id is required")
+		return
+	}
+	customerID, ok := custID.(string)
+	if !ok {
+		c.JSON(http.StatusBadRequest, "customer_id must be string")
+	}
+
+	products, err := GetLikes(langShortName, customerID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":   true,
+		"products": products,
+	})
 
 }
 

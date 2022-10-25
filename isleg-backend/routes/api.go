@@ -231,7 +231,7 @@ func Routes() *gin.Engine {
 			securedCustomer.DELETE("/like/:product_id", frontController.RemoveLike) // funksiyany optimize etmeli
 
 			// get like products if customer exists
-			// securedCustomer.GET("/likes/:customer_id", frontController.GetLikes)
+			securedCustomer.GET("/likes", frontController.GetCustomerLikes)
 
 			// get like products without customer by product id
 			// securedCustomer.GET("/likes-without-customer", frontController.GetLikedProductsWithoutCustomer) // funksiyany optimize etmeli
