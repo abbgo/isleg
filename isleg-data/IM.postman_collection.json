@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "42d16283-2ca1-4071-92e5-51fc52f73e89",
+		"_postman_id": "d2a71513-f57f-4969-9f9e-65cd2e38c027",
 		"name": "IM",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -3236,7 +3236,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"phone_number\":\"+99363747155\",\n    \"password\":\"123456\"\n}",
+							"raw": "{\n    \"phone_number\":\"+99362420377\",\n    \"password\":\"12345\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -3409,29 +3409,18 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NSIsImV4cCI6MTY2NTUyMjkyOX0.S56L4y9NZmnAphuC4huuD4ZgkeKGWGpfKx7ztnXm_m0",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NSIsImN1c3RvbWVyX2lkIjoiMWY1YmM5MTctZmM4NS00NmNmLWExYjItN2MxNGNmZTk0MGJlIiwiZXhwIjoxNjY2NjgxNDgxfQ.aQeAjZRwrtuwyt1GW2iVijRy7hIFxpGowHPs1fM0nms",
 								"type": "default"
 							}
 						],
 						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "customer_id",
-									"value": "7e872c52-0d23-4086-8c45-43000b57332e",
-									"type": "default"
-								},
-								{
-									"key": "product_ids",
-									"value": "0d4a6c3c-cc5d-457b-ac9a-ce60eacb94de",
-									"type": "default"
-								},
-								{
-									"key": "product_ids",
-									"value": "b2b165a3-2261-4d67-8160-0e239ecd99b5",
-									"type": "default"
+							"mode": "raw",
+							"raw": "[\n    {\n        \"product_id\":\"81b84c5d-9759-4b86-978a-649c8ef79660\"\n    },\n    {\n        \"product_id\":\"b2b165a3-2261-4d67-8160-0e239ecd99b5\"\n    }\n]",
+							"options": {
+								"raw": {
+									"language": "json"
 								}
-							]
+							}
 						},
 						"url": {
 							"raw": "localhost:2406/api/tm/like",
@@ -4829,7 +4818,12 @@
 									"value": "Завтра",
 									"type": "default"
 								}
-							]
+							],
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
 						},
 						"url": {
 							"raw": "localhost:2406/admin/order-time",
