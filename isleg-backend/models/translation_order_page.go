@@ -9,9 +9,6 @@ type TranslationOrderPage struct {
 	YourAddress         string `json:"your_address,omitempty"`
 	Mark                string `json:"mark,omitempty"`
 	ToOrder             string `json:"to_order,omitempty"`
-	Tomorrow            string `json:"tomorrow,omitempty"`
-	Cash                string `json:"cash,omitempty"`
-	PaymentTerminal     string `json:"payment_terminal,omitempty"`
 	CreatedAt           string `json:"-"`
 	UpdatedAt           string `json:"-"`
 	DeletedAt           string `json:"-"`
