@@ -204,7 +204,7 @@ func GetTranslationOrderPageByID(c *gin.Context) {
 	ID := c.Param("id")
 
 	// check id and get data from database
-	rowTrOrderPage, err := db.Query("SELECT id,content,type_of_payment,choose_a_delivery_time,your_address,mark,to_order,tomorrow,cash,payment_terminal FROM translation_order_page WHERE id = $1 AND deleted_at IS NULL", ID)
+	rowTrOrderPage, err := db.Query("SELECT id,content,type_of_payment,choose_a_delivery_time,your_address,mark,to_order FROM translation_order_page WHERE id = $1 AND deleted_at IS NULL", ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -225,7 +225,7 @@ func GetTranslationOrderPageByID(c *gin.Context) {
 	var t models.TranslationOrderPage
 
 	for rowTrOrderPage.Next() {
-		if err := rowTrOrderPage.Scan(&t.ID, &t.Content, &t.TypeOfPayment, &t.ChooseADeliveryTime, &t.YourAddress, &t.Mark, &t.ToOrder, &t.Tomorrow, &t.Cash, &t.PaymentTerminal); err != nil {
+		if err := rowTrOrderPage.Scan(&t.ID, &t.Content, &t.TypeOfPayment, &t.ChooseADeliveryTime, &t.YourAddress, &t.Mark, &t.ToOrder); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
