@@ -26,7 +26,7 @@ type LikeProduct struct {
 }
 
 type ProductID struct {
-	ID string `json:"product_id"`
+	IDS []string `json:"product_ids"`
 }
 
 func AddLike(c *gin.Context) {
@@ -99,18 +99,18 @@ func AddLike(c *gin.Context) {
 		return
 	}
 
-	var productIds []ProductID
+	var productIds ProductID
 
 	if err := c.BindJSON(&productIds); err != nil {
 		c.JSON(http.StatusBadRequest, err.Error())
 		return
 	}
 
-	if len(productIds) != 0 {
+	if len(productIds.IDS) != 0 {
 
-		for _, v := range productIds {
+		for _, v := range productIds.IDS {
 
-			rowProduct, err := db.Query("SELECT id FROM products WHERE id = $1 AND deleted_at IS NULL", v.ID)
+			rowProduct, err := db.Query("SELECT id FROM products WHERE id = $1 AND deleted_at IS NULL", v)
 			if err != nil {
 				c.JSON(http.StatusBadRequest, gin.H{
 					"status":  false,
@@ -148,7 +148,7 @@ func AddLike(c *gin.Context) {
 				return
 			}
 
-			rowLike, err := db.Query("SELECT product_id FROM likes WHERE customer_id = $1 AND product_id = $2 AND deleted_at IS NULL", customerID, v.ID)
+			rowLike, err := db.Query("SELECT product_id FROM likes WHERE customer_id = $1 AND product_id = $2 AND deleted_at IS NULL", customerID, v)
 			if err != nil {
 				c.JSON(http.StatusBadRequest, gin.H{
 					"status":  false,
@@ -182,7 +182,7 @@ func AddLike(c *gin.Context) {
 
 			if product == "" {
 
-				resultLike, err := db.Query("INSERT INTO likes (customer_id,product_id) VALUES ($1,$2)", customerID, v.ID)
+				resultLike, err := db.Query("INSERT INTO likes (customer_id,product_id) VALUES ($1,$2)", customerID, v)
 				if err != nil {
 					c.JSON(http.StatusBadRequest, gin.H{
 						"status":  false,
