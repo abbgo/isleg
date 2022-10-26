@@ -332,7 +332,7 @@ func ToOrder(c *gin.Context) {
 
 	}
 
-	resultCart, err := db.Query("DELETE FROM cart WHERE id = customer_id = $1", customerID)
+	resultCart, err := db.Query("DELETE FROM cart WHERE customer_id = $1", customerID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,

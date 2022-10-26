@@ -8,6 +8,10 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+type TrsFooter struct {
+	TranslationsFooter []models.TranslationFooter `json:"translations_footer"`
+}
+
 func CreateTranslationFooter(c *gin.Context) {
 
 	// initialize database connection
@@ -29,7 +33,7 @@ func CreateTranslationFooter(c *gin.Context) {
 		}
 	}()
 
-	var trFooters []models.TranslationFooter
+	var trFooters TrsFooter
 
 	if err := c.BindJSON(&trFooters); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -40,7 +44,7 @@ func CreateTranslationFooter(c *gin.Context) {
 	}
 
 	// check lang_id
-	for _, v := range trFooters {
+	for _, v := range trFooters.TranslationsFooter {
 
 		rowLang, err := db.Query("SELECT id FROM languages WHERE id = $1 AND deleted_atr IS NULL", v.LangID)
 		if err != nil {
@@ -83,7 +87,7 @@ func CreateTranslationFooter(c *gin.Context) {
 	}
 
 	// create translation footer
-	for _, v := range trFooters {
+	for _, v := range trFooters.TranslationsFooter {
 
 		resultTRFooter, err := db.Query("INSERT INTO translation_footer (lang_id,about,payment,contact,secure,word) VALUES ($1,$2,$3,$4,$5,$6)", v.LangID, v.About, v.Payment, v.Contact, v.Contact, v.Word)
 		if err != nil {
