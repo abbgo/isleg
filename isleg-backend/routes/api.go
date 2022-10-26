@@ -44,13 +44,13 @@ func Routes() *gin.Engine {
 
 		back.POST("/order-time", backController.CreateOrderTime) // fully ready
 
-		back.POST("/translation-header", backController.CreateTranslationHeader)        // fully ready
-		back.PUT("/translation-header/:id", backController.UpdateTranslationHeaderByID) // fully reade
-		back.GET("/translation-header/:id", backController.GetTranslationHeaderByID)    // fully ready
+		back.POST("/translation-header", backController.CreateTranslationHeader)     // fully ready
+		back.PUT("/translation-header", backController.UpdateTranslationHeaderByID)  // fully reade
+		back.GET("/translation-header/:id", backController.GetTranslationHeaderByID) // fully ready
 
-		back.POST("/translation-footer", backController.CreateTranslationFooter)        // fully ready
-		back.PUT("/translation-footer/:id", backController.UpdateTranslationFooterByID) // fully ready
-		back.GET("/translation-footer/:id", backController.GetTranslationFooterByID)    // fully ready
+		back.POST("/translation-footer", backController.CreateTranslationFooter)     // fully ready
+		back.PUT("/translation-footer", backController.UpdateTranslationFooterByID)  // fully ready
+		back.GET("/translation-footer/:id", backController.GetTranslationFooterByID) // fully ready
 
 		back.POST("/translation-secure", backController.CreateTranslationSecure)        // fully ready
 		back.PUT("/translation-secure/:id", backController.UpdateTranslationSecureByID) // fully ready

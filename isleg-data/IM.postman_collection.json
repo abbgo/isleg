@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "5b9d9655-b0ff-45bf-a59a-cf347aacdb84",
+		"_postman_id": "d2a71513-f57f-4969-9f9e-65cd2e38c027",
 		"name": "IM",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -1799,59 +1799,13 @@
 						"method": "POST",
 						"header": [],
 						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "about_tm",
-									"value": "Biz Barada",
-									"type": "default"
-								},
-								{
-									"key": "about_ru",
-									"value": "О нас",
-									"type": "default"
-								},
-								{
-									"key": "payment_tm",
-									"value": "Eltip bermek we töleg tertibi",
-									"type": "default"
-								},
-								{
-									"key": "payment_ru",
-									"value": "Порядок доставки и оплаты",
-									"type": "default"
-								},
-								{
-									"key": "contact_tm",
-									"value": "Aragatnaşyk",
-									"type": "default"
-								},
-								{
-									"key": "contact_ru",
-									"value": "Коммуникация",
-									"type": "default"
-								},
-								{
-									"key": "secure_tm",
-									"value": "Ulanyş düzgünleri we gizlinlik şertnamasy",
-									"type": "default"
-								},
-								{
-									"key": "secure_ru",
-									"value": "Обслуживания и Политика Конфиденциальности",
-									"type": "default"
-								},
-								{
-									"key": "word_tm",
-									"value": "Ähli hukuklary goraglydyr",
-									"type": "default"
-								},
-								{
-									"key": "word_ru",
-									"value": "Все права защищены",
-									"type": "default"
+							"mode": "raw",
+							"raw": "[\n    {\n        \"lang_id\":\"aea98b93-7bdf-455b-9ad4-a259d69dc76e\",\n        \"about\":\"О нас\",\n        \"payment\":\"Порядок доставки и оплаты\",\n        \"contact\":\"Коммуникация\",\n        \"secure\":\"Обслуживания и Политика Конфиденциальности\",\n        \"word\":\"Все права защищены\"\n    },\n     {\n        \"lang_id\":\"8723c1c7-aa6d-429f-b8af-ee9ace61f0d7\",\n        \"about\":\"Biz Barada\",\n        \"payment\":\"Eltip bermek we töleg tertibi\",\n        \"contact\":\"Aragatnaşyk\",\n        \"secure\":\"Ulanyş düzgünleri we gizlinlik şertnamasy\",\n        \"word\":\"Ähli hukuklary goraglydyr\"\n    }\n]",
+							"options": {
+								"raw": {
+									"language": "json"
 								}
-							]
+							}
 						},
 						"url": {
 							"raw": "localhost:2406/admin/translation-footer",
@@ -1873,34 +1827,13 @@
 						"method": "PUT",
 						"header": [],
 						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "about",
-									"value": "Biz Barada",
-									"type": "default"
-								},
-								{
-									"key": "payment",
-									"value": "Eltip bermek we töleg tertibi",
-									"type": "default"
-								},
-								{
-									"key": "contact",
-									"value": "Aragatnaşyk",
-									"type": "default"
-								},
-								{
-									"key": "secure",
-									"value": "Ulanyş düzgünleri we gizlinlik şertnamasy",
-									"type": "default"
-								},
-								{
-									"key": "word",
-									"value": "Ähli hukuklary goraglydyr",
-									"type": "default"
+							"mode": "raw",
+							"raw": "{\n    \"id\":\"12dc4c16-5712-4bff-a957-8e16d450b4fb\",\n    \"lang_id\":\"8723c1c7-aa6d-429f-b8af-ee9ace61f0d7\",\n    \"about\":\"Biz Barada\",\n    \"payment\":\"Eltip bermek we töleg tertibi\",\n    \"contact\":\"Aragatnaşyk\",\n    \"secure\":\"Ulanyş düzgünleri we gizlinlik şertnamasy\",\n    \"word\":\"Ähli hukuklary goraglydyr\"\n    }",
+							"options": {
+								"raw": {
+									"language": "json"
 								}
-							]
+							}
 						},
 						"url": {
 							"raw": "localhost:2406/admin/translation-footer/12dc4c16-5712-4bff-a957-8e16d450b4fb",
@@ -1948,149 +1881,13 @@
 						"method": "POST",
 						"header": [],
 						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "research_tm",
-									"value": "gözleg",
-									"type": "default"
-								},
-								{
-									"key": "research_ru",
-									"value": "поиск",
-									"type": "default"
-								},
-								{
-									"key": "phone_tm",
-									"value": "telefon",
-									"type": "default"
-								},
-								{
-									"key": "phone_ru",
-									"value": "tелефон",
-									"type": "default"
-								},
-								{
-									"key": "password_tm",
-									"value": "parol",
-									"type": "default"
-								},
-								{
-									"key": "password_ru",
-									"value": "пароль",
-									"type": "default"
-								},
-								{
-									"key": "forgot_password_tm",
-									"value": "Acar sozumi unutdym",
-									"type": "default"
-								},
-								{
-									"key": "forgot_password_ru",
-									"value": "забыл пароль",
-									"type": "default"
-								},
-								{
-									"key": "sign_in_tm",
-									"value": "ulgama girmek",
-									"type": "default"
-								},
-								{
-									"key": "sign_in_ru",
-									"value": "войти",
-									"type": "default"
-								},
-								{
-									"key": "sign_up_tm",
-									"value": "agza bolmak",
-									"type": "default"
-								},
-								{
-									"key": "sign_up_ru",
-									"value": "зарегистрироваться",
-									"type": "default"
-								},
-								{
-									"key": "name_tm",
-									"value": "Ady",
-									"type": "default"
-								},
-								{
-									"key": "name_ru",
-									"value": "имя",
-									"type": "default"
-								},
-								{
-									"key": "password_verification_tm",
-									"value": "Acar sozi tassyklamak",
-									"type": "default"
-								},
-								{
-									"key": "password_verification_ru",
-									"value": "Подтвердить Пароль",
-									"type": "default"
-								},
-								{
-									"key": "verify_secure_tm",
-									"value": "Ulanyş Düzgünlerini we Gizlinlik Şertnamasyny okadym we kabul edýärin",
-									"type": "default"
-								},
-								{
-									"key": "verify_secure_ru",
-									"value": "Я прочитал и принимаю Условия Обслуживания и Политика Конфиденциальности",
-									"type": "default"
-								},
-								{
-									"key": "my_information_tm",
-									"value": "maglumatym",
-									"type": "default"
-								},
-								{
-									"key": "my_information_ru",
-									"value": "моя информация",
-									"type": "default"
-								},
-								{
-									"key": "my_favorites_tm",
-									"value": "halanlarym",
-									"type": "default"
-								},
-								{
-									"key": "my_favorites_ru",
-									"value": "мои любимые",
-									"type": "default"
-								},
-								{
-									"key": "my_orders_tm",
-									"value": "sargytlarym",
-									"type": "default"
-								},
-								{
-									"key": "my_orders_ru",
-									"value": "мои заказы",
-									"type": "default"
-								},
-								{
-									"key": "log_out_tm",
-									"value": "cykmak",
-									"type": "default"
-								},
-								{
-									"key": "log_out_ru",
-									"value": "выйти",
-									"type": "default"
-								},
-								{
-									"key": "basket_tm",
-									"value": "sebet",
-									"type": "default"
-								},
-								{
-									"key": "basket_ru",
-									"value": "корзина",
-									"type": "default"
+							"mode": "raw",
+							"raw": "[\n    {\n        \"lang_id\":\"aea98b93-7bdf-455b-9ad4-a259d69dc76e\",\n        \"research\":\"поиск\",\n        \"phone\":\"tелефон\",\n        \"password\":\"пароль\",\n        \"forgot_password\":\"забыл пароль\",\n        \"sign_in\":\"войти\",\n        \"sign_up\":\"зарегистрироваться\",\n        \"name\":\"имя\",\n        \"password_verification\":\"Подтвердить Пароль\",\n        \"verify_secure\":\"Я прочитал и принимаю Условия Обслуживания и Политика Конфиденциальности\",\n        \"my_information\":\"моя информация\",\n        \"my_favorites\":\"мои любимые\",\n        \"my_orders\":\"мои заказы\",\n        \"log_out\":\"выйти\",\n        \"basket\":\"корзина\",\n        \"email\":\"uytget\",\n        \"add_to_basket\":\"uytget\"\n    },\n    {\n        \"lang_id\":\"8723c1c7-aa6d-429f-b8af-ee9ace61f0d7\",\n        \"research\":\"gözleg\",\n        \"phone\":\"telefon\",\n        \"password\":\"parol\",\n        \"forgot_password\":\"Acar sozumi unutdym\",\n        \"sign_in\":\"ulgama girmek\",\n        \"sign_up\":\"agza bolmak\",\n        \"name\":\"Ady\",\n        \"password_verification\":\"Acar sozi tassyklamak\",\n        \"verify_secure\":\"Ulanyş Düzgünlerini we Gizlinlik Şertnamasyny okadym we kabul edýärin\",\n        \"my_information\":\"maglumatym\",\n        \"my_favorites\":\"halanlarym\",\n        \"my_orders\":\"sargytlarym\",\n        \"log_out\":\"cykmak\",\n        \"basket\":\"sebet\",\n        \"email\":\"uytget\",\n        \"add_to_basket\":\"uytget\"\n    }\n]",
+							"options": {
+								"raw": {
+									"language": "json"
 								}
-							]
+							}
 						},
 						"url": {
 							"raw": "localhost:2406/admin/translation-header",
@@ -2112,79 +1909,13 @@
 						"method": "PUT",
 						"header": [],
 						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "research",
-									"value": "gözleg",
-									"type": "default"
-								},
-								{
-									"key": "phone",
-									"value": "telefon",
-									"type": "default"
-								},
-								{
-									"key": "password",
-									"value": "parol",
-									"type": "default"
-								},
-								{
-									"key": "forgot_password",
-									"value": "Acar sozumi unutdym",
-									"type": "default"
-								},
-								{
-									"key": "sign_in",
-									"value": "ulgama girmek",
-									"type": "default"
-								},
-								{
-									"key": "sign_up",
-									"value": "agza bolmak",
-									"type": "default"
-								},
-								{
-									"key": "name",
-									"value": "Ady",
-									"type": "default"
-								},
-								{
-									"key": "password_verification",
-									"value": "Acar sozi tassyklamak",
-									"type": "default"
-								},
-								{
-									"key": "verify_secure",
-									"value": "Ulanyş Düzgünlerini we Gizlinlik Şertnamasyny okadym we kabul edýärin",
-									"type": "default"
-								},
-								{
-									"key": "my_information",
-									"value": "maglumatym",
-									"type": "default"
-								},
-								{
-									"key": "my_favorites",
-									"value": "halanlarym",
-									"type": "default"
-								},
-								{
-									"key": "my_orders",
-									"value": "sargytlarym",
-									"type": "default"
-								},
-								{
-									"key": "log_out",
-									"value": "cykmak",
-									"type": "default"
-								},
-								{
-									"key": "basket",
-									"value": "sebet",
-									"type": "default"
+							"mode": "raw",
+							"raw": "{\n        \"id\":\"9154e800-2a92-47de-b4ff-1e63b213e5f7\",\n        \"lang_id\":\"aea98b93-7bdf-455b-9ad4-a259d69dc76e\",\n        \"research\":\"поиск\",\n        \"phone\":\"tелефон\",\n        \"password\":\"пароль\",\n        \"forgot_password\":\"забыл пароль\",\n        \"sign_in\":\"войти\",\n        \"sign_up\":\"зарегистрироваться\",\n        \"name\":\"имя\",\n        \"password_verification\":\"Подтвердить Пароль\",\n        \"verify_secure\":\"Я прочитал и принимаю Условия Обслуживания и Политика Конфиденциальности\",\n        \"my_information\":\"моя информация\",\n        \"my_favorites\":\"мои любимые\",\n        \"my_orders\":\"мои заказы\",\n        \"log_out\":\"выйти\",\n        \"basket\":\"корзина\",\n        \"email\":\"uytget_ru\",\n        \"add_to_basket\":\"uytget_ru\"\n    },",
+							"options": {
+								"raw": {
+									"language": "json"
 								}
-							]
+							}
 						},
 						"url": {
 							"raw": "localhost:2406/admin/translation-header/eaf206e6-d515-4bdb-9323-a047cd0edae5",
@@ -4116,6 +3847,36 @@
 									"key": "to_order_ru",
 									"value": "to_order_ru",
 									"type": "default"
+								},
+								{
+									"key": "tomorrow_tm",
+									"value": "tomorrow_tm",
+									"type": "default"
+								},
+								{
+									"key": "tomorrow_ru",
+									"value": "tomorrow_ru",
+									"type": "default"
+								},
+								{
+									"key": "cash_tm",
+									"value": "cash_tm",
+									"type": "default"
+								},
+								{
+									"key": "cash_ru",
+									"value": "cash_ru",
+									"type": "default"
+								},
+								{
+									"key": "payment_terminal_tm",
+									"value": "payment_terminal_tm",
+									"type": "default"
+								},
+								{
+									"key": "payment_terminal_ru",
+									"value": "payment_terminal_ru",
+									"type": "default"
 								}
 							]
 						},
@@ -4761,34 +4522,8 @@
 						"method": "POST",
 						"header": [],
 						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "date",
-									"value": "tomorrow",
-									"type": "default"
-								},
-								{
-									"key": "times",
-									"value": "09:00 - 12:00",
-									"type": "default"
-								},
-								{
-									"key": "times",
-									"value": "18:00 - 21:00",
-									"type": "default"
-								},
-								{
-									"key": "translation_date_tm",
-									"value": "Ertir",
-									"type": "default"
-								},
-								{
-									"key": "translation_date_ru",
-									"value": "Завтра",
-									"type": "default"
-								}
-							],
+							"mode": "raw",
+							"raw": "{\n    \"date\":\"tomorrow\",\n    \"order_times\":[\n        {\n            \"time\":\"09:00 - 12:00\"\n        },\n        {\n            \"time\":\"18:00 - 21:00\"\n        }\n    ],\n    \"translation_order_dates\":[\n        {\n            \"lang_id\":\"aea98b93-7bdf-455b-9ad4-a259d69dc76e\",\n            \"date\":\"Завтра\"\n        },\n        {\n            \"lang_id\":\"8723c1c7-aa6d-429f-b8af-ee9ace61f0d7\",\n            \"date\":\"Ertir\"\n        },\n         {\n            \"lang_id\":\"55a387df-6d38-42ea-bfba-379327b53cbd\",\n            \"date\":\"Ertir_fr\"\n        },\n         {\n            \"lang_id\":\"198695b5-579a-4f80-ac10-8380e17e5d98\",\n            \"date\":\"Ertir_tr\"\n        },\n         {\n            \"lang_id\":\"b62a1c1c-0a29-4756-8e9d-5c9680758d18\",\n            \"date\":\"Ertir_pl\"\n        }\n        \n    ]\n}",
 							"options": {
 								"raw": {
 									"language": "json"
