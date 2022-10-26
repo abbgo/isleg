@@ -190,7 +190,7 @@ func UpdateTranslationAboutByID(c *gin.Context) {
 	}
 
 	// update data
-	resultTRABout, err := db.Query("UPDATE translation_about SET title = $1, content = $2 WHERE id = $3", trAbout.Title, trAbout.Content, trAbout.ID)
+	resultTRABout, err := db.Query("UPDATE translation_about SET title = $1, content = $2, lang_id = $4 WHERE id = $3", trAbout.Title, trAbout.Content, trAbout.ID, trAbout.LangID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
