@@ -8,6 +8,10 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+type TrsMyInformationPage struct {
+	TranslationsMyInformationPage []models.TranslationMyInformationPage `json:"translations_my_information_page"`
+}
+
 func CreateTranslationMyInformationPage(c *gin.Context) {
 
 	// initialize database connection
@@ -30,7 +34,7 @@ func CreateTranslationMyInformationPage(c *gin.Context) {
 	}()
 
 	//get data from request
-	var trMyInforPages []models.TranslationMyInformationPage
+	var trMyInforPages TrsMyInformationPage
 
 	if err := c.BindJSON(&trMyInforPages); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -41,7 +45,7 @@ func CreateTranslationMyInformationPage(c *gin.Context) {
 	}
 
 	// check lang_id
-	for _, v := range trMyInforPages {
+	for _, v := range trMyInforPages.TranslationsMyInformationPage {
 
 		rowLang, err := db.Query("SELECT id FROM languages WHERE id = $1 AND deleted_at IS NULL", v.LangID)
 		if err != nil {
@@ -84,7 +88,7 @@ func CreateTranslationMyInformationPage(c *gin.Context) {
 	}
 
 	// create translation_my_information_page
-	for _, v := range trMyInforPages {
+	for _, v := range trMyInforPages.TranslationsMyInformationPage {
 
 		resutlTRMyInfPage, err := db.Query("INSERT INTO translation_my_information_page (lang_id,address,birthday,update_password,save) VALUES ($1,$2,$3,$4,$5)", v.LangID, v.Address, v.Birthday, v.UpdatePassword, v.Save)
 		if err != nil {
