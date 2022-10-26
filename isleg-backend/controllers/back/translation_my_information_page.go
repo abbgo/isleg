@@ -3,7 +3,6 @@ package controllers
 import (
 	"github/abbgo/isleg/isleg-backend/config"
 	"github/abbgo/isleg/isleg-backend/models"
-	"github/abbgo/isleg/isleg-backend/pkg"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -136,10 +135,18 @@ func UpdateTranslationMyInformationPageByID(c *gin.Context) {
 	}()
 
 	// get id of translation my information page from request parameter
-	ID := c.Param("id")
+	var trMyInforPage models.TranslationMyInformationPage
+
+	if err := c.BindJSON(&trMyInforPage); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
 
 	// check id
-	rowFlag, err := db.Query("SELECT id FROM translation_my_information_page WHERE id = $1 AND deleted_at IS NULL", ID)
+	rowFlag, err := db.Query("SELECT id FROM translation_my_information_page WHERE id = $1 AND deleted_at IS NULL", trMyInforPage.ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -177,19 +184,7 @@ func UpdateTranslationMyInformationPageByID(c *gin.Context) {
 		return
 	}
 
-	dataNames := []string{"address", "birthday", "update_password", "save"}
-
-	// VALIDATE DATA
-	err = pkg.ValidateTranslationsForUpdate(dataNames, c)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-
-	resultTRMyInfPage, err := db.Query("UPDATE translation_my_information_page SET address = $1, birthday = $2 , update_password = $3, save = $4 WHERE id = $5", c.PostForm("address"), c.PostForm("birthday"), c.PostForm("update_password"), c.PostForm("save"), id)
+	resultTRMyInfPage, err := db.Query("UPDATE translation_my_information_page SET address = $1, birthday = $2 , update_password = $3, save = $4 WHERE id = $5", trMyInforPage.Address, trMyInforPage.Birthday, trMyInforPage.UpdatePassword, trMyInforPage.Save, trMyInforPage.ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
