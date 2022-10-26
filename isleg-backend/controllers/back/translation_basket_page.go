@@ -188,7 +188,7 @@ func UpdateTranslationBasketPageByID(c *gin.Context) {
 		return
 	}
 
-	resultTrBasketPage, err := db.Query("UPDATE translation_basket_page SET quantity_of_goods = $1, total_price = $2 , discount = $3, delivery = $4 , total = $5 , currency = $6 , to_order = $7, your_basket = $8 , empty_the_basket = $9  WHERE id = $10", trBasketPage.QuantityOfGoods, trBasketPage.TotalPrice, trBasketPage.Discount, trBasketPage.Delivery, trBasketPage.Total, trBasketPage.Currency, trBasketPage.ToOrder, trBasketPage.YourBasket, trBasketPage.EmptyTheBasket, trBasketPage.ID)
+	resultTrBasketPage, err := db.Query("UPDATE translation_basket_page SET quantity_of_goods = $1, total_price = $2 , discount = $3, delivery = $4 , total = $5 , currency = $6 , to_order = $7, your_basket = $8 , empty_the_basket = $9, lang_id = $11  WHERE id = $10", trBasketPage.QuantityOfGoods, trBasketPage.TotalPrice, trBasketPage.Discount, trBasketPage.Delivery, trBasketPage.Total, trBasketPage.Currency, trBasketPage.ToOrder, trBasketPage.YourBasket, trBasketPage.EmptyTheBasket, trBasketPage.ID, trBasketPage.LangID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
