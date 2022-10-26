@@ -3,7 +3,6 @@ package controllers
 import (
 	"github/abbgo/isleg/isleg-backend/config"
 	"github/abbgo/isleg/isleg-backend/models"
-	"github/abbgo/isleg/isleg-backend/pkg"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -154,10 +153,19 @@ func UpdateTranslationHeaderByID(c *gin.Context) {
 	}()
 
 	// get id of translation_header table from request parameter
-	trHead := c.Param("id")
+	var trHeader models.TranslationHeader
+
+	if err := c.BindJSON(&trHeader); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	// trHead := c.Param("id")
 
 	// check id
-	rowFlag, err := db.Query("SELECT id FROM translation_header WHERE id = $1 AND deleted_at IS NULL", trHead)
+	rowFlag, err := db.Query("SELECT id FROM translation_header WHERE id = $1 AND deleted_at IS NULL", trHeader.ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -195,20 +203,8 @@ func UpdateTranslationHeaderByID(c *gin.Context) {
 		return
 	}
 
-	dataNames := []string{"research", "phone", "password", "forgot_password", "sign_in", "sign_up", "name", "password_verification", "verify_secure", "my_information", "my_favorites", "my_orders", "log_out", "basket", "email", "add_to_basket"}
-
-	// VALIDATE DATA
-	err = pkg.ValidateTranslationsForUpdate(dataNames, c)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-
 	// update translation_header table data
-	resultTrHedaer, err := db.Query("UPDATE translation_header SET research = $1 , phone = $2, password = $3,forgot_password = $4,sign_in = $5,sign_up = $6,name = $7,password_verification = $8,verify_secure = $9, my_information = $10, my_favorites = $11, my_orders = $12, log_out = $13, basket = $14 , email = $16, add_to_basket = $17 WHERE id = $15", c.PostForm("research"), c.PostForm("phone"), c.PostForm("password"), c.PostForm("forgot_password"), c.PostForm("sign_in"), c.PostForm("sign_up"), c.PostForm("name"), c.PostForm("password_verification"), c.PostForm("verify_secure"), c.PostForm("my_information"), c.PostForm("my_favorites"), c.PostForm("my_orders"), c.PostForm("log_out"), c.PostForm("basket"), id, c.PostForm("email"), c.PostForm("add_to_basket"))
+	resultTrHedaer, err := db.Query("UPDATE translation_header SET research = $1 , phone = $2, password = $3,forgot_password = $4,sign_in = $5,sign_up = $6,name = $7,password_verification = $8,verify_secure = $9, my_information = $10, my_favorites = $11, my_orders = $12, log_out = $13, basket = $14 , email = $16, add_to_basket = $17 WHERE id = $15", trHeader.Research, trHeader.Phone, trHeader.Password, trHeader.ForgotPassword, trHeader.SignIn, trHeader.SignUp, trHeader.Name, trHeader.PasswordVerification, trHeader.VerifySecure, trHeader.MyInformation, trHeader.MyFavorites, trHeader.MyOrders, trHeader.LogOut, trHeader.Basket, trHeader.ID, trHeader.Email, trHeader.AddToBasket)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
