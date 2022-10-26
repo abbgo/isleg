@@ -3,7 +3,6 @@ package controllers
 import (
 	"github/abbgo/isleg/isleg-backend/config"
 	"github/abbgo/isleg/isleg-backend/models"
-	"github/abbgo/isleg/isleg-backend/pkg"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -136,10 +135,19 @@ func UpdateTranslationAboutByID(c *gin.Context) {
 	}()
 
 	// get id of translation about from request parameter
-	ID := c.Param("id")
+	var trAbout models.TranslationAbout
+
+	//get data from request
+	if err := c.BindJSON(&trAbout); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
 
 	// check id
-	rowFlag, err := db.Query("SELECT id FROM translation_about WHERE id = $1 AND deleted_at IS NULL", ID)
+	rowFlag, err := db.Query("SELECT id FROM translation_about WHERE id = $1 AND deleted_at IS NULL", trAbout.ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -177,20 +185,8 @@ func UpdateTranslationAboutByID(c *gin.Context) {
 		return
 	}
 
-	dataNames := []string{"title", "content"}
-
-	// VALIDATE DATA
-	err = pkg.ValidateTranslationsForUpdate(dataNames, c)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-
 	// update data
-	resultTRABout, err := db.Query("UPDATE translation_about SET title = $1, content = $2 WHERE id = $3", c.PostForm("title"), c.PostForm("content"), id)
+	resultTRABout, err := db.Query("UPDATE translation_about SET title = $1, content = $2 WHERE id = $3", trAbout.Title, trAbout.Content, trAbout.ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
