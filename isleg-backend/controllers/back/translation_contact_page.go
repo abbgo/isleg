@@ -8,6 +8,10 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+type TrsContact struct {
+	TranslationsContact []models.TranslationContact `json:"translations_contact"`
+}
+
 func CreateTranslationContact(c *gin.Context) {
 
 	// initialize database connection
@@ -30,7 +34,7 @@ func CreateTranslationContact(c *gin.Context) {
 	}()
 
 	// get data from request
-	var trContacts []models.TranslationContact
+	var trContacts TrsContact
 
 	if err := c.BindJSON(&trContacts); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -41,7 +45,7 @@ func CreateTranslationContact(c *gin.Context) {
 	}
 
 	// check lang_id
-	for _, v := range trContacts {
+	for _, v := range trContacts.TranslationsContact {
 
 		rowLang, err := db.Query("SELECT id FROM languages WHERE id = $1 AND deleted_at IS NULL", v.LangID)
 		if err != nil {
@@ -84,7 +88,7 @@ func CreateTranslationContact(c *gin.Context) {
 	}
 
 	// create translation contact
-	for _, v := range trContacts {
+	for _, v := range trContacts.TranslationsContact {
 
 		resultTRConact, err := db.Query("INSERT INTO translation_contact (lang_id,full_name,email,phone,letter,company_phone,imo,company_email,instagram,button_text) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)", v.LangID, v.FullName, v.Email, v.Phone, v.Letter, v.CompanyPhone, v.Imo, v.CompanyEmail, v.Instragram, v.ButtonText)
 		if err != nil {
@@ -185,7 +189,7 @@ func UpdateTranslationContactByID(c *gin.Context) {
 	}
 
 	// update data
-	resultTRComtact, err := db.Query("UPDATE translation_contact SET full_name = $1, email = $2 , phone = $3 , letter = $4 , company_phone = $5 , imo = $6, company_email = $7, instagram = $8, button_text = $9 WHERE id = $10", trContact.FullName, trContact.Email, trContact.Phone, trContact.Letter, trContact.CompanyPhone, trContact.Imo, trContact.CompanyEmail, trContact.Instragram, trContact.ButtonText, trContact.ID)
+	resultTRComtact, err := db.Query("UPDATE translation_contact SET full_name = $1, email = $2 , phone = $3 , letter = $4 , company_phone = $5 , imo = $6, company_email = $7, instagram = $8, button_text = $9, lang_id = $11 WHERE id = $10", trContact.FullName, trContact.Email, trContact.Phone, trContact.Letter, trContact.CompanyPhone, trContact.Imo, trContact.CompanyEmail, trContact.Instragram, trContact.ButtonText, trContact.ID, trContact.LangID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
