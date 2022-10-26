@@ -3,7 +3,6 @@ package controllers
 import (
 	"github/abbgo/isleg/isleg-backend/config"
 	"github/abbgo/isleg/isleg-backend/models"
-	"github/abbgo/isleg/isleg-backend/pkg"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -140,10 +139,18 @@ func UpdateTranslationOrderPageByID(c *gin.Context) {
 	}()
 
 	// get id from request parameter
-	ID := c.Param("id")
+	var trOrderPage models.TranslationOrderPage
+
+	if err := c.BindJSON(&trOrderPage); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
 
 	// check id
-	rowTrOrderPage, err := db.Query("SELECT id FROM translation_order_page WHERE id = $1 AND deleted_at IS NULL", ID)
+	rowTrOrderPage, err := db.Query("SELECT id FROM translation_order_page WHERE id = $1 AND deleted_at IS NULL", trOrderPage.ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -181,19 +188,7 @@ func UpdateTranslationOrderPageByID(c *gin.Context) {
 		return
 	}
 
-	dataNames := []string{"content", "type_of_payment", "choose_a_delivery_time", "your_address", "mark", "to_order"}
-
-	// VALIDATE DATA
-	err = pkg.ValidateTranslationsForUpdate(dataNames, c)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-
-	resultTrOrderPage, err := db.Query("UPDATE translation_order_page SET content = $1, type_of_payment = $2 , choose_a_delivery_time = $3, your_address = $4 , mark = $5 , to_order = $6 WHERE id = $7", c.PostForm("content"), c.PostForm("type_of_payment"), c.PostForm("choose_a_delivery_time"), c.PostForm("your_address"), c.PostForm("mark"), c.PostForm("to_order"), id)
+	resultTrOrderPage, err := db.Query("UPDATE translation_order_page SET content = $1, type_of_payment = $2 , choose_a_delivery_time = $3, your_address = $4 , mark = $5 , to_order = $6, lang_id = $8 WHERE id = $7", trOrderPage.Content, trOrderPage.TypeOfPayment, trOrderPage.ChooseADeliveryTime, trOrderPage.YourAddress, trOrderPage.Mark, trOrderPage.ToOrder, trOrderPage.ID, trOrderPage.LangID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
