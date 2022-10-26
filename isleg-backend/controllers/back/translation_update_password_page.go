@@ -188,7 +188,7 @@ func UpdateTranslationUpdatePasswordPageByID(c *gin.Context) {
 		return
 	}
 
-	result, err := db.Query("UPDATE translation_update_password_page SET title = $1, verify_password = $2 , explanation = $3 , save = $4 , password = $5 WHERE id = $6", trUpdPassPage.Title, trUpdPassPage.VerifyPassword, trUpdPassPage.Explanation, trUpdPassPage.Save, trUpdPassPage.Password, trUpdPassPage.ID)
+	result, err := db.Query("UPDATE translation_update_password_page SET title = $1, verify_password = $2 , explanation = $3 , save = $4 , password = $5,  lang_id = $7 WHERE id = $6", trUpdPassPage.Title, trUpdPassPage.VerifyPassword, trUpdPassPage.Explanation, trUpdPassPage.Save, trUpdPassPage.Password, trUpdPassPage.ID, trUpdPassPage.LangID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
