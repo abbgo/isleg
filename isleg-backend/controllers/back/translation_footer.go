@@ -30,9 +30,9 @@ func CreateTranslationFooter(c *gin.Context) {
 		}
 	}()
 
-	// GET ALL LANGUAGE
-	languages, err := GetAllLanguageWithIDAndNameShort()
-	if err != nil {
+	var trFooter []models.TranslationFooter
+
+	if err := c.BindJSON(&trFooter); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
 			"message": err.Error(),
@@ -40,21 +40,53 @@ func CreateTranslationFooter(c *gin.Context) {
 		return
 	}
 
-	dataNames := []string{"about", "payment", "contact", "secure", "word"}
+	// check lang_id
+	for _, v := range trFooter {
 
-	// VALIDATE DATA
-	err = pkg.ValidateTranslations(languages, dataNames, c)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
+		rowLang, err := db.Query("SELECT id FROM languages WHERE id = $1 AND deleted_atr IS NULL", v.LangID)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+		defer func() {
+			if err := rowLang.Close(); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}()
+
+		var langID string
+
+		for rowLang.Next() {
+			if err := rowLang.Scan(&langID); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}
+
+		if langID == "" {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": "lamguage not found",
+			})
+			return
+		}
+
 	}
 
 	// create translation footer
-	for _, v := range languages {
-		resultTRFooter, err := db.Query("INSERT INTO translation_footer (lang_id,about,payment,contact,secure,word) VALUES ($1,$2,$3,$4,$5,$6)", v.ID, c.PostForm("about_"+v.NameShort), c.PostForm("payment_"+v.NameShort), c.PostForm("contact_"+v.NameShort), c.PostForm("secure_"+v.NameShort), c.PostForm("word_"+v.NameShort))
+	for _, v := range trFooter {
+
+		resultTRFooter, err := db.Query("INSERT INTO translation_footer (lang_id,about,payment,contact,secure,word) VALUES ($1,$2,$3,$4,$5,$6)", v.LangID, v.About, v.Payment, v.Contact, v.Contact, v.Word)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
@@ -71,6 +103,7 @@ func CreateTranslationFooter(c *gin.Context) {
 				return
 			}
 		}()
+
 	}
 
 	c.JSON(http.StatusOK, gin.H{
