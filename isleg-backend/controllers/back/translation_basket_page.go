@@ -30,9 +30,10 @@ func CreateTranslationBasketPage(c *gin.Context) {
 		}
 	}()
 
-	// GET ALL LANGUAGE
-	languages, err := GetAllLanguageWithIDAndNameShort()
-	if err != nil {
+	// get data from request
+	var trBasketPages []models.TranslationBasketPage
+
+	if err := c.BindJSON(&trBasketPages); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
 			"message": err.Error(),
@@ -40,20 +41,53 @@ func CreateTranslationBasketPage(c *gin.Context) {
 		return
 	}
 
-	dataNames := []string{"quantity_of_goods", "total_price", "discount", "delivery", "total", "currency", "to_order", "your_basket", "empty_the_basket"}
+	//check lsng_id
+	for _, v := range trBasketPages {
 
-	// VALIDATE DATA
-	if err = pkg.ValidateTranslations(languages, dataNames, c); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
+		rowLang, err := db.Query("SELECT id FROM languages WHERE id = $1 AND deleted_at IS NULL", v.LangID)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+		defer func() {
+			if err := rowLang.Close(); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}()
+
+		var langID string
+
+		for rowLang.Next() {
+			if err := rowLang.Scan(&langID); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}
+
+		if langID == "" {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": "language not found",
+			})
+			return
+		}
+
 	}
 
 	// create translation_my_information_page
-	for _, v := range languages {
-		resultTrBasketPage, err := db.Query("INSERT INTO translation_basket_page (lang_id,quantity_of_goods,total_price,discount,delivery,total,currency,to_order,your_basket,empty_the_basket) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)", v.ID, c.PostForm("quantity_of_goods_"+v.NameShort), c.PostForm("total_price_"+v.NameShort), c.PostForm("discount_"+v.NameShort), c.PostForm("delivery_"+v.NameShort), c.PostForm("total_"+v.NameShort), c.PostForm("currency_"+v.NameShort), c.PostForm("to_order_"+v.NameShort), c.PostForm("your_basket_"+v.NameShort), c.PostForm("empty_the_basket_"+v.NameShort))
+	for _, v := range trBasketPages {
+
+		resultTrBasketPage, err := db.Query("INSERT INTO translation_basket_page (lang_id,quantity_of_goods,total_price,discount,delivery,total,currency,to_order,your_basket,empty_the_basket) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)", v.LangID, v.QuantityOfGoods, v.TotalPrice, v.Discount, v.Delivery, v.Total, v.Currency, v.ToOrder, v.YourBasket, v.EmptyTheBasket)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
@@ -70,6 +104,7 @@ func CreateTranslationBasketPage(c *gin.Context) {
 				return
 			}
 		}()
+
 	}
 
 	c.JSON(http.StatusOK, gin.H{
