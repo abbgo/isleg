@@ -3,7 +3,6 @@ package controllers
 import (
 	"github/abbgo/isleg/isleg-backend/config"
 	"github/abbgo/isleg/isleg-backend/models"
-	"github/abbgo/isleg/isleg-backend/pkg"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -136,10 +135,18 @@ func UpdateTranslationContactByID(c *gin.Context) {
 	}()
 
 	// get id of translation contact from request parameter
-	ID := c.Param("id")
+	var trContact models.TranslationContact
+
+	if err := c.BindJSON(&trContact); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
 
 	// check id
-	rowFlag, err := db.Query("SELECT id FROM translation_contact WHERE id = $1 AND deleted_at IS NULL", ID)
+	rowFlag, err := db.Query("SELECT id FROM translation_contact WHERE id = $1 AND deleted_at IS NULL", trContact.ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -177,20 +184,8 @@ func UpdateTranslationContactByID(c *gin.Context) {
 		return
 	}
 
-	dataNames := []string{"full_name", "email", "phone", "letter", "company_phone", "imo", "company_email", "instagram", "button_text"}
-
-	// VALIDATE DATA
-	err = pkg.ValidateTranslationsForUpdate(dataNames, c)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-
 	// update data
-	resultTRComtact, err := db.Query("UPDATE translation_contact SET full_name = $1, email = $2 , phone = $3 , letter = $4 , company_phone = $5 , imo = $6, company_email = $7, instagram = $8, button_text = $9 WHERE id = $10", c.PostForm("full_name"), c.PostForm("email"), c.PostForm("phone"), c.PostForm("letter"), c.PostForm("company_phone"), c.PostForm("imo"), c.PostForm("company_email"), c.PostForm("instagram"), c.PostForm("button_text"), id)
+	resultTRComtact, err := db.Query("UPDATE translation_contact SET full_name = $1, email = $2 , phone = $3 , letter = $4 , company_phone = $5 , imo = $6, company_email = $7, instagram = $8, button_text = $9 WHERE id = $10", trContact.FullName, trContact.Email, trContact.Phone, trContact.Letter, trContact.CompanyPhone, trContact.Imo, trContact.CompanyEmail, trContact.Instragram, trContact.ButtonText, trContact.ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
