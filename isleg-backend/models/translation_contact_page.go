@@ -2,16 +2,16 @@ package models
 
 type TranslationContact struct {
 	ID           string `json:"id,omitempty"`
-	LangID       string `json:"lang_id,omitempty"`
-	FullName     string `json:"full_name,omitempty"`
-	Email        string `json:"email,omitempty"`
-	Phone        string `json:"phone,omitempty"`
-	Letter       string `json:"letter,omitempty"`
-	CompanyPhone string `json:"company_phone,omitempty"`
-	Imo          string `json:"imo,omitempty"`
-	CompanyEmail string `json:"company_email,omitempty"`
-	Instragram   string `json:"instagram,omitempty"`
-	ButtonText   string `json:"button_text,omitempty"`
+	LangID       string `json:"lang_id,omitempty" binding:"required"`
+	FullName     string `json:"full_name,omitempty" binding:"required"`
+	Email        string `json:"email,omitempty" binding:"required"`
+	Phone        string `json:"phone,omitempty" binding:"required"`
+	Letter       string `json:"letter,omitempty" binding:"required"`
+	CompanyPhone string `json:"company_phone,omitempty" binding:"required"`
+	Imo          string `json:"imo,omitempty" binding:"required"`
+	CompanyEmail string `json:"company_email,omitempty" binding:"required"`
+	Instragram   string `json:"instagram,omitempty" binding:"required"`
+	ButtonText   string `json:"button_text,omitempty" binding:"required"`
 	CreatedAt    string `json:"-"`
 	UpdatedAt    string `json:"-"`
 	DeletedAt    string `json:"-"`
