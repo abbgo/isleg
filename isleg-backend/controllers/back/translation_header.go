@@ -8,23 +8,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type TranslationHeaderForHeader struct {
-	Research             string `json:"research"`
-	Phone                string `json:"phone"`
-	Password             string `json:"password"`
-	ForgotPassword       string `json:"forgot_password"`
-	SignIn               string `json:"sign_in"`
-	SignUp               string `json:"sign_up"`
-	Name                 string `json:"name"`
-	PasswordVerification string `json:"password_verification"`
-	VerifySecure         string `json:"verify_secure"`
-	MyInformation        string `json:"my_information"`
-	MyFavorites          string `json:"my_favorites"`
-	MyOrders             string `json:"my_orders"`
-	LogOut               string `json:"log_out"`
-	Basket               string `json:"basket"`
-	Email                string `json:"email"`
-	AddToBasket          string `json:"add_to_basket"`
+type TrsHeader struct {
+	TranslationsHeader []models.TranslationHeader `json:"translations_header"`
 }
 
 func CreateTranslationHeader(c *gin.Context) {
@@ -48,7 +33,7 @@ func CreateTranslationHeader(c *gin.Context) {
 		}
 	}()
 
-	var trHeaders []models.TranslationHeader
+	var trHeaders TrsHeader
 
 	if err := c.BindJSON(&trHeaders); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -59,7 +44,7 @@ func CreateTranslationHeader(c *gin.Context) {
 	}
 
 	// check lang_id
-	for _, v := range trHeaders {
+	for _, v := range trHeaders.TranslationsHeader {
 
 		rowLang, err := db.Query("SELECT id FROM languages WHERE id = $1 AND deleted_at IS NULL", v.LangID)
 		if err != nil {
@@ -102,7 +87,7 @@ func CreateTranslationHeader(c *gin.Context) {
 	}
 
 	// add data to translation_header table
-	for _, v := range trHeaders {
+	for _, v := range trHeaders.TranslationsHeader {
 
 		resultTrHedaer, err := db.Query("INSERT INTO translation_header (lang_id,research,phone,password,forgot_password,sign_in,sign_up,name,password_verification,verify_secure,my_information,my_favorites,my_orders,log_out,basket,email,add_to_basket) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17)", v.LangID, v.Research, v.Phone, v.Password, v.ForgotPassword, v.SignIn, v.SignUp, v.Name, v.PasswordVerification, v.VerifySecure, v.MyInformation, v.MyFavorites, v.MyOrders, v.LogOut, v.Basket, v.Email, v.AddToBasket)
 		if err != nil {
