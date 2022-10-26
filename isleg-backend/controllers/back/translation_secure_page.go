@@ -8,6 +8,10 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+type TrsSecure struct {
+	TranslationsSecure []models.TranslationSecure `json:"translations_secure"`
+}
+
 func CreateTranslationSecure(c *gin.Context) {
 
 	// initialize database connection
@@ -29,7 +33,7 @@ func CreateTranslationSecure(c *gin.Context) {
 		}
 	}()
 
-	var trSecures []models.TranslationSecure
+	var trSecures TrsSecure
 
 	// get data from request
 	if err := c.BindJSON(&trSecures); err != nil {
@@ -41,7 +45,7 @@ func CreateTranslationSecure(c *gin.Context) {
 	}
 
 	// check lang_id
-	for _, v := range trSecures {
+	for _, v := range trSecures.TranslationsSecure {
 
 		rowLang, err := db.Query("SELECT id FROM languages WHERE id = $1 AND deleted_at IS NULL", v.LangID)
 		if err != nil {
@@ -84,7 +88,7 @@ func CreateTranslationSecure(c *gin.Context) {
 	}
 
 	// create translation secure
-	for _, v := range trSecures {
+	for _, v := range trSecures.TranslationsSecure {
 
 		rsultTRSEcure, err := db.Query("INSERT INTO translation_secure (lang_id,title,content) VALUES ($1,$2,$3)", v.LangID, v.Title, v.Content)
 		if err != nil {
