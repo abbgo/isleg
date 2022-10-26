@@ -189,7 +189,7 @@ func UpdateTranslationHeaderByID(c *gin.Context) {
 	}
 
 	// update translation_header table data
-	resultTrHedaer, err := db.Query("UPDATE translation_header SET research = $1 , phone = $2, password = $3, forgot_password = $4, sign_in = $5, sign_up = $6, name = $7, password_verification = $8, verify_secure = $9, my_information = $10, my_favorites = $11, my_orders = $12, log_out = $13, basket = $14 , email = $16, add_to_basket = $17, add_to_basket = $18 WHERE id = $15", trHeader.Research, trHeader.Phone, trHeader.Password, trHeader.ForgotPassword, trHeader.SignIn, trHeader.SignUp, trHeader.Name, trHeader.PasswordVerification, trHeader.VerifySecure, trHeader.MyInformation, trHeader.MyFavorites, trHeader.MyOrders, trHeader.LogOut, trHeader.Basket, trHeader.ID, trHeader.Email, trHeader.AddToBasket, trHeader.LangID)
+	resultTrHedaer, err := db.Query("UPDATE translation_header SET research = $1 , phone = $2, password = $3, forgot_password = $4, sign_in = $5, sign_up = $6, name = $7, password_verification = $8, verify_secure = $9, my_information = $10, my_favorites = $11, my_orders = $12, log_out = $13, basket = $14 , email = $16, add_to_basket = $17, lang_id = $18 WHERE id = $15", trHeader.Research, trHeader.Phone, trHeader.Password, trHeader.ForgotPassword, trHeader.SignIn, trHeader.SignUp, trHeader.Name, trHeader.PasswordVerification, trHeader.VerifySecure, trHeader.MyInformation, trHeader.MyFavorites, trHeader.MyOrders, trHeader.LogOut, trHeader.Basket, trHeader.ID, trHeader.Email, trHeader.AddToBasket, trHeader.LangID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,

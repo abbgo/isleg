@@ -180,7 +180,7 @@ func UpdateTranslationFooterByID(c *gin.Context) {
 	}
 
 	// update data of translation footer
-	rsultTRFooter, err := db.Query("UPDATE translation_footer SET about = $1, payment = $2, contact = $3, secure = $4, word = $5 WHERE id = $6", trFooter.About, trFooter.Payment, trFooter.Contact, trFooter.Secure, trFooter.Word, trFooter.ID)
+	rsultTRFooter, err := db.Query("UPDATE translation_footer SET about = $1, payment = $2, contact = $3, secure = $4, word = $5, lang_id = $7 WHERE id = $6", trFooter.About, trFooter.Payment, trFooter.Contact, trFooter.Secure, trFooter.Word, trFooter.ID, trFooter.LangID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
