@@ -52,37 +52,37 @@ func Routes() *gin.Engine {
 		back.PUT("/translation-footer", backController.UpdateTranslationFooterByID)  // fully ready
 		back.GET("/translation-footer/:id", backController.GetTranslationFooterByID) // fully ready
 
-		back.POST("/translation-secure", backController.CreateTranslationSecure)        // fully ready
-		back.PUT("/translation-secure/:id", backController.UpdateTranslationSecureByID) // fully ready
-		back.GET("/translation-secure/:id", backController.GetTranslationSecureByID)    // fully ready
+		back.POST("/translation-secure", backController.CreateTranslationSecure)     // fully ready
+		back.PUT("/translation-secure", backController.UpdateTranslationSecureByID)  // fully ready
+		back.GET("/translation-secure/:id", backController.GetTranslationSecureByID) // fully ready
 
-		back.POST("/translation-payment", backController.CreateTranslationPayment)        // fully ready
-		back.PUT("/translation-payment/:id", backController.UpdateTranslationPaymentByID) // fully ready
-		back.GET("/translation-payment/:id", backController.GetTranslationPaymentByID)    // fully ready
+		back.POST("/translation-payment", backController.CreateTranslationPayment)     // fully ready
+		back.PUT("/translation-payment", backController.UpdateTranslationPaymentByID)  // fully ready
+		back.GET("/translation-payment/:id", backController.GetTranslationPaymentByID) // fully ready
 
-		back.POST("/translation-about", backController.CreateTranslationAbout)        // fully ready
-		back.PUT("/translation-about/:id", backController.UpdateTranslationAboutByID) // fully ready
-		back.GET("/translation-about/:id", backController.GetTranslationAboutByID)    // fully ready
+		back.POST("/translation-about", backController.CreateTranslationAbout)     // fully ready
+		back.PUT("/translation-about", backController.UpdateTranslationAboutByID)  // fully ready
+		back.GET("/translation-about/:id", backController.GetTranslationAboutByID) // fully ready
 
-		back.POST("/translation-contact", backController.CreateTranslationContact)        // fully ready
-		back.PUT("/translation-contact/:id", backController.UpdateTranslationContactByID) // fully ready
-		back.GET("/translation-contact/:id", backController.GetTranslationContactByID)    // fully raedy
+		back.POST("/translation-contact", backController.CreateTranslationContact)     // fully ready
+		back.PUT("/translation-contact", backController.UpdateTranslationContactByID)  // fully ready
+		back.GET("/translation-contact/:id", backController.GetTranslationContactByID) // fully raedy
 
-		back.POST("/translation-my-information-page", backController.CreateTranslationMyInformationPage)        // fully ready
-		back.PUT("/translation-my-information-page/:id", backController.UpdateTranslationMyInformationPageByID) // fully ready
-		back.GET("/translation-my-information-page/:id", backController.GetTranslationMyInformationPageByID)    // fully ready
+		back.POST("/translation-my-information-page", backController.CreateTranslationMyInformationPage)     // fully ready
+		back.PUT("/translation-my-information-page", backController.UpdateTranslationMyInformationPageByID)  // fully ready
+		back.GET("/translation-my-information-page/:id", backController.GetTranslationMyInformationPageByID) // fully ready
 
-		back.POST("/translation-update-password-page", backController.CreateTranslationUpdatePasswordPage)        // fully ready
-		back.PUT("/translation-update-password-page/:id", backController.UpdateTranslationUpdatePasswordPageByID) // fully ready
-		back.GET("/translation-update-password-page/:id", backController.GetTranslationUpdatePasswordPageByID)    // fully ready
+		back.POST("/translation-update-password-page", backController.CreateTranslationUpdatePasswordPage)     // fully ready
+		back.PUT("/translation-update-password-page", backController.UpdateTranslationUpdatePasswordPageByID)  // fully ready
+		back.GET("/translation-update-password-page/:id", backController.GetTranslationUpdatePasswordPageByID) // fully ready
 
-		back.POST("/translation-basket-page", backController.CreateTranslationBasketPage)        // fully ready
-		back.PUT("/translation-basket-page/:id", backController.UpdateTranslationBasketPageByID) // fully ready
-		back.GET("/translation-basket-page/:id", backController.GetTranslationBasketPageByID)    // fully ready
+		back.POST("/translation-basket-page", backController.CreateTranslationBasketPage)     // fully ready
+		back.PUT("/translation-basket-page", backController.UpdateTranslationBasketPageByID)  // fully ready
+		back.GET("/translation-basket-page/:id", backController.GetTranslationBasketPageByID) // fully ready
 
-		back.POST("/translation-order-page", backController.CreateTranslationOrderPage)        // fully ready
-		back.PUT("/translation-order-page/:id", backController.UpdateTranslationOrderPageByID) // fully ready
-		back.GET("/translation-order-page/:id", backController.GetTranslationOrderPageByID)    // fully ready
+		back.POST("/translation-order-page", backController.CreateTranslationOrderPage)     // fully ready
+		back.PUT("/translation-order-page", backController.UpdateTranslationOrderPageByID)  // fully ready
+		back.GET("/translation-order-page/:id", backController.GetTranslationOrderPageByID) // fully ready
 
 		back.POST("/translation-my-order-page", backController.CreateTranslationMyOrderPage)        // fully ready
 		back.PUT("/translation-my-order-page/:id", backController.UpdateTranslationMyOrderPageByID) // fully ready

@@ -9,6 +9,10 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+type TrsOrderPage struct {
+	TranslationsOrderPage []models.TranslationOrderPage `json:"translations_order_page"`
+}
+
 func CreateTranslationOrderPage(c *gin.Context) {
 
 	// initialize database connection
@@ -30,9 +34,10 @@ func CreateTranslationOrderPage(c *gin.Context) {
 		}
 	}()
 
-	// GET ALL LANGUAGE
-	languages, err := GetAllLanguageWithIDAndNameShort()
-	if err != nil {
+	// get data from request
+	var trOrderPages TrsOrderPage
+
+	if err := c.BindJSON(&trOrderPages); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
 			"message": err.Error(),
@@ -40,20 +45,53 @@ func CreateTranslationOrderPage(c *gin.Context) {
 		return
 	}
 
-	dataNames := []string{"content", "type_of_payment", "choose_a_delivery_time", "your_address", "mark", "to_order"}
+	// check lang_id
+	for _, v := range trOrderPages.TranslationsOrderPage {
 
-	// VALIDATE DATA
-	if err = pkg.ValidateTranslations(languages, dataNames, c); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
+		rowLang, err := db.Query("SELECT id FROM languages WHERE id = $1 AND deleted_at IS NULL", v.LangID)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+		defer func() {
+			if err := rowLang.Close(); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}()
+
+		var langID string
+
+		for rowLang.Next() {
+			if err := rowLang.Scan(&langID); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}
+
+		if langID == "" {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": "language not found",
+			})
+			return
+		}
+
 	}
 
 	// create translation_my_information_page
-	for _, v := range languages {
-		resultTrOrderPage, err := db.Query("INSERT INTO translation_order_page (lang_id,content,type_of_payment,choose_a_delivery_time,your_address,mark,to_order) VALUES ($1,$2,$3,$4,$5,$6,$7)", v.ID, c.PostForm("content_"+v.NameShort), c.PostForm("type_of_payment_"+v.NameShort), c.PostForm("choose_a_delivery_time_"+v.NameShort), c.PostForm("your_address_"+v.NameShort), c.PostForm("mark_"+v.NameShort), c.PostForm("to_order_"+v.NameShort))
+	for _, v := range trOrderPages.TranslationsOrderPage {
+
+		resultTrOrderPage, err := db.Query("INSERT INTO translation_order_page (lang_id,content,type_of_payment,choose_a_delivery_time,your_address,mark,to_order) VALUES ($1,$2,$3,$4,$5,$6,$7)", v.LangID, v.Content, v.TypeOfPayment, v.ChooseADeliveryTime, v.YourAddress, v.Mark, v.ToOrder)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
@@ -70,6 +108,7 @@ func CreateTranslationOrderPage(c *gin.Context) {
 				return
 			}
 		}()
+
 	}
 
 	c.JSON(http.StatusOK, gin.H{
