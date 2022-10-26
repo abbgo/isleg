@@ -3,7 +3,6 @@ package controllers
 import (
 	"github/abbgo/isleg/isleg-backend/config"
 	"github/abbgo/isleg/isleg-backend/models"
-	"github/abbgo/isleg/isleg-backend/pkg"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -30,9 +29,9 @@ func CreateTranslationFooter(c *gin.Context) {
 		}
 	}()
 
-	var trFooter []models.TranslationFooter
+	var trFooters []models.TranslationFooter
 
-	if err := c.BindJSON(&trFooter); err != nil {
+	if err := c.BindJSON(&trFooters); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
 			"message": err.Error(),
@@ -41,7 +40,7 @@ func CreateTranslationFooter(c *gin.Context) {
 	}
 
 	// check lang_id
-	for _, v := range trFooter {
+	for _, v := range trFooters {
 
 		rowLang, err := db.Query("SELECT id FROM languages WHERE id = $1 AND deleted_atr IS NULL", v.LangID)
 		if err != nil {
@@ -84,7 +83,7 @@ func CreateTranslationFooter(c *gin.Context) {
 	}
 
 	// create translation footer
-	for _, v := range trFooter {
+	for _, v := range trFooters {
 
 		resultTRFooter, err := db.Query("INSERT INTO translation_footer (lang_id,about,payment,contact,secure,word) VALUES ($1,$2,$3,$4,$5,$6)", v.LangID, v.About, v.Payment, v.Contact, v.Contact, v.Word)
 		if err != nil {
@@ -135,10 +134,10 @@ func UpdateTranslationFooterByID(c *gin.Context) {
 	}()
 
 	// get id of translation footer from request parameter
-	trFootID := c.Param("id")
+	var trFooter models.TranslationFooter
 
 	// check id
-	rowFlag, err := db.Query("SELECT id FROM translation_footer WHERE id = $1 AND deleted_at IS NULL", trFootID)
+	rowFlag, err := db.Query("SELECT id FROM translation_footer WHERE id = $1 AND deleted_at IS NULL", trFooter.ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -176,20 +175,8 @@ func UpdateTranslationFooterByID(c *gin.Context) {
 		return
 	}
 
-	dataNames := []string{"about", "payment", "contact", "secure", "word"}
-
-	// VALIDATE DATA
-	err = pkg.ValidateTranslationsForUpdate(dataNames, c)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-
 	// update data of translation footer
-	rsultTRFooter, err := db.Query("UPDATE translation_footer SET about = $1, payment = $2, contact = $3, secure = $4, word = $5 WHERE id = $6", c.PostForm("about"), c.PostForm("payment"), c.PostForm("contact"), c.PostForm("secure"), c.PostForm("word"), id)
+	rsultTRFooter, err := db.Query("UPDATE translation_footer SET about = $1, payment = $2, contact = $3, secure = $4, word = $5 WHERE id = $6", trFooter.About, trFooter.Payment, trFooter.Contact, trFooter.Secure, trFooter.Word, trFooter.ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,

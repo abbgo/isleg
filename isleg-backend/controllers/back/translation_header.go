@@ -48,9 +48,9 @@ func CreateTranslationHeader(c *gin.Context) {
 		}
 	}()
 
-	var trHeader []models.TranslationHeader
+	var trHeaders []models.TranslationHeader
 
-	if err := c.BindJSON(&trHeader); err != nil {
+	if err := c.BindJSON(&trHeaders); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
 			"message": err.Error(),
@@ -59,7 +59,7 @@ func CreateTranslationHeader(c *gin.Context) {
 	}
 
 	// check lang_id
-	for _, v := range trHeader {
+	for _, v := range trHeaders {
 
 		rowLang, err := db.Query("SELECT id FROM languages WHERE id = $1 AND deleted_at IS NULL", v.LangID)
 		if err != nil {
@@ -102,7 +102,7 @@ func CreateTranslationHeader(c *gin.Context) {
 	}
 
 	// add data to translation_header table
-	for _, v := range trHeader {
+	for _, v := range trHeaders {
 
 		resultTrHedaer, err := db.Query("INSERT INTO translation_header (lang_id,research,phone,password,forgot_password,sign_in,sign_up,name,password_verification,verify_secure,my_information,my_favorites,my_orders,log_out,basket,email,add_to_basket) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17)", v.LangID, v.Research, v.Phone, v.Password, v.ForgotPassword, v.SignIn, v.SignUp, v.Name, v.PasswordVerification, v.VerifySecure, v.MyInformation, v.MyFavorites, v.MyOrders, v.LogOut, v.Basket, v.Email, v.AddToBasket)
 		if err != nil {
