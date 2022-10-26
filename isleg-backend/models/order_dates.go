@@ -8,18 +8,18 @@ import (
 
 type OrderDates struct {
 	ID                    string                  `json:"id,omitempty"`
-	Date                  string                  `json:"date,omitempty"`
+	Date                  string                  `json:"date,omitempty" binding:"required"`
 	CreatedAt             string                  `json:"-"`
 	UpdatedAt             string                  `json:"-"`
 	DeletedAt             string                  `json:"-"`
-	TranslationOrderDates []TranslationOrderDates `json:"translation_order_dates,omitempty"` // one to many
-	OrderTimes            []OrderTimes            `json:"order_times,omitempty"`             // one to many
+	TranslationOrderDates []TranslationOrderDates `json:"translation_order_dates,omitempty" binding:"required"` // one to many
+	OrderTimes            []OrderTimes            `json:"order_times,omitempty" binding:"required"`             // one to many
 }
 
 type OrderTimes struct {
 	ID          string `json:"id,omitempty"`
 	OrderDateID string `json:"order_date_id,omitempty"`
-	Time        string `json:"time,omitempty"`
+	Time        string `json:"time,omitempty" binding:"required"`
 	CreatedAt   string `json:"-"`
 	UpdatedAt   string `json:"-"`
 	DeletedAt   string `json:"-"`
@@ -27,15 +27,15 @@ type OrderTimes struct {
 
 type TranslationOrderDates struct {
 	ID          string `json:"id,omitempty"`
-	LangID      string `json:"lang_id,omitempty"`
+	LangID      string `json:"lang_id,omitempty" binding:"required"`
 	OrderDateID string `json:"order_date_id,omitempty"`
-	Date        string `json:"date,omitempty"`
+	Date        string `json:"date,omitempty" binding:"required"`
 	CreatedAt   string `json:"-"`
 	UpdatedAt   string `json:"-"`
 	DeletedAt   string `json:"-"`
 }
 
-func ValidateOrderDateAndTime(date string, times []string) error {
+func ValidateOrderDateAndTime(date string, times []OrderTimes) error {
 
 	hourAndMinute := regexp.MustCompile("([01]?[0-9]|2[0-3]):[0-5][0-9]")
 
@@ -45,7 +45,7 @@ func ValidateOrderDateAndTime(date string, times []string) error {
 
 	for _, v := range times {
 
-		ts := strings.Split(v, " - ")
+		ts := strings.Split(v.Time, " - ")
 
 		for _, v1 := range ts {
 
