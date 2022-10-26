@@ -8,6 +8,10 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+type TrsUpdatePasswordPage struct {
+	TranslationsUpdatePasswordPage []models.TranslationUpdatePasswordPage `json:"translations_update_password_page"`
+}
+
 func CreateTranslationUpdatePasswordPage(c *gin.Context) {
 
 	// initialize database connection
@@ -30,7 +34,7 @@ func CreateTranslationUpdatePasswordPage(c *gin.Context) {
 	}()
 
 	// get data from request
-	var trUpdPassPages []models.TranslationUpdatePasswordPage
+	var trUpdPassPages TrsUpdatePasswordPage
 
 	if err := c.BindJSON(&trUpdPassPages); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -41,7 +45,7 @@ func CreateTranslationUpdatePasswordPage(c *gin.Context) {
 	}
 
 	// check lang_id
-	for _, v := range trUpdPassPages {
+	for _, v := range trUpdPassPages.TranslationsUpdatePasswordPage {
 
 		rowLang, err := db.Query("SELECT id FROM languages WHERE id = $1 AND deleted_at IS NULL", v.LangID)
 		if err != nil {
@@ -84,7 +88,7 @@ func CreateTranslationUpdatePasswordPage(c *gin.Context) {
 	}
 
 	// add data in database
-	for _, v := range trUpdPassPages {
+	for _, v := range trUpdPassPages.TranslationsUpdatePasswordPage {
 
 		result, err := db.Query("INSERT INTO translation_update_password_page (lang_id,title,password,verify_password,explanation,save) VALUES ($1,$2,$3,$4,$5,$6)", v.LangID, v.Title, v.Password, v.VerifyPassword, v.Explanation, v.Save)
 		if err != nil {
