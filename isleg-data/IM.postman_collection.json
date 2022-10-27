@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "c8a08124-a91f-470c-9c3d-aca7d07e2d69",
+		"_postman_id": "2c3654b5-fb4e-48cf-8154-36b3fe3b0447",
 		"name": "IM",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -207,22 +207,22 @@
 								},
 								{
 									"key": "name_tm",
-									"value": "Täze harytlar",
+									"value": "Diş pastasy",
 									"type": "text"
 								},
 								{
 									"key": "name_ru",
-									"value": "Новые продукты",
+									"value": "Зубная паста",
 									"type": "default"
 								},
 								{
 									"key": "parent_category_id",
-									"value": "d154a3f1-7086-439f-b343-3998d6521efa",
+									"value": "7e3eeef8-4748-483c-bbf8-3767943135ee",
 									"type": "default"
 								},
 								{
 									"key": "is_home_category",
-									"value": "true",
+									"value": "false",
 									"type": "default"
 								}
 							]
@@ -895,12 +895,12 @@
 							"formdata": [
 								{
 									"key": "brend_id",
-									"value": "ddccb2dc-9697-4f4e-acf5-26b8bc2c8b72",
+									"value": "c4bcda34-7332-4ae5-8129-d7538d63fee4",
 									"type": "default"
 								},
 								{
 									"key": "price",
-									"value": "161.00",
+									"value": "30.50",
 									"type": "default"
 								},
 								{
@@ -915,32 +915,37 @@
 								},
 								{
 									"key": "name_tm",
-									"value": "(4+1) Kofe Jacobs Monarch 47.5 gr (5 sany)",
+									"value": "Diş pastasy \"Blend-a-Med Complete 7\" Herbal, 100 ml",
 									"type": "default"
 								},
 								{
 									"key": "description_tm",
-									"value": "(4+1) Kofe Jacobs Monarch 47.5 gr (5 sany)",
+									"value": "Diş pastasy \"Blend-a-Med Complete 7\" Herbal, 100 ml",
 									"type": "default"
 								},
 								{
 									"key": "name_ru",
-									"value": "(4+1) Кофе Jacobs Monarch 47.5 г (5 шт)",
+									"value": "Зубная паста \"Blend-a-Med Complete 7\" с ополаскивателем 100 мл",
 									"type": "default"
 								},
 								{
 									"key": "description_ru",
-									"value": "(4+1) Кофе Jacobs Monarch 47.5 г (5 шт)",
+									"value": "Зубная паста \"Blend-a-Med Complete 7\" с ополаскивателем 100 мл",
 									"type": "default"
 								},
 								{
 									"key": "category_id",
-									"value": "d154a3f1-7086-439f-b343-3998d6521efa",
+									"value": "789cbced-9141-4748-94d3-93476d276057",
 									"type": "default"
 								},
 								{
 									"key": "category_id",
-									"value": "71994790-1b7b-41ab-90a8-b3df0d68e3e6",
+									"value": "7e3eeef8-4748-483c-bbf8-3767943135ee",
+									"type": "default"
+								},
+								{
+									"key": "category_id",
+									"value": "57d072c8-4952-44c5-845e-d2d706677e16",
 									"type": "default"
 								},
 								{
@@ -977,22 +982,22 @@
 								{
 									"key": "small",
 									"type": "file",
-									"src": "/home/abb/go/src/github.com/abbgo/isleg/isleg-data/Saydyn suratynyn razmeri/Yazuw kagyz/small.jpg"
+									"src": "/home/abb/go/src/github.com/abbgo/isleg/isleg-data/Saydyn suratynyn razmeri/Bic galam/small.jpg"
 								},
 								{
 									"key": "large",
 									"type": "file",
-									"src": "/home/abb/go/src/github.com/abbgo/isleg/isleg-data/Saydyn suratynyn razmeri/Yazuw kagyz/large.jpg"
+									"src": "/home/abb/go/src/github.com/abbgo/isleg/isleg-data/Saydyn suratynyn razmeri/Bic galam/large.jpg"
 								},
 								{
 									"key": "small",
 									"type": "file",
-									"src": "/home/abb/go/src/github.com/abbgo/isleg/isleg-data/Saydyn suratynyn razmeri/Yalong galam/small.jpg"
+									"src": "/home/abb/go/src/github.com/abbgo/isleg/isleg-data/Saydyn suratynyn razmeri/Kagyz kley/small.jpg"
 								},
 								{
 									"key": "large",
 									"type": "file",
-									"src": "/home/abb/go/src/github.com/abbgo/isleg/isleg-data/Saydyn suratynyn razmeri/Yalong galam/large.jpg"
+									"src": "/home/abb/go/src/github.com/abbgo/isleg/isleg-data/Saydyn suratynyn razmeri/Kagyz kley/large.jpg"
 								}
 							]
 						},
