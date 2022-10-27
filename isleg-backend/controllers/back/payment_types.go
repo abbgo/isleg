@@ -8,6 +8,10 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+type PayTypes struct {
+	PaymentTypes []models.PaymentTypes `json:"payment_types"`
+}
+
 func CreatePaymentType(c *gin.Context) {
 
 	// initialize database connection
@@ -29,9 +33,9 @@ func CreatePaymentType(c *gin.Context) {
 		}
 	}()
 
-	// GET ALL LANGUAGE
-	languages, err := GetAllLanguageWithIDAndNameShort()
-	if err != nil {
+	// get data from request
+	var paymentTypes PayTypes
+	if err := c.BindJSON(&paymentTypes); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
 			"message": err.Error(),
@@ -39,20 +43,53 @@ func CreatePaymentType(c *gin.Context) {
 		return
 	}
 
-	// VALIDATE DATA
-	for _, v := range languages {
-		if c.PostForm("type_"+v.NameShort) == "" {
+	// check lang_id
+	for _, v := range paymentTypes.PaymentTypes {
+
+		rowLang, err := db.Query("SELECT id FROM languages WHERE id = $1 AND deleted_at IS NULL", v.LangID)
+		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
-				"message": "type_" + v.NameShort + " is required",
+				"message": err.Error(),
 			})
 			return
 		}
+		defer func() {
+			if err := rowLang.Close(); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}()
+
+		var langID string
+
+		for rowLang.Next() {
+			if err := rowLang.Scan(&langID); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}
+
+		if langID == "" {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": "language not found",
+			})
+			return
+		}
+
 	}
 
 	// create company address
-	for _, v := range languages {
-		resultComAddres, err := db.Query("INSERT INTO payment_types (lang_id,type) VALUES ($1,$2)", v.ID, c.PostForm("type_"+v.NameShort))
+	for _, v := range paymentTypes.PaymentTypes {
+
+		resultComAddres, err := db.Query("INSERT INTO payment_types (lang_id,type) VALUES ($1,$2)", v.LangID, v.Type)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
@@ -69,6 +106,7 @@ func CreatePaymentType(c *gin.Context) {
 				return
 			}
 		}()
+
 	}
 
 	c.JSON(http.StatusOK, gin.H{
