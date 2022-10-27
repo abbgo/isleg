@@ -138,10 +138,10 @@ func UpdateCompanyAddressByID(c *gin.Context) {
 	}()
 
 	// get id from request parameter
-	ID := c.Param("id")
+	var companyAddress models.CompanyAddress
 
 	//check id
-	rowComAddress, err := db.Query("SELECT id FROM company_address WHERE id = $1 AND deleted_at IS NULL", ID)
+	rowComAddress, err := db.Query("SELECT id FROM company_address WHERE id = $1 AND deleted_at IS NULL", companyAddress.ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -179,16 +179,7 @@ func UpdateCompanyAddressByID(c *gin.Context) {
 		return
 	}
 
-	address := c.PostForm("address")
-	if address == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": "address required",
-		})
-		return
-	}
-
-	resultComAddres, err := db.Query("UPDATE company_address SET address = $1 WHERE id = $3", address, id)
+	resultComAddres, err := db.Query("UPDATE company_address SET address = $1, lang_id = $2 WHERE id = $3", companyAddress.Address, companyAddress.LangID, companyAddress.ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
