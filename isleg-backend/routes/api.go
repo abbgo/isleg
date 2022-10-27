@@ -123,10 +123,10 @@ func Routes() *gin.Engine {
 		back.PUT("/company-address", backController.UpdateCompanyAddressByID)  // fully ready
 		back.GET("/company-address/:id", backController.GetCompanyAddressByID) // fully ready
 
-		back.POST("/payment-type", backController.CreatePaymentType)        // fully ready
-		back.PUT("/payment-type/:id", backController.UpdatePaymentTypeByID) // fully ready
-		back.GET("/payment-type/:id", backController.GetPaymentTypeByID)    // fully ready
-		back.GET("/payment-types", backController.GetPaymentTypes)          // fully ready
+		back.POST("/payment-type", backController.CreatePaymentType)     // fully ready
+		back.PUT("/payment-type", backController.UpdatePaymentTypeByID)  // fully ready
+		back.GET("/payment-type/:id", backController.GetPaymentTypeByID) // fully ready
+		back.GET("/payment-types", backController.GetPaymentTypes)       // fully ready
 
 		back.POST("/afisa", backController.CreateAfisa)                             // fully ready
 		back.PUT("/afisa/:id", backController.UpdateAfisaByID)                      // fully ready

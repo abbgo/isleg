@@ -137,11 +137,18 @@ func UpdatePaymentTypeByID(c *gin.Context) {
 		}
 	}()
 
-	// get id from request data
-	ID := c.Param("id")
+	// get data from request
+	var paymentType models.PaymentTypes
+	if err := c.BindJSON(&paymentType); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
 
 	// check id
-	rowPaymentType, err := db.Query("SELECT id FROM payment_types WHERE id = $1 AND deleted_at IS NULL", ID)
+	rowPaymentType, err := db.Query("SELECT id FROM payment_types WHERE id = $1 AND deleted_at IS NULL", paymentType.ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -179,17 +186,7 @@ func UpdatePaymentTypeByID(c *gin.Context) {
 		return
 	}
 
-	// get data from request
-	paymentType := c.PostForm("type")
-	if paymentType == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": "paymentType required",
-		})
-		return
-	}
-
-	resultPaymentType, err := db.Query("UPDATE payment_types SET type = $1 WHERE id = $2", paymentType, id)
+	resultPaymentType, err := db.Query("UPDATE payment_types SET type = $1, lang_id = $3 WHERE id = $2", paymentType.Type, paymentType.ID, paymentType.LangID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
