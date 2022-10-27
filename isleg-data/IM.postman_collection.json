@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "6ea51eb9-8315-4306-ad7d-f89c0c9ed286",
+		"_postman_id": "c8a08124-a91f-470c-9c3d-aca7d07e2d69",
 		"name": "IM",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -207,37 +207,22 @@
 								},
 								{
 									"key": "name_tm",
-									"value": "Name_tm",
+									"value": "Täze harytlar",
 									"type": "text"
 								},
 								{
 									"key": "name_ru",
-									"value": "Name_ru",
+									"value": "Новые продукты",
 									"type": "default"
 								},
 								{
 									"key": "parent_category_id",
-									"value": "417a385e-6a74-44f3-a536-405eb8251978",
+									"value": "d154a3f1-7086-439f-b343-3998d6521efa",
 									"type": "default"
 								},
 								{
 									"key": "is_home_category",
-									"value": "false",
-									"type": "default"
-								},
-								{
-									"key": "name_fr",
-									"value": "NAME_FR",
-									"type": "default"
-								},
-								{
-									"key": "name_tr",
-									"value": "name_tr",
-									"type": "default"
-								},
-								{
-									"key": "name_pl",
-									"value": "name_pl",
+									"value": "true",
 									"type": "default"
 								}
 							]
@@ -910,17 +895,17 @@
 							"formdata": [
 								{
 									"key": "brend_id",
-									"value": "fdd259c2-794a-42b9-a3ad-9e91502af23e",
+									"value": "ddccb2dc-9697-4f4e-acf5-26b8bc2c8b72",
 									"type": "default"
 								},
 								{
 									"key": "price",
-									"value": "67",
+									"value": "161.00",
 									"type": "default"
 								},
 								{
 									"key": "old_price",
-									"value": "68",
+									"value": "",
 									"type": "default"
 								},
 								{
@@ -929,44 +914,40 @@
 									"type": "default"
 								},
 								{
-									"key": "product_code",
-									"value": "151fwe51we",
-									"type": "default"
-								},
-								{
 									"key": "name_tm",
-									"value": "Nemlendiriji suwuk sabyn Aura Clean \"Черничный йогурт\" 1 ltr",
-									"type": "default"
-								},
-								{
-									"key": "name_ru",
-									"value": "Жидкое крем-мыло увлажняющее Aura Clean \"Черничный йогурт\" 1 л",
+									"value": "(4+1) Kofe Jacobs Monarch 47.5 gr (5 sany)",
 									"type": "default"
 								},
 								{
 									"key": "description_tm",
-									"value": "Nemlendiriji suwuk sabyn Aura Clean \"Черничный йогурт\" 1 ltr",
+									"value": "(4+1) Kofe Jacobs Monarch 47.5 gr (5 sany)",
+									"type": "default"
+								},
+								{
+									"key": "name_ru",
+									"value": "(4+1) Кофе Jacobs Monarch 47.5 г (5 шт)",
 									"type": "default"
 								},
 								{
 									"key": "description_ru",
-									"value": "Жидкое крем-мыло увлажняющее Aura Clean \"Черничный йогурт\" 1 л",
+									"value": "(4+1) Кофе Jacobs Monarch 47.5 г (5 шт)",
 									"type": "default"
 								},
 								{
 									"key": "category_id",
-									"value": "b982bd86-0a0f-4950-baad-5a131e9b728e",
+									"value": "d154a3f1-7086-439f-b343-3998d6521efa",
 									"type": "default"
 								},
 								{
 									"key": "category_id",
-									"value": "a4277afa-1c92-4f4e-809e-dfbb54ddbc9b",
+									"value": "71994790-1b7b-41ab-90a8-b3df0d68e3e6",
 									"type": "default"
 								},
 								{
 									"key": "category_id",
-									"value": "338906f1-dbe2-4ba7-84fc-fe7a4d7856ec",
-									"type": "default"
+									"value": "ab28ad8f-72af-4e9e-841b-38a6e6881a6e",
+									"type": "default",
+									"disabled": true
 								},
 								{
 									"key": "is_new",
@@ -981,67 +962,37 @@
 								{
 									"key": "main_small",
 									"type": "file",
-									"src": "/home/abb/go/src/github.com/abbgo/isleg/isleg-data/Saydyn suratynyn razmeri/Yalong galam/small.jpg"
+									"src": "/home/abb/go/src/github.com/abbgo/isleg/isleg-data/Saydyn suratynyn razmeri/Bianyo galam/small.jpg"
 								},
 								{
 									"key": "main_medium",
 									"type": "file",
-									"src": "/home/abb/go/src/github.com/abbgo/isleg/isleg-data/Saydyn suratynyn razmeri/Yalong galam/medium.jpg"
+									"src": "/home/abb/go/src/github.com/abbgo/isleg/isleg-data/Saydyn suratynyn razmeri/Bianyo galam/medium.jpg"
 								},
 								{
 									"key": "main_large",
 									"type": "file",
+									"src": "/home/abb/go/src/github.com/abbgo/isleg/isleg-data/Saydyn suratynyn razmeri/Bianyo galam/large.jpg"
+								},
+								{
+									"key": "small",
+									"type": "file",
+									"src": "/home/abb/go/src/github.com/abbgo/isleg/isleg-data/Saydyn suratynyn razmeri/Yazuw kagyz/small.jpg"
+								},
+								{
+									"key": "large",
+									"type": "file",
+									"src": "/home/abb/go/src/github.com/abbgo/isleg/isleg-data/Saydyn suratynyn razmeri/Yazuw kagyz/large.jpg"
+								},
+								{
+									"key": "small",
+									"type": "file",
+									"src": "/home/abb/go/src/github.com/abbgo/isleg/isleg-data/Saydyn suratynyn razmeri/Yalong galam/small.jpg"
+								},
+								{
+									"key": "large",
+									"type": "file",
 									"src": "/home/abb/go/src/github.com/abbgo/isleg/isleg-data/Saydyn suratynyn razmeri/Yalong galam/large.jpg"
-								},
-								{
-									"key": "small",
-									"type": "file",
-									"src": "/home/abb/go/src/github.com/abbgo/isleg/isleg-data/Saydyn suratynyn razmeri/Bic galam/small.jpg"
-								},
-								{
-									"key": "small",
-									"type": "file",
-									"src": "/home/abb/go/src/github.com/abbgo/isleg/isleg-data/Saydyn suratynyn razmeri/Bic galam/small.jpg"
-								},
-								{
-									"key": "large",
-									"type": "file",
-									"src": "/home/abb/go/src/github.com/abbgo/isleg/isleg-data/Saydyn suratynyn razmeri/Bic galam/large.jpg"
-								},
-								{
-									"key": "large",
-									"type": "file",
-									"src": "/home/abb/go/src/github.com/abbgo/isleg/isleg-data/Saydyn suratynyn razmeri/Bic galam/large.jpg"
-								},
-								{
-									"key": "name_fr",
-									"value": "name_fr",
-									"type": "default"
-								},
-								{
-									"key": "name_tr",
-									"value": "name_tr",
-									"type": "default"
-								},
-								{
-									"key": "name_pl",
-									"value": "name_pl",
-									"type": "default"
-								},
-								{
-									"key": "description_fr",
-									"value": "description_fr",
-									"type": "default"
-								},
-								{
-									"key": "description_tr",
-									"value": "description_tr",
-									"type": "default"
-								},
-								{
-									"key": "description_pl",
-									"value": "description_pl",
-									"type": "default"
 								}
 							]
 						},
@@ -1527,14 +1478,13 @@
 						"method": "POST",
 						"header": [],
 						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "phone",
-									"value": "+993 12 227475",
-									"type": "default"
+							"mode": "raw",
+							"raw": "{\n    \"company_phone\":\"236587\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
 								}
-							]
+							}
 						},
 						"url": {
 							"raw": "localhost:2406/admin/company-phone",
@@ -1556,25 +1506,23 @@
 						"method": "PUT",
 						"header": [],
 						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "phone",
-									"value": "63698547",
-									"type": "default"
+							"mode": "raw",
+							"raw": "{\n    \"id\":\"96c30e15-274c-49a0-bcc5-e2f8deac248f\",\n    \"company_phone\":\"236587\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
 								}
-							]
+							}
 						},
 						"url": {
-							"raw": "localhost:2406/admin/company-phone/3060bc25-2a55-4ee0-894d-f87f887e1fc4",
+							"raw": "localhost:2406/admin/company-phone",
 							"host": [
 								"localhost"
 							],
 							"port": "2406",
 							"path": [
 								"admin",
-								"company-phone",
-								"3060bc25-2a55-4ee0-894d-f87f887e1fc4"
+								"company-phone"
 							]
 						}
 					},
@@ -1710,19 +1658,13 @@
 						"method": "POST",
 						"header": [],
 						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "address_tm",
-									"value": "Aşgabat şäheri Azady köçesiniň 23-nji jaýy",
-									"type": "default"
-								},
-								{
-									"key": "address_ru",
-									"value": "Улица Азади 23, Ашхабад",
-									"type": "default"
+							"mode": "raw",
+							"raw": "{\n    \"company_addresses\":[\n        {\n            \"lang_id\":\"aea98b93-7bdf-455b-9ad4-a259d69dc76e\",\n            \"address\":\"Улица Азади 23, Ашхабад\"\n        },\n        {\n            \"lang_id\":\"8723c1c7-aa6d-429f-b8af-ee9ace61f0d7\",\n            \"address\":\"Aşgabat şäheri Azady köçesiniň 23-nji jaýy\"\n        }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
 								}
-							]
+							}
 						},
 						"url": {
 							"raw": "localhost:2406/admin/company-address",
@@ -1744,25 +1686,23 @@
 						"method": "PUT",
 						"header": [],
 						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "address",
-									"value": "adres_tm",
-									"type": "default"
+							"mode": "raw",
+							"raw": "{\n    \"id\":\"d2c66808-e5fe-435f-ba01-cb717f80d9e0\",\n    \"lang_id\":\"8723c1c7-aa6d-429f-b8af-ee9ace61f0d7\",\n    \"address\":\"Aşgabat şäheri Azady köçesiniň 23-nji jaýy\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
 								}
-							]
+							}
 						},
 						"url": {
-							"raw": "localhost:2406/admin/company-address/d2c66808-e5fe-435f-ba01-cb717f80d9e0",
+							"raw": "localhost:2406/admin/company-address",
 							"host": [
 								"localhost"
 							],
 							"port": "2406",
 							"path": [
 								"admin",
-								"company-address",
-								"d2c66808-e5fe-435f-ba01-cb717f80d9e0"
+								"company-address"
 							]
 						}
 					},
@@ -3439,109 +3379,13 @@
 						"method": "POST",
 						"header": [],
 						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "orders_tm",
-									"value": "orders_tm",
-									"type": "default"
-								},
-								{
-									"key": "orders_ru",
-									"value": "orders_ru",
-									"type": "default"
-								},
-								{
-									"key": "date_tm",
-									"value": "date_tm",
-									"type": "default"
-								},
-								{
-									"key": "date_ru",
-									"value": "date_ru",
-									"type": "default"
-								},
-								{
-									"key": "price_tm",
-									"value": "price_tm",
-									"type": "default"
-								},
-								{
-									"key": "price_ru",
-									"value": "price_ru",
-									"type": "default"
-								},
-								{
-									"key": "currency_tm",
-									"value": "currency_tm",
-									"type": "default"
-								},
-								{
-									"key": "currency_ru",
-									"value": "currency_ru",
-									"type": "default"
-								},
-								{
-									"key": "image_tm",
-									"value": "image_tm",
-									"type": "default"
-								},
-								{
-									"key": "image_ru",
-									"value": "image_ru",
-									"type": "default"
-								},
-								{
-									"key": "name_tm",
-									"value": "name_tm",
-									"type": "default"
-								},
-								{
-									"key": "name_ru",
-									"value": "name_ru",
-									"type": "default"
-								},
-								{
-									"key": "brend_tm",
-									"value": "brend_tm",
-									"type": "default"
-								},
-								{
-									"key": "brend_ru",
-									"value": "brend_ru",
-									"type": "default"
-								},
-								{
-									"key": "code_tm",
-									"value": "code_tm",
-									"type": "default"
-								},
-								{
-									"key": "code_ru",
-									"value": "code_ru",
-									"type": "default"
-								},
-								{
-									"key": "amount_tm",
-									"value": "amount_tm",
-									"type": "default"
-								},
-								{
-									"key": "amount_ru",
-									"value": "amount_ru",
-									"type": "default"
-								},
-								{
-									"key": "total_price_tm",
-									"value": "total_price_tm",
-									"type": "default"
-								},
-								{
-									"key": "total_price_ru",
-									"value": "total_price_ru",
-									"type": "default"
+							"mode": "raw",
+							"raw": "{\n    \"translation_my_order_page\":[\n        {\n            \"lang_id\":\"aea98b93-7bdf-455b-9ad4-a259d69dc76e\",\n            \"orders\":\"orders_ru\",\n            \"date\":\"date_ru\",\n            \"price\":\"price_ru\",\n            \"currency\":\"currency_ru\",\n            \"image\":\"image_ru\",\n            \"name\":\"name_ru\",\n            \"brend\":\"brend_ru\",\n            \"code\":\"code_ru\",\n            \"amount\":\"amount_ru\",\n            \"total_price\":\"total_price_ru\"\n        },\n        {\n            \"lang_id\":\"8723c1c7-aa6d-429f-b8af-ee9ace61f0d7\",\n            \"orders\":\"orders_tm\",\n            \"date\":\"date_tm\",\n            \"price\":\"price_tm\",\n            \"currency\":\"currency_tm\",\n            \"image\":\"image_tm\",\n            \"name\":\"name_tm\",\n            \"brend\":\"brend_tm\",\n            \"code\":\"code_tm\",\n            \"amount\":\"amount_tm\",\n            \"total_price\":\"total_price_tm\"\n        }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
 								}
-							]
+							}
 						},
 						"url": {
 							"raw": "localhost:2406/admin/translation-my-order-page",
@@ -3563,70 +3407,23 @@
 						"method": "PUT",
 						"header": [],
 						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "orders",
-									"value": "orders",
-									"type": "default"
-								},
-								{
-									"key": "date",
-									"value": "date",
-									"type": "default"
-								},
-								{
-									"key": "price",
-									"value": "price",
-									"type": "default"
-								},
-								{
-									"key": "currency",
-									"value": "currency",
-									"type": "default"
-								},
-								{
-									"key": "image",
-									"value": "image",
-									"type": "default"
-								},
-								{
-									"key": "name",
-									"value": "name",
-									"type": "default"
-								},
-								{
-									"key": "brend",
-									"value": "brend",
-									"type": "default"
-								},
-								{
-									"key": "code",
-									"value": "code",
-									"type": "default"
-								},
-								{
-									"key": "amount",
-									"value": "amount",
-									"type": "default"
-								},
-								{
-									"key": "total_price",
-									"value": "total_price",
-									"type": "default"
+							"mode": "raw",
+							"raw": "{\n    \"id\":\"ff43b90d-e22d-4364-b358-6fd56bb3a305\",\n    \"lang_id\":\"8723c1c7-aa6d-429f-b8af-ee9ace61f0d7\",\n    \"orders\":\"orders_tm\",\n    \"date\":\"date_tm\",\n    \"price\":\"price_tm\",\n    \"currency\":\"currency_tm\",\n    \"image\":\"image_tm\",\n    \"name\":\"name_tm\",\n    \"brend\":\"brend_tm\",\n    \"code\":\"code_tm\",\n    \"amount\":\"amount_tm\",\n    \"total_price\":\"total_price_tm\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
 								}
-							]
+							}
 						},
 						"url": {
-							"raw": "localhost:2406/admin/translation-my-order-page/ff43b90d-e22d-4364-b358-6fd56bb3a305",
+							"raw": "localhost:2406/admin/translation-my-order-page",
 							"host": [
 								"localhost"
 							],
 							"port": "2406",
 							"path": [
 								"admin",
-								"translation-my-order-page",
-								"ff43b90d-e22d-4364-b358-6fd56bb3a305"
+								"translation-my-order-page"
 							]
 						}
 					},
@@ -3683,19 +3480,13 @@
 						"method": "POST",
 						"header": [],
 						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "type_tm",
-									"value": "töleg terminaly",
-									"type": "default"
-								},
-								{
-									"key": "type_ru",
-									"value": "платежный терминал",
-									"type": "default"
+							"mode": "raw",
+							"raw": "{\n    \"payment_types\":[\n        {\n            \"lang_id\":\"aea98b93-7bdf-455b-9ad4-a259d69dc76e\",\n            \"type\":\"платежный терминал\"\n        },\n        {\n            \"lang_id\":\"8723c1c7-aa6d-429f-b8af-ee9ace61f0d7\",\n            \"type\":\"töleg terminaly\"\n        }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
 								}
-							]
+							}
 						},
 						"url": {
 							"raw": "localhost:2406/admin/payment-type",
@@ -3717,25 +3508,23 @@
 						"method": "PUT",
 						"header": [],
 						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "type",
-									"value": "nagt_tm",
-									"type": "default"
+							"mode": "raw",
+							"raw": "{\n    \"id\":\"7a6a313d-8fcd-4c56-9fa5-aefb12552b82\",\n    \"lang_id\":\"8723c1c7-aa6d-429f-b8af-ee9ace61f0d7\",\n    \"type\":\"töleg terminaly\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
 								}
-							]
+							}
 						},
 						"url": {
-							"raw": "localhost:2406/admin/payment-type/38696743-82e5-4644-9c86-4a99ae45f912",
+							"raw": "localhost:2406/admin/payment-type",
 							"host": [
 								"localhost"
 							],
 							"port": "2406",
 							"path": [
 								"admin",
-								"payment-type",
-								"38696743-82e5-4644-9c86-4a99ae45f912"
+								"payment-type"
 							]
 						}
 					},
