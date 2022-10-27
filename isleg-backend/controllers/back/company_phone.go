@@ -2,10 +2,15 @@ package controllers
 
 import (
 	"github/abbgo/isleg/isleg-backend/config"
+	"github/abbgo/isleg/isleg-backend/models"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
+
+type CompPhone struct {
+	Phone models.CompanyPhone `json:"company_phone"`
+}
 
 func CreateCompanyPhone(c *gin.Context) {
 
@@ -29,19 +34,17 @@ func CreateCompanyPhone(c *gin.Context) {
 	}()
 
 	// GET DATA FROM REQUEST
-	phone := c.PostForm("phone")
-
-	// validate data
-	if phone == "" {
+	var companyPhone CompPhone
+	if err := c.BindJSON(&companyPhone); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
-			"message": "phone is required",
+			"message": err.Error(),
 		})
 		return
 	}
 
 	// create company phone
-	resultComPhone, err := db.Query("INSERT INTO company_phone (phone) VALUES ($1)", phone)
+	resultComPhone, err := db.Query("INSERT INTO company_phone (phone) VALUES ($1)", companyPhone.Phone.Phone)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
