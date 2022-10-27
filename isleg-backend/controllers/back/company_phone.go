@@ -90,11 +90,18 @@ func UpdateCompanyPhoneByID(c *gin.Context) {
 		}
 	}()
 
-	// get id from request parameter
-	ID := c.Param("id")
+	// get data from request
+	var companyPhone CompPhone
+	if err := c.BindJSON(&companyPhone); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
 
 	// check id
-	rowCompanyPhone, err := db.Query("SELECT id FROM company_phone WHERE id = $1 AND deleted_at IS NULL", ID)
+	rowCompanyPhone, err := db.Query("SELECT id FROM company_phone WHERE id = $1 AND deleted_at IS NULL", companyPhone.Phone.ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -132,19 +139,7 @@ func UpdateCompanyPhoneByID(c *gin.Context) {
 		return
 	}
 
-	// get data from request
-	phone := c.PostForm("phone")
-
-	// validate data
-	if phone == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": "phone is required",
-		})
-		return
-	}
-
-	resultComPhone, err := db.Query("UPDATE company_phone SET phone = $1 WHERE id = $2", phone, ID)
+	resultComPhone, err := db.Query("UPDATE company_phone SET phone = $1 WHERE id = $2", companyPhone.Phone.Phone, companyPhone.Phone.ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
