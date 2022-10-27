@@ -9,6 +9,10 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+type TrsMyOrderPages struct {
+	TranslationsMyOrderPage []models.TranslationMyOrderPage `json:"translation_my_order_page"`
+}
+
 func CreateTranslationMyOrderPage(c *gin.Context) {
 
 	// initialize database connection
@@ -30,9 +34,11 @@ func CreateTranslationMyOrderPage(c *gin.Context) {
 		}
 	}()
 
-	// GET ALL LANGUAGE
-	languages, err := GetAllLanguageWithIDAndNameShort()
-	if err != nil {
+	// get data from reuqest
+
+	var trMyOrderPages TrsMyOrderPages
+
+	if err := c.BindJSON(&trMyOrderPages); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
 			"message": err.Error(),
@@ -40,20 +46,53 @@ func CreateTranslationMyOrderPage(c *gin.Context) {
 		return
 	}
 
-	dataNames := []string{"orders", "date", "price", "currency", "image", "name", "brend", "code", "amount", "total_price"}
+	// check lang_id
+	for _, v := range trMyOrderPages.TranslationsMyOrderPage {
 
-	// VALIDATE DATA
-	if err = pkg.ValidateTranslations(languages, dataNames, c); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
+		rowLang, err := db.Query("SELECT id FROM languages WHERE id = $1 AND deleted_at IS NULL", v.LangID)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+		defer func() {
+			if err := rowLang.Close(); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}()
+
+		var langID string
+
+		for rowLang.Next() {
+			if err := rowLang.Scan(&langID); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}
+
+		if langID == "" {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": "language not found",
+			})
+			return
+		}
+
 	}
 
 	// create translation_my_information_page
-	for _, v := range languages {
-		resultTrMyOrderPage, err := db.Query("INSERT INTO translation_my_order_page (lang_id,orders,date,price,currency,image,name,brend,code,amount,total_price) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)", v.ID, c.PostForm("orders_"+v.NameShort), c.PostForm("date_"+v.NameShort), c.PostForm("price_"+v.NameShort), c.PostForm("currency_"+v.NameShort), c.PostForm("image_"+v.NameShort), c.PostForm("name_"+v.NameShort), c.PostForm("brend_"+v.NameShort), c.PostForm("code_"+v.NameShort), c.PostForm("amount_"+v.NameShort), c.PostForm("total_price_"+v.NameShort))
+	for _, v := range trMyOrderPages.TranslationsMyOrderPage {
+
+		resultTrMyOrderPage, err := db.Query("INSERT INTO translation_my_order_page (lang_id,orders,date,price,currency,image,name,brend,code,amount,total_price) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)", v.LangID, v.Orders, v.Date, v.Price, v.Currency, v.Image, v.Name, v.Brend, v.Code, v.Amount, v.TotalPrice)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
@@ -70,6 +109,7 @@ func CreateTranslationMyOrderPage(c *gin.Context) {
 				return
 			}
 		}()
+
 	}
 
 	c.JSON(http.StatusOK, gin.H{
