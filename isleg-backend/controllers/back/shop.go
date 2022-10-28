@@ -30,13 +30,10 @@ func CreateShop(c *gin.Context) {
 		}
 	}()
 
-	ownerName := c.PostForm("owner_name")
-	address := c.PostForm("address")
-	phoneNumber := c.PostForm("phone_number")
-	runningTime := c.PostForm("running_time")
-	categories, _ := c.GetPostFormArray("category_id")
+	// get data from request
+	var shop models.Shop
 
-	if err := models.ValidateShopData(ownerName, address, phoneNumber, runningTime, categories); err != nil {
+	if err := c.BindJSON(&shop); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
 			"message": err.Error(),
@@ -44,7 +41,15 @@ func CreateShop(c *gin.Context) {
 		return
 	}
 
-	resultShops, err := db.Query("INSERT INTO shops (owner_name,address,phone_number,running_time) VALUES ($1,$2,$3,$4) RETURNING id", ownerName, address, phoneNumber, runningTime)
+	if err := models.ValidateShopData(shop.Categories); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	resultShops, err := db.Query("INSERT INTO shops (owner_name,address,phone_number,running_time) VALUES ($1,$2,$3,$4) RETURNING id", shop.OwnerName, shop.Address, shop.PhoneNumber, shop.RunningTime)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -75,7 +80,7 @@ func CreateShop(c *gin.Context) {
 	}
 
 	// create category shop
-	resultCategorySHop, err := db.Query("INSERT INTO category_shop (category_id,shop_id) VALUES (unnest($1::uuid[]),$2)", pq.Array(categories), shopID)
+	resultCategorySHop, err := db.Query("INSERT INTO category_shop (category_id,shop_id) VALUES (unnest($1::uuid[]),$2)", pq.Array(shop.Categories), shopID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -169,7 +174,7 @@ func UpdateShopByID(c *gin.Context) {
 	runningTime := c.PostForm("running_time")
 	categories, _ := c.GetPostFormArray("category_id")
 
-	if err := models.ValidateShopData(ownerName, address, phoneNumber, runningTime, categories); err != nil {
+	if err := models.ValidateShopData(categories); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
 			"message": err.Error(),
