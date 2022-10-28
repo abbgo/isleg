@@ -139,7 +139,7 @@ func Routes() *gin.Engine {
 		back.POST("/district", backController.CreateDistrict) // fully ready
 
 		back.POST("/shop", backController.CreateShop)                             // fully ready
-		back.PUT("/shop/:id", backController.UpdateShopByID)                      // fully ready
+		back.PUT("/shop", backController.UpdateShopByID)                          // fully ready
 		back.GET("/shop/:id", backController.GetShopByID)                         // fully ready
 		back.GET("/shops", backController.GetShops)                               // fully ready
 		back.DELETE("/shop/:id", backController.DeleteShopByID)                   // fully ready

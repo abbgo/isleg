@@ -126,11 +126,18 @@ func UpdateShopByID(c *gin.Context) {
 		}
 	}()
 
-	// get id from request parameter
-	ID := c.Param("id")
+	// gat data from request
+	var shop models.Shop
+	if err := c.BindJSON(&shop); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
 
 	// check id
-	rowShop, err := db.Query("SELECT id FROM shops WHERE id = $1 AND deleted_at IS NULL", ID)
+	rowShop, err := db.Query("SELECT id FROM shops WHERE id = $1 AND deleted_at IS NULL", shop.ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -168,13 +175,7 @@ func UpdateShopByID(c *gin.Context) {
 		return
 	}
 
-	ownerName := c.PostForm("owner_name")
-	address := c.PostForm("address")
-	phoneNumber := c.PostForm("phone_number")
-	runningTime := c.PostForm("running_time")
-	categories, _ := c.GetPostFormArray("category_id")
-
-	if err := models.ValidateShopData(categories); err != nil {
+	if err := models.ValidateShopData(shop.Categories); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
 			"message": err.Error(),
@@ -182,7 +183,7 @@ func UpdateShopByID(c *gin.Context) {
 		return
 	}
 
-	resultShop, err := db.Query("UPDATE shops SET owner_name = $1 , address = $2 , phone_number = $3 , running_time = $4 WHERE id = $5", ownerName, address, phoneNumber, runningTime, ID)
+	resultShop, err := db.Query("UPDATE shops SET owner_name = $1 , address = $2 , phone_number = $3 , running_time = $4 WHERE id = $5", shop.OwnerName, shop.Address, shop.PhoneNumber, shop.RunningTime, shop.ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -200,7 +201,7 @@ func UpdateShopByID(c *gin.Context) {
 		}
 	}()
 
-	resultCategoryShop, err := db.Query("DELETE FROM category_shop WHERE shop_id = $1", ID)
+	resultCategoryShop, err := db.Query("DELETE FROM category_shop WHERE shop_id = $1", shop.ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -219,7 +220,7 @@ func UpdateShopByID(c *gin.Context) {
 	}()
 
 	// for _, v := range categories {
-	resultCatShop, err := db.Query("INSERT INTO category_shop (category_id,shop_id) VALUES (unnest($1::uuid[]),$2)", pq.Array(categories), ID)
+	resultCatShop, err := db.Query("INSERT INTO category_shop (category_id,shop_id) VALUES (unnest($1::uuid[]),$2)", pq.Array(shop.Categories), shop.ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
