@@ -37,7 +37,7 @@ func GenerateAccessToken(phoneNumber, customerID string) (accessTokenString stri
 
 func GenerateRefreshToken(phoneNumber, customerID string) (refreshTokenString string, err error) {
 
-	expirationTime := time.Now().Add(5 * time.Hour)
+	expirationTime := time.Now().Add(24 * time.Hour * 3)
 	claims := &JWTClaim{
 		PhoneNumber: phoneNumber,
 		CustomerID:  customerID,

@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "2c3654b5-fb4e-48cf-8154-36b3fe3b0447",
+		"_postman_id": "075431e0-cb9f-4dd5-a783-bc10143864f5",
 		"name": "IM",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -2866,39 +2866,13 @@
 						"method": "POST",
 						"header": [],
 						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "owner_name",
-									"value": "Owez Myradow",
-									"type": "default"
-								},
-								{
-									"key": "address",
-									"value": "Asgabat saher Mir 2/2 jay 2 magazyn 23",
-									"type": "default"
-								},
-								{
-									"key": "phone_number",
-									"value": "62420387",
-									"type": "default"
-								},
-								{
-									"key": "running_time",
-									"value": "7:00-21:00",
-									"type": "default"
-								},
-								{
-									"key": "category_id",
-									"value": "33cf0893-ff6e-40b3-b50f-2a3e926eca70",
-									"type": "default"
-								},
-								{
-									"key": "category_id",
-									"value": "f745d171-68e6-42e2-b339-cb3c210cda55",
-									"type": "default"
+							"mode": "raw",
+							"raw": "{\n    \"owner_name\":\"Arslan Rejepow\",\n    \"address\":\"Parahat 4 drob 3 jay 7\",\n    \"phone_number\":\"+99365235478\",\n    \"running_time\":\"07:00 - 21:00\",\n    \"categories\":[\n        \"789cbced-9141-4748-94d3-93476d276057\",\n        \"28a5bd8a-318a-4acf-b3c9-8ba04be5a979\"\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
 								}
-							]
+							}
 						},
 						"url": {
 							"raw": "localhost:2406/admin/shop",
@@ -2920,50 +2894,23 @@
 						"method": "PUT",
 						"header": [],
 						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "owner_name",
-									"value": "Arslan Serdarow",
-									"type": "default"
-								},
-								{
-									"key": "address",
-									"value": "Mir 2 2/2 jay 7 dom 36",
-									"type": "default"
-								},
-								{
-									"key": "phone_number",
-									"value": "63254871",
-									"type": "default"
-								},
-								{
-									"key": "running_time",
-									"value": "7:00-21:00",
-									"type": "default"
-								},
-								{
-									"key": "category_id",
-									"value": "5d877898-9ef4-4b91-8518-193b431228a8",
-									"type": "default"
-								},
-								{
-									"key": "category_id",
-									"value": "66772380-c161-4c45-9350-a45e765193e2",
-									"type": "default"
+							"mode": "raw",
+							"raw": "{\n    \"id\":\"a9934de9-88b1-44f1-8321-5445eb231e89\",\n    \"owner_name\":\"Arslan Rejepow\",\n    \"address\":\"Parahat 4 drob 3 jay 7\",\n    \"phone_number\":\"+99365235478\",\n    \"running_time\":\"07:00 - 21:00\",\n    \"categories\":[\n        \"789cbced-9141-4748-94d3-93476d276057\",\n        \"28a5bd8a-318a-4acf-b3c9-8ba04be5a979\"\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
 								}
-							]
+							}
 						},
 						"url": {
-							"raw": "localhost:2406/admin/shop/0d4f9096-9cd7-4d72-afa5-e460de11e77e",
+							"raw": "localhost:2406/admin/shop",
 							"host": [
 								"localhost"
 							],
 							"port": "2406",
 							"path": [
 								"admin",
-								"shop",
-								"0d4f9096-9cd7-4d72-afa5-e460de11e77e"
+								"shop"
 							]
 						}
 					},
