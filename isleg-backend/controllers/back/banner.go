@@ -86,3 +86,123 @@ func CreateBanner(c *gin.Context) {
 	})
 
 }
+
+func UpdateBanner(c *gin.Context) {
+
+	// initialize database connection
+	db, err := config.ConnDB()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
+
+	// get id from reequest parameter
+	ID := c.Param("id")
+
+	// get data from request
+	bannerUrl := c.PostForm("url")
+	var fileName string
+
+	// check id and get image of brend
+	rowBrend, err := db.Query("SELECT id,image FROM brends WHERE id = $1 AND deleted_at IS NULL", ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer func() {
+		if err := rowBrend.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
+
+	var image, bannerID string
+
+	for rowBrend.Next() {
+		if err := rowBrend.Scan(&bannerID, &image); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}
+
+	if bannerID == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "record not found",
+		})
+		return
+	}
+
+	// VALIDATE DATA
+	if bannerUrl == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "brend name is required",
+		})
+		return
+	} else {
+		_, err := url.ParseRequestURI(bannerUrl)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}
+
+	fileName, err = pkg.FileUploadForUpdate("image", "banner", image, c)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	// update data
+	resultBrend, err := db.Query("UPDATE banner SET url = $1 , image = $2 WHERE id = $3", bannerUrl, fileName, ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer func() {
+		if err := resultBrend.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":  true,
+		"message": "data successfully updated",
+	})
+
+}

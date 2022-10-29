@@ -108,7 +108,7 @@ func UpdateBrendByID(c *gin.Context) {
 	var fileName string
 
 	// check id and get image of brend
-	rowBrend, err := db.Query("SELECT image FROM brends WHERE id = $1 AND deleted_at IS NULL", ID)
+	rowBrend, err := db.Query("SELECT id,image FROM brends WHERE id = $1 AND deleted_at IS NULL", ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -126,10 +126,10 @@ func UpdateBrendByID(c *gin.Context) {
 		}
 	}()
 
-	var image string
+	var image, brendID string
 
 	for rowBrend.Next() {
-		if err := rowBrend.Scan(&image); err != nil {
+		if err := rowBrend.Scan(&brendID, &image); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
@@ -138,7 +138,7 @@ func UpdateBrendByID(c *gin.Context) {
 		}
 	}
 
-	if image == "" {
+	if brendID == "" {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
 			"message": "record not found",
