@@ -33,235 +33,244 @@ func Routes() *gin.Engine {
 	// routes belong to admin panel
 	back := routes.Group("/admin")
 	{
-		back.POST("/language", backController.CreateLanguage)                             // fully ready
-		back.PUT("/language/:id", backController.UpdateLanguageByID)                      // fully ready
-		back.GET("/language/:id", backController.GetLanguageByID)                         // fully ready
-		back.GET("/languages", backController.GetLanguages)                               // fully ready
-		back.DELETE("/language/:id", backController.DeleteLanguageByID)                   // fully ready
-		back.GET("/restore-language/:id", backController.RestoreLanguageByID)             // fully ready
-		back.DELETE("/delete-language/:id", backController.DeletePermanentlyLanguageByID) // fully ready
+		back.POST("/language", backController.CreateLanguage)
+		back.PUT("/language/:id", backController.UpdateLanguageByID)
+		back.GET("/language/:id", backController.GetLanguageByID)
+		back.GET("/languages", backController.GetLanguages)
+		back.DELETE("/language/:id", backController.DeleteLanguageByID)
+		back.GET("/restore-language/:id", backController.RestoreLanguageByID)
+		back.DELETE("/delete-language/:id", backController.DeletePermanentlyLanguageByID)
 
-		back.POST("/company-setting", backController.CreateCompanySetting) // fully ready
-		back.PUT("/company-setting", backController.UpdateCompanySetting)  // fully ready
-		back.GET("/company-setting", backController.GetCompanySetting)     // fully ready
+		back.POST("/company-setting", backController.CreateCompanySetting)
+		back.PUT("/company-setting", backController.UpdateCompanySetting)
+		back.GET("/company-setting", backController.GetCompanySetting)
 
-		back.POST("/order-time", backController.CreateOrderTime) // fully ready
+		back.POST("/order-time", backController.CreateOrderTime)
 
-		back.POST("/translation-header", backController.CreateTranslationHeader)     // fully ready
-		back.PUT("/translation-header", backController.UpdateTranslationHeaderByID)  // fully reade
-		back.GET("/translation-header/:id", backController.GetTranslationHeaderByID) // fully ready
+		back.POST("/translation-header", backController.CreateTranslationHeader)
+		back.PUT("/translation-header", backController.UpdateTranslationHeaderByID) // fully reade
+		back.GET("/translation-header/:id", backController.GetTranslationHeaderByID)
 
-		back.POST("/translation-footer", backController.CreateTranslationFooter)     // fully ready
-		back.PUT("/translation-footer", backController.UpdateTranslationFooterByID)  // fully ready
-		back.GET("/translation-footer/:id", backController.GetTranslationFooterByID) // fully ready
+		back.POST("/translation-footer", backController.CreateTranslationFooter)
+		back.PUT("/translation-footer", backController.UpdateTranslationFooterByID)
+		back.GET("/translation-footer/:id", backController.GetTranslationFooterByID)
 
-		back.POST("/translation-secure", backController.CreateTranslationSecure)     // fully ready
-		back.PUT("/translation-secure", backController.UpdateTranslationSecureByID)  // fully ready
-		back.GET("/translation-secure/:id", backController.GetTranslationSecureByID) // fully ready
+		back.POST("/translation-secure", backController.CreateTranslationSecure)
+		back.PUT("/translation-secure", backController.UpdateTranslationSecureByID)
+		back.GET("/translation-secure/:id", backController.GetTranslationSecureByID)
 
-		back.POST("/translation-payment", backController.CreateTranslationPayment)     // fully ready
-		back.PUT("/translation-payment", backController.UpdateTranslationPaymentByID)  // fully ready
-		back.GET("/translation-payment/:id", backController.GetTranslationPaymentByID) // fully ready
+		back.POST("/translation-payment", backController.CreateTranslationPayment)
+		back.PUT("/translation-payment", backController.UpdateTranslationPaymentByID)
+		back.GET("/translation-payment/:id", backController.GetTranslationPaymentByID)
 
-		back.POST("/translation-about", backController.CreateTranslationAbout)     // fully ready
-		back.PUT("/translation-about", backController.UpdateTranslationAboutByID)  // fully ready
-		back.GET("/translation-about/:id", backController.GetTranslationAboutByID) // fully ready
+		back.POST("/translation-about", backController.CreateTranslationAbout)
+		back.PUT("/translation-about", backController.UpdateTranslationAboutByID)
+		back.GET("/translation-about/:id", backController.GetTranslationAboutByID)
 
-		back.POST("/translation-contact", backController.CreateTranslationContact)     // fully ready
-		back.PUT("/translation-contact", backController.UpdateTranslationContactByID)  // fully ready
+		back.POST("/translation-contact", backController.CreateTranslationContact)
+		back.PUT("/translation-contact", backController.UpdateTranslationContactByID)
 		back.GET("/translation-contact/:id", backController.GetTranslationContactByID) // fully raedy
 
-		back.POST("/translation-my-information-page", backController.CreateTranslationMyInformationPage)     // fully ready
-		back.PUT("/translation-my-information-page", backController.UpdateTranslationMyInformationPageByID)  // fully ready
-		back.GET("/translation-my-information-page/:id", backController.GetTranslationMyInformationPageByID) // fully ready
+		back.POST("/translation-my-information-page", backController.CreateTranslationMyInformationPage)
+		back.PUT("/translation-my-information-page", backController.UpdateTranslationMyInformationPageByID)
+		back.GET("/translation-my-information-page/:id", backController.GetTranslationMyInformationPageByID)
 
-		back.POST("/translation-update-password-page", backController.CreateTranslationUpdatePasswordPage)     // fully ready
-		back.PUT("/translation-update-password-page", backController.UpdateTranslationUpdatePasswordPageByID)  // fully ready
-		back.GET("/translation-update-password-page/:id", backController.GetTranslationUpdatePasswordPageByID) // fully ready
+		back.POST("/translation-update-password-page", backController.CreateTranslationUpdatePasswordPage)
+		back.PUT("/translation-update-password-page", backController.UpdateTranslationUpdatePasswordPageByID)
+		back.GET("/translation-update-password-page/:id", backController.GetTranslationUpdatePasswordPageByID)
 
-		back.POST("/translation-basket-page", backController.CreateTranslationBasketPage)     // fully ready
-		back.PUT("/translation-basket-page", backController.UpdateTranslationBasketPageByID)  // fully ready
-		back.GET("/translation-basket-page/:id", backController.GetTranslationBasketPageByID) // fully ready
+		back.POST("/translation-basket-page", backController.CreateTranslationBasketPage)
+		back.PUT("/translation-basket-page", backController.UpdateTranslationBasketPageByID)
+		back.GET("/translation-basket-page/:id", backController.GetTranslationBasketPageByID)
 
-		back.POST("/translation-order-page", backController.CreateTranslationOrderPage)     // fully ready
-		back.PUT("/translation-order-page", backController.UpdateTranslationOrderPageByID)  // fully ready
-		back.GET("/translation-order-page/:id", backController.GetTranslationOrderPageByID) // fully ready
+		back.POST("/translation-order-page", backController.CreateTranslationOrderPage)
+		back.PUT("/translation-order-page", backController.UpdateTranslationOrderPageByID)
+		back.GET("/translation-order-page/:id", backController.GetTranslationOrderPageByID)
 
-		back.POST("/translation-my-order-page", backController.CreateTranslationMyOrderPage)     // fully ready
-		back.PUT("/translation-my-order-page", backController.UpdateTranslationMyOrderPageByID)  // fully ready
-		back.GET("/translation-my-order-page/:id", backController.GetTranslationMyOrderPageByID) // fully ready
+		back.POST("/translation-my-order-page", backController.CreateTranslationMyOrderPage)
+		back.PUT("/translation-my-order-page", backController.UpdateTranslationMyOrderPageByID)
+		back.GET("/translation-my-order-page/:id", backController.GetTranslationMyOrderPageByID)
 
-		back.POST("/category", backController.CreateCategory)                             // fully ready
-		back.PUT("/category/:id", backController.UpdateCategoryByID)                      // fully ready
-		back.GET("/category/:id", backController.GetCategoryByID)                         // fully ready
-		back.GET("/categories", backController.GetCategories)                             // fully ready
-		back.DELETE("/category/:id", backController.DeleteCategoryByID)                   // fully ready
-		back.GET("/restore-category/:id", backController.RestoreCategoryByID)             // fully ready
-		back.DELETE("/delete-category/:id", backController.DeletePermanentlyCategoryByID) // fully ready
+		back.POST("/category", backController.CreateCategory)
+		back.PUT("/category/:id", backController.UpdateCategoryByID)
+		back.GET("/category/:id", backController.GetCategoryByID)
+		back.GET("/categories", backController.GetCategories)
+		back.DELETE("/category/:id", backController.DeleteCategoryByID)
+		back.GET("/restore-category/:id", backController.RestoreCategoryByID)
+		back.DELETE("/delete-category/:id", backController.DeletePermanentlyCategoryByID)
 
-		back.POST("/brend", backController.CreateBrend)                             // fully ready
-		back.PUT("/brend/:id", backController.UpdateBrendByID)                      // fully ready
-		back.GET("/brend/:id", backController.GetBrendByID)                         // fully ready
-		back.GET("/brends", backController.GetBrends)                               // fully ready
-		back.DELETE("/brend/:id", backController.DeleteBrendByID)                   // fully ready
-		back.GET("/restore-brend/:id", backController.RestoreBrendByID)             // fully ready
-		back.DELETE("/delete-brend/:id", backController.DeletePermanentlyBrendByID) // fully ready
+		back.POST("/brend", backController.CreateBrend)
+		back.PUT("/brend/:id", backController.UpdateBrendByID)
+		back.GET("/brend/:id", backController.GetBrendByID)
+		back.GET("/brends", backController.GetBrends)
+		back.DELETE("/brend/:id", backController.DeleteBrendByID)
+		back.GET("/restore-brend/:id", backController.RestoreBrendByID)
+		back.DELETE("/delete-brend/:id", backController.DeletePermanentlyBrendByID)
 
-		back.POST("/product", backController.CreateProduct)                             // fully ready
-		back.PUT("/product/:id", backController.UpdateProductByID)                      // fully ready
-		back.GET("/product/:id", backController.GetProductByID)                         // fully ready
-		back.GET("/products", backController.GetProducts)                               // fully ready
-		back.DELETE("/product/:id", backController.DeleteProductByID)                   // fully ready
-		back.GET("/restore-product/:id", backController.RestoreProductByID)             // fully ready
-		back.DELETE("/delete-product/:id", backController.DeletePermanentlyProductByID) // fully ready
+		back.POST("/product", backController.CreateProduct)
+		back.PUT("/product/:id", backController.UpdateProductByID)
+		back.GET("/product/:id", backController.GetProductByID)
+		back.GET("/products", backController.GetProducts)
+		back.DELETE("/product/:id", backController.DeleteProductByID)
+		back.GET("/restore-product/:id", backController.RestoreProductByID)
+		back.DELETE("/delete-product/:id", backController.DeletePermanentlyProductByID)
 
-		back.POST("/company-phone", backController.CreateCompanyPhone)                             // fully ready
-		back.PUT("/company-phone", backController.UpdateCompanyPhoneByID)                          // fully ready
-		back.GET("/company-phone/:id", backController.GetCompanyPhoneByID)                         // fully ready
-		back.DELETE("/company-phone/:id", backController.DeleteCompanyPhoneByID)                   // fully ready
-		back.GET("/restore-company-phone/:id", backController.RestoreCompanyPhoneByID)             // fully ready
-		back.DELETE("/delete-company-phone/:id", backController.DeletePermanentlyCompanyPhoneByID) // fully ready
+		back.POST("/company-phone", backController.CreateCompanyPhone)
+		back.PUT("/company-phone", backController.UpdateCompanyPhoneByID)
+		back.GET("/company-phone/:id", backController.GetCompanyPhoneByID)
+		back.DELETE("/company-phone/:id", backController.DeleteCompanyPhoneByID)
+		back.GET("/restore-company-phone/:id", backController.RestoreCompanyPhoneByID)
+		back.DELETE("/delete-company-phone/:id", backController.DeletePermanentlyCompanyPhoneByID)
 
-		back.POST("/company-address", backController.CreateCompanyAddress)     // fully ready
-		back.PUT("/company-address", backController.UpdateCompanyAddressByID)  // fully ready
-		back.GET("/company-address/:id", backController.GetCompanyAddressByID) // fully ready
+		back.POST("/company-address", backController.CreateCompanyAddress)
+		back.PUT("/company-address", backController.UpdateCompanyAddressByID)
+		back.GET("/company-address/:id", backController.GetCompanyAddressByID)
 
-		back.POST("/payment-type", backController.CreatePaymentType)     // fully ready
-		back.PUT("/payment-type", backController.UpdatePaymentTypeByID)  // fully ready
-		back.GET("/payment-type/:id", backController.GetPaymentTypeByID) // fully ready
-		back.GET("/payment-types", backController.GetPaymentTypes)       // fully ready
+		back.POST("/payment-type", backController.CreatePaymentType)
+		back.PUT("/payment-type", backController.UpdatePaymentTypeByID)
+		back.GET("/payment-type/:id", backController.GetPaymentTypeByID)
+		back.GET("/payment-types", backController.GetPaymentTypes)
 
-		back.POST("/afisa", backController.CreateAfisa)                             // fully ready
-		back.PUT("/afisa/:id", backController.UpdateAfisaByID)                      // fully ready
-		back.GET("/afisa/:id", backController.GetAfisaByID)                         // fully ready
-		back.GET("/afisas", backController.GetAfisas)                               // fully ready
-		back.DELETE("/afisa/:id", backController.DeleteAfisaByID)                   // fully ready
-		back.GET("/restore-afisa/:id", backController.RestoreAfisaByID)             // fully ready
-		back.DELETE("/delete-afisa/:id", backController.DeletePermanentlyAfisaByID) // fully ready
+		back.POST("/afisa", backController.CreateAfisa)
+		back.PUT("/afisa/:id", backController.UpdateAfisaByID)
+		back.GET("/afisa/:id", backController.GetAfisaByID)
+		back.GET("/afisas", backController.GetAfisas)
+		back.DELETE("/afisa/:id", backController.DeleteAfisaByID)
+		back.GET("/restore-afisa/:id", backController.RestoreAfisaByID)
+		back.DELETE("/delete-afisa/:id", backController.DeletePermanentlyAfisaByID)
 
-		back.POST("/district", backController.CreateDistrict) // fully ready
+		back.POST("/district", backController.CreateDistrict)
 
-		back.POST("/shop", backController.CreateShop)                             // fully ready
-		back.PUT("/shop", backController.UpdateShopByID)                          // fully ready
-		back.GET("/shop/:id", backController.GetShopByID)                         // fully ready
-		back.GET("/shops", backController.GetShops)                               // fully ready
-		back.DELETE("/shop/:id", backController.DeleteShopByID)                   // fully ready
-		back.GET("/restore-shop/:id", backController.RestoreShopByID)             // fully ready
-		back.DELETE("/delete-shop/:id", backController.DeletePermanentlyShopByID) // fully ready
+		back.POST("/shop", backController.CreateShop)
+		back.PUT("/shop", backController.UpdateShopByID)
+		back.GET("/shop/:id", backController.GetShopByID)
+		back.GET("/shops", backController.GetShops)
+		back.DELETE("/shop/:id", backController.DeleteShopByID)
+		back.GET("/restore-shop/:id", backController.RestoreShopByID)
+		back.DELETE("/delete-shop/:id", backController.DeletePermanentlyShopByID)
 
 	}
 
 	// customer routes
 	customer := routes.Group("/api/auth")
 	{
-		customer.POST("/register", frontController.RegisterCustomer) // fully ready
-		customer.POST("/login", frontController.LoginCustomer)       // fully ready
-		customer.POST("/refresh", auth.Refresh)                      // fully ready
+		customer.POST("/register", frontController.RegisterCustomer)
+		customer.POST("/login", frontController.LoginCustomer)
+		customer.POST("/refresh", auth.Refresh)
 	}
 
 	// routes belong to front
 	front := routes.Group("/api/:lang")
 	{
 		// get header data
-		front.GET("/header", frontController.GetHeaderData) // fully ready
+		front.GET("/header", frontController.GetHeaderData)
 
 		// get footer data
-		front.GET("/footer", frontController.GetFooterData) // fully ready
+		front.GET("/footer", frontController.GetFooterData)
 
 		// get all brend
-		front.GET("/brends", frontController.GetBrends) // fully ready
+		front.GET("/brends", frontController.GetBrends)
 
 		// get company phone numbers
-		front.GET("/company-phones", backController.GetCompanyPhones) // fully ready
+		front.GET("/company-phones", backController.GetCompanyPhones)
 
 		// get company address
-		front.GET("/company-address", backController.GetCompanyAddress) // fully ready
+		front.GET("/company-address", backController.GetCompanyAddress)
 
 		// get Terms of Service and Privacy Policy page translation
-		front.GET("/translation-secure", backController.GetTranslationSecureByLangID) // fully ready
+		front.GET("/translation-secure", backController.GetTranslationSecureByLangID)
 
 		// get Delivery and payment order page translation
-		front.GET("/translation-payment", backController.GetTranslationPaymentByLangID) // fully ready
+		front.GET("/translation-payment", backController.GetTranslationPaymentByLangID)
 
 		// get about us page translation
-		front.GET("/translation-about", backController.GetTranslationAboutByLangID) // fully ready
+		front.GET("/translation-about", backController.GetTranslationAboutByLangID)
 
 		// get contact us page translation
-		front.GET("/translation-contact", backController.GetTranslationContactByLangID) // fully ready
+		front.GET("/translation-contact", backController.GetTranslationContactByLangID)
 
 		// get update password page translation
-		front.GET("/translation-update-password-page", backController.GetTranslationUpdatePasswordPageByLangID) // fully ready
+		front.GET("/translation-update-password-page", backController.GetTranslationUpdatePasswordPageByLangID)
 
 		// get basket page translation
-		front.GET("/translation-basket-page", backController.GetTranslationBasketPageByLangID) // fully ready
+		front.GET("/translation-basket-page", backController.GetTranslationBasketPageByLangID)
 
 		// get order page translation
-		front.GET("/translation-order-page", backController.GetTranslationOrderPageByLangID) // fully ready
+		front.GET("/translation-order-page", backController.GetTranslationOrderPageByLangID)
 
 		// get my order page translation
-		front.GET("/translation-my-order-page", backController.GetTranslationMyOrderPageByLangID) // fully ready
+		front.GET("/translation-my-order-page", backController.GetTranslationMyOrderPageByLangID)
 
 		// get payment ttype by lang id
-		front.GET("/payment-types", backController.GetPaymentTypesByLangID) // fully ready
+		front.GET("/payment-types", backController.GetPaymentTypesByLangID)
 
 		// homepage categories
-		front.GET("/homepage-categories", frontController.GetHomePageCategories) // fully ready
+		front.GET("/homepage-categories", frontController.GetHomePageCategories)
 
 		// // get one category with products
-		front.GET("/:category_id/:limit/:page", backController.GetOneCategoryWithProducts) // funksiyany gowy optimize etmeli
+		front.GET("/:category_id/:limit/:page", backController.GetOneCategoryWithProducts)
 
 		// get order time
-		front.GET("/order-time", backController.GetOrderTime) // funksiyany optimize etmeli
+		front.GET("/order-time", backController.GetOrderTime)
 
 		// search
-		front.POST("/search", frontController.Search) // funksiyany optimize etmeli
+		front.POST("/search", frontController.Search)
 
 		// get my information page translation
 		front.GET("/translation-my-information-page", backController.GetTranslationMyInformationPageByLangID)
 
 		// to order
-		front.POST("/to-order", frontController.ToOrder) // fully ready
+		front.POST("/to-order", frontController.ToOrder)
 
 		// to order
-		front.POST("/send-mail", frontController.SendMail) // fully ready
+		front.POST("/send-mail", frontController.SendMail)
+
+		// get like products without customer by product id
+		// Eger musderi like - a haryt gosup sonam sol haryt bazadan ayrylan bolsa
+		// sony bildirmek ucin front - dan mana cookie - daki product_id - leri
+		// ugdurkdyryar we men yzyna sol id - leri product - lary ugratyan
+		front.GET("/likes-without-customer", frontController.GetLikedProductsWithoutCustomer) // post-form data - dan json data gecirmeli
+
+		// get order products without customer by product id
+		// Eger musderi sebede - e haryt gosup sonam sol haryt bazadan ayrylan bolsa
+		// sony bildirmek ucin front - dan mana cookie - daki product_id - leri
+		// ugdurkdyryar we men yzyna sol id - leri product - lary ugratyan
+		front.GET("/orders-without-customer", frontController.GetOrderedProductsWithoutCustomer)
 
 		securedCustomer := front.Group("/").Use(middlewares.Auth())
 		{
 			// add like if customer exists
-			securedCustomer.POST("/like", frontController.AddLike) // funksiyany optimize etmeli
+			securedCustomer.POST("/like", frontController.AddLike)
 
 			// remove like if customer exists
-			securedCustomer.DELETE("/like/:product_id", frontController.RemoveLike) // funksiyany optimize etmeli
+			securedCustomer.DELETE("/like/:product_id", frontController.RemoveLike)
 
 			// get like products if customer exists
 			securedCustomer.GET("/likes", frontController.GetCustomerLikes)
 
-			// get like products without customer by product id
-			// securedCustomer.GET("/likes-without-customer", frontController.GetLikedProductsWithoutCustomer) // funksiyany optimize etmeli
-
 			// add product to cart
-			securedCustomer.POST("/add-cart", frontController.AddCart) // funksiyany optimize etmeli
+			securedCustomer.POST("/add-cart", frontController.AddCart)
 
 			// get product of cart
 			securedCustomer.GET("/get-cart/:customer_id", frontController.GetCustomerCartProducts)
 
 			// remove product from cart
-			securedCustomer.DELETE("/remove-cart", frontController.RemoveCart) // funksiyany optimize etmeli
+			securedCustomer.DELETE("/remove-cart", frontController.RemoveCart)
 
 			// get customer orders
-			securedCustomer.GET("/orders", frontController.GetCustomerOrders) // funksiyany optimize etmeli
+			securedCustomer.GET("/orders", frontController.GetCustomerOrders)
 
 			// get customer orders
-			securedCustomer.GET("/addresses", frontController.GetCustomerAddresses) // funksiyany optimize etmeli
+			securedCustomer.GET("/addresses", frontController.GetCustomerAddresses)
 
 			// get customer informations
-			securedCustomer.GET("/my-information", frontController.GetCustomerInformation) // funksiyany optimize etmeli
+			securedCustomer.GET("/my-information", frontController.GetCustomerInformation)
 
 			// get customer informations
-			securedCustomer.PUT("/my-information", frontController.UpdateCustomerInformation) // funksiyany optimize etmeli
+			securedCustomer.PUT("/my-information", frontController.UpdateCustomerInformation)
 
 			// update customer address status
-			securedCustomer.PUT("/address", frontController.UpdateCustomerAddressStatus) // funksiyany optimize etmeli
+			securedCustomer.PUT("/address", frontController.UpdateCustomerAddressStatus)
 
 			// update customer password
 			securedCustomer.PUT("/customer-password", frontController.UpdateCustomerPassword) //+

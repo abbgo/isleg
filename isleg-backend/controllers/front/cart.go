@@ -111,97 +111,29 @@ func AddCart(c *gin.Context) {
 		return
 	}
 
-	for k, v := range cart.Products {
+	if len(cart.Products) != 0 {
 
-		if v.QuantityOfProduct < 1 {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": "quantity of product cannot be less than 1",
-			})
-			return
-		}
+		for k, v := range cart.Products {
 
-		for _, x := range cart.Products[(k + 1):] {
-			if v.ProductID == x.ProductID {
+			if v.QuantityOfProduct < 1 {
 				c.JSON(http.StatusBadRequest, gin.H{
 					"status":  false,
-					"message": "the same product cannot be repeated twice",
+					"message": "quantity of product cannot be less than 1",
 				})
 				return
 			}
-		}
 
-		rowProduct, err := db.Query("SELECT id FROM products WHERE id = $1 AND deleted_at IS NULL", v.ProductID)
-		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-		defer func() {
-			if err := rowProduct.Close(); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
-				return
+			for _, x := range cart.Products[(k + 1):] {
+				if v.ProductID == x.ProductID {
+					c.JSON(http.StatusBadRequest, gin.H{
+						"status":  false,
+						"message": "the same product cannot be repeated twice",
+					})
+					return
+				}
 			}
-		}()
 
-		var product_id string
-
-		for rowProduct.Next() {
-			if err := rowProduct.Scan(&product_id); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
-				return
-			}
-		}
-
-		if product_id == "" {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": "product not found",
-			})
-			return
-		}
-
-		rowCart, err := db.Query("SELECT product_id FROM cart WHERE customer_id = $1 AND product_id = $2 AND deleted_at IS NULL", customerID, v.ProductID)
-		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-		defer func() {
-			if err := rowCart.Close(); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
-				return
-			}
-		}()
-
-		var productId string
-
-		for rowCart.Next() {
-			if err := rowCart.Scan(&productId); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
-				return
-			}
-		}
-
-		if productId == "" {
-
-			resultCartInsert, err := db.Query("INSERT INTO cart (customer_id,product_id,quantity_of_product) VALUES ($1,$2,$3)", customerID, v.ProductID, v.QuantityOfProduct)
+			rowProduct, err := db.Query("SELECT id FROM products WHERE id = $1 AND deleted_at IS NULL", v.ProductID)
 			if err != nil {
 				c.JSON(http.StatusBadRequest, gin.H{
 					"status":  false,
@@ -210,7 +142,7 @@ func AddCart(c *gin.Context) {
 				return
 			}
 			defer func() {
-				if err := resultCartInsert.Close(); err != nil {
+				if err := rowProduct.Close(); err != nil {
 					c.JSON(http.StatusBadRequest, gin.H{
 						"status":  false,
 						"message": err.Error(),
@@ -219,43 +151,134 @@ func AddCart(c *gin.Context) {
 				}
 			}()
 
-		} else {
+			var product_id string
 
-			reultCartUpdate, err := db.Query("UPDATE cart SET quantity_of_product = $1 WHERE customer_id = $2 AND product_id = $3 AND deleted_at IS NULL", v.QuantityOfProduct, customerID, v.ProductID)
-			if err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
-				return
+			for rowProduct.Next() {
+				if err := rowProduct.Scan(&product_id); err != nil {
+					c.JSON(http.StatusBadRequest, gin.H{
+						"status":  false,
+						"message": err.Error(),
+					})
+					return
+				}
 			}
-			defer func() {
-				if err := reultCartUpdate.Close(); err != nil {
+
+			if product_id != "" {
+
+				rowCart, err := db.Query("SELECT product_id FROM cart WHERE customer_id = $1 AND product_id = $2 AND deleted_at IS NULL", customerID, v.ProductID)
+				if err != nil {
 					c.JSON(http.StatusBadRequest, gin.H{
 						"status":  false,
 						"message": err.Error(),
 					})
 					return
 				}
-			}()
+				defer func() {
+					if err := rowCart.Close(); err != nil {
+						c.JSON(http.StatusBadRequest, gin.H{
+							"status":  false,
+							"message": err.Error(),
+						})
+						return
+					}
+				}()
+
+				var productId string
+
+				for rowCart.Next() {
+					if err := rowCart.Scan(&productId); err != nil {
+						c.JSON(http.StatusBadRequest, gin.H{
+							"status":  false,
+							"message": err.Error(),
+						})
+						return
+					}
+				}
+
+				if productId == "" {
+
+					resultCartInsert, err := db.Query("INSERT INTO cart (customer_id,product_id,quantity_of_product) VALUES ($1,$2,$3)", customerID, v.ProductID, v.QuantityOfProduct)
+					if err != nil {
+						c.JSON(http.StatusBadRequest, gin.H{
+							"status":  false,
+							"message": err.Error(),
+						})
+						return
+					}
+					defer func() {
+						if err := resultCartInsert.Close(); err != nil {
+							c.JSON(http.StatusBadRequest, gin.H{
+								"status":  false,
+								"message": err.Error(),
+							})
+							return
+						}
+					}()
+
+				} else {
+
+					reultCartUpdate, err := db.Query("UPDATE cart SET quantity_of_product = $1 WHERE customer_id = $2 AND product_id = $3 AND deleted_at IS NULL", v.QuantityOfProduct, customerID, v.ProductID)
+					if err != nil {
+						c.JSON(http.StatusBadRequest, gin.H{
+							"status":  false,
+							"message": err.Error(),
+						})
+						return
+					}
+					defer func() {
+						if err := reultCartUpdate.Close(); err != nil {
+							c.JSON(http.StatusBadRequest, gin.H{
+								"status":  false,
+								"message": err.Error(),
+							})
+							return
+						}
+					}()
+
+				}
+
+			}
 
 		}
 
-	}
+		products, err := GetCartProducts(langShortName, customerID)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
 
-	products, err := GetCartProducts(langShortName, customerID)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
+		c.JSON(http.StatusOK, gin.H{
+			"status":   true,
+			"products": products,
 		})
-		return
-	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"status":   true,
-		"products": products,
-	})
+	} else {
+
+		products, err := GetCartProducts(langShortName, customerID)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+
+		if len(products) != 0 {
+			c.JSON(http.StatusOK, gin.H{
+				"status":   true,
+				"products": products,
+			})
+		} else {
+			c.JSON(http.StatusOK, gin.H{
+				"status":  true,
+				"message": "cart empty",
+			})
+		}
+
+	}
 
 }
 
