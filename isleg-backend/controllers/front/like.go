@@ -554,16 +554,16 @@ func GetLikedProductsWithoutCustomer(c *gin.Context) {
 		return
 	}
 
-	productIds, ok := c.GetPostFormArray("product_ids")
-	if !ok {
+	var productIds ProductID
+	if err := c.BindJSON(&productIds); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
-			"message": "product id is required",
+			"message": err.Error(),
 		})
 		return
 	}
 
-	for _, v := range productIds {
+	for _, v := range productIds.IDS {
 		rowProduct, err := db.Query("SELECT id FROM products WHERE id = $1 AND deleted_at IS NULL", v)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{

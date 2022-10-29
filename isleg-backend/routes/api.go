@@ -225,13 +225,13 @@ func Routes() *gin.Engine {
 		// to order
 		front.POST("/send-mail", frontController.SendMail)
 
-		// get like products without customer by product id
+		// get like products without customer by product id ->
 		// Eger musderi like - a haryt gosup sonam sol haryt bazadan ayrylan bolsa
 		// sony bildirmek ucin front - dan mana cookie - daki product_id - leri
 		// ugdurkdyryar we men yzyna sol id - leri product - lary ugratyan
-		front.GET("/likes-without-customer", frontController.GetLikedProductsWithoutCustomer) // post-form data - dan json data gecirmeli
+		front.GET("/likes-without-customer", frontController.GetLikedProductsWithoutCustomer)
 
-		// get order products without customer by product id
+		// get order products without customer by product id ->
 		// Eger musderi sebede - e haryt gosup sonam sol haryt bazadan ayrylan bolsa
 		// sony bildirmek ucin front - dan mana cookie - daki product_id - leri
 		// ugdurkdyryar we men yzyna sol id - leri product - lary ugratyan
@@ -252,7 +252,7 @@ func Routes() *gin.Engine {
 			securedCustomer.POST("/add-cart", frontController.AddCart)
 
 			// get product of cart
-			securedCustomer.GET("/get-cart/:customer_id", frontController.GetCustomerCartProducts)
+			securedCustomer.GET("/get-cart", frontController.GetCustomerCartProducts)
 
 			// remove product from cart
 			securedCustomer.DELETE("/remove-cart", frontController.RemoveCart)

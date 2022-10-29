@@ -1025,6 +1025,13 @@ func GetOrderedProductsWithoutCustomer(c *gin.Context) {
 	}
 
 	var productIds ProductID
+	if err := c.BindJSON(&productIds); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
 
 	for _, v := range productIds.IDS {
 
