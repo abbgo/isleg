@@ -5,6 +5,7 @@ import (
 	backController "github/abbgo/isleg/isleg-backend/controllers/back"
 	"github/abbgo/isleg/isleg-backend/models"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gosimple/slug"
@@ -43,9 +44,77 @@ func Search(c *gin.Context) {
 		return
 	}
 
+	// get limit from param
+	limitStr := c.Param("limit")
+	if limitStr == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "limit is required",
+		})
+		return
+	}
+	limit, err := strconv.ParseUint(limitStr, 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	// get page from param
+	pageStr := c.Param("page")
+	if pageStr == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "page is required",
+		})
+		return
+	}
+	page, err := strconv.ParseUint(pageStr, 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	offset := limit * (page - 1)
+
+	var countOfProduct uint
+
 	search := slug.MakeLang(c.PostForm("search"), "en")
 
-	rowsProduct, err := db.Query("SELECT p.id,p.brend_id,p.price,p.old_price,p.amount,p.limit_amount,p.is_new FROM products p inner join translation_product tp on tp.product_id = p.id WHERE tp.slug LIKE $1 AND tp.lang_id = $2 AND tp.deleted_at IS NULL AND p.deleted_at IS NULL", "%"+search+"%", langID)
+	countProduct, err := db.Query("SELECT COUNT(*) FROM products p inner join translation_product tp on tp.product_id = p.id WHERE tp.slug LIKE $1 AND tp.lang_id = $2 AND tp.deleted_at IS NULL AND p.deleted_at IS NULL", "%"+search+"%", langID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer func() {
+		if err := countProduct.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
+
+	for countProduct.Next() {
+		if err := countProduct.Scan(&countOfProduct); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}
+
+	rowsProduct, err := db.Query("SELECT p.id,p.brend_id,p.price,p.old_price,p.amount,p.limit_amount,p.is_new FROM products p inner join translation_product tp on tp.product_id = p.id WHERE tp.slug LIKE $1 AND tp.lang_id = $2 AND tp.deleted_at IS NULL AND p.deleted_at IS NULL ORDER BY p.created_at ASC LIMIT $3 OFFSET $4", "%"+search+"%", langID, limit, offset)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -177,8 +246,9 @@ func Search(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"status":   true,
-		"products": products,
+		"status":            true,
+		"products":          products,
+		"count_of_products": countOfProduct,
 	})
 
 }

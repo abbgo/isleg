@@ -222,7 +222,7 @@ func Routes() *gin.Engine {
 		front.GET("/order-time", backController.GetOrderTime)
 
 		// search
-		front.POST("/search", frontController.Search)
+		front.POST("/search/:limit/:page", frontController.Search)
 
 		// get my information page translation
 		front.GET("/translation-my-information-page", backController.GetTranslationMyInformationPageByLangID)
