@@ -8,10 +8,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type TrsAbout struct {
-	TranslationsAbout []models.TranslationAbout `json:"translations_about"`
-}
-
 func CreateTranslationAbout(c *gin.Context) {
 
 	// initialize database connection
@@ -34,7 +30,7 @@ func CreateTranslationAbout(c *gin.Context) {
 	}()
 
 	// get data from request
-	var trAbouts TrsAbout
+	var trAbouts []models.TranslationAbout
 
 	if err := c.BindJSON(&trAbouts); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -45,7 +41,7 @@ func CreateTranslationAbout(c *gin.Context) {
 	}
 
 	// check lang_id
-	for _, v := range trAbouts.TranslationsAbout {
+	for _, v := range trAbouts {
 
 		rowLang, err := db.Query("SELECT id FROM languages WHERE id = $1 AND deleted_at IS NULL", v.LangID)
 		if err != nil {
@@ -88,7 +84,7 @@ func CreateTranslationAbout(c *gin.Context) {
 	}
 
 	// create translation about
-	for _, v := range trAbouts.TranslationsAbout {
+	for _, v := range trAbouts {
 
 		resultTRAbout, err := db.Query("INSERT INTO translation_about (lang_id,title,content) VALUES ($1,$2,$3)", v.LangID, v.Title, v.Content)
 		if err != nil {
