@@ -8,10 +8,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type TrsContact struct {
-	TranslationsContact []models.TranslationContact `json:"translations_contact"`
-}
-
 func CreateTranslationContact(c *gin.Context) {
 
 	// initialize database connection
@@ -34,7 +30,7 @@ func CreateTranslationContact(c *gin.Context) {
 	}()
 
 	// get data from request
-	var trContacts TrsContact
+	var trContacts []models.TranslationContact
 
 	if err := c.BindJSON(&trContacts); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -45,7 +41,7 @@ func CreateTranslationContact(c *gin.Context) {
 	}
 
 	// check lang_id
-	for _, v := range trContacts.TranslationsContact {
+	for _, v := range trContacts {
 
 		rowLang, err := db.Query("SELECT id FROM languages WHERE id = $1 AND deleted_at IS NULL", v.LangID)
 		if err != nil {
@@ -88,7 +84,7 @@ func CreateTranslationContact(c *gin.Context) {
 	}
 
 	// create translation contact
-	for _, v := range trContacts.TranslationsContact {
+	for _, v := range trContacts {
 
 		resultTRConact, err := db.Query("INSERT INTO translation_contact (lang_id,full_name,email,phone,letter,company_phone,imo,company_email,instagram,button_text) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)", v.LangID, v.FullName, v.Email, v.Phone, v.Letter, v.CompanyPhone, v.Imo, v.CompanyEmail, v.Instragram, v.ButtonText)
 		if err != nil {
