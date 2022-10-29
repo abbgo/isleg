@@ -8,10 +8,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type TrsOrderPage struct {
-	TranslationsOrderPage []models.TranslationOrderPage `json:"translations_order_page"`
-}
-
 func CreateTranslationOrderPage(c *gin.Context) {
 
 	// initialize database connection
@@ -34,7 +30,7 @@ func CreateTranslationOrderPage(c *gin.Context) {
 	}()
 
 	// get data from request
-	var trOrderPages TrsOrderPage
+	var trOrderPages []models.TranslationOrderPage
 
 	if err := c.BindJSON(&trOrderPages); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -45,7 +41,7 @@ func CreateTranslationOrderPage(c *gin.Context) {
 	}
 
 	// check lang_id
-	for _, v := range trOrderPages.TranslationsOrderPage {
+	for _, v := range trOrderPages {
 
 		rowLang, err := db.Query("SELECT id FROM languages WHERE id = $1 AND deleted_at IS NULL", v.LangID)
 		if err != nil {
@@ -88,7 +84,7 @@ func CreateTranslationOrderPage(c *gin.Context) {
 	}
 
 	// create translation_my_information_page
-	for _, v := range trOrderPages.TranslationsOrderPage {
+	for _, v := range trOrderPages {
 
 		resultTrOrderPage, err := db.Query("INSERT INTO translation_order_page (lang_id,content,type_of_payment,choose_a_delivery_time,your_address,mark,to_order) VALUES ($1,$2,$3,$4,$5,$6,$7)", v.LangID, v.Content, v.TypeOfPayment, v.ChooseADeliveryTime, v.YourAddress, v.Mark, v.ToOrder)
 		if err != nil {
