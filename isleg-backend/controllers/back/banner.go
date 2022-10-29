@@ -88,7 +88,7 @@ func CreateBanner(c *gin.Context) {
 
 }
 
-func UpdateBanner(c *gin.Context) {
+func UpdateBannerByID(c *gin.Context) {
 
 	// initialize database connection
 	db, err := config.ConnDB()
@@ -208,7 +208,7 @@ func UpdateBanner(c *gin.Context) {
 
 }
 
-func GetBanner(c *gin.Context) {
+func GetBannerByID(c *gin.Context) {
 
 	// initialize database connection
 	db, err := config.ConnDB()
@@ -274,6 +274,69 @@ func GetBanner(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"status": true,
 		"banner": banner,
+	})
+
+}
+
+func GetBanners(c *gin.Context) {
+
+	// initialize database connection
+	db, err := config.ConnDB()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
+
+	// get data from database
+	rowBrends, err := db.Query("SELECT id,url,image FROM banner WHERE deleted_at IS NULL")
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer func() {
+		if err := rowBrends.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
+
+	var banners []models.Banner
+
+	for rowBrends.Next() {
+		var banner models.Banner
+
+		if err := rowBrends.Scan(&banner.ID, &banner.Url, &banner.Image); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+
+		banners = append(banners, banner)
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":  true,
+		"banners": banners,
 	})
 
 }
