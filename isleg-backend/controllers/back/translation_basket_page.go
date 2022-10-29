@@ -8,10 +8,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type TrsBasketPage struct {
-	TranslationsBasketPage []models.TranslationBasketPage `json:"translations_basket_page"`
-}
-
 func CreateTranslationBasketPage(c *gin.Context) {
 
 	// initialize database connection
@@ -34,7 +30,7 @@ func CreateTranslationBasketPage(c *gin.Context) {
 	}()
 
 	// get data from request
-	var trBasketPages TrsBasketPage
+	var trBasketPages []models.TranslationBasketPage
 
 	if err := c.BindJSON(&trBasketPages); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -45,7 +41,7 @@ func CreateTranslationBasketPage(c *gin.Context) {
 	}
 
 	//check lsng_id
-	for _, v := range trBasketPages.TranslationsBasketPage {
+	for _, v := range trBasketPages {
 
 		rowLang, err := db.Query("SELECT id FROM languages WHERE id = $1 AND deleted_at IS NULL", v.LangID)
 		if err != nil {
@@ -88,7 +84,7 @@ func CreateTranslationBasketPage(c *gin.Context) {
 	}
 
 	// create translation_my_information_page
-	for _, v := range trBasketPages.TranslationsBasketPage {
+	for _, v := range trBasketPages {
 
 		resultTrBasketPage, err := db.Query("INSERT INTO translation_basket_page (lang_id,quantity_of_goods,total_price,discount,delivery,total,currency,to_order,your_basket,empty_the_basket) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)", v.LangID, v.QuantityOfGoods, v.TotalPrice, v.Discount, v.Delivery, v.Total, v.Currency, v.ToOrder, v.YourBasket, v.EmptyTheBasket)
 		if err != nil {
