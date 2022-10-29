@@ -8,10 +8,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type TrsMyOrderPages struct {
-	TranslationsMyOrderPage []models.TranslationMyOrderPage `json:"translation_my_order_page"`
-}
-
 func CreateTranslationMyOrderPage(c *gin.Context) {
 
 	// initialize database connection
@@ -35,7 +31,7 @@ func CreateTranslationMyOrderPage(c *gin.Context) {
 
 	// get data from reuqest
 
-	var trMyOrderPages TrsMyOrderPages
+	var trMyOrderPages []models.TranslationMyOrderPage
 
 	if err := c.BindJSON(&trMyOrderPages); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -46,7 +42,7 @@ func CreateTranslationMyOrderPage(c *gin.Context) {
 	}
 
 	// check lang_id
-	for _, v := range trMyOrderPages.TranslationsMyOrderPage {
+	for _, v := range trMyOrderPages {
 
 		rowLang, err := db.Query("SELECT id FROM languages WHERE id = $1 AND deleted_at IS NULL", v.LangID)
 		if err != nil {
@@ -89,7 +85,7 @@ func CreateTranslationMyOrderPage(c *gin.Context) {
 	}
 
 	// create translation_my_information_page
-	for _, v := range trMyOrderPages.TranslationsMyOrderPage {
+	for _, v := range trMyOrderPages {
 
 		resultTrMyOrderPage, err := db.Query("INSERT INTO translation_my_order_page (lang_id,orders,date,price,currency,image,name,brend,code,amount,total_price) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)", v.LangID, v.Orders, v.Date, v.Price, v.Currency, v.Image, v.Name, v.Brend, v.Code, v.Amount, v.TotalPrice)
 		if err != nil {
