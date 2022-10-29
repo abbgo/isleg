@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"errors"
+	"fmt"
 	"github/abbgo/isleg/isleg-backend/config"
 	backController "github/abbgo/isleg/isleg-backend/controllers/back"
 	"github/abbgo/isleg/isleg-backend/models"
@@ -116,11 +117,13 @@ func AddCart(c *gin.Context) {
 		for k, v := range cart {
 
 			if v.QuantityOfProduct < 1 {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": "quantity of product cannot be less than 1",
-				})
-				return
+				if err := DeleteCart(customerID, v.ProductID); err != nil {
+					c.JSON(http.StatusBadRequest, gin.H{
+						"status":  false,
+						"message": err.Error(),
+					})
+					return
+				}
 			}
 
 			for _, x := range cart[(k + 1):] {
@@ -164,6 +167,8 @@ func AddCart(c *gin.Context) {
 			}
 
 			if product_id != "" {
+
+				fmt.Println("--------------------")
 
 				rowCart, err := db.Query("SELECT product_id FROM cart WHERE customer_id = $1 AND product_id = $2 AND deleted_at IS NULL", customerID, v.ProductID)
 				if err != nil {
@@ -405,6 +410,8 @@ func GetCustomerCartProducts(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, "customer_id must be string")
 	}
 
+	fmt.Println(customerID)
+
 	langShortName := c.Param("lang")
 
 	products, err := GetCartProducts(langShortName, customerID)
@@ -425,24 +432,6 @@ func GetCustomerCartProducts(c *gin.Context) {
 
 func RemoveCart(c *gin.Context) {
 
-	db, err := config.ConnDB()
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-	defer func() {
-		if err := db.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
-
 	custID, hasCustomer := c.Get("customer_id")
 	if !hasCustomer {
 		c.JSON(http.StatusBadRequest, "customer_id is required")
@@ -455,127 +444,107 @@ func RemoveCart(c *gin.Context) {
 
 	productID := c.PostForm("product_id")
 
-	rowCustomer, err := db.Query("SELECT id FROM customers WHERE id = $1 AND deleted_at IS NULL", customerID)
-	if err != nil {
+	if err := DeleteCart(customerID, productID); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
 			"message": err.Error(),
 		})
 		return
 	}
-	defer func() {
-		if err := rowCustomer.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":  true,
+		"message": "product successfull deleted from cart",
+	})
+
+}
+
+func DeleteCart(customerID, productID string) error {
+
+	db, err := config.ConnDB()
+	if err != nil {
+		return err
+	}
+	defer func() error {
+		if err := db.Close(); err != nil {
+			return err
 		}
+		return nil
+	}()
+
+	rowCustomer, err := db.Query("SELECT id FROM customers WHERE id = $1 AND deleted_at IS NULL", customerID)
+	if err != nil {
+		return err
+	}
+	defer func() error {
+		if err := rowCustomer.Close(); err != nil {
+			return err
+		}
+		return nil
 	}()
 
 	var customer_id string
 
 	for rowCustomer.Next() {
 		if err := rowCustomer.Scan(&customer_id); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
+			return err
 		}
 	}
 
 	if customer_id == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": "customer not found",
-		})
-		return
+		return errors.New("customer not found")
 	}
 
 	if productID != "" {
 
 		rowCart, err := db.Query("SELECT product_id FROM cart WHERE customer_id = $1 AND product_id = $2 AND deleted_at IS NULL", customerID, productID)
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
+			return err
 		}
-		defer func() {
+		defer func() error {
 			if err := rowCart.Close(); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
-				return
+				return err
 			}
+			return nil
 		}()
 
 		var product_id string
 
 		for rowCart.Next() {
 			if err := rowCart.Scan(&product_id); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
-				return
+				return err
 			}
 		}
 
 		if product_id == "" {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": "this product not found in this customer",
-			})
-			return
+			return errors.New("this product not found in this customer")
 		}
 
 		resultCart, err := db.Query("DELETE FROM cart WHERE customer_id = $1 AND product_id = $2 AND deleted_at IS NULL", customerID, productID)
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
+			return err
 		}
-		defer func() {
+		defer func() error {
 			if err := resultCart.Close(); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
-				return
+				return err
 			}
+			return nil
 		}()
 
 	} else {
 
 		resultCart, err := db.Query("DELETE FROM cart WHERE customer_id = $1 AND deleted_at IS NULL", customerID)
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
+			return err
 		}
-		defer func() {
+		defer func() error {
 			if err := resultCart.Close(); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
-				return
+				return err
 			}
+			return nil
 		}()
 
 	}
-
-	c.JSON(http.StatusOK, gin.H{
-		"status":  true,
-		"message": "product successfull deleted from cart",
-	})
+	return nil
 
 }
