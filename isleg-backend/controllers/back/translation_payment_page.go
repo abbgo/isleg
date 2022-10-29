@@ -8,10 +8,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type TrsPayment struct {
-	TranslationsPayment []models.TranslationPayment `json:"translations_payment"`
-}
-
 func CreateTranslationPayment(c *gin.Context) {
 
 	// initialize database connection
@@ -33,7 +29,7 @@ func CreateTranslationPayment(c *gin.Context) {
 		}
 	}()
 
-	var trPaymentPages TrsPayment
+	var trPaymentPages []models.TranslationPayment
 
 	// get data from request
 	if err := c.BindJSON(&trPaymentPages); err != nil {
@@ -45,7 +41,7 @@ func CreateTranslationPayment(c *gin.Context) {
 	}
 
 	// check lang_id
-	for _, v := range trPaymentPages.TranslationsPayment {
+	for _, v := range trPaymentPages {
 
 		rowLang, err := db.Query("SELECT id FROM languages WHERE id = $1 AND deleted_at IS NULL", v.LangID)
 		if err != nil {
@@ -88,7 +84,7 @@ func CreateTranslationPayment(c *gin.Context) {
 	}
 
 	// create translation payment
-	for _, v := range trPaymentPages.TranslationsPayment {
+	for _, v := range trPaymentPages {
 
 		resultTRPayment, err := db.Query("INSERT INTO translation_payment (lang_id,title,content) VALUES ($1,$2,$3)", v.LangID, v.Title, v.Content)
 		if err != nil {
