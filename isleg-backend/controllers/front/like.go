@@ -277,7 +277,7 @@ func RemoveLike(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, "customer_id must be string")
 	}
 
-	productID := c.Param("product_id")
+	productID := c.PostForm("product_id")
 
 	rowCustomer, err := db.Query("SELECT id FROM customers WHERE id = $1 AND deleted_at IS NULL", customerID)
 	if err != nil {

@@ -54,7 +54,7 @@ func CreateBrend(c *gin.Context) {
 	}
 
 	// CREATE BREND
-	result, err := db.Query("INSERT INTO brends (name,image) VALUES ($1,$2)", name, "uploads/brend/"+newFileName)
+	result, err := db.Query("INSERT INTO brends (name,image) VALUES ($1,$2)", name, newFileName)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,

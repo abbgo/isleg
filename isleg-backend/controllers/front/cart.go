@@ -11,9 +11,9 @@ import (
 	"github.com/google/uuid"
 )
 
-type DataForAddCart struct {
-	Products []CartProduct `json:"products"`
-}
+// type DataForAddCart struct {
+// 	Products []CartProduct `json:"products"`
+// }
 
 type CartProduct struct {
 	ProductID         string `json:"product_id" binding:"required"`
@@ -66,7 +66,7 @@ func AddCart(c *gin.Context) {
 
 	langShortName := c.Param("lang")
 
-	var cart DataForAddCart
+	var cart []CartProduct
 
 	if err := c.BindJSON(&cart); err != nil {
 		c.JSON(http.StatusBadRequest, err.Error())
@@ -111,9 +111,9 @@ func AddCart(c *gin.Context) {
 		return
 	}
 
-	if len(cart.Products) != 0 {
+	if len(cart) != 0 {
 
-		for k, v := range cart.Products {
+		for k, v := range cart {
 
 			if v.QuantityOfProduct < 1 {
 				c.JSON(http.StatusBadRequest, gin.H{
@@ -123,7 +123,7 @@ func AddCart(c *gin.Context) {
 				return
 			}
 
-			for _, x := range cart.Products[(k + 1):] {
+			for _, x := range cart[(k + 1):] {
 				if v.ProductID == x.ProductID {
 					c.JSON(http.StatusBadRequest, gin.H{
 						"status":  false,
@@ -453,7 +453,7 @@ func RemoveCart(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, "customer_id must be string")
 	}
 
-	productID := c.Query("product_id")
+	productID := c.PostForm("product_id")
 
 	rowCustomer, err := db.Query("SELECT id FROM customers WHERE id = $1 AND deleted_at IS NULL", customerID)
 	if err != nil {

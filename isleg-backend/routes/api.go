@@ -47,6 +47,8 @@ func Routes() *gin.Engine {
 
 		back.POST("/order-time", backController.CreateOrderTime)
 
+		back.POST("/banner", backController.CreateBanner)
+
 		back.POST("/translation-header", backController.CreateTranslationHeader)
 		back.PUT("/translation-header", backController.UpdateTranslationHeaderByID) // fully reade
 		back.GET("/translation-header/:id", backController.GetTranslationHeaderByID)
@@ -243,7 +245,7 @@ func Routes() *gin.Engine {
 			securedCustomer.POST("/like", frontController.AddLike)
 
 			// remove like if customer exists
-			securedCustomer.DELETE("/like/:product_id", frontController.RemoveLike)
+			securedCustomer.POST("/like/:product_id", frontController.RemoveLike)
 
 			// get like products if customer exists
 			securedCustomer.GET("/likes", frontController.GetCustomerLikes)
@@ -255,7 +257,7 @@ func Routes() *gin.Engine {
 			securedCustomer.GET("/get-cart", frontController.GetCustomerCartProducts)
 
 			// remove product from cart
-			securedCustomer.DELETE("/remove-cart", frontController.RemoveCart)
+			securedCustomer.POST("/remove-cart", frontController.RemoveCart)
 
 			// get customer orders
 			securedCustomer.GET("/orders", frontController.GetCustomerOrders)
@@ -273,7 +275,7 @@ func Routes() *gin.Engine {
 			securedCustomer.PUT("/address", frontController.UpdateCustomerAddressStatus)
 
 			// update customer password
-			securedCustomer.PUT("/customer-password", frontController.UpdateCustomerPassword) //+
+			securedCustomer.PUT("/customer-password", frontController.UpdateCustomerPassword)
 
 		}
 
