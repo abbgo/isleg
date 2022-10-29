@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"github/abbgo/isleg/isleg-backend/config"
+	"github/abbgo/isleg/isleg-backend/models"
 	"github/abbgo/isleg/isleg-backend/pkg"
 	"net/http"
 	"net/url"
@@ -108,14 +109,14 @@ func UpdateBanner(c *gin.Context) {
 		}
 	}()
 
-	// get id from reequest parameter
+	// get id from request parameter
 	ID := c.Param("id")
 
 	// get data from request
 	bannerUrl := c.PostForm("url")
 	var fileName string
 
-	// check id and get image of brend
+	// check id and get image of banner
 	rowBrend, err := db.Query("SELECT id,image FROM brends WHERE id = $1 AND deleted_at IS NULL", ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -203,6 +204,76 @@ func UpdateBanner(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
 		"message": "data successfully updated",
+	})
+
+}
+
+func GetBanner(c *gin.Context) {
+
+	// initialize database connection
+	db, err := config.ConnDB()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
+
+	// get id from request paramter
+	ID := c.Param("id")
+
+	// check id and get data from database
+	rowBanner, err := db.Query("SELECT id,url,image FROM banner WHERE id = $1 AND deleted_at IS NULL", ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer func() {
+		if err := rowBanner.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
+
+	var banner models.Banner
+
+	for rowBanner.Next() {
+		if err := rowBanner.Scan(&banner.ID, &banner.Url, &banner.Image); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}
+
+	if banner.ID == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "record not found",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status": true,
+		"banner": banner,
 	})
 
 }
