@@ -746,6 +746,46 @@ func GetCustomerOrders(c *gin.Context) {
 		return
 	}
 
+	// get limit from param
+	limitStr := c.Param("limit")
+	if limitStr == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "limit is required",
+		})
+		return
+	}
+	limit, err := strconv.ParseUint(limitStr, 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	// get page from param
+	pageStr := c.Param("page")
+	if pageStr == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "page is required",
+		})
+		return
+	}
+	page, err := strconv.ParseUint(pageStr, 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	offset := limit * (page - 1)
+
+	var countOfOrders uint
+
 	rowCustomer, err := db.Query("SELECT id FROM customers WHERE id = $1 AND is_register = true AND deleted_at IS NULL", customerID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -786,7 +826,35 @@ func GetCustomerOrders(c *gin.Context) {
 		}
 	}
 
-	rowsOrders, err := db.Query("SELECT id,TO_CHAR(created_at, 'DD.MM.YYYY'),total_price FROM orders WHERE customer_id = $1 AND deleted_at IS NULL", customerID)
+	countOrders, err := db.Query("SELECT COUNT(id) FROM orders WHERE customer_id = $1 AND deleted_at IS NULL", customerID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer func() {
+		if err := countOrders.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
+
+	for countOrders.Next() {
+		if err := countOrders.Scan(&countOfOrders); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}
+
+	rowsOrders, err := db.Query("SELECT id,TO_CHAR(created_at, 'DD.MM.YYYY'),total_price FROM orders WHERE customer_id = $1 AND deleted_at IS NULL ORDER BY created_at ASC LIMIT $2 OFFSET $3", customerID, limit, offset)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -847,6 +915,8 @@ func GetCustomerOrders(c *gin.Context) {
 				})
 				return
 			}
+
+			fmt.Println(product)
 
 			rowProduct, err := db.Query("SELECT brend_id,price,old_price,amount,limit_amount,is_new FROM products WHERE id = $1 AND deleted_at IS NULL", product.ID)
 			if err != nil {
@@ -985,8 +1055,9 @@ func GetCustomerOrders(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"status": true,
-		"orders": orders,
+		"status":          true,
+		"orders":          orders,
+		"count_of_orders": countOfOrders,
 	})
 
 }

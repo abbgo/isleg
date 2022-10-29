@@ -52,8 +52,8 @@ func Routes() *gin.Engine {
 		back.GET("/banner/:id", backController.GetBannerByID)
 		back.GET("/banners", backController.GetBanners)
 		back.DELETE("/banner/:id", backController.DeleteBannerByID)
-		back.GET("/banner/:id", backController.RestoreBannerByID)
-		back.DELETE("/banner/:id", backController.DeletePermanentlyBannerByID)
+		back.GET("/restore-banner/:id", backController.RestoreBannerByID)
+		back.DELETE("/delete-banner/:id", backController.DeletePermanentlyBannerByID)
 
 		back.POST("/translation-header", backController.CreateTranslationHeader)
 		back.PUT("/translation-header", backController.UpdateTranslationHeaderByID)
@@ -266,7 +266,7 @@ func Routes() *gin.Engine {
 			securedCustomer.POST("/remove-cart", frontController.RemoveCart)
 
 			// get customer orders
-			securedCustomer.GET("/orders", frontController.GetCustomerOrders)
+			securedCustomer.GET("/orders/:limit/:page", frontController.GetCustomerOrders)
 
 			// get customer orders
 			securedCustomer.GET("/addresses", frontController.GetCustomerAddresses)
