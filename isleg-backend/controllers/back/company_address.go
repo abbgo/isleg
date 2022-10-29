@@ -8,10 +8,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type CompAddresses struct {
-	CompanyAddresses []models.CompanyAddress `json:"company_addresses"`
-}
-
 func CreateCompanyAddress(c *gin.Context) {
 
 	// initialize database connection
@@ -34,7 +30,7 @@ func CreateCompanyAddress(c *gin.Context) {
 	}()
 
 	// get data from request
-	var companyAddresses CompAddresses
+	var companyAddresses []models.CompanyAddress
 	if err := c.BindJSON(&companyAddresses); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -44,7 +40,7 @@ func CreateCompanyAddress(c *gin.Context) {
 	}
 
 	// check lans_id
-	for _, v := range companyAddresses.CompanyAddresses {
+	for _, v := range companyAddresses {
 
 		rowLang, err := db.Query("SELECT id FROM languages WHERE id = $1 AND deleted_at IS NULL", v.LangID)
 		if err != nil {
@@ -87,7 +83,7 @@ func CreateCompanyAddress(c *gin.Context) {
 	}
 
 	// create company address
-	for _, v := range companyAddresses.CompanyAddresses {
+	for _, v := range companyAddresses {
 
 		resultComAddres, err := db.Query("INSERT INTO company_address (lang_id,address) VALUES ($1,$2)", v.LangID, v.Address)
 		if err != nil {

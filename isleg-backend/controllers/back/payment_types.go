@@ -8,10 +8,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type PayTypes struct {
-	PaymentTypes []models.PaymentTypes `json:"payment_types"`
-}
-
 func CreatePaymentType(c *gin.Context) {
 
 	// initialize database connection
@@ -34,7 +30,7 @@ func CreatePaymentType(c *gin.Context) {
 	}()
 
 	// get data from request
-	var paymentTypes PayTypes
+	var paymentTypes []models.PaymentTypes
 	if err := c.BindJSON(&paymentTypes); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -44,7 +40,7 @@ func CreatePaymentType(c *gin.Context) {
 	}
 
 	// check lang_id
-	for _, v := range paymentTypes.PaymentTypes {
+	for _, v := range paymentTypes {
 
 		rowLang, err := db.Query("SELECT id FROM languages WHERE id = $1 AND deleted_at IS NULL", v.LangID)
 		if err != nil {
@@ -87,7 +83,7 @@ func CreatePaymentType(c *gin.Context) {
 	}
 
 	// create company address
-	for _, v := range paymentTypes.PaymentTypes {
+	for _, v := range paymentTypes {
 
 		resultComAddres, err := db.Query("INSERT INTO payment_types (lang_id,type) VALUES ($1,$2)", v.LangID, v.Type)
 		if err != nil {
