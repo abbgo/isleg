@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "075431e0-cb9f-4dd5-a783-bc10143864f5",
+		"_postman_id": "2c3654b5-fb4e-48cf-8154-36b3fe3b0447",
 		"name": "IM",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -2866,13 +2866,39 @@
 						"method": "POST",
 						"header": [],
 						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"owner_name\":\"Arslan Rejepow\",\n    \"address\":\"Parahat 4 drob 3 jay 7\",\n    \"phone_number\":\"+99365235478\",\n    \"running_time\":\"07:00 - 21:00\",\n    \"categories\":[\n        \"789cbced-9141-4748-94d3-93476d276057\",\n        \"28a5bd8a-318a-4acf-b3c9-8ba04be5a979\"\n    ]\n}",
-							"options": {
-								"raw": {
-									"language": "json"
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "owner_name",
+									"value": "Owez Myradow",
+									"type": "default"
+								},
+								{
+									"key": "address",
+									"value": "Asgabat saher Mir 2/2 jay 2 magazyn 23",
+									"type": "default"
+								},
+								{
+									"key": "phone_number",
+									"value": "62420387",
+									"type": "default"
+								},
+								{
+									"key": "running_time",
+									"value": "7:00-21:00",
+									"type": "default"
+								},
+								{
+									"key": "category_id",
+									"value": "33cf0893-ff6e-40b3-b50f-2a3e926eca70",
+									"type": "default"
+								},
+								{
+									"key": "category_id",
+									"value": "f745d171-68e6-42e2-b339-cb3c210cda55",
+									"type": "default"
 								}
-							}
+							]
 						},
 						"url": {
 							"raw": "localhost:2406/admin/shop",
@@ -2894,23 +2920,50 @@
 						"method": "PUT",
 						"header": [],
 						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"id\":\"a9934de9-88b1-44f1-8321-5445eb231e89\",\n    \"owner_name\":\"Arslan Rejepow\",\n    \"address\":\"Parahat 4 drob 3 jay 7\",\n    \"phone_number\":\"+99365235478\",\n    \"running_time\":\"07:00 - 21:00\",\n    \"categories\":[\n        \"789cbced-9141-4748-94d3-93476d276057\",\n        \"28a5bd8a-318a-4acf-b3c9-8ba04be5a979\"\n    ]\n}",
-							"options": {
-								"raw": {
-									"language": "json"
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "owner_name",
+									"value": "Arslan Serdarow",
+									"type": "default"
+								},
+								{
+									"key": "address",
+									"value": "Mir 2 2/2 jay 7 dom 36",
+									"type": "default"
+								},
+								{
+									"key": "phone_number",
+									"value": "63254871",
+									"type": "default"
+								},
+								{
+									"key": "running_time",
+									"value": "7:00-21:00",
+									"type": "default"
+								},
+								{
+									"key": "category_id",
+									"value": "5d877898-9ef4-4b91-8518-193b431228a8",
+									"type": "default"
+								},
+								{
+									"key": "category_id",
+									"value": "66772380-c161-4c45-9350-a45e765193e2",
+									"type": "default"
 								}
-							}
+							]
 						},
 						"url": {
-							"raw": "localhost:2406/admin/shop",
+							"raw": "localhost:2406/admin/shop/0d4f9096-9cd7-4d72-afa5-e460de11e77e",
 							"host": [
 								"localhost"
 							],
 							"port": "2406",
 							"path": [
 								"admin",
-								"shop"
+								"shop",
+								"0d4f9096-9cd7-4d72-afa5-e460de11e77e"
 							]
 						}
 					},
@@ -3027,13 +3080,13 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NTYiLCJjdXN0b21lcl9pZCI6ImYyNWE2NmQzLTkzYWMtNGRhNC1iMjM3LWQzNDg2N2Q1Y2E4ZiIsImV4cCI6MTY2NjU1MTM1Nn0.3-LqKPDRTh4J5p0S5mGfilG0qHyhmNvVyoJ4CorhGKs",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NSIsImN1c3RvbWVyX2lkIjoiMWY1YmM5MTctZmM4NS00NmNmLWExYjItN2MxNGNmZTk0MGJlIiwiZXhwIjoxNjY3MDIzODAxfQ.fPPZ1BLHzpJrdJ3mMQWuq2_tFLPmUKUe8INeq7qW_HE",
 								"type": "default"
 							}
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"products\":[\n        {\n            \"product_id\":\"d4156225-082e-4f0f-9b2c-85268114433a\",\n            \"quantity_of_product\":10\n        },\n         {\n            \"product_id\":\"8df705a5-2351-4aca-b03e-3357a23840b4\",\n            \"quantity_of_product\":23\n        },\n         {\n            \"product_id\":\"b2b165a3-2261-4d67-8160-0e239ecd99b5\",\n            \"quantity_of_product\":3\n        }\n    ]\n}\n",
+							"raw": "    [\n        {\n            \"product_id\":\"4a5bdcbf-712d-45ca-baa8-1318c6e2fb3c\",\n            \"quantity_of_product\":3 \n        },\n         {\n            \"product_id\":\"ccb43083-1c9e-4e84-bffd-ecb28474165e\",\n            \"quantity_of_product\":4\n        },\n         {\n            \"product_id\":\"20a8c487-9a56-4fb6-8fa0-13facaf96109\",\n            \"quantity_of_product\":3\n        },\n         {\n            \"product_id\":\"ad24153a-997a-46d1-87bb-27aa1e3e8aea\",\n            \"quantity_of_product\":3\n        }\n    ]\n\n",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -3062,12 +3115,12 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NSIsImV4cCI6MTY2MzQwNzk3NH0.54fNs-jACWe01_HHYLLdA8nVC8fQXCUen0XkDqVGzPk",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NSIsImN1c3RvbWVyX2lkIjoiMWY1YmM5MTctZmM4NS00NmNmLWExYjItN2MxNGNmZTk0MGJlIiwiZXhwIjoxNjY3MDIzODAxfQ.fPPZ1BLHzpJrdJ3mMQWuq2_tFLPmUKUe8INeq7qW_HE",
 								"type": "default"
 							}
 						],
 						"url": {
-							"raw": "localhost:2406/api/tm/get-cart/7e872c52-0d23-4086-8c45-43000b57332e",
+							"raw": "localhost:2406/api/tm/get-cart",
 							"host": [
 								"localhost"
 							],
@@ -3075,8 +3128,7 @@
 							"path": [
 								"api",
 								"tm",
-								"get-cart",
-								"7e872c52-0d23-4086-8c45-43000b57332e"
+								"get-cart"
 							]
 						}
 					},
