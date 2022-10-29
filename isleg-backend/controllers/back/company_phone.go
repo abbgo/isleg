@@ -8,10 +8,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type CompPhone struct {
-	Phone models.CompanyPhone `json:"company_phone"`
-}
-
 func CreateCompanyPhone(c *gin.Context) {
 
 	// initialize database connection
@@ -34,7 +30,7 @@ func CreateCompanyPhone(c *gin.Context) {
 	}()
 
 	// GET DATA FROM REQUEST
-	var companyPhone CompPhone
+	var companyPhone models.CompanyPhone
 	if err := c.BindJSON(&companyPhone); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -44,7 +40,7 @@ func CreateCompanyPhone(c *gin.Context) {
 	}
 
 	// create company phone
-	resultComPhone, err := db.Query("INSERT INTO company_phone (phone) VALUES ($1)", companyPhone.Phone.Phone)
+	resultComPhone, err := db.Query("INSERT INTO company_phone (phone) VALUES ($1)", companyPhone.Phone)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -91,7 +87,7 @@ func UpdateCompanyPhoneByID(c *gin.Context) {
 	}()
 
 	// get data from request
-	var companyPhone CompPhone
+	var companyPhone models.CompanyPhone
 	if err := c.BindJSON(&companyPhone); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -101,7 +97,7 @@ func UpdateCompanyPhoneByID(c *gin.Context) {
 	}
 
 	// check id
-	rowCompanyPhone, err := db.Query("SELECT id FROM company_phone WHERE id = $1 AND deleted_at IS NULL", companyPhone.Phone.ID)
+	rowCompanyPhone, err := db.Query("SELECT id FROM company_phone WHERE id = $1 AND deleted_at IS NULL", companyPhone.ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -139,7 +135,7 @@ func UpdateCompanyPhoneByID(c *gin.Context) {
 		return
 	}
 
-	resultComPhone, err := db.Query("UPDATE company_phone SET phone = $1 WHERE id = $2", companyPhone.Phone.Phone, companyPhone.Phone.ID)
+	resultComPhone, err := db.Query("UPDATE company_phone SET phone = $1 WHERE id = $2", companyPhone.Phone, companyPhone.ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
