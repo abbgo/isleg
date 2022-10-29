@@ -117,7 +117,7 @@ func UpdateBannerByID(c *gin.Context) {
 	var fileName string
 
 	// check id and get image of banner
-	rowBrend, err := db.Query("SELECT id,image FROM brends WHERE id = $1 AND deleted_at IS NULL", ID)
+	rowBrend, err := db.Query("SELECT id,image FROM banner WHERE id = $1 AND deleted_at IS NULL", ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -366,7 +366,7 @@ func UpdateDeleteByID(c *gin.Context) {
 	ID := c.Param("id")
 
 	// check id and get image of brend
-	rowBanner, err := db.Query("SELECT id FROM brends WHERE id = $1 AND deleted_at IS NULL", ID)
+	rowBanner, err := db.Query("SELECT id FROM banner WHERE id = $1 AND deleted_at IS NULL", ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -425,6 +425,94 @@ func UpdateDeleteByID(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
 		"message": "data successfully deleted",
+	})
+
+}
+
+func RestoreDeleteByID(c *gin.Context) {
+
+	// initialize database connection
+	db, err := config.ConnDB()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
+
+	// get id from request parameter
+	ID := c.Param("id")
+
+	// check id and get image of brend
+	rowBanner, err := db.Query("SELECT id FROM banner WHERE id = $1 AND deleted_at IS NULL", ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer func() {
+		if err := rowBanner.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
+
+	var id string
+
+	for rowBanner.Next() {
+		if err := rowBanner.Scan(&id); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}
+
+	if id == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "record not found",
+		})
+		return
+	}
+
+	resultBanner, err := db.Query("UPDATE banner SET deleted_at = NULL WHERE id = $1", ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer func() {
+		if err := resultBanner.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":  true,
+		"message": "data successfully restored",
 	})
 
 }

@@ -52,6 +52,7 @@ func Routes() *gin.Engine {
 		back.GET("/banner/:id", backController.GetBannerByID)
 		back.GET("/banners", backController.GetBanners)
 		back.DELETE("/banner/:id", backController.UpdateDeleteByID)
+		back.GET("/banner/:id", backController.RestoreDeleteByID)
 
 		back.POST("/translation-header", backController.CreateTranslationHeader)
 		back.PUT("/translation-header", backController.UpdateTranslationHeaderByID) // fully reade
