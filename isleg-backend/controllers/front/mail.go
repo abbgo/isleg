@@ -34,7 +34,7 @@ func SendMail(c *gin.Context) {
 	port := os.Getenv("MAIL_PORT")
 	address := host + ":" + port
 
-	subject := "Subject: " + mail.FullName + " hat geldi\n"
+	subject := "Subject: " + mail.FullName + " - den hat geldi\n"
 	letter := fmt.Sprintf("Mail adresi: %s\r\n", mail.Email)
 	letter += fmt.Sprintf("Telefon belgisi: %s\r\n", mail.PhoneNumber)
 	letter += fmt.Sprintf("Haty: %s\r\n", mail.Letter)
