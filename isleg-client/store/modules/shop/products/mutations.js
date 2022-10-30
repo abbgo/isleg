@@ -25,11 +25,12 @@ const SET_PRODUCT_FAVORITE = (state, { data, isFavorite }) => {
 }
 const SET_BASKET_PRODUCT_COUNT = (state, payload) => {
   state.productCount -= payload
-
 }
 const SET_REMOVED_FROM_BASKET = (state, payload) => {
   state.removedFromBasket = payload
-
+}
+const SET_PRODUCT_COUNT_WHEN_PAYMENT = (state) => {
+  state.productCount = null
 }
 export default {
   SET_PRODUCTS_CATEGORIES,
@@ -38,5 +39,6 @@ export default {
   SET_PRODUCT_COUNT,
   SET_PRODUCT_FAVORITE,
   SET_BASKET_PRODUCT_COUNT,
-  SET_REMOVED_FROM_BASKET
+  SET_REMOVED_FROM_BASKET,
+  SET_PRODUCT_COUNT_WHEN_PAYMENT,
 }

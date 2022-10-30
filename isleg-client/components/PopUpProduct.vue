@@ -58,7 +58,7 @@
               {{ productData && productData.name }}
             </h4>
             <p class="product__text">
-              Набор карандашей Bianyoчёрнографитных в коробке 12 шт
+              {{ productData && productData.description }}
             </p>
             <span class="old__price price-old"
               >{{ productData && productData.old_price }} manat</span

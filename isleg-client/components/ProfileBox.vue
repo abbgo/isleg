@@ -110,13 +110,15 @@ export default {
     },
   },
   methods: {
-    logOutInSystem() {
+    async logOutInSystem() {
+      const cart = await JSON.parse(localStorage.getItem('lorem'))
       this.$auth.logout()
-      this.$cookies.remove('access_token')
-      this.$cookies.remove('customer_id')
-      this.$cookies.remove('refresh_token')
+      cart.auth.accessToken = null
+      cart.auth.refreshToken = null
+      localStorage.setItem('lorem', JSON.stringify(cart))
       this.$emit('close')
-      this.$router.push(this.localeLocation('/'))
+      console.log(this.$route.name)
+      await this.$router.push({ name: this.$route.name })
     },
   },
 }

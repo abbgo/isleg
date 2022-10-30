@@ -14,9 +14,9 @@
         {{ getProduct && getProduct.price }}
         manat
       </div>
-      <div class="old__price">
-        {{ getProduct && getProduct.old_price }}
-        manat
+      <div class="old__price" v-if="getProduct && getProduct.old_price > 0">
+        <span> {{ getProduct && getProduct.old_price }} manat</span>
+        <span>-15%</span>
       </div>
     </div>
     <div class="chek__count box__count" @click.stop v-if="quantity > 0">
@@ -35,7 +35,10 @@
         </svg>
       </button>
       <p>{{ getProduct && getProduct.quantity }}</p>
-      <button @click.stop="basketAdd(getProduct)">
+      <button
+        @click.stop="basketAdd(getProduct)"
+        :disabled="quantity === getProduct.limit_amount"
+      >
         <svg
           width="10"
           height="10"
@@ -82,8 +85,10 @@
         />
       </svg>
     </div>
-    <div class="product__new">täze</div>
-    <div class="product__sale">-15%</div>
+    <div class="product__new" v-if="getProduct && getProduct.is_new">täze</div>
+    <!-- <div class="product__sale" v-if="getProduct && getProduct.old_price > 0">
+      -15%
+    </div> -->
     <LazyPopUpProduct
       v-if="isProduct"
       :isProduct="isProduct"
@@ -98,6 +103,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
+import { productAdd, productRemove } from '@/api/user.api'
 export default {
   props: {
     product: {
@@ -127,7 +133,7 @@ export default {
             this.quantity = this.product.quantity
             return this.product
           } else {
-            if (cart.cart) {
+            if (cart?.cart) {
               const findProduct = cart.cart.find(
                 (product) => product.id === this.product.id
               )
@@ -164,6 +170,9 @@ export default {
         }
       }
     },
+  },
+  mounted() {
+    //  console.log(this.getProduct)
   },
   methods: {
     async productLike(data) {
@@ -262,10 +271,29 @@ export default {
           })
         )
       }
+      if (cart && cart?.auth?.accessToken && this.$auth.loggedIn) {
+        try {
+          const res = (
+            await productAdd({
+              url: `${this.$i18n.locale}/add-cart`,
+              data: [
+                {
+                  product_id: data.id,
+                  quantity_of_product: this.quantity + 1,
+                },
+              ],
+              accessToken: `Bearer ${cart?.auth?.accessToken}`,
+            })
+          ).data
+          console.log('productAdd', res)
+        } catch (error) {
+          console.log(error)
+        }
+      }
     },
     async basketRemove(data) {
       const cart = await JSON.parse(localStorage.getItem('lorem'))
-      const findProduct = cart.cart.find((product) => product.id === data.id)
+      const findProduct = cart?.cart.find((product) => product.id === data.id)
       if (findProduct) {
         this.quantity -= 1
         this.$store.commit('products/SET_PRODUCT_TOTAL_DECREMENT', {
@@ -274,12 +302,31 @@ export default {
         })
         findProduct.quantity = this.quantity
         if (findProduct.quantity === 0) {
-          cart.cart = cart.cart.filter((product) => product.id !== data.id)
+          cart.cart = cart?.cart.filter((product) => product.id !== data.id)
           this.$store.commit('products/SET_REMOVED_FROM_BASKET', true)
         }
         localStorage.setItem('lorem', JSON.stringify(cart))
       } else {
         this.quantity = 0
+      }
+      if (cart && cart?.auth?.accessToken && this.$auth.loggedIn) {
+        try {
+          const res = (
+            await productAdd({
+              url: `${this.$i18n.locale}/add-cart`,
+              data: [
+                {
+                  product_id: data.id,
+                  quantity_of_product: this.quantity - 1,
+                },
+              ],
+              accessToken: `Bearer ${cart?.auth?.accessToken}`,
+            })
+          ).data
+          console.log('productAdd', res)
+        } catch (error) {
+          console.log(error)
+        }
       }
     },
     openPopUpPoduct() {

@@ -1,21 +1,5 @@
 import axios from 'axios'
 
-const fetchHeader = async ({ commit }, { url, $nuxt }) => {
-  try {
-    const { data } = await axios.get(url)
-    if (data?.status) {
-      commit('SET_HEADER', data?.header_data)
-    }
-  } catch (e) {
-    console.log(e.response)
-    if (e) {
-      return $nuxt.error({
-        statusCode: e?.response?.status,
-        message: e?.message,
-      })
-    }
-  }
-}
 const fetchFooter = async ({ commit }, { url, $nuxt }) => {
   try {
     const { data } = await axios.get(url)
@@ -51,6 +35,7 @@ const fetchBrends = async ({ commit }, { url, $nuxt }) => {
 const fetchCategoryProducts = async ({ commit }, { url, $nuxt }) => {
   try {
     const { data } = await axios.get(url)
+    console.log('data', data)
     if (data?.status) {
       commit('SET_CATEGORY_PRODUCTS', data)
     }
@@ -64,14 +49,17 @@ const fetchCategoryProducts = async ({ commit }, { url, $nuxt }) => {
     }
   }
 }
-const fetchMyInformation = async (ctx, { url, accessToken, refreshToken, $nuxt }) => {
+const fetchMyInformation = async (
+  ctx,
+  { url, accessToken, refreshToken, $nuxt }
+) => {
   try {
     const { data } = await axios.get(url, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
     })
-    console.log(data);
+    console.log(data)
     if (data?.status) {
       commit('SET_MY_PROFILE', data.customer_informations)
     }
@@ -96,9 +84,8 @@ const fetchMyInformation = async (ctx, { url, accessToken, refreshToken, $nuxt }
 }
 
 export default {
-  fetchHeader,
   fetchFooter,
   fetchBrends,
   fetchCategoryProducts,
-  fetchMyInformation
+  fetchMyInformation,
 }

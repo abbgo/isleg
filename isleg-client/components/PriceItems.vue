@@ -1,7 +1,11 @@
 <template>
   <div class="price__items">
     <div class="item__title">
-      <h4>Sizin sebediniz</h4>
+      <h4>Sebet</h4>
+      <button>
+        <p>Sebedi boşat</p>
+        <img src="@/assets/img/trush.svg" alt="" />
+      </button>
     </div>
     <div class="price__texts">
       <span>Haryt mukdary:</span>

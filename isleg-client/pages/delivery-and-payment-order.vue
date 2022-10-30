@@ -2,7 +2,7 @@
   <section class="agreement __container">
     <h4 class="agreement__title">Ulanyş Düzgünleriniň we Gizlinligiň</h4>
     <h5 class="agreement__subtitle">ÖZARA YLALAŞYGY</h5>
-    <p class="agreemwnt__text">
+    <p class="agreement__text">
       Isleg- Internet Marketi (Mundan beýläk – “Isleg”) we www.isleg.com
       internet saýty (Mundan beýläk – “Saýt”) bilen, onuň agzasynyň (“Agza”)
       arasynda aşakdaky şertleri ýerine ýetirmek barada ylalaşyga gelindi. Umumy
