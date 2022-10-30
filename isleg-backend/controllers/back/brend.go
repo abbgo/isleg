@@ -8,13 +8,7 @@ import (
 	"os"
 
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 )
-
-type BrendForHomePage struct {
-	ID    uuid.UUID `json:"id"`
-	Image string    `json:"image"`
-}
 
 func CreateBrend(c *gin.Context) {
 
@@ -60,7 +54,7 @@ func CreateBrend(c *gin.Context) {
 	}
 
 	// CREATE BREND
-	result, err := db.Query("INSERT INTO brends (name,image) VALUES ($1,$2)", name, "uploads/brend/"+newFileName)
+	result, err := db.Query("INSERT INTO brends (name,image) VALUES ($1,$2)", name, newFileName)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -114,7 +108,7 @@ func UpdateBrendByID(c *gin.Context) {
 	var fileName string
 
 	// check id and get image of brend
-	rowBrend, err := db.Query("SELECT image FROM brends WHERE id = $1 AND deleted_at IS NULL", ID)
+	rowBrend, err := db.Query("SELECT id,image FROM brends WHERE id = $1 AND deleted_at IS NULL", ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -132,10 +126,10 @@ func UpdateBrendByID(c *gin.Context) {
 		}
 	}()
 
-	var image string
+	var image, brendID string
 
 	for rowBrend.Next() {
-		if err := rowBrend.Scan(&image); err != nil {
+		if err := rowBrend.Scan(&brendID, &image); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
@@ -144,7 +138,7 @@ func UpdateBrendByID(c *gin.Context) {
 		}
 	}
 
-	if image == "" {
+	if brendID == "" {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
 			"message": "record not found",
@@ -767,37 +761,37 @@ func DeletePermanentlyBrendByID(c *gin.Context) {
 
 }
 
-func GetAllBrendForHomePage() ([]BrendForHomePage, error) {
+func GetAllBrendForHomePage() ([]models.Brend, error) {
 
 	db, err := config.ConnDB()
 	if err != nil {
-		return []BrendForHomePage{}, err
+		return []models.Brend{}, err
 	}
-	defer func() ([]BrendForHomePage, error) {
+	defer func() ([]models.Brend, error) {
 		if err := db.Close(); err != nil {
-			return []BrendForHomePage{}, err
+			return []models.Brend{}, err
 		}
-		return []BrendForHomePage{}, nil
+		return []models.Brend{}, nil
 	}()
 
-	var brends []BrendForHomePage
+	var brends []models.Brend
 
 	// get all brends
 	rows, err := db.Query("SELECT id,image FROM brends WHERE deleted_at IS NULL")
 	if err != nil {
-		return []BrendForHomePage{}, err
+		return []models.Brend{}, err
 	}
-	defer func() ([]BrendForHomePage, error) {
+	defer func() ([]models.Brend, error) {
 		if err := rows.Close(); err != nil {
-			return []BrendForHomePage{}, err
+			return []models.Brend{}, err
 		}
-		return []BrendForHomePage{}, nil
+		return []models.Brend{}, nil
 	}()
 
 	for rows.Next() {
-		var brend BrendForHomePage
+		var brend models.Brend
 		if err := rows.Scan(&brend.ID, &brend.Image); err != nil {
-			return []BrendForHomePage{}, err
+			return []models.Brend{}, err
 		}
 
 		brends = append(brends, brend)

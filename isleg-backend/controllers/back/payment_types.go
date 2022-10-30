@@ -4,13 +4,17 @@ import (
 	"github/abbgo/isleg/isleg-backend/config"
 	"github/abbgo/isleg/isleg-backend/models"
 	"net/http"
-	"time"
 
 	"github.com/gin-gonic/gin"
 )
 
+type PayTypes struct {
+	PaymentTypes []models.PaymentTypes `json:"payment_types"`
+}
+
 func CreatePaymentType(c *gin.Context) {
 
+	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -29,9 +33,9 @@ func CreatePaymentType(c *gin.Context) {
 		}
 	}()
 
-	// GET ALL LANGUAGE
-	languages, err := GetAllLanguageWithIDAndNameShort()
-	if err != nil {
+	// get data from request
+	var paymentTypes PayTypes
+	if err := c.BindJSON(&paymentTypes); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
 			"message": err.Error(),
@@ -39,20 +43,53 @@ func CreatePaymentType(c *gin.Context) {
 		return
 	}
 
-	// VALIDATE DATA
-	for _, v := range languages {
-		if c.PostForm("type_"+v.NameShort) == "" {
+	// check lang_id
+	for _, v := range paymentTypes.PaymentTypes {
+
+		rowLang, err := db.Query("SELECT id FROM languages WHERE id = $1 AND deleted_at IS NULL", v.LangID)
+		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
-				"message": "type_" + v.NameShort + " is required",
+				"message": err.Error(),
 			})
 			return
 		}
+		defer func() {
+			if err := rowLang.Close(); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}()
+
+		var langID string
+
+		for rowLang.Next() {
+			if err := rowLang.Scan(&langID); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}
+
+		if langID == "" {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": "language not found",
+			})
+			return
+		}
+
 	}
 
 	// create company address
-	for _, v := range languages {
-		resultComAddres, err := db.Query("INSERT INTO payment_types (lang_id,type) VALUES ($1,$2)", v.ID, c.PostForm("type_"+v.NameShort))
+	for _, v := range paymentTypes.PaymentTypes {
+
+		resultComAddres, err := db.Query("INSERT INTO payment_types (lang_id,type) VALUES ($1,$2)", v.LangID, v.Type)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
@@ -69,17 +106,19 @@ func CreatePaymentType(c *gin.Context) {
 				return
 			}
 		}()
+
 	}
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
-		"message": "payment type successfully added",
+		"message": "data successfully added",
 	})
 
 }
 
 func UpdatePaymentTypeByID(c *gin.Context) {
 
+	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -98,9 +137,18 @@ func UpdatePaymentTypeByID(c *gin.Context) {
 		}
 	}()
 
-	ID := c.Param("id")
+	// get data from request
+	var paymentType models.PaymentTypes
+	if err := c.BindJSON(&paymentType); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
 
-	rowPaymentType, err := db.Query("SELECT id FROM payment_types WHERE id = $1 AND deleted_at IS NULL", ID)
+	// check id
+	rowPaymentType, err := db.Query("SELECT id FROM payment_types WHERE id = $1 AND deleted_at IS NULL", paymentType.ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -138,18 +186,7 @@ func UpdatePaymentTypeByID(c *gin.Context) {
 		return
 	}
 
-	paymentType := c.PostForm("type")
-	if paymentType == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": "paymentType required",
-		})
-		return
-	}
-
-	currentTime := time.Now()
-
-	resultPaymentType, err := db.Query("UPDATE payment_types SET type = $1, updated_at = $2 WHERE id = $3", paymentType, currentTime, id)
+	resultPaymentType, err := db.Query("UPDATE payment_types SET type = $1, lang_id = $3 WHERE id = $2", paymentType.Type, paymentType.ID, paymentType.LangID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -169,13 +206,14 @@ func UpdatePaymentTypeByID(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
-		"message": "payment types successfully updated",
+		"message": "data successfully updated",
 	})
 
 }
 
 func GetPaymentTypeByID(c *gin.Context) {
 
+	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -194,8 +232,10 @@ func GetPaymentTypeByID(c *gin.Context) {
 		}
 	}()
 
+	// get id from request parameter
 	ID := c.Param("id")
 
+	// check id and get data from database
 	rowPaymentType, err := db.Query("SELECT type FROM payment_types WHERE id = $1 AND deleted_at IS NULL", ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -243,6 +283,7 @@ func GetPaymentTypeByID(c *gin.Context) {
 
 func GetPaymentTypes(c *gin.Context) {
 
+	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -261,6 +302,7 @@ func GetPaymentTypes(c *gin.Context) {
 		}
 	}()
 
+	// get data from database
 	rowsPaymentType, err := db.Query("SELECT lang_id,type FROM payment_types WHERE deleted_at IS NULL")
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{

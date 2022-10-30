@@ -3,10 +3,11 @@ package models
 import (
 	"errors"
 	"github/abbgo/isleg/isleg-backend/config"
+	"strconv"
 	"strings"
 
-	"github.com/lib/pq"
 	"golang.org/x/crypto/bcrypt"
+	"gopkg.in/guregu/null.v4"
 )
 
 type Customer struct {
@@ -14,7 +15,7 @@ type Customer struct {
 	FullName        string            `json:"full_name,omitempty" binding:"required,min=3"`
 	PhoneNumber     string            `json:"phone_number,omitempty" binding:"required,e164,len=12"`
 	Password        string            `json:"password,omitempty" binding:"required,min=5,max=25"`
-	Birthday        pq.NullTime       `json:"birthday,omitempty"`
+	Birthday        null.Time         `json:"birthday,omitempty"`
 	Gender          string            `json:"gender,omitempty"`
 	Email           string            `json:"email,omitempty" binding:"email"`
 	IsRegister      bool              `json:"is_register,omitempty"`
@@ -47,11 +48,25 @@ func ValidateCustomerRegister(phoneNumber, email string) error {
 	if err != nil {
 		return err
 	}
-	defer db.Close()
+	defer func() error {
+		if err := db.Close(); err != nil {
+			return err
+		}
+		return nil
+	}()
 
 	if phoneNumber != "" {
 		if !strings.HasPrefix(phoneNumber, "+993") {
 			return errors.New("phone number must start with +993")
+		}
+
+		_, err := strconv.Atoi(strings.Trim(phoneNumber, "+"))
+		if err != nil {
+			return err
+		}
+
+		if len(phoneNumber) != 12 {
+			return errors.New("phone number must be 12 in length")
 		}
 
 		row, err := db.Query("SELECT phone_number FROM customers WHERE phone_number = $1 AND is_register = true AND deleted_at IS NULL", phoneNumber)
@@ -115,10 +130,17 @@ func ValidateCustomerRegister(phoneNumber, email string) error {
 
 func ValidateCustomerLogin(phoneNumber string) error {
 
-	if phoneNumber != "" {
-		if !strings.HasPrefix(phoneNumber, "+993") {
-			return errors.New("phone number must start with +993")
-		}
+	if !strings.HasPrefix(phoneNumber, "+993") {
+		return errors.New("phone number must start with +993")
+	}
+
+	_, err := strconv.Atoi(strings.Trim(phoneNumber, "+"))
+	if err != nil {
+		return err
+	}
+
+	if len(phoneNumber) != 12 {
+		return errors.New("phone number must be 12 in length")
 	}
 
 	return nil

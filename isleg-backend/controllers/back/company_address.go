@@ -2,14 +2,19 @@ package controllers
 
 import (
 	"github/abbgo/isleg/isleg-backend/config"
+	"github/abbgo/isleg/isleg-backend/models"
 	"net/http"
-	"time"
 
 	"github.com/gin-gonic/gin"
 )
 
+type CompAddresses struct {
+	CompanyAddresses []models.CompanyAddress `json:"company_addresses"`
+}
+
 func CreateCompanyAddress(c *gin.Context) {
 
+	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -28,9 +33,9 @@ func CreateCompanyAddress(c *gin.Context) {
 		}
 	}()
 
-	// GET ALL LANGUAGE
-	languages, err := GetAllLanguageWithIDAndNameShort()
-	if err != nil {
+	// get data from request
+	var companyAddresses CompAddresses
+	if err := c.BindJSON(&companyAddresses); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
 			"message": err.Error(),
@@ -38,20 +43,53 @@ func CreateCompanyAddress(c *gin.Context) {
 		return
 	}
 
-	// VALIDATE DATA
-	for _, v := range languages {
-		if c.PostForm("address_"+v.NameShort) == "" {
+	// check lans_id
+	for _, v := range companyAddresses.CompanyAddresses {
+
+		rowLang, err := db.Query("SELECT id FROM languages WHERE id = $1 AND deleted_at IS NULL", v.LangID)
+		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
-				"message": "address_" + v.NameShort + " is required",
+				"message": err.Error(),
 			})
 			return
 		}
+		defer func() {
+			if err := rowLang.Close(); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}()
+
+		var langID string
+
+		for rowLang.Next() {
+			if err := rowLang.Scan(&langID); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}
+
+		if langID == "" {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": "language not found",
+			})
+			return
+		}
+
 	}
 
 	// create company address
-	for _, v := range languages {
-		resultComAddres, err := db.Query("INSERT INTO company_address (lang_id,address) VALUES ($1,$2)", v.ID, c.PostForm("address_"+v.NameShort))
+	for _, v := range companyAddresses.CompanyAddresses {
+
+		resultComAddres, err := db.Query("INSERT INTO company_address (lang_id,address) VALUES ($1,$2)", v.LangID, v.Address)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
@@ -68,17 +106,19 @@ func CreateCompanyAddress(c *gin.Context) {
 				return
 			}
 		}()
+
 	}
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
-		"message": "company address successfully added",
+		"message": "data successfully added",
 	})
 
 }
 
 func UpdateCompanyAddressByID(c *gin.Context) {
 
+	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -97,9 +137,11 @@ func UpdateCompanyAddressByID(c *gin.Context) {
 		}
 	}()
 
-	ID := c.Param("id")
+	// get id from request parameter
+	var companyAddress models.CompanyAddress
 
-	rowComAddress, err := db.Query("SELECT id FROM company_address WHERE id = $1 AND deleted_at IS NULL", ID)
+	//check id
+	rowComAddress, err := db.Query("SELECT id FROM company_address WHERE id = $1 AND deleted_at IS NULL", companyAddress.ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -137,18 +179,7 @@ func UpdateCompanyAddressByID(c *gin.Context) {
 		return
 	}
 
-	address := c.PostForm("address")
-	if address == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": "address required",
-		})
-		return
-	}
-
-	currentTime := time.Now()
-
-	resultComAddres, err := db.Query("UPDATE company_address SET address = $1, updated_at = $2 WHERE id = $3", address, currentTime, id)
+	resultComAddres, err := db.Query("UPDATE company_address SET address = $1, lang_id = $2 WHERE id = $3", companyAddress.Address, companyAddress.LangID, companyAddress.ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -168,13 +199,14 @@ func UpdateCompanyAddressByID(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
-		"message": "company address successfully updated",
+		"message": "data successfully updated",
 	})
 
 }
 
 func GetCompanyAddressByID(c *gin.Context) {
 
+	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -193,8 +225,10 @@ func GetCompanyAddressByID(c *gin.Context) {
 		}
 	}()
 
+	// get id from request parameter
 	ID := c.Param("id")
 
+	// check id and get data from database
 	rowComAddress, err := db.Query("SELECT address FROM company_address WHERE id = $1 AND deleted_at IS NULL", ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{

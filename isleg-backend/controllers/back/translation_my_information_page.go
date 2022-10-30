@@ -3,11 +3,14 @@ package controllers
 import (
 	"github/abbgo/isleg/isleg-backend/config"
 	"github/abbgo/isleg/isleg-backend/models"
-	"github/abbgo/isleg/isleg-backend/pkg"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
+
+type TrsMyInformationPage struct {
+	TranslationsMyInformationPage []models.TranslationMyInformationPage `json:"translations_my_information_page"`
+}
 
 func CreateTranslationMyInformationPage(c *gin.Context) {
 
@@ -30,9 +33,10 @@ func CreateTranslationMyInformationPage(c *gin.Context) {
 		}
 	}()
 
-	// GET ALL LANGUAGE
-	languages, err := GetAllLanguageWithIDAndNameShort()
-	if err != nil {
+	//get data from request
+	var trMyInforPages TrsMyInformationPage
+
+	if err := c.BindJSON(&trMyInforPages); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
 			"message": err.Error(),
@@ -40,20 +44,53 @@ func CreateTranslationMyInformationPage(c *gin.Context) {
 		return
 	}
 
-	dataNames := []string{"address", "birthday", "update_password", "save"}
+	// check lang_id
+	for _, v := range trMyInforPages.TranslationsMyInformationPage {
 
-	// VALIDATE DATA
-	if err = pkg.ValidateTranslations(languages, dataNames, c); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
+		rowLang, err := db.Query("SELECT id FROM languages WHERE id = $1 AND deleted_at IS NULL", v.LangID)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+		defer func() {
+			if err := rowLang.Close(); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}()
+
+		var langID string
+
+		for rowLang.Next() {
+			if err := rowLang.Scan(&langID); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}
+
+		if langID == "" {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": "language not found",
+			})
+			return
+		}
+
 	}
 
 	// create translation_my_information_page
-	for _, v := range languages {
-		resutlTRMyInfPage, err := db.Query("INSERT INTO translation_my_information_page (lang_id,address,birthday,update_password,save) VALUES ($1,$2,$3,$4,$5)", v.ID, c.PostForm("address_"+v.NameShort), c.PostForm("birthday_"+v.NameShort), c.PostForm("update_password_"+v.NameShort), c.PostForm("save_"+v.NameShort))
+	for _, v := range trMyInforPages.TranslationsMyInformationPage {
+
+		resutlTRMyInfPage, err := db.Query("INSERT INTO translation_my_information_page (lang_id,address,birthday,update_password,save) VALUES ($1,$2,$3,$4,$5)", v.LangID, v.Address, v.Birthday, v.UpdatePassword, v.Save)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
@@ -70,6 +107,7 @@ func CreateTranslationMyInformationPage(c *gin.Context) {
 				return
 			}
 		}()
+
 	}
 
 	c.JSON(http.StatusOK, gin.H{
@@ -101,10 +139,18 @@ func UpdateTranslationMyInformationPageByID(c *gin.Context) {
 	}()
 
 	// get id of translation my information page from request parameter
-	ID := c.Param("id")
+	var trMyInforPage models.TranslationMyInformationPage
+
+	if err := c.BindJSON(&trMyInforPage); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
 
 	// check id
-	rowFlag, err := db.Query("SELECT id FROM translation_my_information_page WHERE id = $1 AND deleted_at IS NULL", ID)
+	rowFlag, err := db.Query("SELECT id FROM translation_my_information_page WHERE id = $1 AND deleted_at IS NULL", trMyInforPage.ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -142,19 +188,7 @@ func UpdateTranslationMyInformationPageByID(c *gin.Context) {
 		return
 	}
 
-	dataNames := []string{"address", "birthday", "update_password", "save"}
-
-	// VALIDATE DATA
-	err = pkg.ValidateTranslationsForUpdate(dataNames, c)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-
-	resultTRMyInfPage, err := db.Query("UPDATE translation_my_information_page SET address = $1, birthday = $2 , update_password = $3, save = $4 WHERE id = $5", c.PostForm("address"), c.PostForm("birthday"), c.PostForm("update_password"), c.PostForm("save"), id)
+	resultTRMyInfPage, err := db.Query("UPDATE translation_my_information_page SET address = $1, birthday = $2 , update_password = $3, save = $4, lang_id = $6 WHERE id = $5", trMyInforPage.Address, trMyInforPage.Birthday, trMyInforPage.UpdatePassword, trMyInforPage.Save, trMyInforPage.ID, trMyInforPage.LangID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,

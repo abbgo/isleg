@@ -3,11 +3,14 @@ package controllers
 import (
 	"github/abbgo/isleg/isleg-backend/config"
 	"github/abbgo/isleg/isleg-backend/models"
-	"github/abbgo/isleg/isleg-backend/pkg"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
+
+type TrsMyOrderPages struct {
+	TranslationsMyOrderPage []models.TranslationMyOrderPage `json:"translation_my_order_page"`
+}
 
 func CreateTranslationMyOrderPage(c *gin.Context) {
 
@@ -30,9 +33,11 @@ func CreateTranslationMyOrderPage(c *gin.Context) {
 		}
 	}()
 
-	// GET ALL LANGUAGE
-	languages, err := GetAllLanguageWithIDAndNameShort()
-	if err != nil {
+	// get data from reuqest
+
+	var trMyOrderPages TrsMyOrderPages
+
+	if err := c.BindJSON(&trMyOrderPages); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
 			"message": err.Error(),
@@ -40,20 +45,53 @@ func CreateTranslationMyOrderPage(c *gin.Context) {
 		return
 	}
 
-	dataNames := []string{"orders", "date", "price", "currency", "image", "name", "brend", "code", "amount", "total_price"}
+	// check lang_id
+	for _, v := range trMyOrderPages.TranslationsMyOrderPage {
 
-	// VALIDATE DATA
-	if err = pkg.ValidateTranslations(languages, dataNames, c); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
+		rowLang, err := db.Query("SELECT id FROM languages WHERE id = $1 AND deleted_at IS NULL", v.LangID)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+		defer func() {
+			if err := rowLang.Close(); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}()
+
+		var langID string
+
+		for rowLang.Next() {
+			if err := rowLang.Scan(&langID); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}
+
+		if langID == "" {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": "language not found",
+			})
+			return
+		}
+
 	}
 
 	// create translation_my_information_page
-	for _, v := range languages {
-		resultTrMyOrderPage, err := db.Query("INSERT INTO translation_my_order_page (lang_id,orders,date,price,currency,image,name,brend,code,amount,total_price) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)", v.ID, c.PostForm("orders_"+v.NameShort), c.PostForm("date_"+v.NameShort), c.PostForm("price_"+v.NameShort), c.PostForm("currency_"+v.NameShort), c.PostForm("image_"+v.NameShort), c.PostForm("name_"+v.NameShort), c.PostForm("brend_"+v.NameShort), c.PostForm("code_"+v.NameShort), c.PostForm("amount_"+v.NameShort), c.PostForm("total_price_"+v.NameShort))
+	for _, v := range trMyOrderPages.TranslationsMyOrderPage {
+
+		resultTrMyOrderPage, err := db.Query("INSERT INTO translation_my_order_page (lang_id,orders,date,price,currency,image,name,brend,code,amount,total_price) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)", v.LangID, v.Orders, v.Date, v.Price, v.Currency, v.Image, v.Name, v.Brend, v.Code, v.Amount, v.TotalPrice)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
@@ -70,6 +108,7 @@ func CreateTranslationMyOrderPage(c *gin.Context) {
 				return
 			}
 		}()
+
 	}
 
 	c.JSON(http.StatusOK, gin.H{
@@ -101,10 +140,18 @@ func UpdateTranslationMyOrderPageByID(c *gin.Context) {
 	}()
 
 	// get id from request parameter
-	ID := c.Param("id")
+	var trMyOrderPage models.TranslationMyOrderPage
+
+	if err := c.BindJSON(&trMyOrderPage); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
 
 	// check id
-	rowTrMyOrderPage, err := db.Query("SELECT id FROM translation_my_order_page WHERE id = $1 AND deleted_at IS NULL", ID)
+	rowTrMyOrderPage, err := db.Query("SELECT id FROM translation_my_order_page WHERE id = $1 AND deleted_at IS NULL", trMyOrderPage.ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -142,20 +189,8 @@ func UpdateTranslationMyOrderPageByID(c *gin.Context) {
 		return
 	}
 
-	dataNames := []string{"orders", "date", "price", "currency", "image", "name", "brend", "code", "amount", "total_price"}
-
-	// VALIDATE DATA
-	err = pkg.ValidateTranslationsForUpdate(dataNames, c)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-
 	// update data
-	resultTrMyOrderPage, err := db.Query("UPDATE translation_my_order_page SET orders = $1, date = $2 , price = $3, currency = $4 , image = $5 , name = $6 , brend = $7, code = $8 , amount = $9, total_price = $10 WHERE id = $11", c.PostForm("orders"), c.PostForm("date"), c.PostForm("price"), c.PostForm("currency"), c.PostForm("image"), c.PostForm("name"), c.PostForm("brend"), c.PostForm("code"), c.PostForm("amount"), c.PostForm("total_price"), id)
+	resultTrMyOrderPage, err := db.Query("UPDATE translation_my_order_page SET orders = $1, date = $2 , price = $3, currency = $4 , image = $5 , name = $6 , brend = $7, code = $8 , amount = $9, total_price = $10, lang_id = $12 WHERE id = $11", trMyOrderPage.Orders, trMyOrderPage.Date, trMyOrderPage.Price, trMyOrderPage.Currency, trMyOrderPage.Image, trMyOrderPage.Name, trMyOrderPage.Brend, trMyOrderPage.Code, trMyOrderPage.Amount, trMyOrderPage.TotalPrice, trMyOrderPage.ID, trMyOrderPage.LangID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,

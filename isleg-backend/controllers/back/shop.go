@@ -4,23 +4,14 @@ import (
 	"github/abbgo/isleg/isleg-backend/config"
 	"github/abbgo/isleg/isleg-backend/models"
 	"net/http"
-	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
+	"github.com/lib/pq"
 )
-
-type OneShop struct {
-	ID          string   `json:"id"`
-	OwnerName   string   `json:"owner_name"`
-	Address     string   `json:"address"`
-	PhoneNumber string   `json:"phone_number"`
-	RunningTime string   `json:"running_time"`
-	Categories  []string `json:"categories"`
-}
 
 func CreateShop(c *gin.Context) {
 
+	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -39,13 +30,10 @@ func CreateShop(c *gin.Context) {
 		}
 	}()
 
-	ownerName := c.PostForm("owner_name")
-	address := c.PostForm("address")
-	phoneNumber := c.PostForm("phone_number")
-	runningTime := c.PostForm("running_time")
-	categories, _ := c.GetPostFormArray("category_id")
+	// get data from request
+	var shop models.Shop
 
-	if err := models.ValidateShopData(ownerName, address, phoneNumber, runningTime, categories); err != nil {
+	if err := c.BindJSON(&shop); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
 			"message": err.Error(),
@@ -53,7 +41,15 @@ func CreateShop(c *gin.Context) {
 		return
 	}
 
-	resultShops, err := db.Query("INSERT INTO shops (owner_name,address,phone_number,running_time) VALUES ($1,$2,$3,$4)", ownerName, address, phoneNumber, runningTime)
+	if err := models.ValidateShopData(shop.Categories); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	resultShops, err := db.Query("INSERT INTO shops (owner_name,address,phone_number,running_time) VALUES ($1,$2,$3,$4) RETURNING id", shop.OwnerName, shop.Address, shop.PhoneNumber, shop.RunningTime)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -71,29 +67,10 @@ func CreateShop(c *gin.Context) {
 		}
 	}()
 
-	// get the id of the added shop
-	lastShopID, err := db.Query("SELECT id FROM shops ORDER BY created_at DESC LIMIT 1")
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-	defer func() {
-		if err := lastShopID.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
-
 	var shopID string
 
-	for lastShopID.Next() {
-		if err := lastShopID.Scan(&shopID); err != nil {
+	for resultShops.Next() {
+		if err := resultShops.Scan(&shopID); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
@@ -103,45 +80,34 @@ func CreateShop(c *gin.Context) {
 	}
 
 	// create category shop
-	for _, v := range categories {
-		vUUID, err := uuid.Parse(v)
-		if v != "" {
-			if err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
-				return
-			}
-		}
-		resultCategorySHop, err := db.Query("INSERT INTO category_shop (category_id,shop_id) VALUES ($1,$2)", vUUID, shopID)
-		if err != nil {
+	resultCategorySHop, err := db.Query("INSERT INTO category_shop (category_id,shop_id) VALUES (unnest($1::uuid[]),$2)", pq.Array(shop.Categories), shopID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer func() {
+		if err := resultCategorySHop.Close(); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
 			})
 			return
 		}
-		defer func() {
-			if err := resultCategorySHop.Close(); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
-				return
-			}
-		}()
-	}
+	}()
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
-		"message": "shop successfully added",
+		"message": "data successfully added",
 	})
 
 }
 
 func UpdateShopByID(c *gin.Context) {
 
+	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -160,9 +126,18 @@ func UpdateShopByID(c *gin.Context) {
 		}
 	}()
 
-	ID := c.Param("id")
+	// gat data from request
+	var shop models.Shop
+	if err := c.BindJSON(&shop); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
 
-	rowShop, err := db.Query("SELECT id FROM shops WHERE id = $1 AND deleted_at IS NULL", ID)
+	// check id
+	rowShop, err := db.Query("SELECT id FROM shops WHERE id = $1 AND deleted_at IS NULL", shop.ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -200,13 +175,7 @@ func UpdateShopByID(c *gin.Context) {
 		return
 	}
 
-	ownerName := c.PostForm("owner_name")
-	address := c.PostForm("address")
-	phoneNumber := c.PostForm("phone_number")
-	runningTime := c.PostForm("running_time")
-	categories, _ := c.GetPostFormArray("category_id")
-
-	if err := models.ValidateShopData(ownerName, address, phoneNumber, runningTime, categories); err != nil {
+	if err := models.ValidateShopData(shop.Categories); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
 			"message": err.Error(),
@@ -214,9 +183,7 @@ func UpdateShopByID(c *gin.Context) {
 		return
 	}
 
-	currentTime := time.Now()
-
-	resultShop, err := db.Query("UPDATE shops SET owner_name = $1 , address = $2 , phone_number = $3 , running_time = $4 , updated_at = $5 WHERE id = $6", ownerName, address, phoneNumber, runningTime, currentTime, ID)
+	resultShop, err := db.Query("UPDATE shops SET owner_name = $1 , address = $2 , phone_number = $3 , running_time = $4 WHERE id = $5", shop.OwnerName, shop.Address, shop.PhoneNumber, shop.RunningTime, shop.ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -234,7 +201,7 @@ func UpdateShopByID(c *gin.Context) {
 		}
 	}()
 
-	resultCategoryShop, err := db.Query("DELETE FROM category_shop WHERE shop_id = $1", ID)
+	resultCategoryShop, err := db.Query("DELETE FROM category_shop WHERE shop_id = $1", shop.ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -252,35 +219,36 @@ func UpdateShopByID(c *gin.Context) {
 		}
 	}()
 
-	for _, v := range categories {
-		resultCatShop, err := db.Query("INSERT INTO category_shop (category_id,shop_id,updated_at) VALUES ($1,$2,$3)", v, ID, currentTime)
-		if err != nil {
+	// for _, v := range categories {
+	resultCatShop, err := db.Query("INSERT INTO category_shop (category_id,shop_id) VALUES (unnest($1::uuid[]),$2)", pq.Array(shop.Categories), shop.ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer func() {
+		if err := resultCatShop.Close(); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
 			})
 			return
 		}
-		defer func() {
-			if err := resultCatShop.Close(); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
-				return
-			}
-		}()
-	}
+	}()
+	// }
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
-		"message": "shop successfully updated",
+		"message": "data successfully updated",
 	})
 
 }
 
 func GetShopByID(c *gin.Context) {
 
+	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -299,8 +267,10 @@ func GetShopByID(c *gin.Context) {
 		}
 	}()
 
+	// get id from requets parameter
 	ID := c.Param("id")
 
+	// check id and get data from database
 	rowShop, err := db.Query("SELECT id,owner_name,address,phone_number,running_time FROM shops WHERE id = $1 AND deleted_at IS NULL", ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -319,7 +289,7 @@ func GetShopByID(c *gin.Context) {
 		}
 	}()
 
-	var shop OneShop
+	var shop models.Shop
 
 	for rowShop.Next() {
 		if err := rowShop.Scan(&shop.ID, &shop.OwnerName, &shop.Address, &shop.PhoneNumber, &shop.RunningTime); err != nil {
@@ -392,6 +362,7 @@ func GetShopByID(c *gin.Context) {
 
 func GetShops(c *gin.Context) {
 
+	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -410,6 +381,7 @@ func GetShops(c *gin.Context) {
 		}
 	}()
 
+	// get data from database
 	rowsShop, err := db.Query("SELECT id,owner_name,address,phone_number,running_time FROM shops WHERE deleted_at IS NULL")
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -428,10 +400,10 @@ func GetShops(c *gin.Context) {
 		}
 	}()
 
-	var shops []OneShop
+	var shops []models.Shop
 
 	for rowsShop.Next() {
-		var shop OneShop
+		var shop models.Shop
 		if err := rowsShop.Scan(&shop.ID, &shop.OwnerName, &shop.Address, &shop.PhoneNumber, &shop.RunningTime); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
@@ -487,6 +459,7 @@ func GetShops(c *gin.Context) {
 
 func DeleteShopByID(c *gin.Context) {
 
+	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -505,8 +478,10 @@ func DeleteShopByID(c *gin.Context) {
 		}
 	}()
 
+	// get id from request parameter
 	ID := c.Param("id")
 
+	// check id
 	rowShop, err := db.Query("SELECT id FROM shops WHERE id = $1 AND deleted_at IS NULL", ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -545,9 +520,7 @@ func DeleteShopByID(c *gin.Context) {
 		return
 	}
 
-	currentTime := time.Now()
-
-	resultShop, err := db.Query("UPDATE shops SET deleted_at = $1 WHERE id = $2", currentTime, ID)
+	resultProc, err := db.Query("CALL delete_shop($1)", ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -556,25 +529,7 @@ func DeleteShopByID(c *gin.Context) {
 		return
 	}
 	defer func() {
-		if err := resultShop.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
-
-	resultCategoryShop, err := db.Query("UPDATE category_shop SET deleted_at = $1 WHERE shop_id = $2", currentTime, ID)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-	defer func() {
-		if err := resultCategoryShop.Close(); err != nil {
+		if err := resultProc.Close(); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
@@ -585,13 +540,14 @@ func DeleteShopByID(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
-		"message": "shop successfully deleted",
+		"message": "data successfully deleted",
 	})
 
 }
 
 func RestoreShopByID(c *gin.Context) {
 
+	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -610,8 +566,10 @@ func RestoreShopByID(c *gin.Context) {
 		}
 	}()
 
+	// get id from request
 	ID := c.Param("id")
 
+	// check id
 	rowShop, err := db.Query("SELECT id FROM shops WHERE id = $1 AND deleted_at IS NOT NULL", ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -650,7 +608,7 @@ func RestoreShopByID(c *gin.Context) {
 		return
 	}
 
-	resultShop, err := db.Query("UPDATE shops SET deleted_at = NULL WHERE id = $1", ID)
+	resultProc, err := db.Query("CALL restore_shop($1)", ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -659,7 +617,7 @@ func RestoreShopByID(c *gin.Context) {
 		return
 	}
 	defer func() {
-		if err := resultShop.Close(); err != nil {
+		if err := resultProc.Close(); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
@@ -668,32 +626,16 @@ func RestoreShopByID(c *gin.Context) {
 		}
 	}()
 
-	resultCategoryShop, err := db.Query("UPDATE category_shop SET deleted_at = NULL WHERE shop_id = $1", ID)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-	defer func() {
-		if err := resultCategoryShop.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
-		"message": "shop successfully restored",
+		"message": "data successfully restored",
 	})
 
 }
 
 func DeletePermanentlyShopByID(c *gin.Context) {
 
+	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -712,8 +654,10 @@ func DeletePermanentlyShopByID(c *gin.Context) {
 		}
 	}()
 
+	// get id from request parameter
 	ID := c.Param("id")
 
+	// check id
 	rowShop, err := db.Query("SELECT id FROM shops WHERE id = $1 AND deleted_at IS NOT NULL", ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -772,7 +716,7 @@ func DeletePermanentlyShopByID(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
-		"message": "shop successfully deleted",
+		"message": "data successfully deleted",
 	})
 
 }

@@ -283,7 +283,6 @@ func GetCompanySettingForHeader() (models.CompanySetting, error) {
 
 	db, err := config.ConnDB()
 	if err != nil {
-
 		return models.CompanySetting{}, nil
 	}
 	defer func() (models.CompanySetting, error) {

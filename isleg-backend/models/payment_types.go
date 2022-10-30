@@ -2,8 +2,8 @@ package models
 
 type PaymentTypes struct {
 	ID        string `json:"id,omitempty"`
-	LangID    string `json:"lang_id,omitempty"`
-	Type      string `json:"type,omitempty"`
+	LangID    string `json:"lang_id,omitempty" binding:"required"`
+	Type      string `json:"type,omitempty" binding:"required"`
 	CreatedAt string `json:"-"`
 	UpdatedAt string `json:"-"`
 	DeletedAt string `json:"-"`

@@ -3,10 +3,10 @@ package controllers
 import (
 	"github/abbgo/isleg/isleg-backend/config"
 	"github/abbgo/isleg/isleg-backend/models"
+	"github/abbgo/isleg/isleg-backend/pkg"
 	"net/http"
 	"os"
 	"path/filepath"
-	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -20,6 +20,7 @@ type OneAfisa struct {
 
 func CreateAfisa(c *gin.Context) {
 
+	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -65,6 +66,14 @@ func CreateAfisa(c *gin.Context) {
 			return
 		}
 
+		if err = c.SaveUploadedFile(file, "./"+fileName); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+
 		newFileName := uuid.New().String() + extension
 		fileName = "uploads/afisa/" + newFileName
 	}
@@ -81,7 +90,7 @@ func CreateAfisa(c *gin.Context) {
 	}
 
 	// create afisa
-	resultAFisa, err := db.Query("INSERT INTO afisa (image) VALUES ($1)", fileName)
+	resultAFisa, err := db.Query("INSERT INTO afisa (image) VALUES ($1) RETURNING id", fileName)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -99,33 +108,10 @@ func CreateAfisa(c *gin.Context) {
 		}
 	}()
 
-	if fileName != "" {
-		c.SaveUploadedFile(file, "./"+fileName)
-	}
-
-	// get id of added afisa
-	lastAfisaID, err := db.Query("SELECT id FROM afisa WHERE deleted_at IS NULL ORDER BY created_at DESC LIMIT 1")
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-	defer func() {
-		if err := lastAfisaID.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
-
 	var afisaID string
 
-	for lastAfisaID.Next() {
-		if err := lastAfisaID.Scan(&afisaID); err != nil {
+	for resultAFisa.Next() {
+		if err := resultAFisa.Scan(&afisaID); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
@@ -157,13 +143,14 @@ func CreateAfisa(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
-		"message": "afisa successfully added",
+		"message": "data successfully added",
 	})
 
 }
 
 func UpdateAfisaByID(c *gin.Context) {
 
+	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -182,9 +169,10 @@ func UpdateAfisaByID(c *gin.Context) {
 		}
 	}()
 
+	// get id from request parameter
 	ID := c.Param("id")
-	var fileName string
 
+	// check id and get image of afisa
 	rowAfisa, err := db.Query("SELECT id,image FROM afisa WHERE id = $1 AND deleted_at IS NULL", ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -243,38 +231,16 @@ func UpdateAfisaByID(c *gin.Context) {
 		return
 	}
 
-	// FILE UPLOAD
-	file, errFile := c.FormFile("image")
-	if errFile != nil {
-		fileName = image
-	} else {
-		extension := filepath.Ext(file.Filename)
-		// VALIDATE IMAGE
-		if extension != ".jpg" && extension != ".jpeg" && extension != ".png" && extension != ".gif" {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": "the file must be an image.",
-			})
-			return
-		}
-
-		newFileName := uuid.New().String() + extension
-		fileName = "uploads/afisa/" + newFileName
-
-		if image != "" {
-			if err := os.Remove("./" + image); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
-				return
-			}
-		}
+	fileName, err := pkg.FileUploadForUpdate("image", "afisa", image, c)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
 	}
 
-	currentTime := time.Now()
-
-	resultAfisa, err := db.Query("UPDATE afisa SET image = $1 , updated_at = $2 WHERE id = $3", fileName, currentTime, ID)
+	resultAfisa, err := db.Query("UPDATE afisa SET image = $1 WHERE id = $2", fileName, ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -292,12 +258,8 @@ func UpdateAfisaByID(c *gin.Context) {
 		}
 	}()
 
-	if fileName != "" {
-		c.SaveUploadedFile(file, "./"+fileName)
-	}
-
 	for _, v := range languages {
-		resultTRAfisa, err := db.Query("UPDATE translation_afisa SET title = $1 , description = $2 , updated_at = $3 WHERE afisa_id = $4 AND lang_id = $5", c.PostForm("title_"+v.NameShort), c.PostForm("description_"+v.NameShort), currentTime, ID, v.ID)
+		resultTRAfisa, err := db.Query("UPDATE translation_afisa SET title = $1 , description = $2 WHERE afisa_id = $3 AND lang_id = $4", c.PostForm("title_"+v.NameShort), c.PostForm("description_"+v.NameShort), ID, v.ID)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
@@ -318,13 +280,14 @@ func UpdateAfisaByID(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
-		"message": "afisa successfully updated",
+		"message": "data successfully updated",
 	})
 
 }
 
 func GetAfisaByID(c *gin.Context) {
 
+	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -343,8 +306,10 @@ func GetAfisaByID(c *gin.Context) {
 		}
 	}()
 
+	// get id from request parameter
 	ID := c.Param("id")
 
+	// check id and get data
 	rowAfisa, err := db.Query("SELECT id,image FROM afisa WHERE id = $1 AND deleted_at IS NULL", ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -426,6 +391,7 @@ func GetAfisaByID(c *gin.Context) {
 
 func GetAfisas(c *gin.Context) {
 
+	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -521,6 +487,7 @@ func GetAfisas(c *gin.Context) {
 
 func DeleteAfisaByID(c *gin.Context) {
 
+	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -539,8 +506,10 @@ func DeleteAfisaByID(c *gin.Context) {
 		}
 	}()
 
+	// get id from request parameter
 	ID := c.Param("id")
 
+	// check id
 	rowAfisa, err := db.Query("SELECT id FROM afisa WHERE id = $1 AND deleted_at IS NULL", ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -579,9 +548,7 @@ func DeleteAfisaByID(c *gin.Context) {
 		return
 	}
 
-	currentTime := time.Now()
-
-	resultAfisa, err := db.Query("UPDATE afisa SET deleted_at = $1 WHERE id = $2", currentTime, ID)
+	resultProc, err := db.Query("CALL delete_afisa($1)", ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -590,25 +557,7 @@ func DeleteAfisaByID(c *gin.Context) {
 		return
 	}
 	defer func() {
-		if err := resultAfisa.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
-
-	resultTrAfisa, err := db.Query("UPDATE translation_afisa SET deleted_at = $1 WHERE afisa_id = $2", currentTime, ID)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-	defer func() {
-		if err := resultTrAfisa.Close(); err != nil {
+		if err := resultProc.Close(); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
@@ -619,13 +568,14 @@ func DeleteAfisaByID(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
-		"message": "afisa successfully deleted",
+		"message": "data successfully deleted",
 	})
 
 }
 
 func RestoreAfisaByID(c *gin.Context) {
 
+	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -644,8 +594,10 @@ func RestoreAfisaByID(c *gin.Context) {
 		}
 	}()
 
+	// get id from request parameter
 	ID := c.Param("id")
 
+	// check id
 	rowAfisa, err := db.Query("SELECT id FROM afisa WHERE id = $1 AND deleted_at IS NOT NULL", ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -684,7 +636,7 @@ func RestoreAfisaByID(c *gin.Context) {
 		return
 	}
 
-	resultAfisa, err := db.Query("UPDATE afisa SET deleted_at = NULL WHERE id = $1", ID)
+	resultProc, err := db.Query("CALL restore_afisa($1)", ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -693,25 +645,7 @@ func RestoreAfisaByID(c *gin.Context) {
 		return
 	}
 	defer func() {
-		if err := resultAfisa.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
-
-	resultTrAfisa, err := db.Query("UPDATE translation_afisa SET deleted_at = NULL WHERE afisa_id = $1", ID)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-	defer func() {
-		if err := resultTrAfisa.Close(); err != nil {
+		if err := resultProc.Close(); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
@@ -722,13 +656,14 @@ func RestoreAfisaByID(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
-		"message": "afisa successfully restored",
+		"message": "data successfully restored",
 	})
 
 }
 
 func DeletePermanentlyAfisaByID(c *gin.Context) {
 
+	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -747,8 +682,10 @@ func DeletePermanentlyAfisaByID(c *gin.Context) {
 		}
 	}()
 
+	// get id from request parameter
 	ID := c.Param("id")
 
+	// check id and get image of afisa
 	rowAfisa, err := db.Query("SELECT id,image FROM afisa WHERE id = $1 AND deleted_at IS NOT NULL", ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -817,7 +754,7 @@ func DeletePermanentlyAfisaByID(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
-		"message": "afisa successfully deleted",
+		"message": "data successfully deleted",
 	})
 
 }

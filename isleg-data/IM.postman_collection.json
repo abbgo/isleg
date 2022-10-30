@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "8a331eea-91b7-4c06-ab8d-a39f62c69622",
+		"_postman_id": "2c3654b5-fb4e-48cf-8154-36b3fe3b0447",
 		"name": "IM",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -207,37 +207,22 @@
 								},
 								{
 									"key": "name_tm",
-									"value": "Name_tm",
+									"value": "Diş pastasy",
 									"type": "text"
 								},
 								{
 									"key": "name_ru",
-									"value": "Name_ru",
+									"value": "Зубная паста",
 									"type": "default"
 								},
 								{
 									"key": "parent_category_id",
-									"value": "417a385e-6a74-44f3-a536-405eb8251978",
+									"value": "7e3eeef8-4748-483c-bbf8-3767943135ee",
 									"type": "default"
 								},
 								{
 									"key": "is_home_category",
 									"value": "false",
-									"type": "default"
-								},
-								{
-									"key": "name_fr",
-									"value": "NAME_FR",
-									"type": "default"
-								},
-								{
-									"key": "name_tr",
-									"value": "name_tr",
-									"type": "default"
-								},
-								{
-									"key": "name_pl",
-									"value": "name_pl",
 									"type": "default"
 								}
 							]
@@ -910,17 +895,17 @@
 							"formdata": [
 								{
 									"key": "brend_id",
-									"value": "fdd259c2-794a-42b9-a3ad-9e91502af23e",
+									"value": "c4bcda34-7332-4ae5-8129-d7538d63fee4",
 									"type": "default"
 								},
 								{
 									"key": "price",
-									"value": "67",
+									"value": "30.50",
 									"type": "default"
 								},
 								{
 									"key": "old_price",
-									"value": "68",
+									"value": "",
 									"type": "default"
 								},
 								{
@@ -929,44 +914,45 @@
 									"type": "default"
 								},
 								{
-									"key": "product_code",
-									"value": "151fwe51we",
-									"type": "default"
-								},
-								{
 									"key": "name_tm",
-									"value": "Nemlendiriji suwuk sabyn Aura Clean \"Черничный йогурт\" 1 ltr",
-									"type": "default"
-								},
-								{
-									"key": "name_ru",
-									"value": "Жидкое крем-мыло увлажняющее Aura Clean \"Черничный йогурт\" 1 л",
+									"value": "Diş pastasy \"Blend-a-Med Complete 7\" Herbal, 100 ml",
 									"type": "default"
 								},
 								{
 									"key": "description_tm",
-									"value": "Nemlendiriji suwuk sabyn Aura Clean \"Черничный йогурт\" 1 ltr",
+									"value": "Diş pastasy \"Blend-a-Med Complete 7\" Herbal, 100 ml",
+									"type": "default"
+								},
+								{
+									"key": "name_ru",
+									"value": "Зубная паста \"Blend-a-Med Complete 7\" с ополаскивателем 100 мл",
 									"type": "default"
 								},
 								{
 									"key": "description_ru",
-									"value": "Жидкое крем-мыло увлажняющее Aura Clean \"Черничный йогурт\" 1 л",
+									"value": "Зубная паста \"Blend-a-Med Complete 7\" с ополаскивателем 100 мл",
 									"type": "default"
 								},
 								{
 									"key": "category_id",
-									"value": "b982bd86-0a0f-4950-baad-5a131e9b728e",
+									"value": "789cbced-9141-4748-94d3-93476d276057",
 									"type": "default"
 								},
 								{
 									"key": "category_id",
-									"value": "a4277afa-1c92-4f4e-809e-dfbb54ddbc9b",
+									"value": "7e3eeef8-4748-483c-bbf8-3767943135ee",
 									"type": "default"
 								},
 								{
 									"key": "category_id",
-									"value": "338906f1-dbe2-4ba7-84fc-fe7a4d7856ec",
+									"value": "57d072c8-4952-44c5-845e-d2d706677e16",
 									"type": "default"
+								},
+								{
+									"key": "category_id",
+									"value": "ab28ad8f-72af-4e9e-841b-38a6e6881a6e",
+									"type": "default",
+									"disabled": true
 								},
 								{
 									"key": "is_new",
@@ -981,17 +967,141 @@
 								{
 									"key": "main_small",
 									"type": "file",
-									"src": "/home/abb/go/src/github.com/abbgo/isleg/isleg-data/Saydyn suratynyn razmeri/Yalong galam/small.jpg"
+									"src": "/home/abb/go/src/github.com/abbgo/isleg/isleg-data/Saydyn suratynyn razmeri/Bianyo galam/small.jpg"
 								},
 								{
 									"key": "main_medium",
 									"type": "file",
-									"src": "/home/abb/go/src/github.com/abbgo/isleg/isleg-data/Saydyn suratynyn razmeri/Yalong galam/medium.jpg"
+									"src": "/home/abb/go/src/github.com/abbgo/isleg/isleg-data/Saydyn suratynyn razmeri/Bianyo galam/medium.jpg"
 								},
 								{
 									"key": "main_large",
 									"type": "file",
-									"src": "/home/abb/go/src/github.com/abbgo/isleg/isleg-data/Saydyn suratynyn razmeri/Yalong galam/large.jpg"
+									"src": "/home/abb/go/src/github.com/abbgo/isleg/isleg-data/Saydyn suratynyn razmeri/Bianyo galam/large.jpg"
+								},
+								{
+									"key": "small",
+									"type": "file",
+									"src": "/home/abb/go/src/github.com/abbgo/isleg/isleg-data/Saydyn suratynyn razmeri/Bic galam/small.jpg"
+								},
+								{
+									"key": "large",
+									"type": "file",
+									"src": "/home/abb/go/src/github.com/abbgo/isleg/isleg-data/Saydyn suratynyn razmeri/Bic galam/large.jpg"
+								},
+								{
+									"key": "small",
+									"type": "file",
+									"src": "/home/abb/go/src/github.com/abbgo/isleg/isleg-data/Saydyn suratynyn razmeri/Kagyz kley/small.jpg"
+								},
+								{
+									"key": "large",
+									"type": "file",
+									"src": "/home/abb/go/src/github.com/abbgo/isleg/isleg-data/Saydyn suratynyn razmeri/Kagyz kley/large.jpg"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:2406/admin/product",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"admin",
+								"product"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UpdateProductByID",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "brend_id",
+									"value": "46b13f0a-d584-4ad3-b270-437ecdc51449",
+									"type": "default"
+								},
+								{
+									"key": "price",
+									"value": "46",
+									"type": "default"
+								},
+								{
+									"key": "old_price",
+									"value": "46.5",
+									"type": "default"
+								},
+								{
+									"key": "amount",
+									"value": "998",
+									"type": "default"
+								},
+								{
+									"key": "product_code",
+									"value": "w5f2we6f598",
+									"type": "default"
+								},
+								{
+									"key": "name_tm",
+									"value": "name_tm",
+									"type": "default"
+								},
+								{
+									"key": "name_ru",
+									"value": "name_ru",
+									"type": "default"
+								},
+								{
+									"key": "description_tm",
+									"value": "description_tm",
+									"type": "default"
+								},
+								{
+									"key": "description_ru",
+									"value": "description_ru",
+									"type": "default"
+								},
+								{
+									"key": "category_id",
+									"value": "417a385e-6a74-44f3-a536-405eb8251978",
+									"type": "default"
+								},
+								{
+									"key": "category_id",
+									"value": "02bd4413-8586-49ab-802e-16304e756a8b",
+									"type": "default"
+								},
+								{
+									"key": "limit_amount",
+									"value": "990",
+									"type": "default"
+								},
+								{
+									"key": "is_new",
+									"value": "true",
+									"type": "default"
+								},
+								{
+									"key": "main_small",
+									"type": "file",
+									"src": "/home/abb/go/src/github.com/abbgo/isleg/isleg-data/Saydyn suratynyn razmeri/Bic galam/small.jpg"
+								},
+								{
+									"key": "main_medium",
+									"type": "file",
+									"src": "/home/abb/go/src/github.com/abbgo/isleg/isleg-data/Saydyn suratynyn razmeri/Bic galam/medium.jpg"
+								},
+								{
+									"key": "main_large",
+									"type": "file",
+									"src": "/home/abb/go/src/github.com/abbgo/isleg/isleg-data/Saydyn suratynyn razmeri/Bic galam/large.jpg"
 								},
 								{
 									"key": "small",
@@ -1046,146 +1156,7 @@
 							]
 						},
 						"url": {
-							"raw": "localhost:2406/admin/product",
-							"host": [
-								"localhost"
-							],
-							"port": "2406",
-							"path": [
-								"admin",
-								"product"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "UpdateProductByID",
-					"request": {
-						"method": "PUT",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "brend_id",
-									"value": "ddccb2dc-9697-4f4e-acf5-26b8bc2c8b72",
-									"type": "default"
-								},
-								{
-									"key": "price",
-									"value": "46",
-									"type": "default"
-								},
-								{
-									"key": "old_price",
-									"value": "46.5",
-									"type": "default"
-								},
-								{
-									"key": "amount",
-									"value": "998",
-									"type": "default"
-								},
-								{
-									"key": "product_code",
-									"value": "w5f2we6f598",
-									"type": "default"
-								},
-								{
-									"key": "main_image",
-									"type": "file",
-									"src": "/home/abb/Pictures/Isleg geljegimiz (1).jpg"
-								},
-								{
-									"key": "images",
-									"type": "file",
-									"src": "/home/abb/Pictures/download (3).jpeg"
-								},
-								{
-									"key": "images",
-									"type": "file",
-									"src": "/home/abb/Pictures/images.jpeg"
-								},
-								{
-									"key": "name_tm",
-									"value": "name_tm",
-									"type": "default"
-								},
-								{
-									"key": "name_ru",
-									"value": "name_ru",
-									"type": "default"
-								},
-								{
-									"key": "description_tm",
-									"value": "description_tm",
-									"type": "default"
-								},
-								{
-									"key": "description_ru",
-									"value": "description_ru",
-									"type": "default"
-								},
-								{
-									"key": "category_id",
-									"value": "45765130-7f97-4f0c-b886-f70b75e02610",
-									"type": "default"
-								},
-								{
-									"key": "category_id",
-									"value": "5bb9a4e7-9992-418f-b551-537844d371da",
-									"type": "default"
-								},
-								{
-									"key": "limit_amount",
-									"value": "990",
-									"type": "default"
-								},
-								{
-									"key": "is_new",
-									"value": "true",
-									"type": "default"
-								},
-								{
-									"key": "main_small",
-									"type": "file",
-									"src": "/home/abb/Pictures/download.jpeg"
-								},
-								{
-									"key": "main_medium",
-									"type": "file",
-									"src": "/home/abb/Pictures/download.jpeg"
-								},
-								{
-									"key": "main_large",
-									"type": "file",
-									"src": "/home/abb/Pictures/download.jpeg"
-								},
-								{
-									"key": "small",
-									"type": "file",
-									"src": "/home/abb/Pictures/download (1).jpeg"
-								},
-								{
-									"key": "small",
-									"type": "file",
-									"src": "/home/abb/Pictures/download (2).jpeg"
-								},
-								{
-									"key": "large",
-									"type": "file",
-									"src": "/home/abb/Pictures/download (1).jpeg"
-								},
-								{
-									"key": "large",
-									"type": "file",
-									"src": "/home/abb/Pictures/download (2).jpeg"
-								}
-							]
-						},
-						"url": {
-							"raw": "localhost:2406/admin/product/61882979-a4bd-4934-b51b-3f7df53c7870",
+							"raw": "localhost:2406/admin/product/e3c33ead-3c30-40f1-9d28-7bb8b71b767f",
 							"host": [
 								"localhost"
 							],
@@ -1193,7 +1164,7 @@
 							"path": [
 								"admin",
 								"product",
-								"61882979-a4bd-4934-b51b-3f7df53c7870"
+								"e3c33ead-3c30-40f1-9d28-7bb8b71b767f"
 							]
 						}
 					},
@@ -1244,7 +1215,7 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "localhost:2406/admin/product/61882979-a4bd-4934-b51b-3f7df53c7870",
+							"raw": "localhost:2406/admin/product/660071e0-8f17-4c48-9d80-d4cac306de3a",
 							"host": [
 								"localhost"
 							],
@@ -1252,7 +1223,7 @@
 							"path": [
 								"admin",
 								"product",
-								"61882979-a4bd-4934-b51b-3f7df53c7870"
+								"660071e0-8f17-4c48-9d80-d4cac306de3a"
 							]
 						}
 					},
@@ -1264,7 +1235,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "localhost:2406/admin/restore-product/ff3ef680-3f35-4424-bc08-6fbb9c065675",
+							"raw": "localhost:2406/admin/restore-product/660071e0-8f17-4c48-9d80-d4cac306de3a",
 							"host": [
 								"localhost"
 							],
@@ -1272,7 +1243,7 @@
 							"path": [
 								"admin",
 								"restore-product",
-								"ff3ef680-3f35-4424-bc08-6fbb9c065675"
+								"660071e0-8f17-4c48-9d80-d4cac306de3a"
 							]
 						}
 					},
@@ -1512,14 +1483,13 @@
 						"method": "POST",
 						"header": [],
 						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "phone",
-									"value": "+993 12 227475",
-									"type": "default"
+							"mode": "raw",
+							"raw": "{\n    \"company_phone\":\"236587\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
 								}
-							]
+							}
 						},
 						"url": {
 							"raw": "localhost:2406/admin/company-phone",
@@ -1541,25 +1511,23 @@
 						"method": "PUT",
 						"header": [],
 						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "phone",
-									"value": "63698547",
-									"type": "default"
+							"mode": "raw",
+							"raw": "{\n    \"id\":\"96c30e15-274c-49a0-bcc5-e2f8deac248f\",\n    \"company_phone\":\"236587\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
 								}
-							]
+							}
 						},
 						"url": {
-							"raw": "localhost:2406/admin/company-phone/3060bc25-2a55-4ee0-894d-f87f887e1fc4",
+							"raw": "localhost:2406/admin/company-phone",
 							"host": [
 								"localhost"
 							],
 							"port": "2406",
 							"path": [
 								"admin",
-								"company-phone",
-								"3060bc25-2a55-4ee0-894d-f87f887e1fc4"
+								"company-phone"
 							]
 						}
 					},
@@ -1695,19 +1663,13 @@
 						"method": "POST",
 						"header": [],
 						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "address_tm",
-									"value": "Aşgabat şäheri Azady köçesiniň 23-nji jaýy",
-									"type": "default"
-								},
-								{
-									"key": "address_ru",
-									"value": "Улица Азади 23, Ашхабад",
-									"type": "default"
+							"mode": "raw",
+							"raw": "{\n    \"company_addresses\":[\n        {\n            \"lang_id\":\"aea98b93-7bdf-455b-9ad4-a259d69dc76e\",\n            \"address\":\"Улица Азади 23, Ашхабад\"\n        },\n        {\n            \"lang_id\":\"8723c1c7-aa6d-429f-b8af-ee9ace61f0d7\",\n            \"address\":\"Aşgabat şäheri Azady köçesiniň 23-nji jaýy\"\n        }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
 								}
-							]
+							}
 						},
 						"url": {
 							"raw": "localhost:2406/admin/company-address",
@@ -1729,25 +1691,23 @@
 						"method": "PUT",
 						"header": [],
 						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "address",
-									"value": "adres_tm",
-									"type": "default"
+							"mode": "raw",
+							"raw": "{\n    \"id\":\"d2c66808-e5fe-435f-ba01-cb717f80d9e0\",\n    \"lang_id\":\"8723c1c7-aa6d-429f-b8af-ee9ace61f0d7\",\n    \"address\":\"Aşgabat şäheri Azady köçesiniň 23-nji jaýy\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
 								}
-							]
+							}
 						},
 						"url": {
-							"raw": "localhost:2406/admin/company-address/d2c66808-e5fe-435f-ba01-cb717f80d9e0",
+							"raw": "localhost:2406/admin/company-address",
 							"host": [
 								"localhost"
 							],
 							"port": "2406",
 							"path": [
 								"admin",
-								"company-address",
-								"d2c66808-e5fe-435f-ba01-cb717f80d9e0"
+								"company-address"
 							]
 						}
 					},
@@ -1784,59 +1744,13 @@
 						"method": "POST",
 						"header": [],
 						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "about_tm",
-									"value": "Biz Barada",
-									"type": "default"
-								},
-								{
-									"key": "about_ru",
-									"value": "О нас",
-									"type": "default"
-								},
-								{
-									"key": "payment_tm",
-									"value": "Eltip bermek we töleg tertibi",
-									"type": "default"
-								},
-								{
-									"key": "payment_ru",
-									"value": "Порядок доставки и оплаты",
-									"type": "default"
-								},
-								{
-									"key": "contact_tm",
-									"value": "Aragatnaşyk",
-									"type": "default"
-								},
-								{
-									"key": "contact_ru",
-									"value": "Коммуникация",
-									"type": "default"
-								},
-								{
-									"key": "secure_tm",
-									"value": "Ulanyş düzgünleri we gizlinlik şertnamasy",
-									"type": "default"
-								},
-								{
-									"key": "secure_ru",
-									"value": "Обслуживания и Политика Конфиденциальности",
-									"type": "default"
-								},
-								{
-									"key": "word_tm",
-									"value": "Ähli hukuklary goraglydyr",
-									"type": "default"
-								},
-								{
-									"key": "word_ru",
-									"value": "Все права защищены",
-									"type": "default"
+							"mode": "raw",
+							"raw": "{\n    \"translations_footer\":[\n        {\n            \"lang_id\":\"aea98b93-7bdf-455b-9ad4-a259d69dc76e\",\n            \"about\":\"О нас\",\n            \"payment\":\"Порядок доставки и оплаты\",\n            \"contact\":\"Коммуникация\",\n            \"secure\":\"Обслуживания и Политика Конфиденциальности\",\n            \"word\":\"Все права защищены\"\n        },\n        {\n            \"lang_id\":\"8723c1c7-aa6d-429f-b8af-ee9ace61f0d7\",\n            \"about\":\"Biz Barada\",\n            \"payment\":\"Eltip bermek we töleg tertibi\",\n            \"contact\":\"Aragatnaşyk\",\n            \"secure\":\"Ulanyş düzgünleri we gizlinlik şertnamasy\",\n            \"word\":\"Ähli hukuklary goraglydyr\"\n        }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
 								}
-							]
+							}
 						},
 						"url": {
 							"raw": "localhost:2406/admin/translation-footer",
@@ -1858,45 +1772,23 @@
 						"method": "PUT",
 						"header": [],
 						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "about",
-									"value": "Biz Barada",
-									"type": "default"
-								},
-								{
-									"key": "payment",
-									"value": "Eltip bermek we töleg tertibi",
-									"type": "default"
-								},
-								{
-									"key": "contact",
-									"value": "Aragatnaşyk",
-									"type": "default"
-								},
-								{
-									"key": "secure",
-									"value": "Ulanyş düzgünleri we gizlinlik şertnamasy",
-									"type": "default"
-								},
-								{
-									"key": "word",
-									"value": "Ähli hukuklary goraglydyr",
-									"type": "default"
+							"mode": "raw",
+							"raw": "{\n    \"id\":\"12dc4c16-5712-4bff-a957-8e16d450b4fb\",\n    \"lang_id\":\"8723c1c7-aa6d-429f-b8af-ee9ace61f0d7\",\n    \"about\":\"Biz Barada\",\n    \"payment\":\"Eltip bermek we töleg tertibi\",\n    \"contact\":\"Aragatnaşyk\",\n    \"secure\":\"Ulanyş düzgünleri we gizlinlik şertnamasy\",\n    \"word\":\"Ähli hukuklary goraglydyr\"\n    }",
+							"options": {
+								"raw": {
+									"language": "json"
 								}
-							]
+							}
 						},
 						"url": {
-							"raw": "localhost:2406/admin/translation-footer/12dc4c16-5712-4bff-a957-8e16d450b4fb",
+							"raw": "localhost:2406/admin/translation-footer",
 							"host": [
 								"localhost"
 							],
 							"port": "2406",
 							"path": [
 								"admin",
-								"translation-footer",
-								"12dc4c16-5712-4bff-a957-8e16d450b4fb"
+								"translation-footer"
 							]
 						}
 					},
@@ -1933,149 +1825,13 @@
 						"method": "POST",
 						"header": [],
 						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "research_tm",
-									"value": "gözleg",
-									"type": "default"
-								},
-								{
-									"key": "research_ru",
-									"value": "поиск",
-									"type": "default"
-								},
-								{
-									"key": "phone_tm",
-									"value": "telefon",
-									"type": "default"
-								},
-								{
-									"key": "phone_ru",
-									"value": "tелефон",
-									"type": "default"
-								},
-								{
-									"key": "password_tm",
-									"value": "parol",
-									"type": "default"
-								},
-								{
-									"key": "password_ru",
-									"value": "пароль",
-									"type": "default"
-								},
-								{
-									"key": "forgot_password_tm",
-									"value": "Acar sozumi unutdym",
-									"type": "default"
-								},
-								{
-									"key": "forgot_password_ru",
-									"value": "забыл пароль",
-									"type": "default"
-								},
-								{
-									"key": "sign_in_tm",
-									"value": "ulgama girmek",
-									"type": "default"
-								},
-								{
-									"key": "sign_in_ru",
-									"value": "войти",
-									"type": "default"
-								},
-								{
-									"key": "sign_up_tm",
-									"value": "agza bolmak",
-									"type": "default"
-								},
-								{
-									"key": "sign_up_ru",
-									"value": "зарегистрироваться",
-									"type": "default"
-								},
-								{
-									"key": "name_tm",
-									"value": "Ady",
-									"type": "default"
-								},
-								{
-									"key": "name_ru",
-									"value": "имя",
-									"type": "default"
-								},
-								{
-									"key": "password_verification_tm",
-									"value": "Acar sozi tassyklamak",
-									"type": "default"
-								},
-								{
-									"key": "password_verification_ru",
-									"value": "Подтвердить Пароль",
-									"type": "default"
-								},
-								{
-									"key": "verify_secure_tm",
-									"value": "Ulanyş Düzgünlerini we Gizlinlik Şertnamasyny okadym we kabul edýärin",
-									"type": "default"
-								},
-								{
-									"key": "verify_secure_ru",
-									"value": "Я прочитал и принимаю Условия Обслуживания и Политика Конфиденциальности",
-									"type": "default"
-								},
-								{
-									"key": "my_information_tm",
-									"value": "maglumatym",
-									"type": "default"
-								},
-								{
-									"key": "my_information_ru",
-									"value": "моя информация",
-									"type": "default"
-								},
-								{
-									"key": "my_favorites_tm",
-									"value": "halanlarym",
-									"type": "default"
-								},
-								{
-									"key": "my_favorites_ru",
-									"value": "мои любимые",
-									"type": "default"
-								},
-								{
-									"key": "my_orders_tm",
-									"value": "sargytlarym",
-									"type": "default"
-								},
-								{
-									"key": "my_orders_ru",
-									"value": "мои заказы",
-									"type": "default"
-								},
-								{
-									"key": "log_out_tm",
-									"value": "cykmak",
-									"type": "default"
-								},
-								{
-									"key": "log_out_ru",
-									"value": "выйти",
-									"type": "default"
-								},
-								{
-									"key": "basket_tm",
-									"value": "sebet",
-									"type": "default"
-								},
-								{
-									"key": "basket_ru",
-									"value": "корзина",
-									"type": "default"
+							"mode": "raw",
+							"raw": "{\n    \"translations_header\":[\n        {\n            \"lang_id\":\"aea98b93-7bdf-455b-9ad4-a259d69dc76e\",\n            \"research\":\"поиск\",\n            \"phone\":\"tелефон\",\n            \"password\":\"пароль\",\n            \"forgot_password\":\"забыл пароль\",\n            \"sign_in\":\"войти\",\n            \"sign_up\":\"зарегистрироваться\",\n            \"name\":\"имя\",\n            \"password_verification\":\"Подтвердить Пароль\",\n            \"verify_secure\":\"Я прочитал и принимаю Условия Обслуживания и Политика Конфиденциальности\",\n            \"my_information\":\"моя информация\",\n            \"my_favorites\":\"мои любимые\",\n            \"my_orders\":\"мои заказы\",\n            \"log_out\":\"выйти\",\n            \"basket\":\"корзина\",\n            \"email\":\"uytget\",\n            \"add_to_basket\":\"uytget\"\n        },\n        {\n            \"lang_id\":\"8723c1c7-aa6d-429f-b8af-ee9ace61f0d7\",\n            \"research\":\"gözleg\",\n            \"phone\":\"telefon\",\n            \"password\":\"parol\",\n            \"forgot_password\":\"Acar sozumi unutdym\",\n            \"sign_in\":\"ulgama girmek\",\n            \"sign_up\":\"agza bolmak\",\n            \"name\":\"Ady\",\n            \"password_verification\":\"Acar sozi tassyklamak\",\n            \"verify_secure\":\"Ulanyş Düzgünlerini we Gizlinlik Şertnamasyny okadym we kabul edýärin\",\n            \"my_information\":\"maglumatym\",\n            \"my_favorites\":\"halanlarym\",\n            \"my_orders\":\"sargytlarym\",\n            \"log_out\":\"cykmak\",\n            \"basket\":\"sebet\",\n            \"email\":\"uytget\",\n            \"add_to_basket\":\"uytget\"\n        }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
 								}
-							]
+							}
 						},
 						"url": {
 							"raw": "localhost:2406/admin/translation-header",
@@ -2097,90 +1853,23 @@
 						"method": "PUT",
 						"header": [],
 						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "research",
-									"value": "gözleg",
-									"type": "default"
-								},
-								{
-									"key": "phone",
-									"value": "telefon",
-									"type": "default"
-								},
-								{
-									"key": "password",
-									"value": "parol",
-									"type": "default"
-								},
-								{
-									"key": "forgot_password",
-									"value": "Acar sozumi unutdym",
-									"type": "default"
-								},
-								{
-									"key": "sign_in",
-									"value": "ulgama girmek",
-									"type": "default"
-								},
-								{
-									"key": "sign_up",
-									"value": "agza bolmak",
-									"type": "default"
-								},
-								{
-									"key": "name",
-									"value": "Ady",
-									"type": "default"
-								},
-								{
-									"key": "password_verification",
-									"value": "Acar sozi tassyklamak",
-									"type": "default"
-								},
-								{
-									"key": "verify_secure",
-									"value": "Ulanyş Düzgünlerini we Gizlinlik Şertnamasyny okadym we kabul edýärin",
-									"type": "default"
-								},
-								{
-									"key": "my_information",
-									"value": "maglumatym",
-									"type": "default"
-								},
-								{
-									"key": "my_favorites",
-									"value": "halanlarym",
-									"type": "default"
-								},
-								{
-									"key": "my_orders",
-									"value": "sargytlarym",
-									"type": "default"
-								},
-								{
-									"key": "log_out",
-									"value": "cykmak",
-									"type": "default"
-								},
-								{
-									"key": "basket",
-									"value": "sebet",
-									"type": "default"
+							"mode": "raw",
+							"raw": "{\n    \"id\":\"9154e800-2a92-47de-b4ff-1e63b213e5f7\",\n    \"lang_id\":\"aea98b93-7bdf-455b-9ad4-a259d69dc76e\",\n    \"research\":\"поиск\",\n    \"phone\":\"tелефон\",\n    \"password\":\"пароль\",\n    \"forgot_password\":\"забыл пароль\",\n    \"sign_in\":\"войти\",\n    \"sign_up\":\"зарегистрироваться\",\n    \"name\":\"имя\",\n    \"password_verification\":\"Подтвердить Пароль\",\n    \"verify_secure\":\"Я прочитал и принимаю Условия Обслуживания и Политика Конфиденциальности\",\n    \"my_information\":\"моя информация\",\n    \"my_favorites\":\"мои любимые\",\n    \"my_orders\":\"мои заказы\",\n    \"log_out\":\"выйти\",\n    \"basket\":\"корзина\",\n    \"email\":\"uytget_ru\",\n    \"add_to_basket\":\"uytget_ru\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
 								}
-							]
+							}
 						},
 						"url": {
-							"raw": "localhost:2406/admin/translation-header/eaf206e6-d515-4bdb-9323-a047cd0edae5",
+							"raw": "localhost:2406/admin/translation-header",
 							"host": [
 								"localhost"
 							],
 							"port": "2406",
 							"path": [
 								"admin",
-								"translation-header",
-								"eaf206e6-d515-4bdb-9323-a047cd0edae5"
+								"translation-header"
 							]
 						}
 					},
@@ -2261,29 +1950,13 @@
 						"method": "POST",
 						"header": [],
 						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "title_tm",
-									"value": "ÖZARA YLALAŞYGY",
-									"type": "default"
-								},
-								{
-									"key": "title_ru",
-									"value": "Пользовательское соглашение",
-									"type": "default"
-								},
-								{
-									"key": "content_tm",
-									"value": "Ynamdar - Internet Marketi (Mundan beýläk – “Ynamdar”) we www.ynamdar.com internet saýty (Mundan beýläk – “Saýt”) bilen, onuň agzasynyň (“Agza”) arasynda aşakdaky şertleri ýerine ýetirmek barada ylalaşyga gelindi.",
-									"type": "default"
-								},
-								{
-									"key": "content_ru",
-									"value": "Между Ынамдар – Интернет Маркетом (далее – “Ынамдар”) и интернет сайтом www.ynamdar.com (далее – “Сайт”), а также его клиентом (далее - “Клиент”) достигнуто соглашение по нижеследующим условиям.\n",
-									"type": "default"
+							"mode": "raw",
+							"raw": "{\n    \"translations_secure\":[\n        {\n            \"lang_id\":\"aea98b93-7bdf-455b-9ad4-a259d69dc76e\",\n            \"title\":\"Пользовательское соглашение\",\n            \"content\":\"Между Ынамдар – Интернет Маркетом (далее – “Ынамдар”) и интернет сайтом www.ynamdar.com (далее – “Сайт”), а также его клиентом (далее - “Клиент”) достигнуто соглашение по нижеследующим условиям.\"\n        },\n        {\n            \"lang_id\":\"8723c1c7-aa6d-429f-b8af-ee9ace61f0d7\",\n            \"title\":\"ÖZARA YLALAŞYGY\",\n            \"content\":\"Ynamdar - Internet Marketi (Mundan beýläk – “Ynamdar”) we www.ynamdar.com internet saýty (Mundan beýläk – “Saýt”) bilen, onuň agzasynyň (“Agza”) arasynda aşakdaky şertleri ýerine ýetirmek barada ylalaşyga gelindi.\"\n        }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
 								}
-							]
+							}
 						},
 						"url": {
 							"raw": "localhost:2406/admin/translation-secure",
@@ -2305,30 +1978,23 @@
 						"method": "PUT",
 						"header": [],
 						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "title",
-									"value": "ÖZARA YLALAŞYGY",
-									"type": "default"
-								},
-								{
-									"key": "content",
-									"value": "Ynamdar - Internet Marketi (Mundan beýläk – “Ynamdar”) we www.ynamdar.com internet saýty (Mundan beýläk – “Saýt”) bilen, onuň agzasynyň (“Agza”) arasynda aşakdaky şertleri ýerine ýetirmek barada ylalaşyga gelindi.",
-									"type": "default"
+							"mode": "raw",
+							"raw": " {\n    \"id\":\"5988b64a-82ad-4ed0-bd1b-bdd0b3b05912\",\n    \"lang_id\":\"8723c1c7-aa6d-429f-b8af-ee9ace61f0d7\",\n    \"title\":\"ÖZARA YLALAŞYGY\",\n    \"content\":\"Ynamdar - Internet Marketi (Mundan beýläk – “Ynamdar”) we www.ynamdar.com internet saýty (Mundan beýläk – “Saýt”) bilen, onuň agzasynyň (“Agza”) arasynda aşakdaky şertleri ýerine ýetirmek barada ylalaşyga gelindi.\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
 								}
-							]
+							}
 						},
 						"url": {
-							"raw": "localhost:2406/admin/translation-secure/5988b64a-82ad-4ed0-bd1b-bdd0b3b05912",
+							"raw": "localhost:2406/admin/translation-secure",
 							"host": [
 								"localhost"
 							],
 							"port": "2406",
 							"path": [
 								"admin",
-								"translation-secure",
-								"5988b64a-82ad-4ed0-bd1b-bdd0b3b05912"
+								"translation-secure"
 							]
 						}
 					},
@@ -2385,29 +2051,13 @@
 						"method": "POST",
 						"header": [],
 						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "title_tm",
-									"value": "Eltip bermek we töleg tertibi",
-									"type": "default"
-								},
-								{
-									"key": "title_ru",
-									"value": "Порядок доставки и оплаты",
-									"type": "default"
-								},
-								{
-									"key": "content_tm",
-									"value": "Eltip bermek hyzmaty Aşgabat şäheriniň çägi bilen bir hatarda Büzmeýine we Änew şäherine hem elýeterlidir. Hyzmat mugt amala aşyrylýar;\nHer bir sargydyň jemi bahasy azyndan 150 manat bolmalydyr;\nSaýtdan sargyt edeniňizden soňra operator size jaň edip sargydy tassyklar (eger hemişelik müşderi bolsaňyz sargytlaryňyz islegiňize görä awtomatik usulda hem tassyklanýar);\nGirizen salgyňyz we telefon belgiňiz esasynda hyzmat amala aşyrylýar;\nSargyt tassyklanmadyk ýagdaýynda ol hasaba alynmaýar we ýerine ýetirilmeýär. Sargydyň tassyklanmagy üçin girizen telefon belgiňizden jaň kabul edip bilýändigiňize göz ýetiriň. Şeýle hem girizen salgyňyzyň dogrulygyny barlaň;\nSargydy barlap alanyňyzdan soňra töleg amala aşyrylýar. Eltip berijiniň size gowşurýan töleg resminamasynda siziň tölemeli puluňyz bellenendir. Töleg nagt we nagt däl görnüşde milli manatda amala aşyrylýar. Kabul edip tölegini geçiren harydyňyz yzyna alynmaýar;\nSargyt tassyklanandan soňra 24 sagadyň dowamynda eýesi tapylmasa ol güýjüni ýitirýär;",
-									"type": "default"
-								},
-								{
-									"key": "content_ru",
-									"value": "В настоящее время услуга по доставке осуществляется по городу Ашхабад, Бюзмеин и Анау. Услуга предоставляется бесплатно.\nМинимальный заказ должен составлять не менее 150 манат;\nПосле Вашего заказа по сайту, оператор позвонит Вам для подтверждения заказа (постоянным клиентам по их желанию подтверждение осуществляется автоматизированно);\nУслуга доставки выполняется по указанному Вами адресу и номеру телефона;\nЕсли заказ не подтвержден то данный заказ не регистрируется и не выполняется. Для подтверждения заказа, удостоверьтесь, что можете принять звонок по указанному Вами номеру телефона. Также проверьте правильность указанного Вами адреса;\nОплата выполняется после того, как Вы проверите и примите заказ. На платежном документе курьера указана сумма Вашей оплаты. Оплата выполняется наличными и через карту в национальной валюте. Принятый и оплаченный товар возврату не подлежит;\nЕсли не удается найти владельца заказа в течение 24 часов после подтверждения заказа, то данный заказ аннулируется;",
-									"type": "default"
+							"mode": "raw",
+							"raw": "{\n    \"translations_payment\":[\n        {\n            \"lang_id\":\"aea98b93-7bdf-455b-9ad4-a259d69dc76e\",\n            \"title\":\"Порядок доставки и оплаты\",\n            \"content\":\"В настоящее время услуга по доставке осуществляется по городу Ашхабад, Бюзмеин и Анау Услуга предоставляется бесплатно Минимальный заказ должен составлять не менее 150 манат После Вашего заказа по сайту, оператор позвонит Вам для подтверждения заказа (постоянным клиентам по их желанию подтверждение осуществляется автоматизированно) Услуга доставки выполняется по указанному Вами адресу и номеру телефона Если заказ не подтвержден то данный заказ не регистрируется и не выполняется. Для подтверждения заказа, удостоверьтесь, что можете принять звонок по указанному Вами номеру телефона. Также проверьте правильность указанного Вами адреса Оплата выполняется после того, как Вы проверите и примите заказ. На платежном документе курьера указана сумма Вашей оплаты. Оплата выполняется наличными и через карту в национальной валюте. Принятый и оплаченный товар возврату не подлежит Если не удается найти владельца заказа в течение 24 часов после подтверждения заказа, то данный заказ аннулируется\"\n        },\n        {\n            \"lang_id\":\"8723c1c7-aa6d-429f-b8af-ee9ace61f0d7\",\n            \"title\":\"Eltip bermek we töleg tertibi\",\n            \"content\":\"Eltip bermek hyzmaty Aşgabat şäheriniň çägi bilen bir hatarda Büzmeýine we Änew şäherine hem elýeterlidir. Hyzmat mugt amala aşyrylýar Her bir sargydyň jemi bahasy azyndan 150 manat bolmalydyr Saýtdan sargyt edeniňizden soňra operator size jaň edip sargydy tassyklar (eger hemişelik müşderi bolsaňyz sargytlaryňyz islegiňize görä awtomatik usulda hem tassyklanýar) Girizen salgyňyz we telefon belgiňiz esasynda hyzmat amala aşyrylýar Sargyt tassyklanmadyk ýagdaýynda ol hasaba alynmaýar we ýerine ýetirilmeýär. Sargydyň tassyklanmagy üçin girizen telefon belgiňizden jaň kabul edip bilýändigiňize göz ýetiriň. Şeýle hem girizen salgyňyzyň dogrulygyny barlaň Sargydy barlap alanyňyzdan soňra töleg amala aşyrylýar. Eltip berijiniň size gowşurýan töleg resminamasynda siziň tölemeli puluňyz bellenendir. Töleg nagt we nagt däl görnüşde milli manatda amala aşyrylýar. Kabul edip tölegini geçiren harydyňyz yzyna alynmaýar Sargyt tassyklanandan soňra 24 sagadyň dowamynda eýesi tapylmasa ol güýjüni ýitirýär;\"\n        }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
 								}
-							]
+							}
 						},
 						"url": {
 							"raw": "localhost:2406/admin/translation-payment",
@@ -2449,30 +2099,23 @@
 						"method": "PUT",
 						"header": [],
 						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "title",
-									"value": "Eltip bermek we töleg tertibi",
-									"type": "default"
-								},
-								{
-									"key": "content",
-									"value": "",
-									"type": "default"
+							"mode": "raw",
+							"raw": "{\n    \"id\":\"5748ec03-5278-425c-babf-f7f2bf8d2efa\",\n    \"lang_id\":\"8723c1c7-aa6d-429f-b8af-ee9ace61f0d7\",\n    \"title\":\"Eltip bermek we töleg tertibi\",\n    \"content\":\"Eltip bermek hyzmaty Aşgabat şäheriniň çägi bilen bir hatarda Büzmeýine we Änew şäherine hem elýeterlidir. Hyzmat mugt amala aşyrylýar Her bir sargydyň jemi bahasy azyndan 150 manat bolmalydyr Saýtdan sargyt edeniňizden soňra operator size jaň edip sargydy tassyklar (eger hemişelik müşderi bolsaňyz sargytlaryňyz islegiňize görä awtomatik usulda hem tassyklanýar) Girizen salgyňyz we telefon belgiňiz esasynda hyzmat amala aşyrylýar Sargyt tassyklanmadyk ýagdaýynda ol hasaba alynmaýar we ýerine ýetirilmeýär. Sargydyň tassyklanmagy üçin girizen telefon belgiňizden jaň kabul edip bilýändigiňize göz ýetiriň. Şeýle hem girizen salgyňyzyň dogrulygyny barlaň Sargydy barlap alanyňyzdan soňra töleg amala aşyrylýar. Eltip berijiniň size gowşurýan töleg resminamasynda siziň tölemeli puluňyz bellenendir. Töleg nagt we nagt däl görnüşde milli manatda amala aşyrylýar. Kabul edip tölegini geçiren harydyňyz yzyna alynmaýar Sargyt tassyklanandan soňra 24 sagadyň dowamynda eýesi tapylmasa ol güýjüni ýitirýär;\"\n    }",
+							"options": {
+								"raw": {
+									"language": "json"
 								}
-							]
+							}
 						},
 						"url": {
-							"raw": "localhost:2406/admin/translation-payment/5748ec03-5278-425c-babf-f7f2bf8d2efa",
+							"raw": "localhost:2406/admin/translation-payment",
 							"host": [
 								"localhost"
 							],
 							"port": "2406",
 							"path": [
 								"admin",
-								"translation-payment",
-								"5748ec03-5278-425c-babf-f7f2bf8d2efa"
+								"translation-payment"
 							]
 						}
 					},
@@ -2509,29 +2152,13 @@
 						"method": "POST",
 						"header": [],
 						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "title_tm",
-									"value": "Sizi Isleg onlaýn marketimizde hoş gördük!",
-									"type": "default"
-								},
-								{
-									"key": "title_ru",
-									"value": "Рады приветствовать Вас в интернет-маркете Isleg!",
-									"type": "default"
-								},
-								{
-									"key": "content_tm",
-									"value": "Onlaýn marketimiz 2019-njy ýylyň iýul aýyndan bäri hyzmat berýär. Häzirki wagtda Size ýüzlerçe brendlere degişli bolan müňlerçe haryt görnüşlerini hödürleýäris! Haryt görnüşlerimizi sizden gelýän isleg we teklipleriň esasynda köpeltmäge dowam edýäris. Biziň maksadymyz müşderilerimize ýokary hilli hyzmat bermek bolup durýar. Indi Siz öýüňizden çykmazdan özüňizi gerekli zatlar bilen üpjün edip bilersiňiz! Munuň bilen bir hatarda Siz wagtyňyzy we transport çykdajylaryny hem tygşytlaýarsyňyz. Tölegi harytlar size gowuşandan soňra nagt ýa-da bank kartlarynyň üsti bilen amala aşyryp bilersiňiz!\n\nBiziň gapymyz hyzmatdaşlyklara we tekliplere hemişe açyk!",
-									"type": "default"
-								},
-								{
-									"key": "content_ru",
-									"value": "Мы начали работу в июле 2019 года и на сегодняшний день мы предлагаем Вам тысячи видов товаров, которые принадлежат сотням брендам. Каждый день мы работаем над увеличением ассортимента, привлечением новых компаний к сотрудничеству. Целью нашей работы является создание выгодных условий для наших клиентов-экономия времени на походы в магазины, оплата наличными или картой, доставка в удобное время, и конечно же качественная продукция по лучшим ценам!\n\nМы открыты для сотрудничества и пожеланий!",
-									"type": "default"
+							"mode": "raw",
+							"raw": "{\n    \"translations_about\":[\n        {\n            \"lang_id\":\"aea98b93-7bdf-455b-9ad4-a259d69dc76e\",\n            \"title\":\"Рады приветствовать Вас в интернет-маркете Isleg!\",\n            \"content\":\"Мы начали работу в июле 2019 года и на сегодняшний день мы предлагаем Вам тысячи видов товаров, которые принадлежат сотням брендам. Каждый день мы работаем над увеличением ассортимента, привлечением новых компаний к сотрудничеству. Целью нашей работы является создание выгодных условий для наших клиентов-экономия времени на походы в магазины, оплата наличными или картой, доставка в удобное время, и конечно же качественная продукция по лучшим ценам Мы открыты для сотрудничества и пожеланий\"\n        },\n        {\n            \"lang_id\":\"8723c1c7-aa6d-429f-b8af-ee9ace61f0d7\",\n            \"title\":\"Sizi Isleg onlaýn marketimizde hoş gördük!\",\n            \"content\":\"Onlaýn marketimiz 2019-njy ýylyň iýul aýyndan bäri hyzmat berýär. Häzirki wagtda Size ýüzlerçe brendlere degişli bolan müňlerçe haryt görnüşlerini hödürleýäris! Haryt görnüşlerimizi sizden gelýän isleg we teklipleriň esasynda köpeltmäge dowam edýäris. Biziň maksadymyz müşderilerimize ýokary hilli hyzmat bermek bolup durýar. Indi Siz öýüňizden çykmazdan özüňizi gerekli zatlar bilen üpjün edip bilersiňiz! Munuň bilen bir hatarda Siz wagtyňyzy we transport çykdajylaryny hem tygşytlaýarsyňyz. Tölegi harytlar size gowuşandan soňra nagt ýa-da bank kartlarynyň üsti bilen amala aşyryp bilersiňiz Biziň gapymyz hyzmatdaşlyklara we tekliplere hemişe açyk!\"\n        }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
 								}
-							]
+							}
 						},
 						"url": {
 							"raw": "localhost:2406/admin/translation-about",
@@ -2573,30 +2200,23 @@
 						"method": "PUT",
 						"header": [],
 						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "title",
-									"value": "",
-									"type": "default"
-								},
-								{
-									"key": "content",
-									"value": "",
-									"type": "default"
+							"mode": "raw",
+							"raw": "{\n    \"id\":\"7abeb5cf-2fbb-43b9-94ca-251dd5f40d5a\",\n    \"lang_id\":\"8723c1c7-aa6d-429f-b8af-ee9ace61f0d7\",\n    \"title\":\"Sizi Isleg onlaýn marketimizde hoş gördük!\",\n    \"content\":\"Onlaýn marketimiz 2019-njy ýylyň iýul aýyndan bäri hyzmat berýär. Häzirki wagtda Size ýüzlerçe brendlere degişli bolan müňlerçe haryt görnüşlerini hödürleýäris! Haryt görnüşlerimizi sizden gelýän isleg we teklipleriň esasynda köpeltmäge dowam edýäris. Biziň maksadymyz müşderilerimize ýokary hilli hyzmat bermek bolup durýar. Indi Siz öýüňizden çykmazdan özüňizi gerekli zatlar bilen üpjün edip bilersiňiz! Munuň bilen bir hatarda Siz wagtyňyzy we transport çykdajylaryny hem tygşytlaýarsyňyz. Tölegi harytlar size gowuşandan soňra nagt ýa-da bank kartlarynyň üsti bilen amala aşyryp bilersiňiz Biziň gapymyz hyzmatdaşlyklara we tekliplere hemişe açyk!\"\n    }",
+							"options": {
+								"raw": {
+									"language": "json"
 								}
-							]
+							}
 						},
 						"url": {
-							"raw": "localhost:2406/admin/translation-about/7abeb5cf-2fbb-43b9-94ca-251dd5f40d5a",
+							"raw": "localhost:2406/admin/translation-about",
 							"host": [
 								"localhost"
 							],
 							"port": "2406",
 							"path": [
 								"admin",
-								"translation-about",
-								"7abeb5cf-2fbb-43b9-94ca-251dd5f40d5a"
+								"translation-about"
 							]
 						}
 					},
@@ -2633,99 +2253,13 @@
 						"method": "POST",
 						"header": [],
 						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "full_name_tm",
-									"value": "at_tm",
-									"type": "default"
-								},
-								{
-									"key": "full_name_ru",
-									"value": "at_ru",
-									"type": "default"
-								},
-								{
-									"key": "email_tm",
-									"value": "rmail_tm",
-									"type": "default"
-								},
-								{
-									"key": "email_ru",
-									"value": "mail_ru",
-									"type": "default"
-								},
-								{
-									"key": "phone_tm",
-									"value": "phone_tm",
-									"type": "default"
-								},
-								{
-									"key": "phone_ru",
-									"value": "phone_ru",
-									"type": "default"
-								},
-								{
-									"key": "letter_tm",
-									"value": "letter_tm",
-									"type": "default"
-								},
-								{
-									"key": "letter_ru",
-									"value": "letter ru",
-									"type": "default"
-								},
-								{
-									"key": "company_phone_tm",
-									"value": "cp tm",
-									"type": "default"
-								},
-								{
-									"key": "company_phone_ru",
-									"value": "cp ru",
-									"type": "default"
-								},
-								{
-									"key": "imo_tm",
-									"value": "imo tm",
-									"type": "default"
-								},
-								{
-									"key": "imo_ru",
-									"value": "imo ru",
-									"type": "default"
-								},
-								{
-									"key": "company_email_tm",
-									"value": "ce tm",
-									"type": "default"
-								},
-								{
-									"key": "company_email_ru",
-									"value": "ce ru",
-									"type": "default"
-								},
-								{
-									"key": "instagram_tm",
-									"value": "instagram tm",
-									"type": "default"
-								},
-								{
-									"key": "instagram_ru",
-									"value": "instagram ru",
-									"type": "default"
-								},
-								{
-									"key": "button_text_tm",
-									"value": "Ugrat",
-									"type": "default"
-								},
-								{
-									"key": "button_text_ru",
-									"value": "Отправить",
-									"type": "default"
+							"mode": "raw",
+							"raw": "{\n    \"translations_contact\":[\n        {\n            \"lang_id\":\"aea98b93-7bdf-455b-9ad4-a259d69dc76e\",\n            \"full_name\":\"full_name_ru\",\n            \"email\":\"email_ru\",\n            \"phone\":\"phone_ru\",\n            \"letter\":\"letter_ru\",\n            \"company_phone\":\"company_phone_ru\",\n            \"imo\":\"imo_ru\",\n            \"company_email\":\"company_email_ru\",\n            \"instagram\":\"instagram_ru\",\n            \"button_text\":\"button_text_ru\"\n        },\n        {\n            \"lang_id\":\"8723c1c7-aa6d-429f-b8af-ee9ace61f0d7\",\n            \"full_name\":\"full_name_tm\",\n            \"email\":\"email_tm\",\n            \"phone\":\"phone_tm\",\n            \"letter\":\"letter_tm\",\n            \"company_phone\":\"company_phone_tm\",\n            \"imo\":\"imo_tm\",\n            \"company_email\":\"company_email_tm\",\n            \"instagram\":\"instagram_tm\",\n            \"button_text\":\"button_texttmu\"\n        }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
 								}
-							]
+							}
 						},
 						"url": {
 							"raw": "localhost:2406/admin/translation-contact",
@@ -2767,65 +2301,23 @@
 						"method": "PUT",
 						"header": [],
 						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "full_name",
-									"value": "at_tm",
-									"type": "default"
-								},
-								{
-									"key": "email",
-									"value": "mail_tm",
-									"type": "default"
-								},
-								{
-									"key": "phone",
-									"value": "phone_tm",
-									"type": "default"
-								},
-								{
-									"key": "letter",
-									"value": "letter_tm",
-									"type": "default"
-								},
-								{
-									"key": "company_phone",
-									"value": "cp_tm",
-									"type": "default"
-								},
-								{
-									"key": "imo",
-									"value": "imo_tm",
-									"type": "default"
-								},
-								{
-									"key": "company_email",
-									"value": "ce_tm",
-									"type": "default"
-								},
-								{
-									"key": "instagram",
-									"value": "ins_tm",
-									"type": "default"
-								},
-								{
-									"key": "button_text",
-									"value": "ugrat",
-									"type": "default"
+							"mode": "raw",
+							"raw": "{\n    \"id\":\"73253999-7355-42b4-8700-94de76f0058a\",\n    \"lang_id\":\"8723c1c7-aa6d-429f-b8af-ee9ace61f0d7\",\n    \"full_name\":\"full_name_tm\",\n    \"email\":\"email_tm\",\n    \"phone\":\"phone_tm\",\n    \"letter\":\"letter_tm\",\n    \"company_phone\":\"company_phone_tm\",\n    \"imo\":\"imo_tm\",\n    \"company_email\":\"company_email_tm\",\n    \"instagram\":\"instagram_tm\",\n    \"button_text\":\"button_texttmu\"\n    }",
+							"options": {
+								"raw": {
+									"language": "json"
 								}
-							]
+							}
 						},
 						"url": {
-							"raw": "localhost:2406/admin/translation-contact/73253999-7355-42b4-8700-94de76f0058a",
+							"raw": "localhost:2406/admin/translation-contact",
 							"host": [
 								"localhost"
 							],
 							"port": "2406",
 							"path": [
 								"admin",
-								"translation-contact",
-								"73253999-7355-42b4-8700-94de76f0058a"
+								"translation-contact"
 							]
 						}
 					},
@@ -2862,49 +2354,13 @@
 						"method": "POST",
 						"header": [],
 						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "address_tm",
-									"value": "salgyňyz",
-									"type": "default"
-								},
-								{
-									"key": "address_ru",
-									"value": "ваш адрес",
-									"type": "default"
-								},
-								{
-									"key": "birthday_tm",
-									"value": "doglan senäň",
-									"type": "default"
-								},
-								{
-									"key": "birthday_ru",
-									"value": "дата рождения",
-									"type": "default"
-								},
-								{
-									"key": "update_password_tm",
-									"value": "",
-									"type": "default"
-								},
-								{
-									"key": "update_password_ru",
-									"value": "",
-									"type": "default"
-								},
-								{
-									"key": "save_tm",
-									"value": "",
-									"type": "default"
-								},
-								{
-									"key": "save_ru",
-									"value": "",
-									"type": "default"
+							"mode": "raw",
+							"raw": "{\n    \"translations_my_information_page\": [\n        {\n            \"lang_id\": \"aea98b93-7bdf-455b-9ad4-a259d69dc76e\",\n            \"birthday\": \"дата рождения\",\n            \"address\": \"ваш адрес\",\n            \"update_password\": \"update_password_ru\",\n            \"save\": \"save_ru\"\n        },\n        {\n            \"lang_id\": \"8723c1c7-aa6d-429f-b8af-ee9ace61f0d7\",\n            \"birthday\": \"doglan senäň\",\n            \"address\": \"salgyňyz\",\n            \"update_password\": \"update_password_tm\",\n            \"save\": \"save_tm\"\n        }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
 								}
-							]
+							}
 						},
 						"url": {
 							"raw": "localhost:2406/admin/translation-my-information-page",
@@ -2952,40 +2408,23 @@
 						"method": "PUT",
 						"header": [],
 						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "address",
-									"value": "salgyňyz",
-									"type": "default"
-								},
-								{
-									"key": "birthday",
-									"value": "doglan senäň",
-									"type": "default"
-								},
-								{
-									"key": "update_password",
-									"value": "açar sözi üýtget",
-									"type": "default"
-								},
-								{
-									"key": "save",
-									"value": "ýatda sakla",
-									"type": "default"
+							"mode": "raw",
+							"raw": "{\n    \"id\":\"11074158-69f2-473a-b4fe-94304ff0d8a7\",\n    \"lang_id\":\"8723c1c7-aa6d-429f-b8af-ee9ace61f0d7\",\n    \"birthday\":\"doglan senäň\",\n    \"address\":\"salgyňyz\",\n    \"update_password\":\"update_password_tm\",\n    \"save\":\"save_tm\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
 								}
-							]
+							}
 						},
 						"url": {
-							"raw": "localhost:2406/admin/translation-my-information-page/11074158-69f2-473a-b4fe-94304ff0d8a7",
+							"raw": "localhost:2406/admin/translation-my-information-page",
 							"host": [
 								"localhost"
 							],
 							"port": "2406",
 							"path": [
 								"admin",
-								"translation-my-information-page",
-								"11074158-69f2-473a-b4fe-94304ff0d8a7"
+								"translation-my-information-page"
 							]
 						}
 					},
@@ -3022,59 +2461,13 @@
 						"method": "POST",
 						"header": [],
 						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "title_tm",
-									"value": "açar sözi üýtgetmek",
-									"type": "default"
-								},
-								{
-									"key": "title_ru",
-									"value": "изменить пароль",
-									"type": "default"
-								},
-								{
-									"key": "verify_password_tm",
-									"value": "açar sözi tassykla",
-									"type": "default"
-								},
-								{
-									"key": "verify_password_ru",
-									"value": "Подтвердить Пароль",
-									"type": "default"
-								},
-								{
-									"key": "explanation_tm",
-									"value": "siziň açar sözüňiz 5-20 uzynlygynda harp ýa-da sandan ybarat bolmalydyr",
-									"type": "default"
-								},
-								{
-									"key": "explanation_ru",
-									"value": "ключевое слово должно быть буквой или цифрой длиной от 5 до 20",
-									"type": "default"
-								},
-								{
-									"key": "save_tm",
-									"value": "ýatda sakla",
-									"type": "default"
-								},
-								{
-									"key": "save_ru",
-									"value": "запомнить",
-									"type": "default"
-								},
-								{
-									"key": "password_tm",
-									"value": "açar sözi",
-									"type": "default"
-								},
-								{
-									"key": "password_ru",
-									"value": "ключевое слово",
-									"type": "default"
+							"mode": "raw",
+							"raw": "{\n    \"translations_update_password_page\":[\n        {\n            \"lang_id\":\"aea98b93-7bdf-455b-9ad4-a259d69dc76e\",\n            \"title\":\"изменить пароль\",\n            \"password\":\"ключевое слово\",\n            \"verify_password\":\"Подтвердить Пароль\",\n            \"explanation\":\"ключевое слово должно быть буквой или цифрой длиной от 5 до 20\",\n            \"save\":\"запомнить\"\n        },\n        {\n            \"lang_id\":\"8723c1c7-aa6d-429f-b8af-ee9ace61f0d7\",\n            \"title\":\"açar sözi üýtgetmek\",\n            \"password\":\"açar sözi\",\n            \"verify_password\":\"açar sözi tassykla\",\n            \"explanation\":\"siziň açar sözüňiz 5-20 uzynlygynda harp ýa-da sandan ybarat bolmalydyr\",\n            \"save\":\"ýatda sakla\"\n        }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
 								}
-							]
+							}
 						},
 						"url": {
 							"raw": "localhost:2406/admin/translation-update-password-page",
@@ -3116,45 +2509,23 @@
 						"method": "PUT",
 						"header": [],
 						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "title",
-									"value": "açar sözi üýtgetmek",
-									"type": "default"
-								},
-								{
-									"key": "verify_password",
-									"value": "açar sözi tassykla",
-									"type": "default"
-								},
-								{
-									"key": "explanation",
-									"value": "siziň açar sözüňiz 5-20 uzynlygynda harp ýa-da sandan ybarat bolmalydyr",
-									"type": "default"
-								},
-								{
-									"key": "save",
-									"value": "ýatda sakla",
-									"type": "default"
-								},
-								{
-									"key": "password",
-									"value": "açar sözi",
-									"type": "default"
+							"mode": "raw",
+							"raw": "{\n    \"id\":\"de12082b-baab-4b83-ac07-119df09d1230\",\n    \"lang_id\":\"8723c1c7-aa6d-429f-b8af-ee9ace61f0d7\",\n    \"title\":\"açar sözi üýtgetmek\",\n    \"password\":\"açar sözi\",\n    \"verify_password\":\"açar sözi tassykla\",\n    \"explanation\":\"siziň açar sözüňiz 5-20 uzynlygynda harp ýa-da sandan ybarat bolmalydyr\",\n    \"save\":\"ýatda sakla\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
 								}
-							]
+							}
 						},
 						"url": {
-							"raw": "localhost:2406/admin/translation-update-password-page/de12082b-baab-4b83-ac07-119df09d1230",
+							"raw": "localhost:2406/admin/translation-update-password-page",
 							"host": [
 								"localhost"
 							],
 							"port": "2406",
 							"path": [
 								"admin",
-								"translation-update-password-page",
-								"de12082b-baab-4b83-ac07-119df09d1230"
+								"translation-update-password-page"
 							]
 						}
 					},
@@ -3221,7 +2592,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"phone_number\":\"+99363747155\",\n    \"password\":\"123456\"\n}",
+							"raw": "{\n    \"phone_number\":\"+99362420377\",\n    \"password\":\"12345\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -3394,29 +2765,18 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NSIsImV4cCI6MTY2NTUyMjkyOX0.S56L4y9NZmnAphuC4huuD4ZgkeKGWGpfKx7ztnXm_m0",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NSIsImN1c3RvbWVyX2lkIjoiMWY1YmM5MTctZmM4NS00NmNmLWExYjItN2MxNGNmZTk0MGJlIiwiZXhwIjoxNjY2NjgxNDgxfQ.aQeAjZRwrtuwyt1GW2iVijRy7hIFxpGowHPs1fM0nms",
 								"type": "default"
 							}
 						],
 						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "customer_id",
-									"value": "7e872c52-0d23-4086-8c45-43000b57332e",
-									"type": "default"
-								},
-								{
-									"key": "product_ids",
-									"value": "0d4a6c3c-cc5d-457b-ac9a-ce60eacb94de",
-									"type": "default"
-								},
-								{
-									"key": "product_ids",
-									"value": "b2b165a3-2261-4d67-8160-0e239ecd99b5",
-									"type": "default"
+							"mode": "raw",
+							"raw": "{\n    \"product_ids\":[\n        \"a2bb8745-1f3a-4de9-ad66-11b0bb3bb754\",\n        \"939da5d3-2f7a-40e2-b133-0b4113280647\",\n        \"0d4a6c3c-cc5d-457b-ac9a-ce60eacb94de\"\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
 								}
-							]
+							}
 						},
 						"url": {
 							"raw": "localhost:2406/api/tm/like",
@@ -3720,13 +3080,13 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NSIsImV4cCI6MTY2MzU2MjEzOH0.793xVgCEkg--G72auyGWIaHM7lX7hrIGt9jgN5X23Uw",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NSIsImN1c3RvbWVyX2lkIjoiMWY1YmM5MTctZmM4NS00NmNmLWExYjItN2MxNGNmZTk0MGJlIiwiZXhwIjoxNjY3MDIzODAxfQ.fPPZ1BLHzpJrdJ3mMQWuq2_tFLPmUKUe8INeq7qW_HE",
 								"type": "default"
 							}
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"customer_id\":\"7e872c52-0d23-4086-8c45-43000b57332e\",\n    \"products\":[\n        {\n            \"product_id\":\"d4156225-082e-4f0f-9b2c-85268114433a\",\n            \"quantity_of_product\":10\n        },\n         {\n            \"product_id\":\"8df705a5-2351-4aca-b03e-3357a23840b4\",\n            \"quantity_of_product\":23\n        },\n         {\n            \"product_id\":\"b2b165a3-2261-4d67-8160-0e239ecd99b5\",\n            \"quantity_of_product\":3\n        }\n    ]\n}",
+							"raw": "    [\n        {\n            \"product_id\":\"4a5bdcbf-712d-45ca-baa8-1318c6e2fb3c\",\n            \"quantity_of_product\":3 \n        },\n         {\n            \"product_id\":\"ccb43083-1c9e-4e84-bffd-ecb28474165e\",\n            \"quantity_of_product\":4\n        },\n         {\n            \"product_id\":\"20a8c487-9a56-4fb6-8fa0-13facaf96109\",\n            \"quantity_of_product\":3\n        },\n         {\n            \"product_id\":\"ad24153a-997a-46d1-87bb-27aa1e3e8aea\",\n            \"quantity_of_product\":3\n        }\n    ]\n\n",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -3755,12 +3115,12 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NSIsImV4cCI6MTY2MzQwNzk3NH0.54fNs-jACWe01_HHYLLdA8nVC8fQXCUen0XkDqVGzPk",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NSIsImN1c3RvbWVyX2lkIjoiMWY1YmM5MTctZmM4NS00NmNmLWExYjItN2MxNGNmZTk0MGJlIiwiZXhwIjoxNjY3MDIzODAxfQ.fPPZ1BLHzpJrdJ3mMQWuq2_tFLPmUKUe8INeq7qW_HE",
 								"type": "default"
 							}
 						],
 						"url": {
-							"raw": "localhost:2406/api/tm/get-cart/7e872c52-0d23-4086-8c45-43000b57332e",
+							"raw": "localhost:2406/api/tm/get-cart",
 							"host": [
 								"localhost"
 							],
@@ -3768,8 +3128,7 @@
 							"path": [
 								"api",
 								"tm",
-								"get-cart",
-								"7e872c52-0d23-4086-8c45-43000b57332e"
+								"get-cart"
 							]
 						}
 					},
@@ -3822,99 +3181,13 @@
 						"method": "POST",
 						"header": [],
 						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "quantity_of_goods_tm",
-									"value": "quantity_of_goods_tm",
-									"type": "default"
-								},
-								{
-									"key": "quantity_of_goods_ru",
-									"value": "quantity_of_goods_ru",
-									"type": "default"
-								},
-								{
-									"key": "total_price_tm",
-									"value": "total_price_tm",
-									"type": "default"
-								},
-								{
-									"key": "total_price_ru",
-									"value": "total_price_ru",
-									"type": "default"
-								},
-								{
-									"key": "discount_tm",
-									"value": "discount_tm",
-									"type": "default"
-								},
-								{
-									"key": "discount_ru",
-									"value": "discount_ru",
-									"type": "default"
-								},
-								{
-									"key": "delivery_tm",
-									"value": "delivery_tm",
-									"type": "default"
-								},
-								{
-									"key": "delivery_ru",
-									"value": "delivery_ru",
-									"type": "default"
-								},
-								{
-									"key": "total_tm",
-									"value": "total_tm",
-									"type": "default"
-								},
-								{
-									"key": "total_ru",
-									"value": "total_ru",
-									"type": "default"
-								},
-								{
-									"key": "currency_tm",
-									"value": "currency_tm",
-									"type": "default"
-								},
-								{
-									"key": "currency_ru",
-									"value": "currency_ru",
-									"type": "default"
-								},
-								{
-									"key": "to_order_tm",
-									"value": "to_order_tm",
-									"type": "default"
-								},
-								{
-									"key": "to_order_ru",
-									"value": "to_order_ru",
-									"type": "default"
-								},
-								{
-									"key": "your_basket_tm",
-									"value": "your_basket_tm",
-									"type": "default"
-								},
-								{
-									"key": "your_basket_ru",
-									"value": "your_basket_ru",
-									"type": "default"
-								},
-								{
-									"key": "empty_the_basket_tm",
-									"value": "empty_the_basket_tm",
-									"type": "default"
-								},
-								{
-									"key": "empty_the_basket_ru",
-									"value": "empty_the_basket_ru",
-									"type": "default"
+							"mode": "raw",
+							"raw": "{\n    \"translations_basket_page\":[\n        {\n            \"lang_id\":\"aea98b93-7bdf-455b-9ad4-a259d69dc76e\",\n            \"quantity_of_goods\":\"quantity_of_goods_ru\",\n            \"total_price\":\"total_price_ru\",\n            \"discount\":\"discount_ru\",\n            \"delivery\":\"delivery_ru\",\n            \"total\":\"total_ru\",\n            \"currency\":\"currency_ru\",\n            \"to_order\":\"to_order_ru\",\n            \"your_basket\":\"your_basket_ru\",\n            \"empty_the_basket\":\"empty_the_basket_ru\"\n        },\n    {\n            \"lang_id\":\"8723c1c7-aa6d-429f-b8af-ee9ace61f0d7\",\n            \"quantity_of_goods\":\"quantity_of_goods_tm\",\n            \"total_price\":\"total_price_tm\",\n            \"discount\":\"discount_tm\",\n            \"delivery\":\"delivery_tm\",\n            \"total\":\"total_tm\",\n            \"currency\":\"currency_tm\",\n            \"to_order\":\"to_order_tm\",\n            \"your_basket\":\"your_basket_tm\",\n            \"empty_the_basket\":\"empty_the_basket_tm\"\n        }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
 								}
-							]
+							}
 						},
 						"url": {
 							"raw": "localhost:2406/admin/translation-basket-page",
@@ -3936,65 +3209,23 @@
 						"method": "PUT",
 						"header": [],
 						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "quantity_of_goods",
-									"value": "quantity_of_goods",
-									"type": "default"
-								},
-								{
-									"key": "total_price",
-									"value": "total_price",
-									"type": "default"
-								},
-								{
-									"key": "discount",
-									"value": "discount",
-									"type": "default"
-								},
-								{
-									"key": "delivery",
-									"value": "delivery",
-									"type": "default"
-								},
-								{
-									"key": "total",
-									"value": "total",
-									"type": "default"
-								},
-								{
-									"key": "currency",
-									"value": "currency",
-									"type": "default"
-								},
-								{
-									"key": "to_order",
-									"value": "to_order",
-									"type": "default"
-								},
-								{
-									"key": "your_basket",
-									"value": "your_basket",
-									"type": "default"
-								},
-								{
-									"key": "empty_the_basket",
-									"value": "empty_the_basket",
-									"type": "default"
+							"mode": "raw",
+							"raw": "{\n    \"id\":\"8723c1c7-aa6d-429f-b8af-ee9ace61f0d7\",\n    \"lang_id\":\"8723c1c7-aa6d-429f-b8af-ee9ace61f0d7\",\n    \"quantity_of_goods\":\"quantity_of_goods_tm\",\n    \"total_price\":\"total_price_tm\",\n    \"discount\":\"discount_tm\",\n    \"delivery\":\"delivery_tm\",\n    \"total\":\"total_tm\",\n    \"currency\":\"currency_tm\",\n    \"to_order\":\"to_order_tm\",\n    \"your_basket\":\"your_basket_tm\",\n    \"empty_the_basket\":\"empty_the_basket_tm\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
 								}
-							]
+							}
 						},
 						"url": {
-							"raw": "localhost:2406/admin/translation-basket-page/51b3699e-1c7b-442a-be7b-6b2ad1f111b4",
+							"raw": "localhost:2406/admin/translation-basket-page",
 							"host": [
 								"localhost"
 							],
 							"port": "2406",
 							"path": [
 								"admin",
-								"translation-basket-page",
-								"51b3699e-1c7b-442a-be7b-6b2ad1f111b4"
+								"translation-basket-page"
 							]
 						}
 					},
@@ -4051,99 +3282,13 @@
 						"method": "POST",
 						"header": [],
 						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "content_tm",
-									"value": "content_tm",
-									"type": "default"
-								},
-								{
-									"key": "content_ru",
-									"value": "content_ru",
-									"type": "default"
-								},
-								{
-									"key": "type_of_payment_tm",
-									"value": "type_of_payment_tm",
-									"type": "default"
-								},
-								{
-									"key": "type_of_payment_ru",
-									"value": "type_of_payment_ru",
-									"type": "default"
-								},
-								{
-									"key": "choose_a_delivery_time_tm",
-									"value": "choose_a_delivery_time_tm",
-									"type": "default"
-								},
-								{
-									"key": "choose_a_delivery_time_ru",
-									"value": "choose_a_delivery_time_ru",
-									"type": "default"
-								},
-								{
-									"key": "your_address_tm",
-									"value": "your_address_tm",
-									"type": "default"
-								},
-								{
-									"key": "your_address_ru",
-									"value": "your_address_ru",
-									"type": "default"
-								},
-								{
-									"key": "mark_tm",
-									"value": "mark_tm",
-									"type": "default"
-								},
-								{
-									"key": "mark_ru",
-									"value": "mark_ru",
-									"type": "default"
-								},
-								{
-									"key": "to_order_tm",
-									"value": "to_order_tm",
-									"type": "default"
-								},
-								{
-									"key": "to_order_ru",
-									"value": "to_order_ru",
-									"type": "default"
-								},
-								{
-									"key": "tomorrow_tm",
-									"value": "tomorrow_tm",
-									"type": "default"
-								},
-								{
-									"key": "tomorrow_ru",
-									"value": "tomorrow_ru",
-									"type": "default"
-								},
-								{
-									"key": "cash_tm",
-									"value": "cash_tm",
-									"type": "default"
-								},
-								{
-									"key": "cash_ru",
-									"value": "cash_ru",
-									"type": "default"
-								},
-								{
-									"key": "payment_terminal_tm",
-									"value": "payment_terminal_tm",
-									"type": "default"
-								},
-								{
-									"key": "payment_terminal_ru",
-									"value": "payment_terminal_ru",
-									"type": "default"
+							"mode": "raw",
+							"raw": "{\n    \"translations_order_page\":[\n        {\n            \"lang_id\":\"aea98b93-7bdf-455b-9ad4-a259d69dc76e\",\n            \"content\":\"content_ru\",\n            \"type_of_payment\":\"type_of_payment_ru\",\n            \"choose_a_delivery_time\":\"choose_a_delivery_time_ru\",\n            \"your_address\":\"your_address_ru\",\n            \"mark\":\"mark_ru\",\n            \"to_order\":\"to_order_ru\"\n        },\n        {\n            \"lang_id\":\"8723c1c7-aa6d-429f-b8af-ee9ace61f0d7\",\n            \"content\":\"content_tm\",\n            \"type_of_payment\":\"type_of_payment_tm\",\n            \"choose_a_delivery_time\":\"choose_a_delivery_time_tm\",\n            \"your_address\":\"your_address_tm\",\n            \"mark\":\"mark_tm\",\n            \"to_order\":\"to_order_tm\"\n        }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
 								}
-							]
+							}
 						},
 						"url": {
 							"raw": "localhost:2406/admin/translation-order-page",
@@ -4165,65 +3310,23 @@
 						"method": "PUT",
 						"header": [],
 						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "content",
-									"value": "content",
-									"type": "default"
-								},
-								{
-									"key": "type_of_payment",
-									"value": "type_of_payment",
-									"type": "default"
-								},
-								{
-									"key": "choose_a_delivery_time",
-									"value": "choose_a_delivery_time",
-									"type": "default"
-								},
-								{
-									"key": "your_address",
-									"value": "your_address",
-									"type": "default"
-								},
-								{
-									"key": "mark",
-									"value": "mark",
-									"type": "default"
-								},
-								{
-									"key": "to_order",
-									"value": "to_order",
-									"type": "default"
-								},
-								{
-									"key": "tomorrow",
-									"value": "tomorrow",
-									"type": "default"
-								},
-								{
-									"key": "cash",
-									"value": "cash",
-									"type": "default"
-								},
-								{
-									"key": "payment_terminal",
-									"value": "payment_terminal",
-									"type": "default"
+							"mode": "raw",
+							"raw": "{\n    \"id\":\"75810722-07fd-400e-94b4-cd230de08cbf\",\n    \"lang_id\":\"8723c1c7-aa6d-429f-b8af-ee9ace61f0d7\",\n    \"content\":\"content_tm\",\n    \"type_of_payment\":\"type_of_payment_tm\",\n    \"choose_a_delivery_time\":\"choose_a_delivery_time_tm\",\n    \"your_address\":\"your_address_tm\",\n    \"mark\":\"mark_tm\",\n    \"to_order\":\"to_order_tm\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
 								}
-							]
+							}
 						},
 						"url": {
-							"raw": "localhost:2406/admin/translation-order-page/75810722-07fd-400e-94b4-cd230de08cbf",
+							"raw": "localhost:2406/admin/translation-order-page",
 							"host": [
 								"localhost"
 							],
 							"port": "2406",
 							"path": [
 								"admin",
-								"translation-order-page",
-								"75810722-07fd-400e-94b4-cd230de08cbf"
+								"translation-order-page"
 							]
 						}
 					},
@@ -4280,109 +3383,13 @@
 						"method": "POST",
 						"header": [],
 						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "orders_tm",
-									"value": "orders_tm",
-									"type": "default"
-								},
-								{
-									"key": "orders_ru",
-									"value": "orders_ru",
-									"type": "default"
-								},
-								{
-									"key": "date_tm",
-									"value": "date_tm",
-									"type": "default"
-								},
-								{
-									"key": "date_ru",
-									"value": "date_ru",
-									"type": "default"
-								},
-								{
-									"key": "price_tm",
-									"value": "price_tm",
-									"type": "default"
-								},
-								{
-									"key": "price_ru",
-									"value": "price_ru",
-									"type": "default"
-								},
-								{
-									"key": "currency_tm",
-									"value": "currency_tm",
-									"type": "default"
-								},
-								{
-									"key": "currency_ru",
-									"value": "currency_ru",
-									"type": "default"
-								},
-								{
-									"key": "image_tm",
-									"value": "image_tm",
-									"type": "default"
-								},
-								{
-									"key": "image_ru",
-									"value": "image_ru",
-									"type": "default"
-								},
-								{
-									"key": "name_tm",
-									"value": "name_tm",
-									"type": "default"
-								},
-								{
-									"key": "name_ru",
-									"value": "name_ru",
-									"type": "default"
-								},
-								{
-									"key": "brend_tm",
-									"value": "brend_tm",
-									"type": "default"
-								},
-								{
-									"key": "brend_ru",
-									"value": "brend_ru",
-									"type": "default"
-								},
-								{
-									"key": "code_tm",
-									"value": "code_tm",
-									"type": "default"
-								},
-								{
-									"key": "code_ru",
-									"value": "code_ru",
-									"type": "default"
-								},
-								{
-									"key": "amount_tm",
-									"value": "amount_tm",
-									"type": "default"
-								},
-								{
-									"key": "amount_ru",
-									"value": "amount_ru",
-									"type": "default"
-								},
-								{
-									"key": "total_price_tm",
-									"value": "total_price_tm",
-									"type": "default"
-								},
-								{
-									"key": "total_price_ru",
-									"value": "total_price_ru",
-									"type": "default"
+							"mode": "raw",
+							"raw": "{\n    \"translation_my_order_page\":[\n        {\n            \"lang_id\":\"aea98b93-7bdf-455b-9ad4-a259d69dc76e\",\n            \"orders\":\"orders_ru\",\n            \"date\":\"date_ru\",\n            \"price\":\"price_ru\",\n            \"currency\":\"currency_ru\",\n            \"image\":\"image_ru\",\n            \"name\":\"name_ru\",\n            \"brend\":\"brend_ru\",\n            \"code\":\"code_ru\",\n            \"amount\":\"amount_ru\",\n            \"total_price\":\"total_price_ru\"\n        },\n        {\n            \"lang_id\":\"8723c1c7-aa6d-429f-b8af-ee9ace61f0d7\",\n            \"orders\":\"orders_tm\",\n            \"date\":\"date_tm\",\n            \"price\":\"price_tm\",\n            \"currency\":\"currency_tm\",\n            \"image\":\"image_tm\",\n            \"name\":\"name_tm\",\n            \"brend\":\"brend_tm\",\n            \"code\":\"code_tm\",\n            \"amount\":\"amount_tm\",\n            \"total_price\":\"total_price_tm\"\n        }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
 								}
-							]
+							}
 						},
 						"url": {
 							"raw": "localhost:2406/admin/translation-my-order-page",
@@ -4404,70 +3411,23 @@
 						"method": "PUT",
 						"header": [],
 						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "orders",
-									"value": "orders",
-									"type": "default"
-								},
-								{
-									"key": "date",
-									"value": "date",
-									"type": "default"
-								},
-								{
-									"key": "price",
-									"value": "price",
-									"type": "default"
-								},
-								{
-									"key": "currency",
-									"value": "currency",
-									"type": "default"
-								},
-								{
-									"key": "image",
-									"value": "image",
-									"type": "default"
-								},
-								{
-									"key": "name",
-									"value": "name",
-									"type": "default"
-								},
-								{
-									"key": "brend",
-									"value": "brend",
-									"type": "default"
-								},
-								{
-									"key": "code",
-									"value": "code",
-									"type": "default"
-								},
-								{
-									"key": "amount",
-									"value": "amount",
-									"type": "default"
-								},
-								{
-									"key": "total_price",
-									"value": "total_price",
-									"type": "default"
+							"mode": "raw",
+							"raw": "{\n    \"id\":\"ff43b90d-e22d-4364-b358-6fd56bb3a305\",\n    \"lang_id\":\"8723c1c7-aa6d-429f-b8af-ee9ace61f0d7\",\n    \"orders\":\"orders_tm\",\n    \"date\":\"date_tm\",\n    \"price\":\"price_tm\",\n    \"currency\":\"currency_tm\",\n    \"image\":\"image_tm\",\n    \"name\":\"name_tm\",\n    \"brend\":\"brend_tm\",\n    \"code\":\"code_tm\",\n    \"amount\":\"amount_tm\",\n    \"total_price\":\"total_price_tm\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
 								}
-							]
+							}
 						},
 						"url": {
-							"raw": "localhost:2406/admin/translation-my-order-page/ff43b90d-e22d-4364-b358-6fd56bb3a305",
+							"raw": "localhost:2406/admin/translation-my-order-page",
 							"host": [
 								"localhost"
 							],
 							"port": "2406",
 							"path": [
 								"admin",
-								"translation-my-order-page",
-								"ff43b90d-e22d-4364-b358-6fd56bb3a305"
+								"translation-my-order-page"
 							]
 						}
 					},
@@ -4524,19 +3484,13 @@
 						"method": "POST",
 						"header": [],
 						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "type_tm",
-									"value": "töleg terminaly",
-									"type": "default"
-								},
-								{
-									"key": "type_ru",
-									"value": "платежный терминал",
-									"type": "default"
+							"mode": "raw",
+							"raw": "{\n    \"payment_types\":[\n        {\n            \"lang_id\":\"aea98b93-7bdf-455b-9ad4-a259d69dc76e\",\n            \"type\":\"платежный терминал\"\n        },\n        {\n            \"lang_id\":\"8723c1c7-aa6d-429f-b8af-ee9ace61f0d7\",\n            \"type\":\"töleg terminaly\"\n        }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
 								}
-							]
+							}
 						},
 						"url": {
 							"raw": "localhost:2406/admin/payment-type",
@@ -4558,25 +3512,23 @@
 						"method": "PUT",
 						"header": [],
 						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "type",
-									"value": "nagt_tm",
-									"type": "default"
+							"mode": "raw",
+							"raw": "{\n    \"id\":\"7a6a313d-8fcd-4c56-9fa5-aefb12552b82\",\n    \"lang_id\":\"8723c1c7-aa6d-429f-b8af-ee9ace61f0d7\",\n    \"type\":\"töleg terminaly\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
 								}
-							]
+							}
 						},
 						"url": {
-							"raw": "localhost:2406/admin/payment-type/38696743-82e5-4644-9c86-4a99ae45f912",
+							"raw": "localhost:2406/admin/payment-type",
 							"host": [
 								"localhost"
 							],
 							"port": "2406",
 							"path": [
 								"admin",
-								"payment-type",
-								"38696743-82e5-4644-9c86-4a99ae45f912"
+								"payment-type"
 							]
 						}
 					},
@@ -4653,8 +3605,9 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NSIsImV4cCI6MTY2NDU0MDMyNX0.kec6D9-WzLvXCUqzVlaNXbR6eSxdNMvVsCxfEqJ1JTI",
-								"type": "default"
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NTYiLCJjdXN0b21lcl9pZCI6ImYyNWE2NmQzLTkzYWMtNGRhNC1iMjM3LWQzNDg2N2Q1Y2E4ZiIsImV4cCI6MTY2NjYzNDE3M30.xSXu0nlDzgVxzUFfcZ9BNW1UaNUX1VBzoTkng-TLd3g",
+								"type": "default",
+								"disabled": true
 							}
 						],
 						"body": {
@@ -4688,12 +3641,12 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NSIsImV4cCI6MTY2NDQzMjc1NH0.lOcKtpKyjXACvk5-VD213k7tYYMnJuaGjK72WOerZE8",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NTYiLCJjdXN0b21lcl9pZCI6ImYyNWE2NmQzLTkzYWMtNGRhNC1iMjM3LWQzNDg2N2Q1Y2E4ZiIsImV4cCI6MTY2NjY0MDMxMX0.8zNnpa_eRNylHGCjtFYAgszHfYgmcncP4IBSBJViPjQ",
 								"type": "default"
 							}
 						],
 						"url": {
-							"raw": "localhost:2406/api/tm/orders/89a6ac71-4495-4218-b9f9-3f2a3eab085b",
+							"raw": "localhost:2406/api/tm/orders",
 							"host": [
 								"localhost"
 							],
@@ -4701,8 +3654,7 @@
 							"path": [
 								"api",
 								"tm",
-								"orders",
-								"89a6ac71-4495-4218-b9f9-3f2a3eab085b"
+								"orders"
 							]
 						}
 					},
@@ -4787,34 +3739,13 @@
 						"method": "POST",
 						"header": [],
 						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "date",
-									"value": "tomorrow",
-									"type": "default"
-								},
-								{
-									"key": "times",
-									"value": "09:00 - 12:00",
-									"type": "default"
-								},
-								{
-									"key": "times",
-									"value": "18:00 - 21:00",
-									"type": "default"
-								},
-								{
-									"key": "translation_date_tm",
-									"value": "Ertir",
-									"type": "default"
-								},
-								{
-									"key": "translation_date_ru",
-									"value": "Завтра",
-									"type": "default"
+							"mode": "raw",
+							"raw": "{\n    \"date\":\"tomorrow\",\n    \"order_times\":[\n        {\n            \"time\":\"09:00 - 12:00\"\n        },\n        {\n            \"time\":\"18:00 - 21:00\"\n        }\n    ],\n    \"translation_order_dates\":[\n        {\n            \"lang_id\":\"aea98b93-7bdf-455b-9ad4-a259d69dc76e\",\n            \"date\":\"Завтра\"\n        },\n        {\n            \"lang_id\":\"8723c1c7-aa6d-429f-b8af-ee9ace61f0d7\",\n            \"date\":\"Ertir\"\n        },\n         {\n            \"lang_id\":\"55a387df-6d38-42ea-bfba-379327b53cbd\",\n            \"date\":\"Ertir_fr\"\n        },\n         {\n            \"lang_id\":\"198695b5-579a-4f80-ac10-8380e17e5d98\",\n            \"date\":\"Ertir_tr\"\n        },\n         {\n            \"lang_id\":\"b62a1c1c-0a29-4756-8e9d-5c9680758d18\",\n            \"date\":\"Ertir_pl\"\n        }\n        \n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
 								}
-							]
+							}
 						},
 						"url": {
 							"raw": "localhost:2406/admin/order-time",
@@ -4851,6 +3782,35 @@
 					"response": []
 				}
 			]
+		},
+		{
+			"name": "SendMail",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"full_name\":\"Allanur Bayramgeldiyev\",\n    \"email\":\"allanur@gmail.com\",\n    \"phone_number\":\"+99362420377\",\n    \"letter\":\"siz bilen maslahatlasyp bilernmi\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:2406/api/tm/send-mail",
+					"host": [
+						"localhost"
+					],
+					"port": "2406",
+					"path": [
+						"api",
+						"tm",
+						"send-mail"
+					]
+				}
+			},
+			"response": []
 		}
 	]
 }

@@ -45,7 +45,7 @@ func Search(c *gin.Context) {
 
 	search := slug.MakeLang(c.PostForm("search"), "en")
 
-	rowsProduct, err := db.Query("SELECT p.id,p.brend_id,p.price,p.old_price,p.amount,p.product_code,p.limit_amount,p.is_new FROM products p inner join translation_product tp on tp.product_id = p.id WHERE tp.slug LIKE $1 AND tp.lang_id = $2 AND tp.deleted_at IS NULL AND p.deleted_at IS NULL", "%"+search+"%", langID)
+	rowsProduct, err := db.Query("SELECT p.id,p.brend_id,p.price,p.old_price,p.amount,p.limit_amount,p.is_new FROM products p inner join translation_product tp on tp.product_id = p.id WHERE tp.slug LIKE $1 AND tp.lang_id = $2 AND tp.deleted_at IS NULL AND p.deleted_at IS NULL", "%"+search+"%", langID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -68,7 +68,7 @@ func Search(c *gin.Context) {
 	for rowsProduct.Next() {
 		var product LikeProduct
 
-		if err := rowsProduct.Scan(&product.ID, &product.BrendID, &product.Price, &product.OldPrice, &product.Amount, &product.ProductCode, &product.LimitAmount, &product.IsNew); err != nil {
+		if err := rowsProduct.Scan(&product.ID, &product.BrendID, &product.Price, &product.OldPrice, &product.Amount, &product.LimitAmount, &product.IsNew); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),

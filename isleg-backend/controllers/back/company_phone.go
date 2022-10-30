@@ -2,16 +2,19 @@ package controllers
 
 import (
 	"github/abbgo/isleg/isleg-backend/config"
+	"github/abbgo/isleg/isleg-backend/models"
 	"net/http"
-	"strconv"
-	"strings"
-	"time"
 
 	"github.com/gin-gonic/gin"
 )
 
+type CompPhone struct {
+	Phone models.CompanyPhone `json:"company_phone"`
+}
+
 func CreateCompanyPhone(c *gin.Context) {
 
+	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -31,44 +34,17 @@ func CreateCompanyPhone(c *gin.Context) {
 	}()
 
 	// GET DATA FROM REQUEST
-	phone := c.PostForm("phone")
-
-	// validate data
-	if phone == "" {
+	var companyPhone CompPhone
+	if err := c.BindJSON(&companyPhone); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
-			"message": "phone is required",
+			"message": err.Error(),
 		})
 		return
 	}
 
-	trimPhone := strings.Trim(phone, "+")
-
-	phones := strings.Split(trimPhone, " ")
-
-	for _, v := range phones {
-
-		_, err = strconv.Atoi(v)
-		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-
-	}
-
-	// if len(phone) != 8 {
-	// 	c.JSON(http.StatusBadRequest, gin.H{
-	// 		"status":  false,
-	// 		"message": "the length of the phone number must be 8",
-	// 	})
-	// 	return
-	// }
-
 	// create company phone
-	resultComPhone, err := db.Query("INSERT INTO company_phone (phone) VALUES ($1)", phone)
+	resultComPhone, err := db.Query("INSERT INTO company_phone (phone) VALUES ($1)", companyPhone.Phone.Phone)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -88,13 +64,14 @@ func CreateCompanyPhone(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
-		"message": "company phone successfully added",
+		"message": "data successfully added",
 	})
 
 }
 
 func UpdateCompanyPhoneByID(c *gin.Context) {
 
+	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -113,9 +90,18 @@ func UpdateCompanyPhoneByID(c *gin.Context) {
 		}
 	}()
 
-	ID := c.Param("id")
+	// get data from request
+	var companyPhone CompPhone
+	if err := c.BindJSON(&companyPhone); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
 
-	rowCompanyPhone, err := db.Query("SELECT id FROM company_phone WHERE id = $1 AND deleted_at IS NULL", ID)
+	// check id
+	rowCompanyPhone, err := db.Query("SELECT id FROM company_phone WHERE id = $1 AND deleted_at IS NULL", companyPhone.Phone.ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -153,37 +139,7 @@ func UpdateCompanyPhoneByID(c *gin.Context) {
 		return
 	}
 
-	phone := c.PostForm("phone")
-
-	// validate data
-	if phone == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": "phone is required",
-		})
-		return
-	}
-
-	_, err = strconv.Atoi(phone)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-
-	if len(phone) != 8 {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": "the length of the phone number must be 8",
-		})
-		return
-	}
-
-	currentTime := time.Now()
-
-	resultComPhone, err := db.Query("UPDATE company_phone SET phone = $1 , updated_at = $3 WHERE id = $2", phone, ID, currentTime)
+	resultComPhone, err := db.Query("UPDATE company_phone SET phone = $1 WHERE id = $2", companyPhone.Phone.Phone, companyPhone.Phone.ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -203,13 +159,14 @@ func UpdateCompanyPhoneByID(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
-		"message": "company phone successfully updated",
+		"message": "data successfully updated",
 	})
 
 }
 
 func GetCompanyPhoneByID(c *gin.Context) {
 
+	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -228,8 +185,10 @@ func GetCompanyPhoneByID(c *gin.Context) {
 		}
 	}()
 
+	// get id from request parameter
 	ID := c.Param("id")
 
+	// check id and get data from database
 	rowComPhone, err := db.Query("SELECT phone FROM company_phone WHERE id = $1 AND deleted_at IS NULL", ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -337,6 +296,7 @@ func GetCompanyPhones(c *gin.Context) {
 
 func DeleteCompanyPhoneByID(c *gin.Context) {
 
+	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -355,8 +315,10 @@ func DeleteCompanyPhoneByID(c *gin.Context) {
 		}
 	}()
 
+	// get id from request parameter
 	ID := c.Param("id")
 
+	// check id
 	rowComPhone, err := db.Query("SELECT id FROM company_phone WHERE id = $1 AND deleted_at IS NULL", ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -395,9 +357,7 @@ func DeleteCompanyPhoneByID(c *gin.Context) {
 		return
 	}
 
-	currentTime := time.Now()
-
-	resultComPhone, err := db.Query("UPDATE company_phone SET deleted_at = $1 WHERE id = $2", currentTime, ID)
+	resultComPhone, err := db.Query("UPDATE company_phone SET deleted_at = now() WHERE id = $2", ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -417,13 +377,14 @@ func DeleteCompanyPhoneByID(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
-		"message": "company phone successfully deleted",
+		"message": "data successfully deleted",
 	})
 
 }
 
 func RestoreCompanyPhoneByID(c *gin.Context) {
 
+	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -442,8 +403,10 @@ func RestoreCompanyPhoneByID(c *gin.Context) {
 		}
 	}()
 
+	// get id from request parameter
 	ID := c.Param("id")
 
+	// check id
 	rowComPhone, err := db.Query("SELECT id FROM company_phone WHERE id = $1 AND deleted_at IS NOT NULL", ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -502,13 +465,14 @@ func RestoreCompanyPhoneByID(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
-		"message": "company phone successfully restored",
+		"message": "data successfully restored",
 	})
 
 }
 
 func DeletePermanentlyCompanyPhoneByID(c *gin.Context) {
 
+	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -527,8 +491,10 @@ func DeletePermanentlyCompanyPhoneByID(c *gin.Context) {
 		}
 	}()
 
+	// get id from request parameter
 	ID := c.Param("id")
 
+	//check id
 	rowCompanyPhone, err := db.Query("SELECT id FROM company_phone WHERE id = $1 AND deleted_at IS NOT NULL", ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -567,6 +533,7 @@ func DeletePermanentlyCompanyPhoneByID(c *gin.Context) {
 		return
 	}
 
+	// delete category phone
 	resultComPhone, err := db.Query("DELETE FROM company_phone WHERE id = $1", ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -587,7 +554,7 @@ func DeletePermanentlyCompanyPhoneByID(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
-		"message": "company phone successfully deleted",
+		"message": "data successfully deleted",
 	})
 
 }

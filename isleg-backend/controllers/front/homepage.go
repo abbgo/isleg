@@ -21,7 +21,6 @@ type Product struct {
 	Name        string           `json:"name"`
 	Price       float64          `json:"price"`
 	OldPrice    float64          `json:"old_price"`
-	ProductCode string           `json:"product_code"`
 	MainImage   models.MainImage `json:"main_image"`
 	Images      []models.Images  `json:"images"`
 	Brend       Brend            `json:"brend"`
@@ -114,7 +113,7 @@ func GetHomePageCategories(c *gin.Context) {
 		}
 
 		// get all product where category id equal homePageCategory.ID and lang_id equal langID
-		productRows, err := db.Query("SELECT p.id,t.name,p.price,p.old_price,p.product_code,p.limit_amount,p.is_new FROM products p LEFT JOIN category_product c ON p.id=c.product_id LEFT JOIN translation_product t ON p.id=t.product_id WHERE t.lang_id = $1 AND c.category_id = $2 AND p.deleted_at IS NULL AND c.deleted_at IS NULL AND t.deleted_at IS NULL ORDER BY p.created_at DESC LIMIT 4", langID, homePageCategory.ID)
+		productRows, err := db.Query("SELECT p.id,t.name,p.price,p.old_price,p.limit_amount,p.is_new FROM products p LEFT JOIN category_product c ON p.id=c.product_id LEFT JOIN translation_product t ON p.id=t.product_id WHERE t.lang_id = $1 AND c.category_id = $2 AND p.deleted_at IS NULL AND c.deleted_at IS NULL AND t.deleted_at IS NULL ORDER BY p.created_at DESC LIMIT 4", langID, homePageCategory.ID)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
@@ -136,7 +135,7 @@ func GetHomePageCategories(c *gin.Context) {
 
 		for productRows.Next() {
 			var product Product
-			if err := productRows.Scan(&product.ID, &product.Name, &product.Price, &product.OldPrice, &product.ProductCode, &product.LimitAmount, &product.IsNew); err != nil {
+			if err := productRows.Scan(&product.ID, &product.Name, &product.Price, &product.OldPrice, &product.LimitAmount, &product.IsNew); err != nil {
 				c.JSON(http.StatusBadRequest, gin.H{
 					"status":  false,
 					"message": err.Error(),
