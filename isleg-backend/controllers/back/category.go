@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"fmt"
 	"github/abbgo/isleg/isleg-backend/config"
 	"github/abbgo/isleg/isleg-backend/models"
 	"github/abbgo/isleg/isleg-backend/pkg"
@@ -258,8 +257,6 @@ func UpdateCategoryByID(c *gin.Context) {
 		return
 	}
 
-	fmt.Println("image: ", image)
-
 	// FILE UPLOAD
 	file, errFile := c.FormFile("image")
 	if errFile != nil {
@@ -297,8 +294,6 @@ func UpdateCategoryByID(c *gin.Context) {
 		}
 
 	}
-
-	fmt.Println("file name: ", fileName)
 
 	dataNames := []string{"name"}
 
@@ -945,6 +940,7 @@ func DeletePermanentlyCategoryByID(c *gin.Context) {
 		return
 	}
 
+	// kategoriyanyn suraty uploads papkadan pozulyar
 	if image != "" {
 		if err := os.Remove("./" + image); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
@@ -955,6 +951,7 @@ func DeletePermanentlyCategoryByID(c *gin.Context) {
 		}
 	}
 
+	// kategoriyanyn produktalarynyn main suratlaryn direktlary bazadan alynyar
 	rowsMainImageProduct, err := db.Query("SELECT m.small,m.medium,m.large FROM products p INNER JOIN category_product c ON c.product_id=p.id INNER JOIN main_image m ON m.product_id = p.id WHERE c.category_id = $1", ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -989,6 +986,7 @@ func DeletePermanentlyCategoryByID(c *gin.Context) {
 		mainImages = append(mainImages, mainImage)
 	}
 
+	// kategoriyanyn produktalarynyn main suratlary uploads papkadan pozulyar
 	for _, v := range mainImages {
 		if err := os.Remove("./" + v.Small); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
@@ -1016,6 +1014,7 @@ func DeletePermanentlyCategoryByID(c *gin.Context) {
 
 	}
 
+	// kategoriyanyn produktalarynyn suratlarynyn direktlary bazadan alynyar
 	rowsImagesProduct, err := db.Query("SELECT i.small,i.large FROM products p INNER JOIN category_product c ON c.product_id=p.id INNER JOIN images i ON i.product_id = p.id WHERE c.category_id = $1", ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -1050,6 +1049,7 @@ func DeletePermanentlyCategoryByID(c *gin.Context) {
 		images = append(images, image)
 	}
 
+	// kategoriyanyn produktalarynyn suratlaryny uploads papkadan pozyaryn
 	for _, v := range images {
 		if err := os.Remove("./" + v.Small); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
@@ -1069,6 +1069,7 @@ func DeletePermanentlyCategoryByID(c *gin.Context) {
 
 	}
 
+	// kategoriya degisli harytlar bazadan pozulyar
 	resultProduct, err := db.Query("DELETE FROM products USING category_product WHERE category_product.product_id = products.id AND category_product.category_id = $1", category_id)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -1087,6 +1088,7 @@ func DeletePermanentlyCategoryByID(c *gin.Context) {
 		}
 	}()
 
+	// kategoriyanyn child kategoriyalarynyn id - leri alynyar database - den
 	rowChildCategory, err := db.Query("SELECT id FROM categories WHERE parent_category_id = $1", ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -1120,6 +1122,7 @@ func DeletePermanentlyCategoryByID(c *gin.Context) {
 		childCategoryIDS = append(childCategoryIDS, childCategoryID)
 	}
 
+	// child kategoriya degisli harytlaryn suratlarynyn direktleri bazadan alynyar we uploads papkadam pozulyar
 	for _, v := range childCategoryIDS {
 		rowPrdcs, err := db.Query("SELECT m.small,m.medium,m.large FROM products p INNER JOIN category_product c ON c.product_id=p.id INNER JOIN main_image m ON m.product_id = p.id WHERE c.category_id = $1", v)
 		if err != nil {
@@ -1235,6 +1238,7 @@ func DeletePermanentlyCategoryByID(c *gin.Context) {
 
 		}
 
+		// child kategoriya degisli harytlar bazadan pozulyar
 		childresultProduct, err := db.Query("DELETE FROM products USING category_product WHERE category_product.product_id = products.id AND category_product.category_id = $1", category_id)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
@@ -1255,6 +1259,7 @@ func DeletePermanentlyCategoryByID(c *gin.Context) {
 
 	}
 
+	// in sonunda kategpriyanyn ozi pozulyar
 	resutCateg, err := db.Query("DELETE FROM categories WHERE id = $1", ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{

@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"errors"
-	"fmt"
 	"github/abbgo/isleg/isleg-backend/config"
 	backController "github/abbgo/isleg/isleg-backend/controllers/back"
 	"github/abbgo/isleg/isleg-backend/models"
@@ -169,8 +168,6 @@ func AddCart(c *gin.Context) {
 			}
 
 			if product_id != "" {
-
-				fmt.Println("--------------------")
 
 				rowCart, err := db.Query("SELECT product_id FROM cart WHERE customer_id = $1 AND product_id = $2 AND deleted_at IS NULL", customerID, v.ProductID)
 				if err != nil {
@@ -417,8 +414,6 @@ func GetCustomerCartProducts(c *gin.Context) {
 	if !ok {
 		c.JSON(http.StatusBadRequest, "customer_id must be string")
 	}
-
-	fmt.Println(customerID)
 
 	langShortName := c.Param("lang")
 

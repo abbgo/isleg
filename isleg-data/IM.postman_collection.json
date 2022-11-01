@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "2c3654b5-fb4e-48cf-8154-36b3fe3b0447",
+		"_postman_id": "28382991-9a13-4233-a305-9991348a7aec",
 		"name": "IM",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -2563,7 +2563,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"full_name\":\"Allanur Bayramgeldiyew\",\n    \"phone_number\":\"+99362420377\",\n    \"password\":\"12345\",\n    \"email\":\"abb@gmail.com\",\n    \"birthday\":null\n}",
+							"raw": "{\n    \"full_name\":\"Allanur Bayramgeldiyew\",\n    \"phone_number\":\"+99362420377\",\n    \"password\":\"123456\",\n    \"email\":\"abb@gmail.com\",\n    \"birthday\":null\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -3066,13 +3066,13 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NSIsImN1c3RvbWVyX2lkIjoiMWY1YmM5MTctZmM4NS00NmNmLWExYjItN2MxNGNmZTk0MGJlIiwiZXhwIjoxNjY3MDIzODAxfQ.fPPZ1BLHzpJrdJ3mMQWuq2_tFLPmUKUe8INeq7qW_HE",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIrOTkzNjI0MjAzNzciLCJjdXN0b21lcl9pZCI6IjE5Y2RjZjFhLWYxMTAtNDUxMC1hNTJiLTA2MzMyOWQ5ODYwNyIsImV4cCI6MTY2NzI4ODAxMn0.eRfEW-FaNfroAf1Aln4k4dTqoIzSMDwGiPfTI525Ijc",
 								"type": "default"
 							}
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "    [\n        {\n            \"product_id\":\"4a5bdcbf-712d-45ca-baa8-1318c6e2fb3c\",\n            \"quantity_of_product\":3 \n        },\n         {\n            \"product_id\":\"ccb43083-1c9e-4e84-bffd-ecb28474165e\",\n            \"quantity_of_product\":4\n        },\n         {\n            \"product_id\":\"20a8c487-9a56-4fb6-8fa0-13facaf96109\",\n            \"quantity_of_product\":3\n        },\n         {\n            \"product_id\":\"ad24153a-997a-46d1-87bb-27aa1e3e8aea\",\n            \"quantity_of_product\":3\n        }\n    ]\n\n",
+							"raw": "    [\n        {\n            \"product_id\":\"d085e5a4-8229-4177-b5e1-623e80846017\",\n            \"quantity_of_product\":3 \n        },\n         {\n            \"product_id\":\"2e05c0d9-f7a0-4dc8-ab1a-171f8d725d33\",\n            \"quantity_of_product\":4\n        },\n         {\n            \"product_id\":\"e34a20fa-3aef-4ba6-92ba-79d3649c61a6\",\n            \"quantity_of_product\":3\n        },\n         {\n            \"product_id\":\"77ecf422-b48b-45fd-8e58-380e23d74c4c\",\n            \"quantity_of_product\":3\n        }\n    ]\n\n",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -3598,7 +3598,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"full_name\":\"Allanur Bayramgeldiyev\",\n    \"phone_number\":\"+99362420377\",\n    \"address\":\"Mir 2/2 jay 7 oy 36\",\n    \"customer_mark\":\"isleg market bet cykypdyr\",\n    \"order_time\":\"12:00 - 16:00\",\n    \"payment_type\":\"nagt\",\n    \"total_price\":1788,\n    \"products\":[\n        {\n            \"product_id\":\"d4156225-082e-4f0f-9b2c-85268114433a\",\n            \"quantity_of_product\":25\n        },\n         {\n            \"product_id\":\"81b84c5d-9759-4b86-978a-649c8ef79660\",\n            \"quantity_of_product\":3\n        },\n         {\n            \"product_id\":\"8df705a5-2351-4aca-b03e-3357a23840b4\",\n            \"quantity_of_product\":3\n        },\n         {\n            \"product_id\":\"e3c33ead-3c30-40f1-9d28-7bb8b71b767f\",\n            \"quantity_of_product\":3\n        }\n    ]\n\n}",
+							"raw": "{\n    \"full_name\":\"Allanur Bayramgeldiyev\",\n    \"phone_number\":\"+99362420377\",\n    \"address\":\"Mir 2/2 jay 7 oy 36\",\n    \"customer_mark\":\"isleg market bet cykypdyr\",\n    \"order_time\":\"12:00 - 16:00\",\n    \"payment_type\":\"nagt\",\n    \"total_price\":934.8,\n    \"shipping_price\":10,\n    \"products\":[\n        {\n            \"product_id\":\"d085e5a4-8229-4177-b5e1-623e80846017\",\n            \"quantity_of_product\":3 \n        },\n         {\n            \"product_id\":\"2e05c0d9-f7a0-4dc8-ab1a-171f8d725d33\",\n            \"quantity_of_product\":4\n        },\n         {\n            \"product_id\":\"e34a20fa-3aef-4ba6-92ba-79d3649c61a6\",\n            \"quantity_of_product\":3\n        },\n         {\n            \"product_id\":\"77ecf422-b48b-45fd-8e58-380e23d74c4c\",\n            \"quantity_of_product\":3\n        }\n    ]\n\n}",
 							"options": {
 								"raw": {
 									"language": "json"

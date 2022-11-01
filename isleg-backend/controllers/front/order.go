@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"fmt"
 	"github/abbgo/isleg/isleg-backend/config"
 	backController "github/abbgo/isleg/isleg-backend/controllers/back"
 	"github/abbgo/isleg/isleg-backend/models"
@@ -731,7 +730,8 @@ func ToOrder(c *gin.Context) {
 	f.SetCellValue("Лист1", "b13", "Jemi: "+strconv.FormatFloat(pkg.RoundFloat(sargyt.TotalPrice, 2), 'f', -1, 64))
 
 	if err := f.SaveAs("./uploads/orders/" + strconv.Itoa(int(sargyt.OrderNumber)) + ".xlsx"); err != nil {
-		fmt.Println(err)
+		c.JSON(http.StatusBadRequest, err.Error())
+		return
 	}
 
 	resultOrderUpdate, err := db.Query("UPDATE orders SET excel = $1 WHERE id = $2", "uploads/orders/"+strconv.Itoa(int(sargyt.OrderNumber))+".xlsx", order_id)
