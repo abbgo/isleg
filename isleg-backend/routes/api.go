@@ -51,6 +51,7 @@ func Routes() *gin.Engine {
 		back.GET("/order-times", backController.GetOrderTimes)
 		back.DELETE("/order-time/:id", backController.DeleteOrderTimeByID)
 		back.GET("/restore-order-time/:id", backController.RestoreOrderTimeByID)
+		back.DELETE("/delete-order-time/:id", backController.DeletePermanentlyOrderTimeByID)
 
 		back.POST("/banner", backController.CreateBanner)
 		back.PUT("/banner/:id", backController.UpdateBannerByID)
