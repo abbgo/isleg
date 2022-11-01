@@ -434,6 +434,12 @@ func GetLikes(langShortName, customerID string) ([]LikeProduct, error) {
 			return []LikeProduct{}, err
 		}
 
+		if product.OldPrice != 0 {
+			product.Percentage = -math.Round(((product.OldPrice - product.Price) * 100) / product.OldPrice)
+		} else {
+			product.Percentage = 0
+		}
+
 		rowMainImage, err := db.Query("SELECT small,medium,large FROM main_image WHERE product_id = $1 AND deleted_at IS NULL", product.ID)
 		if err != nil {
 			return []LikeProduct{}, err
