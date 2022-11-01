@@ -18,6 +18,7 @@ type LikeProduct struct {
 	BrendID            uuid.UUID                 `json:"brend_id"`
 	Price              float64                   `json:"price"`
 	OldPrice           float64                   `json:"old_price"`
+	Percentage         float64                   `json:"percentage"`
 	Amount             uint                      `json:"amount"`
 	LimitAmount        uint                      `json:"limit_amount"`
 	IsNew              bool                      `json:"is_new"`
