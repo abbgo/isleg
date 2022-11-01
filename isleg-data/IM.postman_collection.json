@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "28382991-9a13-4233-a305-9991348a7aec",
+		"_postman_id": "d3d7dfbf-0097-46e5-ae7f-037aad90a5b1",
 		"name": "IM",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -3763,7 +3763,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"date\":\"tomorrow\",\n    \"order_times\":[\n        {\n            \"time\":\"09:00 - 12:00\"\n        },\n        {\n            \"time\":\"18:00 - 21:00\"\n        }\n    ],\n    \"translation_order_dates\":[\n        {\n            \"lang_id\":\"aea98b93-7bdf-455b-9ad4-a259d69dc76e\",\n            \"date\":\"Завтра\"\n        },\n        {\n            \"lang_id\":\"8723c1c7-aa6d-429f-b8af-ee9ace61f0d7\",\n            \"date\":\"Ertir\"\n        },\n         {\n            \"lang_id\":\"55a387df-6d38-42ea-bfba-379327b53cbd\",\n            \"date\":\"Ertir_fr\"\n        },\n         {\n            \"lang_id\":\"198695b5-579a-4f80-ac10-8380e17e5d98\",\n            \"date\":\"Ertir_tr\"\n        },\n         {\n            \"lang_id\":\"b62a1c1c-0a29-4756-8e9d-5c9680758d18\",\n            \"date\":\"Ertir_pl\"\n        }\n        \n    ]\n}",
+							"raw": "{\n    \"date\":\"tomorrow\",\n    \"order_times\":[\n        {\n            \"time\":\"09:00 - 12:00\"\n        },\n        {\n            \"time\":\"18:00 - 21:00\"\n        }\n    ],\n    \"translation_order_dates\":[\n        {\n            \"lang_id\":\"aea98b93-7bdf-455b-9ad4-a259d69dc76e\",\n            \"date\":\"Завтра\"\n        },\n        {\n            \"lang_id\":\"8723c1c7-aa6d-429f-b8af-ee9ace61f0d7\",\n            \"date\":\"Ertir\"\n        }        \n    ]\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -3799,6 +3799,133 @@
 								"api",
 								"tm",
 								"order-time"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UpdateOrderTime",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"id\":\"32646376-c93f-412b-9e75-b3a5fa70df9e\",\n    \"date\":\"today\",\n    \"order_times\":[\n        {\n            \"time\":\"09:00 - 12:00\"\n        },\n        {\n            \"time\":\"18:00 - 21:00\"\n        }\n    ],\n    \"translation_order_dates\":[\n        {\n            \"lang_id\":\"aea98b93-7bdf-455b-9ad4-a259d69dc76e\",\n            \"date\":\"Segodnya\"\n        },\n        {\n            \"lang_id\":\"8723c1c7-aa6d-429f-b8af-ee9ace61f0d7\",\n            \"date\":\"Su gun\"\n        }        \n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:2406/admin/order-time",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"admin",
+								"order-time"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetOrderTimeByID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:2406/admin/order-time/32646376-c93f-412b-9e75-b3a5fa70df9e",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"admin",
+								"order-time",
+								"32646376-c93f-412b-9e75-b3a5fa70df9e"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetOrderTimes",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:2406/admin/order-times",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"admin",
+								"order-times"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeleteOrderTimeByID",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "localhost:2406/admin/order-time/32646376-c93f-412b-9e75-b3a5fa70df9e",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"admin",
+								"order-time",
+								"32646376-c93f-412b-9e75-b3a5fa70df9e"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "RestoreOrderTimeByID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:2406/admin/restore-order-time/32646376-c93f-412b-9e75-b3a5fa70df9e",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"admin",
+								"restore-order-time",
+								"32646376-c93f-412b-9e75-b3a5fa70df9e"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeletePermanentlyOrderTimeByID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:2406/admin/delete-order-time/32646376-c93f-412b-9e75-b3a5fa70df9e",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"admin",
+								"delete-order-time",
+								"32646376-c93f-412b-9e75-b3a5fa70df9e"
 							]
 						}
 					},

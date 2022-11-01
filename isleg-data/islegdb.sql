@@ -203,6 +203,22 @@ END; $$;
 ALTER PROCEDURE public.delete_language(language_id uuid) OWNER TO postgres;
 
 --
+-- Name: delete_order_date(uuid); Type: PROCEDURE; Schema: public; Owner: postgres
+--
+
+CREATE PROCEDURE public.delete_order_date(od_id uuid)
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+UPDATE order_dates SET deleted_at = now() WHERE id = od_id;
+UPDATE order_times SET deleted_at = now() WHERE order_date_id = od_id;
+UPDATE translation_order_dates SET deleted_at = now() WHERE order_date_id = od_id;
+END; $$;
+
+
+ALTER PROCEDURE public.delete_order_date(od_id uuid) OWNER TO postgres;
+
+--
 -- Name: delete_product(uuid); Type: PROCEDURE; Schema: public; Owner: postgres
 --
 
@@ -322,6 +338,22 @@ END; $$;
 
 
 ALTER PROCEDURE public.restore_language(language_id uuid) OWNER TO postgres;
+
+--
+-- Name: restore_order_date(uuid); Type: PROCEDURE; Schema: public; Owner: postgres
+--
+
+CREATE PROCEDURE public.restore_order_date(od_id uuid)
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+UPDATE order_dates SET deleted_at = NULL WHERE id = od_id;
+UPDATE order_times SET deleted_at = NULL WHERE order_date_id = od_id;
+UPDATE translation_order_dates SET deleted_at = NULL WHERE order_date_id = od_id; 
+END; $$;
+
+
+ALTER PROCEDURE public.restore_order_date(od_id uuid) OWNER TO postgres;
 
 --
 -- Name: restore_product(uuid); Type: PROCEDURE; Schema: public; Owner: postgres
@@ -1565,8 +1597,8 @@ da3408ea-1cd6-41b0-aa7d-361ed2325c55	332d15a5-8f2a-4ea5-8eac-a0e571fcdce5	upload
 --
 
 COPY public.order_dates (id, date, created_at, updated_at, deleted_at) FROM stdin;
-32646376-c93f-412b-9e75-b3a5fa70df9e	today	2022-09-28 17:35:33.772335+05	2022-09-28 17:35:33.772335+05	\N
 c1f2beca-a6b6-4971-a6a7-ed50079c6912	tomorrow	2022-09-28 17:36:46.804343+05	2022-09-28 17:36:46.804343+05	\N
+32646376-c93f-412b-9e75-b3a5fa70df9e	today	2022-09-28 17:35:33.772335+05	2022-11-01 23:58:35.636948+05	\N
 \.
 
 
@@ -1575,10 +1607,10 @@ c1f2beca-a6b6-4971-a6a7-ed50079c6912	tomorrow	2022-09-28 17:36:46.804343+05	2022
 --
 
 COPY public.order_times (id, order_date_id, "time", created_at, updated_at, deleted_at) FROM stdin;
-9c2261db-a8d3-4c7d-8bcb-302ac1f1f9fb	32646376-c93f-412b-9e75-b3a5fa70df9e	09:00 - 12:00	2022-09-28 17:35:33.802847+05	2022-09-28 17:35:33.802847+05	\N
-fabed2a7-f467-4ef5-846f-73c0384755b8	32646376-c93f-412b-9e75-b3a5fa70df9e	18:00 - 21:00	2022-09-28 17:35:33.802847+05	2022-09-28 17:35:33.802847+05	\N
 7d47a77a-b8f3-4e96-aa56-5ec7fb328e86	c1f2beca-a6b6-4971-a6a7-ed50079c6912	09:00 - 12:00	2022-09-28 17:36:46.825964+05	2022-09-28 17:36:46.825964+05	\N
 de31361b-9fba-48f2-9341-9e3dd08cf9fd	c1f2beca-a6b6-4971-a6a7-ed50079c6912	18:00 - 21:00	2022-09-28 17:36:46.825964+05	2022-09-28 17:36:46.825964+05	\N
+67c488ef-6021-4cc5-96cc-25408e71dbe3	32646376-c93f-412b-9e75-b3a5fa70df9e	09:00 - 12:00	2022-11-01 22:51:27.754592+05	2022-11-01 23:58:35.636948+05	\N
+861ae017-67b5-45ae-88d7-a6990d7c49fd	32646376-c93f-412b-9e75-b3a5fa70df9e	18:00 - 21:00	2022-11-01 22:51:27.767647+05	2022-11-01 23:58:35.636948+05	\N
 \.
 
 
@@ -1842,10 +1874,10 @@ ff43b90d-e22d-4364-b358-6fd56bb3a305	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	orders
 --
 
 COPY public.translation_order_dates (id, lang_id, order_date_id, date, created_at, updated_at, deleted_at) FROM stdin;
-dcd0c70b-9fa2-4327-8b35-de29bd3febcb	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	32646376-c93f-412b-9e75-b3a5fa70df9e	şu gün	2022-09-28 17:35:33.812812+05	2022-09-28 17:35:33.812812+05	\N
-3338d831-f091-4574-a0bf-f9cb07dd4893	aea98b93-7bdf-455b-9ad4-a259d69dc76e	32646376-c93f-412b-9e75-b3a5fa70df9e	Cегодня	2022-09-28 17:35:33.82453+05	2022-09-28 17:35:33.82453+05	\N
 1aa5185f-9815-4e3f-9c34-718bfb587d91	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	c1f2beca-a6b6-4971-a6a7-ed50079c6912	Ertir	2022-09-28 17:36:46.836838+05	2022-09-28 17:36:46.836838+05	\N
 9e7a3752-fce2-4b66-bf3e-d915bf463f92	aea98b93-7bdf-455b-9ad4-a259d69dc76e	c1f2beca-a6b6-4971-a6a7-ed50079c6912	Завтра	2022-09-28 17:36:46.847888+05	2022-09-28 17:36:46.847888+05	\N
+3338d831-f091-4574-a0bf-f9cb07dd4893	aea98b93-7bdf-455b-9ad4-a259d69dc76e	32646376-c93f-412b-9e75-b3a5fa70df9e	Segodnya	2022-09-28 17:35:33.82453+05	2022-11-01 23:58:35.636948+05	\N
+dcd0c70b-9fa2-4327-8b35-de29bd3febcb	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	32646376-c93f-412b-9e75-b3a5fa70df9e	Su gun	2022-09-28 17:35:33.812812+05	2022-11-01 23:58:35.636948+05	\N
 \.
 
 
