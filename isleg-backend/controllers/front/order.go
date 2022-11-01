@@ -917,8 +917,6 @@ func GetCustomerOrders(c *gin.Context) {
 				return
 			}
 
-			fmt.Println(product)
-
 			rowProduct, err := db.Query("SELECT brend_id,price,old_price,amount,limit_amount,is_new FROM products WHERE id = $1 AND deleted_at IS NULL", product.ID)
 			if err != nil {
 				c.JSON(http.StatusBadRequest, gin.H{
@@ -945,6 +943,12 @@ func GetCustomerOrders(c *gin.Context) {
 					})
 					return
 				}
+			}
+
+			if product.OldPrice != 0 {
+				product.Percentage = -math.Round(((product.OldPrice - product.Price) * 100) / product.OldPrice)
+			} else {
+				product.Percentage = 0
 			}
 
 			rowMainImage, err := db.Query("SELECT small,medium,large FROM main_image WHERE product_id = $1 AND deleted_at IS NULL", product.ID)
