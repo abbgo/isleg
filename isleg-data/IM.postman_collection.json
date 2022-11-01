@@ -608,7 +608,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "localhost:2406/api/tm/fdc10d33-043b-4ee0-9d6e-e2a12a3e150a/2/1",
+							"raw": "localhost:2406/api/tm/d154a3f1-7086-439f-b343-3998d6521efa/10/1",
 							"host": [
 								"localhost"
 							],
@@ -616,8 +616,8 @@
 							"path": [
 								"api",
 								"tm",
-								"fdc10d33-043b-4ee0-9d6e-e2a12a3e150a",
-								"2",
+								"d154a3f1-7086-439f-b343-3998d6521efa",
+								"10",
 								"1"
 							]
 						}
@@ -1664,7 +1664,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"company_addresses\":[\n        {\n            \"lang_id\":\"aea98b93-7bdf-455b-9ad4-a259d69dc76e\",\n            \"address\":\"Улица Азади 23, Ашхабад\"\n        },\n        {\n            \"lang_id\":\"8723c1c7-aa6d-429f-b8af-ee9ace61f0d7\",\n            \"address\":\"Aşgabat şäheri Azady köçesiniň 23-nji jaýy\"\n        }\n    ]\n}",
+							"raw": "[\n        {\n            \"lang_id\":\"aea98b93-7bdf-455b-9ad4-a259d69dc76e\",\n            \"address\":\"Улица Азади 23, Ашхабад\"\n        },\n        {\n            \"lang_id\":\"8723c1c7-aa6d-429f-b8af-ee9ace61f0d7\",\n            \"address\":\"Aşgabat şäheri Azady köçesiniň 23-nji jaýy\"\n        }\n    ]\n",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1745,7 +1745,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"translations_footer\":[\n        {\n            \"lang_id\":\"aea98b93-7bdf-455b-9ad4-a259d69dc76e\",\n            \"about\":\"О нас\",\n            \"payment\":\"Порядок доставки и оплаты\",\n            \"contact\":\"Коммуникация\",\n            \"secure\":\"Обслуживания и Политика Конфиденциальности\",\n            \"word\":\"Все права защищены\"\n        },\n        {\n            \"lang_id\":\"8723c1c7-aa6d-429f-b8af-ee9ace61f0d7\",\n            \"about\":\"Biz Barada\",\n            \"payment\":\"Eltip bermek we töleg tertibi\",\n            \"contact\":\"Aragatnaşyk\",\n            \"secure\":\"Ulanyş düzgünleri we gizlinlik şertnamasy\",\n            \"word\":\"Ähli hukuklary goraglydyr\"\n        }\n    ]\n}",
+							"raw": "[\n        {\n            \"lang_id\":\"aea98b93-7bdf-455b-9ad4-a259d69dc76e\",\n            \"about\":\"О нас\",\n            \"payment\":\"Порядок доставки и оплаты\",\n            \"contact\":\"Коммуникация\",\n            \"secure\":\"Обслуживания и Политика Конфиденциальности\",\n            \"word\":\"Все права защищены\"\n        },\n        {\n            \"lang_id\":\"8723c1c7-aa6d-429f-b8af-ee9ace61f0d7\",\n            \"about\":\"Biz Barada\",\n            \"payment\":\"Eltip bermek we töleg tertibi\",\n            \"contact\":\"Aragatnaşyk\",\n            \"secure\":\"Ulanyş düzgünleri we gizlinlik şertnamasy\",\n            \"word\":\"Ähli hukuklary goraglydyr\"\n        }\n    ]\n",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1826,7 +1826,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"translations_header\":[\n        {\n            \"lang_id\":\"aea98b93-7bdf-455b-9ad4-a259d69dc76e\",\n            \"research\":\"поиск\",\n            \"phone\":\"tелефон\",\n            \"password\":\"пароль\",\n            \"forgot_password\":\"забыл пароль\",\n            \"sign_in\":\"войти\",\n            \"sign_up\":\"зарегистрироваться\",\n            \"name\":\"имя\",\n            \"password_verification\":\"Подтвердить Пароль\",\n            \"verify_secure\":\"Я прочитал и принимаю Условия Обслуживания и Политика Конфиденциальности\",\n            \"my_information\":\"моя информация\",\n            \"my_favorites\":\"мои любимые\",\n            \"my_orders\":\"мои заказы\",\n            \"log_out\":\"выйти\",\n            \"basket\":\"корзина\",\n            \"email\":\"uytget\",\n            \"add_to_basket\":\"uytget\"\n        },\n        {\n            \"lang_id\":\"8723c1c7-aa6d-429f-b8af-ee9ace61f0d7\",\n            \"research\":\"gözleg\",\n            \"phone\":\"telefon\",\n            \"password\":\"parol\",\n            \"forgot_password\":\"Acar sozumi unutdym\",\n            \"sign_in\":\"ulgama girmek\",\n            \"sign_up\":\"agza bolmak\",\n            \"name\":\"Ady\",\n            \"password_verification\":\"Acar sozi tassyklamak\",\n            \"verify_secure\":\"Ulanyş Düzgünlerini we Gizlinlik Şertnamasyny okadym we kabul edýärin\",\n            \"my_information\":\"maglumatym\",\n            \"my_favorites\":\"halanlarym\",\n            \"my_orders\":\"sargytlarym\",\n            \"log_out\":\"cykmak\",\n            \"basket\":\"sebet\",\n            \"email\":\"uytget\",\n            \"add_to_basket\":\"uytget\"\n        }\n    ]\n}",
+							"raw": "[\n        {\n            \"lang_id\":\"aea98b93-7bdf-455b-9ad4-a259d69dc76e\",\n            \"research\":\"поиск\",\n            \"phone\":\"tелефон\",\n            \"password\":\"пароль\",\n            \"forgot_password\":\"забыл пароль\",\n            \"sign_in\":\"войти\",\n            \"sign_up\":\"зарегистрироваться\",\n            \"name\":\"имя\",\n            \"password_verification\":\"Подтвердить Пароль\",\n            \"verify_secure\":\"Я прочитал и принимаю Условия Обслуживания и Политика Конфиденциальности\",\n            \"my_information\":\"моя информация\",\n            \"my_favorites\":\"мои любимые\",\n            \"my_orders\":\"мои заказы\",\n            \"log_out\":\"выйти\",\n            \"basket\":\"корзина\",\n            \"email\":\"uytget\",\n            \"add_to_basket\":\"uytget\"\n        },\n        {\n            \"lang_id\":\"8723c1c7-aa6d-429f-b8af-ee9ace61f0d7\",\n            \"research\":\"gözleg\",\n            \"phone\":\"telefon\",\n            \"password\":\"parol\",\n            \"forgot_password\":\"Acar sozumi unutdym\",\n            \"sign_in\":\"ulgama girmek\",\n            \"sign_up\":\"agza bolmak\",\n            \"name\":\"Ady\",\n            \"password_verification\":\"Acar sozi tassyklamak\",\n            \"verify_secure\":\"Ulanyş Düzgünlerini we Gizlinlik Şertnamasyny okadym we kabul edýärin\",\n            \"my_information\":\"maglumatym\",\n            \"my_favorites\":\"halanlarym\",\n            \"my_orders\":\"sargytlarym\",\n            \"log_out\":\"cykmak\",\n            \"basket\":\"sebet\",\n            \"email\":\"uytget\",\n            \"add_to_basket\":\"uytget\"\n        }\n    ]",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1951,7 +1951,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"translations_secure\":[\n        {\n            \"lang_id\":\"aea98b93-7bdf-455b-9ad4-a259d69dc76e\",\n            \"title\":\"Пользовательское соглашение\",\n            \"content\":\"Между Ынамдар – Интернет Маркетом (далее – “Ынамдар”) и интернет сайтом www.ynamdar.com (далее – “Сайт”), а также его клиентом (далее - “Клиент”) достигнуто соглашение по нижеследующим условиям.\"\n        },\n        {\n            \"lang_id\":\"8723c1c7-aa6d-429f-b8af-ee9ace61f0d7\",\n            \"title\":\"ÖZARA YLALAŞYGY\",\n            \"content\":\"Ynamdar - Internet Marketi (Mundan beýläk – “Ynamdar”) we www.ynamdar.com internet saýty (Mundan beýläk – “Saýt”) bilen, onuň agzasynyň (“Agza”) arasynda aşakdaky şertleri ýerine ýetirmek barada ylalaşyga gelindi.\"\n        }\n    ]\n}",
+							"raw": "[\n        {\n            \"lang_id\":\"aea98b93-7bdf-455b-9ad4-a259d69dc76e\",\n            \"title\":\"Пользовательское соглашение\",\n            \"content\":\"Между Ынамдар – Интернет Маркетом (далее – “Ынамдар”) и интернет сайтом www.ynamdar.com (далее – “Сайт”), а также его клиентом (далее - “Клиент”) достигнуто соглашение по нижеследующим условиям.\"\n        },\n        {\n            \"lang_id\":\"8723c1c7-aa6d-429f-b8af-ee9ace61f0d7\",\n            \"title\":\"ÖZARA YLALAŞYGY\",\n            \"content\":\"Ynamdar - Internet Marketi (Mundan beýläk – “Ynamdar”) we www.ynamdar.com internet saýty (Mundan beýläk – “Saýt”) bilen, onuň agzasynyň (“Agza”) arasynda aşakdaky şertleri ýerine ýetirmek barada ylalaşyga gelindi.\"\n        }\n    ]\n",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -2052,7 +2052,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"translations_payment\":[\n        {\n            \"lang_id\":\"aea98b93-7bdf-455b-9ad4-a259d69dc76e\",\n            \"title\":\"Порядок доставки и оплаты\",\n            \"content\":\"В настоящее время услуга по доставке осуществляется по городу Ашхабад, Бюзмеин и Анау Услуга предоставляется бесплатно Минимальный заказ должен составлять не менее 150 манат После Вашего заказа по сайту, оператор позвонит Вам для подтверждения заказа (постоянным клиентам по их желанию подтверждение осуществляется автоматизированно) Услуга доставки выполняется по указанному Вами адресу и номеру телефона Если заказ не подтвержден то данный заказ не регистрируется и не выполняется. Для подтверждения заказа, удостоверьтесь, что можете принять звонок по указанному Вами номеру телефона. Также проверьте правильность указанного Вами адреса Оплата выполняется после того, как Вы проверите и примите заказ. На платежном документе курьера указана сумма Вашей оплаты. Оплата выполняется наличными и через карту в национальной валюте. Принятый и оплаченный товар возврату не подлежит Если не удается найти владельца заказа в течение 24 часов после подтверждения заказа, то данный заказ аннулируется\"\n        },\n        {\n            \"lang_id\":\"8723c1c7-aa6d-429f-b8af-ee9ace61f0d7\",\n            \"title\":\"Eltip bermek we töleg tertibi\",\n            \"content\":\"Eltip bermek hyzmaty Aşgabat şäheriniň çägi bilen bir hatarda Büzmeýine we Änew şäherine hem elýeterlidir. Hyzmat mugt amala aşyrylýar Her bir sargydyň jemi bahasy azyndan 150 manat bolmalydyr Saýtdan sargyt edeniňizden soňra operator size jaň edip sargydy tassyklar (eger hemişelik müşderi bolsaňyz sargytlaryňyz islegiňize görä awtomatik usulda hem tassyklanýar) Girizen salgyňyz we telefon belgiňiz esasynda hyzmat amala aşyrylýar Sargyt tassyklanmadyk ýagdaýynda ol hasaba alynmaýar we ýerine ýetirilmeýär. Sargydyň tassyklanmagy üçin girizen telefon belgiňizden jaň kabul edip bilýändigiňize göz ýetiriň. Şeýle hem girizen salgyňyzyň dogrulygyny barlaň Sargydy barlap alanyňyzdan soňra töleg amala aşyrylýar. Eltip berijiniň size gowşurýan töleg resminamasynda siziň tölemeli puluňyz bellenendir. Töleg nagt we nagt däl görnüşde milli manatda amala aşyrylýar. Kabul edip tölegini geçiren harydyňyz yzyna alynmaýar Sargyt tassyklanandan soňra 24 sagadyň dowamynda eýesi tapylmasa ol güýjüni ýitirýär;\"\n        }\n    ]\n}",
+							"raw": "[\n        {\n            \"lang_id\":\"aea98b93-7bdf-455b-9ad4-a259d69dc76e\",\n            \"title\":\"Порядок доставки и оплаты\",\n            \"content\":\"В настоящее время услуга по доставке осуществляется по городу Ашхабад, Бюзмеин и Анау Услуга предоставляется бесплатно Минимальный заказ должен составлять не менее 150 манат После Вашего заказа по сайту, оператор позвонит Вам для подтверждения заказа (постоянным клиентам по их желанию подтверждение осуществляется автоматизированно) Услуга доставки выполняется по указанному Вами адресу и номеру телефона Если заказ не подтвержден то данный заказ не регистрируется и не выполняется. Для подтверждения заказа, удостоверьтесь, что можете принять звонок по указанному Вами номеру телефона. Также проверьте правильность указанного Вами адреса Оплата выполняется после того, как Вы проверите и примите заказ. На платежном документе курьера указана сумма Вашей оплаты. Оплата выполняется наличными и через карту в национальной валюте. Принятый и оплаченный товар возврату не подлежит Если не удается найти владельца заказа в течение 24 часов после подтверждения заказа, то данный заказ аннулируется\"\n        },\n        {\n            \"lang_id\":\"8723c1c7-aa6d-429f-b8af-ee9ace61f0d7\",\n            \"title\":\"Eltip bermek we töleg tertibi\",\n            \"content\":\"Eltip bermek hyzmaty Aşgabat şäheriniň çägi bilen bir hatarda Büzmeýine we Änew şäherine hem elýeterlidir. Hyzmat mugt amala aşyrylýar Her bir sargydyň jemi bahasy azyndan 150 manat bolmalydyr Saýtdan sargyt edeniňizden soňra operator size jaň edip sargydy tassyklar (eger hemişelik müşderi bolsaňyz sargytlaryňyz islegiňize görä awtomatik usulda hem tassyklanýar) Girizen salgyňyz we telefon belgiňiz esasynda hyzmat amala aşyrylýar Sargyt tassyklanmadyk ýagdaýynda ol hasaba alynmaýar we ýerine ýetirilmeýär. Sargydyň tassyklanmagy üçin girizen telefon belgiňizden jaň kabul edip bilýändigiňize göz ýetiriň. Şeýle hem girizen salgyňyzyň dogrulygyny barlaň Sargydy barlap alanyňyzdan soňra töleg amala aşyrylýar. Eltip berijiniň size gowşurýan töleg resminamasynda siziň tölemeli puluňyz bellenendir. Töleg nagt we nagt däl görnüşde milli manatda amala aşyrylýar. Kabul edip tölegini geçiren harydyňyz yzyna alynmaýar Sargyt tassyklanandan soňra 24 sagadyň dowamynda eýesi tapylmasa ol güýjüni ýitirýär;\"\n        }\n    ]\n",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -2153,7 +2153,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"translations_about\":[\n        {\n            \"lang_id\":\"aea98b93-7bdf-455b-9ad4-a259d69dc76e\",\n            \"title\":\"Рады приветствовать Вас в интернет-маркете Isleg!\",\n            \"content\":\"Мы начали работу в июле 2019 года и на сегодняшний день мы предлагаем Вам тысячи видов товаров, которые принадлежат сотням брендам. Каждый день мы работаем над увеличением ассортимента, привлечением новых компаний к сотрудничеству. Целью нашей работы является создание выгодных условий для наших клиентов-экономия времени на походы в магазины, оплата наличными или картой, доставка в удобное время, и конечно же качественная продукция по лучшим ценам Мы открыты для сотрудничества и пожеланий\"\n        },\n        {\n            \"lang_id\":\"8723c1c7-aa6d-429f-b8af-ee9ace61f0d7\",\n            \"title\":\"Sizi Isleg onlaýn marketimizde hoş gördük!\",\n            \"content\":\"Onlaýn marketimiz 2019-njy ýylyň iýul aýyndan bäri hyzmat berýär. Häzirki wagtda Size ýüzlerçe brendlere degişli bolan müňlerçe haryt görnüşlerini hödürleýäris! Haryt görnüşlerimizi sizden gelýän isleg we teklipleriň esasynda köpeltmäge dowam edýäris. Biziň maksadymyz müşderilerimize ýokary hilli hyzmat bermek bolup durýar. Indi Siz öýüňizden çykmazdan özüňizi gerekli zatlar bilen üpjün edip bilersiňiz! Munuň bilen bir hatarda Siz wagtyňyzy we transport çykdajylaryny hem tygşytlaýarsyňyz. Tölegi harytlar size gowuşandan soňra nagt ýa-da bank kartlarynyň üsti bilen amala aşyryp bilersiňiz Biziň gapymyz hyzmatdaşlyklara we tekliplere hemişe açyk!\"\n        }\n    ]\n}",
+							"raw": "[\n        {\n            \"lang_id\":\"aea98b93-7bdf-455b-9ad4-a259d69dc76e\",\n            \"title\":\"Рады приветствовать Вас в интернет-маркете Isleg!\",\n            \"content\":\"Мы начали работу в июле 2019 года и на сегодняшний день мы предлагаем Вам тысячи видов товаров, которые принадлежат сотням брендам. Каждый день мы работаем над увеличением ассортимента, привлечением новых компаний к сотрудничеству. Целью нашей работы является создание выгодных условий для наших клиентов-экономия времени на походы в магазины, оплата наличными или картой, доставка в удобное время, и конечно же качественная продукция по лучшим ценам Мы открыты для сотрудничества и пожеланий\"\n        },\n        {\n            \"lang_id\":\"8723c1c7-aa6d-429f-b8af-ee9ace61f0d7\",\n            \"title\":\"Sizi Isleg onlaýn marketimizde hoş gördük!\",\n            \"content\":\"Onlaýn marketimiz 2019-njy ýylyň iýul aýyndan bäri hyzmat berýär. Häzirki wagtda Size ýüzlerçe brendlere degişli bolan müňlerçe haryt görnüşlerini hödürleýäris! Haryt görnüşlerimizi sizden gelýän isleg we teklipleriň esasynda köpeltmäge dowam edýäris. Biziň maksadymyz müşderilerimize ýokary hilli hyzmat bermek bolup durýar. Indi Siz öýüňizden çykmazdan özüňizi gerekli zatlar bilen üpjün edip bilersiňiz! Munuň bilen bir hatarda Siz wagtyňyzy we transport çykdajylaryny hem tygşytlaýarsyňyz. Tölegi harytlar size gowuşandan soňra nagt ýa-da bank kartlarynyň üsti bilen amala aşyryp bilersiňiz Biziň gapymyz hyzmatdaşlyklara we tekliplere hemişe açyk!\"\n        }\n    ]\n",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -2254,7 +2254,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"translations_contact\":[\n        {\n            \"lang_id\":\"aea98b93-7bdf-455b-9ad4-a259d69dc76e\",\n            \"full_name\":\"full_name_ru\",\n            \"email\":\"email_ru\",\n            \"phone\":\"phone_ru\",\n            \"letter\":\"letter_ru\",\n            \"company_phone\":\"company_phone_ru\",\n            \"imo\":\"imo_ru\",\n            \"company_email\":\"company_email_ru\",\n            \"instagram\":\"instagram_ru\",\n            \"button_text\":\"button_text_ru\"\n        },\n        {\n            \"lang_id\":\"8723c1c7-aa6d-429f-b8af-ee9ace61f0d7\",\n            \"full_name\":\"full_name_tm\",\n            \"email\":\"email_tm\",\n            \"phone\":\"phone_tm\",\n            \"letter\":\"letter_tm\",\n            \"company_phone\":\"company_phone_tm\",\n            \"imo\":\"imo_tm\",\n            \"company_email\":\"company_email_tm\",\n            \"instagram\":\"instagram_tm\",\n            \"button_text\":\"button_texttmu\"\n        }\n    ]\n}",
+							"raw": "[\n        {\n            \"lang_id\":\"aea98b93-7bdf-455b-9ad4-a259d69dc76e\",\n            \"full_name\":\"full_name_ru\",\n            \"email\":\"email_ru\",\n            \"phone\":\"phone_ru\",\n            \"letter\":\"letter_ru\",\n            \"company_phone\":\"company_phone_ru\",\n            \"imo\":\"imo_ru\",\n            \"company_email\":\"company_email_ru\",\n            \"instagram\":\"instagram_ru\",\n            \"button_text\":\"button_text_ru\"\n        },\n        {\n            \"lang_id\":\"8723c1c7-aa6d-429f-b8af-ee9ace61f0d7\",\n            \"full_name\":\"full_name_tm\",\n            \"email\":\"email_tm\",\n            \"phone\":\"phone_tm\",\n            \"letter\":\"letter_tm\",\n            \"company_phone\":\"company_phone_tm\",\n            \"imo\":\"imo_tm\",\n            \"company_email\":\"company_email_tm\",\n            \"instagram\":\"instagram_tm\",\n            \"button_text\":\"button_texttmu\"\n        }\n    ]\n",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -2355,7 +2355,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"translations_my_information_page\": [\n        {\n            \"lang_id\": \"aea98b93-7bdf-455b-9ad4-a259d69dc76e\",\n            \"birthday\": \"дата рождения\",\n            \"address\": \"ваш адрес\",\n            \"update_password\": \"update_password_ru\",\n            \"save\": \"save_ru\"\n        },\n        {\n            \"lang_id\": \"8723c1c7-aa6d-429f-b8af-ee9ace61f0d7\",\n            \"birthday\": \"doglan senäň\",\n            \"address\": \"salgyňyz\",\n            \"update_password\": \"update_password_tm\",\n            \"save\": \"save_tm\"\n        }\n    ]\n}",
+							"raw": "[\n        {\n            \"lang_id\": \"aea98b93-7bdf-455b-9ad4-a259d69dc76e\",\n            \"birthday\": \"дата рождения\",\n            \"address\": \"ваш адрес\",\n            \"update_password\": \"update_password_ru\",\n            \"save\": \"save_ru\"\n        },\n        {\n            \"lang_id\": \"8723c1c7-aa6d-429f-b8af-ee9ace61f0d7\",\n            \"birthday\": \"doglan senäň\",\n            \"address\": \"salgyňyz\",\n            \"update_password\": \"update_password_tm\",\n            \"save\": \"save_tm\"\n        }\n    ]\n",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -2462,7 +2462,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"translations_update_password_page\":[\n        {\n            \"lang_id\":\"aea98b93-7bdf-455b-9ad4-a259d69dc76e\",\n            \"title\":\"изменить пароль\",\n            \"password\":\"ключевое слово\",\n            \"verify_password\":\"Подтвердить Пароль\",\n            \"explanation\":\"ключевое слово должно быть буквой или цифрой длиной от 5 до 20\",\n            \"save\":\"запомнить\"\n        },\n        {\n            \"lang_id\":\"8723c1c7-aa6d-429f-b8af-ee9ace61f0d7\",\n            \"title\":\"açar sözi üýtgetmek\",\n            \"password\":\"açar sözi\",\n            \"verify_password\":\"açar sözi tassykla\",\n            \"explanation\":\"siziň açar sözüňiz 5-20 uzynlygynda harp ýa-da sandan ybarat bolmalydyr\",\n            \"save\":\"ýatda sakla\"\n        }\n    ]\n}",
+							"raw": "[\n        {\n            \"lang_id\":\"aea98b93-7bdf-455b-9ad4-a259d69dc76e\",\n            \"title\":\"изменить пароль\",\n            \"password\":\"ключевое слово\",\n            \"verify_password\":\"Подтвердить Пароль\",\n            \"explanation\":\"ключевое слово должно быть буквой или цифрой длиной от 5 до 20\",\n            \"save\":\"запомнить\"\n        },\n        {\n            \"lang_id\":\"8723c1c7-aa6d-429f-b8af-ee9ace61f0d7\",\n            \"title\":\"açar sözi üýtgetmek\",\n            \"password\":\"açar sözi\",\n            \"verify_password\":\"açar sözi tassykla\",\n            \"explanation\":\"siziň açar sözüňiz 5-20 uzynlygynda harp ýa-da sandan ybarat bolmalydyr\",\n            \"save\":\"ýatda sakla\"\n        }\n    ]\n",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -2711,37 +2711,23 @@
 			"item": [
 				{
 					"name": "GetLikedProductsWithoutCustomer",
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
 					"request": {
-						"method": "GET",
+						"method": "POST",
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NSIsImV4cCI6MTY2MzQwNzk3NH0.54fNs-jACWe01_HHYLLdA8nVC8fQXCUen0XkDqVGzPk",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NSIsImN1c3RvbWVyX2lkIjoiMWY1YmM5MTctZmM4NS00NmNmLWExYjItN2MxNGNmZTk0MGJlIiwiZXhwIjoxNjY3Mjc2NTg4fQ.RUyHQ67UTe76Dh49h0A_ZN1HD5V1VmiaUyD9fUGt4fg",
 								"type": "default"
 							}
 						],
 						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "product_ids",
-									"value": "3ca5ade3-d2ce-40ba-9be6-601105b5205a",
-									"type": "default"
-								},
-								{
-									"key": "product_ids",
-									"value": "ba935176-cf8c-4684-ab24-3ff11e5f176a",
-									"type": "default"
-								},
-								{
-									"key": "product_ids",
-									"value": "abc05e23-5d72-41db-969a-662442da399f",
-									"type": "default"
+							"mode": "raw",
+							"raw": "{\n    \"product_ids\":[\n        \"45a9f186-2521-4eef-a4e0-b5c253c70878\",\n        \"ee1d67ed-5862-4dfc-8424-52531a240a6c\"\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
 								}
-							]
+							}
 						},
 						"url": {
 							"raw": "localhost:2406/api/tm/likes-without-customer",
@@ -3182,7 +3168,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"translations_basket_page\":[\n        {\n            \"lang_id\":\"aea98b93-7bdf-455b-9ad4-a259d69dc76e\",\n            \"quantity_of_goods\":\"quantity_of_goods_ru\",\n            \"total_price\":\"total_price_ru\",\n            \"discount\":\"discount_ru\",\n            \"delivery\":\"delivery_ru\",\n            \"total\":\"total_ru\",\n            \"currency\":\"currency_ru\",\n            \"to_order\":\"to_order_ru\",\n            \"your_basket\":\"your_basket_ru\",\n            \"empty_the_basket\":\"empty_the_basket_ru\"\n        },\n    {\n            \"lang_id\":\"8723c1c7-aa6d-429f-b8af-ee9ace61f0d7\",\n            \"quantity_of_goods\":\"quantity_of_goods_tm\",\n            \"total_price\":\"total_price_tm\",\n            \"discount\":\"discount_tm\",\n            \"delivery\":\"delivery_tm\",\n            \"total\":\"total_tm\",\n            \"currency\":\"currency_tm\",\n            \"to_order\":\"to_order_tm\",\n            \"your_basket\":\"your_basket_tm\",\n            \"empty_the_basket\":\"empty_the_basket_tm\"\n        }\n    ]\n}",
+							"raw": "[\n        {\n            \"lang_id\":\"aea98b93-7bdf-455b-9ad4-a259d69dc76e\",\n            \"quantity_of_goods\":\"quantity_of_goods_ru\",\n            \"total_price\":\"total_price_ru\",\n            \"discount\":\"discount_ru\",\n            \"delivery\":\"delivery_ru\",\n            \"total\":\"total_ru\",\n            \"currency\":\"currency_ru\",\n            \"to_order\":\"to_order_ru\",\n            \"your_basket\":\"your_basket_ru\",\n            \"empty_the_basket\":\"empty_the_basket_ru\"\n        },\n    {\n            \"lang_id\":\"8723c1c7-aa6d-429f-b8af-ee9ace61f0d7\",\n            \"quantity_of_goods\":\"quantity_of_goods_tm\",\n            \"total_price\":\"total_price_tm\",\n            \"discount\":\"discount_tm\",\n            \"delivery\":\"delivery_tm\",\n            \"total\":\"total_tm\",\n            \"currency\":\"currency_tm\",\n            \"to_order\":\"to_order_tm\",\n            \"your_basket\":\"your_basket_tm\",\n            \"empty_the_basket\":\"empty_the_basket_tm\"\n        }\n    ]\n",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -3283,7 +3269,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"translations_order_page\":[\n        {\n            \"lang_id\":\"aea98b93-7bdf-455b-9ad4-a259d69dc76e\",\n            \"content\":\"content_ru\",\n            \"type_of_payment\":\"type_of_payment_ru\",\n            \"choose_a_delivery_time\":\"choose_a_delivery_time_ru\",\n            \"your_address\":\"your_address_ru\",\n            \"mark\":\"mark_ru\",\n            \"to_order\":\"to_order_ru\"\n        },\n        {\n            \"lang_id\":\"8723c1c7-aa6d-429f-b8af-ee9ace61f0d7\",\n            \"content\":\"content_tm\",\n            \"type_of_payment\":\"type_of_payment_tm\",\n            \"choose_a_delivery_time\":\"choose_a_delivery_time_tm\",\n            \"your_address\":\"your_address_tm\",\n            \"mark\":\"mark_tm\",\n            \"to_order\":\"to_order_tm\"\n        }\n    ]\n}",
+							"raw": "[\n        {\n            \"lang_id\":\"aea98b93-7bdf-455b-9ad4-a259d69dc76e\",\n            \"content\":\"content_ru\",\n            \"type_of_payment\":\"type_of_payment_ru\",\n            \"choose_a_delivery_time\":\"choose_a_delivery_time_ru\",\n            \"your_address\":\"your_address_ru\",\n            \"mark\":\"mark_ru\",\n            \"to_order\":\"to_order_ru\"\n        },\n        {\n            \"lang_id\":\"8723c1c7-aa6d-429f-b8af-ee9ace61f0d7\",\n            \"content\":\"content_tm\",\n            \"type_of_payment\":\"type_of_payment_tm\",\n            \"choose_a_delivery_time\":\"choose_a_delivery_time_tm\",\n            \"your_address\":\"your_address_tm\",\n            \"mark\":\"mark_tm\",\n            \"to_order\":\"to_order_tm\"\n        }\n    ]\n",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -3384,7 +3370,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"translation_my_order_page\":[\n        {\n            \"lang_id\":\"aea98b93-7bdf-455b-9ad4-a259d69dc76e\",\n            \"orders\":\"orders_ru\",\n            \"date\":\"date_ru\",\n            \"price\":\"price_ru\",\n            \"currency\":\"currency_ru\",\n            \"image\":\"image_ru\",\n            \"name\":\"name_ru\",\n            \"brend\":\"brend_ru\",\n            \"code\":\"code_ru\",\n            \"amount\":\"amount_ru\",\n            \"total_price\":\"total_price_ru\"\n        },\n        {\n            \"lang_id\":\"8723c1c7-aa6d-429f-b8af-ee9ace61f0d7\",\n            \"orders\":\"orders_tm\",\n            \"date\":\"date_tm\",\n            \"price\":\"price_tm\",\n            \"currency\":\"currency_tm\",\n            \"image\":\"image_tm\",\n            \"name\":\"name_tm\",\n            \"brend\":\"brend_tm\",\n            \"code\":\"code_tm\",\n            \"amount\":\"amount_tm\",\n            \"total_price\":\"total_price_tm\"\n        }\n    ]\n}",
+							"raw": "[\n        {\n            \"lang_id\":\"aea98b93-7bdf-455b-9ad4-a259d69dc76e\",\n            \"orders\":\"orders_ru\",\n            \"date\":\"date_ru\",\n            \"price\":\"price_ru\",\n            \"currency\":\"currency_ru\",\n            \"image\":\"image_ru\",\n            \"name\":\"name_ru\",\n            \"brend\":\"brend_ru\",\n            \"code\":\"code_ru\",\n            \"amount\":\"amount_ru\",\n            \"total_price\":\"total_price_ru\"\n        },\n        {\n            \"lang_id\":\"8723c1c7-aa6d-429f-b8af-ee9ace61f0d7\",\n            \"orders\":\"orders_tm\",\n            \"date\":\"date_tm\",\n            \"price\":\"price_tm\",\n            \"currency\":\"currency_tm\",\n            \"image\":\"image_tm\",\n            \"name\":\"name_tm\",\n            \"brend\":\"brend_tm\",\n            \"code\":\"code_tm\",\n            \"amount\":\"amount_tm\",\n            \"total_price\":\"total_price_tm\"\n        }\n    ]\n",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -3485,7 +3471,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"payment_types\":[\n        {\n            \"lang_id\":\"aea98b93-7bdf-455b-9ad4-a259d69dc76e\",\n            \"type\":\"платежный терминал\"\n        },\n        {\n            \"lang_id\":\"8723c1c7-aa6d-429f-b8af-ee9ace61f0d7\",\n            \"type\":\"töleg terminaly\"\n        }\n    ]\n}",
+							"raw": "[\n        {\n            \"lang_id\":\"aea98b93-7bdf-455b-9ad4-a259d69dc76e\",\n            \"type\":\"платежный терминал\"\n        },\n        {\n            \"lang_id\":\"8723c1c7-aa6d-429f-b8af-ee9ace61f0d7\",\n            \"type\":\"töleg terminaly\"\n        }\n    ]\n",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -3641,12 +3627,12 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NTYiLCJjdXN0b21lcl9pZCI6ImYyNWE2NmQzLTkzYWMtNGRhNC1iMjM3LWQzNDg2N2Q1Y2E4ZiIsImV4cCI6MTY2NjY0MDMxMX0.8zNnpa_eRNylHGCjtFYAgszHfYgmcncP4IBSBJViPjQ",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NSIsImN1c3RvbWVyX2lkIjoiMWY1YmM5MTctZmM4NS00NmNmLWExYjItN2MxNGNmZTk0MGJlIiwiZXhwIjoxNjY3MDc0MTQ4fQ.hLUXuutnKf9o8bAm_t2OwLbDf93iRrlZhmzlG2awK3U",
 								"type": "default"
 							}
 						],
 						"url": {
-							"raw": "localhost:2406/api/tm/orders",
+							"raw": "localhost:2406/api/tm/orders/3/2",
 							"host": [
 								"localhost"
 							],
@@ -3654,7 +3640,44 @@
 							"path": [
 								"api",
 								"tm",
-								"orders"
+								"orders",
+								"3",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetOrderedProductsWithoutCustomer",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NSIsImN1c3RvbWVyX2lkIjoiMWY1YmM5MTctZmM4NS00NmNmLWExYjItN2MxNGNmZTk0MGJlIiwiZXhwIjoxNjY3Mjc2NTg4fQ.RUyHQ67UTe76Dh49h0A_ZN1HD5V1VmiaUyD9fUGt4fg",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"product_ids\":[\n        \"45a9f186-2521-4eef-a4e0-b5c253c70878\",\n        \"ee1d67ed-5862-4dfc-8424-52531a240a6c\"\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:2406/api/tm/orders-without-customer",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"api",
+								"tm",
+								"orders-without-customer"
 							]
 						}
 					},
