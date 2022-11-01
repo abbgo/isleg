@@ -154,6 +154,7 @@
 
 <script>
 import { required, sameAs, minLength } from 'vuelidate/lib/validators'
+import { productAdd } from '@/api/user.api'
 export default {
   props: {
     isOpenRegister: {
@@ -357,12 +358,31 @@ export default {
             console.log(this.$auth.loggedIn, this.$store.$auth)
             console.log(response)
             if (response.status === 200) {
-              const { access_token, customer_id, refresh_token } = response.data
-              this.$cookies.set('access_token', access_token)
-              this.$cookies.set('customer_id', customer_id)
-              this.$cookies.set('refresh_token', refresh_token)
+              const { access_token, refresh_token } = response.data
+              const cart = await JSON.parse(localStorage.getItem('lorem'))
+              if (cart) {
+                cart.auth = {
+                  accessToken: access_token,
+                  fullName: this.register.name,
+                  phoneNumber: this.register.phone_number,
+                  email: this.register.email,
+                  refreshToken: refresh_token,
+                }
+                localStorage.setItem('lorem', JSON.stringify(cart))
+              } else {
+                localStorage.setItem(
+                  'lorem',
+                  JSON.stringify({
+                    auth: {
+                      accessToken: access_token,
+                      refreshToken: refresh_token,
+                    },
+                  })
+                )
+              }
               await this.postCarts()
               await this.postFishlists()
+              console.log('this.$route.name', this.$route.name)
               this.closeRegister()
             }
           } catch (err) {
@@ -410,12 +430,10 @@ export default {
       this.$v.$reset()
     },
     async postCarts() {
-      const customerId = await this.$cookies.get('customer_id')
-      const accessToken = await this.$cookies.get('access_token')
       const cart = await JSON.parse(localStorage.getItem('lorem'))
       let products = []
       if (cart) {
-        for (let i = 0; i < cart.cart.length; i++) {
+        for (let i = 0; i < cart.cart?.length; i++) {
           if (cart.cart[i].quantity > 0) {
             products.push({
               product_id: cart.cart[i].id,
@@ -426,48 +444,33 @@ export default {
       }
       console.log(products)
       try {
-        const { status } = await this.$axios.$post(
-          `/${this.$i18n.locale}/add-cart`,
-          {
-            customer_id: customerId,
-            products: products,
-          },
-          {
-            headers: {
-              Authorization: accessToken,
-            },
-          }
-        )
-        console.log(status)
-        // if (status) {
-        // }
-      } catch (e) {
-        console.log(e)
+        const res = (
+          await productAdd({
+            url: `${this.$i18n.locale}/add-cart`,
+            data: products,
+            accessToken: `Bearer ${cart?.auth?.accessToken}`,
+          })
+        ).data
+        console.log('productAdd', res)
+      } catch (error) {
+        console.log(error)
       }
     },
     async postFishlists() {
-      const formData = new FormData()
-      const customerId = await this.$cookies.get('customer_id')
-      const accessToken = await this.$cookies.get('access_token')
       const cart = await JSON.parse(localStorage.getItem('lorem'))
       let wishlists = []
       if (cart) {
         wishlists = cart.cart
-          .filter((product) => product.is_favorite === true)
+          ?.filter((product) => product.is_favorite === true)
           .map((item) => item.id)
-        console.log(wishlists, customerId, accessToken)
-        formData.append('customer_id', customerId)
-        for (let i = 0; i < wishlists.length; i++) {
-          formData.append('product_ids', wishlists[i])
-        }
       }
       try {
         const { status } = await this.$axios.$post(
           `/${this.$i18n.locale}/like`,
-          formData,
+          { product_ids: wishlists },
           {
             headers: {
-              Authorization: accessToken,
+              Authorization: cart.auth.accessToken,
             },
           }
         )

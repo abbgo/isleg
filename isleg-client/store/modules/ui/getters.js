@@ -74,10 +74,18 @@ const isOpenSignUp = (state) => {
   return state.isOpenSignUp
 }
 const categoryProductsName = (state) => {
-  return state.categoryProducts && state.categoryProducts.category && state.categoryProducts.category.name
+  return (
+    state.categoryProducts &&
+    state.categoryProducts.category &&
+    state.categoryProducts.category.name
+  )
 }
 const categoryProducts = (state) => {
-  return state.categoryProducts && state.categoryProducts.category && state.categoryProducts.category.products
+  return (
+    state.categoryProducts &&
+    state.categoryProducts.category &&
+    state.categoryProducts.category.products
+  )
 }
 const myProfile = (state) => {
   return state.myProfile
@@ -110,5 +118,5 @@ export default {
   isOpenSignUp,
   categoryProductsName,
   categoryProducts,
-  myProfile
+  myProfile,
 }

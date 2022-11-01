@@ -59,9 +59,13 @@
         />
       </svg>
       <client-only
-        ><span class="shop__count" v-if="productCount && productCount !== 0">{{
-          productCount > 99 ? '99+' : productCount
-        }}</span></client-only
+        ><span
+          class="shop__count"
+          v-if="(productCount && productCount > 0) || (total && total > 0)"
+          >{{
+            productCount > 99 || total > 99 ? '99+' : productCount || total
+          }}</span
+        ></client-only
       >
       <span class="shop__span">Sebet</span>
     </button>
@@ -101,8 +105,35 @@ export default {
       default: () => '',
     },
   },
+  data() {
+    return {
+      total: null,
+    }
+  },
+  watch: {
+    $route: async function () {
+      const cart = await JSON.parse(localStorage.getItem('lorem'))
+      if (cart?.cart) {
+        if (!this.productCount) {
+          this.total = cart.cart?.reduce((total, num) => {
+            return total + num.quantity
+          }, 0)
+        }
+      }
+    },
+  },
   computed: {
     ...mapGetters('products', ['productCount']),
+  },
+  async mounted() {
+    const cart = await JSON.parse(localStorage.getItem('lorem'))
+    if (cart?.cart) {
+      if (!this.productCount) {
+        this.total = cart.cart?.reduce((total, num) => {
+          return total + num.quantity
+        }, 0)
+      }
+    }
   },
   methods: {
     mouseEnter() {

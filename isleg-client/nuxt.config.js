@@ -62,12 +62,7 @@ export default {
     baseURL: process.env.BASE_API,
   },
   auth: {
-    redirect: {
-      logout: '/',
-      home: '/',
-    },
     strategies: {
-      localStorage: false,
       userRegister: {
         scheme: 'refresh',
         token: {

@@ -12,7 +12,6 @@
     </div>
     <div class="product__chek-text">
       <span>{{ basketProduct && basketProduct.name }}</span>
-      <!-- <span>{{ basketProduct && basketProduct.price }} manat</span> -->
       <div class="chek__count">
         <button @click="fromBasketRemove(basketProduct)">
           <svg
@@ -82,12 +81,12 @@ export default {
         quantity: this.basketProductQuantity,
       })
       if (cart) {
-        const findProduct = cart.cart.find((product) => product.id === data.id)
+        const findProduct = cart.cart?.find((product) => product.id === data.id)
         if (findProduct) {
           findProduct.quantity = this.basketProductQuantity
           localStorage.setItem('lorem', JSON.stringify(cart))
         } else {
-          cart.cart.push(data)
+          cart.cart?.push(data)
           localStorage.setItem('lorem', JSON.stringify(cart))
         }
       } else {

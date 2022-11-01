@@ -2,7 +2,7 @@
   <footer class="footer">
     <div class="mobile__content">
       <ul>
-        <li class="active">
+        <li>
           <h4>Baş sahypa</h4>
           <svg
             width="20"
@@ -44,7 +44,7 @@
             alt=""
           />
         </li>
-        <li>
+        <li @click="$router.push(localeLocation(`/basket`))" class="active">
           <h4>Sebet</h4>
           <svg
             width="21"

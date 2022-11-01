@@ -2,7 +2,7 @@
   <div :class="['pop-up', { active: isPayment }]">
     <div class="pop-up__product-body" style="width: 900px">
       <div class="pop-up__wrapper">
-        <div class="pop-up__close" @click="$emit('close')">
+        <div class="pop-up__close" @click="close">
           <svg
             width="60"
             height="60"
@@ -24,19 +24,9 @@
         <div class="payment__container">
           <div class="payment__text">
             <p>
-              Eltip bermek hyzmaty Aşgabat şäheriniň çägi bilen bir hatarda
-              Büzmeýine we Änew şäherine hem elýeterlidir. Hyzmat mugt amala
-              aşyrylýar; <br />
-              <br />
-              Saýtdan sargyt edeniňizden soňra operator size jaň edip sargydy
-              tassyklar (eger hemişelik müşderi bolsaňyz sargytlaryňyz
-              islegiňize görä awtomatik usulda hem tassyklanýar); <br />
-              <br />
-              Sargydy barlap alanyňyzdan soňra töleg amala aşyrylýar. Eltip
-              berijiniň size gowşurýan töleg resminamasynda siziň tölemeli
-              puluňyz bellenendir. Töleg nagt we nagt däl görnüşde milli manatda
-              amala aşyrylýar. Kabul edip tölegini geçiren harydyňyz yzyna
-              alynmaýar;
+              {{
+                paymentDatas && paymentDatas.text && paymentDatas.text.content
+              }}
             </p>
             <br />
           </div>
@@ -44,22 +34,28 @@
             <div class="settings__chekbox-container">
               <div class="payment__chekbox">
                 <div class="payment__chekbox-title">
-                  <h3>Toleg sekili</h3>
+                  <h3>
+                    {{
+                      paymentDatas &&
+                      paymentDatas.text &&
+                      paymentDatas.text.type_of_payment
+                    }}
+                  </h3>
                 </div>
                 <div
                   class="payment__chekbox-input"
-                  v-for="item in payment.paymentForm"
+                  v-for="item in paymentDatas.types"
                   :key="item.id"
                 >
                   <input
                     :checked="item.checked"
                     class="top__input"
                     name="top"
-                    :id="item.depends"
+                    :id="item.name"
                     type="radio"
                     @change="paymentChecked(item)"
                   />
-                  <label :for="item.depends">{{ item.name }}</label>
+                  <label :for="item.name">{{ item.name }}</label>
                 </div>
                 <span class="error" v-if="isPaymentForm">
                   {{ $t('payment.paymentForm') }}
@@ -67,25 +63,31 @@
               </div>
               <div class="payment__chekbox">
                 <div class="payment__chekbox-title">
-                  <h3>Eltip bermek wagtyny saylan</h3>
+                  <h3>
+                    {{
+                      paymentDatas &&
+                      paymentDatas.text &&
+                      paymentDatas.text.choose_a_delivery_time
+                    }}
+                  </h3>
                 </div>
                 <div class="payment__chekbox-subtitle">
-                  <h4>Ertir(19.06.2022)</h4>
+                  <h4>{{ paymentDatas.orderTimes.title }}</h4>
                 </div>
                 <div
                   class="payment__chekbox-input"
-                  v-for="item in payment.theDeliveryTime"
+                  v-for="item in paymentDatas.orderTimes.times"
                   :key="item.id"
                 >
                   <input
                     :checked="item.checked"
                     class="bottom__input"
                     name="bottom"
-                    :id="item.depends"
+                    :id="item.time"
                     type="radio"
                     @change="theDeliveryTimeChecked(item)"
                   />
-                  <label :for="item.depends">{{ item.time }}</label>
+                  <label :for="item.time">{{ item.time }}</label>
                 </div>
                 <span class="error" v-if="isTheDeliveryTime">
                   {{ $t('payment.theDeliveryTime') }}
@@ -94,11 +96,11 @@
             </div>
             <div class="payment__form">
               <div class="payment__form-box">
-                <label for="">Doly Adynyz <span>*</span></label>
+                <label for="">{{ name }} <span>*</span></label>
                 <input
                   type="text"
                   v-model.trim="$v.payment.fullName.$model"
-                  placeholder="Doly Adynyz"
+                  :placeholder="name"
                 />
                 <span
                   class="error"
@@ -113,7 +115,7 @@
                 >
               </div>
               <div class="payment__form-box">
-                <label for="">Telefon <span>*</span></label>
+                <label for="">{{ phone }} <span>*</span></label>
                 <input
                   type="tel"
                   v-model="$v.payment.phone_number.$model"
@@ -124,11 +126,22 @@
                 </span>
               </div>
               <div class="payment__form-box">
-                <label for="">Salgynyz <span>*</span></label>
+                <label for=""
+                  >{{
+                    paymentDatas &&
+                    paymentDatas.text &&
+                    paymentDatas.text.your_address
+                  }}
+                  <span>*</span></label
+                >
                 <input
                   type="text"
                   v-model.trim="$v.payment.address.$model"
-                  placeholder="Salgynyz"
+                  :placeholder="
+                    paymentDatas &&
+                    paymentDatas.text &&
+                    paymentDatas.text.your_address
+                  "
                 />
                 <span
                   class="error"
@@ -140,12 +153,34 @@
                 </span>
               </div>
               <div class="payment__form-box">
-                <label for="">Bellik</label>
-                <input type="text" placeholder="Bellik" />
+                <label for="">{{
+                  paymentDatas && paymentDatas.text && paymentDatas.text.mark
+                }}</label>
+                <input
+                  type="text"
+                  v-model="payment.note"
+                  :placeholder="
+                    paymentDatas && paymentDatas.text && paymentDatas.text.mark
+                  "
+                />
               </div>
               <div class="payment__form-btn">
-                <button class="disable__btn" disabled>Sayta agza bol</button>
-                <button class="order__btn" @click="order">Sargyt et</button>
+                <button
+                  class="disable__btn"
+                  v-if="isAuth"
+                  @click="$emit('paymentRegister')"
+                >
+                  {{ signIn }}
+                </button>
+                <button v-else></button>
+
+                <button class="order__btn" @click="order">
+                  {{
+                    paymentDatas &&
+                    paymentDatas.text &&
+                    paymentDatas.text.to_order
+                  }}
+                </button>
               </div>
             </div>
           </div>
@@ -157,11 +192,32 @@
 
 <script>
 import { required, minLength } from 'vuelidate/lib/validators'
+import { postPaymentDatas } from '@/api/payment.api'
 export default {
   props: {
     isPayment: {
       type: Boolean,
       default: false,
+    },
+    name: {
+      type: String,
+      default: () => '',
+    },
+    phone: {
+      type: String,
+      default: () => '',
+    },
+    signIn: {
+      type: String,
+      default: () => '',
+    },
+    totalPrice: {
+      type: Number,
+      default: () => 0,
+    },
+    paymentDatas: {
+      type: Object,
+      default: () => {},
     },
   },
   data() {
@@ -169,21 +225,13 @@ export default {
       isPhoneNumber: false,
       isPaymentForm: false,
       isTheDeliveryTime: false,
+      selectedPaymentType: null,
+      selectedPaymentTime: null,
       payment: {
         fullName: '',
-        phone_number: '+993 6',
+        phone_number: '+9936',
         address: '',
         note: '',
-        paymentForm: [
-          { id: 1, checked: false, depends: 'nagt', name: 'Nagt' },
-          { id: 2, checked: false, depends: 'toleg', name: 'Toleg terminaly' },
-          { id: 3, checked: false, depends: 'qr', name: 'QR kod (rysgal pay)' },
-        ],
-        theDeliveryTime: [
-          { id: 4, checked: false, depends: 'afternoon', time: '12.00-15.00' },
-          { id: 5, checked: false, depends: 'after', time: '15.00-18.00' },
-          { id: 6, checked: false, depends: 'evening', time: '18.00-21.00' },
-        ],
       },
     }
   },
@@ -199,10 +247,30 @@ export default {
       address: {
         required,
       },
-      note: {
-        required,
-      },
     },
+  },
+  computed: {
+    async isAuth() {
+      const cart = await JSON.parse(localStorage.getItem('lorem'))
+      console.log(
+        'cart?.auth?.accessToken1',
+        cart?.auth?.accessToken,
+        this.$auth.loggedIn
+      )
+      if (cart?.auth?.accessToken && this.$auth.loggedIn) {
+        console.log(
+          'cart?.auth?.accessToken1',
+          cart?.auth?.accessToken,
+          this.$auth.loggedIn
+        )
+        return false
+      } else {
+        return true
+      }
+    },
+  },
+  mounted() {
+    console.log(this.isAuth)
   },
   methods: {
     enforcePhoneFormat() {
@@ -211,42 +279,46 @@ export default {
         .replace(/\D/g, '')
         .match(/(\d{0,3})(\d{0,1})(\d{0,1})(\d{0,2})(\d{0,2})(\d{0,2})/)
       if (!x[2]) {
-        this.payment.phone_number = '+993 6'
+        this.payment.phone_number = '+9936'
       } else {
         this.payment.phone_number =
-          '+993 6' +
+          '+9936' +
           (x[3] ? x[3] : '') +
-          (x[4] ? ' ' + x[4] : '') +
-          (x[5] ? '-' + x[5] : '') +
-          (x[6] ? '-' + x[6] : '')
+          (x[4] ? x[4] : '') +
+          (x[5] ? x[5] : '') +
+          (x[6] ? x[6] : '')
       }
     },
     paymentChecked(payload) {
-      const findItem = this.payment.paymentForm.find(
+      const findItem = this.paymentDatas.types.find(
         (item) => item.checked == true
       )
       if (findItem) {
         findItem.checked = false
       }
       payload.checked = true
+      this.selectedPaymentType = payload
+      console.log(this.selectedPaymentType)
       this.isPaymentForm = false
     },
     theDeliveryTimeChecked(payload) {
-      const findItem = this.payment.paymentForm.find(
+      const findItem = this.paymentDatas.orderTimes.times.find(
         (item) => item.checked == true
       )
       if (findItem) {
         findItem.checked = false
       }
       payload.checked = true
+      this.selectedPaymentTime = payload
+      console.log(this.selectedPaymentTime)
       this.isTheDeliveryTime = false
     },
     order: async function () {
       this.$v.$touch()
-      const paymentForm = this.payment.paymentForm.filter(
+      const paymentForm = this.paymentDatas.types.filter(
         (pay) => pay.checked == true
       )
-      const theDeliveryTime = this.payment.theDeliveryTime.filter(
+      const theDeliveryTime = this.paymentDatas.orderTimes.times.filter(
         (pay) => pay.checked == true
       )
       if (paymentForm.length == 0) {
@@ -256,37 +328,91 @@ export default {
         this.isTheDeliveryTime = true
       }
       if (this.$v.$invalid) {
-        if (this.payment.phone_number.length < 16) {
+        if (this.payment.phone_number.length < 12) {
           this.isPhoneNumber = true
         } else {
           this.isPhoneNumber = false
         }
       } else {
-        if (this.payment.phone_number.length >= 16) {
-          // try {
-          //   const res = await this.$axios.$post('/api/login/user/register', {
-          //     username: this.$v.userRegister.fullName.$model,
-          //     email: this.$v.userRegister.email.$model,
-          //     password: this.$v.userRegister.password.$model,
-          //   })
-          //   if (res.status === 201) {
-          //     await this.$auth.loginWith('userLogin', {
-          //       data: {
-          //         email: this.$v.userRegister.email.$model,
-          //         password: this.$v.userRegister.password.$model,
-          //       },
-          //     })
-          //     this.$router.push(this.localeLocation('/user-profile/trades'))
-          //   }
-          // } catch (e) {
-          //   this.$toast(this.$t('register.error'))
-          // }
+        if (
+          this.payment.phone_number.length >= 12 &&
+          paymentForm.length > 0 &&
+          theDeliveryTime.length > 0
+        ) {
+          const cart = await JSON.parse(localStorage.getItem('lorem'))
+          let products = []
+          if (cart) {
+            for (let i = 0; i < cart?.cart?.length; i++) {
+              if (cart.cart[i]?.quantity > 0) {
+                products.push({
+                  product_id: cart.cart[i].id,
+                  quantity_of_product: cart.cart[i].quantity,
+                })
+              }
+            }
+          }
+          console.log(products, {
+            full_name: this.payment.fullName,
+            phone_number: this.payment.phone_number,
+            address: this.payment.address,
+            customer_mark: this.payment.note,
+            order_time: this.selectedPaymentTime.time,
+            payment_type: this.selectedPaymentType.name,
+            total_price: this.totalPrice,
+            products: products,
+          })
+          try {
+            const { status } = (
+              await postPaymentDatas({
+                url: `${this.$i18n.locale}/to-order`,
+                data: {
+                  full_name: this.payment.fullName,
+                  phone_number: this.payment.phone_number,
+                  address: this.payment.address,
+                  customer_mark: this.payment.note,
+                  order_time: this.selectedPaymentTime.time,
+                  payment_type: this.selectedPaymentType.name,
+                  total_price: this.totalPrice,
+                  products: products,
+                },
+              })
+            ).data
+            console.log(status)
+            if (status) {
+              cart.cart = cart.cart
+                .filter((product) => product.is_favorite === true)
+                .filter((item) => {
+                  item.quantity = 0
+                  return item
+                })
+              localStorage.setItem('lorem', JSON.stringify(cart))
+              this.$emit('paymentSuccesfullySended')
+            }
+          } catch (error) {
+            console.log('payment', error)
+            this.$toast(this.$t('register.error'))
+          }
         } else {
-          if (this.payment.phone_number.length < 16) {
+          if (this.payment.phone_number.length < 12) {
             this.isPhoneNumber = true
+          } else {
+            this.isPhoneNumber = false
+          }
+          if (paymentForm.length == 0) {
+            this.isPaymentForm = true
+          }
+          if (theDeliveryTime.length == 0) {
+            this.isTheDeliveryTime = true
           }
         }
       }
+    },
+    close() {
+      this.$emit('close')
+      this.isPhoneNumber = false
+      this.isPaymentForm = false
+      this.isTheDeliveryTime = false
+      this.$v.$reset()
     },
   },
 }

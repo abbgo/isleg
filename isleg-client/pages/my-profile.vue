@@ -126,15 +126,12 @@ export default {
   },
   methods: {
     async fetchMyProfile() {
-      const customerId = await this.$cookies.get('customer_id')
-      const accessToken = await this.$cookies.get('access_token')
-      const refreshToken = await this.$cookies.get('refresh_token')
-      console.log(customerId, accessToken)
+      const cart = await JSON.parse(localStorage.getItem('lorem'))
       try {
         const { customer_informations, status } = (
           await getMyProfile({
-            url: `${this.$i18n.locale}/my-information/${customerId}`,
-            accessToken: `Bearer ${accessToken}`,
+            url: `${this.$i18n.locale}/my-information`,
+            accessToken: `Bearer ${cart.auth.accessToken}`,
           })
         ).data
         console.log(customer_informations, status)
@@ -153,18 +150,16 @@ export default {
             const { access_token, refresh_token, status } = (
               await getRefreshToken({
                 url: `auth/refresh`,
-                refreshToken: `Bearer ${refreshToken}`,
+                refreshToken: `Bearer ${cart.auth.refreshToken}`,
               })
             ).data
             console.log(access_token, refresh_token, status)
             if (status) {
-              this.$cookies.set('access_token', access_token)
-              this.$cookies.set('refresh_token', refresh_token)
               try {
                 const { customer_informations, status } = (
                   await getMyProfile({
-                    url: `${this.$i18n.locale}/my-information/${customerId}`,
-                    accessToken: `Bearer ${access_token}`,
+                    url: `${this.$i18n.locale}/my-information`,
+                    accessToken: `Bearer ${cart.auth.accessToken}`,
                   })
                 ).data
                 console.log(customer_informations, status)
@@ -185,10 +180,11 @@ export default {
             console.log('ref', error.response.status)
             if (error.response.status === 403) {
               await this.$auth.logout()
-              await this.$cookies.remove('access_token')
-              await this.$cookies.remove('customer_id')
-              await this.$cookies.remove('refresh_token')
-              await this.$router.push(this.localeLocation('/'))
+              cart.auth.accessToken = null
+              cart.auth.refreshToken = null
+              localStorage.setItem('lorem', JSON.stringify(cart))
+              console.log(this.$route.name)
+              await this.$router.push({ name: this.$route.name })
             }
           }
         }
@@ -196,12 +192,11 @@ export default {
     },
     async postMyInformation() {
       // const access_token = this.$cookies.set('access_token', access_token)
-      // const customer_id = this.$cookies.set('customer_id', customer_id)
       // const refresh_token = this.$cookies.set('refresh_token', refresh_token)
       // try {
       //   const { customer_informations, status } = (
       //     await myInformation({
-      //       url: `${this.$i18n.locale}/my-information/${customerId}`,
+      //       url: `${this.$i18n.locale}/my-information`,
       //       accessToken: `Bearer ${accessToken}`,
       //     })
       //   ).data
