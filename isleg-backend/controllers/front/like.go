@@ -4,6 +4,7 @@ import (
 	"errors"
 	"github/abbgo/isleg/isleg-backend/config"
 	"github/abbgo/isleg/isleg-backend/models"
+	"math"
 	"net/http"
 
 	backController "github/abbgo/isleg/isleg-backend/controllers/back"
@@ -633,6 +634,12 @@ func GetLikedProductsWithoutCustomer(c *gin.Context) {
 				"message": err.Error(),
 			})
 			return
+		}
+
+		if product.OldPrice != 0 {
+			product.Percentage = -math.Round(((product.OldPrice - product.Price) * 100) / product.OldPrice)
+		} else {
+			product.Percentage = 0
 		}
 
 		rowMainImage, err := db.Query("SELECT small,medium,large FROM main_image WHERE product_id = $1 AND deleted_at IS NULL", product.ID)
