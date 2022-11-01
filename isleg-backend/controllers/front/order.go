@@ -5,6 +5,7 @@ import (
 	"github/abbgo/isleg/isleg-backend/config"
 	backController "github/abbgo/isleg/isleg-backend/controllers/back"
 	"github/abbgo/isleg/isleg-backend/models"
+	"github/abbgo/isleg/isleg-backend/pkg"
 	"log"
 	"math"
 	"net/http"
@@ -16,14 +17,15 @@ import (
 )
 
 type Order struct {
-	FullName     string        `json:"full_name" binding:"required,min=3"`
-	PhoneNumber  string        `json:"phone_number" binding:"required,e164,len=12"`
-	Address      string        `json:"address" binding:"required,min=3"`
-	CustomerMark string        `json:"customer_mark"`
-	OrderTime    string        `json:"order_time" binding:"required"`
-	PaymentType  string        `json:"payment_type" binding:"required"`
-	TotalPrice   float64       `json:"total_price" binding:"required"`
-	Products     []CartProduct `json:"products" binding:"required"`
+	FullName      string        `json:"full_name" binding:"required,min=3"`
+	PhoneNumber   string        `json:"phone_number" binding:"required,e164,len=12"`
+	Address       string        `json:"address" binding:"required,min=3"`
+	CustomerMark  string        `json:"customer_mark"`
+	OrderTime     string        `json:"order_time" binding:"required"`
+	PaymentType   string        `json:"payment_type" binding:"required"`
+	TotalPrice    float64       `json:"total_price" binding:"required"`
+	ShippingPrice float64       `json:"shipping_price,omitempty"`
+	Products      []CartProduct `json:"products" binding:"required"`
 }
 
 type GetOrder struct {
@@ -218,7 +220,7 @@ func ToOrder(c *gin.Context) {
 
 	}
 
-	resultOrders, err := db.Query("INSERT INTO orders (customer_id,customer_mark,order_time,payment_type,total_price) VALUES ($1,$2,$3,$4,$5) RETURNING id", customerID, order.CustomerMark, order.OrderTime, order.PaymentType, order.TotalPrice)
+	resultOrders, err := db.Query("INSERT INTO orders (customer_id,customer_mark,order_time,payment_type,total_price,shipping_price) VALUES ($1,$2,$3,$4,$5,$6) RETURNING id", customerID, order.CustomerMark, order.OrderTime, order.PaymentType, order.TotalPrice, order.ShippingPrice)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -412,7 +414,7 @@ func ToOrder(c *gin.Context) {
 		}
 	}
 
-	rowOrder, err := db.Query("SELECT order_number,TO_CHAR(created_at,'DD.MM.YYYY HH24:MI'),order_time,customer_mark,total_price,payment_type FROM orders WHERE id = $1 AND deleted_at IS NULL", order_id)
+	rowOrder, err := db.Query("SELECT order_number,TO_CHAR(created_at,'DD.MM.YYYY HH24:MI'),order_time,customer_mark,total_price,shipping_price,payment_type FROM orders WHERE id = $1 AND deleted_at IS NULL", order_id)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -433,7 +435,7 @@ func ToOrder(c *gin.Context) {
 	var sargyt models.Orders
 
 	for rowOrder.Next() {
-		if err := rowOrder.Scan(&sargyt.OrderNumber, &sargyt.CreatedAt, &sargyt.OrderTime, &sargyt.CustomerMark, &sargyt.TotalPrice, &sargyt.PaymentType); err != nil {
+		if err := rowOrder.Scan(&sargyt.OrderNumber, &sargyt.CreatedAt, &sargyt.OrderTime, &sargyt.CustomerMark, &sargyt.TotalPrice, &sargyt.ShippingPrice, &sargyt.PaymentType); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
@@ -604,7 +606,7 @@ func ToOrder(c *gin.Context) {
 	f.SetCellValue("Лист1", "B9", "Sargyt edilen senesi: "+sargyt.CreatedAt)
 	f.SetCellValue("Лист1", "b10", "Eltip bermeli wagty: "+sargyt.OrderTime)
 	f.SetCellValue("Лист1", "b11", "Toleg sekili: "+sargyt.PaymentType)
-	f.SetCellValue("Лист1", "b12", "Jemi: "+strconv.FormatFloat(sargyt.TotalPrice, 'f', 6, 64))
+	f.SetCellValue("Лист1", "b12", "Eltip bermek hyzmaty: "+strconv.FormatFloat(pkg.RoundFloat(sargyt.ShippingPrice, 2), 'f', -1, 64))
 
 	for i := 0; i < len(products); i++ {
 
@@ -638,6 +640,32 @@ func ToOrder(c *gin.Context) {
 			return
 		}
 
+		style2, err := f.NewStyle(&excelize.Style{
+			Border: []excelize.Border{
+				{Type: "left", Color: "#000000", Style: 1},
+				{Type: "top", Color: "#000000", Style: 1},
+				{Type: "bottom", Color: "#000000", Style: 1},
+				{Type: "right", Color: "#000000", Style: 1},
+			},
+			Font: &excelize.Font{
+				Bold:   false,
+				Italic: false,
+				Family: "Calibri",
+				Size:   9,
+				Color:  "#000000",
+			},
+			Alignment: &excelize.Alignment{
+				Horizontal: "left",
+			},
+		})
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+
 		style1, err := f.NewStyle(&excelize.Style{
 			Border: []excelize.Border{
 				{Type: "left", Color: "#000000", Style: 1},
@@ -651,55 +679,83 @@ func ToOrder(c *gin.Context) {
 			return
 		}
 
-		if err = f.SetCellStyle("Лист1", "a16", "a16", style); err != nil {
-			log.Fatal(err)
+		if err := f.MergeCell("Лист1", "a16", "b16"); err != nil {
+			c.JSON(http.StatusBadRequest, err.Error())
+			return
 		}
 
-		if err = f.SetCellStyle("Лист1", "b16", "b16", style); err != nil {
-			log.Fatal(err)
+		if err = f.SetCellStyle("Лист1", "a16", "a16", style2); err != nil {
+			c.JSON(http.StatusBadRequest, err.Error())
+			return
 		}
 
 		if err = f.SetCellStyle("Лист1", "c16", "c16", style); err != nil {
-			log.Fatal(err)
+			c.JSON(http.StatusBadRequest, err.Error())
+			return
 		}
 
 		if err = f.SetCellStyle("Лист1", "d16", "d16", style); err != nil {
-			log.Fatal(err)
+			c.JSON(http.StatusBadRequest, err.Error())
+			return
 		}
 
 		if err = f.SetCellStyle("Лист1", "e16", "e16", style); err != nil {
-			log.Fatal(err)
+			c.JSON(http.StatusBadRequest, err.Error())
+			return
 		}
 
 		if err = f.SetCellStyle("Лист1", "f16", "f16", style1); err != nil {
-			log.Fatal(err)
+			c.JSON(http.StatusBadRequest, err.Error())
+			return
 		}
 
 	}
 
 	var totalPrice float64 = 0
+	var counter int
 
 	for k, v2 := range products {
 
 		f.SetCellValue("Лист1", "a"+strconv.Itoa(16+k), v2.Name)
-		f.SetCellValue("Лист1", "b"+strconv.Itoa(16+k), v2.Amount)
+		f.SetCellValue("Лист1", "c"+strconv.Itoa(16+k), v2.Amount)
 		f.SetCellValue("Лист1", "d"+strconv.Itoa(16+k), v2.Price)
 		f.SetCellValue("Лист1", "e"+strconv.Itoa(16+k), float64(v2.Amount)*v2.Price)
 
 		totalPrice = totalPrice + float64(v2.Amount)*v2.Price
 
+		counter++
+
 	}
 
-	f.SetCellValue("Лист1", "d20", totalPrice)
+	f.SetCellValue("Лист1", "d"+strconv.Itoa(17+counter), totalPrice)
+	f.SetCellValue("Лист1", "b13", "Jemi: "+strconv.FormatFloat(pkg.RoundFloat(sargyt.TotalPrice, 2), 'f', -1, 64))
 
 	if err := f.SaveAs("./uploads/orders/" + strconv.Itoa(int(sargyt.OrderNumber)) + ".xlsx"); err != nil {
 		fmt.Println(err)
 	}
 
+	resultOrderUpdate, err := db.Query("UPDATE orders SET excel = $1 WHERE id = $2", "uploads/orders/"+strconv.Itoa(int(sargyt.OrderNumber))+".xlsx", order_id)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer func() {
+		if err := resultOrderUpdate.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
+
 	c.JSON(http.StatusOK, gin.H{
-		"status":    true,
-		"message":   "success",
-		"file_path": "uploads/orders/" + strconv.Itoa(int(sargyt.OrderNumber)) + ".xlsx",
+		"status":  true,
+		"message": "success",
+		// "file_path": "uploads/orders/" + strconv.Itoa(int(sargyt.OrderNumber)) + ".xlsx",
 	})
 
 }

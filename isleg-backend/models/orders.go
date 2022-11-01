@@ -9,6 +9,7 @@ type Orders struct {
 	TotalPrice    float64 `json:"total_price,omitempty"`
 	OrderNumber   int     `json:"order_number,omitempty"`
 	ShippingPrice float64 `json:"shipping_price,omitempty"`
+	Excel         float64 `json:"excel,omitempty"`
 	CreatedAt     string  `json:"-"`
 	UpdatedAt     string  `json:"-"`
 	DeletedAt     string  `json:"-"`

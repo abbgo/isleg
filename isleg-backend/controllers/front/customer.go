@@ -194,7 +194,6 @@ func RegisterCustomer(c *gin.Context) {
 		"message":       "customer successfully added",
 		"access_token":  accessTokenString,
 		"refresh_token": refreshTokenString,
-		"customer_id":   customerID,
 	})
 
 }
