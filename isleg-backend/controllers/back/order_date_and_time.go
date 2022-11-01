@@ -705,6 +705,92 @@ func DeleteOrderTimeByID(c *gin.Context) {
 
 }
 
+func RestoreOrderTimeByID(c *gin.Context) {
+
+	// initialize database connection
+	db, err := config.ConnDB()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
+
+	ID := c.Param("id")
+
+	rowOrderDate, err := db.Query("SELECT id FROM order_dates WHERE id = $1 AND deleted_at IS NOT NULL", ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer func() {
+		if err := rowOrderDate.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
+
+	var order_date_id string
+
+	for rowOrderDate.Next() {
+		if err := rowOrderDate.Scan(&order_date_id); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}
+
+	if order_date_id == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "order date not found",
+		})
+		return
+	}
+
+	resultPROC, err := db.Query("CALL restore_order_date($1)", ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer func() {
+		if err := resultPROC.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":  true,
+		"message": "data successfully restored",
+	})
+
+}
+
 func GetOrderTime(c *gin.Context) {
 
 	db, err := config.ConnDB()
