@@ -625,6 +625,12 @@ func GetProductByID(c *gin.Context) {
 		}
 	}
 
+	if product.OldPrice != 0 {
+		product.Percentage = -math.Round(((product.OldPrice - product.Price) * 100) / product.OldPrice)
+	} else {
+		product.Percentage = 0
+	}
+
 	if product.ID == "" {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -843,9 +849,9 @@ func GetProducts(c *gin.Context) {
 		}
 
 		if product.OldPrice != 0 {
-			product.Percentgae = -math.Round(((product.OldPrice - product.Price) * 100) / product.OldPrice)
+			product.Percentage = -math.Round(((product.OldPrice - product.Price) * 100) / product.OldPrice)
 		} else {
-			product.Percentgae = 0
+			product.Percentage = 0
 		}
 
 		rowMainImage, err := db.Query("SELECT small,medium,large FROM main_image WHERE deleted_at IS NULL AND product_id = $1", product.ID)

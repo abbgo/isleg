@@ -10,8 +10,8 @@ type Product struct {
 	ID                 string               `json:"id,omitempty"`
 	BrendID            string               `json:"brend_id,omitempty"`
 	Price              float64              `json:"price,omitempty"`
-	OldPrice           float64              `json:"old_price,omitempty"`
-	Percentgae         float64              `json:"percentage,omitempty"`
+	OldPrice           float64              `json:"old_price"`
+	Percentage         float64              `json:"percentage"`
 	Amount             uint                 `json:"amount,omitempty"`
 	LimitAmount        uint                 `json:"limit_amount,omitempty"`
 	IsNew              bool                 `json:"is_new,omitempty"`
