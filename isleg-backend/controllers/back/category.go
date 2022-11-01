@@ -5,6 +5,7 @@ import (
 	"github/abbgo/isleg/isleg-backend/config"
 	"github/abbgo/isleg/isleg-backend/models"
 	"github/abbgo/isleg/isleg-backend/pkg"
+	"math"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -43,6 +44,7 @@ type Product struct {
 	Name        string           `json:"name"`
 	Price       float64          `json:"price"`
 	OldPrice    float64          `json:"old_price"`
+	Percentage  float64          `json:"percentage"`
 	MainImage   models.MainImage `json:"main_image"`
 	Images      []models.Images  `json:"images"`
 	Brend       Brend            `json:"brend"`
@@ -1448,6 +1450,12 @@ func GetOneCategoryWithProducts(c *gin.Context) {
 					"message": err.Error(),
 				})
 				return
+			}
+
+			if product.OldPrice != 0 {
+				product.Percentage = -math.Round(((product.OldPrice - product.Price) * 100) / product.OldPrice)
+			} else {
+				product.Percentage = 0
 			}
 
 			rowMainImage, err := db.Query("SELECT small,medium,large FROM main_image WHERE product_id = $1", product.ID)
