@@ -49,6 +49,7 @@ func Routes() *gin.Engine {
 		back.PUT("/order-time", backController.UpdateOrderTime)
 		back.GET("/order-time/:id", backController.GetOrderTimeByID)
 		back.GET("/order-times", backController.GetOrderTimes)
+		back.DELETE("/order-time/:id", backController.DeleteOrderTimeByID)
 
 		back.POST("/banner", backController.CreateBanner)
 		back.PUT("/banner/:id", backController.UpdateBannerByID)
