@@ -484,6 +484,141 @@ func GetOrderTimeByID(c *gin.Context) {
 
 }
 
+func GetOrderTimes(c *gin.Context) {
+
+	// initialize database connection
+	db, err := config.ConnDB()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
+
+	rowsOrderDate, err := db.Query("SELECT id,date FROM order_dates WHERE deleted_at IS NULL")
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer func() {
+		if err := rowsOrderDate.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
+
+	var orderDates []models.OrderDates
+
+	for rowsOrderDate.Next() {
+		var orderDate models.OrderDates
+
+		if err := rowsOrderDate.Scan(&orderDate.ID, &orderDate.Date); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+
+		rowsOrderTimes, err := db.Query("SELECT time FROM order_times WHERE order_date_id = $1", orderDate.ID)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+		defer func() {
+			if err := rowsOrderTimes.Close(); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}()
+
+		var orderTimes []models.OrderTimes
+
+		for rowsOrderTimes.Next() {
+			var orderTime models.OrderTimes
+
+			if err := rowsOrderTimes.Scan(&orderTime.Time); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+
+			orderTimes = append(orderTimes, orderTime)
+		}
+
+		orderDate.OrderTimes = orderTimes
+
+		rowsTrOrderDate, err := db.Query("SELECT date FROM translation_order_dates WHERE order_date_id = $1", orderDate.ID)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+		defer func() {
+			if err := rowsTrOrderDate.Close(); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}()
+
+		var trsOrderDate []models.TranslationOrderDates
+
+		for rowsTrOrderDate.Next() {
+			var trOrderDate models.TranslationOrderDates
+
+			if err := rowsTrOrderDate.Scan(&trOrderDate.Date); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+
+			trsOrderDate = append(trsOrderDate, trOrderDate)
+		}
+
+		orderDate.TranslationOrderDates = trsOrderDate
+
+		orderDates = append(orderDates, orderDate)
+
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":      true,
+		"order_dates": orderDates,
+	})
+
+}
+
 func GetOrderTime(c *gin.Context) {
 
 	db, err := config.ConnDB()
