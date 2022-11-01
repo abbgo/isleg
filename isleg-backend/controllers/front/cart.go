@@ -6,6 +6,7 @@ import (
 	"github/abbgo/isleg/isleg-backend/config"
 	backController "github/abbgo/isleg/isleg-backend/controllers/back"
 	"github/abbgo/isleg/isleg-backend/models"
+	"math"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -26,6 +27,7 @@ type ProductOfCart struct {
 	BrendID            uuid.UUID                 `json:"brend_id"`
 	Price              float64                   `json:"price"`
 	OldPrice           float64                   `json:"old_price"`
+	Percentage         float64                   `json:"percentage"`
 	Amount             uint                      `json:"amount"`
 	LimitAmount        uint                      `json:"limit_amount"`
 	IsNew              bool                      `json:"is_new"`
@@ -337,6 +339,12 @@ func GetCartProducts(langShortName, customerID string) ([]ProductOfCart, error) 
 
 		if err := rowsProduct.Scan(&product.ID, &product.BrendID, &product.Price, &product.OldPrice, &product.Amount, &product.LimitAmount, &product.IsNew, &product.QuantityOfProduct); err != nil {
 			return []ProductOfCart{}, err
+		}
+
+		if product.OldPrice != 0 {
+			product.Percentage = -math.Round(((product.OldPrice - product.Price) * 100) / product.OldPrice)
+		} else {
+			product.Percentage = 0
 		}
 
 		rowMainImage, err := db.Query("SELECT small,medium,large FROM main_image WHERE product_id = $1 AND deleted_at IS NULL", product.ID)
