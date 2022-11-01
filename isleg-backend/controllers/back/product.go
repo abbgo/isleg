@@ -4,6 +4,7 @@ import (
 	"github/abbgo/isleg/isleg-backend/config"
 	"github/abbgo/isleg/isleg-backend/models"
 	"github/abbgo/isleg/isleg-backend/pkg"
+	"math"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -839,6 +840,12 @@ func GetProducts(c *gin.Context) {
 				"message": err.Error(),
 			})
 			return
+		}
+
+		if product.OldPrice != 0 {
+			product.Percentgae = -math.Round(((product.OldPrice - product.Price) * 100) / product.OldPrice)
+		} else {
+			product.Percentgae = 0
 		}
 
 		rowMainImage, err := db.Query("SELECT small,medium,large FROM main_image WHERE deleted_at IS NULL AND product_id = $1", product.ID)
