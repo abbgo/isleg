@@ -343,6 +343,147 @@ func UpdateOrderTime(c *gin.Context) {
 
 }
 
+func GetOrderTimeByID(c *gin.Context) {
+
+	// initialize database connection
+	db, err := config.ConnDB()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
+
+	ID := c.Param("id")
+
+	rowOrderDate, err := db.Query("SELECT id,date FROM order_dates WHERE id = $1 AND deleted_at IS NULL", ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer func() {
+		if err := rowOrderDate.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
+
+	var orderDate models.OrderDates
+
+	for rowOrderDate.Next() {
+		if err := rowOrderDate.Scan(&orderDate.ID, &orderDate.Date); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+
+		if orderDate.ID == "" {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": "order date not found",
+			})
+			return
+		}
+
+		rowsOrderTimes, err := db.Query("SELECT time FROM order_times WHERE order_date_id = $1", orderDate.ID)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+		defer func() {
+			if err := rowsOrderTimes.Close(); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}()
+
+		var orderTimes []models.OrderTimes
+
+		for rowsOrderTimes.Next() {
+			var orderTime models.OrderTimes
+
+			if err := rowsOrderTimes.Scan(&orderTime.Time); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+
+			orderTimes = append(orderTimes, orderTime)
+		}
+
+		orderDate.OrderTimes = orderTimes
+
+		rowsTrOrderDate, err := db.Query("SELECT date FROM translation_order_dates WHERE order_date_id = $1", orderDate.ID)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+		defer func() {
+			if err := rowsTrOrderDate.Close(); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}()
+
+		var trsOrderDate []models.TranslationOrderDates
+
+		for rowsTrOrderDate.Next() {
+			var trOrderDate models.TranslationOrderDates
+
+			if err := rowsTrOrderDate.Scan(&trOrderDate.Date); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+
+			trsOrderDate = append(trsOrderDate, trOrderDate)
+		}
+
+		orderDate.TranslationOrderDates = trsOrderDate
+
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":     true,
+		"order_date": orderDate,
+	})
+
+}
+
 func GetOrderTime(c *gin.Context) {
 
 	db, err := config.ConnDB()
