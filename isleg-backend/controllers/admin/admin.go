@@ -1,11 +1,14 @@
-package admin
+package controllers
 
 import (
+	"github/abbgo/isleg/isleg-backend/auth"
 	"github/abbgo/isleg/isleg-backend/config"
 	"github/abbgo/isleg/isleg-backend/models"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+
+	frontController "github/abbgo/isleg/isleg-backend/controllers/front"
 )
 
 func RegisterAdmin(c *gin.Context) {
@@ -75,6 +78,107 @@ func RegisterAdmin(c *gin.Context) {
 		"status":       true,
 		"phone_number": admin.PhoneNumber,
 		"password":     admin.Password,
+	})
+
+}
+
+func LoginAdmin(c *gin.Context) {
+
+	// initialize database connection
+	db, err := config.ConnDB()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
+
+	var admin frontController.Login
+
+	if err := c.BindJSON(&admin); err != nil {
+		c.JSON(http.StatusBadRequest, err.Error())
+		return
+	}
+
+	// check if email exists and password is correct
+	row, err := db.Query("SELECT id,password,type FROM admins WHERE phone_number = $1 AND deleted_at IS NULL", admin.PhoneNumber)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer func() {
+		if err := row.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
+
+	var adminID, oldPassword, adminType string
+
+	for row.Next() {
+		if err := row.Scan(&adminID, &oldPassword, &adminType); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}
+
+	if adminID == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "this admin does not exist",
+		})
+		return
+	}
+
+	credentialError := models.CheckPassword(admin.Password, oldPassword)
+	if credentialError != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "invalid credentials",
+		})
+		return
+	}
+
+	accessTokenString, err := auth.GenerateAccessTokenForAdmin(admin.PhoneNumber, adminID, adminType)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	refreshTokenString, err := auth.GenerateRefreshTokenForAdmin(admin.PhoneNumber, adminID, adminType)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"access_token":  accessTokenString,
+		"refresh_token": refreshTokenString,
 	})
 
 }

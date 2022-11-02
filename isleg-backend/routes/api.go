@@ -40,6 +40,8 @@ func Routes() *gin.Engine {
 		admin := back.Group("/auth")
 		{
 			admin.POST("/register", adminController.RegisterAdmin)
+			admin.POST("/login", adminController.LoginAdmin)
+
 		}
 
 		back.POST("/language", backController.CreateLanguage)

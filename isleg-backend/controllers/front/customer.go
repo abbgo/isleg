@@ -13,7 +13,7 @@ import (
 
 type Login struct {
 	PhoneNumber string `json:"phone_number" binding:"required,e164,len=12"`
-	Password    string `json:"password" binding:"required,min=5,max=25"`
+	Password    string `json:"password" binding:"required,min=3,max=25"`
 }
 
 type CustomerInformation struct {
@@ -235,7 +235,10 @@ func LoginCustomer(c *gin.Context) {
 	// check if email exists and password is correct
 	row, err := db.Query("SELECT id,password FROM customers WHERE phone_number = $1 AND is_register = true AND deleted_at IS NULL", customer.PhoneNumber)
 	if err != nil {
-		c.AbortWithStatusJSON(500, gin.H{"message": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
 		return
 	}
 	defer func() {
@@ -252,33 +255,46 @@ func LoginCustomer(c *gin.Context) {
 
 	for row.Next() {
 		if err := row.Scan(&customerID, &oldPassword); err != nil {
-			c.AbortWithStatusJSON(500, gin.H{"message": err.Error()})
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
 			return
 		}
 	}
 
 	if customerID == "" {
-		c.JSON(http.StatusUnauthorized, gin.H{"message": "this client does not exist"})
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "this client does not exist",
+		})
 		return
 	}
 
 	credentialError := models.CheckPassword(customer.Password, oldPassword)
 	if credentialError != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"message": "invalid credentials"})
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "invalid credentials",
+		})
 		return
 	}
 
 	accessTokenString, err := auth.GenerateAccessToken(customer.Password, customerID)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		c.Abort()
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
 		return
 	}
 
 	refreshTokenString, err := auth.GenerateRefreshToken(customer.PhoneNumber, customerID)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		c.Abort()
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
 		return
 	}
 
