@@ -2383,7 +2383,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiI2NTQ1MzI5NCIsImV4cCI6MTY1Nzc4MDYzNH0.e_aJxSJb3IJUCnOT_dxMy3K0KJnlWvZSxcOWQaSQqBQ",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NTYiLCJjdXN0b21lcl9pZCI6IjFhZTEyMzkwLTAzYWUtNDlhYy1hOWFkLWQ3YmE1Yzk1YjUxYSIsImV4cCI6MTY2NzQyMTQ0OH0._d7mh9mJVExs_VKyu7V8BDnLvik9CbM-BjvhF-hGJ-4",
 								"type": "default"
 							}
 						],
@@ -2647,12 +2647,12 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NTYiLCJleHAiOjE2NjU5NTEyNjV9.WKKj35rXo3U_xdyudD8WcIwXN3KKrHngEIU2x-owovQ",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NTYiLCJjdXN0b21lcl9pZCI6IjFhZTEyMzkwLTAzYWUtNDlhYy1hOWFkLWQ3YmE1Yzk1YjUxYSIsImV4cCI6MTY2NzQyMTQ0OH0._d7mh9mJVExs_VKyu7V8BDnLvik9CbM-BjvhF-hGJ-4",
 								"type": "default"
 							}
 						],
 						"url": {
-							"raw": "localhost:2406/api/tm/my-information/89a6ac71-4495-4218-b9f9-3f2a3eab085b",
+							"raw": "localhost:2406/api/tm/my-information",
 							"host": [
 								"localhost"
 							],
@@ -2660,8 +2660,7 @@
 							"path": [
 								"api",
 								"tm",
-								"my-information",
-								"89a6ac71-4495-4218-b9f9-3f2a3eab085b"
+								"my-information"
 							]
 						}
 					},
@@ -3932,6 +3931,75 @@
 								"admin",
 								"delete-order-time",
 								"32646376-c93f-412b-9e75-b3a5fa70df9e"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Admin",
+			"item": [
+				{
+					"name": "RegisterAdmin",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIrOTkzNjM3NDcxNTUiLCJhZG1pbl9pZCI6ImM5N2JmYzZhLWZkODUtNGFhOC04MmRiLWU3ODhmNmIwZDcwYSIsInR5cGUiOiJzdXBlcl9hZG1pbiIsImV4cCI6MTY2NzQ5NzM5Mn0.lI_ahAoWDZeiN3XlFs_V9BLk0nDkTXCUWyXQuUQwcnI",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"full_name\":\"Maya Kerimova\",\n    \"phone_number\":\"+99363333333\",\n    \"password\":\"123456\",\n    \"type\":\"super_admin\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:2406/admin/auth/register",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"admin",
+								"auth",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "LoginAdmin",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"phone_number\":\"+99363747155\",\n    \"password\":\"1122\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:2406/admin/auth/login",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"admin",
+								"auth",
+								"login"
 							]
 						}
 					},

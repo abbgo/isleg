@@ -407,6 +407,24 @@ SET default_tablespace = '';
 SET default_table_access_method = heap;
 
 --
+-- Name: admins; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.admins (
+    id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
+    full_name character varying,
+    phone_number character varying,
+    password character varying,
+    created_at timestamp with time zone DEFAULT now(),
+    updated_at timestamp with time zone DEFAULT now(),
+    deleted_at timestamp with time zone,
+    type character varying
+);
+
+
+ALTER TABLE public.admins OWNER TO postgres;
+
+--
 -- Name: afisa; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -1162,6 +1180,19 @@ ALTER TABLE public.translation_update_password_page OWNER TO postgres;
 --
 
 ALTER TABLE ONLY public.orders ALTER COLUMN order_number SET DEFAULT nextval('public.orders_order_number_seq'::regclass);
+
+
+--
+-- Data for Name: admins; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.admins (id, full_name, phone_number, password, created_at, updated_at, deleted_at, type) FROM stdin;
+5e0e9a0a-e07a-4911-bbc0-8dad29a6abbd	Allanur Bayramgeldiyev	+99362420377	$2a$14$w5DuoaqTJEdPpT3fzrLdh.Q3BGm/wX76NFGPGhy9G4nU/fDUXvtPy	2022-11-02 21:46:19.827563+05	2022-11-02 21:46:19.827563+05	\N	super_admin
+c97bfc6a-fd85-4aa8-82db-e788f6b0d70a	Muhammet Bayramov	+99363747155	$2a$14$IXSdYxI0f.qQ8kDuLq.DU.F4ZRnMuq58VErTjaFNdquqzcZaenImu	2022-11-02 21:48:30.593337+05	2022-11-02 21:48:30.593337+05	\N	super_admin
+6989254b-79c7-412c-acb2-19f67a3277d5	Seyit Batyrov	+99361111111	$2a$14$qD9HYvqPHUVITgfAJLfj3uODG.hcGiI7.ayv3jc1NlSD34QA5drv2	2022-11-02 22:30:44.622854+05	2022-11-02 22:30:44.622854+05	\N	admin
+42ba1c9b-f56d-44e4-a72b-5031d0f3ce64	Kakajan Batyrov	+99362222222	$2a$14$QxhaMFkztA7x1jlR9PT3zOwCystNe/7QDEp7C04xLNFp2MDMCgpHK	2022-11-02 22:31:53.959553+05	2022-11-02 22:31:53.959553+05	\N	admin
+54f172bc-e13b-4dd8-95af-c3e364f09e3b	Maya Kerimova	+99363333333	$2a$14$tR7soepOOiWQ0jtHpmTLy.kYOzMfbu2RNk2iICMeYHFqwiI1AvKBm	2022-11-02 22:43:54.030609+05	2022-11-02 22:43:54.030609+05	\N	super_admin
+\.
 
 
 --
@@ -2044,6 +2075,14 @@ SELECT pg_catalog.setval('public.orders_order_number_seq', 47, true);
 
 
 --
+-- Name: admins admins_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.admins
+    ADD CONSTRAINT admins_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: afisa afisa_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -2368,6 +2407,13 @@ ALTER TABLE ONLY public.translation_update_password_page
 --
 
 CREATE TRIGGER after_insert_language AFTER INSERT ON public.languages FOR EACH ROW EXECUTE FUNCTION public.after_insert_language();
+
+
+--
+-- Name: admins updated_admins_updated_at; Type: TRIGGER; Schema: public; Owner: postgres
+--
+
+CREATE TRIGGER updated_admins_updated_at BEFORE UPDATE ON public.admins FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
 
 
 --
