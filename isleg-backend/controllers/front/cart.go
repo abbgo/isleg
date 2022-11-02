@@ -18,7 +18,7 @@ import (
 
 type CartProduct struct {
 	ProductID         string `json:"product_id" binding:"required"`
-	QuantityOfProduct int    `json:"quantity_of_product" binding:"required"`
+	QuantityOfProduct int    `json:"quantity_of_product"`
 }
 
 type ProductOfCart struct {
@@ -125,6 +125,7 @@ func AddCart(c *gin.Context) {
 					})
 					return
 				}
+				break
 			}
 
 			for _, x := range cart[(k + 1):] {

@@ -257,7 +257,7 @@ func Routes() *gin.Engine {
 			securedCustomer.POST("/like", frontController.AddLike)
 
 			// remove like if customer exists
-			securedCustomer.POST("/like/:product_id", frontController.RemoveLike)
+			// securedCustomer.POST("/like/:product_id", frontController.RemoveLike)
 
 			// get like products if customer exists
 			securedCustomer.GET("/likes", frontController.GetCustomerLikes)

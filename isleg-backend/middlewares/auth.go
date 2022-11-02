@@ -2,7 +2,6 @@ package middlewares
 
 import (
 	"github/abbgo/isleg/isleg-backend/auth"
-	"net/http"
 	"strings"
 	"time"
 
@@ -28,16 +27,16 @@ func Auth() gin.HandlerFunc {
 			},
 		)
 		if err != nil {
-			context.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+			context.JSON(403, gin.H{"message": err.Error()})
 			return
 		}
 		claims, ok := token.Claims.(*auth.JWTClaim)
 		if !ok {
-			context.JSON(http.StatusBadRequest, gin.H{"message": "couldn't parse claims"})
+			context.JSON(400, gin.H{"message": "couldn't parse claims"})
 			return
 		}
 		if claims.ExpiresAt < time.Now().Local().Unix() {
-			context.JSON(http.StatusBadRequest, gin.H{"message": "token expired"})
+			context.JSON(403, gin.H{"message": "token expired"})
 			return
 		}
 		context.Set("customer_id", claims.CustomerID)

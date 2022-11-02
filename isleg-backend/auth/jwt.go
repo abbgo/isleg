@@ -21,7 +21,8 @@ type JWTClaim struct {
 
 func GenerateAccessToken(phoneNumber, customerID string) (accessTokenString string, err error) {
 
-	expirationTime := time.Now().Add(1 * time.Hour)
+	expirationTime := time.Now().Add(3 * time.Hour)
+
 	claims := &JWTClaim{
 		PhoneNumber: phoneNumber,
 		CustomerID:  customerID,

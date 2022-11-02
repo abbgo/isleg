@@ -6,6 +6,7 @@ import (
 	"github/abbgo/isleg/isleg-backend/models"
 	"math"
 	"net/http"
+	"strconv"
 
 	backController "github/abbgo/isleg/isleg-backend/controllers/back"
 
@@ -53,6 +54,16 @@ func AddLike(c *gin.Context) {
 	}()
 
 	langShortName := c.Param("lang")
+
+	statusStr := c.Query("status")
+	status, err := strconv.ParseBool(statusStr)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
 
 	custID, hasCustomer := c.Get("customer_id")
 	if !hasCustomer {
@@ -109,43 +120,13 @@ func AddLike(c *gin.Context) {
 		return
 	}
 
-	if len(productIds.IDS) != 0 {
+	if status {
 
-		for _, v := range productIds.IDS {
+		if len(productIds.IDS) != 0 {
 
-			rowProduct, err := db.Query("SELECT id FROM products WHERE id = $1 AND deleted_at IS NULL", v)
-			if err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
-				return
-			}
-			defer func() {
-				if err := rowProduct.Close(); err != nil {
-					c.JSON(http.StatusBadRequest, gin.H{
-						"status":  false,
-						"message": err.Error(),
-					})
-					return
-				}
-			}()
+			for _, v := range productIds.IDS {
 
-			var product_id string
-
-			for rowProduct.Next() {
-				if err := rowProduct.Scan(&product_id); err != nil {
-					c.JSON(http.StatusBadRequest, gin.H{
-						"status":  false,
-						"message": err.Error(),
-					})
-					return
-				}
-			}
-
-			if product_id != "" {
-
-				rowLike, err := db.Query("SELECT product_id FROM likes WHERE customer_id = $1 AND product_id = $2 AND deleted_at IS NULL", customerID, v)
+				rowProduct, err := db.Query("SELECT id FROM products WHERE id = $1 AND deleted_at IS NULL", v)
 				if err != nil {
 					c.JSON(http.StatusBadRequest, gin.H{
 						"status":  false,
@@ -154,7 +135,7 @@ func AddLike(c *gin.Context) {
 					return
 				}
 				defer func() {
-					if err := rowLike.Close(); err != nil {
+					if err := rowProduct.Close(); err != nil {
 						c.JSON(http.StatusBadRequest, gin.H{
 							"status":  false,
 							"message": err.Error(),
@@ -163,23 +144,21 @@ func AddLike(c *gin.Context) {
 					}
 				}()
 
-				var product string
+				var product_id string
 
-				for rowLike.Next() {
-
-					if err := rowLike.Scan(&product); err != nil {
+				for rowProduct.Next() {
+					if err := rowProduct.Scan(&product_id); err != nil {
 						c.JSON(http.StatusBadRequest, gin.H{
 							"status":  false,
 							"message": err.Error(),
 						})
 						return
 					}
-
 				}
 
-				if product == "" {
+				if product_id != "" {
 
-					resultLike, err := db.Query("INSERT INTO likes (customer_id,product_id) VALUES ($1,$2)", customerID, v)
+					rowLike, err := db.Query("SELECT product_id FROM likes WHERE customer_id = $1 AND product_id = $2 AND deleted_at IS NULL", customerID, v)
 					if err != nil {
 						c.JSON(http.StatusBadRequest, gin.H{
 							"status":  false,
@@ -188,7 +167,7 @@ func AddLike(c *gin.Context) {
 						return
 					}
 					defer func() {
-						if err := resultLike.Close(); err != nil {
+						if err := rowLike.Close(); err != nil {
 							c.JSON(http.StatusBadRequest, gin.H{
 								"status":  false,
 								"message": err.Error(),
@@ -197,190 +176,284 @@ func AddLike(c *gin.Context) {
 						}
 					}()
 
+					var product string
+
+					for rowLike.Next() {
+
+						if err := rowLike.Scan(&product); err != nil {
+							c.JSON(http.StatusBadRequest, gin.H{
+								"status":  false,
+								"message": err.Error(),
+							})
+							return
+						}
+
+					}
+
+					if product == "" {
+
+						resultLike, err := db.Query("INSERT INTO likes (customer_id,product_id) VALUES ($1,$2)", customerID, v)
+						if err != nil {
+							c.JSON(http.StatusBadRequest, gin.H{
+								"status":  false,
+								"message": err.Error(),
+							})
+							return
+						}
+						defer func() {
+							if err := resultLike.Close(); err != nil {
+								c.JSON(http.StatusBadRequest, gin.H{
+									"status":  false,
+									"message": err.Error(),
+								})
+								return
+							}
+						}()
+
+					}
+
 				}
 
 			}
 
-		}
+			products, err := GetLikes(langShortName, customerID)
+			if err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
 
-		// c.JSON(http.StatusOK, gin.H{
-		// 	"status":  true,
-		// 	"message": "products has been successfully added to my favorites",
-		// })
-
-		products, err := GetLikes(langShortName, customerID)
-		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-
-		c.JSON(http.StatusOK, gin.H{
-			"status":   true,
-			"products": products,
-		})
-
-	} else {
-
-		products, err := GetLikes(langShortName, customerID)
-		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-
-		if len(products) == 0 {
-			c.JSON(http.StatusOK, gin.H{
-				"status":  true,
-				"message": "like empty",
-			})
-		} else {
 			c.JSON(http.StatusOK, gin.H{
 				"status":   true,
 				"products": products,
 			})
+
+		} else {
+
+			products, err := GetLikes(langShortName, customerID)
+			if err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+
+			if len(products) == 0 {
+				c.JSON(http.StatusOK, gin.H{
+					"status":  true,
+					"message": "like empty",
+				})
+			} else {
+				c.JSON(http.StatusOK, gin.H{
+					"status":   true,
+					"products": products,
+				})
+			}
+
 		}
+
+	} else {
+
+		rowLike, err := db.Query("SELECT product_id FROM likes WHERE customer_id = $1 AND product_id = $2 AND deleted_at IS NULL", customerID, productIds.IDS[0])
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+		defer func() {
+			if err := rowLike.Close(); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}()
+
+		var product_id string
+
+		for rowLike.Next() {
+			if err := rowLike.Scan(&product_id); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}
+
+		if product_id == "" {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": "this product not found in this customer",
+			})
+			return
+		}
+
+		resultLike, err := db.Query("DELETE FROM likes WHERE customer_id = $1 AND product_id = $2 AND deleted_at IS NULL", customerID, productIds.IDS[0])
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+		defer func() {
+			if err := resultLike.Close(); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}()
+
+		c.JSON(http.StatusOK, gin.H{
+			"status":  true,
+			"message": "like successfull deleted",
+		})
 
 	}
 
 }
 
-func RemoveLike(c *gin.Context) {
+// func RemoveLike(c *gin.Context) {
 
-	db, err := config.ConnDB()
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-	defer func() {
-		if err := db.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
+// 	db, err := config.ConnDB()
+// 	if err != nil {
+// 		c.JSON(http.StatusBadRequest, gin.H{
+// 			"status":  false,
+// 			"message": err.Error(),
+// 		})
+// 		return
+// 	}
+// 	defer func() {
+// 		if err := db.Close(); err != nil {
+// 			c.JSON(http.StatusBadRequest, gin.H{
+// 				"status":  false,
+// 				"message": err.Error(),
+// 			})
+// 			return
+// 		}
+// 	}()
 
-	custID, hasCustomer := c.Get("customer_id")
-	if !hasCustomer {
-		c.JSON(http.StatusBadRequest, "customer_id is required")
-		return
-	}
-	customerID, ok := custID.(string)
-	if !ok {
-		c.JSON(http.StatusBadRequest, "customer_id must be string")
-	}
+// 	custID, hasCustomer := c.Get("customer_id")
+// 	if !hasCustomer {
+// 		c.JSON(http.StatusBadRequest, "customer_id is required")
+// 		return
+// 	}
+// 	customerID, ok := custID.(string)
+// 	if !ok {
+// 		c.JSON(http.StatusBadRequest, "customer_id must be string")
+// 	}
 
-	productID := c.PostForm("product_id") // Su parametri nireden almaly ( postForm , query , parameter - mi )
+// 	productID := c.PostForm("product_id") // Su parametri nireden almaly ( postForm , query , parameter - mi )
 
-	rowCustomer, err := db.Query("SELECT id FROM customers WHERE id = $1 AND deleted_at IS NULL", customerID)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-	defer func() {
-		if err := rowCustomer.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
+// 	rowCustomer, err := db.Query("SELECT id FROM customers WHERE id = $1 AND deleted_at IS NULL", customerID)
+// 	if err != nil {
+// 		c.JSON(http.StatusBadRequest, gin.H{
+// 			"status":  false,
+// 			"message": err.Error(),
+// 		})
+// 		return
+// 	}
+// 	defer func() {
+// 		if err := rowCustomer.Close(); err != nil {
+// 			c.JSON(http.StatusBadRequest, gin.H{
+// 				"status":  false,
+// 				"message": err.Error(),
+// 			})
+// 			return
+// 		}
+// 	}()
 
-	var customer_id string
+// 	var customer_id string
 
-	for rowCustomer.Next() {
-		if err := rowCustomer.Scan(&customer_id); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}
+// 	for rowCustomer.Next() {
+// 		if err := rowCustomer.Scan(&customer_id); err != nil {
+// 			c.JSON(http.StatusBadRequest, gin.H{
+// 				"status":  false,
+// 				"message": err.Error(),
+// 			})
+// 			return
+// 		}
+// 	}
 
-	if customer_id == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": "customer not found",
-		})
-		return
-	}
+// 	if customer_id == "" {
+// 		c.JSON(http.StatusBadRequest, gin.H{
+// 			"status":  false,
+// 			"message": "customer not found",
+// 		})
+// 		return
+// 	}
 
-	rowLike, err := db.Query("SELECT product_id FROM likes WHERE customer_id = $1 AND product_id = $2 AND deleted_at IS NULL", customerID, productID)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-	defer func() {
-		if err := rowLike.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
+// 	rowLike, err := db.Query("SELECT product_id FROM likes WHERE customer_id = $1 AND product_id = $2 AND deleted_at IS NULL", customerID, productID)
+// 	if err != nil {
+// 		c.JSON(http.StatusBadRequest, gin.H{
+// 			"status":  false,
+// 			"message": err.Error(),
+// 		})
+// 		return
+// 	}
+// 	defer func() {
+// 		if err := rowLike.Close(); err != nil {
+// 			c.JSON(http.StatusBadRequest, gin.H{
+// 				"status":  false,
+// 				"message": err.Error(),
+// 			})
+// 			return
+// 		}
+// 	}()
 
-	var product_id string
+// 	var product_id string
 
-	for rowLike.Next() {
-		if err := rowLike.Scan(&product_id); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}
+// 	for rowLike.Next() {
+// 		if err := rowLike.Scan(&product_id); err != nil {
+// 			c.JSON(http.StatusBadRequest, gin.H{
+// 				"status":  false,
+// 				"message": err.Error(),
+// 			})
+// 			return
+// 		}
+// 	}
 
-	if product_id == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": "this product not found in this customer",
-		})
-		return
-	}
+// 	if product_id == "" {
+// 		c.JSON(http.StatusBadRequest, gin.H{
+// 			"status":  false,
+// 			"message": "this product not found in this customer",
+// 		})
+// 		return
+// 	}
 
-	resultLike, err := db.Query("DELETE FROM likes WHERE customer_id = $1 AND product_id = $2 AND deleted_at IS NULL", customerID, productID)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-	defer func() {
-		if err := resultLike.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
+// 	resultLike, err := db.Query("DELETE FROM likes WHERE customer_id = $1 AND product_id = $2 AND deleted_at IS NULL", customerID, productID)
+// 	if err != nil {
+// 		c.JSON(http.StatusBadRequest, gin.H{
+// 			"status":  false,
+// 			"message": err.Error(),
+// 		})
+// 		return
+// 	}
+// 	defer func() {
+// 		if err := resultLike.Close(); err != nil {
+// 			c.JSON(http.StatusBadRequest, gin.H{
+// 				"status":  false,
+// 				"message": err.Error(),
+// 			})
+// 			return
+// 		}
+// 	}()
 
-	c.JSON(http.StatusOK, gin.H{
-		"status":  true,
-		"message": "like successfull deleted",
-	})
+// 	c.JSON(http.StatusOK, gin.H{
+// 		"status":  true,
+// 		"message": "like successfull deleted",
+// 	})
 
-}
+// }
 
 func GetLikes(langShortName, customerID string) ([]LikeProduct, error) {
 
