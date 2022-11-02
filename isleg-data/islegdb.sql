@@ -1199,6 +1199,11 @@ c4bcda34-7332-4ae5-8129-d7538d63fee4	Golden Eagle	uploads/brend/7a425220-7200-4e
 --
 
 COPY public.cart (id, product_id, customer_id, quantity_of_product, created_at, updated_at, deleted_at) FROM stdin;
+3dbef1b1-109b-4651-b154-53fa2b652d1e	fa148eb2-520f-430e-bd8d-9d5a166d0600	1ae12390-03ae-49ac-a9ad-d7ba5c95b51a	15	2022-11-02 07:34:24.985903+05	2022-11-02 09:28:05.867344+05	\N
+c8109f75-4819-4ca1-871a-fa1bd57e554b	45a9f186-2521-4eef-a4e0-b5c253c70878	1ae12390-03ae-49ac-a9ad-d7ba5c95b51a	23	2022-11-02 07:34:25.183881+05	2022-11-02 09:28:05.903691+05	\N
+e910cfeb-d3fa-4b84-80ad-b107be07788f	d6dfc8f9-27d9-45f9-811d-2a93fa0f7d35	1ae12390-03ae-49ac-a9ad-d7ba5c95b51a	17	2022-11-02 07:35:42.093235+05	2022-11-02 09:28:05.925756+05	\N
+9fe0490f-e586-4f02-8b1c-090f973a08db	83da5c7b-bffe-4450-97c9-0f376441b1d4	1ae12390-03ae-49ac-a9ad-d7ba5c95b51a	10	2022-11-02 08:50:39.40356+05	2022-11-02 09:28:05.943573+05	\N
+7b11fc05-75c8-4e09-8d73-4f28bc54e9b0	4bb06dbd-e4b2-4148-bb61-b1429d8cfc40	1ae12390-03ae-49ac-a9ad-d7ba5c95b51a	4	2022-11-02 09:08:10.949661+05	2022-11-02 09:28:05.957169+05	\N
 \.
 
 
@@ -1402,6 +1407,7 @@ COPY public.customer_address (id, customer_id, address, created_at, updated_at, 
 
 COPY public.customers (id, full_name, phone_number, password, birthday, gender, created_at, updated_at, deleted_at, email, is_register) FROM stdin;
 19cdcf1a-f110-4510-a52b-063329d98607	Allanur Bayramgeldiyew	+99362420377	$2a$14$QLQ.Mkd6Oi3Qz4djp38KS.Y1BBwKNJL1Hy6qKS0piHnoNP4rvIMd2	\N	\N	2022-11-01 11:33:32.61818+05	2022-11-01 11:33:32.61818+05	\N	abb@gmail.com	t
+1ae12390-03ae-49ac-a9ad-d7ba5c95b51a	Muhammetmyrat	+99363747155	$2a$14$Ag0N0Otwyu7qmHaDCVVmWOz2UxHsYhqoEMkZcnCgzMzB1rAGqMZO2	\N	\N	2022-11-02 07:34:24.403632+05	2022-11-02 07:34:24.403632+05	\N	bayramovmuhammetmyrat97@gmail.com	t
 \.
 
 
@@ -1533,6 +1539,11 @@ aea98b93-7bdf-455b-9ad4-a259d69dc76e	ru	uploads/language1c24e3a6-173e-4264-a631-
 --
 
 COPY public.likes (id, product_id, customer_id, created_at, updated_at, deleted_at) FROM stdin;
+4d95a87e-4472-483c-8cb7-0b958643fb54	4bb06dbd-e4b2-4148-bb61-b1429d8cfc40	1ae12390-03ae-49ac-a9ad-d7ba5c95b51a	2022-11-02 08:51:07.5462+05	2022-11-02 08:51:07.5462+05	\N
+4a785b16-d7c7-4281-91dd-5d2f5c8ae823	fa148eb2-520f-430e-bd8d-9d5a166d0600	1ae12390-03ae-49ac-a9ad-d7ba5c95b51a	2022-11-02 09:04:17.29964+05	2022-11-02 09:04:17.29964+05	\N
+aa5faea4-19cd-44e8-be01-4f2c40183691	45a9f186-2521-4eef-a4e0-b5c253c70878	1ae12390-03ae-49ac-a9ad-d7ba5c95b51a	2022-11-02 09:09:41.072979+05	2022-11-02 09:09:41.072979+05	\N
+76e85fb4-16f8-456e-9027-b11fbb4d271b	d6dfc8f9-27d9-45f9-811d-2a93fa0f7d35	1ae12390-03ae-49ac-a9ad-d7ba5c95b51a	2022-11-02 09:11:25.961947+05	2022-11-02 09:11:25.961947+05	\N
+852fb57e-0be7-4317-b2c7-a2cf599becc5	3f397126-6d8d-4a0d-982c-01fd00526957	1ae12390-03ae-49ac-a9ad-d7ba5c95b51a	2022-11-02 09:18:16.131785+05	2022-11-02 09:18:16.131785+05	\N
 \.
 
 

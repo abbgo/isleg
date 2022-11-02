@@ -2592,7 +2592,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"phone_number\":\"+99362420377\",\n    \"password\":\"12345\"\n}",
+							"raw": "{\n    \"phone_number\":\"+99363747155\",\n    \"password\":\"123456\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -2751,7 +2751,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NSIsImN1c3RvbWVyX2lkIjoiMWY1YmM5MTctZmM4NS00NmNmLWExYjItN2MxNGNmZTk0MGJlIiwiZXhwIjoxNjY2NjgxNDgxfQ.aQeAjZRwrtuwyt1GW2iVijRy7hIFxpGowHPs1fM0nms",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NTYiLCJjdXN0b21lcl9pZCI6IjFhZTEyMzkwLTAzYWUtNDlhYy1hOWFkLWQ3YmE1Yzk1YjUxYSIsImV4cCI6MTY2NzM2Mzg1M30.TPbR-nFqrMnyLZ5ba-I02JRME56l4g23uA14Zg4bYIU",
 								"type": "default"
 							}
 						],
@@ -2765,7 +2765,7 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:2406/api/tm/like",
+							"raw": "localhost:2406/api/tm/like?status=true",
 							"host": [
 								"localhost"
 							],
@@ -2774,6 +2774,12 @@
 								"api",
 								"tm",
 								"like"
+							],
+							"query": [
+								{
+									"key": "status",
+									"value": "true"
+								}
 							]
 						}
 					},
@@ -3066,13 +3072,13 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIrOTkzNjI0MjAzNzciLCJjdXN0b21lcl9pZCI6IjE5Y2RjZjFhLWYxMTAtNDUxMC1hNTJiLTA2MzMyOWQ5ODYwNyIsImV4cCI6MTY2NzI4ODAxMn0.eRfEW-FaNfroAf1Aln4k4dTqoIzSMDwGiPfTI525Ijc",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NTYiLCJjdXN0b21lcl9pZCI6IjFhZTEyMzkwLTAzYWUtNDlhYy1hOWFkLWQ3YmE1Yzk1YjUxYSIsImV4cCI6MTY2NzM2MTc3Nn0.apXI0YZexzyPcxKN4-zg08ZSTTk3y_WyQF2VS9gK7Ac",
 								"type": "default"
 							}
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "    [\n        {\n            \"product_id\":\"d085e5a4-8229-4177-b5e1-623e80846017\",\n            \"quantity_of_product\":3 \n        },\n         {\n            \"product_id\":\"2e05c0d9-f7a0-4dc8-ab1a-171f8d725d33\",\n            \"quantity_of_product\":4\n        },\n         {\n            \"product_id\":\"e34a20fa-3aef-4ba6-92ba-79d3649c61a6\",\n            \"quantity_of_product\":3\n        },\n         {\n            \"product_id\":\"77ecf422-b48b-45fd-8e58-380e23d74c4c\",\n            \"quantity_of_product\":3\n        }\n    ]\n\n",
+							"raw": "    [\n        {\n            \"product_id\":\"4bb06dbd-e4b2-4148-bb61-b1429d8cfc40\",\n            \"quantity_of_product\":0\n        },\n        {\n            \"product_id\":\"fa148eb2-520f-430e-bd8d-9d5a166d0600\",\n            \"quantity_of_product\":4\n        }\n    ]\n\n",
 							"options": {
 								"raw": {
 									"language": "json"
