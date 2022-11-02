@@ -27,7 +27,7 @@ func Routes() *gin.Engine {
 	routes.Use(cors.New(cors.Config{
 		// AllowOrigins:     []string{"https://foo.com"},
 		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE"},
-		AllowHeaders:     []string{"Origin", "Content-Length", "Content-Type", "RefreshToken", "Authorization"},
+		AllowHeaders:     []string{"Origin", "Content-Length", "Content-Type", "RefreshToken", "Authorization", "RefreshTokenAdmin", "AuthorizationAdmin"},
 		AllowCredentials: true,
 		AllowAllOrigins:  true,
 		MaxAge:           12 * time.Hour,
@@ -39,9 +39,9 @@ func Routes() *gin.Engine {
 
 		admin := back.Group("/auth")
 		{
-			admin.POST("/register", adminController.RegisterAdmin)
+			admin.POST("/register", middlewares.IsSuperAdmin(), adminController.RegisterAdmin)
 			admin.POST("/login", adminController.LoginAdmin)
-
+			admin.POST("/refresh", auth.RefreshTokenForAdmin)
 		}
 
 		back.POST("/language", backController.CreateLanguage)

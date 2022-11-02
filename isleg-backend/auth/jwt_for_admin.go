@@ -1,9 +1,13 @@
 package auth
 
 import (
+	"errors"
+	"net/http"
+	"strings"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
+	"github.com/gin-gonic/gin"
 )
 
 type JWTClaimForAdmin struct {
@@ -45,5 +49,68 @@ func GenerateRefreshTokenForAdmin(phoneNumber, adminID, adminType string) (refre
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	refreshTokenString, err = token.SignedString(JwtKey)
 	return
+
+}
+
+func RefreshTokenForAdmin(c *gin.Context) {
+
+	tokenStr := c.GetHeader("RefreshTokenAdmin")
+	tokenString := strings.Split(tokenStr, " ")[1]
+
+	if tokenString == "" {
+		c.JSON(401, gin.H{
+			"message": "request does not contain an refresh token",
+		})
+		// c.Abort()
+		return
+	}
+
+	token, err := jwt.ParseWithClaims(
+		tokenString,
+		&JWTClaimForAdmin{},
+		func(token *jwt.Token) (interface{}, error) {
+			return []byte(JwtKey), nil
+		},
+	)
+
+	if err != nil {
+		c.JSON(403, gin.H{
+			"message": err.Error(),
+		})
+		return
+	}
+
+	claims, ok := token.Claims.(*JWTClaimForAdmin)
+
+	if !ok {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": errors.New("couldn't parse claims")})
+		return
+	}
+
+	if claims.ExpiresAt < time.Now().Local().Unix() {
+		c.JSON(403, gin.H{
+			"message": errors.New("token expired"),
+		})
+		return
+	}
+
+	accessTokenString, err := GenerateAccessTokenForAdmin(claims.PhoneNumber, claims.AdminID, claims.Type)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
+		return
+	}
+
+	refreshTokenString, err := GenerateRefreshTokenForAdmin(claims.PhoneNumber, claims.AdminID, claims.Type)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":        true,
+		"access_token":  accessTokenString,
+		"refresh_token": refreshTokenString,
+	})
 
 }
