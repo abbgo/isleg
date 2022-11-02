@@ -27,7 +27,7 @@ func Routes() *gin.Engine {
 	routes.Use(cors.New(cors.Config{
 		// AllowOrigins:     []string{"https://foo.com"},
 		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE"},
-		AllowHeaders:     []string{"Origin", "Content-Length", "Content-Type", "RefreshToken", "Authorization", "RefreshTokenAdmin", "AuthorizationAdmin"},
+		AllowHeaders:     []string{"Origin", "Content-Length", "Content-Type", "RefreshToken", "Authorization"},
 		AllowCredentials: true,
 		AllowAllOrigins:  true,
 		MaxAge:           12 * time.Hour,

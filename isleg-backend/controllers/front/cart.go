@@ -75,44 +75,6 @@ func AddCart(c *gin.Context) {
 		return
 	}
 
-	rowCustomer, err := db.Query("SELECT id FROM customers WHERE id = $1 AND deleted_at IS NULL", customerID)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-	defer func() {
-		if err := rowCustomer.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
-
-	var customer_id string
-
-	for rowCustomer.Next() {
-		if err := rowCustomer.Scan(&customer_id); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}
-
-	if customer_id == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": "Customer not found",
-		})
-		return
-	}
-
 	if len(cart) != 0 {
 
 		for k, v := range cart {
@@ -304,26 +266,6 @@ func GetCartProducts(langShortName, customerID string) ([]ProductOfCart, error) 
 		return []ProductOfCart{}, err
 	}
 
-	// customerID := c.Param("customer_id")
-
-	rowCustomer, err := db.Query("SELECT id FROM customers WHERE id = $1 AND deleted_at IS NULL", customerID)
-	if err != nil {
-		return []ProductOfCart{}, err
-	}
-	defer rowCustomer.Close()
-
-	var customer_id string
-
-	for rowCustomer.Next() {
-		if err := rowCustomer.Scan(&customer_id); err != nil {
-			return []ProductOfCart{}, err
-		}
-	}
-
-	if customer_id == "" {
-		return []ProductOfCart{}, errors.New("customer not found")
-	}
-
 	rowsProduct, err := db.Query("SELECT p.id,p.brend_id,p.price,p.old_price,p.amount,p.limit_amount,p.is_new,c.quantity_of_product FROM products p LEFT JOIN cart c ON c.product_id = p.id WHERE c.customer_id = $1 AND c.deleted_at IS NULL AND p.deleted_at IS NULL", customerID)
 	if err != nil {
 		return []ProductOfCart{}, err
@@ -475,29 +417,6 @@ func DeleteCart(customerID, productID string) error {
 		}
 		return nil
 	}()
-
-	rowCustomer, err := db.Query("SELECT id FROM customers WHERE id = $1 AND deleted_at IS NULL", customerID)
-	if err != nil {
-		return err
-	}
-	defer func() error {
-		if err := rowCustomer.Close(); err != nil {
-			return err
-		}
-		return nil
-	}()
-
-	var customer_id string
-
-	for rowCustomer.Next() {
-		if err := rowCustomer.Scan(&customer_id); err != nil {
-			return err
-		}
-	}
-
-	if customer_id == "" {
-		return errors.New("customer not found")
-	}
 
 	if productID != "" {
 

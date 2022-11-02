@@ -2,6 +2,7 @@ package middlewares
 
 import (
 	"github/abbgo/isleg/isleg-backend/auth"
+	"github/abbgo/isleg/isleg-backend/config"
 	"strings"
 	"time"
 
@@ -39,6 +40,45 @@ func Auth() gin.HandlerFunc {
 			context.AbortWithStatusJSON(403, gin.H{"message": "token expired"})
 			return
 		}
+
+		db, err := config.ConnDB()
+		if err != nil {
+			context.AbortWithStatusJSON(400, gin.H{"message": err.Error()})
+			return
+		}
+		defer func() {
+			if err := db.Close(); err != nil {
+				context.AbortWithStatusJSON(400, gin.H{"message": err.Error()})
+				return
+			}
+		}()
+
+		rowCustomer, err := db.Query("SELECT id FROM customers WHERE id = $1 AND deleted_at IS NULL", claims.CustomerID)
+		if err != nil {
+			context.AbortWithStatusJSON(400, gin.H{"message": err.Error()})
+			return
+		}
+		defer func() {
+			if err := rowCustomer.Close(); err != nil {
+				context.AbortWithStatusJSON(400, gin.H{"message": err.Error()})
+				return
+			}
+		}()
+
+		var customer_id string
+
+		for rowCustomer.Next() {
+			if err := rowCustomer.Scan(&customer_id); err != nil {
+				context.AbortWithStatusJSON(400, gin.H{"message": err.Error()})
+				return
+			}
+		}
+
+		if customer_id == "" {
+			context.AbortWithStatusJSON(400, gin.H{"message": "customer not found"})
+			return
+		}
+
 		context.Set("customer_id", claims.CustomerID)
 		context.Next()
 	}
@@ -46,7 +86,7 @@ func Auth() gin.HandlerFunc {
 
 func IsSuperAdmin() gin.HandlerFunc {
 	return func(context *gin.Context) {
-		tokenStr := context.GetHeader("AuthorizationAdmin")
+		tokenStr := context.GetHeader("Authorization")
 		tokenString := strings.Split(tokenStr, " ")[1]
 
 		if tokenString == "" {

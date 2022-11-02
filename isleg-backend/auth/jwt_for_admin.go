@@ -54,7 +54,7 @@ func GenerateRefreshTokenForAdmin(phoneNumber, adminID, adminType string) (refre
 
 func RefreshTokenForAdmin(c *gin.Context) {
 
-	tokenStr := c.GetHeader("RefreshTokenAdmin")
+	tokenStr := c.GetHeader("RefreshToken")
 	tokenString := strings.Split(tokenStr, " ")[1]
 
 	if tokenString == "" {
