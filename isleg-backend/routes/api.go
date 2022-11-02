@@ -2,8 +2,11 @@ package routes
 
 import (
 	"github/abbgo/isleg/isleg-backend/auth"
+
+	adminController "github/abbgo/isleg/isleg-backend/controllers/admin"
 	backController "github/abbgo/isleg/isleg-backend/controllers/back"
 	frontController "github/abbgo/isleg/isleg-backend/controllers/front"
+
 	"github/abbgo/isleg/isleg-backend/middlewares"
 	"time"
 
@@ -33,6 +36,12 @@ func Routes() *gin.Engine {
 	// routes belong to admin panel
 	back := routes.Group("/admin")
 	{
+
+		admin := back.Group("/auth")
+		{
+			admin.POST("/register", adminController.RegisterAdmin)
+		}
+
 		back.POST("/language", backController.CreateLanguage)
 		back.PUT("/language/:id", backController.UpdateLanguageByID)
 		back.GET("/language/:id", backController.GetLanguageByID)
