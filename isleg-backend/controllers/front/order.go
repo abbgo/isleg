@@ -771,7 +771,6 @@ func ToOrder(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
 		"message": "success",
-		// "file_path": "uploads/orders/" + strconv.Itoa(int(sargyt.OrderNumber)) + ".xlsx",
 	})
 
 }
