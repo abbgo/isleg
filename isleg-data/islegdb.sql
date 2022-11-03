@@ -770,7 +770,8 @@ CREATE TABLE public.orders (
     deleted_at timestamp with time zone,
     order_number integer NOT NULL,
     shipping_price numeric,
-    excel character varying
+    excel character varying,
+    address character varying DEFAULT 'uytget'::character varying
 );
 
 
@@ -1686,14 +1687,14 @@ eb493992-f301-48c1-82d7-640a54a25e9f	d085e5a4-8229-4177-b5e1-623e80846017	3	f481
 -- Data for Name: orders; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.orders (id, customer_id, customer_mark, order_time, payment_type, total_price, created_at, updated_at, deleted_at, order_number, shipping_price, excel) FROM stdin;
-ceaa4aba-eeb2-46a8-bcd9-6a512428a5b5	19cdcf1a-f110-4510-a52b-063329d98607	isleg market bet cykypdyr	12:00 - 16:00	nagt	123	2022-11-01 11:36:50.903997+05	2022-11-01 11:36:51.143851+05	\N	41	100	uploads/orders/41.xlsx
-8dcf18ec-0131-4ab2-9566-c94418ddbc31	19cdcf1a-f110-4510-a52b-063329d98607	isleg market bet cykypdyr	12:00 - 16:00	nagt	123	2022-11-01 11:46:07.904084+05	2022-11-01 11:46:08.038286+05	\N	42	100	uploads/orders/42.xlsx
-7d936ce2-97fc-498d-a0de-b020e8072cda	19cdcf1a-f110-4510-a52b-063329d98607	isleg market bet cykypdyr	12:00 - 16:00	nagt	123	2022-11-01 11:47:50.530076+05	2022-11-01 11:47:50.665077+05	\N	43	100	uploads/orders/43.xlsx
-b51ef8d3-ff34-4217-8aea-4244d98b973d	19cdcf1a-f110-4510-a52b-063329d98607	isleg market bet cykypdyr	12:00 - 16:00	nagt	123	2022-11-01 11:49:21.871297+05	2022-11-01 11:49:22.025714+05	\N	44	100	uploads/orders/44.xlsx
-bce5ea2b-5a22-410b-bc4b-9bd0514536ab	19cdcf1a-f110-4510-a52b-063329d98607	isleg market bet cykypdyr	12:00 - 16:00	nagt	924.8	2022-11-01 11:52:33.28092+05	2022-11-01 11:52:33.423601+05	\N	45	100	uploads/orders/45.xlsx
-93b6b6e7-2b4d-4e43-90cb-bd8eace2f352	19cdcf1a-f110-4510-a52b-063329d98607	isleg market bet cykypdyr	12:00 - 16:00	nagt	934.8	2022-11-01 11:53:05.727152+05	2022-11-01 11:53:05.867729+05	\N	46	100	uploads/orders/46.xlsx
-f481e32a-adb6-40d9-b795-db677ad8b126	19cdcf1a-f110-4510-a52b-063329d98607	isleg market bet cykypdyr	12:00 - 16:00	nagt	934.8	2022-11-01 11:53:28.790587+05	2022-11-01 11:53:28.937555+05	\N	47	10	uploads/orders/47.xlsx
+COPY public.orders (id, customer_id, customer_mark, order_time, payment_type, total_price, created_at, updated_at, deleted_at, order_number, shipping_price, excel, address) FROM stdin;
+ceaa4aba-eeb2-46a8-bcd9-6a512428a5b5	19cdcf1a-f110-4510-a52b-063329d98607	isleg market bet cykypdyr	12:00 - 16:00	nagt	123	2022-11-01 11:36:50.903997+05	2022-11-03 16:37:41.50845+05	\N	41	100	uploads/orders/41.xlsx	uytget
+8dcf18ec-0131-4ab2-9566-c94418ddbc31	19cdcf1a-f110-4510-a52b-063329d98607	isleg market bet cykypdyr	12:00 - 16:00	nagt	123	2022-11-01 11:46:07.904084+05	2022-11-03 16:37:41.50845+05	\N	42	100	uploads/orders/42.xlsx	uytget
+7d936ce2-97fc-498d-a0de-b020e8072cda	19cdcf1a-f110-4510-a52b-063329d98607	isleg market bet cykypdyr	12:00 - 16:00	nagt	123	2022-11-01 11:47:50.530076+05	2022-11-03 16:37:41.50845+05	\N	43	100	uploads/orders/43.xlsx	uytget
+b51ef8d3-ff34-4217-8aea-4244d98b973d	19cdcf1a-f110-4510-a52b-063329d98607	isleg market bet cykypdyr	12:00 - 16:00	nagt	123	2022-11-01 11:49:21.871297+05	2022-11-03 16:37:41.50845+05	\N	44	100	uploads/orders/44.xlsx	uytget
+bce5ea2b-5a22-410b-bc4b-9bd0514536ab	19cdcf1a-f110-4510-a52b-063329d98607	isleg market bet cykypdyr	12:00 - 16:00	nagt	924.8	2022-11-01 11:52:33.28092+05	2022-11-03 16:37:41.50845+05	\N	45	100	uploads/orders/45.xlsx	uytget
+93b6b6e7-2b4d-4e43-90cb-bd8eace2f352	19cdcf1a-f110-4510-a52b-063329d98607	isleg market bet cykypdyr	12:00 - 16:00	nagt	934.8	2022-11-01 11:53:05.727152+05	2022-11-03 16:37:41.50845+05	\N	46	100	uploads/orders/46.xlsx	uytget
+f481e32a-adb6-40d9-b795-db677ad8b126	19cdcf1a-f110-4510-a52b-063329d98607	isleg market bet cykypdyr	12:00 - 16:00	nagt	934.8	2022-11-01 11:53:28.790587+05	2022-11-03 16:37:41.50845+05	\N	47	10	uploads/orders/47.xlsx	uytget
 \.
 
 

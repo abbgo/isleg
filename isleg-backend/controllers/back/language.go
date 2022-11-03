@@ -111,7 +111,7 @@ func UpdateLanguageByID(c *gin.Context) {
 	var fileName string
 
 	// Check if there is a language, id equal to langID
-	rowFlag, err := db.Query("SELECT flag FROM languages WHERE id = $1 AND deleted_at IS NULL", langID)
+	rowFlag, err := db.Query("SELECT flag,name_short FROM languages WHERE id = $1 AND deleted_at IS NULL", langID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -129,10 +129,10 @@ func UpdateLanguageByID(c *gin.Context) {
 		}
 	}()
 
-	var flag string
+	var flag, name_short string
 
 	for rowFlag.Next() {
-		if err := rowFlag.Scan(&flag); err != nil {
+		if err := rowFlag.Scan(&flag, &name_short); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
@@ -156,6 +156,10 @@ func UpdateLanguageByID(c *gin.Context) {
 			"message": "language name_short is required",
 		})
 		return
+	} else {
+		if name_short == "tm" {
+			nameShort = "tm"
+		}
 	}
 
 	// upload image of language
@@ -307,7 +311,7 @@ func DeleteLanguageByID(c *gin.Context) {
 	langID := c.Param("id")
 
 	// Check if there is a language, id equal to langID
-	rowFlag, err := db.Query("SELECT id FROM languages WHERE id = $1 AND deleted_at IS NULL", langID)
+	rowFlag, err := db.Query("SELECT id,name_short FROM languages WHERE id = $1 AND deleted_at IS NULL", langID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -325,10 +329,10 @@ func DeleteLanguageByID(c *gin.Context) {
 		}
 	}()
 
-	var id string
+	var id, name_short string
 
 	for rowFlag.Next() {
-		if err := rowFlag.Scan(&id); err != nil {
+		if err := rowFlag.Scan(&id, &name_short); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
@@ -341,6 +345,14 @@ func DeleteLanguageByID(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
 			"message": "language not found",
+		})
+		return
+	}
+
+	if name_short == "tm" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "You cannot delete it, as it is default language",
 		})
 		return
 	}
@@ -485,7 +497,7 @@ func DeletePermanentlyLanguageByID(c *gin.Context) {
 	langID := c.Param("id")
 
 	// Check if there is a language, id equal to langID and get image of language from database
-	rowFlag, err := db.Query("SELECT flag FROM languages WHERE id = $1 AND deleted_at IS NOT NULL", langID)
+	rowFlag, err := db.Query("SELECT flag,name_short FROM languages WHERE id = $1 AND deleted_at IS NOT NULL", langID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -503,10 +515,10 @@ func DeletePermanentlyLanguageByID(c *gin.Context) {
 		}
 	}()
 
-	var flag string
+	var flag, name_short string
 
 	for rowFlag.Next() {
-		if err := rowFlag.Scan(&flag); err != nil {
+		if err := rowFlag.Scan(&flag, &name_short); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
@@ -519,6 +531,14 @@ func DeletePermanentlyLanguageByID(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
 			"message": "language not found",
+		})
+		return
+	}
+
+	if name_short == "tm" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "You cannot delete it, as it is default language",
 		})
 		return
 	}

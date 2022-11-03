@@ -46,6 +46,8 @@ func Routes() *gin.Engine {
 
 		securedAdmin := back.Group("/").Use(middlewares.CheckAdmin())
 		{
+			securedAdmin.GET("/orders/:limit/:page", frontController.GetOrders)
+
 			securedAdmin.POST("/language", backController.CreateLanguage)
 			securedAdmin.PUT("/language/:id", backController.UpdateLanguageByID)
 			securedAdmin.GET("/language/:id", backController.GetLanguageByID)

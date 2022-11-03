@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"github/abbgo/isleg/isleg-backend/config"
 	backController "github/abbgo/isleg/isleg-backend/controllers/back"
 	"github/abbgo/isleg/isleg-backend/models"
@@ -14,6 +15,21 @@ import (
 	"github.com/lib/pq"
 	"github.com/xuri/excelize/v2"
 )
+
+type OrderForAdmin struct {
+	ID            string          `json:"id"`
+	FullName      string          `json:"full_name"`
+	PhoneNumber   string          `json:"phone_number"`
+	Address       string          `json:"address"`
+	CustomerMark  string          `json:"customer_mark"`
+	OrderTime     string          `json:"order_time"`
+	PaymentType   string          `json:"payment_type"`
+	TotalPrice    float64         `json:"total_price"`
+	ShippingPrice float64         `json:"shipping_price"`
+	CreatedAt     string          `json:"created_at"`
+	Excel         string          `json:"excel"`
+	Products      []ProductOfCart `json:"products"`
+}
 
 type Order struct {
 	FullName      string        `json:"full_name" binding:"required,min=3"`
@@ -219,7 +235,7 @@ func ToOrder(c *gin.Context) {
 
 	}
 
-	resultOrders, err := db.Query("INSERT INTO orders (customer_id,customer_mark,order_time,payment_type,total_price,shipping_price) VALUES ($1,$2,$3,$4,$5,$6) RETURNING id", customerID, order.CustomerMark, order.OrderTime, order.PaymentType, order.TotalPrice, order.ShippingPrice)
+	resultOrders, err := db.Query("INSERT INTO orders (customer_id,customer_mark,order_time,payment_type,total_price,shipping_price,address) VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING id", customerID, order.CustomerMark, order.OrderTime, order.PaymentType, order.TotalPrice, order.ShippingPrice, order.Address)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -760,6 +776,379 @@ func ToOrder(c *gin.Context) {
 
 }
 
+func GetOrders(c *gin.Context) {
+
+	db, err := config.ConnDB()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
+
+	// GET language id
+	langID, err := backController.GetLangID("tm")
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	// get limit from param
+	limitStr := c.Param("limit")
+	if limitStr == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "limit is required",
+		})
+		return
+	}
+	limit, err := strconv.ParseUint(limitStr, 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	// get page from param
+	pageStr := c.Param("page")
+	if pageStr == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "page is required",
+		})
+		return
+	}
+	page, err := strconv.ParseUint(pageStr, 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	offset := limit * (page - 1)
+	countOfOrders := 0
+
+	fmt.Println("limit: ", limit)
+	fmt.Println("offset: ", offset)
+
+	countAllCustomer, err := db.Query("SELECT customer_id FROM orders WHERE deleted_at IS NULL")
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer func() {
+		if err := countAllCustomer.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
+
+	for countAllCustomer.Next() {
+		countOfOrders++
+	}
+
+	rowsCustomerID, err := db.Query("SELECT customer_id FROM orders WHERE deleted_at IS NULL GROUP BY customer_id")
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer func() {
+		if err := rowsCustomerID.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
+
+	var customerIDs []string
+
+	for rowsCustomerID.Next() {
+		var customerID string
+
+		if err := rowsCustomerID.Scan(&customerID); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+
+		customerIDs = append(customerIDs, customerID)
+	}
+
+	var orders []OrderForAdmin
+
+	for _, v := range customerIDs {
+
+		var order OrderForAdmin
+
+		rowCustomer, err := db.Query("SELECT full_name,phone_number FROM customers WHERE deleted_at IS NULL AND id = $1 LIMIT $2 OFFSET $3", v, limit, offset)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+		defer func() {
+			if err := rowCustomer.Close(); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}()
+
+		for rowCustomer.Next() {
+			if err := rowCustomer.Scan(&order.FullName, &order.PhoneNumber); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}
+
+		rowOrder, err := db.Query("SELECT id,customer_mark,order_time,payment_type,total_price,shipping_price,excel,address,TO_CHAR(created_at, 'DD.MM.YYYY') FROM orders WHERE customer_id = $1 AND deleted_at IS NULL", v)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+		defer func() {
+			if err := rowOrder.Close(); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}()
+
+		for rowOrder.Next() {
+			if err := rowOrder.Scan(&order.ID, &order.CustomerMark, &order.OrderTime, &order.PaymentType, &order.TotalPrice, &order.ShippingPrice, &order.Excel, &order.Address, &order.CreatedAt); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+
+			rowsOrderedProducts, err := db.Query("SELECT product_id,quantity_of_product FROM ordered_products WHERE order_id = $1 AND deleted_at IS NULL", order.ID)
+			if err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+			defer func() {
+				if err := rowsOrderedProducts.Close(); err != nil {
+					c.JSON(http.StatusBadRequest, gin.H{
+						"status":  false,
+						"message": err.Error(),
+					})
+					return
+				}
+			}()
+
+			var products []ProductOfCart
+
+			for rowsOrderedProducts.Next() {
+				var product ProductOfCart
+
+				if err := rowsOrderedProducts.Scan(&product.ID, &product.QuantityOfProduct); err != nil {
+					c.JSON(http.StatusBadRequest, gin.H{
+						"status":  false,
+						"message": err.Error(),
+					})
+					return
+				}
+
+				rowProduct, err := db.Query("SELECT brend_id,price,old_price,amount,limit_amount,is_new FROM products WHERE id = $1 AND deleted_at IS NULL", product.ID)
+				if err != nil {
+					c.JSON(http.StatusBadRequest, gin.H{
+						"status":  false,
+						"message": err.Error(),
+					})
+					return
+				}
+				defer func() {
+					if err := rowProduct.Close(); err != nil {
+						c.JSON(http.StatusBadRequest, gin.H{
+							"status":  false,
+							"message": err.Error(),
+						})
+						return
+					}
+				}()
+
+				for rowProduct.Next() {
+					if err := rowProduct.Scan(&product.BrendID, &product.Price, &product.OldPrice, &product.Amount, &product.LimitAmount, &product.IsNew); err != nil {
+						c.JSON(http.StatusBadRequest, gin.H{
+							"status":  false,
+							"message": err.Error(),
+						})
+						return
+					}
+				}
+
+				if product.OldPrice != 0 {
+					product.Percentage = -math.Round(((product.OldPrice - product.Price) * 100) / product.OldPrice)
+				} else {
+					product.Percentage = 0
+				}
+
+				rowMainImage, err := db.Query("SELECT small,medium,large FROM main_image WHERE product_id = $1 AND deleted_at IS NULL", product.ID)
+				if err != nil {
+					c.JSON(http.StatusBadRequest, gin.H{
+						"status":  false,
+						"message": err.Error(),
+					})
+					return
+				}
+				defer func() {
+					if err := rowMainImage.Close(); err != nil {
+						c.JSON(http.StatusBadRequest, gin.H{
+							"status":  false,
+							"message": err.Error(),
+						})
+						return
+					}
+				}()
+
+				var mainImage models.MainImage
+
+				for rowMainImage.Next() {
+					if err := rowMainImage.Scan(&mainImage.Small, &mainImage.Medium, &mainImage.Large); err != nil {
+						c.JSON(http.StatusBadRequest, gin.H{
+							"status":  false,
+							"message": err.Error(),
+						})
+						return
+					}
+				}
+
+				product.MainImage = mainImage
+
+				rowsImages, err := db.Query("SELECT small,large FROM images WHERE product_id = $1 AND deleted_at IS NULL", product.ID)
+				if err != nil {
+					c.JSON(http.StatusBadRequest, gin.H{
+						"status":  false,
+						"message": err.Error(),
+					})
+					return
+				}
+				defer func() {
+					if err := rowsImages.Close(); err != nil {
+						c.JSON(http.StatusBadRequest, gin.H{
+							"status":  false,
+							"message": err.Error(),
+						})
+						return
+					}
+				}()
+
+				var images []models.Images
+
+				for rowsImages.Next() {
+					var image models.Images
+
+					if err := rowsImages.Scan(&image.Small, &image.Large); err != nil {
+						c.JSON(http.StatusBadRequest, gin.H{
+							"status":  false,
+							"message": err.Error(),
+						})
+						return
+					}
+
+					images = append(images, image)
+				}
+
+				product.Images = images
+
+				rowTrProduct, err := db.Query("SELECT name,description FROM translation_product WHERE product_id = $1 AND lang_id = $2 AND deleted_at IS NULL", product.ID, langID)
+				if err != nil {
+					c.JSON(http.StatusBadRequest, gin.H{
+						"status":  false,
+						"message": err.Error(),
+					})
+					return
+				}
+				defer func() {
+					if err := rowTrProduct.Close(); err != nil {
+						c.JSON(http.StatusBadRequest, gin.H{
+							"status":  false,
+							"message": err.Error(),
+						})
+						return
+					}
+				}()
+
+				var trProduct models.TranslationProduct
+
+				for rowTrProduct.Next() {
+					if err := rowTrProduct.Scan(&trProduct.Name, &trProduct.Description); err != nil {
+						c.JSON(http.StatusBadRequest, gin.H{
+							"status":  false,
+							"message": err.Error(),
+						})
+						return
+					}
+				}
+				product.TranslationProduct = trProduct
+
+				products = append(products, product)
+
+			}
+
+			order.Products = products
+
+			orders = append(orders, order)
+
+		}
+
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":          true,
+		"orders":          orders,
+		"count_of_orders": countOfOrders,
+	})
+
+}
+
 func GetCustomerOrders(c *gin.Context) {
 
 	db, err := config.ConnDB()
@@ -883,7 +1272,7 @@ func GetCustomerOrders(c *gin.Context) {
 		}
 	}
 
-	countOrders, err := db.Query("SELECT COUNT(id) FROM orders WHERE customer_id = $1 AND deleted_at IS NULL", customerID)
+	countOrders, err := db.Query("SELECT COUNT(id) FROM orders WHERE customer_id = $1", customerID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -911,7 +1300,7 @@ func GetCustomerOrders(c *gin.Context) {
 		}
 	}
 
-	rowsOrders, err := db.Query("SELECT id,TO_CHAR(created_at, 'DD.MM.YYYY'),total_price FROM orders WHERE customer_id = $1 AND deleted_at IS NULL ORDER BY created_at ASC LIMIT $2 OFFSET $3", customerID, limit, offset)
+	rowsOrders, err := db.Query("SELECT id,TO_CHAR(created_at, 'DD.MM.YYYY'),total_price FROM orders WHERE customer_id = $1 ORDER BY created_at ASC LIMIT $2 OFFSET $3", customerID, limit, offset)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
