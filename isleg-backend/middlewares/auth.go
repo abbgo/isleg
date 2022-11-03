@@ -63,7 +63,7 @@ func Auth() gin.HandlerFunc {
 			}
 		}()
 
-		rowCustomer, err := db.Query("SELECT id FROM customers WHERE phone_number = $1 AND deleted_at IS NULL", claims.PhoneNumber)
+		rowCustomer, err := db.Query("SELECT id FROM customers WHERE id = $1 AND deleted_at IS NULL", claims.CustomerID)
 		if err != nil {
 			context.AbortWithStatusJSON(400, gin.H{"message": err.Error()})
 			return
