@@ -388,7 +388,8 @@ func RemoveCart(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, "customer_id must be string")
 	}
 
-	productID := c.PostForm("product_id")
+	// productID := c.PostForm("product_id")
+	productID := ""
 
 	if err := DeleteCart(customerID, productID); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
