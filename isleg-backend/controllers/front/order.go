@@ -906,11 +906,13 @@ func GetOrders(c *gin.Context) {
 
 	var orders []OrderForAdmin
 
+	fmt.Println("customers: ", customerIDs)
+
 	for _, v := range customerIDs {
 
 		var order OrderForAdmin
 
-		rowCustomer, err := db.Query("SELECT full_name,phone_number FROM customers WHERE deleted_at IS NULL AND id = $1 LIMIT $2 OFFSET $3", v, limit, offset)
+		rowCustomer, err := db.Query("SELECT full_name,phone_number FROM customers WHERE deleted_at IS NULL AND id = $1", v)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
@@ -938,7 +940,7 @@ func GetOrders(c *gin.Context) {
 			}
 		}
 
-		rowOrder, err := db.Query("SELECT id,customer_mark,order_time,payment_type,total_price,shipping_price,excel,address,TO_CHAR(created_at, 'DD.MM.YYYY') FROM orders WHERE customer_id = $1 AND deleted_at IS NULL", v)
+		rowOrder, err := db.Query("SELECT id,customer_mark,order_time,payment_type,total_price,shipping_price,excel,address,TO_CHAR(created_at, 'DD.MM.YYYY') FROM orders WHERE customer_id = $1 AND deleted_at IS NULL LIMIT $2 OFFSET $3", v, limit, offset)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
