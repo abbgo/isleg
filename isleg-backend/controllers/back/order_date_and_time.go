@@ -187,7 +187,7 @@ func CreateOrderTime(c *gin.Context) {
 
 }
 
-func UpdateOrderTime(c *gin.Context) {
+func UpdateOrderTimeByID(c *gin.Context) {
 
 	// initialize database connection
 	db, err := config.ConnDB()

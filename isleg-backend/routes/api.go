@@ -59,7 +59,7 @@ func Routes() *gin.Engine {
 			securedAdmin.GET("/company-setting", backController.GetCompanySetting)
 
 			securedAdmin.POST("/order-time", backController.CreateOrderTime)
-			securedAdmin.PUT("/order-time", backController.UpdateOrderTime)
+			securedAdmin.PUT("/order-time", backController.UpdateOrderTimeByID)
 			securedAdmin.GET("/order-time/:id", backController.GetOrderTimeByID)
 			securedAdmin.GET("/order-times", backController.GetOrderTimes)
 			securedAdmin.DELETE("/order-time/:id", backController.DeleteOrderTimeByID)
