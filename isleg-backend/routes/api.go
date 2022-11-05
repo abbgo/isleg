@@ -41,6 +41,7 @@ func Routes() *gin.Engine {
 		{
 			admin.POST("/register", middlewares.IsSuperAdmin(), adminController.RegisterAdmin)
 			admin.PUT("/information-of-admin", middlewares.IsSuperAdmin(), adminController.UpdateAdminInformation)
+			admin.PUT("/password-of-admin/:id", middlewares.IsSuperAdmin(), adminController.UpdateAdminPassword)
 			admin.POST("/login", adminController.LoginAdmin)
 			admin.POST("/refresh", auth.RefreshTokenForAdmin)
 		}
