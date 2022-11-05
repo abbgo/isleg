@@ -1140,6 +1140,93 @@ func GetOrders(c *gin.Context) {
 
 }
 
+func OrderConfirmation(c *gin.Context) {
+
+	db, err := config.ConnDB()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
+
+	// get id of language from request parameter
+	orderID := c.Param("id")
+
+	// check orderID
+	rowOrder, err := db.Query("SELECT id FROM orders WHERE id = $1 AND deleted_at IS NULL", orderID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer func() {
+		if err := rowOrder.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
+
+	var order_id string
+
+	for rowOrder.Next() {
+		if err := rowOrder.Scan(&order_id); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}
+
+	if order_id == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "order not found",
+		})
+		return
+	}
+
+	resultOrder, err := db.Query("UPDATE orders SET deleted_at = now() WHERE id = $1", orderID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer func() {
+		if err := resultOrder.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":  true,
+		"message": "order confirmed",
+	})
+
+}
+
 func GetCustomerOrders(c *gin.Context) {
 
 	db, err := config.ConnDB()
