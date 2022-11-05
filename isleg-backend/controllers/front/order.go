@@ -844,7 +844,25 @@ func GetOrders(c *gin.Context) {
 	offset := limit * (page - 1)
 	countOfOrders := 0
 
-	countAllCustomer, err := db.Query("SELECT customer_id FROM orders WHERE deleted_at IS NULL")
+	statusStr := c.Query("status")
+	status, err := strconv.ParseBool(statusStr)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	var deletedAt string
+
+	if status {
+		deletedAt = "IS NOT NULL"
+	} else {
+		deletedAt = "IS NULL"
+	}
+
+	countAllCustomer, err := db.Query("SELECT customer_id FROM orders WHERE deleted_at $1", deletedAt)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -866,7 +884,7 @@ func GetOrders(c *gin.Context) {
 		countOfOrders++
 	}
 
-	rowsCustomerID, err := db.Query("SELECT customer_id FROM orders WHERE deleted_at IS NULL GROUP BY customer_id")
+	rowsCustomerID, err := db.Query("SELECT customer_id FROM orders WHERE deleted_at IS NULL GROUP BY customer_id deleted_at $1", deletedAt)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -902,7 +920,7 @@ func GetOrders(c *gin.Context) {
 
 	var orders []OrderForAdmin
 
-	rowsOrder, err := db.Query("SELECT customer_id,id,customer_mark,order_time,payment_type,total_price,shipping_price,excel,address,TO_CHAR(created_at, 'DD.MM.YYYY') FROM orders WHERE customer_id = ANY($1) AND deleted_at IS NULL LIMIT $2 OFFSET $3", pq.Array(customerIDs), limit, offset)
+	rowsOrder, err := db.Query("SELECT customer_id,id,customer_mark,order_time,payment_type,total_price,shipping_price,excel,address,TO_CHAR(created_at, 'DD.MM.YYYY') FROM orders WHERE customer_id = ANY($1) AND deleted_at $4 LIMIT $2 OFFSET $3", pq.Array(customerIDs), limit, offset, deletedAt)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
