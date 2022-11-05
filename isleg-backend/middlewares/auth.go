@@ -138,7 +138,7 @@ func IsSuperAdmin() gin.HandlerFunc {
 		// context.Set("admin_id", claims.AdminID)
 
 		if claims.Type != "super_admin" {
-			context.AbortWithStatusJSON(400, gin.H{"message": "only super_admin can add admin and super_admin"})
+			context.AbortWithStatusJSON(400, gin.H{"message": "only super_admin can perform this task"})
 			return
 		}
 

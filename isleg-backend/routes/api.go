@@ -40,6 +40,7 @@ func Routes() *gin.Engine {
 		admin := back.Group("/auth")
 		{
 			admin.POST("/register", middlewares.IsSuperAdmin(), adminController.RegisterAdmin)
+			admin.PUT("/information-of-admin", middlewares.IsSuperAdmin(), adminController.UpdateAdminInformation)
 			admin.POST("/login", adminController.LoginAdmin)
 			admin.POST("/refresh", auth.RefreshTokenForAdmin)
 		}
@@ -298,7 +299,7 @@ func Routes() *gin.Engine {
 			// get customer informations
 			securedCustomer.GET("/my-information", frontController.GetCustomerInformation)
 
-			// get customer informations
+			// update customer informations
 			securedCustomer.PUT("/my-information", frontController.UpdateCustomerInformation)
 
 			// update customer address status
