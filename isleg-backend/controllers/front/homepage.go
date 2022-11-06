@@ -17,16 +17,16 @@ type HomePageCategory struct {
 }
 
 type Product struct {
-	ID          string           `json:"id"`
-	Name        string           `json:"name"`
-	Price       float64          `json:"price"`
-	OldPrice    float64          `json:"old_price"`
-	MainImage   models.MainImage `json:"main_image"`
-	Images      []models.Images  `json:"images"`
-	Brend       Brend            `json:"brend"`
-	LimitAmount int              `json:"limit_amount"`
-	IsNew       bool             `json:"is_new"`
-	Amount      int              `json:"amount"`
+	ID          string                    `json:"id"`
+	Price       float64                   `json:"price"`
+	OldPrice    float64                   `json:"old_price"`
+	MainImage   models.MainImage          `json:"main_image"`
+	Images      []models.Images           `json:"images"`
+	Brend       Brend                     `json:"brend"`
+	LimitAmount int                       `json:"limit_amount"`
+	IsNew       bool                      `json:"is_new"`
+	Amount      int                       `json:"amount"`
+	Translation models.TranslationProduct `json:"translation"`
 }
 
 type Brend struct {
@@ -114,7 +114,7 @@ func GetHomePageCategories(c *gin.Context) {
 		}
 
 		// get all product where category id equal homePageCategory.ID and lang_id equal langID
-		productRows, err := db.Query("SELECT p.id,t.name,p.price,p.old_price,p.limit_amount,p.is_new,p.amount FROM products p LEFT JOIN category_product c ON p.id=c.product_id LEFT JOIN translation_product t ON p.id=t.product_id WHERE t.lang_id = $1 AND c.category_id = $2 AND p.deleted_at IS NULL AND c.deleted_at IS NULL AND t.deleted_at IS NULL ORDER BY p.created_at DESC LIMIT 4", langID, homePageCategory.ID)
+		productRows, err := db.Query("SELECT p.id,p.price,p.old_price,p.limit_amount,p.is_new,p.amount FROM products p LEFT JOIN category_product c ON p.id=c.product_id WHERE c.category_id = $1 AND p.deleted_at IS NULL AND c.deleted_at IS NULL ORDER BY p.created_at DESC LIMIT 4", homePageCategory.ID)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
@@ -136,7 +136,7 @@ func GetHomePageCategories(c *gin.Context) {
 
 		for productRows.Next() {
 			var product Product
-			if err := productRows.Scan(&product.ID, &product.Name, &product.Price, &product.OldPrice, &product.LimitAmount, &product.IsNew, &product.Amount); err != nil {
+			if err := productRows.Scan(&product.ID, &product.Price, &product.OldPrice, &product.LimitAmount, &product.IsNew, &product.Amount); err != nil {
 				c.JSON(http.StatusBadRequest, gin.H{
 					"status":  false,
 					"message": err.Error(),
@@ -177,6 +177,38 @@ func GetHomePageCategories(c *gin.Context) {
 				}
 
 				product.MainImage = mainImage
+
+				rowTrProduct, err := db.Query("SELECT name,description FROM translation_product WHERE lang_id = $1 AND product_id = $2 AND deleted_at IS NULL", langID, product.ID)
+				if err != nil {
+					c.JSON(http.StatusBadRequest, gin.H{
+						"status":  false,
+						"message": err.Error(),
+					})
+					return
+				}
+				defer func() {
+					if err := rowTrProduct.Close(); err != nil {
+						c.JSON(http.StatusBadRequest, gin.H{
+							"status":  false,
+							"message": err.Error(),
+						})
+						return
+					}
+				}()
+
+				var trProduct models.TranslationProduct
+
+				for rowTrProduct.Next() {
+					if err := rowTrProduct.Scan(&trProduct.Name, &trProduct.Description); err != nil {
+						c.JSON(http.StatusBadRequest, gin.H{
+							"status":  false,
+							"message": err.Error(),
+						})
+						return
+					}
+				}
+
+				product.Translation = trProduct
 
 				rowsImages, err := db.Query("SELECT small,large FROM images WHERE product_id = $1", product.ID)
 				if err != nil {
