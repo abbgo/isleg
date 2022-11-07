@@ -19,7 +19,7 @@ type JWTClaimForAdmin struct {
 
 func GenerateAccessTokenForAdmin(phoneNumber, adminID, adminType string) (accessTokenString string, err error) {
 
-	expirationTime := time.Now().Add(24 * time.Hour)
+	expirationTime := time.Now().Add(30 * time.Minute)
 
 	claims := &JWTClaimForAdmin{
 		PhoneNumber: phoneNumber,
@@ -37,7 +37,7 @@ func GenerateAccessTokenForAdmin(phoneNumber, adminID, adminType string) (access
 
 func GenerateRefreshTokenForAdmin(phoneNumber, adminID, adminType string) (refreshTokenString string, err error) {
 
-	expirationTime := time.Now().Add(24 * time.Hour * 5)
+	expirationTime := time.Now().Add(12 * time.Hour)
 	claims := &JWTClaimForAdmin{
 		PhoneNumber: phoneNumber,
 		AdminID:     adminID,
