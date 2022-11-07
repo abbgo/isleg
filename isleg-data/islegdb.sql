@@ -197,6 +197,7 @@ UPDATE translation_category SET deleted_at = now() WHERE lang_id = language_id;
 UPDATE translation_product SET deleted_at = now() WHERE lang_id = language_id;
 UPDATE translation_afisa SET deleted_at = now() WHERE lang_id = language_id;
 UPDATE translation_district SET deleted_at = now() WHERE lang_id = language_id;
+UPDATE translation_notification SET deleted_at = now() WHERE lang_id = language_id;
 END; $$;
 
 
@@ -334,6 +335,7 @@ UPDATE translation_category SET deleted_at = NULL WHERE lang_id = language_id;
 UPDATE translation_product SET deleted_at = NULL WHERE lang_id = language_id;
 UPDATE translation_afisa SET deleted_at = NULL WHERE lang_id = language_id;
 UPDATE translation_district SET deleted_at = NULL WHERE lang_id = language_id;
+UPDATE translation_notification SET deleted_at = NULL WHERE lang_id = language_id;
 END; $$;
 
 
@@ -707,6 +709,21 @@ CREATE TABLE public.main_image (
 ALTER TABLE public.main_image OWNER TO postgres;
 
 --
+-- Name: notifications; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.notifications (
+    id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
+    name character varying,
+    created_at timestamp with time zone DEFAULT now(),
+    updated_at timestamp with time zone DEFAULT now(),
+    deleted_at timestamp with time zone
+);
+
+
+ALTER TABLE public.notifications OWNER TO postgres;
+
+--
 -- Name: order_dates; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -1064,6 +1081,23 @@ CREATE TABLE public.translation_my_order_page (
 
 
 ALTER TABLE public.translation_my_order_page OWNER TO postgres;
+
+--
+-- Name: translation_notification; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.translation_notification (
+    id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
+    notification_id uuid,
+    lang_id uuid,
+    translation character varying,
+    created_at timestamp with time zone DEFAULT now(),
+    updated_at timestamp with time zone DEFAULT now(),
+    deleted_at timestamp with time zone
+);
+
+
+ALTER TABLE public.translation_notification OWNER TO postgres;
 
 --
 -- Name: translation_order_dates; Type: TABLE; Schema: public; Owner: postgres
@@ -1627,6 +1661,14 @@ da3408ea-1cd6-41b0-aa7d-361ed2325c55	332d15a5-8f2a-4ea5-8eac-a0e571fcdce5	upload
 
 
 --
+-- Data for Name: notifications; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.notifications (id, name, created_at, updated_at, deleted_at) FROM stdin;
+\.
+
+
+--
 -- Data for Name: order_dates; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -1903,6 +1945,14 @@ d294138e-b808-41ae-9ac5-1826751fda3d	aea98b93-7bdf-455b-9ad4-a259d69dc76e	ваш
 COPY public.translation_my_order_page (id, lang_id, orders, date, price, currency, image, name, brend, code, amount, total_price, created_at, updated_at, deleted_at) FROM stdin;
 6f30b588-94d8-49f5-a558-a90c2ec9150e	aea98b93-7bdf-455b-9ad4-a259d69dc76e	orders_ru	date_ru	price_ru	currency_ru	image_ru	name_ru	brend_ru	code_ru	amount_ru	total_price_ru	2022-09-02 13:04:39.394714+05	2022-09-02 13:04:39.394714+05	\N
 ff43b90d-e22d-4364-b358-6fd56bb3a305	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	orders	date	price	currency	image	name	brend	code	amount	total_price	2022-09-02 13:04:39.36328+05	2022-09-02 13:12:48.119751+05	\N
+\.
+
+
+--
+-- Data for Name: translation_notification; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.translation_notification (id, notification_id, lang_id, translation, created_at, updated_at, deleted_at) FROM stdin;
 \.
 
 
@@ -2214,6 +2264,14 @@ ALTER TABLE ONLY public.main_image
 
 
 --
+-- Name: notifications notifications_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.notifications
+    ADD CONSTRAINT notifications_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: order_dates order_dates_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -2347,6 +2405,14 @@ ALTER TABLE ONLY public.translation_my_information_page
 
 ALTER TABLE ONLY public.translation_my_order_page
     ADD CONSTRAINT translation_my_order_page_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: translation_notification translation_notification_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.translation_notification
+    ADD CONSTRAINT translation_notification_pkey PRIMARY KEY (id);
 
 
 --
@@ -2531,6 +2597,13 @@ CREATE TRIGGER updated_main_image_updated_at BEFORE UPDATE ON public.main_image 
 
 
 --
+-- Name: notifications updated_notifications_updated_at; Type: TRIGGER; Schema: public; Owner: postgres
+--
+
+CREATE TRIGGER updated_notifications_updated_at BEFORE UPDATE ON public.notifications FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
+
+
+--
 -- Name: order_dates updated_order_dates_updated_at; Type: TRIGGER; Schema: public; Owner: postgres
 --
 
@@ -2647,6 +2720,13 @@ CREATE TRIGGER updated_translation_my_information_page_updated_at BEFORE UPDATE 
 --
 
 CREATE TRIGGER updated_translation_my_order_page_updated_at BEFORE UPDATE ON public.translation_my_order_page FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
+
+
+--
+-- Name: translation_notification updated_translation_notification_updated_at; Type: TRIGGER; Schema: public; Owner: postgres
+--
+
+CREATE TRIGGER updated_translation_notification_updated_at BEFORE UPDATE ON public.translation_notification FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
 
 
 --
@@ -2956,11 +3036,27 @@ ALTER TABLE ONLY public.payment_types
 
 
 --
+-- Name: translation_notification languages_translation_notification; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.translation_notification
+    ADD CONSTRAINT languages_translation_notification FOREIGN KEY (lang_id) REFERENCES public.languages(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
 -- Name: translation_order_dates languages_translation_order_dates; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.translation_order_dates
     ADD CONSTRAINT languages_translation_order_dates FOREIGN KEY (lang_id) REFERENCES public.languages(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: translation_notification notifications_translation_notification; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.translation_notification
+    ADD CONSTRAINT notifications_translation_notification FOREIGN KEY (notification_id) REFERENCES public.notifications(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --

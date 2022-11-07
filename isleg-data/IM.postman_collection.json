@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "c7149ba9-13fc-40d0-b3a1-1c905a0df748",
+		"_postman_id": "4e483145-c56c-4374-a6f6-30ea8ff64730",
 		"name": "IM",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -1065,6 +1065,37 @@
 										"admin",
 										"auth",
 										"login"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GetAdmins",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIrOTkzNjM3NDcxNTUiLCJhZG1pbl9pZCI6ImM5N2JmYzZhLWZkODUtNGFhOC04MmRiLWU3ODhmNmIwZDcwYSIsInR5cGUiOiJzdXBlcl9hZG1pbiIsImV4cCI6MTY2Nzg4NjMwOH0.tRVWHUku32MBtT2jTHuzbYGi3tIPlgvjndSz6PQwurg",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "localhost:2406/admin/admins/1/2",
+									"host": [
+										"localhost"
+									],
+									"port": "2406",
+									"path": [
+										"admin",
+										"admins",
+										"1",
+										"2"
 									]
 								}
 							},
