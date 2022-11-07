@@ -50,6 +50,7 @@ func Routes() *gin.Engine {
 		{
 			securedAdmin.GET("/orders/:limit/:page", frontController.GetOrders)
 			securedAdmin.POST("/order-confirmation/:id", frontController.OrderConfirmation)
+			securedAdmin.GET("/admins/:limit/:page", adminController.GetAdmins)
 
 			securedAdmin.POST("/language", backController.CreateLanguage)
 			securedAdmin.PUT("/language/:id", backController.UpdateLanguageByID)
