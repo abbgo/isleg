@@ -79,6 +79,7 @@ func RegisterAdmin(c *gin.Context) {
 		"status":       true,
 		"phone_number": admin.PhoneNumber,
 		"password":     admin.Password,
+		"admin_type":   admin.Type,
 	})
 
 }
@@ -180,6 +181,7 @@ func LoginAdmin(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"access_token":  accessTokenString,
 		"refresh_token": refreshTokenString,
+		"admin_type":    adminType,
 	})
 
 }
