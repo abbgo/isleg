@@ -953,7 +953,7 @@ func DeletePermanentlyCategoryByID(c *gin.Context) {
 	}
 
 	// kategoriyanyn produktalarynyn main suratlaryn direktlary bazadan alynyar
-	rowsMainImageProduct, err := db.Query("SELECT m.small,m.medium,m.large FROM products p INNER JOIN category_product c ON c.product_id=p.id INNER JOIN main_image m ON m.product_id = p.id WHERE c.category_id = $1", ID)
+	rowsMainImageProduct, err := db.Query("SELECT m.product_id,m.small,m.medium,m.large FROM products p INNER JOIN category_product c ON c.product_id=p.id INNER JOIN main_image m ON m.product_id = p.id WHERE c.category_id = $1", ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -976,7 +976,7 @@ func DeletePermanentlyCategoryByID(c *gin.Context) {
 	for rowsMainImageProduct.Next() {
 		var mainImage models.MainImage
 
-		if err := rowsMainImageProduct.Scan(&mainImage.Small, &mainImage.Medium, &mainImage.Large); err != nil {
+		if err := rowsMainImageProduct.Scan(&mainImage.ProductID, &mainImage.Small, &mainImage.Medium, &mainImage.Large); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
@@ -1089,6 +1089,107 @@ func DeletePermanentlyCategoryByID(c *gin.Context) {
 		}
 	}()
 
+	// haryt pozulanda sol haryda degisli likelar hem pozulmaly
+	for _, v := range mainImages {
+		resultLike, err := db.Query("DELETE FROM likes WHERE product_id = $1", v.ProductID)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+		defer func() {
+			if err := resultLike.Close(); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}()
+	}
+
+	// haryt pozulanda sol haryda degisli sebetdaki harytlar hem pozulmaly
+	for _, v := range mainImages {
+		resultCart, err := db.Query("DELETE FROM cart WHERE product_id = $1", v.ProductID)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+		defer func() {
+			if err := resultCart.Close(); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}()
+	}
+
+	// haryt pozulanda sol haryda degisli sargyt edilen harytlar hem pozulmaly
+	for _, v := range mainImages {
+		resultOrderedProduct, err := db.Query("DELETE FROM ordered_products WHERE product_id = $1", v.ProductID)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+		defer func() {
+			if err := resultOrderedProduct.Close(); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}()
+	}
+
+	// kategoriya pozulanda category_product tablisadaky maglumatlar hem pozulmaly
+	resultCatProc, err := db.Query("DELETE FROM category_product WHERE category_id = $1", category_id)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer func() {
+		if err := resultCatProc.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
+
+	// kategoriya pozulanda category_shop tablisadaky maglumatlar hem pozulmaly
+	resultCatShop, err := db.Query("DELETE FROM category_shop WHERE category_id = $1", category_id)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer func() {
+		if err := resultCatShop.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
+
 	// kategoriyanyn child kategoriyalarynyn id - leri alynyar database - den
 	rowChildCategory, err := db.Query("SELECT id FROM categories WHERE parent_category_id = $1", ID)
 	if err != nil {
@@ -1125,7 +1226,7 @@ func DeletePermanentlyCategoryByID(c *gin.Context) {
 
 	// child kategoriya degisli harytlaryn suratlarynyn direktleri bazadan alynyar we uploads papkadam pozulyar
 	for _, v := range childCategoryIDS {
-		rowPrdcs, err := db.Query("SELECT m.small,m.medium,m.large FROM products p INNER JOIN category_product c ON c.product_id=p.id INNER JOIN main_image m ON m.product_id = p.id WHERE c.category_id = $1", v)
+		rowPrdcs, err := db.Query("SELECT m.product_id,m.small,m.medium,m.large FROM products p INNER JOIN category_product c ON c.product_id=p.id INNER JOIN main_image m ON m.product_id = p.id WHERE c.category_id = $1", v)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
@@ -1148,7 +1249,7 @@ func DeletePermanentlyCategoryByID(c *gin.Context) {
 		for rowsMainImageProduct.Next() {
 			var childMainImage models.MainImage
 
-			if err := rowsMainImageProduct.Scan(&childMainImage.Small, &childMainImage.Medium, &childMainImage.Large); err != nil {
+			if err := rowsMainImageProduct.Scan(&childMainImage.ProductID, &childMainImage.Small, &childMainImage.Medium, &childMainImage.Large); err != nil {
 				c.JSON(http.StatusBadRequest, gin.H{
 					"status":  false,
 					"message": err.Error(),
@@ -1186,7 +1287,7 @@ func DeletePermanentlyCategoryByID(c *gin.Context) {
 
 		}
 
-		rowsChildImagesProduct, err := db.Query("SELECT i.small,i.large FROM products p INNER JOIN category_product c ON c.product_id=p.id INNER JOIN images i ON i.product_id = p.id WHERE c.category_id = $1", ID)
+		rowsChildImagesProduct, err := db.Query("SELECT i.small,i.large FROM products p INNER JOIN category_product c ON c.product_id=p.id INNER JOIN images i ON i.product_id = p.id WHERE c.category_id = $1", v)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
@@ -1240,7 +1341,7 @@ func DeletePermanentlyCategoryByID(c *gin.Context) {
 		}
 
 		// child kategoriya degisli harytlar bazadan pozulyar
-		childresultProduct, err := db.Query("DELETE FROM products USING category_product WHERE category_product.product_id = products.id AND category_product.category_id = $1", category_id)
+		childresultProduct, err := db.Query("DELETE FROM products USING category_product WHERE category_product.product_id = products.id AND category_product.category_id = $1", v)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
@@ -1250,6 +1351,107 @@ func DeletePermanentlyCategoryByID(c *gin.Context) {
 		}
 		defer func() {
 			if err := childresultProduct.Close(); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}()
+
+		// haryt pozulanda sol haryda degisli likelar hem pozulmaly
+		for _, v := range childMainImages {
+			resultLike, err := db.Query("DELETE FROM likes WHERE product_id = $1", v.ProductID)
+			if err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+			defer func() {
+				if err := resultLike.Close(); err != nil {
+					c.JSON(http.StatusBadRequest, gin.H{
+						"status":  false,
+						"message": err.Error(),
+					})
+					return
+				}
+			}()
+		}
+
+		// haryt pozulanda sol haryda degisli sebetdaki harytlar hem pozulmaly
+		for _, v := range childMainImages {
+			resultCart, err := db.Query("DELETE FROM cart WHERE product_id = $1", v.ProductID)
+			if err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+			defer func() {
+				if err := resultCart.Close(); err != nil {
+					c.JSON(http.StatusBadRequest, gin.H{
+						"status":  false,
+						"message": err.Error(),
+					})
+					return
+				}
+			}()
+		}
+
+		// haryt pozulanda sol haryda degisli sargyt edilen harytlar hem pozulmaly
+		for _, v := range childMainImages {
+			resultOrderedProduct, err := db.Query("DELETE FROM ordered_products WHERE product_id = $1", v.ProductID)
+			if err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+			defer func() {
+				if err := resultOrderedProduct.Close(); err != nil {
+					c.JSON(http.StatusBadRequest, gin.H{
+						"status":  false,
+						"message": err.Error(),
+					})
+					return
+				}
+			}()
+		}
+
+		// kategoriya pozulanda category_product tablisadaky maglumatlar hem pozulmaly
+		resultCatProc, err := db.Query("DELETE FROM category_product WHERE category_id = $1", v)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+		defer func() {
+			if err := resultCatProc.Close(); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}()
+
+		// kategoriya pozulanda category_shop tablisadaky maglumatlar hem pozulmaly
+		resultCatShop, err := db.Query("DELETE FROM category_shop WHERE category_id = $1", v)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+		defer func() {
+			if err := resultCatShop.Close(); err != nil {
 				c.JSON(http.StatusBadRequest, gin.H{
 					"status":  false,
 					"message": err.Error(),
