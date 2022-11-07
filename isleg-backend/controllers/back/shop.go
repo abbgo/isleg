@@ -696,6 +696,24 @@ func DeletePermanentlyShopByID(c *gin.Context) {
 		return
 	}
 
+	resultCategoryShop, err := db.Query("DELETE FROM category_shop WHERE shop_id = $1", ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer func() {
+		if err := resultCategoryShop.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
+
 	resultShop, err := db.Query("DELETE FROM shops WHERE id = $1", ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
