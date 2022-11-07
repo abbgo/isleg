@@ -44,13 +44,13 @@ func Routes() *gin.Engine {
 			admin.PUT("/password-of-admin/:id", middlewares.IsSuperAdmin(), adminController.UpdateAdminPassword)
 			admin.POST("/login", adminController.LoginAdmin)
 			admin.POST("/refresh", auth.RefreshTokenForAdmin)
+			admin.GET("/admins/:limit/:page", middlewares.IsSuperAdmin(), adminController.GetAdmins)
 		}
 
 		securedAdmin := back.Group("/").Use(middlewares.CheckAdmin())
 		{
 			securedAdmin.GET("/orders/:limit/:page", frontController.GetOrders)
 			securedAdmin.POST("/order-confirmation/:id", frontController.OrderConfirmation)
-			securedAdmin.GET("/admins/:limit/:page", adminController.GetAdmins)
 
 			securedAdmin.POST("/language", backController.CreateLanguage)
 			securedAdmin.PUT("/language/:id", backController.UpdateLanguageByID)
