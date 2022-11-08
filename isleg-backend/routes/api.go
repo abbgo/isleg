@@ -175,7 +175,7 @@ func Routes() *gin.Engine {
 			securedAdmin.POST("/notification", backController.CreateNotification)
 			securedAdmin.PUT("/notification", backController.UpdateNotificationByID)
 			securedAdmin.GET("/notification/:id", backController.GetNotificationByID)
-			// securedAdmin.GET("/afisas", backController.GetAfisas)
+			securedAdmin.GET("/notifications", backController.GetNotifications)
 			// securedAdmin.DELETE("/afisa/:id", backController.DeleteAfisaByID)
 			// securedAdmin.GET("/restore-afisa/:id", backController.RestoreAfisaByID)
 			// securedAdmin.DELETE("/delete-afisa/:id", backController.DeletePermanentlyAfisaByID)
