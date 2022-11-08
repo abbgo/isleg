@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"fmt"
 	"github/abbgo/isleg/isleg-backend/config"
 	"github/abbgo/isleg/isleg-backend/models"
 	"net/http"
@@ -172,8 +171,6 @@ func UpdateNotificationByID(c *gin.Context) {
 		return
 	}
 
-	fmt.Print("data: ", notification)
-
 	rowNotification, err := db.Query("SELECT id FROM notifications WHERE id = $1 AND deleted_at IS NULL", notification.ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -256,6 +253,110 @@ func UpdateNotificationByID(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
 		"message": "data successfully updated",
+	})
+
+}
+
+func GetNotificationByID(c *gin.Context) {
+
+	// initialize database connection
+	db, err := config.ConnDB()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
+
+	ID := c.Param("id")
+
+	rowNotification, err := db.Query("SELECT id,name FROM notifications WHERE id = $1", ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer func() {
+		if err := rowNotification.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
+
+	var notification models.Notification
+
+	for rowNotification.Next() {
+		if err := rowNotification.Scan(&notification.ID, &notification.Name); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+
+		if notification.ID == "" {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": "notification not found",
+			})
+			return
+		}
+
+		rowsTrNotification, err := db.Query("SELECT translation FROM translation_notification WHERE notification_id = $1 AND deleted_at IS NULL", notification.ID)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+		defer func() {
+			if err := rowsTrNotification.Close(); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}()
+
+		var trNotifications []models.TranslationNotification
+
+		for rowsTrNotification.Next() {
+			var trNotification models.TranslationNotification
+
+			if err := rowsTrNotification.Scan(&trNotification.Translation); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+
+			trNotifications = append(trNotifications, trNotification)
+		}
+		notification.Translations = trNotifications
+
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":       true,
+		"notification": notification,
 	})
 
 }
