@@ -247,6 +247,9 @@ func Routes() *gin.Engine {
 		// get payment ttype by lang id
 		front.GET("/payment-types", backController.GetPaymentTypesByLangID)
 
+		// get notifications by lang id
+		front.GET("/notifications", backController.GetNotificationByLangID)
+
 		// homepage categories
 		front.GET("/homepage-categories", frontController.GetHomePageCategories)
 

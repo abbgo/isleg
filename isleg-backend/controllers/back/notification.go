@@ -717,3 +717,114 @@ func DeletePermanentlyNotificationByID(c *gin.Context) {
 	})
 
 }
+
+func GetNotificationByLangID(c *gin.Context) {
+
+	db, err := config.ConnDB()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
+
+	// GET DATA FROM ROUTE PARAMETER
+	langShortName := c.Param("lang")
+
+	// GET language id
+	langID, err := GetLangID(langShortName)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	rowsNotification, err := db.Query("SELECT id,name FROM notifications WHERE deleted_at IS NULL")
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer func() {
+		if err := rowsNotification.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
+
+	var notifications []models.Notification
+
+	for rowsNotification.Next() {
+		var notification models.Notification
+
+		if err := rowsNotification.Scan(&notification.ID, &notification.Name); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+
+		rowTrNotification, err := db.Query("SELECT translation FROM translation_notification WHERE notification_id = $1 AND lang_id = $2 AND deleted_at IS NULL", notification.ID, langID)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+		defer func() {
+			if err := rowTrNotification.Close(); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}()
+
+		var trNotifications []models.TranslationNotification
+
+		for rowTrNotification.Next() {
+			var trNotification models.TranslationNotification
+
+			if err := rowTrNotification.Scan(&trNotification.Translation); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+
+			trNotifications = append(trNotifications, trNotification)
+		}
+
+		notification.Translations = trNotifications
+
+		notifications = append(notifications, notification)
+
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":        true,
+		"notifications": notifications,
+	})
+
+}
