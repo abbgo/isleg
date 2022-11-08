@@ -338,7 +338,7 @@ func UpdateOrderTimeByID(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
-		"message": "data successfully added",
+		"message": "data successfully updated",
 	})
 
 }

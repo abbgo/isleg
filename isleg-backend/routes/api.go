@@ -44,7 +44,7 @@ func Routes() *gin.Engine {
 			admin.PUT("/password-of-admin/:id", middlewares.IsSuperAdmin(), adminController.UpdateAdminPassword)
 			admin.POST("/login", adminController.LoginAdmin)
 			admin.POST("/refresh", auth.RefreshTokenForAdmin)
-			admin.GET("/admins/:limit/:page", middlewares.IsSuperAdmin(), adminController.GetAdmins)
+			admin.GET("/admins/:limit/:page", middlewares.CheckAdmin(), adminController.GetAdmins)
 		}
 
 		securedAdmin := back.Group("/").Use(middlewares.CheckAdmin())
@@ -173,7 +173,7 @@ func Routes() *gin.Engine {
 			securedAdmin.DELETE("/delete-afisa/:id", backController.DeletePermanentlyAfisaByID)
 
 			securedAdmin.POST("/notification", backController.CreateNotification)
-			// securedAdmin.PUT("/afisa/:id", backController.UpdateAfisaByID)
+			securedAdmin.PUT("/notification", backController.UpdateNotificationByID)
 			// securedAdmin.GET("/afisa/:id", backController.GetAfisaByID)
 			// securedAdmin.GET("/afisas", backController.GetAfisas)
 			// securedAdmin.DELETE("/afisa/:id", backController.DeleteAfisaByID)
