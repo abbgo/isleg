@@ -204,6 +204,21 @@ END; $$;
 ALTER PROCEDURE public.delete_language(language_id uuid) OWNER TO postgres;
 
 --
+-- Name: delete_notification(uuid); Type: PROCEDURE; Schema: public; Owner: postgres
+--
+
+CREATE PROCEDURE public.delete_notification(n_id uuid)
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+UPDATE notifications SET deleted_at = now() WHERE id = n_id;
+UPDATE translation_notification SET deleted_at = now() WHERE notification_id = n_id;
+END; $$;
+
+
+ALTER PROCEDURE public.delete_notification(n_id uuid) OWNER TO postgres;
+
+--
 -- Name: delete_order_date(uuid); Type: PROCEDURE; Schema: public; Owner: postgres
 --
 
@@ -340,6 +355,21 @@ END; $$;
 
 
 ALTER PROCEDURE public.restore_language(language_id uuid) OWNER TO postgres;
+
+--
+-- Name: restore_notification(uuid); Type: PROCEDURE; Schema: public; Owner: postgres
+--
+
+CREATE PROCEDURE public.restore_notification(n_id uuid)
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+UPDATE notifications SET deleted_at = NULL WHERE id = n_id;
+UPDATE translation_notification SET deleted_at = NULL WHERE notification_id = n_id;
+END; $$;
+
+
+ALTER PROCEDURE public.restore_notification(n_id uuid) OWNER TO postgres;
 
 --
 -- Name: restore_order_date(uuid); Type: PROCEDURE; Schema: public; Owner: postgres
@@ -1265,6 +1295,10 @@ c4bcda34-7332-4ae5-8129-d7538d63fee4	Golden Eagle	uploads/brend/7a425220-7200-4e
 --
 
 COPY public.cart (id, product_id, customer_id, quantity_of_product, created_at, updated_at, deleted_at) FROM stdin;
+93c1447c-7f52-4087-9f8a-8db0597a1c5f	360ebeac-853e-45a5-ab7f-838430b0c442	1ae12390-03ae-49ac-a9ad-d7ba5c95b51a	2	2022-11-08 08:33:31.847631+05	2022-11-08 08:37:26.755031+05	\N
+d98de6fd-eb0c-4fec-82ab-227be02af485	febf699d-ca37-458a-b121-b5b70bbc7db0	1ae12390-03ae-49ac-a9ad-d7ba5c95b51a	1	2022-11-08 08:33:31.921759+05	2022-11-08 08:37:26.786622+05	\N
+8626e93e-b3a9-4f4a-bfeb-275cb6edd82e	45a9f186-2521-4eef-a4e0-b5c253c70878	1ae12390-03ae-49ac-a9ad-d7ba5c95b51a	2	2022-11-08 08:33:31.909452+05	2022-11-08 08:37:26.807376+05	\N
+4c6a3e54-a5f8-44b7-86f4-7fa07cf5584b	4bb06dbd-e4b2-4148-bb61-b1429d8cfc40	1ae12390-03ae-49ac-a9ad-d7ba5c95b51a	1	2022-11-08 08:45:45.022815+05	2022-11-08 08:45:45.022815+05	\N
 \.
 
 
@@ -1601,6 +1635,10 @@ aea98b93-7bdf-455b-9ad4-a259d69dc76e	ru	uploads/language1c24e3a6-173e-4264-a631-
 --
 
 COPY public.likes (id, product_id, customer_id, created_at, updated_at, deleted_at) FROM stdin;
+cb5b7269-b287-44cc-9127-99f63a9d7b49	d6dfc8f9-27d9-45f9-811d-2a93fa0f7d35	1ae12390-03ae-49ac-a9ad-d7ba5c95b51a	2022-11-08 08:37:00.737651+05	2022-11-08 08:37:00.737651+05	\N
+bf8f34df-5cc0-453a-86ef-1972d3ab1f18	4bb06dbd-e4b2-4148-bb61-b1429d8cfc40	1ae12390-03ae-49ac-a9ad-d7ba5c95b51a	2022-11-08 08:37:01.559755+05	2022-11-08 08:37:01.559755+05	\N
+c43336ec-4aad-49d5-8007-ecc3c19096cd	45a9f186-2521-4eef-a4e0-b5c253c70878	1ae12390-03ae-49ac-a9ad-d7ba5c95b51a	2022-11-08 08:49:28.962404+05	2022-11-08 08:49:28.962404+05	\N
+aa4b205c-338a-4aec-898e-12b5fee49a59	fa148eb2-520f-430e-bd8d-9d5a166d0600	1ae12390-03ae-49ac-a9ad-d7ba5c95b51a	2022-11-08 08:51:46.081691+05	2022-11-08 08:51:46.081691+05	\N
 \.
 
 
