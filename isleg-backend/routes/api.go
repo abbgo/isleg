@@ -172,6 +172,14 @@ func Routes() *gin.Engine {
 			securedAdmin.GET("/restore-afisa/:id", backController.RestoreAfisaByID)
 			securedAdmin.DELETE("/delete-afisa/:id", backController.DeletePermanentlyAfisaByID)
 
+			securedAdmin.POST("/notification", backController.CreateNotification)
+			// securedAdmin.PUT("/afisa/:id", backController.UpdateAfisaByID)
+			// securedAdmin.GET("/afisa/:id", backController.GetAfisaByID)
+			// securedAdmin.GET("/afisas", backController.GetAfisas)
+			// securedAdmin.DELETE("/afisa/:id", backController.DeleteAfisaByID)
+			// securedAdmin.GET("/restore-afisa/:id", backController.RestoreAfisaByID)
+			// securedAdmin.DELETE("/delete-afisa/:id", backController.DeletePermanentlyAfisaByID)
+
 			securedAdmin.POST("/district", backController.CreateDistrict)
 
 			securedAdmin.POST("/shop", backController.CreateShop)
