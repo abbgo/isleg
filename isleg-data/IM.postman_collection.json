@@ -997,6 +997,26 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "GetNotificationByLangID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:2406/api/tm/notifications",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"api",
+								"tm",
+								"notifications"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -5008,14 +5028,14 @@
 					"name": "Notification",
 					"item": [
 						{
-							"name": "CreateAfisa",
+							"name": "CreateNotification",
 							"request": {
 								"auth": {
 									"type": "bearer",
 									"bearer": [
 										{
 											"key": "token",
-											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIrOTkzNjM3NDcxNTUiLCJhZG1pbl9pZCI6ImM5N2JmYzZhLWZkODUtNGFhOC04MmRiLWU3ODhmNmIwZDcwYSIsInR5cGUiOiJzdXBlcl9hZG1pbiIsImV4cCI6MTY2Nzg3NjI4Mn0.WGHakuaK2TXeJltXdFb4RNAn6ac1XSbcSi3qEwiIUV0",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIrOTkzNjM3NDcxNTUiLCJhZG1pbl9pZCI6ImM5N2JmYzZhLWZkODUtNGFhOC04MmRiLWU3ODhmNmIwZDcwYSIsInR5cGUiOiJzdXBlcl9hZG1pbiIsImV4cCI6MTY2NzkzMjY5OX0.p-wwvyX6cWBYV86VeRLPWZJtVfI79hftketDdtucYzk",
 											"type": "string"
 										}
 									]
