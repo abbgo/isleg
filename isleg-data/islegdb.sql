@@ -554,22 +554,6 @@ CREATE TABLE public.category_product (
 ALTER TABLE public.category_product OWNER TO postgres;
 
 --
--- Name: category_shop; Type: TABLE; Schema: public; Owner: postgres
---
-
-CREATE TABLE public.category_shop (
-    id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
-    category_id uuid,
-    shop_id uuid,
-    created_at timestamp with time zone DEFAULT now(),
-    updated_at timestamp with time zone DEFAULT now(),
-    deleted_at timestamp with time zone
-);
-
-
-ALTER TABLE public.category_shop OWNER TO postgres;
-
---
 -- Name: company_address; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -1449,16 +1433,6 @@ ceffda14-f32c-4878-baa0-bb3563f4327d	789cbced-9141-4748-94d3-93476d276057	9c655c
 
 
 --
--- Data for Name: category_shop; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-COPY public.category_shop (id, category_id, shop_id, created_at, updated_at, deleted_at) FROM stdin;
-03a408bd-f163-4ec7-9202-e713d35e24aa	789cbced-9141-4748-94d3-93476d276057	a9934de9-88b1-44f1-8321-5445eb231e89	2022-10-28 11:55:11.797567+05	2022-10-28 11:55:11.797567+05	\N
-4a847568-0341-4727-ae6e-f5808cddb32a	28a5bd8a-318a-4acf-b3c9-8ba04be5a979	a9934de9-88b1-44f1-8321-5445eb231e89	2022-10-28 11:55:11.797567+05	2022-10-28 11:55:11.797567+05	\N
-\.
-
-
---
 -- Data for Name: company_address; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -2184,14 +2158,6 @@ ALTER TABLE ONLY public.category_product
 
 
 --
--- Name: category_shop category_shop_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.category_shop
-    ADD CONSTRAINT category_shop_pkey PRIMARY KEY (id);
-
-
---
 -- Name: company_address company_address_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -2528,13 +2494,6 @@ CREATE TRIGGER updated_category_product_updated_at BEFORE UPDATE ON public.categ
 
 
 --
--- Name: category_shop updated_category_shop_updated_at; Type: TRIGGER; Schema: public; Owner: postgres
---
-
-CREATE TRIGGER updated_category_shop_updated_at BEFORE UPDATE ON public.category_shop FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
-
-
---
 -- Name: company_address updated_company_address_updated_at; Type: TRIGGER; Schema: public; Owner: postgres
 --
 
@@ -2820,14 +2779,6 @@ ALTER TABLE ONLY public.category_product
 
 
 --
--- Name: category_shop fk_category_category_shop; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.category_shop
-    ADD CONSTRAINT fk_category_category_shop FOREIGN KEY (category_id) REFERENCES public.categories(id) ON UPDATE CASCADE ON DELETE CASCADE;
-
-
---
 -- Name: categories fk_category_child_category; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -3001,14 +2952,6 @@ ALTER TABLE ONLY public.likes
 
 ALTER TABLE ONLY public.translation_product
     ADD CONSTRAINT fk_product_translation_product FOREIGN KEY (product_id) REFERENCES public.products(id) ON UPDATE CASCADE ON DELETE CASCADE;
-
-
---
--- Name: category_shop fk_shop_category_shop; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.category_shop
-    ADD CONSTRAINT fk_shop_category_shop FOREIGN KEY (shop_id) REFERENCES public.shops(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --

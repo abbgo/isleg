@@ -26,7 +26,7 @@ type LikeProduct struct {
 	IsNew              bool                      `json:"is_new"`
 	MainImage          models.MainImage          `json:"main_image"`
 	Images             []models.Images           `json:"images"`
-	TranslationProduct models.TranslationProduct `json:"translation_product"`
+	TranslationProduct models.TranslationProduct `json:"translation"`
 }
 
 type ProductID struct {
