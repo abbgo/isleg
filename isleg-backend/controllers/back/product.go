@@ -468,7 +468,7 @@ func UpdateProductByID(c *gin.Context) {
 
 	}
 
-	resultProducts, err := db.Query("UPDATE products SET brend_id = $1 , price = $2 , old_price = $3, amount = $4, limit_amount = $5 , is_new = $6 WHERE id = $7", brendID, price, oldPrice, amount, limitAmount, isNew, ID)
+	resultProducts, err := db.Query("UPDATE products SET brend_id = $1 , price = $2 , old_price = $3, amount = $4, limit_amount = $5 , is_new = $6, shop_id = $8 WHERE id = $7", brendID, price, oldPrice, amount, limitAmount, isNew, ID, shopID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
