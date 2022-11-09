@@ -9,6 +9,7 @@ import (
 type Product struct {
 	ID                 string               `json:"id,omitempty"`
 	BrendID            string               `json:"brend_id,omitempty"`
+	ShopID             string               `json:"shop_id,omitempty"`
 	Price              float64              `json:"price,omitempty"`
 	OldPrice           float64              `json:"old_price"`
 	Percentage         float64              `json:"percentage"`
@@ -23,6 +24,7 @@ type Product struct {
 	TranslationProduct []TranslationProduct `json:"translation_product,omitempty"` // one to many
 	Categories         []string             `json:"categories,omitempty"`
 	Brend              Brend                `json:"brend,omitempty"`
+	Shop               Shop                 `json:"shop,omitempty"`
 }
 
 type MainImage struct {
