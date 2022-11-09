@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "0ce65a7e-4c91-4486-a257-bd8bb49193d6",
+		"_postman_id": "537a027c-56c1-43b0-afad-1bf9c42cded7",
 		"name": "IM",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -1777,7 +1777,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NTYiLCJjdXN0b21lcl9pZCI6IjFhZTEyMzkwLTAzYWUtNDlhYy1hOWFkLWQ3YmE1Yzk1YjUxYSIsImV4cCI6MTY2NzQ1NTY2NH0.BLTauBZxWMmqvgtV8-ZWaukzJzFbZ_-rTwcte8ME2pA",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIrOTkzNjM3NDcxNTUiLCJhZG1pbl9pZCI6ImM5N2JmYzZhLWZkODUtNGFhOC04MmRiLWU3ODhmNmIwZDcwYSIsInR5cGUiOiJzdXBlcl9hZG1pbiIsImV4cCI6MTY2Nzk4NTgwNX0.9kVIqUR1KNVAow_ibYorrsGHRrd5WgGX751pYdybPPM",
 											"type": "string"
 										}
 									]
@@ -1785,39 +1785,13 @@
 								"method": "POST",
 								"header": [],
 								"body": {
-									"mode": "formdata",
-									"formdata": [
-										{
-											"key": "owner_name",
-											"value": "Owez Myradow",
-											"type": "default"
-										},
-										{
-											"key": "address",
-											"value": "Asgabat saher Mir 2/2 jay 2 magazyn 23",
-											"type": "default"
-										},
-										{
-											"key": "phone_number",
-											"value": "62420387",
-											"type": "default"
-										},
-										{
-											"key": "running_time",
-											"value": "7:00-21:00",
-											"type": "default"
-										},
-										{
-											"key": "category_id",
-											"value": "33cf0893-ff6e-40b3-b50f-2a3e926eca70",
-											"type": "default"
-										},
-										{
-											"key": "category_id",
-											"value": "f745d171-68e6-42e2-b339-cb3c210cda55",
-											"type": "default"
+									"mode": "raw",
+									"raw": "{\n    \"owner_name\":\"Owez Myradow\",\n    \"address\":\"Asgabat saher Mir 4/1 jay 2 magazyn 56\",\n    \"phone_number\":\"+99361254689\",\n    \"running_time\":\"7:00-21:00\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
 										}
-									]
+									}
 								},
 								"url": {
 									"raw": "localhost:2406/admin/shop",
@@ -1841,7 +1815,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NTYiLCJjdXN0b21lcl9pZCI6IjFhZTEyMzkwLTAzYWUtNDlhYy1hOWFkLWQ3YmE1Yzk1YjUxYSIsImV4cCI6MTY2NzQ1NTY2NH0.BLTauBZxWMmqvgtV8-ZWaukzJzFbZ_-rTwcte8ME2pA",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIrOTkzNjM3NDcxNTUiLCJhZG1pbl9pZCI6ImM5N2JmYzZhLWZkODUtNGFhOC04MmRiLWU3ODhmNmIwZDcwYSIsInR5cGUiOiJzdXBlcl9hZG1pbiIsImV4cCI6MTY2Nzk4NTgwNX0.9kVIqUR1KNVAow_ibYorrsGHRrd5WgGX751pYdybPPM",
 											"type": "string"
 										}
 									]
@@ -1849,50 +1823,23 @@
 								"method": "PUT",
 								"header": [],
 								"body": {
-									"mode": "formdata",
-									"formdata": [
-										{
-											"key": "owner_name",
-											"value": "Arslan Serdarow",
-											"type": "default"
-										},
-										{
-											"key": "address",
-											"value": "Mir 2 2/2 jay 7 dom 36",
-											"type": "default"
-										},
-										{
-											"key": "phone_number",
-											"value": "63254871",
-											"type": "default"
-										},
-										{
-											"key": "running_time",
-											"value": "7:00-21:00",
-											"type": "default"
-										},
-										{
-											"key": "category_id",
-											"value": "5d877898-9ef4-4b91-8518-193b431228a8",
-											"type": "default"
-										},
-										{
-											"key": "category_id",
-											"value": "66772380-c161-4c45-9350-a45e765193e2",
-											"type": "default"
+									"mode": "raw",
+									"raw": "{\n    \"id\":\"a283d9a4-f38e-43ee-a228-6584b7406cc4\",\n    \"owner_name\":\"Arslan Kerimow\",\n    \"address\":\"Asgabat saher Mir 2/2 jay 2 magazyn 23\",\n    \"phone_number\":\"+99362420387\",\n    \"running_time\":\"8:00-22:00\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
 										}
-									]
+									}
 								},
 								"url": {
-									"raw": "localhost:2406/admin/shop/0d4f9096-9cd7-4d72-afa5-e460de11e77e",
+									"raw": "localhost:2406/admin/shop",
 									"host": [
 										"localhost"
 									],
 									"port": "2406",
 									"path": [
 										"admin",
-										"shop",
-										"0d4f9096-9cd7-4d72-afa5-e460de11e77e"
+										"shop"
 									]
 								}
 							},
@@ -1906,7 +1853,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NTYiLCJjdXN0b21lcl9pZCI6IjFhZTEyMzkwLTAzYWUtNDlhYy1hOWFkLWQ3YmE1Yzk1YjUxYSIsImV4cCI6MTY2NzQ1NTY2NH0.BLTauBZxWMmqvgtV8-ZWaukzJzFbZ_-rTwcte8ME2pA",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIrOTkzNjM3NDcxNTUiLCJhZG1pbl9pZCI6ImM5N2JmYzZhLWZkODUtNGFhOC04MmRiLWU3ODhmNmIwZDcwYSIsInR5cGUiOiJzdXBlcl9hZG1pbiIsImV4cCI6MTY2Nzk4NTgwNX0.9kVIqUR1KNVAow_ibYorrsGHRrd5WgGX751pYdybPPM",
 											"type": "string"
 										}
 									]
@@ -1914,7 +1861,7 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "localhost:2406/admin/shop/0d4f9096-9cd7-4d72-afa5-e460de11e77e",
+									"raw": "localhost:2406/admin/shop/a283d9a4-f38e-43ee-a228-6584b7406cc4",
 									"host": [
 										"localhost"
 									],
@@ -1922,7 +1869,7 @@
 									"path": [
 										"admin",
 										"shop",
-										"0d4f9096-9cd7-4d72-afa5-e460de11e77e"
+										"a283d9a4-f38e-43ee-a228-6584b7406cc4"
 									]
 								}
 							},
@@ -1936,7 +1883,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NTYiLCJjdXN0b21lcl9pZCI6IjFhZTEyMzkwLTAzYWUtNDlhYy1hOWFkLWQ3YmE1Yzk1YjUxYSIsImV4cCI6MTY2NzQ1NTY2NH0.BLTauBZxWMmqvgtV8-ZWaukzJzFbZ_-rTwcte8ME2pA",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIrOTkzNjM3NDcxNTUiLCJhZG1pbl9pZCI6ImM5N2JmYzZhLWZkODUtNGFhOC04MmRiLWU3ODhmNmIwZDcwYSIsInR5cGUiOiJzdXBlcl9hZG1pbiIsImV4cCI6MTY2Nzk4NTgwNX0.9kVIqUR1KNVAow_ibYorrsGHRrd5WgGX751pYdybPPM",
 											"type": "string"
 										}
 									]
@@ -1965,7 +1912,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NTYiLCJjdXN0b21lcl9pZCI6IjFhZTEyMzkwLTAzYWUtNDlhYy1hOWFkLWQ3YmE1Yzk1YjUxYSIsImV4cCI6MTY2NzQ1NTY2NH0.BLTauBZxWMmqvgtV8-ZWaukzJzFbZ_-rTwcte8ME2pA",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIrOTkzNjM3NDcxNTUiLCJhZG1pbl9pZCI6ImM5N2JmYzZhLWZkODUtNGFhOC04MmRiLWU3ODhmNmIwZDcwYSIsInR5cGUiOiJzdXBlcl9hZG1pbiIsImV4cCI6MTY2Nzk5MDEyOX0.4FBidHzkItqkhjMai1dlr1YC9O2v7f4HcjDUL7Yds2I",
 											"type": "string"
 										}
 									]
@@ -1973,7 +1920,7 @@
 								"method": "DELETE",
 								"header": [],
 								"url": {
-									"raw": "localhost:2406/admin/shop/0d4f9096-9cd7-4d72-afa5-e460de11e77e",
+									"raw": "localhost:2406/admin/shop/a283d9a4-f38e-43ee-a228-6584b7406cc4",
 									"host": [
 										"localhost"
 									],
@@ -1981,7 +1928,7 @@
 									"path": [
 										"admin",
 										"shop",
-										"0d4f9096-9cd7-4d72-afa5-e460de11e77e"
+										"a283d9a4-f38e-43ee-a228-6584b7406cc4"
 									]
 								}
 							},
@@ -1995,7 +1942,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NTYiLCJjdXN0b21lcl9pZCI6IjFhZTEyMzkwLTAzYWUtNDlhYy1hOWFkLWQ3YmE1Yzk1YjUxYSIsImV4cCI6MTY2NzQ1NTY2NH0.BLTauBZxWMmqvgtV8-ZWaukzJzFbZ_-rTwcte8ME2pA",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIrOTkzNjM3NDcxNTUiLCJhZG1pbl9pZCI6ImM5N2JmYzZhLWZkODUtNGFhOC04MmRiLWU3ODhmNmIwZDcwYSIsInR5cGUiOiJzdXBlcl9hZG1pbiIsImV4cCI6MTY2Nzk5MDEyOX0.4FBidHzkItqkhjMai1dlr1YC9O2v7f4HcjDUL7Yds2I",
 											"type": "string"
 										}
 									]
@@ -2003,7 +1950,7 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "localhost:2406/admin/restore-shop/0d4f9096-9cd7-4d72-afa5-e460de11e77e",
+									"raw": "localhost:2406/admin/restore-shop/a283d9a4-f38e-43ee-a228-6584b7406cc4",
 									"host": [
 										"localhost"
 									],
@@ -2011,7 +1958,7 @@
 									"path": [
 										"admin",
 										"restore-shop",
-										"0d4f9096-9cd7-4d72-afa5-e460de11e77e"
+										"a283d9a4-f38e-43ee-a228-6584b7406cc4"
 									]
 								}
 							},
@@ -3751,6 +3698,11 @@
 											"key": "large",
 											"type": "file",
 											"src": "/home/abb/go/src/github.com/abbgo/isleg/isleg-data/Saydyn suratynyn razmeri/Kagyz kley/large.jpg"
+										},
+										{
+											"key": "shop_id",
+											"value": "",
+											"type": "default"
 										}
 									]
 								},
@@ -3914,6 +3866,11 @@
 										{
 											"key": "description_pl",
 											"value": "description_pl",
+											"type": "default"
+										},
+										{
+											"key": "shop_id",
+											"value": "",
 											"type": "default"
 										}
 									]
