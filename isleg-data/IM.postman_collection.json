@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "c7149ba9-13fc-40d0-b3a1-1c905a0df748",
+		"_postman_id": "537a027c-56c1-43b0-afad-1bf9c42cded7",
 		"name": "IM",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -625,7 +625,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "localhost:2406/api/tm/d154a3f1-7086-439f-b343-3998d6521efa/10/1",
+							"raw": "localhost:2406/api/tm/ab28ad8f-72af-4e9e-841b-38a6e6881a6e/10/1",
 							"host": [
 								"localhost"
 							],
@@ -633,7 +633,7 @@
 							"path": [
 								"api",
 								"tm",
-								"d154a3f1-7086-439f-b343-3998d6521efa",
+								"ab28ad8f-72af-4e9e-841b-38a6e6881a6e",
 								"10",
 								"1"
 							]
@@ -997,6 +997,26 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "GetNotificationByLangID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:2406/api/tm/notifications",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"api",
+								"tm",
+								"notifications"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -1065,6 +1085,37 @@
 										"admin",
 										"auth",
 										"login"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GetAdmins",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIrOTkzNjM3NDcxNTUiLCJhZG1pbl9pZCI6ImM5N2JmYzZhLWZkODUtNGFhOC04MmRiLWU3ODhmNmIwZDcwYSIsInR5cGUiOiJzdXBlcl9hZG1pbiIsImV4cCI6MTY2Nzg4NjMwOH0.tRVWHUku32MBtT2jTHuzbYGi3tIPlgvjndSz6PQwurg",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "localhost:2406/admin/admins/1/2",
+									"host": [
+										"localhost"
+									],
+									"port": "2406",
+									"path": [
+										"admin",
+										"admins",
+										"1",
+										"2"
 									]
 								}
 							},
@@ -1726,7 +1777,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NTYiLCJjdXN0b21lcl9pZCI6IjFhZTEyMzkwLTAzYWUtNDlhYy1hOWFkLWQ3YmE1Yzk1YjUxYSIsImV4cCI6MTY2NzQ1NTY2NH0.BLTauBZxWMmqvgtV8-ZWaukzJzFbZ_-rTwcte8ME2pA",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIrOTkzNjM3NDcxNTUiLCJhZG1pbl9pZCI6ImM5N2JmYzZhLWZkODUtNGFhOC04MmRiLWU3ODhmNmIwZDcwYSIsInR5cGUiOiJzdXBlcl9hZG1pbiIsImV4cCI6MTY2Nzk4NTgwNX0.9kVIqUR1KNVAow_ibYorrsGHRrd5WgGX751pYdybPPM",
 											"type": "string"
 										}
 									]
@@ -1734,39 +1785,13 @@
 								"method": "POST",
 								"header": [],
 								"body": {
-									"mode": "formdata",
-									"formdata": [
-										{
-											"key": "owner_name",
-											"value": "Owez Myradow",
-											"type": "default"
-										},
-										{
-											"key": "address",
-											"value": "Asgabat saher Mir 2/2 jay 2 magazyn 23",
-											"type": "default"
-										},
-										{
-											"key": "phone_number",
-											"value": "62420387",
-											"type": "default"
-										},
-										{
-											"key": "running_time",
-											"value": "7:00-21:00",
-											"type": "default"
-										},
-										{
-											"key": "category_id",
-											"value": "33cf0893-ff6e-40b3-b50f-2a3e926eca70",
-											"type": "default"
-										},
-										{
-											"key": "category_id",
-											"value": "f745d171-68e6-42e2-b339-cb3c210cda55",
-											"type": "default"
+									"mode": "raw",
+									"raw": "{\n    \"owner_name\":\"Owez Myradow\",\n    \"address\":\"Asgabat saher Mir 4/1 jay 2 magazyn 56\",\n    \"phone_number\":\"+99361254689\",\n    \"running_time\":\"7:00-21:00\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
 										}
-									]
+									}
 								},
 								"url": {
 									"raw": "localhost:2406/admin/shop",
@@ -1790,7 +1815,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NTYiLCJjdXN0b21lcl9pZCI6IjFhZTEyMzkwLTAzYWUtNDlhYy1hOWFkLWQ3YmE1Yzk1YjUxYSIsImV4cCI6MTY2NzQ1NTY2NH0.BLTauBZxWMmqvgtV8-ZWaukzJzFbZ_-rTwcte8ME2pA",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIrOTkzNjM3NDcxNTUiLCJhZG1pbl9pZCI6ImM5N2JmYzZhLWZkODUtNGFhOC04MmRiLWU3ODhmNmIwZDcwYSIsInR5cGUiOiJzdXBlcl9hZG1pbiIsImV4cCI6MTY2Nzk4NTgwNX0.9kVIqUR1KNVAow_ibYorrsGHRrd5WgGX751pYdybPPM",
 											"type": "string"
 										}
 									]
@@ -1798,50 +1823,23 @@
 								"method": "PUT",
 								"header": [],
 								"body": {
-									"mode": "formdata",
-									"formdata": [
-										{
-											"key": "owner_name",
-											"value": "Arslan Serdarow",
-											"type": "default"
-										},
-										{
-											"key": "address",
-											"value": "Mir 2 2/2 jay 7 dom 36",
-											"type": "default"
-										},
-										{
-											"key": "phone_number",
-											"value": "63254871",
-											"type": "default"
-										},
-										{
-											"key": "running_time",
-											"value": "7:00-21:00",
-											"type": "default"
-										},
-										{
-											"key": "category_id",
-											"value": "5d877898-9ef4-4b91-8518-193b431228a8",
-											"type": "default"
-										},
-										{
-											"key": "category_id",
-											"value": "66772380-c161-4c45-9350-a45e765193e2",
-											"type": "default"
+									"mode": "raw",
+									"raw": "{\n    \"id\":\"a283d9a4-f38e-43ee-a228-6584b7406cc4\",\n    \"owner_name\":\"Arslan Kerimow\",\n    \"address\":\"Asgabat saher Mir 2/2 jay 2 magazyn 23\",\n    \"phone_number\":\"+99362420387\",\n    \"running_time\":\"8:00-22:00\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
 										}
-									]
+									}
 								},
 								"url": {
-									"raw": "localhost:2406/admin/shop/0d4f9096-9cd7-4d72-afa5-e460de11e77e",
+									"raw": "localhost:2406/admin/shop",
 									"host": [
 										"localhost"
 									],
 									"port": "2406",
 									"path": [
 										"admin",
-										"shop",
-										"0d4f9096-9cd7-4d72-afa5-e460de11e77e"
+										"shop"
 									]
 								}
 							},
@@ -1855,7 +1853,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NTYiLCJjdXN0b21lcl9pZCI6IjFhZTEyMzkwLTAzYWUtNDlhYy1hOWFkLWQ3YmE1Yzk1YjUxYSIsImV4cCI6MTY2NzQ1NTY2NH0.BLTauBZxWMmqvgtV8-ZWaukzJzFbZ_-rTwcte8ME2pA",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIrOTkzNjM3NDcxNTUiLCJhZG1pbl9pZCI6ImM5N2JmYzZhLWZkODUtNGFhOC04MmRiLWU3ODhmNmIwZDcwYSIsInR5cGUiOiJzdXBlcl9hZG1pbiIsImV4cCI6MTY2Nzk4NTgwNX0.9kVIqUR1KNVAow_ibYorrsGHRrd5WgGX751pYdybPPM",
 											"type": "string"
 										}
 									]
@@ -1863,7 +1861,7 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "localhost:2406/admin/shop/0d4f9096-9cd7-4d72-afa5-e460de11e77e",
+									"raw": "localhost:2406/admin/shop/a283d9a4-f38e-43ee-a228-6584b7406cc4",
 									"host": [
 										"localhost"
 									],
@@ -1871,7 +1869,7 @@
 									"path": [
 										"admin",
 										"shop",
-										"0d4f9096-9cd7-4d72-afa5-e460de11e77e"
+										"a283d9a4-f38e-43ee-a228-6584b7406cc4"
 									]
 								}
 							},
@@ -1885,7 +1883,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NTYiLCJjdXN0b21lcl9pZCI6IjFhZTEyMzkwLTAzYWUtNDlhYy1hOWFkLWQ3YmE1Yzk1YjUxYSIsImV4cCI6MTY2NzQ1NTY2NH0.BLTauBZxWMmqvgtV8-ZWaukzJzFbZ_-rTwcte8ME2pA",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIrOTkzNjM3NDcxNTUiLCJhZG1pbl9pZCI6ImM5N2JmYzZhLWZkODUtNGFhOC04MmRiLWU3ODhmNmIwZDcwYSIsInR5cGUiOiJzdXBlcl9hZG1pbiIsImV4cCI6MTY2Nzk4NTgwNX0.9kVIqUR1KNVAow_ibYorrsGHRrd5WgGX751pYdybPPM",
 											"type": "string"
 										}
 									]
@@ -1914,7 +1912,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NTYiLCJjdXN0b21lcl9pZCI6IjFhZTEyMzkwLTAzYWUtNDlhYy1hOWFkLWQ3YmE1Yzk1YjUxYSIsImV4cCI6MTY2NzQ1NTY2NH0.BLTauBZxWMmqvgtV8-ZWaukzJzFbZ_-rTwcte8ME2pA",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIrOTkzNjM3NDcxNTUiLCJhZG1pbl9pZCI6ImM5N2JmYzZhLWZkODUtNGFhOC04MmRiLWU3ODhmNmIwZDcwYSIsInR5cGUiOiJzdXBlcl9hZG1pbiIsImV4cCI6MTY2Nzk5MDEyOX0.4FBidHzkItqkhjMai1dlr1YC9O2v7f4HcjDUL7Yds2I",
 											"type": "string"
 										}
 									]
@@ -1922,7 +1920,7 @@
 								"method": "DELETE",
 								"header": [],
 								"url": {
-									"raw": "localhost:2406/admin/shop/0d4f9096-9cd7-4d72-afa5-e460de11e77e",
+									"raw": "localhost:2406/admin/shop/a283d9a4-f38e-43ee-a228-6584b7406cc4",
 									"host": [
 										"localhost"
 									],
@@ -1930,7 +1928,7 @@
 									"path": [
 										"admin",
 										"shop",
-										"0d4f9096-9cd7-4d72-afa5-e460de11e77e"
+										"a283d9a4-f38e-43ee-a228-6584b7406cc4"
 									]
 								}
 							},
@@ -1944,7 +1942,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NTYiLCJjdXN0b21lcl9pZCI6IjFhZTEyMzkwLTAzYWUtNDlhYy1hOWFkLWQ3YmE1Yzk1YjUxYSIsImV4cCI6MTY2NzQ1NTY2NH0.BLTauBZxWMmqvgtV8-ZWaukzJzFbZ_-rTwcte8ME2pA",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIrOTkzNjM3NDcxNTUiLCJhZG1pbl9pZCI6ImM5N2JmYzZhLWZkODUtNGFhOC04MmRiLWU3ODhmNmIwZDcwYSIsInR5cGUiOiJzdXBlcl9hZG1pbiIsImV4cCI6MTY2Nzk5MDEyOX0.4FBidHzkItqkhjMai1dlr1YC9O2v7f4HcjDUL7Yds2I",
 											"type": "string"
 										}
 									]
@@ -1952,7 +1950,7 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "localhost:2406/admin/restore-shop/0d4f9096-9cd7-4d72-afa5-e460de11e77e",
+									"raw": "localhost:2406/admin/restore-shop/a283d9a4-f38e-43ee-a228-6584b7406cc4",
 									"host": [
 										"localhost"
 									],
@@ -1960,7 +1958,7 @@
 									"path": [
 										"admin",
 										"restore-shop",
-										"0d4f9096-9cd7-4d72-afa5-e460de11e77e"
+										"a283d9a4-f38e-43ee-a228-6584b7406cc4"
 									]
 								}
 							},
@@ -3700,6 +3698,11 @@
 											"key": "large",
 											"type": "file",
 											"src": "/home/abb/go/src/github.com/abbgo/isleg/isleg-data/Saydyn suratynyn razmeri/Kagyz kley/large.jpg"
+										},
+										{
+											"key": "shop_id",
+											"value": "",
+											"type": "default"
 										}
 									]
 								},
@@ -3863,6 +3866,11 @@
 										{
 											"key": "description_pl",
 											"value": "description_pl",
+											"type": "default"
+										},
+										{
+											"key": "shop_id",
+											"value": "",
 											"type": "default"
 										}
 									]
@@ -4966,6 +4974,236 @@
 										"admin",
 										"restore-language",
 										"198695b5-579a-4f80-ac10-8380e17e5d98"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Notification",
+					"item": [
+						{
+							"name": "CreateNotification",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIrOTkzNjM3NDcxNTUiLCJhZG1pbl9pZCI6ImM5N2JmYzZhLWZkODUtNGFhOC04MmRiLWU3ODhmNmIwZDcwYSIsInR5cGUiOiJzdXBlcl9hZG1pbiIsImV4cCI6MTY2NzkzMjY5OX0.p-wwvyX6cWBYV86VeRLPWZJtVfI79hftketDdtucYzk",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\":\"sargyt_ucin\",\n    \"translations\":[\n        {\n            \"lang_id\":\"aea98b93-7bdf-455b-9ad4-a259d69dc76e\",\n            \"translation\":\"Ваш заказ успешно получен\"\n        },\n         {\n            \"lang_id\":\"8723c1c7-aa6d-429f-b8af-ee9ace61f0d7\",\n            \"translation\":\"siziň sargydyňyz üstünlikli kabul edildi\"\n        }\n    ]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:2406/admin/notification",
+									"host": [
+										"localhost"
+									],
+									"port": "2406",
+									"path": [
+										"admin",
+										"notification"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "UpdateNotificationByID",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIrOTkzNjM3NDcxNTUiLCJhZG1pbl9pZCI6ImM5N2JmYzZhLWZkODUtNGFhOC04MmRiLWU3ODhmNmIwZDcwYSIsInR5cGUiOiJzdXBlcl9hZG1pbiIsImV4cCI6MTY2Nzg3ODU3N30.-U4094YTShxzRb_F6_T9IVLxBDuy9vYYswjojsfy1X8",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"id\":\"8e7cd6ae-3113-4c1d-8c23-30d608af6843\",\n    \"name\":\"sargyt_ucin_uytgedilen\",\n    \"translations\":[\n        {\n            \"lang_id\":\"aea98b93-7bdf-455b-9ad4-a259d69dc76e\",\n            \"translation\":\"Ваш заказ успешно получен_ru\"\n        }\n    ]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:2406/admin/notification",
+									"host": [
+										"localhost"
+									],
+									"port": "2406",
+									"path": [
+										"admin",
+										"notification"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GetNotificationByID",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIrOTkzNjM3NDcxNTUiLCJhZG1pbl9pZCI6ImM5N2JmYzZhLWZkODUtNGFhOC04MmRiLWU3ODhmNmIwZDcwYSIsInR5cGUiOiJzdXBlcl9hZG1pbiIsImV4cCI6MTY2Nzg3ODU3N30.-U4094YTShxzRb_F6_T9IVLxBDuy9vYYswjojsfy1X8",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "localhost:2406/admin/notification/8e7cd6ae-3113-4c1d-8c23-30d608af6843",
+									"host": [
+										"localhost"
+									],
+									"port": "2406",
+									"path": [
+										"admin",
+										"notification",
+										"8e7cd6ae-3113-4c1d-8c23-30d608af6843"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GetNotifications",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIrOTkzNjM3NDcxNTUiLCJhZG1pbl9pZCI6ImM5N2JmYzZhLWZkODUtNGFhOC04MmRiLWU3ODhmNmIwZDcwYSIsInR5cGUiOiJzdXBlcl9hZG1pbiIsImV4cCI6MTY2Nzg4MDk3NX0.z0AG2BIZpoSmbRGsQuD_2cus3xx1j3zo8EwP5lImZN8",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "localhost:2406/admin/notifications",
+									"host": [
+										"localhost"
+									],
+									"port": "2406",
+									"path": [
+										"admin",
+										"notifications"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "DeleteNotificationByID",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIrOTkzNjM3NDcxNTUiLCJhZG1pbl9pZCI6ImM5N2JmYzZhLWZkODUtNGFhOC04MmRiLWU3ODhmNmIwZDcwYSIsInR5cGUiOiJzdXBlcl9hZG1pbiIsImV4cCI6MTY2Nzg4Mjk3M30.bNoSPa8tuS1Ojb2mmASPd101OBXmB-Z7uIHWCNqEWUQ",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "localhost:2406/admin/notification/8e7cd6ae-3113-4c1d-8c23-30d608af6843",
+									"host": [
+										"localhost"
+									],
+									"port": "2406",
+									"path": [
+										"admin",
+										"notification",
+										"8e7cd6ae-3113-4c1d-8c23-30d608af6843"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "RestoreNotificationByID",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIrOTkzNjM3NDcxNTUiLCJhZG1pbl9pZCI6ImM5N2JmYzZhLWZkODUtNGFhOC04MmRiLWU3ODhmNmIwZDcwYSIsInR5cGUiOiJzdXBlcl9hZG1pbiIsImV4cCI6MTY2Nzg4MjY2NX0.bF42rg7Z_x8TS6O6tC8WUAIiG6nT6yri4iZDIqAZM0Q",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "localhost:2406/admin/restore-notification/8e7cd6ae-3113-4c1d-8c23-30d608af6843",
+									"host": [
+										"localhost"
+									],
+									"port": "2406",
+									"path": [
+										"admin",
+										"restore-notification",
+										"8e7cd6ae-3113-4c1d-8c23-30d608af6843"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "DeletePermanentlyNotificationByID",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIrOTkzNjM3NDcxNTUiLCJhZG1pbl9pZCI6ImM5N2JmYzZhLWZkODUtNGFhOC04MmRiLWU3ODhmNmIwZDcwYSIsInR5cGUiOiJzdXBlcl9hZG1pbiIsImV4cCI6MTY2Nzg4Mjk3M30.bNoSPa8tuS1Ojb2mmASPd101OBXmB-Z7uIHWCNqEWUQ",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "localhost:2406/admin/delete-notification/8e7cd6ae-3113-4c1d-8c23-30d608af6843",
+									"host": [
+										"localhost"
+									],
+									"port": "2406",
+									"path": [
+										"admin",
+										"delete-notification",
+										"8e7cd6ae-3113-4c1d-8c23-30d608af6843"
 									]
 								}
 							},

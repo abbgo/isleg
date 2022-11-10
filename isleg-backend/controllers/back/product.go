@@ -40,6 +40,7 @@ func CreateProduct(c *gin.Context) {
 
 	// validate data
 	brendID := c.PostForm("brend_id")
+	shopID := c.PostForm("shop_id")
 	priceStr := c.PostForm("price")
 	oldPriceStr := c.PostForm("old_price")
 	amountStr := c.PostForm("amount")
@@ -47,7 +48,7 @@ func CreateProduct(c *gin.Context) {
 	isNewStr := c.PostForm("is_new")
 	categories, _ := c.GetPostFormArray("category_id")
 
-	_, _, price, oldPrice, amount, limitAmount, isNew, err := models.ValidateProductModel("", brendID, priceStr, oldPriceStr, amountStr, limitAmountStr, isNewStr, categories)
+	_, _, price, oldPrice, amount, limitAmount, isNew, err := models.ValidateProductModel("", brendID, shopID, priceStr, oldPriceStr, amountStr, limitAmountStr, isNewStr, categories)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -142,7 +143,7 @@ func CreateProduct(c *gin.Context) {
 	}
 
 	// create product
-	resultProducts, err := db.Query("INSERT INTO products (brend_id,price,old_price,amount,limit_amount,is_new) VALUES ($1,$2,$3,$4,$5,$6) RETURNING id", brendID, price, oldPrice, amount, limitAmount, isNew)
+	resultProducts, err := db.Query("INSERT INTO products (brend_id,price,old_price,amount,limit_amount,is_new,shop_id) VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING id", brendID, price, oldPrice, amount, limitAmount, isNew, shopID)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{
 			"status":  false,
@@ -282,6 +283,7 @@ func UpdateProductByID(c *gin.Context) {
 
 	// get data from request
 	brendID := c.PostForm("brend_id")
+	shopID := c.PostForm("shop_id")
 	priceStr := c.PostForm("price")
 	oldPriceStr := c.PostForm("old_price")
 	amountStr := c.PostForm("amount")
@@ -290,7 +292,7 @@ func UpdateProductByID(c *gin.Context) {
 	categories, _ := c.GetPostFormArray("category_id")
 
 	// validate data
-	images, mainImage, price, oldPrice, amount, limitAmount, isNew, nil := models.ValidateProductModel(ID, brendID, priceStr, oldPriceStr, amountStr, limitAmountStr, isNewStr, categories)
+	images, mainImage, price, oldPrice, amount, limitAmount, isNew, nil := models.ValidateProductModel(ID, brendID, shopID, priceStr, oldPriceStr, amountStr, limitAmountStr, isNewStr, categories)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -466,7 +468,7 @@ func UpdateProductByID(c *gin.Context) {
 
 	}
 
-	resultProducts, err := db.Query("UPDATE products SET brend_id = $1 , price = $2 , old_price = $3, amount = $4, limit_amount = $5 , is_new = $6 WHERE id = $7", brendID, price, oldPrice, amount, limitAmount, isNew, ID)
+	resultProducts, err := db.Query("UPDATE products SET brend_id = $1 , price = $2 , old_price = $3, amount = $4, limit_amount = $5 , is_new = $6, shop_id = $8 WHERE id = $7", brendID, price, oldPrice, amount, limitAmount, isNew, ID, shopID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -1350,6 +1352,60 @@ func DeletePermanentlyProductByID(c *gin.Context) {
 		}
 
 	}
+
+	resultCart, err := db.Query("DELETE FROM cart WHERE product_id = $1", ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer func() {
+		if err := resultCart.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
+
+	resultLike, err := db.Query("DELETE FROM likes WHERE product_id = $1", ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer func() {
+		if err := resultLike.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
+
+	resultOrderedProc, err := db.Query("DELETE FROM ordered_products WHERE product_id = $1", ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer func() {
+		if err := resultOrderedProc.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	resultProduct, err := db.Query("DELETE FROM products WHERE id = $1", ID)
 	if err != nil {

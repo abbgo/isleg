@@ -33,7 +33,7 @@ type ProductOfCart struct {
 	QuantityOfProduct  int                       `json:"quantity_of_product"`
 	MainImage          models.MainImage          `json:"main_image"`
 	Images             []models.Images           `json:"images"`
-	TranslationProduct models.TranslationProduct `json:"translation_product"`
+	TranslationProduct models.TranslationProduct `json:"translation"`
 }
 
 func AddCart(c *gin.Context) {

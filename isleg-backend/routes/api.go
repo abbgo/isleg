@@ -40,13 +40,19 @@ func Routes() *gin.Engine {
 		admin := back.Group("/auth")
 		{
 			admin.POST("/register", middlewares.IsSuperAdmin(), adminController.RegisterAdmin)
+			admin.PUT("/information-of-admin", middlewares.IsSuperAdmin(), adminController.UpdateAdminInformation)
+			admin.PUT("/password-of-admin/:id", middlewares.IsSuperAdmin(), adminController.UpdateAdminPassword)
 			admin.POST("/login", adminController.LoginAdmin)
 			admin.POST("/refresh", auth.RefreshTokenForAdmin)
 		}
 
 		securedAdmin := back.Group("/").Use(middlewares.CheckAdmin())
 		{
+			admin.GET("/admins/:limit/:page", middlewares.CheckAdmin(), adminController.GetAdmins)
+
 			securedAdmin.GET("/orders/:limit/:page", frontController.GetOrders)
+			securedAdmin.POST("/order-confirmation/:id", frontController.OrderConfirmation)
+			securedAdmin.GET("/return-order/:id", frontController.ReturnOrder)
 
 			securedAdmin.POST("/language", backController.CreateLanguage)
 			securedAdmin.PUT("/language/:id", backController.UpdateLanguageByID)
@@ -168,6 +174,14 @@ func Routes() *gin.Engine {
 			securedAdmin.GET("/restore-afisa/:id", backController.RestoreAfisaByID)
 			securedAdmin.DELETE("/delete-afisa/:id", backController.DeletePermanentlyAfisaByID)
 
+			securedAdmin.POST("/notification", backController.CreateNotification)
+			securedAdmin.PUT("/notification", backController.UpdateNotificationByID)
+			securedAdmin.GET("/notification/:id", backController.GetNotificationByID)
+			securedAdmin.GET("/notifications", backController.GetNotifications)
+			securedAdmin.DELETE("/notification/:id", backController.DeleteNotificationByID)
+			securedAdmin.GET("/restore-notification/:id", backController.RestoreNotificationByID)
+			securedAdmin.DELETE("/delete-notification/:id", backController.DeletePermanentlyNotificationByID)
+
 			securedAdmin.POST("/district", backController.CreateDistrict)
 
 			securedAdmin.POST("/shop", backController.CreateShop)
@@ -235,6 +249,9 @@ func Routes() *gin.Engine {
 		// get payment ttype by lang id
 		front.GET("/payment-types", backController.GetPaymentTypesByLangID)
 
+		// get notifications by lang id
+		front.GET("/notifications", backController.GetNotificationByLangID)
+
 		// homepage categories
 		front.GET("/homepage-categories", frontController.GetHomePageCategories)
 
@@ -297,7 +314,7 @@ func Routes() *gin.Engine {
 			// get customer informations
 			securedCustomer.GET("/my-information", frontController.GetCustomerInformation)
 
-			// get customer informations
+			// update customer informations
 			securedCustomer.PUT("/my-information", frontController.UpdateCustomerInformation)
 
 			// update customer address status

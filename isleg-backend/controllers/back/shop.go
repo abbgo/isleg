@@ -4,9 +4,9 @@ import (
 	"github/abbgo/isleg/isleg-backend/config"
 	"github/abbgo/isleg/isleg-backend/models"
 	"net/http"
+	"os"
 
 	"github.com/gin-gonic/gin"
-	"github.com/lib/pq"
 )
 
 func CreateShop(c *gin.Context) {
@@ -41,15 +41,45 @@ func CreateShop(c *gin.Context) {
 		return
 	}
 
-	if err := models.ValidateShopData(shop.Categories); err != nil {
+	rowShop, err := db.Query("SELECT id FROM shops WHERE phone_number = $1 AND deleted_at IS NULL", shop.PhoneNumber)
+	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
 			"message": err.Error(),
 		})
 		return
 	}
+	defer func() {
+		if err := rowShop.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
-	resultShops, err := db.Query("INSERT INTO shops (owner_name,address,phone_number,running_time) VALUES ($1,$2,$3,$4) RETURNING id", shop.OwnerName, shop.Address, shop.PhoneNumber, shop.RunningTime)
+	var phoneNumber string
+
+	for rowShop.Next() {
+		if err := rowShop.Scan(&phoneNumber); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}
+
+	if phoneNumber != "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "this shop already exists",
+		})
+		return
+	}
+
+	resultShops, err := db.Query("INSERT INTO shops (owner_name,address,phone_number,running_time) VALUES ($1,$2,$3,$4)", shop.OwnerName, shop.Address, shop.PhoneNumber, shop.RunningTime)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -59,37 +89,6 @@ func CreateShop(c *gin.Context) {
 	}
 	defer func() {
 		if err := resultShops.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
-
-	var shopID string
-
-	for resultShops.Next() {
-		if err := resultShops.Scan(&shopID); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}
-
-	// create category shop
-	resultCategorySHop, err := db.Query("INSERT INTO category_shop (category_id,shop_id) VALUES (unnest($1::uuid[]),$2)", pq.Array(shop.Categories), shopID)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-	defer func() {
-		if err := resultCategorySHop.Close(); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
@@ -175,14 +174,6 @@ func UpdateShopByID(c *gin.Context) {
 		return
 	}
 
-	if err := models.ValidateShopData(shop.Categories); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-
 	resultShop, err := db.Query("UPDATE shops SET owner_name = $1 , address = $2 , phone_number = $3 , running_time = $4 WHERE id = $5", shop.OwnerName, shop.Address, shop.PhoneNumber, shop.RunningTime, shop.ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -200,44 +191,6 @@ func UpdateShopByID(c *gin.Context) {
 			return
 		}
 	}()
-
-	resultCategoryShop, err := db.Query("DELETE FROM category_shop WHERE shop_id = $1", shop.ID)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-	defer func() {
-		if err := resultCategoryShop.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
-
-	// for _, v := range categories {
-	resultCatShop, err := db.Query("INSERT INTO category_shop (category_id,shop_id) VALUES (unnest($1::uuid[]),$2)", pq.Array(shop.Categories), shop.ID)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-	defer func() {
-		if err := resultCatShop.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
-	// }
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
@@ -309,50 +262,6 @@ func GetShopByID(c *gin.Context) {
 		return
 	}
 
-	rowsCategoryShop, err := db.Query("SELECT category_id FROM category_shop WHERE shop_id = $1 AND deleted_at IS NULL", ID)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-	defer func() {
-		if err := rowsCategoryShop.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
-
-	var categories []string
-
-	for rowsCategoryShop.Next() {
-		var category string
-
-		if err := rowsCategoryShop.Scan(&category); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-
-		categories = append(categories, category)
-	}
-
-	if len(categories) == 0 {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": "record not found",
-		})
-		return
-	}
-
-	shop.Categories = categories
-
 	c.JSON(http.StatusOK, gin.H{
 		"status": true,
 		"shop":   shop,
@@ -411,41 +320,6 @@ func GetShops(c *gin.Context) {
 			})
 			return
 		}
-
-		rowsCategoryShop, err := db.Query("SELECT category_id FROM category_shop WHERE shop_id = $1 AND deleted_at IS NULL", shop.ID)
-		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-		defer func() {
-			if err := rowsCategoryShop.Close(); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
-				return
-			}
-		}()
-
-		var categories []string
-
-		for rowsCategoryShop.Next() {
-			var category string
-			if err := rowsCategoryShop.Scan(&category); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
-				return
-			}
-
-			categories = append(categories, category)
-		}
-
-		shop.Categories = categories
 
 		shops = append(shops, shop)
 	}
@@ -694,6 +568,116 @@ func DeletePermanentlyShopByID(c *gin.Context) {
 			"message": "record not found",
 		})
 		return
+	}
+
+	rowsMainImage, err := db.Query("SELECT m.small,m.medium,m.large FROM main_image m INNER JOIN products p ON p.id = m.product_id WHERE p.shop_id = $1", ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer func() {
+		if err := rowsMainImage.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
+
+	var mainImages []models.MainImage
+
+	for rowsMainImage.Next() {
+		var mainImage models.MainImage
+
+		if err := rowsMainImage.Scan(&mainImage.Small, &mainImage.Medium, &mainImage.Large); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+
+		mainImages = append(mainImages, mainImage)
+	}
+
+	for _, v := range mainImages {
+		if err := os.Remove("./" + v.Small); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+		if err := os.Remove("./" + v.Medium); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+		if err := os.Remove("./" + v.Large); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}
+
+	rowsImages, err := db.Query("SELECT i.small,i.large FROM images i INNER JOIN products p ON p.id = i.product_id WHERE p.shop_id = $1", ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer func() {
+		if err := rowsImages.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
+
+	var images []models.Images
+
+	for rowsImages.Next() {
+		var image models.Images
+
+		if err := rowsImages.Scan(&image.Small, &image.Large); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+
+		images = append(images, image)
+	}
+
+	for _, v := range images {
+		if err := os.Remove("./" + v.Small); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+
+		if err := os.Remove("./" + v.Large); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
 	}
 
 	resultShop, err := db.Query("DELETE FROM shops WHERE id = $1", ID)

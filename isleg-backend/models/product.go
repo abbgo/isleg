@@ -9,6 +9,7 @@ import (
 type Product struct {
 	ID                 string               `json:"id,omitempty"`
 	BrendID            string               `json:"brend_id,omitempty"`
+	ShopID             string               `json:"shop_id,omitempty"`
 	Price              float64              `json:"price,omitempty"`
 	OldPrice           float64              `json:"old_price"`
 	Percentage         float64              `json:"percentage"`
@@ -23,6 +24,7 @@ type Product struct {
 	TranslationProduct []TranslationProduct `json:"translation_product,omitempty"` // one to many
 	Categories         []string             `json:"categories,omitempty"`
 	Brend              Brend                `json:"brend,omitempty"`
+	Shop               Shop                 `json:"shop,omitempty"`
 }
 
 type MainImage struct {
@@ -67,7 +69,7 @@ type CategoryProduct struct {
 	DeletedAt  string `json:"-"`
 }
 
-func ValidateProductModel(productID, brendID, priceStr, oldPriceStr, amountStr, limitAmountStr, isNewStr string, categories []string) ([]Images, MainImage, float64, float64, uint64, uint64, bool, error) {
+func ValidateProductModel(productID, brendID, shopID, priceStr, oldPriceStr, amountStr, limitAmountStr, isNewStr string, categories []string) ([]Images, MainImage, float64, float64, uint64, uint64, bool, error) {
 
 	// initialize database connection
 	db, err := config.ConnDB()
@@ -155,6 +157,29 @@ func ValidateProductModel(productID, brendID, priceStr, oldPriceStr, amountStr, 
 
 	} else {
 		oldPrice = 0
+	}
+
+	rowShop, err := db.Query("SELECT id FROM shops WHERE id = $1 AND deleted_at IS NULL", shopID)
+	if err != nil {
+		return []Images{}, MainImage{}, 0, 0, 0, 0, false, err
+	}
+	defer func() ([]Images, MainImage, float64, float64, uint64, uint64, bool, error) {
+		if err := rowShop.Close(); err != nil {
+			return []Images{}, MainImage{}, 0, 0, 0, 0, false, err
+		}
+		return []Images{}, MainImage{}, 0, 0, 0, 0, false, nil
+	}()
+
+	var shop_id string
+
+	for rowShop.Next() {
+		if err := rowShop.Scan(&shop_id); err != nil {
+			return []Images{}, MainImage{}, 0, 0, 0, 0, false, err
+		}
+	}
+
+	if shop_id == "" {
+		return []Images{}, MainImage{}, 0, 0, 0, 0, false, errors.New("brend not found")
 	}
 
 	// validate brend_id
