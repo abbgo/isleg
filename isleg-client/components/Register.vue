@@ -380,10 +380,10 @@ export default {
                   })
                 )
               }
-              await this.postCarts()
-              await this.postFishlists()
-              console.log('this.$route.name', this.$route.name)
               this.closeRegister()
+              await this.postCarts()
+              await this.postWishlists()
+              console.log('this.$route.name', this.$route.name)
             }
           } catch (err) {
             console.log(err)
@@ -456,7 +456,7 @@ export default {
         console.log(error)
       }
     },
-    async postFishlists() {
+    async postWishlists() {
       const cart = await JSON.parse(localStorage.getItem('lorem'))
       let wishlists = []
       if (cart) {
@@ -466,7 +466,7 @@ export default {
       }
       try {
         const { status } = await this.$axios.$post(
-          `/${this.$i18n.locale}/like`,
+          `/${this.$i18n.locale}/like?status=${true}`,
           { product_ids: wishlists },
           {
             headers: {

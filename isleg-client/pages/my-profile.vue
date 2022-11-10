@@ -100,7 +100,8 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { getMyProfile, getRefreshToken } from '@/api/myProfile.api'
+import { getMyProfile } from '@/api/myProfile.api'
+import { getRefreshToken } from '@/api/user.api'
 export default {
   data() {
     return {
@@ -118,7 +119,7 @@ export default {
       },
     }
   },
-  async fetch() {
+  async mounted() {
     await this.fetchMyProfile()
   },
   computed: {
@@ -139,12 +140,12 @@ export default {
           this.myProfileDatas.fillName = customer_informations.full_name
           this.myProfileDatas.phone_number = customer_informations.phone_number
           this.myProfileDatas.email = customer_informations.email
-          this.myProfileDatas.birthday = new Date(
-            customer_informations.birthday.Time
-          )
+          this.myProfileDatas.birthday = customer_informations.birthday
+            ? new Date(customer_informations.birthday.Time)
+            : null
         }
       } catch (error) {
-        console.log('getMyProfile1', error.response.status)
+        console.log('getMyProfile1', error)
         if (error?.response?.status === 403) {
           try {
             const { access_token, refresh_token, status } = (
@@ -153,13 +154,31 @@ export default {
                 refreshToken: `Bearer ${cart.auth.refreshToken}`,
               })
             ).data
-            console.log(access_token, refresh_token, status)
+            console.log('new', access_token, refresh_token, status)
             if (status) {
+              const lorem = await JSON.parse(localStorage.getItem('lorem'))
+              if (lorem) {
+                lorem.auth = {
+                  accessToken: access_token,
+                  refreshToken: refresh_token,
+                }
+                localStorage.setItem('lorem', JSON.stringify(lorem))
+              } else {
+                localStorage.setItem(
+                  'lorem',
+                  JSON.stringify({
+                    auth: {
+                      accessToken: access_token,
+                      refreshToken: refresh_token,
+                    },
+                  })
+                )
+              }
               try {
                 const { customer_informations, status } = (
                   await getMyProfile({
                     url: `${this.$i18n.locale}/my-information`,
-                    accessToken: `Bearer ${cart.auth.accessToken}`,
+                    accessToken: `Bearer ${lorem.auth.accessToken}`,
                   })
                 ).data
                 console.log(customer_informations, status)
@@ -179,12 +198,12 @@ export default {
           } catch (error) {
             console.log('ref', error.response.status)
             if (error.response.status === 403) {
-              await this.$auth.logout()
+              this.$auth.logout()
               cart.auth.accessToken = null
               cart.auth.refreshToken = null
               localStorage.setItem('lorem', JSON.stringify(cart))
               console.log(this.$route.name)
-              await this.$router.push({ name: this.$route.name })
+              this.$router.push({ name: this.$route.name })
             }
           }
         }

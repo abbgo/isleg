@@ -2,7 +2,7 @@
   <section class="slider __container">
     <swiper ref="mySwiper" :options="swiperOptions" class="big__slider">
       <swiper-slide v-for="brend in brends" :key="brend.id">
-        <img :src="`${imgURL}/${brend.image}`" alt="" />
+        <img :data-src="`${imgURL}/${brend.image}`" loading="lazy" alt="" />
       </swiper-slide>
     </swiper>
     <div class="swiper-pagination"></div>
@@ -41,8 +41,10 @@
 
 <script>
 import { Swiper, SwiperSlide } from 'vue-awesome-swiper'
+import observer from '@/mixins/observer'
 
 export default {
+  mixins: [observer],
   components: {
     Swiper,
     SwiperSlide,
@@ -90,3 +92,9 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+.swiper-slide {
+  background: url('../assets/img/isloading.svg') center no-repeat;
+}
+</style>

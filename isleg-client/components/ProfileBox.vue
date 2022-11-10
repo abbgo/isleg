@@ -110,15 +110,15 @@ export default {
     },
   },
   methods: {
-    async logOutInSystem() {
-      const cart = await JSON.parse(localStorage.getItem('lorem'))
+    logOutInSystem() {
+      const cart = JSON.parse(localStorage.getItem('lorem'))
       this.$auth.logout()
       cart.auth.accessToken = null
       cart.auth.refreshToken = null
       localStorage.setItem('lorem', JSON.stringify(cart))
       this.$emit('close')
       console.log(this.$route.name)
-      await this.$router.push({ name: this.$route.name })
+      this.$router.push({ name: this.$route.name })
     },
   },
 }

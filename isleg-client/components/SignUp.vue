@@ -108,6 +108,7 @@ export default {
         phone_number: '+9936',
         password: '',
       },
+      productsWhenUserSignUp: [],
     }
   },
   validations: {
@@ -164,18 +165,17 @@ export default {
                 JSON.stringify({
                   auth: {
                     accessToken: access_token,
-                    phoneNumber: this.signUp.phone_number,
                     refreshToken: refresh_token,
                   },
                 })
               )
             }
-            await this.postCarts()
-            await this.postFishlists()
-            console.log('this.$route.name', this.$route.name)
-            await this.$router.push({ name: this.$route.name })
             this.closeSignUp()
             this.$toast(this.$t('register.success.logIn'))
+            await this.postCarts()
+            await this.postWishlists()
+            console.log('this.$route.name', this.$route.name)
+            this.$router.push({ name: this.$route.name })
           }
         } catch (err) {
           console.log('err', err)
@@ -209,6 +209,9 @@ export default {
     },
     async postCarts() {
       let products = []
+      let array = []
+      let wishlists = []
+      let newWishlists = []
       const cart = await JSON.parse(localStorage.getItem('lorem'))
       if (cart?.cart) {
         for (let i = 0; i < cart.cart.length; i++) {
@@ -219,8 +222,9 @@ export default {
             })
           }
         }
+        wishlists = cart.cart.filter((product) => product.is_favorite === true)
       }
-      console.log('products', products)
+      console.log('wishlistsPPPPPPPP', products)
       try {
         const res = (
           await productAdd({
@@ -230,22 +234,56 @@ export default {
           })
         ).data
         console.log('productAdd', res)
+        if (res.status) {
+          if (res.products.length > 0) {
+            array = res.products.filter(
+              (item) =>
+                (item.quantity = item.quantity_of_product
+                  ? item.quantity_of_product
+                  : 0)
+            )
+            for (let i = 0; i < array.length; i++) {
+              array[i]['is_favorite'] = false
+            }
+          }
+          console.log('array', array)
+          console.log('wishlists>>', wishlists)
+          if (wishlists.length > 0) {
+            for (let i = 0; i < array.length; i++) {
+              for (let j = 0; j < wishlists.length; j++) {
+                if (array[i].id == wishlists[j].id) {
+                  console.log('(array[i] favorite', array[i])
+                  array[i]['is_favorite'] = true
+                }
+              }
+            }
+          }
+          console.log(array)
+          this.productsWhenUserSignUp = array
+        }
       } catch (error) {
         console.log(error)
       }
     },
-    async postFishlists() {
+    async postWishlists() {
       let wishlists = []
+      let array = []
+      let withoutWishlists = []
       const cart = await JSON.parse(localStorage.getItem('lorem'))
       if (cart?.cart) {
         wishlists = cart.cart
           .filter((product) => product.is_favorite === true)
           .map((item) => item.id)
       }
-      console.log(wishlists)
+      console.log('wishlists', wishlists)
+      withoutWishlists =
+        this.productsWhenUserSignUp.filter(
+          (product) => product.is_favorite === true && product.quantity > 0
+        ) || []
+      console.log('withoutWishlists', withoutWishlists)
       try {
         const res = await this.$axios.$post(
-          `/${this.$i18n.locale}/like`,
+          `/${this.$i18n.locale}/like?status=${true}`,
           { product_ids: wishlists },
           {
             headers: {
@@ -253,7 +291,33 @@ export default {
             },
           }
         )
-        console.log(res)
+        console.log('postWishlists', res)
+        if (res.status) {
+          if (res.products.length > 0) {
+            for (let i = 0; i < res.products.length; i++) {
+              res.products[i]['quantity'] = 0
+              res.products[i]['is_favorite'] = true
+              for (let j = 0; j < withoutWishlists.length; j++) {
+                if (res.products[i].id !== withoutWishlists[j].id) {
+                  console.log('withoutWishlistsAfter', res.products[i])
+                  array.push(res.products[i])
+                } else {
+                  array.push(res.products[i])
+                }
+              }
+            }
+          }
+          console.log('array', array)
+          if (cart && cart.cart) {
+            // console.log('postWishlistsssssss', [...withoutWishlists, ...array])
+            cart.cart = [...withoutWishlists, ...array]
+            console.log(' cart.cart', cart.cart)
+            localStorage.setItem('lorem', JSON.stringify(cart))
+          } else {
+            cart['cart'] = [...withoutWishlists, ...array]
+            localStorage.setItem('lorem', JSON.stringify(cart))
+          }
+        }
       } catch (e) {
         console.log(e)
       }

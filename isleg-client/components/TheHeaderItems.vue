@@ -62,9 +62,7 @@
         ><span
           class="shop__count"
           v-if="(productCount && productCount > 0) || (total && total > 0)"
-          >{{
-            productCount > 99 || total > 99 ? '99+' : productCount || total
-          }}</span
+          >{{ productBasketTotalCount }}</span
         ></client-only
       >
       <span class="shop__span">Sebet</span>
@@ -113,26 +111,45 @@ export default {
   watch: {
     $route: async function () {
       const cart = await JSON.parse(localStorage.getItem('lorem'))
-      if (cart?.cart) {
+      if (cart && cart?.cart) {
+        console.log('watch', cart)
         if (!this.productCount) {
+          console.log('watch2', cart)
           this.total = cart.cart?.reduce((total, num) => {
             return total + num.quantity
           }, 0)
         }
+      } else {
+        console.log('watch3', cart)
+        this.total = null
+        this.$store.commit('products/SET_PRODUCT_COUNT_WHEN_PAYMENT')
       }
     },
   },
   computed: {
     ...mapGetters('products', ['productCount']),
+    productBasketTotalCount() {
+      const cart = JSON.parse(localStorage.getItem('lorem'))
+      console.log('>>>>>>>>>>>>>>>>', cart, cart.cart)
+      if (cart && cart?.cart) {
+        return this.productCount > 99 || this.total > 99
+          ? '99+'
+          : this.productCount || this.total
+      } else {
+        return null
+      }
+    },
   },
   async mounted() {
     const cart = await JSON.parse(localStorage.getItem('lorem'))
-    if (cart?.cart) {
+    if (cart && cart?.cart) {
       if (!this.productCount) {
         this.total = cart.cart?.reduce((total, num) => {
           return total + num.quantity
         }, 0)
       }
+    } else {
+      this.total = null
     }
   },
   methods: {

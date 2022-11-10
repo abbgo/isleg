@@ -2,20 +2,24 @@
   <div class="product__box" @click.stop="openPopUpPoduct">
     <div class="product__img">
       <img
-        :src="`${imgURL}/${getProduct && getProduct.main_image.medium}`"
-        alt="isleg"
+        loading="lazy"
+        :data-src="`${imgURL}/${getProduct && getProduct.main_image.medium}`"
       />
     </div>
     <div class="product__description">
-      <p>{{ getProduct && getProduct.name }}</p>
+      <p>
+        {{
+          getProduct && getProduct.translation && getProduct.translation.name
+        }}
+      </p>
     </div>
     <div class="product__price">
       <div class="new__price">
         {{ getProduct && getProduct.price }}
-        manat
+        TMT
       </div>
       <div class="old__price" v-if="getProduct && getProduct.old_price > 0">
-        <span> {{ getProduct && getProduct.old_price }} manat</span>
+        <span> {{ getProduct && getProduct.old_price }} TMT</span>
         <span>-15%</span>
       </div>
     </div>
@@ -35,10 +39,7 @@
         </svg>
       </button>
       <p>{{ getProduct && getProduct.quantity }}</p>
-      <button
-        @click.stop="basketAdd(getProduct)"
-        :disabled="quantity === getProduct.limit_amount"
-      >
+      <button @click.stop="basketAdd(getProduct)">
         <svg
           width="10"
           height="10"
@@ -103,8 +104,10 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { productAdd, productRemove } from '@/api/user.api'
+import observer from '@/mixins/observer'
+import { productAdd, productLike, getRefreshToken } from '@/api/user.api'
 export default {
+  mixins: [observer],
   props: {
     product: {
       type: Object,
@@ -118,22 +121,29 @@ export default {
       quantity: 0,
       isFavorite: false,
       isProduct: false,
+      isDisabled: false,
+      count: 0,
     }
   },
   computed: {
     ...mapGetters('products', ['imgURL', 'removedFromBasket']),
     getProduct() {
-      let cart = null
       const isServer = typeof window === 'undefined'
       if (!isServer) {
-        cart = JSON.parse(localStorage.getItem('lorem'))
+        const cart = JSON.parse(localStorage.getItem('lorem'))
         if (cart) {
           if (this.$route.name === `wishlist___${this.$i18n.locale}`) {
             this.isFavorite = this.product.is_favorite
             this.quantity = this.product.quantity
+            if (
+              this.quantity === this.product.limit_amount ||
+              this.quantity === this.product.amount
+            ) {
+              this.isDisabled = true
+            }
             return this.product
           } else {
-            if (cart?.cart) {
+            if (cart?.cart || cart?.cart?.length > 0) {
               const findProduct = cart.cart.find(
                 (product) => product.id === this.product.id
               )
@@ -149,6 +159,12 @@ export default {
                   'products/SET_PRODUCT_COUNT',
                   totalCount == 0 ? null : totalCount
                 )
+                if (
+                  this.quantity === findProduct.limit_amount ||
+                  this.quantity === findProduct.amount
+                ) {
+                  this.isDisabled = true
+                }
                 return findProduct
               }
             } else if (cart.wishlist) {
@@ -172,7 +188,7 @@ export default {
     },
   },
   mounted() {
-    //  console.log(this.getProduct)
+    console.log(this.getProduct)
   },
   methods: {
     async productLike(data) {
@@ -227,71 +243,225 @@ export default {
           })
         )
       }
+      console.log(cart, this.isFavorite, [data.id])
+      if (cart && cart?.auth?.accessToken && this.$auth.loggedIn) {
+        try {
+          const res = await this.$axios.$post(
+            `/${this.$i18n.locale}/like?status=${this.isFavorite}`,
+            { product_ids: [data.id] },
+            {
+              headers: {
+                Authorization: cart?.auth?.accessToken,
+              },
+            }
+          )
+          console.log(res)
+          console.log('productLike', res)
+        } catch (error) {
+          console.log(error.response)
+          if (error?.response?.status === 403) {
+            try {
+              const { access_token, refresh_token, status } = (
+                await getRefreshToken({
+                  url: `auth/refresh`,
+                  refreshToken: `Bearer ${cart.auth.refreshToken}`,
+                })
+              ).data
+              console.log('new', access_token, refresh_token, status)
+              if (status) {
+                const lorem = await JSON.parse(localStorage.getItem('lorem'))
+                if (lorem) {
+                  lorem.auth = {
+                    accessToken: access_token,
+                    refreshToken: refresh_token,
+                  }
+                  localStorage.setItem('lorem', JSON.stringify(lorem))
+                } else {
+                  localStorage.setItem(
+                    'lorem',
+                    JSON.stringify({
+                      auth: {
+                        accessToken: access_token,
+                        refreshToken: refresh_token,
+                      },
+                    })
+                  )
+                }
+                try {
+                  const response = await this.$axios.$post(
+                    `/${this.$i18n.locale}/like?status=${this.isFavorite}`,
+                    { product_ids: [data.id] },
+                    {
+                      headers: {
+                        Authorization: cart?.auth?.accessToken,
+                      },
+                    }
+                  )
+                  console.log(res)
+                  console.log('productLike', response)
+                } catch (error) {
+                  console.log('productLike1', error)
+                }
+              }
+            } catch (error) {
+              console.log('ref', error.response.status)
+              if (error.response.status === 403) {
+                this.$auth.logout()
+                cart.auth.accessToken = null
+                cart.auth.refreshToken = null
+                localStorage.setItem('lorem', JSON.stringify(cart))
+                console.log(this.$route.name)
+                this.$router.push({ name: this.$route.name })
+              }
+            }
+          }
+        }
+      }
     },
     async basketAdd(data) {
       const cart = await JSON.parse(localStorage.getItem('lorem'))
       const array = []
-      if (cart && cart.cart) {
-        const findProduct = cart.cart.find((product) => product.id === data.id)
-        if (findProduct) {
-          this.quantity += 1
-          this.$store.commit('products/SET_PRODUCT_TOTAL_INCREMENT', {
-            data: data,
-            quantity: this.quantity,
-          })
-          findProduct.quantity = this.quantity
-          localStorage.setItem('lorem', JSON.stringify(cart))
-        } else {
-          if (this.removedFromBasket && this.quantity > 0) {
-            this.quantity = 0
-            setTimeout(() => {
-              this.$store.commit('products/SET_REMOVED_FROM_BASKET', false)
-            }, 0)
-          } else {
+      if (this.isDisabled === true) {
+        if (this.count === 0) {
+          if (this.quantity === data.limit_amount) {
+            this.$toast(`Harydyn satyn alma mukdary ${data.limit_amount} !`)
+          } else if (this.quantity === data.amount) {
+            this.$toast(`Harydyn stock  mukdary ${data.amount} !`)
+          }
+        }
+        this.count++
+      } else {
+        if (cart && cart.cart) {
+          const findProduct = cart.cart.find(
+            (product) => product.id === data.id
+          )
+          if (findProduct) {
             this.quantity += 1
             this.$store.commit('products/SET_PRODUCT_TOTAL_INCREMENT', {
               data: data,
               quantity: this.quantity,
             })
-            cart.cart.push(data)
+            findProduct.quantity = this.quantity
             localStorage.setItem('lorem', JSON.stringify(cart))
+          } else {
+            if (this.removedFromBasket && this.quantity > 0) {
+              this.quantity = 0
+              setTimeout(() => {
+                this.$store.commit('products/SET_REMOVED_FROM_BASKET', false)
+              }, 0)
+            } else {
+              this.quantity += 1
+              this.$store.commit('products/SET_PRODUCT_TOTAL_INCREMENT', {
+                data: data,
+                quantity: this.quantity,
+              })
+              cart.cart.push(data)
+              localStorage.setItem('lorem', JSON.stringify(cart))
+            }
+          }
+        } else {
+          this.quantity += 1
+          this.$store.commit('products/SET_PRODUCT_TOTAL_INCREMENT', {
+            data: data,
+            quantity: this.quantity,
+          })
+          array.push(data)
+          localStorage.setItem(
+            'lorem',
+            JSON.stringify({
+              cart: [...array],
+            })
+          )
+        }
+        if (cart && cart?.auth?.accessToken && this.$auth.loggedIn) {
+          try {
+            const res = (
+              await productAdd({
+                url: `${this.$i18n.locale}/add-cart`,
+                data: [
+                  {
+                    product_id: data.id,
+                    quantity_of_product: this.quantity,
+                  },
+                ],
+                accessToken: `Bearer ${cart?.auth?.accessToken}`,
+              })
+            ).data
+            console.log('productAdd', res)
+          } catch (error) {
+            console.log(error.response)
+            if (error?.response?.status === 403) {
+              try {
+                const { access_token, refresh_token, status } = (
+                  await getRefreshToken({
+                    url: `auth/refresh`,
+                    refreshToken: `Bearer ${cart.auth.refreshToken}`,
+                  })
+                ).data
+                console.log('new', access_token, refresh_token, status)
+                if (status) {
+                  const lorem = await JSON.parse(localStorage.getItem('lorem'))
+                  if (lorem) {
+                    lorem.auth = {
+                      accessToken: access_token,
+                      refreshToken: refresh_token,
+                    }
+                    localStorage.setItem('lorem', JSON.stringify(lorem))
+                  } else {
+                    localStorage.setItem(
+                      'lorem',
+                      JSON.stringify({
+                        auth: {
+                          accessToken: access_token,
+                          refreshToken: refresh_token,
+                        },
+                      })
+                    )
+                  }
+                  try {
+                    const response = (
+                      await productAdd({
+                        url: `${this.$i18n.locale}/add-cart`,
+                        data: [
+                          {
+                            product_id: data.id,
+                            quantity_of_product: this.quantity,
+                          },
+                        ],
+                        accessToken: `Bearer ${lorem?.auth?.accessToken}`,
+                      })
+                    ).data
+                    console.log('productAdd1', response)
+                  } catch (error) {
+                    console.log('productAdd1', error)
+                  }
+                }
+              } catch (error) {
+                console.log('ref', error.response.status)
+                if (error.response.status === 403) {
+                  this.$auth.logout()
+                  cart.auth.accessToken = null
+                  cart.auth.refreshToken = null
+                  localStorage.setItem('lorem', JSON.stringify(cart))
+                  console.log(this.$route.name)
+                  this.$router.push({ name: this.$route.name })
+                }
+              }
+            }
           }
         }
-      } else {
-        this.quantity += 1
-        this.$store.commit('products/SET_PRODUCT_TOTAL_INCREMENT', {
-          data: data,
-          quantity: this.quantity,
-        })
-        array.push(data)
-        localStorage.setItem(
-          'lorem',
-          JSON.stringify({
-            cart: [...array],
-          })
-        )
-      }
-      if (cart && cart?.auth?.accessToken && this.$auth.loggedIn) {
-        try {
-          const res = (
-            await productAdd({
-              url: `${this.$i18n.locale}/add-cart`,
-              data: [
-                {
-                  product_id: data.id,
-                  quantity_of_product: this.quantity + 1,
-                },
-              ],
-              accessToken: `Bearer ${cart?.auth?.accessToken}`,
-            })
-          ).data
-          console.log('productAdd', res)
-        } catch (error) {
-          console.log(error)
+        console.log(this.quantity)
+        if (
+          this.quantity === data.limit_amount ||
+          this.quantity === data.amount
+        ) {
+          this.isDisabled = true
         }
       }
     },
     async basketRemove(data) {
+      this.isDisabled = false
+      this.count = 0
       const cart = await JSON.parse(localStorage.getItem('lorem'))
       const findProduct = cart?.cart.find((product) => product.id === data.id)
       if (findProduct) {
@@ -309,6 +479,7 @@ export default {
       } else {
         this.quantity = 0
       }
+      console.log(this.quantity)
       if (cart && cart?.auth?.accessToken && this.$auth.loggedIn) {
         try {
           const res = (
@@ -317,7 +488,7 @@ export default {
               data: [
                 {
                   product_id: data.id,
-                  quantity_of_product: this.quantity - 1,
+                  quantity_of_product: this.quantity,
                 },
               ],
               accessToken: `Bearer ${cart?.auth?.accessToken}`,
@@ -325,7 +496,65 @@ export default {
           ).data
           console.log('productAdd', res)
         } catch (error) {
-          console.log(error)
+          console.log(error.response)
+          if (error?.response?.status === 403) {
+            try {
+              const { access_token, refresh_token, status } = (
+                await getRefreshToken({
+                  url: `auth/refresh`,
+                  refreshToken: `Bearer ${cart.auth.refreshToken}`,
+                })
+              ).data
+              console.log('new', access_token, refresh_token, status)
+              if (status) {
+                const lorem = await JSON.parse(localStorage.getItem('lorem'))
+                if (lorem) {
+                  lorem.auth = {
+                    accessToken: access_token,
+                    refreshToken: refresh_token,
+                  }
+                  localStorage.setItem('lorem', JSON.stringify(lorem))
+                } else {
+                  localStorage.setItem(
+                    'lorem',
+                    JSON.stringify({
+                      auth: {
+                        accessToken: access_token,
+                        refreshToken: refresh_token,
+                      },
+                    })
+                  )
+                }
+                try {
+                  const response = (
+                    await productAdd({
+                      url: `${this.$i18n.locale}/add-cart`,
+                      data: [
+                        {
+                          product_id: data.id,
+                          quantity_of_product: this.quantity,
+                        },
+                      ],
+                      accessToken: `Bearer ${lorem?.auth?.accessToken}`,
+                    })
+                  ).data
+                  console.log('productAdd1', response)
+                } catch (error) {
+                  console.log('productAdd1', error)
+                }
+              }
+            } catch (error) {
+              console.log('ref', error.response.status)
+              if (error.response.status === 403) {
+                this.$auth.logout()
+                cart.auth.accessToken = null
+                cart.auth.refreshToken = null
+                localStorage.setItem('lorem', JSON.stringify(cart))
+                console.log(this.$route.name)
+                this.$router.push({ name: this.$route.name })
+              }
+            }
+          }
         }
       }
     },

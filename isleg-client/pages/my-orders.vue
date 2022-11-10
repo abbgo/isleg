@@ -16,7 +16,7 @@
         <tbody>
           <tr>
             <td>02.05.2022</td>
-            <td>105 manat</td>
+            <td>105 TMT</td>
           </tr>
           <tr>
             <td>02.05.2022</td>

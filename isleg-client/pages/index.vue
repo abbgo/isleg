@@ -19,7 +19,11 @@
       </client-only>
     </section>
     <client-only>
-      <LazySliderBrends />
+      <LazySliderBrends
+        v-if="brends && brends.length"
+        :imgURL="imgURL"
+        :brends="brends"
+      />
     </client-only>
   </div>
 </template>
@@ -31,12 +35,12 @@ export default {
   name: 'IndexPage',
   components: { ProductColumn },
   async fetch() {
-    await this.$store.dispatch('ui/fetchBrends', {
-      url: `${process.env.BASE_API}/${this.$i18n.locale}/brends`,
-      $nuxt: this.$nuxt,
-    })
     await this.$store.dispatch('products/fetchProductsCategories', {
       url: `${process.env.BASE_API}/${this.$i18n.locale}/homepage-categories`,
+      $nuxt: this.$nuxt,
+    })
+    await this.$store.dispatch('ui/fetchBrends', {
+      url: `${process.env.BASE_API}/${this.$i18n.locale}/brends`,
       $nuxt: this.$nuxt,
     })
   },

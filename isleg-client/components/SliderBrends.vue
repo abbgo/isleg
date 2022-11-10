@@ -7,23 +7,12 @@
           :options="swiperSmallOptions"
           class="brends__animation swiper"
         >
-          <swiper-slide class="brends__animation-slide swiper-slide">
-            <img src="@/assets/img/slider/1.png" alt="" />
-          </swiper-slide>
-          <swiper-slide class="brends__animation-slide swiper-slide">
-            <img src="@/assets/img/slider/1.png" alt="" />
-          </swiper-slide>
-          <swiper-slide class="brends__animation-slide swiper-slide">
-            <img src="@/assets/img/slider/1.png" alt="" />
-          </swiper-slide>
-          <swiper-slide class="brends__animation-slide swiper-slide">
-            <img src="@/assets/img/slider/1.png" alt="" />
-          </swiper-slide>
-          <swiper-slide class="brends__animation-slide swiper-slide">
-            <img src="@/assets/img/slider/1.png" alt="" />
-          </swiper-slide>
-          <swiper-slide class="brends__animation-slide swiper-slide">
-            <img src="@/assets/img/slider/1.png" alt="" />
+          <swiper-slide
+            v-for="brend in brends"
+            :key="brend.id"
+            class="brends__animation-slide swiper-slide"
+          >
+            <img :data-src="`${imgURL}/${brend.image}`" loading="lazy" alt="" />
           </swiper-slide>
         </swiper>
       </div>
@@ -33,7 +22,20 @@
 
 <script>
 import { Swiper, SwiperSlide } from 'vue-awesome-swiper'
+import observer from '@/mixins/observer'
+
 export default {
+  mixins: [observer],
+  props: {
+    imgURL: {
+      type: String,
+      default: () => '',
+    },
+    brends: {
+      type: Array,
+      default: () => [],
+    },
+  },
   components: {
     Swiper,
     SwiperSlide,
@@ -80,3 +82,9 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+.swiper-slide {
+  background: url('../assets/img/isloading.svg') center no-repeat;
+}
+</style>

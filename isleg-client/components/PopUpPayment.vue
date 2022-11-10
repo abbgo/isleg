@@ -1,5 +1,5 @@
 <template>
-  <div :class="['pop-up', { active: isPayment }]">
+  <div :class="['pop-up', { active: isPaymentComputed }]">
     <div class="pop-up__product-body" style="width: 900px">
       <div class="pop-up__wrapper">
         <div class="pop-up__close" @click="close">
@@ -79,6 +79,7 @@
                   v-for="item in paymentDatas.orderTimes.times"
                   :key="item.id"
                 >
+                  <h4>{{ item.translation_date }}</h4>
                   <input
                     :checked="item.checked"
                     class="bottom__input"
@@ -193,6 +194,9 @@
 <script>
 import { required, minLength } from 'vuelidate/lib/validators'
 import { postPaymentDatas } from '@/api/payment.api'
+import { getMyProfile } from '@/api/myProfile.api'
+import { async } from 'q'
+
 export default {
   props: {
     isPayment: {
@@ -212,10 +216,14 @@ export default {
       default: () => '',
     },
     totalPrice: {
-      type: Number,
-      default: () => 0,
+      type: String,
+      default: () => '',
     },
     paymentDatas: {
+      type: Object,
+      default: () => {},
+    },
+    userInformation: {
       type: Object,
       default: () => {},
     },
@@ -250,8 +258,19 @@ export default {
     },
   },
   computed: {
-    async isAuth() {
-      const cart = await JSON.parse(localStorage.getItem('lorem'))
+    isPaymentComputed() {
+      if (this.isPayment) {
+        const cart = JSON.parse(localStorage.getItem('lorem'))
+        if (cart && cart?.auth?.accessToken && this.$auth.loggedIn) {
+          this.fetchUserInformation(cart)
+        }
+        return true
+      } else {
+        return false
+      }
+    },
+    isAuth() {
+      const cart = JSON.parse(localStorage.getItem('lorem'))
       console.log(
         'cart?.auth?.accessToken1',
         cart?.auth?.accessToken,
@@ -259,7 +278,7 @@ export default {
       )
       if (cart?.auth?.accessToken && this.$auth.loggedIn) {
         console.log(
-          'cart?.auth?.accessToken1',
+          'cart?.auth?.accessToken2',
           cart?.auth?.accessToken,
           this.$auth.loggedIn
         )
@@ -269,10 +288,31 @@ export default {
       }
     },
   },
-  mounted() {
-    console.log(this.isAuth)
-  },
+  mounted() {},
   methods: {
+    async fetchUserInformation(cart) {
+      try {
+        const { customer_informations, status } = (
+          await getMyProfile({
+            url: `${this.$i18n.locale}/my-information`,
+            accessToken: `Bearer ${cart.auth.accessToken}`,
+          })
+        ).data
+        console.log(
+          'deeeeeeeeeeeeeeeeeeeeeeeeeede',
+          customer_informations,
+          status
+        )
+        if (status) {
+          this.payment.fullName = customer_informations.full_name
+          this.payment.phone_number = customer_informations.phone_number
+          this.payment.address = customer_informations.addresses[0]?.address
+          console.log(' this.userInformation', this.userInformation)
+        }
+      } catch (error) {
+        console.log('err', error)
+      }
+    },
     enforcePhoneFormat() {
       this.isPhoneNumber = false
       let x = this.payment.phone_number
@@ -372,7 +412,7 @@ export default {
                   customer_mark: this.payment.note,
                   order_time: this.selectedPaymentTime.time,
                   payment_type: this.selectedPaymentType.name,
-                  total_price: this.totalPrice,
+                  total_price: Number(this.totalPrice),
                   products: products,
                 },
               })

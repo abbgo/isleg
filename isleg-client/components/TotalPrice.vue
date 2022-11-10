@@ -2,7 +2,7 @@
   <div class="total__price">
     <div class="price__number">
       <span>Jemi:</span>
-      <p>{{ totalPrice }} manat</p>
+      <p>{{ totalPrice }} TMT</p>
     </div>
     <div class="price__send-btn" @click="$emit('payment')">
       <button class="btn-send">Sargyt et</button>
@@ -14,8 +14,8 @@
 export default {
   props: {
     totalPrice: {
-      type: Number,
-      default: () => 0,
+      type: String,
+      default: () => '',
     },
   },
 }

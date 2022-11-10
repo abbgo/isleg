@@ -29,7 +29,12 @@
                 :style="`backgroundImage: url(${imgURL}/${bigSlider})`"
                 @mousemove="imageZoom"
               >
-                <img :src="`${imgURL}/${bigSlider}`" id="img-1" alt="" />
+                <img
+                  loading="lazy"
+                  :src="`${imgURL}/${bigSlider}`"
+                  id="img-1"
+                  alt=""
+                />
               </figure>
             </div>
             <div class="product__slider-small">
@@ -37,6 +42,7 @@
                 <img
                   @mouseenter="changeImagePath(productData.main_image.large)"
                   :src="`${imgURL}/${productData.main_image.small}`"
+                  loading="lazy"
                   alt=""
                 />
               </div>
@@ -55,16 +61,24 @@
           </div>
           <div class="product__datas">
             <h4 class="pop-up-product__title">
-              {{ productData && productData.name }}
+              {{
+                productData &&
+                productData.translation &&
+                productData.translation.name
+              }}
             </h4>
             <p class="product__text">
-              {{ productData && productData.description }}
+              {{
+                productData &&
+                productData.translation &&
+                productData.translation.description
+              }}
             </p>
             <span class="old__price price-old"
-              >{{ productData && productData.old_price }} manat</span
+              >{{ productData && productData.old_price }} TMT</span
             >
             <span class="new__price price-new"
-              >{{ productData && productData.price }} manat</span
+              >{{ productData && productData.price }} TMT</span
             >
             <div class="product__btns">
               <div class="btn__count-box" v-if="quantity > 0">

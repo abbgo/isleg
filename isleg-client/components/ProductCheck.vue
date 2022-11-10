@@ -2,18 +2,27 @@
   <div class="product__chek">
     <div class="product__chek-img">
       <img
-        :src="`${imgURL}/${
-          basketProduct &&
-          basketProduct.main_image &&
-          basketProduct.main_image.medium
+        :data-src="`${imgURL}/${
+          getBasketProduct &&
+          getBasketProduct.main_image &&
+          getBasketProduct.main_image.medium
         }`"
+        loading="lazy"
         alt="isleg"
       />
     </div>
     <div class="product__chek-text">
-      <span>{{ basketProduct && basketProduct.name }}</span>
+      <span>{{
+        getBasketProduct &&
+        getBasketProduct.translation &&
+        getBasketProduct.translation.name
+      }}</span>
+      <div class="new__price product__chek-new-price">
+        {{ getBasketProduct && getBasketProduct.price }}
+        TMT
+      </div>
       <div class="chek__count">
-        <button @click="fromBasketRemove(basketProduct)">
+        <button @click="fromBasketRemove(getBasketProduct)">
           <svg
             width="8"
             height="4"
@@ -27,8 +36,8 @@
             />
           </svg>
         </button>
-        <p>{{ basketProduct && basketProduct.quantity }}</p>
-        <button @click="fromBasketAdd(basketProduct)">
+        <p>{{ getBasketProduct && getBasketProduct.quantity }}</p>
+        <button @click="fromBasketAdd(getBasketProduct)">
           <svg
             width="10"
             height="10"
@@ -45,17 +54,28 @@
       </div>
     </div>
     <div class="product__chek-close">
-      <div class="close" @click="$emit('popUpSureOpen', basketProduct)">
+      <div class="close" @click="$emit('popUpSureOpen', getBasketProduct)">
         <img src="@/assets/img/close.svg" alt="" />
       </div>
-      <span>{{ basketProduct && basketProduct.price }} manat</span>
+      <span v-if="getBasketProduct && getBasketProduct.price"
+        >{{
+          parseFloat(
+            getBasketProduct.price * getBasketProduct.quantity
+          ).toFixed(2)
+        }}
+        TMT</span
+      >
     </div>
   </div>
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
+import observer from '@/mixins/observer'
+import { productAdd, getRefreshToken } from '@/api/user.api'
+
 export default {
+  mixins: [observer],
   props: {
     basketProduct: {
       type: Object,
@@ -65,42 +85,152 @@ export default {
   data() {
     return {
       basketProductQuantity: 0,
+      isDisabled: false,
+      count: 0,
     }
   },
   computed: {
     ...mapGetters('card', ['imgURL', 'productTotal']),
+    getBasketProduct() {
+      this.basketProductQuantity = this.basketProduct.quantity
+      if (
+        this.basketProductQuantity === this.basketProduct.limit_amount ||
+        this.basketProductQuantity === this.basketProduct.amount
+      ) {
+        this.isDisabled = true
+      }
+      return this.basketProduct
+    },
   },
   methods: {
-    fromBasketAdd(data) {
+    async fromBasketAdd(data) {
       const cart = JSON.parse(localStorage.getItem('lorem'))
       const array = []
-      this.basketProductQuantity = data.quantity
-      this.basketProductQuantity += 1
-      this.$store.commit('products/SET_PRODUCT_TOTAL_INCREMENT', {
-        data: data,
-        quantity: this.basketProductQuantity,
-      })
-      if (cart) {
-        const findProduct = cart.cart?.find((product) => product.id === data.id)
-        if (findProduct) {
-          findProduct.quantity = this.basketProductQuantity
-          localStorage.setItem('lorem', JSON.stringify(cart))
-        } else {
-          cart.cart?.push(data)
-          localStorage.setItem('lorem', JSON.stringify(cart))
+      // this.basketProductQuantity = data.quantity
+      if (this.isDisabled) {
+        if (this.count === 0) {
+          if (this.basketProductQuantity === data.limit_amount) {
+            this.$toast(`Harydyn satyn alma mukdary ${data.limit_amount} !`)
+          } else if (this.basketProductQuantity === data.amount) {
+            this.$toast(`Harydyn stock  mukdary ${data.amount} !`)
+          }
         }
+        this.count++
       } else {
-        localStorage.setItem(
-          'lorem',
-          JSON.stringify({
-            cart: [...array],
-          })
-        )
+        this.basketProductQuantity += 1
+        this.$store.commit('products/SET_PRODUCT_TOTAL_INCREMENT', {
+          data: data,
+          quantity: this.basketProductQuantity,
+        })
+        if (cart) {
+          const findProduct = cart.cart?.find(
+            (product) => product.id === data.id
+          )
+          if (findProduct) {
+            findProduct.quantity = this.basketProductQuantity
+            localStorage.setItem('lorem', JSON.stringify(cart))
+          } else {
+            cart.cart?.push(data)
+            localStorage.setItem('lorem', JSON.stringify(cart))
+          }
+        } else {
+          localStorage.setItem(
+            'lorem',
+            JSON.stringify({
+              cart: [...array],
+            })
+          )
+        }
+        console.log(this.basketProductQuantity)
+        if (cart && cart?.auth?.accessToken && this.$auth.loggedIn) {
+          try {
+            const res = (
+              await productAdd({
+                url: `${this.$i18n.locale}/add-cart`,
+                data: [
+                  {
+                    product_id: data.id,
+                    quantity_of_product: this.basketProductQuantity,
+                  },
+                ],
+                accessToken: `Bearer ${cart?.auth?.accessToken}`,
+              })
+            ).data
+            console.log('productAdd', res)
+          } catch (error) {
+            console.log(error.response)
+            if (error?.response?.status === 403) {
+              try {
+                const { access_token, refresh_token, status } = (
+                  await getRefreshToken({
+                    url: `auth/refresh`,
+                    refreshToken: `Bearer ${cart.auth.refreshToken}`,
+                  })
+                ).data
+                console.log('new', access_token, refresh_token, status)
+                if (status) {
+                  const lorem = await JSON.parse(localStorage.getItem('lorem'))
+                  if (lorem) {
+                    lorem.auth = {
+                      accessToken: access_token,
+                      refreshToken: refresh_token,
+                    }
+                    localStorage.setItem('lorem', JSON.stringify(lorem))
+                  } else {
+                    localStorage.setItem(
+                      'lorem',
+                      JSON.stringify({
+                        auth: {
+                          accessToken: access_token,
+                          refreshToken: refresh_token,
+                        },
+                      })
+                    )
+                  }
+                  try {
+                    const response = (
+                      await productAdd({
+                        url: `${this.$i18n.locale}/add-cart`,
+                        data: [
+                          {
+                            product_id: data.id,
+                            quantity_of_product: this.basketProductQuantity,
+                          },
+                        ],
+                        accessToken: `Bearer ${lorem?.auth?.accessToken}`,
+                      })
+                    ).data
+                    console.log('productAdd1', response)
+                  } catch (error) {
+                    console.log('productAdd1', error)
+                  }
+                }
+              } catch (error) {
+                console.log('ref', error.response.status)
+                if (error.response.status === 403) {
+                  this.$auth.logout()
+                  cart.auth.accessToken = null
+                  cart.auth.refreshToken = null
+                  localStorage.setItem('lorem', JSON.stringify(cart))
+                  console.log(this.$route.name)
+                  this.$router.push({ name: this.$route.name })
+                }
+              }
+            }
+          }
+        }
+        if (
+          this.basketProductQuantity === data.limit_amount ||
+          this.basketProductQuantity === data.amount
+        ) {
+          this.isDisabled = true
+        }
       }
     },
-    fromBasketRemove(data) {
+    async fromBasketRemove(data) {
       const cart = JSON.parse(localStorage.getItem('lorem'))
-      this.basketProductQuantity = data.quantity
+      this.isDisabled = false
+      this.count = 0
       if (this.basketProductQuantity === 1) {
         this.$emit('popUpSureOpen', data)
       } else {
@@ -109,10 +239,88 @@ export default {
           data,
           quantity: this.basketProductQuantity,
         })
+        const findProduct = cart.cart.find((product) => product.id === data.id)
+        findProduct.quantity = this.basketProductQuantity
+        localStorage.setItem('lorem', JSON.stringify(cart))
+        console.log('else', this.basketProductQuantity)
+        if (cart && cart?.auth?.accessToken && this.$auth.loggedIn) {
+          try {
+            const res = (
+              await productAdd({
+                url: `${this.$i18n.locale}/add-cart`,
+                data: [
+                  {
+                    product_id: data.id,
+                    quantity_of_product: this.basketProductQuantity,
+                  },
+                ],
+                accessToken: `Bearer ${cart?.auth?.accessToken}`,
+              })
+            ).data
+            console.log('productAdd', res)
+          } catch (error) {
+            console.log(error.response)
+            if (error?.response?.status === 403) {
+              try {
+                const { access_token, refresh_token, status } = (
+                  await getRefreshToken({
+                    url: `auth/refresh`,
+                    refreshToken: `Bearer ${cart.auth.refreshToken}`,
+                  })
+                ).data
+                console.log('new', access_token, refresh_token, status)
+                if (status) {
+                  const lorem = await JSON.parse(localStorage.getItem('lorem'))
+                  if (lorem) {
+                    lorem.auth = {
+                      accessToken: access_token,
+                      refreshToken: refresh_token,
+                    }
+                    localStorage.setItem('lorem', JSON.stringify(lorem))
+                  } else {
+                    localStorage.setItem(
+                      'lorem',
+                      JSON.stringify({
+                        auth: {
+                          accessToken: access_token,
+                          refreshToken: refresh_token,
+                        },
+                      })
+                    )
+                  }
+                  try {
+                    const response = (
+                      await productAdd({
+                        url: `${this.$i18n.locale}/add-cart`,
+                        data: [
+                          {
+                            product_id: data.id,
+                            quantity_of_product: this.basketProductQuantity,
+                          },
+                        ],
+                        accessToken: `Bearer ${lorem?.auth?.accessToken}`,
+                      })
+                    ).data
+                    console.log('productAdd1', response)
+                  } catch (error) {
+                    console.log('productAdd1', error)
+                  }
+                }
+              } catch (error) {
+                console.log('ref', error.response.status)
+                if (error.response.status === 403) {
+                  this.$auth.logout()
+                  cart.auth.accessToken = null
+                  cart.auth.refreshToken = null
+                  localStorage.setItem('lorem', JSON.stringify(cart))
+                  console.log(this.$route.name)
+                  this.$router.push({ name: this.$route.name })
+                }
+              }
+            }
+          }
+        }
       }
-      const findProduct = cart.cart.find((product) => product.id === data.id)
-      findProduct.quantity = this.basketProductQuantity
-      localStorage.setItem('lorem', JSON.stringify(cart))
     },
   },
 }
