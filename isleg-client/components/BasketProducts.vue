@@ -4,7 +4,7 @@
       v-for="basketProduct in products"
       :key="basketProduct.id"
       :basketProduct="basketProduct"
-      @popUpSureOpen="popUpSureOpen"
+      @popUpSureOpen="popUpSure"
     ></product-check>
   </div>
 </template>
@@ -18,8 +18,8 @@ export default {
     },
   },
   methods: {
-    popUpSureOpen(data) {
-      this.$emit('popUpSureOpen', data)
+    popUpSure(item) {
+      this.$emit('sure', item)
     },
   },
 }

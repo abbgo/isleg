@@ -4,7 +4,7 @@
     :class="{ active: mobileBasket }"
     v-if="products.length"
   >
-    <BasketProducts :products="products" @popUpSureOpen="openPopUpSure" />
+    <BasketProducts :products="products" @sure="openPopUpSure" />
     <BasketPrices
       :productCount="productCount"
       :totalPrice="totalPrice"
@@ -223,9 +223,9 @@ export default {
       this.paymentDatas.orderTimes.title = null
       this.paymentDatas.orderTimes.times = []
     },
-    openPopUpSure(data) {
+    openPopUpSure(product) {
       this.isSure = true
-      this.productRemoveItem = data
+      this.productRemoveItem = product
       document.body.classList.add('_lock')
     },
     cartEmpty() {
@@ -261,10 +261,19 @@ export default {
           }
         }
       } else {
-        cart.cart = cart?.cart.filter(
+        if (this.productRemoveItem.quantity > 0) {
+          const findProduct = cart?.cart.find(
+            (product) => product.id === this.productRemoveItem.id
+          )
+          findProduct.quantity = 0
+        } else {
+          cart.cart = cart?.cart.filter(
+            (product) => product.id != this.productRemoveItem.id
+          )
+        }
+        this.products = this.products.filter(
           (product) => product.id != this.productRemoveItem.id
         )
-        this.products = cart.cart
         localStorage.setItem('lorem', JSON.stringify(cart))
         this.$store.commit('products/SET_BASKET_PRODUCT_COUNT', 1)
         if (cart && cart?.auth?.accessToken && this.$auth.loggedIn) {

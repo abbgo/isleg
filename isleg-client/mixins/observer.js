@@ -9,7 +9,7 @@ export default {
     const images = document.querySelectorAll('img[data-src]')
     const options =
       {
-        rootMargin: '0px 0px -50px 0px',
+        rootMargin: '0px 0px -20px 0px',
         threshold: 1.0,
       } || {}
     this.observer = new IntersectionObserver(async ([entry]) => {

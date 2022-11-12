@@ -222,7 +222,8 @@ export default {
             })
           }
         }
-        wishlists = cart.cart.filter((product) => product.is_favorite === true)
+        wishlists =
+          cart.cart.filter((product) => product.is_favorite === true) || []
       }
       console.log('wishlistsPPPPPPPP', products)
       try {
@@ -235,15 +236,17 @@ export default {
         ).data
         console.log('productAdd', res)
         if (res.status) {
-          if (res.products.length > 0) {
-            array = res.products.filter(
-              (item) =>
-                (item.quantity = item.quantity_of_product
-                  ? item.quantity_of_product
-                  : 0)
-            )
-            for (let i = 0; i < array.length; i++) {
-              array[i]['is_favorite'] = false
+          if (res.products) {
+            if (res.products.length > 0) {
+              array = res.products.filter(
+                (item) =>
+                  (item.quantity = item.quantity_of_product
+                    ? item.quantity_of_product
+                    : 0)
+              )
+              for (let i = 0; i < array.length; i++) {
+                array[i]['is_favorite'] = false
+              }
             }
           }
           console.log('array', array)
@@ -269,6 +272,7 @@ export default {
       let wishlists = []
       let array = []
       let withoutWishlists = []
+      let withWishlists = []
       const cart = await JSON.parse(localStorage.getItem('lorem'))
       if (cart?.cart) {
         wishlists = cart.cart
@@ -278,9 +282,13 @@ export default {
       console.log('wishlists', wishlists)
       withoutWishlists =
         this.productsWhenUserSignUp.filter(
-          (product) => product.is_favorite === true && product.quantity > 0
+          (product) => product.is_favorite === false
         ) || []
-      console.log('withoutWishlists', withoutWishlists)
+      withWishlists =
+        this.productsWhenUserSignUp.filter(
+          (product) => product.is_favorite === true
+        ) || []
+      console.log('withoutWishlists', withWishlists)
       try {
         const res = await this.$axios.$post(
           `/${this.$i18n.locale}/like?status=${true}`,
@@ -293,28 +301,33 @@ export default {
         )
         console.log('postWishlists', res)
         if (res.status) {
-          if (res.products.length > 0) {
-            for (let i = 0; i < res.products.length; i++) {
-              res.products[i]['quantity'] = 0
-              res.products[i]['is_favorite'] = true
-              for (let j = 0; j < withoutWishlists.length; j++) {
-                if (res.products[i].id !== withoutWishlists[j].id) {
-                  console.log('withoutWishlistsAfter', res.products[i])
-                  array.push(res.products[i])
-                } else {
-                  array.push(res.products[i])
-                }
+          if (res.products) {
+            if (res.products.length > 0) {
+              for (let i = 0; i < res.products.length; i++) {
+                res.products[i]['quantity'] = 0
+                res.products[i]['is_favorite'] = true
               }
+              if (withWishlists.length > 0) {
+                let result = res.products.filter(
+                  (o1) => !withWishlists.some((o2) => o1.id === o2.id)
+                )
+                console.log('result', result)
+                array = result
+              } else {
+                array = res.products
+              }
+            } else {
+              array = res.products
             }
           }
           console.log('array', array)
           if (cart && cart.cart) {
             // console.log('postWishlistsssssss', [...withoutWishlists, ...array])
-            cart.cart = [...withoutWishlists, ...array]
+            cart.cart = [...withoutWishlists, ...withWishlists, ...array]
             console.log(' cart.cart', cart.cart)
             localStorage.setItem('lorem', JSON.stringify(cart))
           } else {
-            cart['cart'] = [...withoutWishlists, ...array]
+            cart['cart'] = [...withoutWishlists, ...withWishlists, ...array]
             localStorage.setItem('lorem', JSON.stringify(cart))
           }
         }
