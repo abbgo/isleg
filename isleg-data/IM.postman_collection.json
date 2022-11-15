@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "537a027c-56c1-43b0-afad-1bf9c42cded7",
+		"_postman_id": "3985535b-1c09-4f6b-8913-efa713263fbf",
 		"name": "IM",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -1777,7 +1777,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIrOTkzNjM3NDcxNTUiLCJhZG1pbl9pZCI6ImM5N2JmYzZhLWZkODUtNGFhOC04MmRiLWU3ODhmNmIwZDcwYSIsInR5cGUiOiJzdXBlcl9hZG1pbiIsImV4cCI6MTY2Nzk4NTgwNX0.9kVIqUR1KNVAow_ibYorrsGHRrd5WgGX751pYdybPPM",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIrOTkzNjM3NDcxNTUiLCJhZG1pbl9pZCI6ImM5N2JmYzZhLWZkODUtNGFhOC04MmRiLWU3ODhmNmIwZDcwYSIsInR5cGUiOiJzdXBlcl9hZG1pbiIsImV4cCI6MTY2ODQ4MjU3MX0.iVWIhlVUpjvszAcXoqtJkqiQcAoHnTemjW_aGdYM4Es",
 											"type": "string"
 										}
 									]
@@ -1786,7 +1786,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"owner_name\":\"Owez Myradow\",\n    \"address\":\"Asgabat saher Mir 4/1 jay 2 magazyn 56\",\n    \"phone_number\":\"+99361254689\",\n    \"running_time\":\"7:00-21:00\"\n}",
+									"raw": "{\n    \"owner_name\":\"Seyidow Arslan\",\n    \"address\":\"Asgabat Bagyr Alyyew koce 34-nji jay\",\n    \"phone_number\":\"+99363987654\",\n    \"running_time\":\"7:00-21:00\"\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -1912,7 +1912,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIrOTkzNjM3NDcxNTUiLCJhZG1pbl9pZCI6ImM5N2JmYzZhLWZkODUtNGFhOC04MmRiLWU3ODhmNmIwZDcwYSIsInR5cGUiOiJzdXBlcl9hZG1pbiIsImV4cCI6MTY2Nzk5MDEyOX0.4FBidHzkItqkhjMai1dlr1YC9O2v7f4HcjDUL7Yds2I",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIrOTkzNjM3NDcxNTUiLCJhZG1pbl9pZCI6ImM5N2JmYzZhLWZkODUtNGFhOC04MmRiLWU3ODhmNmIwZDcwYSIsInR5cGUiOiJzdXBlcl9hZG1pbiIsImV4cCI6MTY2ODQ4Mjk3N30.TJdqjkDp2QwI0GM_YEc1QtzujCBt8_J42C1yjnnNq3c",
 											"type": "string"
 										}
 									]
@@ -1920,7 +1920,7 @@
 								"method": "DELETE",
 								"header": [],
 								"url": {
-									"raw": "localhost:2406/admin/shop/a283d9a4-f38e-43ee-a228-6584b7406cc4",
+									"raw": "localhost:2406/admin/shop/74b239d4-be05-4c4e-ab6c-6aba02490089",
 									"host": [
 										"localhost"
 									],
@@ -1928,7 +1928,7 @@
 									"path": [
 										"admin",
 										"shop",
-										"a283d9a4-f38e-43ee-a228-6584b7406cc4"
+										"74b239d4-be05-4c4e-ab6c-6aba02490089"
 									]
 								}
 							},
@@ -1942,7 +1942,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIrOTkzNjM3NDcxNTUiLCJhZG1pbl9pZCI6ImM5N2JmYzZhLWZkODUtNGFhOC04MmRiLWU3ODhmNmIwZDcwYSIsInR5cGUiOiJzdXBlcl9hZG1pbiIsImV4cCI6MTY2Nzk5MDEyOX0.4FBidHzkItqkhjMai1dlr1YC9O2v7f4HcjDUL7Yds2I",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIrOTkzNjM3NDcxNTUiLCJhZG1pbl9pZCI6ImM5N2JmYzZhLWZkODUtNGFhOC04MmRiLWU3ODhmNmIwZDcwYSIsInR5cGUiOiJzdXBlcl9hZG1pbiIsImV4cCI6MTY2ODQ4Mjk3N30.TJdqjkDp2QwI0GM_YEc1QtzujCBt8_J42C1yjnnNq3c",
 											"type": "string"
 										}
 									]
@@ -1950,7 +1950,7 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "localhost:2406/admin/restore-shop/a283d9a4-f38e-43ee-a228-6584b7406cc4",
+									"raw": "localhost:2406/admin/restore-shop/74b239d4-be05-4c4e-ab6c-6aba02490089",
 									"host": [
 										"localhost"
 									],
@@ -1958,7 +1958,7 @@
 									"path": [
 										"admin",
 										"restore-shop",
-										"a283d9a4-f38e-43ee-a228-6584b7406cc4"
+										"74b239d4-be05-4c4e-ab6c-6aba02490089"
 									]
 								}
 							},
@@ -1972,7 +1972,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NTYiLCJjdXN0b21lcl9pZCI6IjFhZTEyMzkwLTAzYWUtNDlhYy1hOWFkLWQ3YmE1Yzk1YjUxYSIsImV4cCI6MTY2NzQ1NTY2NH0.BLTauBZxWMmqvgtV8-ZWaukzJzFbZ_-rTwcte8ME2pA",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIrOTkzNjM3NDcxNTUiLCJhZG1pbl9pZCI6ImM5N2JmYzZhLWZkODUtNGFhOC04MmRiLWU3ODhmNmIwZDcwYSIsInR5cGUiOiJzdXBlcl9hZG1pbiIsImV4cCI6MTY2ODQ4Mjk3N30.TJdqjkDp2QwI0GM_YEc1QtzujCBt8_J42C1yjnnNq3c",
 											"type": "string"
 										}
 									]
@@ -1980,7 +1980,7 @@
 								"method": "DELETE",
 								"header": [],
 								"url": {
-									"raw": "localhost:2406/admin/delete-shop/0d4f9096-9cd7-4d72-afa5-e460de11e77e",
+									"raw": "localhost:2406/admin/delete-shop/74b239d4-be05-4c4e-ab6c-6aba02490089",
 									"host": [
 										"localhost"
 									],
@@ -1988,7 +1988,7 @@
 									"path": [
 										"admin",
 										"delete-shop",
-										"0d4f9096-9cd7-4d72-afa5-e460de11e77e"
+										"74b239d4-be05-4c4e-ab6c-6aba02490089"
 									]
 								}
 							},
@@ -3583,7 +3583,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NTYiLCJjdXN0b21lcl9pZCI6IjFhZTEyMzkwLTAzYWUtNDlhYy1hOWFkLWQ3YmE1Yzk1YjUxYSIsImV4cCI6MTY2NzQ1NTY2NH0.BLTauBZxWMmqvgtV8-ZWaukzJzFbZ_-rTwcte8ME2pA",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIrOTkzNjM3NDcxNTUiLCJhZG1pbl9pZCI6ImM5N2JmYzZhLWZkODUtNGFhOC04MmRiLWU3ODhmNmIwZDcwYSIsInR5cGUiOiJzdXBlcl9hZG1pbiIsImV4cCI6MTY2ODQ4MjU3MX0.iVWIhlVUpjvszAcXoqtJkqiQcAoHnTemjW_aGdYM4Es",
 											"type": "string"
 										}
 									]
@@ -3595,7 +3595,7 @@
 									"formdata": [
 										{
 											"key": "brend_id",
-											"value": "c4bcda34-7332-4ae5-8129-d7538d63fee4",
+											"value": "fdd259c2-794a-42b9-a3ad-9e91502af23e",
 											"type": "default"
 										},
 										{
@@ -3605,7 +3605,7 @@
 										},
 										{
 											"key": "old_price",
-											"value": "",
+											"value": "32.60",
 											"type": "default"
 										},
 										{
@@ -3615,22 +3615,22 @@
 										},
 										{
 											"key": "name_tm",
-											"value": "Diş pastasy \"Blend-a-Med Complete 7\" Herbal, 100 ml",
+											"value": "(2+1) Ýüz üçin maska plýonka \"Zenix\" altynsöw, paket 15 gr (3 sany)",
 											"type": "default"
 										},
 										{
 											"key": "description_tm",
-											"value": "Diş pastasy \"Blend-a-Med Complete 7\" Herbal, 100 ml",
+											"value": "(2+1) Ýüz üçin maska plýonka \"Zenix\" altynsöw, paket 15 gr (3 sany)",
 											"type": "default"
 										},
 										{
 											"key": "name_ru",
-											"value": "Зубная паста \"Blend-a-Med Complete 7\" с ополаскивателем 100 мл",
+											"value": "(2+1) Золотистая маска пленка \"Zenix\" пакетик 15 г (3 шт)",
 											"type": "default"
 										},
 										{
 											"key": "description_ru",
-											"value": "Зубная паста \"Blend-a-Med Complete 7\" с ополаскивателем 100 мл",
+											"value": "(2+1) Золотистая маска пленка \"Zenix\" пакетик 15 г (3 шт)",
 											"type": "default"
 										},
 										{
@@ -3701,7 +3701,7 @@
 										},
 										{
 											"key": "shop_id",
-											"value": "",
+											"value": "74b239d4-be05-4c4e-ab6c-6aba02490089",
 											"type": "default"
 										}
 									]
