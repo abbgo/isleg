@@ -39,16 +39,31 @@ func Routes() *gin.Engine {
 
 		admin := back.Group("/auth")
 		{
+			// RegisterAdmin admin registrasiya etmek ucin ulanylyar.
+			// Admini dine super admin registrasiya edip bilyar. Admin admin registrasiya edip bilenok
 			admin.POST("/register", middlewares.IsSuperAdmin(), adminController.RegisterAdmin)
+
+			// Adminlerin maglumatlaryny uytgetmek ucin ulanylyar. Adminlerin maglumatlaryny dine super admin
+			// uytgedip bilyar. Admin hic bit adminin maglumatlaryny uytgedip bilenok
 			admin.PUT("/information-of-admin", middlewares.IsSuperAdmin(), adminController.UpdateAdminInformation)
+
+			// Adminlerin parollaryny uytgetmek ucin ulanylyar. Islendik adminin parolyny dine
+			// super admin uytgedip bilyar. Admin hic bir adminin parolyny uytgedip bilenok
 			admin.PUT("/password-of-admin/:id", middlewares.IsSuperAdmin(), adminController.UpdateAdminPassword)
+
+			// LoginAdmin funksiya admin login bolmak ucin ulanylyar.
 			admin.POST("/login", adminController.LoginAdmin)
+
+			// Adminlerin access tokenin tazelelap refresh bilen access tokeni bile bermek
+			// ucin ulanylyar
 			admin.POST("/refresh", auth.RefreshTokenForAdmin)
 		}
 
 		securedAdmin := back.Group("/").Use(middlewares.CheckAdmin())
 		{
-			admin.GET("/admins/:limit/:page", middlewares.CheckAdmin(), adminController.GetAdmins)
+
+			//
+			admin.GET("/admins/:limit/:page", adminController.GetAdmins)
 
 			securedAdmin.GET("/orders/:limit/:page", frontController.GetOrders)
 			securedAdmin.POST("/order-confirmation/:id", frontController.OrderConfirmation)
@@ -277,7 +292,7 @@ func Routes() *gin.Engine {
 		// Eger musderi like - a haryt gosup sonam sol haryt bazadan ayrylan bolsa
 		// sony bildirmek ucin front - dan mana cookie - daki product_id - leri
 		// ugdurkdyryar we men yzyna sol id - leri product - lary ugratyan
-		// front.POST("/likes-without-customer", frontController.GetLikedProductsWithoutCustomer)
+		front.POST("/likes-without-customer", frontController.GetLikedProductsWithoutCustomer)
 
 		// get order products without customer by product id ->
 		// Eger musderi sebede - e haryt gosup sonam sol haryt bazadan ayrylan bolsa
