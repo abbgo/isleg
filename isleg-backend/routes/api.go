@@ -277,7 +277,7 @@ func Routes() *gin.Engine {
 		// Eger musderi like - a haryt gosup sonam sol haryt bazadan ayrylan bolsa
 		// sony bildirmek ucin front - dan mana cookie - daki product_id - leri
 		// ugdurkdyryar we men yzyna sol id - leri product - lary ugratyan
-		front.POST("/likes-without-customer", frontController.GetLikedProductsWithoutCustomer)
+		// front.POST("/likes-without-customer", frontController.GetLikedProductsWithoutCustomer)
 
 		// get order products without customer by product id ->
 		// Eger musderi sebede - e haryt gosup sonam sol haryt bazadan ayrylan bolsa
