@@ -96,6 +96,8 @@ func Auth() gin.HandlerFunc {
 
 }
 
+// IsSuperAdmin middleware dine super adminlere dostup beryar
+// adminleri gecirmeyar
 func IsSuperAdmin() gin.HandlerFunc {
 
 	return func(context *gin.Context) {
@@ -147,6 +149,9 @@ func IsSuperAdmin() gin.HandlerFunc {
 
 }
 
+// CheckAdmin middleware ahli adminlere dostup beryar
+// gelen request - in admin tarapyndan gelip gelmedigini barlayar
+// we admin bolmasa gecirmeyar
 func CheckAdmin() gin.HandlerFunc {
 
 	return func(context *gin.Context) {

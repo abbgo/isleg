@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"fmt"
 	"github/abbgo/isleg/isleg-backend/config"
 	"github/abbgo/isleg/isleg-backend/models"
 	"math"
@@ -81,8 +80,6 @@ func AddLike(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, err.Error())
 		return
 	}
-
-	fmt.Println("GELEN DATA:", productIds.IDS)
 
 	if status {
 
