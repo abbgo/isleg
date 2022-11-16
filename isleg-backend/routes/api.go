@@ -362,7 +362,7 @@ func Routes() *gin.Engine {
 		// sahypasynyn terjimesinin   getirip beryar
 		front.GET("/translation-my-information-page", backController.GetTranslationMyInformationPageByLangID)
 
-		// to order
+		// ToOrder funksiya sargyt sebede gosulan harytlary sargyt etmek ucin ulanylyar
 		front.POST("/to-order", frontController.ToOrder)
 
 		// to order
