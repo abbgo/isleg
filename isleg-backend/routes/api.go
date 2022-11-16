@@ -283,10 +283,11 @@ func Routes() *gin.Engine {
 		customer.POST("/refresh", auth.Refresh)
 	}
 
-	// routes belong to front
+	// bu group - a degisli api - lerden maglumat alynanda ( :lang ) paramter boyunca uytgedilip
+	// terjime alynyar
 	front := routes.Group("/api/:lang")
 	{
-		// get header data
+		// GetHeaderData header - e degisli ahli maglumatlary alyar
 		front.GET("/header", frontController.GetHeaderData)
 
 		// get footer data

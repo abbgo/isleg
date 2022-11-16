@@ -655,6 +655,8 @@ func GetAllLanguageWithIDAndNameShort() ([]models.Language, error) {
 
 }
 
+// GetLangID funksiya berilen langShortName parameter boyunca dilin id - sini getirip beryar
+// bu yerde langShortName - dilin gysga ady
 func GetLangID(langShortName string) (string, error) {
 
 	db, err := config.ConnDB()
@@ -691,6 +693,7 @@ func GetLangID(langShortName string) (string, error) {
 
 }
 
+// router - daki lang parameter boyunca dilin id - sini getirip beryar
 func CheckLanguage(c *gin.Context) (string, error) {
 
 	// GET DATA FROM ROUTE PARAMETER
