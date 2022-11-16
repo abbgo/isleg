@@ -290,61 +290,76 @@ func Routes() *gin.Engine {
 		// GetHeaderData header - e degisli ahli maglumatlary alyar
 		front.GET("/header", frontController.GetHeaderData)
 
-		// get footer data
+		// GetFooterData funksiya footer - a degisli maglumnatlary alyar
 		front.GET("/footer", frontController.GetFooterData)
 
-		// get all brend
+		// GetBrends funksiya ahli brendlerin suratlaryny we id - lerini getiryar
 		front.GET("/brends", frontController.GetBrends)
 
-		// get company phone numbers
+		// GetCompanyPhones funksiya firmany  ahli telefon belgilerini getirip beryar
 		front.GET("/company-phones", backController.GetCompanyPhones)
 
-		// get company address
+		// GetCompanyAddress funksiya dil boyunca firmanyn salgysyny getirip beryar
 		front.GET("/company-address", backController.GetCompanyAddress)
 
-		// get Terms of Service and Privacy Policy page translation
+		// GetTranslationSecureByLangID funksiya dil boyunca ulanys duzgunleri we
+		// gizlinlik sertleri sahypasynyn terjimesini getirip beryar
 		front.GET("/translation-secure", backController.GetTranslationSecureByLangID)
 
-		// get Delivery and payment order page translation
+		// GetTranslationPaymentByLangID funksiya dil boyunca eltip bermek
+		// we toleg tertibi sahypasynyn terjimesini getirip beryar
 		front.GET("/translation-payment", backController.GetTranslationPaymentByLangID)
 
-		// get about us page translation
+		// GetTranslationAboutByLangID funksiya dil boyunca biz barada sahypanyn
+		// terjimesini getirip beryar
 		front.GET("/translation-about", backController.GetTranslationAboutByLangID)
 
-		// get contact us page translation
+		// GetTranslationContactByLangID funksiya dil boyunca aragatnasyk ( habarlasmak )
+		// sahypasynyn terjimesini getirip beryar
 		front.GET("/translation-contact", backController.GetTranslationContactByLangID)
 
-		// get update password page translation
+		// GetTranslationUpdatePasswordPageByLangID funksiya dil boyunca
+		// musderinin parol uytgetyan sahypasynyn terjimesini getirip beryar
 		front.GET("/translation-update-password-page", backController.GetTranslationUpdatePasswordPageByLangID)
 
-		// get basket page translation
+		// GetTranslationBasketPageByLangID funksiya dil boyunca sebet sahypasynyn
+		// terjimesini getirip beryar
 		front.GET("/translation-basket-page", backController.GetTranslationBasketPageByLangID)
 
-		// get order page translation
+		// GetTranslationOrderPageByLangID funksiya dil boyunca sargyt sahypanyn
+		// terjimesini getirip beryar
 		front.GET("/translation-order-page", backController.GetTranslationOrderPageByLangID)
 
-		// get my order page translation
+		// GetTranslationMyOrderPageByLangID funksiya dil boyunca musderinin
+		// eden sargytlaryny gorjek sahypasynyn terjimesini getiryar
 		front.GET("/translation-my-order-page", backController.GetTranslationMyOrderPageByLangID)
 
-		// get payment ttype by lang id
+		// GetPaymentTypesByLangID funksiya dil boyunca toleg gornuslerinin
+		// terjimesini getirip beryar
 		front.GET("/payment-types", backController.GetPaymentTypesByLangID)
 
-		// get notifications by lang id
+		// GetNotificationByLangID funksiya dil boyunca ahli bildirislerin ( notification )
+		// terjimesini getirip beryar
 		front.GET("/notifications", backController.GetNotificationByLangID)
 
-		// homepage categories
+		// GetHomePageCategories funksiya dil boyunca bas sahypada duryan kategoriyalary
+		// 4 sany harydy bilen bilelikde getiryar
 		front.GET("/homepage-categories", frontController.GetHomePageCategories)
 
-		// // get one category with products
+		// GetOneCategoryWithProducts funksiya dil boyunca dine bir kategoriyany
+		// ahli harytlary pagination edip getiryar
 		front.GET("/:category_id/:limit/:page", backController.GetOneCategoryWithProducts)
 
-		// get order time
+		// GetOrderTime funksiya dil boyunca musderi ucin sargyt edilip bilinjek
+		// wagtlary getirip beryar
 		front.GET("/order-time", backController.GetOrderTime)
 
-		// search
+		// Search funksiya dil boyunca gozlenilen harytlary pagination edip
+		// getirip beryar
 		front.POST("/search/:limit/:page", frontController.Search)
 
-		// get my information page translation
+		// GetTranslationMyInformationPageByLangID funksiya dil boyunca musderinin maglumatlarym
+		// sahypasynyn terjimesinin   getirip beryar
 		front.GET("/translation-my-information-page", backController.GetTranslationMyInformationPageByLangID)
 
 		// to order

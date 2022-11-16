@@ -8,6 +8,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// GetFooterData funksiya asakdaky maglumatlary getirip beryar:
+// footer - in terjimesini
 func GetFooterData(c *gin.Context) {
 
 	langID, err := backController.CheckLanguage(c)

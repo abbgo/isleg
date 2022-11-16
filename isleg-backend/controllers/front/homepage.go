@@ -34,6 +34,7 @@ type Brend struct {
 	Name string `json:"name"`
 }
 
+// ahli brendlerin suratlaryny we id - lerini getiryar
 func GetBrends(c *gin.Context) {
 
 	// get all brend from brend controller

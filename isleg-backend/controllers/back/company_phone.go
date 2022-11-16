@@ -230,6 +230,7 @@ func GetCompanyPhoneByID(c *gin.Context) {
 
 }
 
+// GetCompanyPhones funksiya firmanyn ahli telefon belgilerini alyar
 func GetCompanyPhones(c *gin.Context) {
 
 	db, err := config.ConnDB()

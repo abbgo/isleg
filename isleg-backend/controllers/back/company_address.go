@@ -270,6 +270,7 @@ func GetCompanyAddressByID(c *gin.Context) {
 
 }
 
+// GetCompanyAddress funksiya dil boyunca firmanyn salgysyny getirip beryar
 func GetCompanyAddress(c *gin.Context) {
 
 	db, err := config.ConnDB()

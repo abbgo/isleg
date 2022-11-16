@@ -761,6 +761,7 @@ func DeletePermanentlyBrendByID(c *gin.Context) {
 
 }
 
+// GetAllBrendForHomePage ahli brendlerin id - lerini we suratlaryny alyar
 func GetAllBrendForHomePage() ([]models.Brend, error) {
 
 	db, err := config.ConnDB()
