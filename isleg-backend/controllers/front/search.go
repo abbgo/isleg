@@ -7,6 +7,7 @@ import (
 	"math"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gosimple/slug"
@@ -85,9 +86,10 @@ func Search(c *gin.Context) {
 
 	var countOfProduct uint
 
-	search := slug.MakeLang(c.PostForm("search"), "en")
+	incomingsSarch := slug.MakeLang(c.PostForm("search"), "en")
+	search := strings.ReplaceAll(incomingsSarch, "-", " | ")
 
-	countProduct, err := db.Query("SELECT COUNT(*) FROM products p inner join translation_product tp on tp.product_id = p.id WHERE tp.slug LIKE $1 AND tp.lang_id = $2 AND tp.deleted_at IS NULL AND p.deleted_at IS NULL", "%"+search+"%", langID)
+	countProduct, err := db.Query("SELECT COUNT(*) FROM products p inner join translation_product tp on tp.product_id = p.id WHERE to_tsvector(slug) @@ to_tsquery($1) AND tp.lang_id = $2 AND tp.deleted_at IS NULL AND p.deleted_at IS NULL", search, langID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -115,7 +117,7 @@ func Search(c *gin.Context) {
 		}
 	}
 
-	rowsProduct, err := db.Query("SELECT p.id,p.brend_id,p.price,p.old_price,p.amount,p.limit_amount,p.is_new FROM products p inner join translation_product tp on tp.product_id = p.id WHERE tp.slug LIKE $1 AND tp.lang_id = $2 AND tp.deleted_at IS NULL AND p.deleted_at IS NULL ORDER BY p.created_at ASC LIMIT $3 OFFSET $4", "%"+search+"%", langID, limit, offset)
+	rowsProduct, err := db.Query("SELECT p.id,p.brend_id,p.price,p.old_price,p.amount,p.limit_amount,p.is_new FROM products p inner join translation_product tp on tp.product_id = p.id WHERE to_tsvector(slug) @@ to_tsquery($1) AND tp.lang_id = $2 AND tp.deleted_at IS NULL AND p.deleted_at IS NULL ORDER BY p.created_at ASC LIMIT $3 OFFSET $4", search, langID, limit, offset)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
