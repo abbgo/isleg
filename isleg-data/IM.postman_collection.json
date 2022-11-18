@@ -691,13 +691,13 @@
 							"formdata": [
 								{
 									"key": "search",
-									"value": "e-k",
+									"value": "cuyseli neskafe kofe",
 									"type": "default"
 								}
 							]
 						},
 						"url": {
-							"raw": "localhost:2406/api/tm/search",
+							"raw": "localhost:2406/api/tm/search/2/1",
 							"host": [
 								"localhost"
 							],
@@ -705,7 +705,9 @@
 							"path": [
 								"api",
 								"tm",
-								"search"
+								"search",
+								"2",
+								"1"
 							]
 						}
 					},
