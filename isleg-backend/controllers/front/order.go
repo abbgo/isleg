@@ -1826,7 +1826,7 @@ func GetOrderedProductsWithoutCustomer(c *gin.Context) {
 
 		product.Images = images
 
-		rowTrProduct, err := db.Query("SELECT name,description FROM translation_product WHERE product_id = $1 AND lang_id = $2 AND deleted_at IS NULL", product.ID, langID)
+		rowsLang, err := db.Query("SELECT id,name_short FROM languages WHERE deleted_at IS NULL")
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
@@ -1835,7 +1835,7 @@ func GetOrderedProductsWithoutCustomer(c *gin.Context) {
 			return
 		}
 		defer func() {
-			if err := rowTrProduct.Close(); err != nil {
+			if err := rowsLang.Close(); err != nil {
 				c.JSON(http.StatusBadRequest, gin.H{
 					"status":  false,
 					"message": err.Error(),
@@ -1844,19 +1844,61 @@ func GetOrderedProductsWithoutCustomer(c *gin.Context) {
 			}
 		}()
 
-		var trProduct models.TranslationProduct
+		var languages []models.Language
 
-		for rowTrProduct.Next() {
-			if err := rowTrProduct.Scan(&trProduct.Name, &trProduct.Description); err != nil {
+		for rowsLang.Next() {
+			var language models.Language
+
+			if err := rowsLang.Scan(&language.ID, &language.NameShort); err != nil {
 				c.JSON(http.StatusBadRequest, gin.H{
 					"status":  false,
 					"message": err.Error(),
 				})
 				return
 			}
+
+			languages = append(languages, language)
 		}
 
-		product.TranslationProduct = trProduct
+		for _, v := range languages {
+
+			rowTrProduct, err := db.Query("SELECT name,description FROM translation_product WHERE product_id = $1 AND lang_id = $2 AND deleted_at IS NULL", product.ID, langID)
+			if err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+			defer func() {
+				if err := rowTrProduct.Close(); err != nil {
+					c.JSON(http.StatusBadRequest, gin.H{
+						"status":  false,
+						"message": err.Error(),
+					})
+					return
+				}
+			}()
+
+			var trProduct models.TranslationProduct
+
+			translation := make(map[string]models.TranslationProduct)
+
+			for rowTrProduct.Next() {
+				if err := rowTrProduct.Scan(&trProduct.Name, &trProduct.Description); err != nil {
+					c.JSON(http.StatusBadRequest, gin.H{
+						"status":  false,
+						"message": err.Error(),
+					})
+					return
+				}
+			}
+
+			translation[v.NameShort] = trProduct
+
+			product.Translations = append(product.Translations, translation)
+
+		}
 
 		products = append(products, product)
 	}
