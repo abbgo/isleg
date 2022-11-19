@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "3985535b-1c09-4f6b-8913-efa713263fbf",
+		"_postman_id": "907648a4-c585-489a-8483-32930648b4b3",
 		"name": "IM",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -122,7 +122,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NTYiLCJjdXN0b21lcl9pZCI6IjFhZTEyMzkwLTAzYWUtNDlhYy1hOWFkLWQ3YmE1Yzk1YjUxYSIsImV4cCI6MTY2NzQ1NTY2NH0.BLTauBZxWMmqvgtV8-ZWaukzJzFbZ_-rTwcte8ME2pA",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NTYiLCJjdXN0b21lcl9pZCI6IjFhZTEyMzkwLTAzYWUtNDlhYy1hOWFkLWQ3YmE1Yzk1YjUxYSIsImV4cCI6MTY2ODg1NjE1N30.QIhEXl_8pSk8ciFiNtLgquupsnpk3KdB5j4yR4PGJZQ",
 											"type": "string"
 										}
 									]
@@ -130,7 +130,7 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "localhost:2406/api/tm/orders/3/2",
+									"raw": "localhost:2406/api/tm/orders/1/1",
 									"host": [
 										"localhost"
 									],
@@ -139,8 +139,8 @@
 										"api",
 										"tm",
 										"orders",
-										"3",
-										"2"
+										"1",
+										"1"
 									]
 								}
 							},
@@ -220,14 +220,14 @@
 							"response": []
 						},
 						{
-							"name": "GetCartProducts",
+							"name": "GetCustomerCartProducts",
 							"request": {
 								"auth": {
 									"type": "bearer",
 									"bearer": [
 										{
 											"key": "token",
-											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NTYiLCJjdXN0b21lcl9pZCI6IjFhZTEyMzkwLTAzYWUtNDlhYy1hOWFkLWQ3YmE1Yzk1YjUxYSIsImV4cCI6MTY2NzQ1NTY2NH0.BLTauBZxWMmqvgtV8-ZWaukzJzFbZ_-rTwcte8ME2pA",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NTYiLCJjdXN0b21lcl9pZCI6IjFhZTEyMzkwLTAzYWUtNDlhYy1hOWFkLWQ3YmE1Yzk1YjUxYSIsImV4cCI6MTY2ODg1NjE1N30.QIhEXl_8pSk8ciFiNtLgquupsnpk3KdB5j4yR4PGJZQ",
 											"type": "string"
 										}
 									]
@@ -340,7 +340,7 @@
 							"response": []
 						},
 						{
-							"name": "GetLikes",
+							"name": "GetCustomerLikes",
 							"protocolProfileBehavior": {
 								"disableBodyPruning": true
 							},
@@ -350,7 +350,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NTYiLCJjdXN0b21lcl9pZCI6IjFhZTEyMzkwLTAzYWUtNDlhYy1hOWFkLWQ3YmE1Yzk1YjUxYSIsImV4cCI6MTY2NzQ1NTY2NH0.BLTauBZxWMmqvgtV8-ZWaukzJzFbZ_-rTwcte8ME2pA",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NTYiLCJjdXN0b21lcl9pZCI6IjFhZTEyMzkwLTAzYWUtNDlhYy1hOWFkLWQ3YmE1Yzk1YjUxYSIsImV4cCI6MTY2ODg1NjE1N30.QIhEXl_8pSk8ciFiNtLgquupsnpk3KdB5j4yR4PGJZQ",
 											"type": "string"
 										}
 									]
@@ -362,7 +362,7 @@
 									"formdata": []
 								},
 								"url": {
-									"raw": "localhost:2406/api/tm/likes/7e872c52-0d23-4086-8c45-43000b57332e",
+									"raw": "localhost:2406/api/tm/likes",
 									"host": [
 										"localhost"
 									],
@@ -370,8 +370,36 @@
 									"path": [
 										"api",
 										"tm",
-										"likes",
-										"7e872c52-0d23-4086-8c45-43000b57332e"
+										"likes"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GetLikedProductsWithoutCustomer",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"product_ids\":[\n        \"45a9f186-2521-4eef-a4e0-b5c253c70878\",\n        \"ee1d67ed-5862-4dfc-8424-52531a240a6c\"\n    ]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:2406/api/tm/likes-without-customer",
+									"host": [
+										"localhost"
+									],
+									"port": "2406",
+									"path": [
+										"api",
+										"tm",
+										"likes-without-customer"
 									]
 								}
 							},
@@ -837,35 +865,6 @@
 								"api",
 								"tm",
 								"translation-basket-page"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "GetLikedProductsWithoutCustomer",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"product_ids\":[\n        \"45a9f186-2521-4eef-a4e0-b5c253c70878\",\n        \"ee1d67ed-5862-4dfc-8424-52531a240a6c\"\n    ]\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "localhost:2406/api/tm/likes-without-customer",
-							"host": [
-								"localhost"
-							],
-							"port": "2406",
-							"path": [
-								"api",
-								"tm",
-								"likes-without-customer"
 							]
 						}
 					},
