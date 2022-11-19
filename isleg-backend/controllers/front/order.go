@@ -1167,7 +1167,6 @@ func GetOrders(c *gin.Context) {
 					return
 				}
 			}
-			product.TranslationProduct = trProduct
 
 			products = append(products, product)
 
@@ -1302,19 +1301,6 @@ func GetCustomerOrders(c *gin.Context) {
 	customerID, ok := custID.(string)
 	if !ok {
 		c.JSON(http.StatusBadRequest, "customer_id must be string")
-	}
-
-	// GET DATA FROM ROUTE PARAMETER
-	langShortName := c.Param("lang")
-
-	// GET language id
-	langID, err := backController.GetLangID(langShortName)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
 	}
 
 	// get limit from param
@@ -1589,7 +1575,7 @@ func GetCustomerOrders(c *gin.Context) {
 
 			product.Images = images
 
-			rowTrProduct, err := db.Query("SELECT name,description FROM translation_product WHERE product_id = $1 AND lang_id = $2 AND deleted_at IS NULL", product.ID, langID)
+			rowsLang, err := db.Query("SELECT id,name_short FROM languages WHERE deleted_at IS NULL")
 			if err != nil {
 				c.JSON(http.StatusBadRequest, gin.H{
 					"status":  false,
@@ -1598,7 +1584,7 @@ func GetCustomerOrders(c *gin.Context) {
 				return
 			}
 			defer func() {
-				if err := rowTrProduct.Close(); err != nil {
+				if err := rowsLang.Close(); err != nil {
 					c.JSON(http.StatusBadRequest, gin.H{
 						"status":  false,
 						"message": err.Error(),
@@ -1607,18 +1593,61 @@ func GetCustomerOrders(c *gin.Context) {
 				}
 			}()
 
-			var trProduct models.TranslationProduct
+			var languages []models.Language
 
-			for rowTrProduct.Next() {
-				if err := rowTrProduct.Scan(&trProduct.Name, &trProduct.Description); err != nil {
+			for rowsLang.Next() {
+				var language models.Language
+
+				if err := rowsLang.Scan(&language.ID, &language.NameShort); err != nil {
 					c.JSON(http.StatusBadRequest, gin.H{
 						"status":  false,
 						"message": err.Error(),
 					})
 					return
 				}
+
+				languages = append(languages, language)
 			}
-			product.TranslationProduct = trProduct
+
+			for _, v := range languages {
+
+				rowTrProduct, err := db.Query("SELECT name,description FROM translation_product WHERE product_id = $1 AND lang_id = $2 AND deleted_at IS NULL", product.ID, v.ID)
+				if err != nil {
+					c.JSON(http.StatusBadRequest, gin.H{
+						"status":  false,
+						"message": err.Error(),
+					})
+					return
+				}
+				defer func() {
+					if err := rowTrProduct.Close(); err != nil {
+						c.JSON(http.StatusBadRequest, gin.H{
+							"status":  false,
+							"message": err.Error(),
+						})
+						return
+					}
+				}()
+
+				var trProduct models.TranslationProduct
+
+				translation := make(map[string]models.TranslationProduct)
+
+				for rowTrProduct.Next() {
+					if err := rowTrProduct.Scan(&trProduct.Name, &trProduct.Description); err != nil {
+						c.JSON(http.StatusBadRequest, gin.H{
+							"status":  false,
+							"message": err.Error(),
+						})
+						return
+					}
+				}
+
+				translation[v.NameShort] = trProduct
+
+				product.Translations = append(product.Translations, translation)
+
+			}
 
 			products = append(products, product)
 
@@ -1656,19 +1685,6 @@ func GetOrderedProductsWithoutCustomer(c *gin.Context) {
 			return
 		}
 	}()
-
-	// GET DATA FROM ROUTE PARAMETER
-	langShortName := c.Param("lang")
-
-	// GET language id
-	langID, err := backController.GetLangID(langShortName)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
 
 	var productIds ProductID
 	if err := c.BindJSON(&productIds); err != nil {
@@ -1862,7 +1878,7 @@ func GetOrderedProductsWithoutCustomer(c *gin.Context) {
 
 		for _, v := range languages {
 
-			rowTrProduct, err := db.Query("SELECT name,description FROM translation_product WHERE product_id = $1 AND lang_id = $2 AND deleted_at IS NULL", product.ID, langID)
+			rowTrProduct, err := db.Query("SELECT name,description FROM translation_product WHERE product_id = $1 AND lang_id = $2 AND deleted_at IS NULL", product.ID, v.ID)
 			if err != nil {
 				c.JSON(http.StatusBadRequest, gin.H{
 					"status":  false,

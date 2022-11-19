@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"github/abbgo/isleg/isleg-backend/config"
-	backController "github/abbgo/isleg/isleg-backend/controllers/back"
 	"github/abbgo/isleg/isleg-backend/models"
 	"math"
 	"net/http"
@@ -51,8 +50,6 @@ func AddLike(c *gin.Context) {
 			return
 		}
 	}()
-
-	langShortName := c.Param("lang")
 
 	statusStr := c.Query("status")
 	status, err := strconv.ParseBool(statusStr)
@@ -177,7 +174,7 @@ func AddLike(c *gin.Context) {
 
 			}
 
-			products, err := GetLikes(langShortName, customerID)
+			products, err := GetLikes(customerID)
 			if err != nil {
 				c.JSON(http.StatusBadRequest, gin.H{
 					"status":  false,
@@ -193,7 +190,7 @@ func AddLike(c *gin.Context) {
 
 		} else {
 
-			products, err := GetLikes(langShortName, customerID)
+			products, err := GetLikes(customerID)
 			if err != nil {
 				c.JSON(http.StatusBadRequest, gin.H{
 					"status":  false,
@@ -425,22 +422,13 @@ func AddLike(c *gin.Context) {
 
 // }
 
-func GetLikes(langShortName, customerID string) ([]LikeProduct, error) {
+func GetLikes(customerID string) ([]LikeProduct, error) {
 
 	db, err := config.ConnDB()
 	if err != nil {
 		return []LikeProduct{}, err
 	}
 	defer db.Close()
-
-	// GET DATA FROM ROUTE PARAMETER
-	// langShortName := c.Param("lang")
-
-	// GET language id
-	langID, err := backController.GetLangID(langShortName)
-	if err != nil {
-		return []LikeProduct{}, err
-	}
 
 	rowsProduct, err := db.Query("SELECT p.id,p.brend_id,p.price,p.old_price,p.amount,p.limit_amount,p.is_new FROM products p LEFT JOIN likes l ON l.product_id = p.id WHERE l.customer_id = $1 AND l.deleted_at IS NULL AND p.deleted_at IS NULL", customerID)
 	if err != nil {
@@ -519,7 +507,7 @@ func GetLikes(langShortName, customerID string) ([]LikeProduct, error) {
 
 		for _, v := range languages {
 
-			rowTrProduct, err := db.Query("SELECT name,description FROM translation_product WHERE lang_id = $1 AND product_id = $2", langID, product.ID)
+			rowTrProduct, err := db.Query("SELECT name,description FROM translation_product WHERE lang_id = $1 AND product_id = $2", v.ID, product.ID)
 			if err != nil {
 				return []LikeProduct{}, err
 			}
@@ -550,8 +538,6 @@ func GetLikes(langShortName, customerID string) ([]LikeProduct, error) {
 
 func GetCustomerLikes(c *gin.Context) {
 
-	langShortName := c.Param("lang")
-
 	custID, hasCustomer := c.Get("customer_id")
 	if !hasCustomer {
 		c.JSON(http.StatusBadRequest, "customer_id is required")
@@ -562,7 +548,7 @@ func GetCustomerLikes(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, "customer_id must be string")
 	}
 
-	products, err := GetLikes(langShortName, customerID)
+	products, err := GetLikes(customerID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -597,19 +583,6 @@ func GetLikedProductsWithoutCustomer(c *gin.Context) {
 			return
 		}
 	}()
-
-	// GET DATA FROM ROUTE PARAMETER
-	langShortName := c.Param("lang")
-
-	// GET language id
-	langID, err := backController.GetLangID(langShortName)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
 
 	var productIds ProductID
 	if err := c.BindJSON(&productIds); err != nil {
@@ -801,7 +774,7 @@ func GetLikedProductsWithoutCustomer(c *gin.Context) {
 
 		for _, v := range languages {
 
-			rowTrProduct, err := db.Query("SELECT name,description FROM translation_product WHERE product_id = $1 AND lang_id = $2 AND deleted_at IS NULL", product.ID, langID)
+			rowTrProduct, err := db.Query("SELECT name,description FROM translation_product WHERE product_id = $1 AND lang_id = $2 AND deleted_at IS NULL", product.ID, v.ID)
 			if err != nil {
 				c.JSON(http.StatusBadRequest, gin.H{
 					"status":  false,

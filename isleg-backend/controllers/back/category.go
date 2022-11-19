@@ -1697,7 +1697,7 @@ func GetOneCategoryWithProducts(c *gin.Context) {
 
 				for _, v := range languages {
 
-					rowTrProduct, err := db.Query("SELECT name,description FROM translation_product WHERE lang_id = $1 AND product_id = $2 AND deleted_at IS NULL", langID, product.ID)
+					rowTrProduct, err := db.Query("SELECT name,description FROM translation_product WHERE lang_id = $1 AND product_id = $2 AND deleted_at IS NULL", v.ID, product.ID)
 					if err != nil {
 						c.JSON(http.StatusBadRequest, gin.H{
 							"status":  false,

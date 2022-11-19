@@ -3,7 +3,6 @@ package controllers
 import (
 	"errors"
 	"github/abbgo/isleg/isleg-backend/config"
-	backController "github/abbgo/isleg/isleg-backend/controllers/back"
 	"github/abbgo/isleg/isleg-backend/models"
 	"math"
 	"net/http"
@@ -22,18 +21,19 @@ type CartProduct struct {
 }
 
 type ProductOfCart struct {
-	ID                 uuid.UUID                 `json:"id"`
-	BrendID            uuid.UUID                 `json:"brend_id"`
-	Price              float64                   `json:"price"`
-	OldPrice           float64                   `json:"old_price"`
-	Percentage         float64                   `json:"percentage"`
-	Amount             uint                      `json:"amount"`
-	LimitAmount        uint                      `json:"limit_amount"`
-	IsNew              bool                      `json:"is_new"`
-	QuantityOfProduct  int                       `json:"quantity_of_product"`
-	MainImage          models.MainImage          `json:"main_image"`
-	Images             []models.Images           `json:"images"`
-	TranslationProduct models.TranslationProduct `json:"translation"`
+	ID                uuid.UUID        `json:"id"`
+	BrendID           uuid.UUID        `json:"brend_id"`
+	Price             float64          `json:"price"`
+	OldPrice          float64          `json:"old_price"`
+	Percentage        float64          `json:"percentage"`
+	Amount            uint             `json:"amount"`
+	LimitAmount       uint             `json:"limit_amount"`
+	IsNew             bool             `json:"is_new"`
+	QuantityOfProduct int              `json:"quantity_of_product"`
+	MainImage         models.MainImage `json:"main_image"`
+	Images            []models.Images  `json:"images"`
+	// TranslationProduct models.TranslationProduct `json:"translation"`
+	Translations []map[string]models.TranslationProduct `json:"translations"`
 }
 
 func AddCart(c *gin.Context) {
@@ -65,8 +65,6 @@ func AddCart(c *gin.Context) {
 	if !ok {
 		c.JSON(http.StatusBadRequest, "customer_id must be string")
 	}
-
-	langShortName := c.Param("lang")
 
 	var cart []CartProduct
 
@@ -208,7 +206,7 @@ func AddCart(c *gin.Context) {
 
 		}
 
-		products, err := GetCartProducts(langShortName, customerID)
+		products, err := GetCartProducts(customerID)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
@@ -224,7 +222,7 @@ func AddCart(c *gin.Context) {
 
 	} else {
 
-		products, err := GetCartProducts(langShortName, customerID)
+		products, err := GetCartProducts(customerID)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
@@ -249,22 +247,13 @@ func AddCart(c *gin.Context) {
 
 }
 
-func GetCartProducts(langShortName, customerID string) ([]ProductOfCart, error) {
+func GetCartProducts(customerID string) ([]ProductOfCart, error) {
 
 	db, err := config.ConnDB()
 	if err != nil {
 		return []ProductOfCart{}, err
 	}
 	defer db.Close()
-
-	// GET DATA FROM ROUTE PARAMETER
-	// langShortName := c.Param("lang")
-
-	// GET language id
-	langID, err := backController.GetLangID(langShortName)
-	if err != nil {
-		return []ProductOfCart{}, err
-	}
 
 	rowsProduct, err := db.Query("SELECT p.id,p.brend_id,p.price,p.old_price,p.amount,p.limit_amount,p.is_new,c.quantity_of_product FROM products p LEFT JOIN cart c ON c.product_id = p.id WHERE c.customer_id = $1 AND c.deleted_at IS NULL AND p.deleted_at IS NULL", customerID)
 	if err != nil {
@@ -323,21 +312,47 @@ func GetCartProducts(langShortName, customerID string) ([]ProductOfCart, error) 
 
 		product.Images = images
 
-		rowTrProduct, err := db.Query("SELECT name,description FROM translation_product WHERE lang_id = $1 AND product_id = $2", langID, product.ID)
+		rowsLang, err := db.Query("SELECT id,name_short FROM languages WHERE deleted_at IS NULL")
 		if err != nil {
 			return []ProductOfCart{}, err
 		}
-		defer rowTrProduct.Close()
+		defer rowsLang.Close()
 
-		var trProduct models.TranslationProduct
+		var languages []models.Language
 
-		for rowTrProduct.Next() {
-			if err := rowTrProduct.Scan(&trProduct.Name, &trProduct.Description); err != nil {
+		for rowsLang.Next() {
+			var language models.Language
+
+			if err := rowsLang.Scan(&language.ID, &language.NameShort); err != nil {
 				return []ProductOfCart{}, err
 			}
+
+			languages = append(languages, language)
 		}
 
-		product.TranslationProduct = trProduct
+		for _, v := range languages {
+
+			rowTrProduct, err := db.Query("SELECT name,description FROM translation_product WHERE lang_id = $1 AND product_id = $2 AND deleted_at IS NULL", v.ID, product.ID)
+			if err != nil {
+				return []ProductOfCart{}, err
+			}
+			defer rowTrProduct.Close()
+
+			var trProduct models.TranslationProduct
+
+			translation := make(map[string]models.TranslationProduct)
+
+			for rowTrProduct.Next() {
+				if err := rowTrProduct.Scan(&trProduct.Name, &trProduct.Description); err != nil {
+					return []ProductOfCart{}, err
+				}
+			}
+
+			translation[v.NameShort] = trProduct
+
+			product.Translations = append(product.Translations, translation)
+
+		}
 
 		products = append(products, product)
 	}
@@ -358,9 +373,7 @@ func GetCustomerCartProducts(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, "customer_id must be string")
 	}
 
-	langShortName := c.Param("lang")
-
-	products, err := GetCartProducts(langShortName, customerID)
+	products, err := GetCartProducts(customerID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
