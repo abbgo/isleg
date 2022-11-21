@@ -108,12 +108,16 @@ export default {
       },
     }
   },
-  async mounted() {
-    await this.getBasketProducts()
+  watch: {
+    isUserLoggined: async function (val) {
+      if (val) {
+        await this.getBasketProducts()
+      }
+    },
   },
   computed: {
     ...mapGetters('products', ['productCount']),
-    ...mapGetters('ui', ['phone', 'name', 'signIn']),
+    ...mapGetters('ui', ['phone', 'name', 'signIn', 'isUserLoggined']),
     totalPrice() {
       return this.products?.reduce((total, num) => {
         let sum = Number(Number(num.price) * Number(num.quantity))
@@ -126,24 +130,28 @@ export default {
           this.productsChek.delivery = Number(15).toFixed(2)
         }
         console.log('totalSum', totalSum)
-        return Number(totalSum).toFixed(2)
+        return Number(totalSum).toFixed(2) > 0
+          ? Number(totalSum).toFixed(2)
+          : '0'
       }, 0)
     },
   },
+  async mounted() {
+    await this.getBasketProducts()
+  },
   methods: {
     async getBasketProducts() {
-      let cart = JSON.parse(localStorage.getItem('lorem'))
+      let cart = await JSON.parse(localStorage.getItem('lorem'))
       if (cart?.cart) {
         let totalCount = cart?.cart.reduce((total, num) => {
           return total + num.quantity
         }, 0)
-        this.products = cart.cart.filter((product) => product.quantity > 0)
+        this.products =
+          cart.cart.filter((product) => product.quantity > 0) || []
         this.$store.commit(
           'products/SET_PRODUCT_COUNT',
           totalCount == 0 ? null : totalCount
         )
-      } else {
-        this.products = []
       }
     },
     async openPayment() {
@@ -202,14 +210,16 @@ export default {
         console.log('order_times', order_times)
         if (status) {
           for (let i = 0; i < order_times.length; i++) {
+            for (let j = 0; j < order_times[i].times.length; j++) {
+              order_times[i].times[j]['checked'] = false
+            }
             this.paymentDatas.orderTimes.times.push({
               id: i + Math.random() * 2,
               translation_date: order_times[i].translation_date,
-              time: order_times[i].times[i].time,
-              checked: false,
+              time: order_times[i].times,
             })
           }
-          console.log(this.paymentDatas.orderTimes)
+          console.log(this.paymentDatas.orderTimes.times)
         }
       } catch (error) {
         console.log('payment', error)
@@ -236,16 +246,22 @@ export default {
     closePopUpSure() {
       this.productRemoveItem = null
       this.isSure = false
+      this.isCartEmpty = false
       document.body.classList.remove('_lock')
     },
     async confirm() {
       const cart = await JSON.parse(localStorage.getItem('lorem'))
       if (this.isCartEmpty) {
         this.products = []
-        cart.cart = []
+        cart.cart = cart.cart.filter((product) => product.is_favorite === true)
+        for (let i = 0; i < cart.cart.length; i++) {
+          cart.cart[i].quantity = 0
+        }
+        console.log(cart.cart)
+        console.log('this.isCartEmpty')
+        this.$store.commit('products/SET_PRODUCT_COUNT_WHEN_PAYMENT', null)
         localStorage.setItem('lorem', JSON.stringify(cart))
-        this.$store.commit('products/SET_PRODUCT_COUNT_WHEN_PAYMENT')
-        if (cart && cart?.auth?.accessToken && this.$auth.loggedIn) {
+        if (cart && cart?.auth?.accessToken) {
           try {
             const res = (
               await deleteAllProductsFromBasket({
@@ -256,10 +272,9 @@ export default {
             console.log(res)
           } catch (error) {
             console.log(error)
-          } finally {
-            this.isCartEmpty = false
           }
         }
+        this.isCartEmpty = false
       } else {
         if (this.productRemoveItem.quantity > 0) {
           const findProduct = cart?.cart.find(
@@ -275,8 +290,11 @@ export default {
           (product) => product.id != this.productRemoveItem.id
         )
         localStorage.setItem('lorem', JSON.stringify(cart))
-        this.$store.commit('products/SET_BASKET_PRODUCT_COUNT', 1)
-        if (cart && cart?.auth?.accessToken && this.$auth.loggedIn) {
+        this.$store.commit(
+          'products/SET_BASKET_PRODUCT_COUNT',
+          this.productRemoveItem.quantity
+        )
+        if (cart && cart?.auth?.accessToken) {
           try {
             const res = (
               await productAdd({
@@ -342,12 +360,10 @@ export default {
               } catch (error) {
                 console.log('ref', error.response.status)
                 if (error.response.status === 403) {
-                  this.$auth.logout()
                   cart.auth.accessToken = null
                   cart.auth.refreshToken = null
                   localStorage.setItem('lorem', JSON.stringify(cart))
-                  console.log(this.$route.name)
-                  this.$router.push({ name: this.$route.name })
+                  this.$router.push(this.localeLocation('/'))
                 }
               }
             }
@@ -366,7 +382,7 @@ export default {
     },
     paymentSuccesfullySended() {
       this.products = []
-      this.$store.commit('products/SET_PRODUCT_COUNT_WHEN_PAYMENT')
+      this.$store.commit('products/SET_PRODUCT_COUNT_WHEN_PAYMENT', null)
       this.isPayment = false
       document.body.classList.remove('_lock')
     },

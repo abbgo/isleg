@@ -1,5 +1,5 @@
 <template>
-  <section class="agreement __container">
+  <section class="agreement __container" v-if="myProfileDatas.fillName">
     <h4 class="agreement__title">Profilim</h4>
     <div class="communication_form">
       <div class="form__box">
@@ -103,6 +103,7 @@ import { mapGetters } from 'vuex'
 import { getMyProfile } from '@/api/myProfile.api'
 import { getRefreshToken } from '@/api/user.api'
 export default {
+  //   middleware: ['check-auth', 'user-auth'],
   data() {
     return {
       isChangePassword: false,
@@ -119,11 +120,20 @@ export default {
       },
     }
   },
-  async mounted() {
-    await this.fetchMyProfile()
-  },
   computed: {
     ...mapGetters('ui', ['myProfile']),
+  },
+  async mounted() {
+    const cart = await JSON.parse(localStorage.getItem('lorem'))
+    if (!cart) {
+      this.$router.replace(this.localeLocation('/'))
+    } else if (!cart.auth) {
+      this.$router.replace(this.localeLocation('/'))
+    } else if (!cart.auth.accessToken) {
+      this.$router.replace(this.localeLocation('/'))
+    } else {
+      await this.fetchMyProfile()
+    }
   },
   methods: {
     async fetchMyProfile() {
@@ -182,15 +192,15 @@ export default {
                   })
                 ).data
                 console.log(customer_informations, status)
-                //   if (status) {
-                //     routes.value = data.filter((item) => (item.id = item.uuid)) || []
-                //     selected.route = routes.value[0] || {}
-                //     if (routes.value.length) {
-                //       for (let i = 0; i < routes.value.length; i++) {
-                //         routes.value[i]['isEdit'] = false
-                //       }
-                //     }
-                //   }
+                if (status) {
+                  this.myProfileDatas.fillName = customer_informations.full_name
+                  this.myProfileDatas.phone_number =
+                    customer_informations.phone_number
+                  this.myProfileDatas.email = customer_informations.email
+                  this.myProfileDatas.birthday = customer_informations.birthday
+                    ? new Date(customer_informations.birthday.Time)
+                    : null
+                }
               } catch (error) {
                 console.log('getMyProfile2', error)
               }
@@ -198,36 +208,34 @@ export default {
           } catch (error) {
             console.log('ref', error.response.status)
             if (error.response.status === 403) {
-              this.$auth.logout()
               cart.auth.accessToken = null
               cart.auth.refreshToken = null
               localStorage.setItem('lorem', JSON.stringify(cart))
-              console.log(this.$route.name)
-              this.$router.push({ name: this.$route.name })
+              this.$router.push(this.localeLocation('/'))
             }
           }
         }
       }
     },
     async postMyInformation() {
-      // const access_token = this.$cookies.set('access_token', access_token)
-      // const refresh_token = this.$cookies.set('refresh_token', refresh_token)
-      // try {
-      //   const { customer_informations, status } = (
-      //     await myInformation({
-      //       url: `${this.$i18n.locale}/my-information`,
-      //       accessToken: `Bearer ${accessToken}`,
-      //     })
-      //   ).data
-      //   console.log(customer_informations, status)
-      //   if (status) {
-      //     this.myProfileDatas.fillName = customer_informations.full_name
-      //     this.myProfileDatas.phone_number = customer_informations.phone_number
-      //     this.myProfileDatas.email = customer_informations.email
-      //   }
-      // } catch (error) {
-      //   console.log('getMyProfile1', error.response.status)
-      // }
+      const access_token = this.$cookies.set('access_token', access_token)
+      const refresh_token = this.$cookies.set('refresh_token', refresh_token)
+      try {
+        const { customer_informations, status } = (
+          await myInformation({
+            url: `${this.$i18n.locale}/my-information`,
+            accessToken: `Bearer ${accessToken}`,
+          })
+        ).data
+        console.log(customer_informations, status)
+        if (status) {
+          this.myProfileDatas.fillName = customer_informations.full_name
+          this.myProfileDatas.phone_number = customer_informations.phone_number
+          this.myProfileDatas.email = customer_informations.email
+        }
+      } catch (error) {
+        console.log('getMyProfile1', error.response.status)
+      }
     },
     openChangePassword() {
       this.isChangePassword = true

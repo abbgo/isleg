@@ -22,6 +22,12 @@ const SET_CATEGORY_PRODUCTS = (state, payload) => {
 const SET_MY_PROFILE = (state, payload) => {
   state.myProfile = payload
 }
+const SET_USER_LOGGINED = (state, payload) => {
+  state.isUserLoggined = payload
+}
+const SET_AUTHENTICATION = (state, auth) => {
+  state.authenticated = auth
+}
 export default {
   SET_HEADER,
   SET_FOOTER,
@@ -30,4 +36,5 @@ export default {
   SET_OPEN_ISOPENSIGNUP,
   SET_CATEGORY_PRODUCTS,
   SET_MY_PROFILE,
+  SET_USER_LOGGINED,
 }

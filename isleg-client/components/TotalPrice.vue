@@ -14,7 +14,7 @@
 export default {
   props: {
     totalPrice: {
-      type: String,
+      type: [String, Number],
       default: () => '',
     },
   },

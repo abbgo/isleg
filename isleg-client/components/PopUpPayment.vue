@@ -80,15 +80,17 @@
                   :key="item.id"
                 >
                   <h4>{{ item.translation_date }}</h4>
-                  <input
-                    :checked="item.checked"
-                    class="bottom__input"
-                    name="bottom"
-                    :id="item.time"
-                    type="radio"
-                    @change="theDeliveryTimeChecked(item)"
-                  />
-                  <label :for="item.time">{{ item.time }}</label>
+                  <template v-for="time in item.time"
+                    ><input
+                      :checked="time.checked"
+                      class="bottom__input"
+                      name="bottom"
+                      :id="time.time"
+                      type="radio"
+                      @change="theDeliveryTimeChecked(time)"
+                    />
+                    <label :for="time.time">{{ time.time }}</label></template
+                  >
                 </div>
                 <span class="error" v-if="isTheDeliveryTime">
                   {{ $t('payment.theDeliveryTime') }}
@@ -195,7 +197,7 @@
 import { required, minLength } from 'vuelidate/lib/validators'
 import { postPaymentDatas } from '@/api/payment.api'
 import { getMyProfile } from '@/api/myProfile.api'
-import { async } from 'q'
+import { getRefreshToken } from '@/api/user.api'
 
 export default {
   props: {
@@ -216,7 +218,7 @@ export default {
       default: () => '',
     },
     totalPrice: {
-      type: String,
+      type: [String, Number],
       default: () => '',
     },
     paymentDatas: {
@@ -261,7 +263,7 @@ export default {
     isPaymentComputed() {
       if (this.isPayment) {
         const cart = JSON.parse(localStorage.getItem('lorem'))
-        if (cart && cart?.auth?.accessToken && this.$auth.loggedIn) {
+        if (cart && cart?.auth?.accessToken) {
           this.fetchUserInformation(cart)
         }
         return true
@@ -271,24 +273,15 @@ export default {
     },
     isAuth() {
       const cart = JSON.parse(localStorage.getItem('lorem'))
-      console.log(
-        'cart?.auth?.accessToken1',
-        cart?.auth?.accessToken,
-        this.$auth.loggedIn
-      )
-      if (cart?.auth?.accessToken && this.$auth.loggedIn) {
-        console.log(
-          'cart?.auth?.accessToken2',
-          cart?.auth?.accessToken,
-          this.$auth.loggedIn
-        )
+      console.log('cart?.auth?.accessToken1', cart?.auth?.accessToken)
+      if (cart?.auth?.accessToken) {
+        console.log('cart?.auth?.accessToken2', cart?.auth?.accessToken)
         return false
       } else {
         return true
       }
     },
   },
-  mounted() {},
   methods: {
     async fetchUserInformation(cart) {
       try {
@@ -311,6 +304,67 @@ export default {
         }
       } catch (error) {
         console.log('err', error)
+        if (error?.response?.status === 403) {
+          try {
+            const { access_token, refresh_token, status } = (
+              await getRefreshToken({
+                url: `auth/refresh`,
+                refreshToken: `Bearer ${cart.auth.refreshToken}`,
+              })
+            ).data
+            console.log('new', access_token, refresh_token, status)
+            if (status) {
+              const lorem = await JSON.parse(localStorage.getItem('lorem'))
+              if (lorem) {
+                lorem.auth = {
+                  accessToken: access_token,
+                  refreshToken: refresh_token,
+                }
+                localStorage.setItem('lorem', JSON.stringify(lorem))
+              } else {
+                localStorage.setItem(
+                  'lorem',
+                  JSON.stringify({
+                    auth: {
+                      accessToken: access_token,
+                      refreshToken: refresh_token,
+                    },
+                  })
+                )
+              }
+              try {
+                const { customer_informations, status } = (
+                  await getMyProfile({
+                    url: `${this.$i18n.locale}/my-information`,
+                    accessToken: `Bearer ${lorem.auth.accessToken}`,
+                  })
+                ).data
+                console.log(
+                  'deeeeeeeeeeeeeeeeeeeeeeeeeede',
+                  customer_informations,
+                  status
+                )
+                if (status) {
+                  this.payment.fullName = customer_informations.full_name
+                  this.payment.phone_number = customer_informations.phone_number
+                  this.payment.address =
+                    customer_informations.addresses[0]?.address
+                  console.log(' this.userInformation', this.userInformation)
+                }
+              } catch (error) {
+                console.log('getMyProfile2', error)
+              }
+            }
+          } catch (error) {
+            console.log('ref', error.response.status)
+            if (error.response.status === 403) {
+              cart.auth.accessToken = null
+              cart.auth.refreshToken = null
+              localStorage.setItem('lorem', JSON.stringify(cart))
+              this.$router.push(this.localeLocation('/'))
+            }
+          }
+        }
       }
     },
     enforcePhoneFormat() {

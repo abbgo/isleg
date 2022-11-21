@@ -124,7 +124,11 @@
       <client-only
         ><div class="category__section">
           <Products :products="categoryProducts" />
-          <pagination></pagination>
+          <pagination
+            :modelValue="page"
+            @clickPage="(pagination) => updatePage(pagination)"
+            :pageCount="paginationCount"
+          ></pagination>
           <!-- <div class="pagination">
           <div class="pagination__box">
             <div class="left__arrows">
@@ -194,13 +198,14 @@
 
 <script>
 import Products from '@/components/app/Products.vue'
-// import Pagination from '@/components/app/Pagination.vue'
+import Pagination from '@/components/app/Pagination.vue'
 import noUiSlider from '@/plugins/nouislider.min'
+import { getCategoryProducts } from '@/api/categories.api'
 import { mapGetters } from 'vuex'
 export default {
   components: {
     Products,
-    // Pagination,
+    Pagination,
   },
   data() {
     return {
@@ -208,13 +213,11 @@ export default {
       isFilter: false,
       limit: 20,
       page: 1,
+      paginationCount: 0,
     }
   },
   async fetch() {
-    await this.$store.dispatch('ui/fetchCategoryProducts', {
-      url: `${process.env.BASE_API}/${this.$i18n.locale}/${this.$route.params?.id}/${this.limit}/${this.page}`,
-      $nuxt: this.$nuxt,
-    })
+    await this.fetchCategoryProducts()
   },
   computed: {
     ...mapGetters('ui', ['categoryProductsName', 'categoryProducts']),
@@ -241,6 +244,22 @@ export default {
     }
   },
   methods: {
+    async fetchCategoryProducts() {
+      try {
+        const res = (
+          await getCategoryProducts({
+            url: `${this.$i18n.locale}/${this.$route.params?.id}/${this.limit}/${this.page}`,
+          })
+        ).data
+        console.log(res)
+        if (res.status) {
+          this.paginationCount = Math.ceil(res.count_of_products / this.limit)
+          this.$store.commit('ui/SET_CATEGORY_PRODUCTS', res)
+        }
+      } catch (e) {
+        console.log(e)
+      }
+    },
     openOrdering() {
       this.isOrdering = true
       document.body.classList.add('_lock')
@@ -262,6 +281,10 @@ export default {
       let input1 = document.getElementById('input1')
       console.log('input0', input0.value)
       console.log('input1', input1.value)
+    },
+    async updatePage(p) {
+      this.page = p
+      await this.fetchCategoryProducts()
     },
   },
 }

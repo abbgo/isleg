@@ -37,7 +37,6 @@ const fetchCategoryProducts = async ({ commit }, { url, $nuxt }) => {
     const { data } = await axios.get(url)
     console.log('data', data)
     if (data?.status) {
-      commit('SET_CATEGORY_PRODUCTS', data)
     }
   } catch (e) {
     console.log(e.response)
@@ -82,10 +81,19 @@ const fetchMyInformation = async (
     // }
   }
 }
-
+const initAuth = ({ commit }) => {
+  //   const cart = JSON.parse(localStorage.getItem('lorem'))
+  //   console.log('>>', cart)
+  if (localStorage.getItem('lorem')) {
+    commit('SET_AUTHENTICATION', true)
+  } else {
+    commit('SET_AUTHENTICATION', false)
+  }
+}
 export default {
   fetchFooter,
   fetchBrends,
   fetchCategoryProducts,
   fetchMyInformation,
+  initAuth,
 }

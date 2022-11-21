@@ -90,7 +90,15 @@ const categoryProducts = (state) => {
 const myProfile = (state) => {
   return state.myProfile
 }
+const isUserLoggined = (state) => {
+  return state.isUserLoggined
+}
+const isAuthenticated = (state) => {
+  return state.authenticated
+}
 export default {
+  isAuthenticated,
+  isUserLoggined,
   imgURL,
   logo,
   research,

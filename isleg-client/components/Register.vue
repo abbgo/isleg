@@ -154,7 +154,7 @@
 
 <script>
 import { required, sameAs, minLength } from 'vuelidate/lib/validators'
-import { productAdd } from '@/api/user.api'
+import { productAdd, userLogin } from '@/api/user.api'
 export default {
   props: {
     isOpenRegister: {
@@ -318,13 +318,13 @@ export default {
         this.isPhoneNumber = false
       }
       if (this.$v.$invalid) {
+        console.log('>>>')
         if (
           this.$v.register.email.$model !== '' &&
           this.checkValidate === false
         ) {
           this.inValidEmail = true
         }
-
         if (
           this.$v.register.password.$model !==
           this.$v.register.repeatPassword.$model
@@ -338,16 +338,13 @@ export default {
           this.checkValidate == true &&
           this.register.phone_number.length >= 12 &&
           this.$v.register.password.$model ==
-            this.$v.register.repeatPassword.$model
+            this.$v.register.repeatPassword.$model &&
+          this.$v.register.checked.$model == true
         ) {
           this.disabled = true
-          const formData = new FormData()
-          formData.append('full_name', this.register.name)
-          formData.append('phone_number', this.register.phone_number)
-          formData.append('password', this.register.password)
-          formData.append('email', this.register.email)
           try {
-            let response = await this.$auth.loginWith('userRegister', {
+            const response = await userLogin({
+              url: 'auth/register',
               data: {
                 full_name: this.register.name,
                 phone_number: this.register.phone_number,
@@ -355,7 +352,6 @@ export default {
                 email: this.register.email,
               },
             })
-            console.log(this.$auth.loggedIn, this.$store.$auth)
             console.log(response)
             if (response.status === 200) {
               const { access_token, refresh_token } = response.data
@@ -381,9 +377,9 @@ export default {
                 )
               }
               this.closeRegister()
+              this.$toast(this.$t('register.success.register'))
               await this.postCarts()
               await this.postWishlists()
-              console.log('this.$route.name', this.$route.name)
             }
           } catch (err) {
             console.log(err)
@@ -401,6 +397,11 @@ export default {
           }
           if (this.register.phone_number.length < 12) {
             this.isPhoneNumber = true
+          }
+          if (!this.register.checked) {
+            this.isTearmsOfServices = true
+          } else {
+            this.isTearmsOfServices = false
           }
         }
       }
@@ -442,7 +443,6 @@ export default {
           }
         }
       }
-      console.log(products)
       try {
         const res = (
           await productAdd({
@@ -451,7 +451,6 @@ export default {
             accessToken: `Bearer ${cart?.auth?.accessToken}`,
           })
         ).data
-        console.log('productAdd', res)
       } catch (error) {
         console.log(error)
       }
@@ -470,13 +469,10 @@ export default {
           { product_ids: wishlists },
           {
             headers: {
-              Authorization: cart.auth.accessToken,
+              Authorization: `Bearer ${cart?.auth?.accessToken}`,
             },
           }
         )
-        console.log(status)
-        // if (status) {
-        // }
       } catch (e) {
         console.log(e)
       }

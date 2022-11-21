@@ -25,7 +25,7 @@ export default {
       default: () => {},
     },
     totalPrice: {
-      type: String,
+      type: [String, Number],
       default: () => '',
     },
   },
