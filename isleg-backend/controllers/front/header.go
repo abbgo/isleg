@@ -15,6 +15,11 @@ type HeaderData struct {
 	Categories        []backController.ResultCategory `json:"categories"`
 }
 
+// GetHeaderData funksiyadan asakdaky maglumatlar alynyar:
+// firmanyn logasy we favicony , yagny sazlamalaryn maglumatlary
+// header - in terjimesi
+// dillerin gysga ady we suraty
+// kategoriyalar
 func GetHeaderData(c *gin.Context) {
 
 	langID, err := backController.CheckLanguage(c)

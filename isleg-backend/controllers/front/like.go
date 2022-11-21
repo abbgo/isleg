@@ -1,14 +1,11 @@
 package controllers
 
 import (
-	"fmt"
 	"github/abbgo/isleg/isleg-backend/config"
 	"github/abbgo/isleg/isleg-backend/models"
 	"math"
 	"net/http"
 	"strconv"
-
-	backController "github/abbgo/isleg/isleg-backend/controllers/back"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -16,17 +13,18 @@ import (
 )
 
 type LikeProduct struct {
-	ID                 uuid.UUID                 `json:"id"`
-	BrendID            uuid.UUID                 `json:"brend_id"`
-	Price              float64                   `json:"price"`
-	OldPrice           float64                   `json:"old_price"`
-	Percentage         float64                   `json:"percentage"`
-	Amount             uint                      `json:"amount"`
-	LimitAmount        uint                      `json:"limit_amount"`
-	IsNew              bool                      `json:"is_new"`
-	MainImage          models.MainImage          `json:"main_image"`
-	Images             []models.Images           `json:"images"`
-	TranslationProduct models.TranslationProduct `json:"translation"`
+	ID          uuid.UUID        `json:"id"`
+	BrendID     uuid.UUID        `json:"brend_id"`
+	Price       float64          `json:"price"`
+	OldPrice    float64          `json:"old_price"`
+	Percentage  float64          `json:"percentage"`
+	Amount      uint             `json:"amount"`
+	LimitAmount uint             `json:"limit_amount"`
+	IsNew       bool             `json:"is_new"`
+	MainImage   models.MainImage `json:"main_image"`
+	Images      []models.Images  `json:"images"`
+	// TranslationProduct models.TranslationProduct `json:"translation"`
+	Translations []map[string]models.TranslationProduct `json:"translations"`
 }
 
 type ProductID struct {
@@ -52,8 +50,6 @@ func AddLike(c *gin.Context) {
 			return
 		}
 	}()
-
-	langShortName := c.Param("lang")
 
 	statusStr := c.Query("status")
 	status, err := strconv.ParseBool(statusStr)
@@ -81,8 +77,6 @@ func AddLike(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, err.Error())
 		return
 	}
-
-	fmt.Println("GELEN DATA:", productIds.IDS)
 
 	if status {
 
@@ -180,7 +174,7 @@ func AddLike(c *gin.Context) {
 
 			}
 
-			products, err := GetLikes(langShortName, customerID)
+			products, err := GetLikes(customerID)
 			if err != nil {
 				c.JSON(http.StatusBadRequest, gin.H{
 					"status":  false,
@@ -196,7 +190,7 @@ func AddLike(c *gin.Context) {
 
 		} else {
 
-			products, err := GetLikes(langShortName, customerID)
+			products, err := GetLikes(customerID)
 			if err != nil {
 				c.JSON(http.StatusBadRequest, gin.H{
 					"status":  false,
@@ -428,22 +422,13 @@ func AddLike(c *gin.Context) {
 
 // }
 
-func GetLikes(langShortName, customerID string) ([]LikeProduct, error) {
+func GetLikes(customerID string) ([]LikeProduct, error) {
 
 	db, err := config.ConnDB()
 	if err != nil {
 		return []LikeProduct{}, err
 	}
 	defer db.Close()
-
-	// GET DATA FROM ROUTE PARAMETER
-	// langShortName := c.Param("lang")
-
-	// GET language id
-	langID, err := backController.GetLangID(langShortName)
-	if err != nil {
-		return []LikeProduct{}, err
-	}
 
 	rowsProduct, err := db.Query("SELECT p.id,p.brend_id,p.price,p.old_price,p.amount,p.limit_amount,p.is_new FROM products p LEFT JOIN likes l ON l.product_id = p.id WHERE l.customer_id = $1 AND l.deleted_at IS NULL AND p.deleted_at IS NULL", customerID)
 	if err != nil {
@@ -502,21 +487,47 @@ func GetLikes(langShortName, customerID string) ([]LikeProduct, error) {
 
 		product.Images = images
 
-		rowTrProduct, err := db.Query("SELECT name,description FROM translation_product WHERE lang_id = $1 AND product_id = $2", langID, product.ID)
+		rowsLang, err := db.Query("SELECT id,name_short FROM languages WHERE deleted_at IS NULL")
 		if err != nil {
 			return []LikeProduct{}, err
 		}
-		defer rowTrProduct.Close()
+		defer rowsLang.Close()
 
-		var trProduct models.TranslationProduct
+		var languages []models.Language
 
-		for rowTrProduct.Next() {
-			if err := rowTrProduct.Scan(&trProduct.Name, &trProduct.Description); err != nil {
+		for rowsLang.Next() {
+			var language models.Language
+
+			if err := rowsLang.Scan(&language.ID, &language.NameShort); err != nil {
 				return []LikeProduct{}, err
 			}
+
+			languages = append(languages, language)
 		}
 
-		product.TranslationProduct = trProduct
+		for _, v := range languages {
+
+			rowTrProduct, err := db.Query("SELECT name,description FROM translation_product WHERE lang_id = $1 AND product_id = $2", v.ID, product.ID)
+			if err != nil {
+				return []LikeProduct{}, err
+			}
+			defer rowTrProduct.Close()
+
+			var trProduct models.TranslationProduct
+
+			translation := make(map[string]models.TranslationProduct)
+
+			for rowTrProduct.Next() {
+				if err := rowTrProduct.Scan(&trProduct.Name, &trProduct.Description); err != nil {
+					return []LikeProduct{}, err
+				}
+			}
+
+			translation[v.NameShort] = trProduct
+
+			product.Translations = append(product.Translations, translation)
+
+		}
 
 		products = append(products, product)
 	}
@@ -526,8 +537,6 @@ func GetLikes(langShortName, customerID string) ([]LikeProduct, error) {
 }
 
 func GetCustomerLikes(c *gin.Context) {
-
-	langShortName := c.Param("lang")
 
 	custID, hasCustomer := c.Get("customer_id")
 	if !hasCustomer {
@@ -539,7 +548,7 @@ func GetCustomerLikes(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, "customer_id must be string")
 	}
 
-	products, err := GetLikes(langShortName, customerID)
+	products, err := GetLikes(customerID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -574,19 +583,6 @@ func GetLikedProductsWithoutCustomer(c *gin.Context) {
 			return
 		}
 	}()
-
-	// GET DATA FROM ROUTE PARAMETER
-	langShortName := c.Param("lang")
-
-	// GET language id
-	langID, err := backController.GetLangID(langShortName)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
 
 	var productIds ProductID
 	if err := c.BindJSON(&productIds); err != nil {
@@ -742,7 +738,7 @@ func GetLikedProductsWithoutCustomer(c *gin.Context) {
 
 		product.Images = images
 
-		rowTrProduct, err := db.Query("SELECT name,description FROM translation_product WHERE product_id = $1 AND lang_id = $2 AND deleted_at IS NULL", product.ID, langID)
+		rowsLang, err := db.Query("SELECT id,name_short FROM languages WHERE deleted_at IS NULL")
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
@@ -751,7 +747,7 @@ func GetLikedProductsWithoutCustomer(c *gin.Context) {
 			return
 		}
 		defer func() {
-			if err := rowTrProduct.Close(); err != nil {
+			if err := rowsLang.Close(); err != nil {
 				c.JSON(http.StatusBadRequest, gin.H{
 					"status":  false,
 					"message": err.Error(),
@@ -760,19 +756,61 @@ func GetLikedProductsWithoutCustomer(c *gin.Context) {
 			}
 		}()
 
-		var trProduct models.TranslationProduct
+		var languages []models.Language
 
-		for rowTrProduct.Next() {
-			if err := rowTrProduct.Scan(&trProduct.Name, &trProduct.Description); err != nil {
+		for rowsLang.Next() {
+			var language models.Language
+
+			if err := rowsLang.Scan(&language.ID, &language.NameShort); err != nil {
 				c.JSON(http.StatusBadRequest, gin.H{
 					"status":  false,
 					"message": err.Error(),
 				})
 				return
 			}
+
+			languages = append(languages, language)
 		}
 
-		product.TranslationProduct = trProduct
+		for _, v := range languages {
+
+			rowTrProduct, err := db.Query("SELECT name,description FROM translation_product WHERE product_id = $1 AND lang_id = $2 AND deleted_at IS NULL", product.ID, v.ID)
+			if err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+			defer func() {
+				if err := rowTrProduct.Close(); err != nil {
+					c.JSON(http.StatusBadRequest, gin.H{
+						"status":  false,
+						"message": err.Error(),
+					})
+					return
+				}
+			}()
+
+			var trProduct models.TranslationProduct
+
+			translation := make(map[string]models.TranslationProduct)
+
+			for rowTrProduct.Next() {
+				if err := rowTrProduct.Scan(&trProduct.Name, &trProduct.Description); err != nil {
+					c.JSON(http.StatusBadRequest, gin.H{
+						"status":  false,
+						"message": err.Error(),
+					})
+					return
+				}
+			}
+
+			translation[v.NameShort] = trProduct
+
+			product.Translations = append(product.Translations, translation)
+
+		}
 
 		products = append(products, product)
 	}

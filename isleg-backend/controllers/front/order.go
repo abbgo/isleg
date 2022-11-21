@@ -97,6 +97,8 @@ func ToOrder(c *gin.Context) {
 		return
 	}
 
+	// haryt sargyt etyan musderi on bazada barmy ya-da yokmy sony bilmek ucin order.PhoneNumber telefon belgi boyunca sol musderini
+	// bazadan gozletyas
 	rowCustomer, err := db.Query("SELECT id,phone_number FROM customers WHERE phone_number = $1 AND deleted_at IS NULL", order.PhoneNumber)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -128,7 +130,8 @@ func ToOrder(c *gin.Context) {
 		}
 	}
 
-	if customerPhoneNumber != "" {
+	if customerPhoneNumber != "" { // eger musderi on bazada bar bolsa onda , yene-de frontdan gelen order.Address musderinin
+		// adresi on bazada barmy ya-da yokmy sony barlayas
 
 		rowsCustomerAddress, err := db.Query("SELECT address FROM customer_address WHERE customer_id = $1 AND address = $2 AND deleted_at IS NULL", customerID, order.Address)
 		if err != nil {
@@ -160,7 +163,8 @@ func ToOrder(c *gin.Context) {
 			}
 		}
 
-		if customerAddress == "" {
+		if customerAddress == "" { // eger musderinin adresi bazada yok bolsa onda gelen order.Address adresi sol musdera
+			// taze adres hokmunde baza yazdyryas
 
 			resultCustomerAddres, err := db.Query("INSERT INTO customer_address (customer_id,address,is_active) VALUES ($1,$2,$3)", customerID, order.Address, false)
 			if err != nil {
@@ -182,7 +186,7 @@ func ToOrder(c *gin.Context) {
 
 		}
 
-	} else {
+	} else { // bu yerde bolsa eger musderi bazada yok bolsa , onda musderini baza gosyas
 
 		resultCustomer, err := db.Query("INSERT INTO customers (full_name,phone_number,is_register) VALUES ($1,$2,$3) RETURNING id", order.FullName, order.PhoneNumber, false)
 		if err != nil {
@@ -214,6 +218,7 @@ func ToOrder(c *gin.Context) {
 			}
 		}
 
+		// musderi baza gosulandan son bolsa sol musderinin adresini baza gosyas
 		resultCustomerAddress, err := db.Query("INSERT INTO customer_address (customer_id,address,is_active) VALUES ($1,$2,$3)", customer_id, order.Address, false)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
@@ -236,6 +241,8 @@ func ToOrder(c *gin.Context) {
 
 	}
 
+	// musderinin baza bilen barlag isleri gutarandan son musderinin sargydyny baza gosyas we
+	// gosulan sargydyn id - sini alyarys, ordered_prodcuts tablisa ucin
 	resultOrders, err := db.Query("INSERT INTO orders (customer_id,customer_mark,order_time,payment_type,total_price,shipping_price,address) VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING id", customerID, order.CustomerMark, order.OrderTime, order.PaymentType, order.TotalPrice, order.ShippingPrice, order.Address)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -266,8 +273,11 @@ func ToOrder(c *gin.Context) {
 		}
 	}
 
+	// edilen sargyt baza gosulandan son sol sargyda degisli harytlary baza gosyas
 	for _, v := range order.Products {
 
+		// eger gelyan harydyn mukdary 1 - den kici bolsa
+		// ondan yzyna error ugratyas. Sebabi 0 mukdarda haryt sargyt edip bolmayar
 		if v.QuantityOfProduct < 1 {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
@@ -276,6 +286,7 @@ func ToOrder(c *gin.Context) {
 			return
 		}
 
+		// gelen product_id boyunca sol haryt bazadaky harytlaryn arasynda barmy ya-da yokmy sony barlayas
 		rowProduct, err := db.Query("SELECT id FROM products WHERE id = $1 AND deleted_at IS NULL", v.ProductID)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
@@ -306,6 +317,8 @@ func ToOrder(c *gin.Context) {
 			}
 		}
 
+		// eger sargyt edilen haryt bazada yok bolsa , onda yzyna error iberyas/
+		// sebabi bazada yok bolan harydy sargyt edip bolmayar
 		if product_id == "" {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
@@ -314,6 +327,7 @@ func ToOrder(c *gin.Context) {
 			return
 		}
 
+		// harydyn barlaglary gutarandan son bolsa sargyt edilen harytlary ordered_products tablisa gosyas
 		resultOrderedProduct, err := db.Query("INSERT INTO ordered_products (product_id,quantity_of_product,order_id) VALUES ($1,$2,$3)", v.ProductID, v.QuantityOfProduct, order_id)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
@@ -332,6 +346,8 @@ func ToOrder(c *gin.Context) {
 			}
 		}()
 
+		// haryt ordered_products tablisa gosulandan son products tablisadan sargyt edilen
+		// harytlaryn mukdaryny azaltyas
 		resultProduct, err := db.Query("UPDATE products SET amount = amount - $1 WHERE id = $2", v.QuantityOfProduct, v.ProductID)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
@@ -352,6 +368,7 @@ func ToOrder(c *gin.Context) {
 
 	}
 
+	// harytlar sargyt edilenden son sargyt eden musderinin sebedindaki harytlary ayyryas
 	resultCart, err := db.Query("DELETE FROM cart WHERE customer_id = $1", customerID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -370,6 +387,7 @@ func ToOrder(c *gin.Context) {
 		}
 	}()
 
+	// excel fayly doldurmak ucin bazadan firmanyn telefon belgisini almaly
 	rowCompanyPhone, err := db.Query("SELECT phone FROM company_phone ORDER BY created_at DESC LIMIT 1")
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -400,6 +418,7 @@ func ToOrder(c *gin.Context) {
 		}
 	}
 
+	// excel fayly doldurmak ucin firmanyn email adresini we instagram sahypasyny bazadan almaly
 	rowCompanySetting, err := db.Query("SELECT email,instagram FROM company_setting ORDER BY created_at DESC LIMIT 1")
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -430,6 +449,7 @@ func ToOrder(c *gin.Context) {
 		}
 	}
 
+	// excel fayly doldurmak ucin edilen sargydyn maglumatlaryny bazadan almaly
 	rowOrder, err := db.Query("SELECT order_number,TO_CHAR(created_at,'DD.MM.YYYY HH24:MI'),order_time,customer_mark,total_price,shipping_price,payment_type FROM orders WHERE id = $1 AND deleted_at IS NULL", order_id)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -460,6 +480,7 @@ func ToOrder(c *gin.Context) {
 		}
 	}
 
+	// excel fayly doldurmak ucin sargyt eden musderinin maglumatlaryny bazadan almaly
 	rowsCustomer, err := db.Query("SELECT full_name,phone_number FROM customers WHERE id = $1 AND deleted_at IS NULL", customerID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -490,6 +511,7 @@ func ToOrder(c *gin.Context) {
 		}
 	}
 
+	// excel fayly doldurmak ucin sargyt edilen harytlary bazadan almaly
 	rowsOrderedProducts, err := db.Query("SELECT product_id,quantity_of_product FROM ordered_products WHERE order_id = $1 AND deleted_at IS NULL", order_id)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -591,6 +613,7 @@ func ToOrder(c *gin.Context) {
 		products = append(products, product)
 	}
 
+	// dolduryljak excel fayly acmaly
 	f, err := excelize.OpenFile("./uploads/orders/order.xlsx")
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -610,6 +633,7 @@ func ToOrder(c *gin.Context) {
 		}
 	}()
 
+	// excel fayly maglumatlar bilen doldurmaly
 	f.SetCellValue("Лист1", "c1", "Telefon: "+companyPhone)
 	f.SetCellValue("Лист1", "c2", "IMO: "+companyPhone)
 	f.SetCellValue("Лист1", "c3", "Instagram: "+instagram)
@@ -624,75 +648,76 @@ func ToOrder(c *gin.Context) {
 	f.SetCellValue("Лист1", "b11", "Toleg sekili: "+sargyt.PaymentType)
 	f.SetCellValue("Лист1", "b12", "Eltip bermek hyzmaty: "+strconv.FormatFloat(pkg.RoundFloat(sargyt.ShippingPrice, 2), 'f', -1, 64))
 
+	style, err := f.NewStyle(&excelize.Style{
+		Border: []excelize.Border{
+			{Type: "left", Color: "#000000", Style: 1},
+			{Type: "top", Color: "#000000", Style: 1},
+			{Type: "bottom", Color: "#000000", Style: 1},
+			{Type: "right", Color: "#000000", Style: 1},
+		},
+		Font: &excelize.Font{
+			Bold:   false,
+			Italic: false,
+			Family: "Calibri",
+			Size:   9,
+			Color:  "#000000",
+		},
+		Alignment: &excelize.Alignment{
+			Horizontal: "center",
+		},
+	})
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	style2, err := f.NewStyle(&excelize.Style{
+		Border: []excelize.Border{
+			{Type: "left", Color: "#000000", Style: 1},
+			{Type: "top", Color: "#000000", Style: 1},
+			{Type: "bottom", Color: "#000000", Style: 1},
+			{Type: "right", Color: "#000000", Style: 1},
+		},
+		Font: &excelize.Font{
+			Bold:   false,
+			Italic: false,
+			Family: "Calibri",
+			Size:   9,
+			Color:  "#000000",
+		},
+		Alignment: &excelize.Alignment{
+			Horizontal: "left",
+		},
+	})
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	style1, err := f.NewStyle(&excelize.Style{
+		Border: []excelize.Border{
+			{Type: "left", Color: "#000000", Style: 1},
+		},
+	})
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	// sargyt edilen harytlar excel fayla yazdyrylyar
 	for i := 0; i < len(products); i++ {
 
 		if err = f.InsertRow("Лист1", 16); err != nil {
 			log.Fatal(err)
-		}
-
-		style, err := f.NewStyle(&excelize.Style{
-			Border: []excelize.Border{
-				{Type: "left", Color: "#000000", Style: 1},
-				{Type: "top", Color: "#000000", Style: 1},
-				{Type: "bottom", Color: "#000000", Style: 1},
-				{Type: "right", Color: "#000000", Style: 1},
-			},
-			Font: &excelize.Font{
-				Bold:   false,
-				Italic: false,
-				Family: "Calibri",
-				Size:   9,
-				Color:  "#000000",
-			},
-			Alignment: &excelize.Alignment{
-				Horizontal: "center",
-			},
-		})
-		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-
-		style2, err := f.NewStyle(&excelize.Style{
-			Border: []excelize.Border{
-				{Type: "left", Color: "#000000", Style: 1},
-				{Type: "top", Color: "#000000", Style: 1},
-				{Type: "bottom", Color: "#000000", Style: 1},
-				{Type: "right", Color: "#000000", Style: 1},
-			},
-			Font: &excelize.Font{
-				Bold:   false,
-				Italic: false,
-				Family: "Calibri",
-				Size:   9,
-				Color:  "#000000",
-			},
-			Alignment: &excelize.Alignment{
-				Horizontal: "left",
-			},
-		})
-		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-
-		style1, err := f.NewStyle(&excelize.Style{
-			Border: []excelize.Border{
-				{Type: "left", Color: "#000000", Style: 1},
-			},
-		})
-		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
 		}
 
 		if err := f.MergeCell("Лист1", "a16", "b16"); err != nil {
@@ -743,14 +768,17 @@ func ToOrder(c *gin.Context) {
 
 	}
 
+	// sargyt edilen harytlaryn jemi bahasy we sargydyn jemi bahasy excel fayla yazdyrylyar
 	f.SetCellValue("Лист1", "d"+strconv.Itoa(17+counter), totalPrice)
 	f.SetCellValue("Лист1", "b13", "Jemi: "+strconv.FormatFloat(pkg.RoundFloat(sargyt.TotalPrice, 2), 'f', -1, 64))
 
+	// tayyar bolan excel fayl uploads papka yazdyrylyar
 	if err := f.SaveAs("./uploads/orders/" + strconv.Itoa(int(sargyt.OrderNumber)) + ".xlsx"); err != nil {
 		c.JSON(http.StatusBadRequest, err.Error())
 		return
 	}
 
+	// excel fayl tayyar bolanson sargydyn fayly hokmunde baza yazdyrylyar
 	resultOrderUpdate, err := db.Query("UPDATE orders SET excel = $1 WHERE id = $2", "uploads/orders/"+strconv.Itoa(int(sargyt.OrderNumber))+".xlsx", order_id)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -1139,7 +1167,6 @@ func GetOrders(c *gin.Context) {
 					return
 				}
 			}
-			product.TranslationProduct = trProduct
 
 			products = append(products, product)
 
@@ -1274,19 +1301,6 @@ func GetCustomerOrders(c *gin.Context) {
 	customerID, ok := custID.(string)
 	if !ok {
 		c.JSON(http.StatusBadRequest, "customer_id must be string")
-	}
-
-	// GET DATA FROM ROUTE PARAMETER
-	langShortName := c.Param("lang")
-
-	// GET language id
-	langID, err := backController.GetLangID(langShortName)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
 	}
 
 	// get limit from param
@@ -1561,7 +1575,7 @@ func GetCustomerOrders(c *gin.Context) {
 
 			product.Images = images
 
-			rowTrProduct, err := db.Query("SELECT name,description FROM translation_product WHERE product_id = $1 AND lang_id = $2 AND deleted_at IS NULL", product.ID, langID)
+			rowsLang, err := db.Query("SELECT id,name_short FROM languages WHERE deleted_at IS NULL")
 			if err != nil {
 				c.JSON(http.StatusBadRequest, gin.H{
 					"status":  false,
@@ -1570,7 +1584,7 @@ func GetCustomerOrders(c *gin.Context) {
 				return
 			}
 			defer func() {
-				if err := rowTrProduct.Close(); err != nil {
+				if err := rowsLang.Close(); err != nil {
 					c.JSON(http.StatusBadRequest, gin.H{
 						"status":  false,
 						"message": err.Error(),
@@ -1579,18 +1593,61 @@ func GetCustomerOrders(c *gin.Context) {
 				}
 			}()
 
-			var trProduct models.TranslationProduct
+			var languages []models.Language
 
-			for rowTrProduct.Next() {
-				if err := rowTrProduct.Scan(&trProduct.Name, &trProduct.Description); err != nil {
+			for rowsLang.Next() {
+				var language models.Language
+
+				if err := rowsLang.Scan(&language.ID, &language.NameShort); err != nil {
 					c.JSON(http.StatusBadRequest, gin.H{
 						"status":  false,
 						"message": err.Error(),
 					})
 					return
 				}
+
+				languages = append(languages, language)
 			}
-			product.TranslationProduct = trProduct
+
+			for _, v := range languages {
+
+				rowTrProduct, err := db.Query("SELECT name,description FROM translation_product WHERE product_id = $1 AND lang_id = $2 AND deleted_at IS NULL", product.ID, v.ID)
+				if err != nil {
+					c.JSON(http.StatusBadRequest, gin.H{
+						"status":  false,
+						"message": err.Error(),
+					})
+					return
+				}
+				defer func() {
+					if err := rowTrProduct.Close(); err != nil {
+						c.JSON(http.StatusBadRequest, gin.H{
+							"status":  false,
+							"message": err.Error(),
+						})
+						return
+					}
+				}()
+
+				var trProduct models.TranslationProduct
+
+				translation := make(map[string]models.TranslationProduct)
+
+				for rowTrProduct.Next() {
+					if err := rowTrProduct.Scan(&trProduct.Name, &trProduct.Description); err != nil {
+						c.JSON(http.StatusBadRequest, gin.H{
+							"status":  false,
+							"message": err.Error(),
+						})
+						return
+					}
+				}
+
+				translation[v.NameShort] = trProduct
+
+				product.Translations = append(product.Translations, translation)
+
+			}
 
 			products = append(products, product)
 
@@ -1628,19 +1685,6 @@ func GetOrderedProductsWithoutCustomer(c *gin.Context) {
 			return
 		}
 	}()
-
-	// GET DATA FROM ROUTE PARAMETER
-	langShortName := c.Param("lang")
-
-	// GET language id
-	langID, err := backController.GetLangID(langShortName)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
 
 	var productIds ProductID
 	if err := c.BindJSON(&productIds); err != nil {
@@ -1798,7 +1842,7 @@ func GetOrderedProductsWithoutCustomer(c *gin.Context) {
 
 		product.Images = images
 
-		rowTrProduct, err := db.Query("SELECT name,description FROM translation_product WHERE product_id = $1 AND lang_id = $2 AND deleted_at IS NULL", product.ID, langID)
+		rowsLang, err := db.Query("SELECT id,name_short FROM languages WHERE deleted_at IS NULL")
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
@@ -1807,7 +1851,7 @@ func GetOrderedProductsWithoutCustomer(c *gin.Context) {
 			return
 		}
 		defer func() {
-			if err := rowTrProduct.Close(); err != nil {
+			if err := rowsLang.Close(); err != nil {
 				c.JSON(http.StatusBadRequest, gin.H{
 					"status":  false,
 					"message": err.Error(),
@@ -1816,19 +1860,61 @@ func GetOrderedProductsWithoutCustomer(c *gin.Context) {
 			}
 		}()
 
-		var trProduct models.TranslationProduct
+		var languages []models.Language
 
-		for rowTrProduct.Next() {
-			if err := rowTrProduct.Scan(&trProduct.Name, &trProduct.Description); err != nil {
+		for rowsLang.Next() {
+			var language models.Language
+
+			if err := rowsLang.Scan(&language.ID, &language.NameShort); err != nil {
 				c.JSON(http.StatusBadRequest, gin.H{
 					"status":  false,
 					"message": err.Error(),
 				})
 				return
 			}
+
+			languages = append(languages, language)
 		}
 
-		product.TranslationProduct = trProduct
+		for _, v := range languages {
+
+			rowTrProduct, err := db.Query("SELECT name,description FROM translation_product WHERE product_id = $1 AND lang_id = $2 AND deleted_at IS NULL", product.ID, v.ID)
+			if err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+			defer func() {
+				if err := rowTrProduct.Close(); err != nil {
+					c.JSON(http.StatusBadRequest, gin.H{
+						"status":  false,
+						"message": err.Error(),
+					})
+					return
+				}
+			}()
+
+			var trProduct models.TranslationProduct
+
+			translation := make(map[string]models.TranslationProduct)
+
+			for rowTrProduct.Next() {
+				if err := rowTrProduct.Scan(&trProduct.Name, &trProduct.Description); err != nil {
+					c.JSON(http.StatusBadRequest, gin.H{
+						"status":  false,
+						"message": err.Error(),
+					})
+					return
+				}
+			}
+
+			translation[v.NameShort] = trProduct
+
+			product.Translations = append(product.Translations, translation)
+
+		}
 
 		products = append(products, product)
 	}

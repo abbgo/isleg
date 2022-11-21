@@ -39,17 +39,18 @@ type Category struct {
 }
 
 type Product struct {
-	ID          string                    `json:"id"`
-	Price       float64                   `json:"price"`
-	OldPrice    float64                   `json:"old_price"`
-	Percentage  float64                   `json:"percentage"`
-	MainImage   models.MainImage          `json:"main_image"`
-	Images      []models.Images           `json:"images"`
-	Brend       Brend                     `json:"brend"`
-	LimitAmount int                       `json:"limit_amount"`
-	Amount      int                       `json:"amount"`
-	IsNew       bool                      `json:"is_new"`
-	Translation models.TranslationProduct `json:"translation"`
+	ID          string           `json:"id"`
+	Price       float64          `json:"price"`
+	OldPrice    float64          `json:"old_price"`
+	Percentage  float64          `json:"percentage"`
+	MainImage   models.MainImage `json:"main_image"`
+	Images      []models.Images  `json:"images"`
+	Brend       Brend            `json:"brend"`
+	LimitAmount int              `json:"limit_amount"`
+	Amount      int              `json:"amount"`
+	IsNew       bool             `json:"is_new"`
+	// Translation models.TranslationProduct `json:"translation"`
+	Translations []map[string]models.TranslationProduct `json:"translations"`
 }
 
 type Brend struct {
@@ -1660,7 +1661,7 @@ func GetOneCategoryWithProducts(c *gin.Context) {
 					}
 				}
 
-				rowTrProduct, err := db.Query("SELECT name,description FROM translation_product WHERE lang_id = $1 AND product_id = $2 AND deleted_at IS NULL", langID, product.ID)
+				rowsLang, err := db.Query("SELECT id,name_short FROM languages WHERE deleted_at IS NULL")
 				if err != nil {
 					c.JSON(http.StatusBadRequest, gin.H{
 						"status":  false,
@@ -1669,7 +1670,7 @@ func GetOneCategoryWithProducts(c *gin.Context) {
 					return
 				}
 				defer func() {
-					if err := rowTrProduct.Close(); err != nil {
+					if err := rowsLang.Close(); err != nil {
 						c.JSON(http.StatusBadRequest, gin.H{
 							"status":  false,
 							"message": err.Error(),
@@ -1678,19 +1679,61 @@ func GetOneCategoryWithProducts(c *gin.Context) {
 					}
 				}()
 
-				var trProduct models.TranslationProduct
+				var languages []models.Language
 
-				for rowTrProduct.Next() {
-					if err := rowTrProduct.Scan(&trProduct.Name, &trProduct.Description); err != nil {
+				for rowsLang.Next() {
+					var language models.Language
+
+					if err := rowsLang.Scan(&language.ID, &language.NameShort); err != nil {
 						c.JSON(http.StatusBadRequest, gin.H{
 							"status":  false,
 							"message": err.Error(),
 						})
 						return
 					}
+
+					languages = append(languages, language)
 				}
 
-				product.Translation = trProduct
+				for _, v := range languages {
+
+					rowTrProduct, err := db.Query("SELECT name,description FROM translation_product WHERE lang_id = $1 AND product_id = $2 AND deleted_at IS NULL", v.ID, product.ID)
+					if err != nil {
+						c.JSON(http.StatusBadRequest, gin.H{
+							"status":  false,
+							"message": err.Error(),
+						})
+						return
+					}
+					defer func() {
+						if err := rowTrProduct.Close(); err != nil {
+							c.JSON(http.StatusBadRequest, gin.H{
+								"status":  false,
+								"message": err.Error(),
+							})
+							return
+						}
+					}()
+
+					var trProduct models.TranslationProduct
+
+					translation := make(map[string]models.TranslationProduct)
+
+					for rowTrProduct.Next() {
+						if err := rowTrProduct.Scan(&trProduct.Name, &trProduct.Description); err != nil {
+							c.JSON(http.StatusBadRequest, gin.H{
+								"status":  false,
+								"message": err.Error(),
+							})
+							return
+						}
+					}
+
+					translation[v.NameShort] = trProduct
+
+					product.Translations = append(product.Translations, translation)
+
+				}
 
 				product.MainImage = mainImage
 
