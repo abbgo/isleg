@@ -876,46 +876,46 @@ func GetLikedOrOrderedProductsWithoutCustomer(c *gin.Context) {
 	}
 
 	// front - dan gelen id - ler prodcuts tablisada barmy ya-da yokmy sol barlanyar
-	for _, v := range productIds.IDS {
-		rowProduct, err := db.Query("SELECT id FROM products WHERE id = $1 AND deleted_at IS NULL", v)
-		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-		defer func() {
-			if err := rowProduct.Close(); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
-				return
-			}
-		}()
+	// for _, v := range productIds.IDS {
+	// 	rowProduct, err := db.Query("SELECT id FROM products WHERE id = $1 AND deleted_at IS NULL", v)
+	// 	if err != nil {
+	// 		c.JSON(http.StatusBadRequest, gin.H{
+	// 			"status":  false,
+	// 			"message": err.Error(),
+	// 		})
+	// 		return
+	// 	}
+	// 	defer func() {
+	// 		if err := rowProduct.Close(); err != nil {
+	// 			c.JSON(http.StatusBadRequest, gin.H{
+	// 				"status":  false,
+	// 				"message": err.Error(),
+	// 			})
+	// 			return
+	// 		}
+	// 	}()
 
-		var product_id string
+	// 	var product_id string
 
-		for rowProduct.Next() {
-			if err := rowProduct.Scan(&product_id); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
-				return
-			}
-		}
+	// 	for rowProduct.Next() {
+	// 		if err := rowProduct.Scan(&product_id); err != nil {
+	// 			c.JSON(http.StatusBadRequest, gin.H{
+	// 				"status":  false,
+	// 				"message": err.Error(),
+	// 			})
+	// 			return
+	// 		}
+	// 	}
 
-		// eger id products tablisada yok bolsa , onda yzyna yalnyslyk ugradylyar
-		if product_id == "" {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": "product not found",
-			})
-			return
-		}
-	}
+	// 	// eger id products tablisada yok bolsa , onda yzyna yalnyslyk ugradylyar
+	// 	if product_id == "" {
+	// 		c.JSON(http.StatusBadRequest, gin.H{
+	// 			"status":  false,
+	// 			"message": "product not found",
+	// 		})
+	// 		return
+	// 	}
+	// }
 
 	// front - dan gelen id - ler boyunca id - si gelen id den bolan harytlar yzyna ugradylyar
 	rowLikes, err := db.Query("SELECT id,brend_id,price,old_price,amount,limit_amount,is_new FROM products WHERE id = ANY($1) AND deleted_at IS NULL", pq.Array(productIds.IDS))

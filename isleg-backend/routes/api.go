@@ -423,8 +423,14 @@ func Routes() *gin.Engine {
 			// update customer address status
 			securedCustomer.PUT("/address", frontController.UpdateCustomerAddressStatus)
 
+			// add address to customer
+			securedCustomer.POST("/address", frontController.AddAddressToCustomer)
+
 			// update customer password
 			securedCustomer.PUT("/customer-password", frontController.UpdateCustomerPassword)
+
+			// add address to customer
+			securedCustomer.POST("/customer-password", frontController.UpdateCustomerPassword)
 
 		}
 
