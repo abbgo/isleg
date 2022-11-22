@@ -365,25 +365,33 @@ func Routes() *gin.Engine {
 		// ToOrder funksiya sargyt sebede gosulan harytlary sargyt etmek ucin ulanylyar
 		front.POST("/to-order", frontController.ToOrder)
 
-		// to order
+		// SendMail funksiya musderi habarlasmak sahypa girip hat yazanda firma hat ugratyar
 		front.POST("/send-mail", frontController.SendMail)
 
 		// get like products without customer by product id ->
 		// Eger musderi like - a haryt gosup sonam sol haryt bazadan ayrylan bolsa
 		// sony bildirmek ucin front - dan mana cookie - daki product_id - leri
-		// ugdurkdyryar we men yzyna sol id - leri product - lary ugratyan
-		front.POST("/likes-without-customer", frontController.GetLikedProductsWithoutCustomer)
+		// ugradyar we men yzyna sol id - leri product - lary ugratyan
 
 		// get order products without customer by product id ->
 		// Eger musderi sebede - e haryt gosup sonam sol haryt bazadan ayrylan bolsa
 		// sony bildirmek ucin front - dan mana cookie - daki product_id - leri
 		// ugdurkdyryar we men yzyna sol id - leri product - lary ugratyan
-		front.POST("/orders-without-customer", frontController.GetOrderedProductsWithoutCustomer)
+
+		front.POST("/likes-or-orders-without-customer", frontController.GetLikedOrOrderedProductsWithoutCustomer)
+
+		// get order products without customer by product id ->
+		// Eger musderi sebede - e haryt gosup sonam sol haryt bazadan ayrylan bolsa
+		// sony bildirmek ucin front - dan mana cookie - daki product_id - leri
+		// ugdurkdyryar we men yzyna sol id - leri product - lary ugratyan
+		// front.POST("/orders-without-customer", frontController.GetOrderedProductsWithoutCustomer)
 
 		securedCustomer := front.Group("/").Use(middlewares.Auth())
 		{
-			// add like if customer exists
-			securedCustomer.POST("/like", frontController.AddLike)
+			// AddLike funksiya musderinin tokeni bar bolan yagdayynda
+			// halanlarym sahypa haryt gosmak ucin ya-da halanlarym sahypadan
+			// haryt pozmak ucin ulanylyar
+			securedCustomer.POST("/like", frontController.AddOrRemoveLike)
 
 			// remove like if customer exists
 			// securedCustomer.POST("/like/:product_id", frontController.RemoveLike)
