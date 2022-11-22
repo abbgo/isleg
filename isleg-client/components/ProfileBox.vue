@@ -112,13 +112,10 @@ export default {
   methods: {
     logOutInSystem() {
       const cart = JSON.parse(localStorage.getItem('lorem'))
-      this.$auth.logout()
       cart.auth.accessToken = null
       cart.auth.refreshToken = null
       localStorage.setItem('lorem', JSON.stringify(cart))
       this.$emit('close')
-      console.log(this.$route.name)
-      this.$router.push({ name: this.$route.name })
     },
   },
 }

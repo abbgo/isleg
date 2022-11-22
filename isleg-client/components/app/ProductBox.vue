@@ -8,9 +8,7 @@
     </div>
     <div class="product__description">
       <p>
-        {{
-          getProduct && getProduct.translation && getProduct.translation.name
-        }}
+        {{ translationProductName(getProduct.translations) }}
       </p>
     </div>
     <div class="product__price">
@@ -19,7 +17,10 @@
         TMT
       </div>
       <div class="old__price" v-if="getProduct && getProduct.old_price > 0">
-        <span> {{ getProduct && getProduct.old_price }} TMT</span>
+        <span>
+          {{ getProduct && getProduct.old_price }}
+          TMT</span
+        >
         <span>-15%</span>
       </div>
     </div>
@@ -38,7 +39,9 @@
           />
         </svg>
       </button>
-      <p>{{ getProduct && getProduct.quantity }}</p>
+      <p>
+        {{ getProduct && getProduct.quantity }}
+      </p>
       <button @click.stop="basketAdd(getProduct)">
         <svg
           width="10"
@@ -87,9 +90,6 @@
       </svg>
     </div>
     <div class="product__new" v-if="getProduct && getProduct.is_new">täze</div>
-    <!-- <div class="product__sale" v-if="getProduct && getProduct.old_price > 0">
-      -15%
-    </div> -->
     <LazyPopUpProduct
       v-if="isProduct"
       :isProduct="isProduct"
@@ -105,9 +105,10 @@
 <script>
 import { mapGetters } from 'vuex'
 import observer from '@/mixins/observer'
+import translation from '@/mixins/translation'
 import { productAdd, productLike, getRefreshToken } from '@/api/user.api'
 export default {
-  mixins: [observer],
+  mixins: [observer, translation],
   props: {
     product: {
       type: Object,
@@ -127,10 +128,11 @@ export default {
   },
   computed: {
     ...mapGetters('products', ['imgURL', 'removedFromBasket']),
+    ...mapGetters('ui', ['isUserLoggined']),
     getProduct() {
-      const isServer = typeof window === 'undefined'
-      if (!isServer) {
+      if (this.isUserLoggined) {
         const cart = JSON.parse(localStorage.getItem('lorem'))
+        console.log('computed propertyyy')
         if (cart) {
           if (this.$route.name === `wishlist___${this.$i18n.locale}`) {
             this.isFavorite = this.product.is_favorite
@@ -183,6 +185,64 @@ export default {
           }
         } else {
           return this.product
+        }
+      } else {
+        const isServer = typeof window === 'undefined'
+        if (!isServer) {
+          const cart = JSON.parse(localStorage.getItem('lorem'))
+          if (cart) {
+            if (this.$route.name === `wishlist___${this.$i18n.locale}`) {
+              this.isFavorite = this.product.is_favorite
+              this.quantity = this.product.quantity
+              if (
+                this.quantity === this.product.limit_amount ||
+                this.quantity === this.product.amount
+              ) {
+                this.isDisabled = true
+              }
+              return this.product
+            } else {
+              if (cart?.cart || cart?.cart?.length > 0) {
+                const findProduct = cart.cart.find(
+                  (product) => product.id === this.product.id
+                )
+                if (!findProduct) {
+                  return this.product
+                } else {
+                  let totalCount = cart.cart.reduce((total, num) => {
+                    return total + num.quantity
+                  }, 0)
+                  this.quantity = findProduct.quantity
+                  this.isFavorite = findProduct.is_favorite
+                  this.$store.commit(
+                    'products/SET_PRODUCT_COUNT',
+                    totalCount == 0 ? null : totalCount
+                  )
+                  if (
+                    this.quantity === findProduct.limit_amount ||
+                    this.quantity === findProduct.amount
+                  ) {
+                    this.isDisabled = true
+                  }
+                  return findProduct
+                }
+              } else if (cart.wishlist) {
+                const findProduct = cart.wishlist.find(
+                  (product) => product.id === this.product.id
+                )
+                if (!findProduct) {
+                  return this.product
+                } else {
+                  this.isFavorite = findProduct.is_favorite
+                  return findProduct
+                }
+              } else {
+                return this.product
+              }
+            }
+          } else {
+            return this.product
+          }
         }
       }
     },
@@ -244,14 +304,14 @@ export default {
         )
       }
       console.log(cart, this.isFavorite, [data.id])
-      if (cart && cart?.auth?.accessToken && this.$auth.loggedIn) {
+      if (cart && cart?.auth?.accessToken) {
         try {
           const res = await this.$axios.$post(
             `/${this.$i18n.locale}/like?status=${this.isFavorite}`,
             { product_ids: [data.id] },
             {
               headers: {
-                Authorization: cart?.auth?.accessToken,
+                Authorization: `Bearer ${cart.auth.accessToken}`,
               },
             }
           )
@@ -293,7 +353,7 @@ export default {
                     { product_ids: [data.id] },
                     {
                       headers: {
-                        Authorization: cart?.auth?.accessToken,
+                        Authorization: `Bearer ${cart.auth.accessToken}`,
                       },
                     }
                   )
@@ -306,12 +366,10 @@ export default {
             } catch (error) {
               console.log('ref', error.response.status)
               if (error.response.status === 403) {
-                this.$auth.logout()
                 cart.auth.accessToken = null
                 cart.auth.refreshToken = null
                 localStorage.setItem('lorem', JSON.stringify(cart))
-                console.log(this.$route.name)
-                this.$router.push({ name: this.$route.name })
+                this.$router.push(this.localeLocation('/'))
               }
             }
           }
@@ -373,7 +431,7 @@ export default {
             })
           )
         }
-        if (cart && cart?.auth?.accessToken && this.$auth.loggedIn) {
+        if (cart && cart?.auth?.accessToken) {
           try {
             const res = (
               await productAdd({
@@ -439,12 +497,10 @@ export default {
               } catch (error) {
                 console.log('ref', error.response.status)
                 if (error.response.status === 403) {
-                  this.$auth.logout()
                   cart.auth.accessToken = null
                   cart.auth.refreshToken = null
                   localStorage.setItem('lorem', JSON.stringify(cart))
-                  console.log(this.$route.name)
-                  this.$router.push({ name: this.$route.name })
+                  this.$router.push(this.localeLocation('/'))
                 }
               }
             }
@@ -480,7 +536,7 @@ export default {
         this.quantity = 0
       }
       console.log(this.quantity)
-      if (cart && cart?.auth?.accessToken && this.$auth.loggedIn) {
+      if (cart && cart?.auth?.accessToken) {
         try {
           const res = (
             await productAdd({
@@ -546,12 +602,10 @@ export default {
             } catch (error) {
               console.log('ref', error.response.status)
               if (error.response.status === 403) {
-                this.$auth.logout()
                 cart.auth.accessToken = null
                 cart.auth.refreshToken = null
                 localStorage.setItem('lorem', JSON.stringify(cart))
-                console.log(this.$route.name)
-                this.$router.push({ name: this.$route.name })
+                this.$router.push(this.localeLocation('/'))
               }
             }
           }

@@ -115,13 +115,13 @@ export default {
       'categories',
     ]),
     withOutLocaleLang() {
-      return this.languages.filter(
-        (lang) => lang.name_short != this.$i18n.locale
+      return this.languages?.filter(
+        (lang) => lang.name_short != this.$i18n?.locale
       )
     },
     activeLang() {
-      const find = this.languages.find(
-        (lang) => lang.name_short == this.$i18n.locale
+      const find = this.languages?.find(
+        (lang) => lang.name_short == this.$i18n?.locale
       )
       return find
     },
@@ -186,7 +186,7 @@ export default {
     },
     async openPopUp() {
       const cart = await JSON.parse(localStorage.getItem('lorem'))
-      if (cart && cart?.auth?.accessToken && this.$auth.loggedIn) {
+      if (cart && cart?.auth?.accessToken) {
         this.isProfile = !this.isProfile
       } else {
         document.body.classList.add('_lock')

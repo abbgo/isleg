@@ -29,8 +29,8 @@ const SET_BASKET_PRODUCT_COUNT = (state, payload) => {
 const SET_REMOVED_FROM_BASKET = (state, payload) => {
   state.removedFromBasket = payload
 }
-const SET_PRODUCT_COUNT_WHEN_PAYMENT = (state) => {
-  state.productCount = null
+const SET_PRODUCT_COUNT_WHEN_PAYMENT = (state, payload) => {
+  state.productCount = payload
 }
 export default {
   SET_PRODUCTS_CATEGORIES,

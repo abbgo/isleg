@@ -61,20 +61,18 @@
           </div>
           <div class="product__datas">
             <h4 class="pop-up-product__title">
-              {{
-                productData &&
-                productData.translation &&
-                productData.translation.name
-              }}
+              {{ translationProductName(productData.translations) }}
             </h4>
             <p class="product__text">
-              {{
-                productData &&
-                productData.translation &&
-                productData.translation.description
-              }}
+              {{ translationProductDescription(productData.translations) }}
             </p>
-            <span class="old__price price-old"
+            <span
+              class="old__price price-old"
+              v-if="
+                productData &&
+                productData.old_price &&
+                productData.old_price > 0
+              "
               >{{ productData && productData.old_price }} TMT</span
             >
             <span class="new__price price-new"
@@ -142,7 +140,10 @@
 
 <script>
 import { mapGetters } from 'vuex'
+import translation from '@/mixins/translation'
+
 export default {
+  mixins: [translation],
   props: {
     isProduct: {
       type: Boolean,

@@ -13,7 +13,10 @@
           hasFirst ? paginationClasses.buttonDisable : ''
         }`"
       >
-        <s-icon icon="chevron-left" />
+        <span class="mdi"><img src="@/assets/img/chevron-left.svg" /></span>
+        <span class="mdi"
+          ><img src="@/assets/img/chevron-left-white.svg"
+        /></span>
       </button>
     </li>
 
@@ -54,7 +57,10 @@
           hasLast ? paginationClasses.buttonDisable : ''
         }`"
       >
-        <s-icon icon="chevron-right" />
+        <span class="mdi"><img src="@/assets/img/chevron-right.svg" /></span>
+        <span class="mdi"
+          ><img src="@/assets/img/chevron-right-white.svg"
+        /></span>
       </button>
     </li>
   </ul>
@@ -186,17 +192,16 @@ export default {
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .pagination {
   display: flex;
-  background: #e2f3d8;
-  border: 1px solid #8c8c8c;
+  background: #fff;
   border-radius: 4px;
-  padding: 9px;
-  // .pagination__item
+  padding: 8px;
+  margin-top: 35px;
   &__item {
     &:not(:last-child) {
-      margin-right: 4px;
+      margin-right: 5px;
     }
     &--active {
     }
@@ -211,27 +216,41 @@ export default {
     min-width: 24px;
     padding: 4px 5px;
     border-radius: 4px;
+    font-family: TTNormsPro;
     font-style: normal;
-    font-weight: 400;
-    font-size: 12px;
+    font-weight: 500;
+    font-size: 17px;
+    color: #1b3254;
     line-height: 15px;
     background-color: transparent;
     display: flex;
     justify-content: center;
     align-items: center;
-    color: var(--secondary);
     &:hover {
-      background-color: var(--primary);
-      color: var(--white);
+      background-color: #fd5e29;
+      color: #fff;
+      .mdi:nth-of-type(1) {
+        display: none;
+      }
+      .mdi:nth-of-type(2) {
+        display: block;
+      }
     }
     &--active {
-      background-color: var(--primary);
-      color: var(--white);
+      background-color: #fd5e29;
+      color: #fff;
     }
     &--disable {
-      background-color: transparent !important;
-      color: var(--secondary) !important;
+      // background-color: transparent !important;
+      color: #1b3254 !important;
     }
+  }
+  .mdi {
+    color: inherit;
+    display: flex;
+  }
+  .mdi:nth-of-type(2) {
+    display: none;
   }
 }
 </style>

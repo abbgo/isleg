@@ -2,13 +2,13 @@
   <div class="header__items">
     <span class="item___box dropdown">
       <span class="item__active">
-        <img :src="`${imgURL}/${activeLang.flag}`" alt="" />
+        <img :src="`${imgURL}/${activeLang && activeLang.flag}`" alt="" />
       </span>
       <span class="item__dropdown">
         <img
           v-for="(item, i) in withOutLocaleLang"
           :key="i"
-          :src="`${imgURL}/${item.flag}`"
+          :src="`${imgURL}/${item && item.flag}`"
           @click="$i18n.setLocale(item.name_short)"
           alt=""
         />
@@ -112,7 +112,6 @@ export default {
     $route: async function () {
       const cart = await JSON.parse(localStorage.getItem('lorem'))
       if (cart && cart?.cart) {
-        console.log('watch', cart)
         if (!this.productCount) {
           console.log('watch2', cart)
           this.total = cart.cart?.reduce((total, num) => {
@@ -122,7 +121,7 @@ export default {
       } else {
         console.log('watch3', cart)
         this.total = null
-        this.$store.commit('products/SET_PRODUCT_COUNT_WHEN_PAYMENT')
+        this.$store.commit('products/SET_PRODUCT_COUNT_WHEN_PAYMENT', null)
       }
     },
   },
@@ -140,8 +139,8 @@ export default {
       }
     },
   },
-  async mounted() {
-    const cart = await JSON.parse(localStorage.getItem('lorem'))
+  mounted() {
+    const cart = JSON.parse(localStorage.getItem('lorem'))
     if (cart && cart?.cart) {
       if (!this.productCount) {
         this.total = cart.cart?.reduce((total, num) => {
@@ -150,6 +149,7 @@ export default {
       }
     } else {
       this.total = null
+      this.$store.commit('products/SET_PRODUCT_COUNT_WHEN_PAYMENT', null)
     }
   },
   methods: {

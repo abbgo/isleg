@@ -8,3 +8,4 @@ export const getRefreshToken = ({ url, refreshToken }) =>
   request({ url: url, refreshToken: refreshToken })
 export const deleteAllProductsFromBasket = ({ url, accessToken }) =>
   request({ url: url, accessToken: accessToken })
+export const userLogin = ({ url, data }) => request({ url: url, data: data })

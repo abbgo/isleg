@@ -12,11 +12,7 @@
       />
     </div>
     <div class="product__chek-text">
-      <span>{{
-        getBasketProduct &&
-        getBasketProduct.translation &&
-        getBasketProduct.translation.name
-      }}</span>
+      <span> {{ translationProductName(getBasketProduct.translations) }}</span>
       <div class="new__price product__chek-new-price">
         {{ getBasketProduct && getBasketProduct.price }}
         TMT
@@ -72,10 +68,11 @@
 <script>
 import { mapGetters } from 'vuex'
 import observer from '@/mixins/observer'
+import translation from '@/mixins/translation'
 import { productAdd, getRefreshToken } from '@/api/user.api'
 
 export default {
-  mixins: [observer],
+  mixins: [observer, translation],
   props: {
     basketProduct: {
       type: Object,
@@ -142,7 +139,7 @@ export default {
           )
         }
         console.log(this.basketProductQuantity)
-        if (cart && cart?.auth?.accessToken && this.$auth.loggedIn) {
+        if (cart && cart?.auth?.accessToken) {
           try {
             const res = (
               await productAdd({
@@ -208,12 +205,10 @@ export default {
               } catch (error) {
                 console.log('ref', error.response.status)
                 if (error.response.status === 403) {
-                  this.$auth.logout()
                   cart.auth.accessToken = null
                   cart.auth.refreshToken = null
                   localStorage.setItem('lorem', JSON.stringify(cart))
-                  console.log(this.$route.name)
-                  this.$router.push({ name: this.$route.name })
+                  this.$router.push(this.localeLocation('/'))
                 }
               }
             }
@@ -243,7 +238,7 @@ export default {
         findProduct.quantity = this.basketProductQuantity
         localStorage.setItem('lorem', JSON.stringify(cart))
         console.log('else', this.basketProductQuantity)
-        if (cart && cart?.auth?.accessToken && this.$auth.loggedIn) {
+        if (cart && cart?.auth?.accessToken) {
           try {
             const res = (
               await productAdd({
@@ -309,12 +304,10 @@ export default {
               } catch (error) {
                 console.log('ref', error.response.status)
                 if (error.response.status === 403) {
-                  this.$auth.logout()
                   cart.auth.accessToken = null
                   cart.auth.refreshToken = null
                   localStorage.setItem('lorem', JSON.stringify(cart))
-                  console.log(this.$route.name)
-                  this.$router.push({ name: this.$route.name })
+                  this.$router.push(this.localeLocation('/'))
                 }
               }
             }

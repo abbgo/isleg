@@ -70,7 +70,7 @@
 
 <script>
 import { required, minLength } from 'vuelidate/lib/validators'
-import { productAdd } from '@/api/user.api'
+import { productAdd, userLogin } from '@/api/user.api'
 
 export default {
   props: {
@@ -140,15 +140,16 @@ export default {
       this.$v.$touch()
       if (this.signUp.phone_number.length >= 12) {
         this.disabled = true
+        const userData = {
+          phone_number: this.signUp.phone_number,
+          password: this.signUp.password,
+        }
         try {
-          let response = await this.$auth.loginWith('userLogin', {
-            data: {
-              phone_number: this.signUp.phone_number,
-              password: this.signUp.password,
-            },
+          let response = await userLogin({
+            url: 'auth/login',
+            data: userData,
           })
           console.log(response)
-          console.log(this.$auth.loggedIn)
           if (response.status === 200) {
             const { access_token, refresh_token } = response.data
             console.log(access_token, refresh_token)
@@ -174,14 +175,15 @@ export default {
             this.$toast(this.$t('register.success.logIn'))
             await this.postCarts()
             await this.postWishlists()
-            console.log('this.$route.name', this.$route.name)
-            this.$router.push({ name: this.$route.name })
+            this.$store.commit('ui/SET_USER_LOGGINED', true)
           }
         } catch (err) {
           console.log('err', err)
           if (err) {
             if (err?.response?.status == 401) {
               this.$toast(this.$t('register.phoneNumberOrPassValid'))
+            } else if (err?.response?.status === 400) {
+              this.$toast(this.$t('register.userDoesNotExist'))
             } else {
               this.$toast(this.$t('register.error'))
             }
@@ -209,9 +211,6 @@ export default {
     },
     async postCarts() {
       let products = []
-      let array = []
-      let wishlists = []
-      let newWishlists = []
       const cart = await JSON.parse(localStorage.getItem('lorem'))
       if (cart?.cart) {
         for (let i = 0; i < cart.cart.length; i++) {
@@ -222,8 +221,6 @@ export default {
             })
           }
         }
-        wishlists =
-          cart.cart.filter((product) => product.is_favorite === true) || []
       }
       console.log('wishlistsPPPPPPPP', products)
       try {
@@ -238,31 +235,31 @@ export default {
         if (res.status) {
           if (res.products) {
             if (res.products.length > 0) {
-              array = res.products.filter(
+              res.products = res.products.filter(
                 (item) =>
                   (item.quantity = item.quantity_of_product
                     ? item.quantity_of_product
                     : 0)
               )
-              for (let i = 0; i < array.length; i++) {
-                array[i]['is_favorite'] = false
+              for (let i = 0; i < res.products.length; i++) {
+                res.products[i]['is_favorite'] = false
               }
+              this.productsWhenUserSignUp = res.products
             }
+          } else {
+            this.productsWhenUserSignUp = []
           }
-          console.log('array', array)
-          console.log('wishlists>>', wishlists)
-          if (wishlists.length > 0) {
-            for (let i = 0; i < array.length; i++) {
-              for (let j = 0; j < wishlists.length; j++) {
-                if (array[i].id == wishlists[j].id) {
-                  console.log('(array[i] favorite', array[i])
-                  array[i]['is_favorite'] = true
-                }
-              }
-            }
-          }
-          console.log(array)
-          this.productsWhenUserSignUp = array
+          console.log('array', res.products)
+          //  if (wishlists.length > 0) {
+          //    for (let i = 0; i < res.products.length; i++) {
+          //      for (let j = 0; j < wishlists.length; j++) {
+          //        if (res.products[i].id == wishlists[j].id) {
+          //          console.log('(array[i] favorite', res.products[i])
+          //          res.products[i].is_favorite = true
+          //        }
+          //      }
+          //    }
+          //  }
         }
       } catch (error) {
         console.log(error)
@@ -271,8 +268,8 @@ export default {
     async postWishlists() {
       let wishlists = []
       let array = []
-      let withoutWishlists = []
-      let withWishlists = []
+      // let withoutWishlists = []
+      // let withWishlists = []
       const cart = await JSON.parse(localStorage.getItem('lorem'))
       if (cart?.cart) {
         wishlists = cart.cart
@@ -280,22 +277,23 @@ export default {
           .map((item) => item.id)
       }
       console.log('wishlists', wishlists)
-      withoutWishlists =
-        this.productsWhenUserSignUp.filter(
-          (product) => product.is_favorite === false
-        ) || []
-      withWishlists =
-        this.productsWhenUserSignUp.filter(
-          (product) => product.is_favorite === true
-        ) || []
-      console.log('withoutWishlists', withWishlists)
+      // withoutWishlists =
+      //   this.productsWhenUserSignUp.filter(
+      //     (product) => product.is_favorite === false
+      //   ) || []
+      // withWishlists =
+      //   this.productsWhenUserSignUp.filter(
+      //     (product) => product.is_favorite === true
+      //   ) || []
+      // console.log('withoutWishlists', withoutWishlists)
+      // console.log('withWishlists', withWishlists)
       try {
         const res = await this.$axios.$post(
           `/${this.$i18n.locale}/like?status=${true}`,
           { product_ids: wishlists },
           {
             headers: {
-              Authorization: cart.auth.accessToken,
+              Authorization: `Bearer ${cart?.auth?.accessToken}`,
             },
           }
         )
@@ -307,9 +305,23 @@ export default {
                 res.products[i]['quantity'] = 0
                 res.products[i]['is_favorite'] = true
               }
-              if (withWishlists.length > 0) {
+              if (this.productsWhenUserSignUp.length > 0) {
+                for (let i = 0; i < res.products.length; i++) {
+                  for (let j = 0; j < this.productsWhenUserSignUp.length; j++) {
+                    if (
+                      res.products[i].id == this.productsWhenUserSignUp[j].id
+                    ) {
+                      console.log(
+                        'this.productsWhenUserSignUp[j]',
+                        this.productsWhenUserSignUp[j]['is_favorite']
+                      )
+                      this.productsWhenUserSignUp[j]['is_favorite'] = true
+                    }
+                  }
+                }
                 let result = res.products.filter(
-                  (o1) => !withWishlists.some((o2) => o1.id === o2.id)
+                  (o1) =>
+                    !this.productsWhenUserSignUp.some((o2) => o1.id === o2.id)
                 )
                 console.log('result', result)
                 array = result
@@ -323,11 +335,11 @@ export default {
           console.log('array', array)
           if (cart && cart.cart) {
             // console.log('postWishlistsssssss', [...withoutWishlists, ...array])
-            cart.cart = [...withoutWishlists, ...withWishlists, ...array]
+            cart.cart = [...this.productsWhenUserSignUp, ...array]
             console.log(' cart.cart', cart.cart)
             localStorage.setItem('lorem', JSON.stringify(cart))
           } else {
-            cart['cart'] = [...withoutWishlists, ...withWishlists, ...array]
+            cart['cart'] = [...this.productsWhenUserSignUp, ...array]
             localStorage.setItem('lorem', JSON.stringify(cart))
           }
         }

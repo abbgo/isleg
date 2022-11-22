@@ -12,7 +12,7 @@ export default {
         rootMargin: '0px 0px -20px 0px',
         threshold: 1.0,
       } || {}
-    this.observer = new IntersectionObserver(async ([entry]) => {
+    this.observer = new IntersectionObserver(([entry]) => {
       if (!entry.isIntersecting) {
         return
       } else {
