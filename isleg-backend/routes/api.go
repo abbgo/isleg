@@ -388,7 +388,7 @@ func Routes() *gin.Engine {
 
 		securedCustomer := front.Group("/").Use(middlewares.Auth())
 		{
-			// AddLike funksiya musderinin tokeni bar bolan yagdayynda
+			// AddOrRemoveLike funksiya musderinin tokeni bar bolan yagdayynda
 			// halanlarym sahypa haryt gosmak ucin ya-da halanlarym sahypadan
 			// haryt pozmak ucin ulanylyar
 			securedCustomer.POST("/like", frontController.AddOrRemoveLike)
@@ -396,41 +396,49 @@ func Routes() *gin.Engine {
 			// remove like if customer exists
 			// securedCustomer.POST("/like/:product_id", frontController.RemoveLike)
 
-			// get like products if customer exists
+			// GetCustomerLikes funksiya frontdan token bar bolan yagdayynda
+			// musderinin halanlarym sahypasyna gosan harytlaryny getiryar
 			securedCustomer.GET("/likes", frontController.GetCustomerLikes)
 
-			// add product to cart
+			// AddCart funksiya sebede haryt gosmak ucin ulanylyar
+			// musderinin tokeni gelen yagdayynda
 			securedCustomer.POST("/add-cart", frontController.AddCart)
 
-			// get product of cart
+			// GetCustomerCartProducts funksiya musderinin sebedindaki harytlary fronda bermek ucin ulanylyar
+			// token bar bolan yagdayynda
 			securedCustomer.GET("/get-cart", frontController.GetCustomerCartProducts)
 
-			// remove product from cart
+			// RemoveCart funksiya musderinin sebedinden haryt pozmak ucin ulanylyar
+			// token bar bolan yagdayynda
 			securedCustomer.POST("/remove-cart", frontController.RemoveCart)
 
-			// get customer orders
+			// GetCustomerOrders funkisya musderinin bazadaky onki sargytlaryny
+			// getirip beryar. token bar bolan yagdayynda
 			securedCustomer.GET("/orders/:limit/:page", frontController.GetCustomerOrders)
 
-			// get customer orders
+			// GetCustomerAddresses funksiya musderinin ahli salgylaryny alyar
+			// token bar bolan yagdayynda
 			securedCustomer.GET("/addresses", frontController.GetCustomerAddresses)
 
-			// get customer informations
+			// GetCustomerInformation funksiya musderinin maglumatllaryny alyar
+			// token bar bolan yagdayynda
 			securedCustomer.GET("/my-information", frontController.GetCustomerInformation)
 
-			// update customer informations
+			// UpdateCustomerInformation funksiya musderinin maglumatlary uytgetmek
+			// ucin ulanylyar. token bar bolan yagdayynda
 			securedCustomer.PUT("/my-information", frontController.UpdateCustomerInformation)
 
-			// update customer address status
+			// UpdateCustomerAddressStatus funksiya musderinin salgysynyn aktiwligini uytgetyar
+			// musderi haryt sargyt edende haysy salgysyny ulanjak bolsa sony aktiwe edip goyar yaly
 			securedCustomer.PUT("/address", frontController.UpdateCustomerAddressStatus)
 
-			// add address to customer
+			// AddAddressToCustomer musderi ozune taze salgy gosup biler yaly yazylan funksiya
+			// token bar bolan yagdayynda
 			securedCustomer.POST("/address", frontController.AddAddressToCustomer)
 
-			// update customer password
+			// UpdateCustomerPassword funksiya musderinin parolyny uytgetmek ucin
+			// token bar bolan yagdayynda
 			securedCustomer.PUT("/customer-password", frontController.UpdateCustomerPassword)
-
-			// add address to customer
-			securedCustomer.POST("/customer-password", frontController.UpdateCustomerPassword)
 
 		}
 

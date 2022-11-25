@@ -43,44 +43,7 @@ func GetCustomerAddresses(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, "customer_id must be string")
 	}
 
-	rowCustomer, err := db.Query("SELECT id FROM customers WHERE id = $1 AND is_register = true AND deleted_at IS NULL", customerID)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-	defer func() {
-		if err := rowCustomer.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
-
-	var customer_id string
-
-	for rowCustomer.Next() {
-		if err := rowCustomer.Scan(&customer_id); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}
-
-	if customer_id == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": "customer not found",
-		})
-		return
-	}
-
+	// musderinin salgylaryny alyas bazadan
 	rowsAddress, err := db.Query("SELECT id,address,is_active FROM customer_address WHERE customer_id = $1 AND deleted_at IS NULL", customerID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -156,6 +119,7 @@ func UpdateCustomerAddressStatus(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, "customer_id must be string")
 	}
 
+	// musderide frontdan gelen id - li salgy barmy ya-da yokmy sony barlayas
 	rowCusomerAddress, err := db.Query("SELECT id FROM customer_address WHERE id = $1 AND deleted_at IS NULL", addressID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -186,6 +150,7 @@ func UpdateCustomerAddressStatus(c *gin.Context) {
 		}
 	}
 
+	// eger salgy yok bolsa yzyna yalnyslyk goyberyas
 	if address_id == "" {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -194,6 +159,7 @@ func UpdateCustomerAddressStatus(c *gin.Context) {
 		return
 	}
 
+	// salgy bar bolsada sol salgynyn statusyny update etyas
 	resultCustomerAddress, err := db.Query("UPDATE customer_address SET is_active = true WHERE id = $1", addressID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -212,6 +178,7 @@ func UpdateCustomerAddressStatus(c *gin.Context) {
 		}
 	}()
 
+	// gelen salgydan basga ahli salgylaryn statusyny false etyas
 	resultCustAddressIsActive, err := db.Query("UPDATE customer_address SET is_active = false WHERE id != $1 AND customer_id = $2", addressID, customerID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -276,6 +243,7 @@ func AddAddressToCustomer(c *gin.Context) {
 		return
 	}
 
+	// gosuljak bolyan salgy sol musderide on barmy ya-da yokmy sony barlayas
 	rowCusomerAddress, err := db.Query("SELECT id FROM customer_address WHERE address = $1 AND customer_id = $2 AND deleted_at IS NULL", address, customerID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -306,6 +274,7 @@ func AddAddressToCustomer(c *gin.Context) {
 		}
 	}
 
+	// eger salgy on bar bolsa onda yzyna musdera duydurys goyberyas
 	if address_id != "" {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -314,6 +283,7 @@ func AddAddressToCustomer(c *gin.Context) {
 		return
 	}
 
+	// eger salgy on sol musderide yok bolsa , onda sol musderinin salgylarynyn arasyna gosyas
 	resultCustomerAddress, err := db.Query("INSERT INTO customer_address (customer_id,address,is_active) VALUES ($1,$2,true)", customerID, address)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -332,6 +302,7 @@ func AddAddressToCustomer(c *gin.Context) {
 		}
 	}()
 
+	// gosulan salgyny aktiwe edip musdera degisli beyleki ahli salgylaryn statusynyn false etyas
 	resultCustAddressStatus, err := db.Query("UPDATE customer_address SET is_active = false WHERE address != $1 AND customer_id = $2", address, customerID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{

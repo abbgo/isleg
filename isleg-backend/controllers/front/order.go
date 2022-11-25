@@ -1343,46 +1343,7 @@ func GetCustomerOrders(c *gin.Context) {
 
 	var countOfOrders uint
 
-	rowCustomer, err := db.Query("SELECT id FROM customers WHERE id = $1 AND is_register = true AND deleted_at IS NULL", customerID)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-	defer func() {
-		if err := rowCustomer.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
-
-	var customer_id string
-
-	for rowCustomer.Next() {
-		if err := rowCustomer.Scan(&customer_id); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}
-
-	if customer_id == "" {
-		if err := rowCustomer.Scan(&customer_id); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": "customer not found",
-			})
-			return
-		}
-	}
-
+	// programmany ulanyp otyran musderinin sargytlarynyn sanyny alyas frontda pagination ucin
 	countOrders, err := db.Query("SELECT COUNT(id) FROM orders WHERE customer_id = $1", customerID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -1411,6 +1372,7 @@ func GetCustomerOrders(c *gin.Context) {
 		}
 	}
 
+	// musderinin sargytlaryny alyas bazadan
 	rowsOrders, err := db.Query("SELECT id,TO_CHAR(created_at, 'DD.MM.YYYY'),total_price FROM orders WHERE customer_id = $1 ORDER BY created_at ASC LIMIT $2 OFFSET $3", customerID, limit, offset)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{

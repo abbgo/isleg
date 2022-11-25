@@ -335,6 +335,7 @@ func GetCustomerInformation(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, "customer_id must be string")
 	}
 
+	// bazadan musderinin maglumatlary alynyar
 	rowCustomer, err := db.Query("SELECT id , full_name , phone_number , birthday , email FROM customers WHERE id = $1 AND is_register = true AND deleted_at IS NULL", customerID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -373,6 +374,7 @@ func GetCustomerInformation(c *gin.Context) {
 		return
 	}
 
+	// bazadan musderinin salgylary alynyar
 	rowsCustomerAddress, err := db.Query("SELECT id , address , is_active FROM customer_address WHERE deleted_at IS NULL AND customer_id = $1", customer.ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -453,6 +455,7 @@ func UpdateCustomerInformation(c *gin.Context) {
 		return
 	}
 
+	// musderinin  maglumatlaryny uytgetyar
 	resultCustomer, err := db.Query("UPDATE customers SET full_name = $1, phone_number = $2, email = $3, birthday = $4 WHERE id = $5", customer.FullName, customer.PhoneNumber, customer.Email, customer.Birthday, customerID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -510,6 +513,7 @@ func UpdateCustomerPassword(c *gin.Context) {
 
 	password := c.PostForm("password")
 
+	// parol update edilmanka paroly kotlayas
 	hashPassword, err := models.HashPassword(password)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -519,6 +523,7 @@ func UpdateCustomerPassword(c *gin.Context) {
 		return
 	}
 
+	// sonrada musderinin parolyny uytgetyas
 	resultCustomer, err := db.Query("UPDATE customers SET password = $1 WHERE id = $2", hashPassword, customerID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{

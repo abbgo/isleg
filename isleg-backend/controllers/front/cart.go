@@ -66,17 +66,21 @@ func AddCart(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, "customer_id must be string")
 	}
 
+	// frontdan maglumaty bind etyar
 	var cart []CartProduct
-
 	if err := c.BindJSON(&cart); err != nil {
 		c.JSON(http.StatusBadRequest, err.Error())
 		return
 	}
 
-	if len(cart) != 0 {
+	// frontdan maglumat gelipdirmi gelmandirmi sony barlayas
+	if len(cart) != 0 { // eger frontdan maglumatdan gelyan bolsa gelen harytlary sebede gosyas
 
 		for k, v := range cart {
 
+			// eger frontdan gelen harydyn mukdary 1 - den kici bolsa
+			// sol musderinin sol harydyny sebetden ayyryas , yagny mukdary nol bolan haryt sebetde durup bilmez
+			// sonun ucin eger musderi harydyn sanyny nol etse ony sebetdebn ayyryas
 			if v.QuantityOfProduct < 1 {
 				if err := DeleteCart(customerID, v.ProductID); err != nil {
 					c.JSON(http.StatusBadRequest, gin.H{
@@ -88,6 +92,8 @@ func AddCart(c *gin.Context) {
 				break
 			}
 
+			// bu yerde frontdan 1 haryt 2 gezek gaytalanyp gelipdirmi ya-da gelmandirmi
+			// sony barlayas. Eger 1 haryt 2 gezek gelen bolsa yzyna osibka yazyp ugartyas
 			for _, x := range cart[(k + 1):] {
 				if v.ProductID == x.ProductID {
 					c.JSON(http.StatusBadRequest, gin.H{
@@ -98,6 +104,7 @@ func AddCart(c *gin.Context) {
 				}
 			}
 
+			// bu yerde frontdan gelen haryt bazada barmy ya-da yokmy sol barlanyar
 			rowProduct, err := db.Query("SELECT id FROM products WHERE id = $1 AND deleted_at IS NULL", v.ProductID)
 			if err != nil {
 				c.JSON(http.StatusBadRequest, gin.H{
@@ -130,6 +137,8 @@ func AddCart(c *gin.Context) {
 
 			if product_id != "" {
 
+				// eger haryt bazada bar bolsa onda sol haryt programmany ulanyp otyran musderinin sebedinde barmy ya-da yok
+				// sony barlayas
 				rowCart, err := db.Query("SELECT product_id FROM cart WHERE customer_id = $1 AND product_id = $2 AND deleted_at IS NULL", customerID, v.ProductID)
 				if err != nil {
 					c.JSON(http.StatusBadRequest, gin.H{
@@ -162,6 +171,8 @@ func AddCart(c *gin.Context) {
 
 				if productId == "" {
 
+					// eger sol haryt programmany ulanyp otyran musderinin sebedinde yok bolsa
+					// sol harydy sol musderinin sebedine gosyas
 					resultCartInsert, err := db.Query("INSERT INTO cart (customer_id,product_id,quantity_of_product) VALUES ($1,$2,$3)", customerID, v.ProductID, v.QuantityOfProduct)
 					if err != nil {
 						c.JSON(http.StatusBadRequest, gin.H{
@@ -182,6 +193,8 @@ func AddCart(c *gin.Context) {
 
 				} else {
 
+					// eger sol haryt programmany ulanyp otyran musderinin sebedinde bar bolsa
+					// onda sol harydyn mukdaryny update etyas
 					reultCartUpdate, err := db.Query("UPDATE cart SET quantity_of_product = $1 WHERE customer_id = $2 AND product_id = $3 AND deleted_at IS NULL", v.QuantityOfProduct, customerID, v.ProductID)
 					if err != nil {
 						c.JSON(http.StatusBadRequest, gin.H{
@@ -206,6 +219,8 @@ func AddCart(c *gin.Context) {
 
 		}
 
+		// haryt sebede gosulandan sonra programmany ulanyp otyran musdera degisli
+		// harytlary yzyna gaytaryp beryas
 		products, err := GetCartProducts(customerID)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
@@ -221,7 +236,8 @@ func AddCart(c *gin.Context) {
 		})
 
 	} else {
-
+		// eger frontdan maglumat gelmese programmany ulanyp otyran musderinin
+		// sebedindaki harytlary yzyna ugratyas
 		products, err := GetCartProducts(customerID)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
@@ -247,6 +263,7 @@ func AddCart(c *gin.Context) {
 
 }
 
+// GetCartProducts funksiya bazadan belli bir musdera degisli sebetdaki harytlary alyp beryar
 func GetCartProducts(customerID string) ([]ProductOfCart, error) {
 
 	db, err := config.ConnDB()
@@ -419,6 +436,7 @@ func RemoveCart(c *gin.Context) {
 
 }
 
+// DeleteCart funksiya muderinin sebedinden haryt pozmak ucin ulanylyar
 func DeleteCart(customerID, productID string) error {
 
 	db, err := config.ConnDB()
