@@ -3999,7 +3999,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIrOTkzNjM3NDcxNTUiLCJhZG1pbl9pZCI6ImM5N2JmYzZhLWZkODUtNGFhOC04MmRiLWU3ODhmNmIwZDcwYSIsInR5cGUiOiJzdXBlcl9hZG1pbiIsImV4cCI6MTY2OTA5NDMzNn0.whQCuM5tutyu-Wp5PbEuynIIjVW4HIYVKiJizmjT0Vc",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIrOTkzNjM3NDcxNTUiLCJhZG1pbl9pZCI6ImM5N2JmYzZhLWZkODUtNGFhOC04MmRiLWU3ODhmNmIwZDcwYSIsInR5cGUiOiJzdXBlcl9hZG1pbiIsImV4cCI6MTY2OTM1MDUxOX0.pBjhsnrxKjy6XFCaABtB0vpg7YTF7vLcUMi-HrxX0JA",
 											"type": "string"
 										}
 									]
@@ -4007,7 +4007,7 @@
 								"method": "DELETE",
 								"header": [],
 								"url": {
-									"raw": "localhost:2406/admin/product/ccb43083-1c9e-4e84-bffd-ecb28474165e",
+									"raw": "localhost:2406/admin/product/4bb06dbd-e4b2-4148-bb61-b1429d8cfc40",
 									"host": [
 										"localhost"
 									],
@@ -4015,7 +4015,7 @@
 									"path": [
 										"admin",
 										"product",
-										"ccb43083-1c9e-4e84-bffd-ecb28474165e"
+										"4bb06dbd-e4b2-4148-bb61-b1429d8cfc40"
 									]
 								}
 							},
