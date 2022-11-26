@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"database/sql"
 	"github/abbgo/isleg/isleg-backend/config"
 	backController "github/abbgo/isleg/isleg-backend/controllers/back"
 	"github/abbgo/isleg/isleg-backend/models"
@@ -883,21 +884,27 @@ func GetOrders(c *gin.Context) {
 		return
 	}
 
-	var deletedAt string
-
+	var countAllCustomer, rowsCustomerID, rowsOrder *sql.Rows
 	if status {
-		deletedAt = "IS NOT NULL"
+		rows, err := db.Query("SELECT customer_id FROM orders WHERE deleted_at IS NOT NULL")
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+		countAllCustomer = rows
 	} else {
-		deletedAt = "IS NULL"
-	}
-
-	countAllCustomer, err := db.Query("SELECT customer_id FROM orders WHERE deleted_at $1", deletedAt)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
+		rows, err := db.Query("SELECT customer_id FROM orders WHERE deleted_at IS NULL")
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+		countAllCustomer = rows
 	}
 	defer func() {
 		if err := countAllCustomer.Close(); err != nil {
@@ -913,13 +920,26 @@ func GetOrders(c *gin.Context) {
 		countOfOrders++
 	}
 
-	rowsCustomerID, err := db.Query("SELECT customer_id FROM orders WHERE deleted_at IS NULL GROUP BY customer_id deleted_at $1", deletedAt)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
+	if status {
+		rows, err := db.Query("SELECT customer_id FROM orders WHERE deleted_at IS NOT NULL GROUP BY customer_id")
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+		rowsCustomerID = rows
+	} else {
+		rows, err := db.Query("SELECT customer_id FROM orders WHERE deleted_at IS NULL GROUP BY customer_id")
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+		rowsCustomerID = rows
 	}
 	defer func() {
 		if err := rowsCustomerID.Close(); err != nil {
@@ -949,13 +969,26 @@ func GetOrders(c *gin.Context) {
 
 	var orders []OrderForAdmin
 
-	rowsOrder, err := db.Query("SELECT customer_id,id,customer_mark,order_time,payment_type,total_price,shipping_price,excel,address,TO_CHAR(created_at, 'DD.MM.YYYY') FROM orders WHERE customer_id = ANY($1) AND deleted_at $4 LIMIT $2 OFFSET $3", pq.Array(customerIDs), limit, offset, deletedAt)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
+	if status {
+		rows, err := db.Query("SELECT customer_id,id,customer_mark,order_time,payment_type,total_price,shipping_price,excel,address,TO_CHAR(created_at, 'DD.MM.YYYY') FROM orders WHERE customer_id = ANY($1) AND deleted_at IS NOT NULL LIMIT $2 OFFSET $3", pq.Array(customerIDs), limit, offset)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+		rowsOrder = rows
+	} else {
+		rows, err := db.Query("SELECT customer_id,id,customer_mark,order_time,payment_type,total_price,shipping_price,excel,address,TO_CHAR(created_at, 'DD.MM.YYYY') FROM orders WHERE customer_id = ANY($1) AND deleted_at IS NULL LIMIT $2 OFFSET $3", pq.Array(customerIDs), limit, offset)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+		rowsOrder = rows
 	}
 	defer func() {
 		if err := rowsOrder.Close(); err != nil {
