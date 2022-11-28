@@ -68,6 +68,14 @@ func RegisterCustomer(c *gin.Context) {
 		return
 	}
 
+	if len(customer.Password) < 5 || len(customer.Password) > 25 {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "password length should be between 5 and 25",
+		})
+		return
+	}
+
 	err = models.ValidateCustomerRegister(customer.PhoneNumber, customer.Email)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -238,6 +246,14 @@ func LoginCustomer(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
 			"message": "customer password is required",
+		})
+		return
+	}
+
+	if len(customer.Password) < 5 || len(customer.Password) > 25 {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "password length should be between 5 and 25",
 		})
 		return
 	}
