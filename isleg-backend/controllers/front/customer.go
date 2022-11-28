@@ -60,6 +60,14 @@ func RegisterCustomer(c *gin.Context) {
 		return
 	}
 
+	if customer.Password == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "customer password is required",
+		})
+		return
+	}
+
 	err = models.ValidateCustomerRegister(customer.PhoneNumber, customer.Email)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -223,6 +231,14 @@ func LoginCustomer(c *gin.Context) {
 
 	if err := c.BindJSON(&customer); err != nil {
 		c.JSON(http.StatusBadRequest, err.Error())
+		return
+	}
+
+	if customer.Password == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "customer password is required",
+		})
 		return
 	}
 
