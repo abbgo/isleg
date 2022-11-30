@@ -14,7 +14,7 @@ type Customer struct {
 	ID              string            `json:"id,omitempty"`
 	FullName        string            `json:"full_name,omitempty" binding:"required,min=3"`
 	PhoneNumber     string            `json:"phone_number,omitempty" binding:"required,e164,len=12"`
-	Password        string            `json:"password,omitempty" binding:"min=5,max=25"`
+	Password        string            `json:"password,omitempty"`
 	Birthday        null.Time         `json:"birthday,omitempty"`
 	Gender          string            `json:"gender,omitempty"`
 	Email           string            `json:"email,omitempty" binding:"email"`
