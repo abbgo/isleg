@@ -39,7 +39,7 @@ func CreateBanner(c *gin.Context) {
 	if bannerUrl == "" {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
-			"message": "brend name is required",
+			"message": "url is required",
 		})
 		return
 	} else {
