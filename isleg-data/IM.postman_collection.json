@@ -458,7 +458,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"phone_number\":\"+99363747155\",\n    \"password\":\"123456\"\n}",
+									"raw": "{\n    \"phone_number\":\"+99362420377\",\n    \"password\":\"123456\"\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -514,7 +514,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NTYiLCJjdXN0b21lcl9pZCI6IjFhZTEyMzkwLTAzYWUtNDlhYy1hOWFkLWQ3YmE1Yzk1YjUxYSIsImV4cCI6MTY2NzQ1NTY2NH0.BLTauBZxWMmqvgtV8-ZWaukzJzFbZ_-rTwcte8ME2pA",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NTYiLCJjdXN0b21lcl9pZCI6IjE5Y2RjZjFhLWYxMTAtNDUxMC1hNTJiLTA2MzMyOWQ5ODYwNyIsImV4cCI6MTY2OTg0MTIxM30.1uYFezUt_ZRXMUCW1qKnq6XEzWSN84ct5sY9_kBoVzM",
 											"type": "string"
 										}
 									]
@@ -544,7 +544,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NTYiLCJjdXN0b21lcl9pZCI6IjFhZTEyMzkwLTAzYWUtNDlhYy1hOWFkLWQ3YmE1Yzk1YjUxYSIsImV4cCI6MTY2NzQ1NTY2NH0.BLTauBZxWMmqvgtV8-ZWaukzJzFbZ_-rTwcte8ME2pA",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NTYiLCJjdXN0b21lcl9pZCI6IjFhZTEyMzkwLTAzYWUtNDlhYy1hOWFkLWQ3YmE1Yzk1YjUxYSIsImV4cCI6MTY2OTYwNjU3NH0.S5c1wKJpbVmGaS0PYXMHr-vVeXaiZGrLIpxpMp8XS6g",
 											"type": "string"
 										}
 									]
@@ -562,7 +562,7 @@
 									]
 								},
 								"url": {
-									"raw": "localhost:2406/api/tm/customer-password/89a6ac71-4495-4218-b9f9-3f2a3eab085b",
+									"raw": "localhost:2406/api/tm/customer-password",
 									"host": [
 										"localhost"
 									],
@@ -570,8 +570,46 @@
 									"path": [
 										"api",
 										"tm",
-										"customer-password",
-										"89a6ac71-4495-4218-b9f9-3f2a3eab085b"
+										"customer-password"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "UpdateCustomerInformation",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NTYiLCJjdXN0b21lcl9pZCI6IjFhZTEyMzkwLTAzYWUtNDlhYy1hOWFkLWQ3YmE1Yzk1YjUxYSIsImV4cCI6MTY2OTYwODU3M30.utYS232-4vP80pb-bSb8n9sPLzewlHFXEgEi_WeacyY",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"full_name\":\"Muhammetmyrat Bayramov\",\n    \"phone_number\":\"+99363747155\",\n    \"birthday\":\"1997-03-11T00:00:00Z\",\n    \"gender\":\"male\",\n    \"email\":\"muhammetmyrat@gmail.com\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:2406/api/tm/my-information",
+									"host": [
+										"localhost"
+									],
+									"port": "2406",
+									"path": [
+										"api",
+										"tm",
+										"my-information"
 									]
 								}
 							},
@@ -3999,7 +4037,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIrOTkzNjM3NDcxNTUiLCJhZG1pbl9pZCI6ImM5N2JmYzZhLWZkODUtNGFhOC04MmRiLWU3ODhmNmIwZDcwYSIsInR5cGUiOiJzdXBlcl9hZG1pbiIsImV4cCI6MTY2OTM1MDUxOX0.pBjhsnrxKjy6XFCaABtB0vpg7YTF7vLcUMi-HrxX0JA",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIrOTkzNjM3NDcxNTUiLCJhZG1pbl9pZCI6ImM5N2JmYzZhLWZkODUtNGFhOC04MmRiLWU3ODhmNmIwZDcwYSIsInR5cGUiOiJzdXBlcl9hZG1pbiIsImV4cCI6MTY2OTg0MDE3NH0.LQsuDKxG3zpVrzZ8rblouvEA0xnTV-oJipraoUSMWuU",
 											"type": "string"
 										}
 									]
@@ -4007,7 +4045,7 @@
 								"method": "DELETE",
 								"header": [],
 								"url": {
-									"raw": "localhost:2406/admin/product/4bb06dbd-e4b2-4148-bb61-b1429d8cfc40",
+									"raw": "localhost:2406/admin/product/45a9f186-2521-4eef-a4e0-b5c253c70878",
 									"host": [
 										"localhost"
 									],
@@ -4015,7 +4053,7 @@
 									"path": [
 										"admin",
 										"product",
-										"4bb06dbd-e4b2-4148-bb61-b1429d8cfc40"
+										"45a9f186-2521-4eef-a4e0-b5c253c70878"
 									]
 								}
 							},
