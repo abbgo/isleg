@@ -19,37 +19,38 @@ type JWTClaim struct {
 	jwt.StandardClaims
 }
 
-func GenerateAccessToken(phoneNumber, customerID string) (accessTokenString string, err error) {
+func GenerateTokenForCustomer(phoneNumber, customerID string) (string, string, error) {
 
-	expirationTime := time.Now().Add(30 * time.Minute)
-	// expirationTime := time.Now().Add(5 * time.Second)
+	expirationTimeAccessToken := time.Now().Add(30 * time.Minute)
 
-	claims := &JWTClaim{
+	claimsAccessToken := &JWTClaim{
 		PhoneNumber: phoneNumber,
 		CustomerID:  customerID,
 		StandardClaims: jwt.StandardClaims{
-			ExpiresAt: expirationTime.Unix(),
+			ExpiresAt: expirationTimeAccessToken.Unix(),
 		},
 	}
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	accessTokenString, err = token.SignedString(JwtKey)
-	return
+	accessToken := jwt.NewWithClaims(jwt.SigningMethodHS256, claimsAccessToken)
+	accessTokenString, err := accessToken.SignedString(JwtKey)
+	if err != nil {
+		return "", "", nil
+	}
 
-}
-
-func GenerateRefreshToken(phoneNumber, customerID string) (refreshTokenString string, err error) {
-
-	expirationTime := time.Now().Add(12 * time.Hour)
-	claims := &JWTClaim{
+	expirationTimeRefreshToken := time.Now().Add(12 * time.Hour)
+	claimsRefreshToken := &JWTClaim{
 		PhoneNumber: phoneNumber,
 		CustomerID:  customerID,
 		StandardClaims: jwt.StandardClaims{
-			ExpiresAt: expirationTime.Unix(),
+			ExpiresAt: expirationTimeRefreshToken.Unix(),
 		},
 	}
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	refreshTokenString, err = token.SignedString(JwtKey)
-	return
+	refreshToken := jwt.NewWithClaims(jwt.SigningMethodHS256, claimsRefreshToken)
+	refreshTokenString, err := refreshToken.SignedString(JwtKey)
+	if err != nil {
+		return "", "", nil
+	}
+
+	return accessTokenString, refreshTokenString, nil
 
 }
 
@@ -96,13 +97,7 @@ func Refresh(c *gin.Context) {
 		return
 	}
 
-	accessTokenString, err := GenerateAccessToken(claims.PhoneNumber, claims.CustomerID)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
-		return
-	}
-
-	refreshTokenString, err := GenerateRefreshToken(claims.PhoneNumber, claims.CustomerID)
+	accessTokenString, refreshTokenString, err := GenerateTokenForCustomer(claims.PhoneNumber, claims.CustomerID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
 		return

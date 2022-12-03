@@ -191,14 +191,7 @@ func RegisterCustomer(c *gin.Context) {
 
 	}
 
-	accessTokenString, err := auth.GenerateAccessToken(customer.PhoneNumber, customerID)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
-		c.Abort()
-		return
-	}
-
-	refreshTokenString, err := auth.GenerateRefreshToken(customer.PhoneNumber, customerID)
+	accessTokenString, refreshTokenString, err := auth.GenerateTokenForCustomer(customer.PhoneNumber, customerID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
 		c.Abort()
@@ -312,16 +305,7 @@ func LoginCustomer(c *gin.Context) {
 		return
 	}
 
-	accessTokenString, err := auth.GenerateAccessToken(customer.Password, customerID)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-
-	refreshTokenString, err := auth.GenerateRefreshToken(customer.PhoneNumber, customerID)
+	accessTokenString, refreshTokenString, err := auth.GenerateTokenForCustomer(customer.PhoneNumber, customerID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
