@@ -160,16 +160,7 @@ func LoginAdmin(c *gin.Context) {
 		return
 	}
 
-	accessTokenString, err := auth.GenerateAccessTokenForAdmin(admin.PhoneNumber, adminID, adminType)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-
-	refreshTokenString, err := auth.GenerateRefreshTokenForAdmin(admin.PhoneNumber, adminID, adminType)
+	accessTokenString, refreshTokenString, err := auth.GenerateAccessTokenForAdmin(admin.PhoneNumber, adminID, adminType)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
