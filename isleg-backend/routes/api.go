@@ -346,8 +346,12 @@ func Routes() *gin.Engine {
 		front.GET("/homepage-categories", frontController.GetHomePageCategories)
 
 		// GetOneCategoryWithProducts funksiya dil boyunca dine bir kategoriyany
-		// ahli harytlary pagination edip getiryar
-		front.GET("/:category_id/:limit/:page", backController.GetOneCategoryWithProducts)
+		// ahli harytlary bilen pagination edip getiryar
+		front.GET("/category/:category_id/:limit/:page", backController.GetOneCategoryWithProducts)
+
+		// GetOneBrendWithProducts funksiya dil boyunca dine bir brendi
+		// ahli harytlary bilen pagination edip getiryar
+		front.GET("/brend/:brend_id/:limit/:page", backController.GetOneBrendWithProducts)
 
 		// GetOrderTime funksiya dil boyunca musderi ucin sargyt edilip bilinjek
 		// wagtlary getirip beryar

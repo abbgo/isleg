@@ -4,8 +4,10 @@ import (
 	"github/abbgo/isleg/isleg-backend/config"
 	"github/abbgo/isleg/isleg-backend/models"
 	"github/abbgo/isleg/isleg-backend/pkg"
+	"math"
 	"net/http"
 	"os"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -799,5 +801,373 @@ func GetAllBrendForHomePage() ([]models.Brend, error) {
 	}
 
 	return brends, nil
+
+}
+
+func GetOneBrendWithProducts(c *gin.Context) {
+
+	db, err := config.ConnDB()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
+
+	var countOfProducts uint64
+
+	// langID, err := CheckLanguage(c)
+	// if err != nil {
+	// 	c.JSON(http.StatusBadRequest, gin.H{
+	// 		"status":  false,
+	// 		"message": err.Error(),
+	// 	})
+	// 	return
+	// }
+
+	// get limit from param
+	limitStr := c.Param("limit")
+	if limitStr == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "limit is required",
+		})
+		return
+	}
+	limit, err := strconv.ParseUint(limitStr, 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	// get page from param
+	pageStr := c.Param("page")
+	if pageStr == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "page is required",
+		})
+		return
+	}
+	page, err := strconv.ParseUint(pageStr, 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	offset := limit * (page - 1)
+
+	brendID := c.Param("brend_id")
+
+	// get brend where id equal brendID
+	brendRow, err := db.Query("SELECT id,image,name FROM brends where id = $1", brendID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer func() {
+		if err := brendRow.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
+
+	var brend Category
+
+	for brendRow.Next() {
+		if err := brendRow.Scan(&brend.ID, &brend.Image, &brend.Name); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+
+		if brend.ID == "" {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": "brend not found",
+			})
+			return
+		}
+
+		// get count product where product_id equal brendID
+		brendCount, err := db.Query("SELECT COUNT(id) FROM products WHERE brend_id = $1 AND deleted_at IS NULL", brendID)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+		defer func() {
+			if err := brendCount.Close(); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}()
+
+		for brendCount.Next() {
+			if err := brendCount.Scan(&countOfProducts); err != nil {
+				if err != nil {
+					c.JSON(http.StatusBadRequest, gin.H{
+						"status":  false,
+						"message": err.Error(),
+					})
+					return
+				}
+			}
+		}
+
+		// get all product where brend id equal brendID
+		productRows, err := db.Query("SELECT id,price,old_price,limit_amount,is_new,amount FROM products WHERE brend_id = $1 AND deleted_at IS NULL ORDER BY created_at ASC LIMIT $2 OFFSET $3", brendID, limit, offset)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+		defer func() {
+			if err := productRows.Close(); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}()
+
+		var products []Product
+
+		for productRows.Next() {
+			var product Product
+
+			if err := productRows.Scan(&product.ID, &product.Price, &product.OldPrice, &product.LimitAmount, &product.IsNew, &product.Amount); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+
+			if product.OldPrice != 0 {
+				product.Percentage = -math.Round(((product.OldPrice - product.Price) * 100) / product.OldPrice)
+			} else {
+				product.Percentage = 0
+			}
+
+			if product.Amount != 0 {
+
+				rowMainImage, err := db.Query("SELECT small,medium,large FROM main_image WHERE product_id = $1", product.ID)
+				if err != nil {
+					c.JSON(http.StatusBadRequest, gin.H{
+						"status":  false,
+						"message": err.Error(),
+					})
+					return
+				}
+				defer func() {
+					if err := rowMainImage.Close(); err != nil {
+						c.JSON(http.StatusBadRequest, gin.H{
+							"status":  false,
+							"message": err.Error(),
+						})
+						return
+					}
+				}()
+
+				var mainImage models.MainImage
+
+				for rowMainImage.Next() {
+					if err := rowMainImage.Scan(&mainImage.Small, &mainImage.Medium, &mainImage.Large); err != nil {
+						c.JSON(http.StatusBadRequest, gin.H{
+							"status":  false,
+							"message": err.Error(),
+						})
+						return
+					}
+				}
+
+				rowsLang, err := db.Query("SELECT id,name_short FROM languages WHERE deleted_at IS NULL")
+				if err != nil {
+					c.JSON(http.StatusBadRequest, gin.H{
+						"status":  false,
+						"message": err.Error(),
+					})
+					return
+				}
+				defer func() {
+					if err := rowsLang.Close(); err != nil {
+						c.JSON(http.StatusBadRequest, gin.H{
+							"status":  false,
+							"message": err.Error(),
+						})
+						return
+					}
+				}()
+
+				var languages []models.Language
+
+				for rowsLang.Next() {
+					var language models.Language
+
+					if err := rowsLang.Scan(&language.ID, &language.NameShort); err != nil {
+						c.JSON(http.StatusBadRequest, gin.H{
+							"status":  false,
+							"message": err.Error(),
+						})
+						return
+					}
+
+					languages = append(languages, language)
+				}
+
+				for _, v := range languages {
+
+					rowTrProduct, err := db.Query("SELECT name,description FROM translation_product WHERE lang_id = $1 AND product_id = $2 AND deleted_at IS NULL", v.ID, product.ID)
+					if err != nil {
+						c.JSON(http.StatusBadRequest, gin.H{
+							"status":  false,
+							"message": err.Error(),
+						})
+						return
+					}
+					defer func() {
+						if err := rowTrProduct.Close(); err != nil {
+							c.JSON(http.StatusBadRequest, gin.H{
+								"status":  false,
+								"message": err.Error(),
+							})
+							return
+						}
+					}()
+
+					var trProduct models.TranslationProduct
+
+					translation := make(map[string]models.TranslationProduct)
+
+					for rowTrProduct.Next() {
+						if err := rowTrProduct.Scan(&trProduct.Name, &trProduct.Description); err != nil {
+							c.JSON(http.StatusBadRequest, gin.H{
+								"status":  false,
+								"message": err.Error(),
+							})
+							return
+						}
+					}
+
+					translation[v.NameShort] = trProduct
+
+					product.Translations = append(product.Translations, translation)
+
+				}
+
+				product.MainImage = mainImage
+
+				rowsImages, err := db.Query("SELECT small,large FROM images WHERE product_id = $1", product.ID)
+				if err != nil {
+					c.JSON(http.StatusBadRequest, gin.H{
+						"status":  false,
+						"message": err.Error(),
+					})
+					return
+				}
+				defer func() {
+					if err := rowsImages.Close(); err != nil {
+						c.JSON(http.StatusBadRequest, gin.H{
+							"status":  false,
+							"message": err.Error(),
+						})
+						return
+					}
+				}()
+
+				var images []models.Images
+
+				for rowsImages.Next() {
+					var image models.Images
+
+					if err := rowsImages.Scan(&image.Small, &image.Large); err != nil {
+						c.JSON(http.StatusBadRequest, gin.H{
+							"status":  false,
+							"message": err.Error(),
+						})
+						return
+					}
+
+					images = append(images, image)
+				}
+
+				product.Images = images
+
+				// get brend where id equal brend_id of product
+				brendRows, err := db.Query("SELECT b.id,b.name FROM products p LEFT JOIN brends b ON p.brend_id=b.id WHERE p.id = $1 AND p.deleted_at IS NULL AND b.deleted_at IS NULL", product.ID)
+				if err != nil {
+					c.JSON(http.StatusBadRequest, gin.H{
+						"status":  false,
+						"message": err.Error(),
+					})
+					return
+				}
+				defer func() {
+					if err := brendRows.Close(); err != nil {
+						c.JSON(http.StatusBadRequest, gin.H{
+							"status":  false,
+							"message": err.Error(),
+						})
+						return
+					}
+				}()
+
+				var brend Brend
+
+				for brendRows.Next() {
+					if err := brendRows.Scan(&brend.ID, &brend.Name); err != nil {
+						c.JSON(http.StatusBadRequest, gin.H{
+							"status":  false,
+							"message": err.Error(),
+						})
+						return
+					}
+				}
+				product.Brend = brend
+				products = append(products, product)
+
+			}
+		}
+		brend.Products = products
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":            true,
+		"brend":             brend,
+		"count_of_products": countOfProducts,
+	})
 
 }
