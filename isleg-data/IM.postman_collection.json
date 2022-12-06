@@ -703,7 +703,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "localhost:2406/api/tm/ab28ad8f-72af-4e9e-841b-38a6e6881a6e/10/1",
+							"raw": "localhost:2406/api/tm/category/d154a3f1-7086-439f-b343-3998d6521efa/10/1",
 							"host": [
 								"localhost"
 							],
@@ -711,7 +711,8 @@
 							"path": [
 								"api",
 								"tm",
-								"ab28ad8f-72af-4e9e-841b-38a6e6881a6e",
+								"category",
+								"d154a3f1-7086-439f-b343-3998d6521efa",
 								"10",
 								"1"
 							]
@@ -1093,6 +1094,29 @@
 								"api",
 								"tm",
 								"notifications"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetOneBrendWithProducts",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:2406/api/tm/brend/214be879-65c3-4710-86b4-3fc3bce2e974/10/1",
+							"host": [
+								"localhost"
+							],
+							"port": "2406",
+							"path": [
+								"api",
+								"tm",
+								"brend",
+								"214be879-65c3-4710-86b4-3fc3bce2e974",
+								"10",
+								"1"
 							]
 						}
 					},
