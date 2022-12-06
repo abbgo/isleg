@@ -35,6 +35,7 @@ type ResultCatego struct {
 type Category struct {
 	ID       string    `json:"id"`
 	Name     string    `json:"name"`
+	Image    string    `json:"image"`
 	Products []Product `json:"products"`
 }
 
@@ -1523,7 +1524,7 @@ func GetOneCategoryWithProducts(c *gin.Context) {
 	categoryID := c.Param("category_id")
 
 	// get category where id equal categiryID
-	categoryRow, err := db.Query("SELECT c.id,t.name FROM categories c LEFT JOIN translation_category t ON c.id=t.category_id WHERE t.lang_id = $1 AND c.id = $2 AND c.deleted_at IS NULL AND t.deleted_at IS NULL", langID, categoryID)
+	categoryRow, err := db.Query("SELECT c.id,c.image,t.name FROM categories c LEFT JOIN translation_category t ON c.id=t.category_id WHERE t.lang_id = $1 AND c.id = $2 AND c.deleted_at IS NULL AND t.deleted_at IS NULL", langID, categoryID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -1544,7 +1545,7 @@ func GetOneCategoryWithProducts(c *gin.Context) {
 	var category Category
 
 	for categoryRow.Next() {
-		if err := categoryRow.Scan(&category.ID, &category.Name); err != nil {
+		if err := categoryRow.Scan(&category.ID, &category.Image, &category.Name); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
