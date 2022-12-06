@@ -8,7 +8,6 @@ import (
 	frontController "github/abbgo/isleg/isleg-backend/controllers/front"
 
 	"github/abbgo/isleg/isleg-backend/middlewares"
-	"time"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-contrib/gzip"
@@ -30,7 +29,7 @@ func Routes() *gin.Engine {
 		AllowHeaders:     []string{"Origin", "Content-Length", "Content-Type", "RefreshToken", "Authorization"},
 		AllowCredentials: true,
 		AllowAllOrigins:  true,
-		MaxAge:           12 * time.Hour,
+		// MaxAge:           12 * time.Hour,
 	}))
 
 	// routes belong to admin panel
