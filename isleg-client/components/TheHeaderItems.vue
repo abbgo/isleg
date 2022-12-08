@@ -38,6 +38,30 @@
         @close="$emit('closeProfilePopUp')"
       ></profile-box>
     </span>
+    <span class="item__border"></span>
+    <span
+      class="item___box like__container"
+      @click.stop="$router.push(localeLocation('/wishlist'))"
+    >
+      <svg
+        class="like__svg"
+        width="22"
+        height="20"
+        viewBox="0 0 22 20"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M11.1009 20.0001L9.52095 18.5611C3.90795 13.4711 0.201946 10.1141 0.201946 5.99405C0.194196 5.20475 0.343943 4.42184 0.642425 3.69111C0.940907 2.96038 1.38213 2.29653 1.94027 1.73838C2.49842 1.18024 3.16228 0.739012 3.893 0.44053C4.62373 0.142048 5.40665 -0.00769852 6.19595 5.20535e-05C7.12799 0.00787245 8.04755 0.215225 8.89276 0.60816C9.73796 1.00109 10.4892 1.57049 11.0959 2.27805C11.7027 1.57049 12.4539 1.00109 13.2991 0.60816C14.1443 0.215225 15.0639 0.00787245 15.9959 5.20535e-05C16.7854 -0.00783452 17.5685 0.141845 18.2994 0.440329C19.0303 0.738814 19.6944 1.1801 20.2526 1.73837C20.8109 2.29664 21.2522 2.96066 21.5507 3.69157C21.8492 4.42248 21.9988 5.20559 21.9909 5.99505C21.9909 10.1151 18.2849 13.4721 12.6719 18.5731L11.1009 20.0001Z"
+          fill="#8D98A9"
+        />
+      </svg>
+      <client-only
+        ><span class="like__count" v-if="likesCount && likesCount > 0">{{
+          likesCount > 99 ? '99+' : likesCount
+        }}</span></client-only
+      >
+    </span>
     <span id="oppacity" class="item__border"></span>
     <button
       @mouseenter="mouseEnter"
@@ -59,11 +83,9 @@
         />
       </svg>
       <client-only
-        ><span
-          class="shop__count"
-          v-if="(productCount && productCount > 0) || (total && total > 0)"
-          >{{ productBasketTotalCount }}</span
-        ></client-only
+        ><span class="shop__count" v-if="productCount && productCount > 0">{{
+          productCount > 99 ? '99+' : productCount
+        }}</span></client-only
       >
       <span class="shop__span">Sebet</span>
     </button>
@@ -105,51 +127,70 @@ export default {
   },
   data() {
     return {
-      total: null,
+      totalCount: null,
+      likes: null,
     }
   },
-  watch: {
-    $route: async function () {
-      const cart = await JSON.parse(localStorage.getItem('lorem'))
-      if (cart && cart?.cart) {
-        if (!this.productCount) {
-          console.log('watch2', cart)
-          this.total = cart.cart?.reduce((total, num) => {
-            return total + num.quantity
-          }, 0)
-        }
-      } else {
-        console.log('watch3', cart)
-        this.total = null
-        this.$store.commit('products/SET_PRODUCT_COUNT_WHEN_PAYMENT', null)
-      }
-    },
-  },
+  //   watch: {
+  //     $route: async function () {
+  //       const cart = await JSON.parse(localStorage.getItem('lorem'))
+  //       if (cart && cart?.cart) {
+  //         if (!this.productCount) {
+  //           console.log('watch2', cart)
+  //           this.totalCount = cart.cart.reduce((total, num) => {
+  //             return total + num.quantity
+  //           }, 0)
+  //           this.$store.commit(
+  //             'products/SET_PRODUCT_COUNT_WHEN_PAYMENT',
+  //             this.totalCount
+  //           )
+  //         }
+  //         if (!this.likesCount) {
+  //           this.likes =
+  //             cart.cart?.filter((product) => product.is_favorite === true)
+  //               ?.length || null
+  //           this.$store.commit('products/SET_PRODUCT_LIKES', this.likes)
+  //         }
+  //       } else {
+  //         console.log('watch3', cart)
+  //         this.$store.commit('products/SET_PRODUCT_COUNT_WHEN_PAYMENT', null)
+  //         this.$store.commit('products/SET_PRODUCT_LIKES', null)
+  //       }
+  //     },
+  //     productCount: function (val) {
+  //       if (!val) {
+  //         this.$store.commit('products/SET_PRODUCT_COUNT_WHEN_PAYMENT', null)
+  //         this.total = null
+  //       }
+  //     },
+  //   },
   computed: {
-    ...mapGetters('products', ['productCount']),
-    productBasketTotalCount() {
-      const cart = JSON.parse(localStorage.getItem('lorem'))
-      console.log('>>>>>>>>>>>>>>>>', cart, cart.cart)
-      if (cart && cart?.cart) {
-        return this.productCount > 99 || this.total > 99
-          ? '99+'
-          : this.productCount || this.total
-      } else {
-        return null
-      }
-    },
+    ...mapGetters('products', ['productCount', 'likesCount']),
   },
   mounted() {
     const cart = JSON.parse(localStorage.getItem('lorem'))
-    if (cart && cart?.cart) {
+    if (cart && cart.cart) {
       if (!this.productCount) {
-        this.total = cart.cart?.reduce((total, num) => {
-          return total + num.quantity
-        }, 0)
+        this.totalCount =
+          cart.cart.reduce((total, num) => {
+            if (num.quantity) {
+              return total + num?.quantity
+            }
+          }, 0) || null
+        this.$store.commit(
+          'products/SET_PRODUCT_COUNT_WHEN_PAYMENT',
+          this.totalCount
+        )
+      }
+      if (!this.likesCount) {
+        this.likes =
+          cart.cart?.filter((product) => product.is_favorite === true)
+            ?.length || null
+        this.$store.commit('products/SET_PRODUCT_LIKES', this.likes)
       }
     } else {
-      this.total = null
       this.$store.commit('products/SET_PRODUCT_COUNT_WHEN_PAYMENT', null)
+      this.$store.commit('products/SET_PRODUCT_LIKES', null)
     }
   },
   methods: {

@@ -9,3 +9,6 @@ export const getRefreshToken = ({ url, refreshToken }) =>
 export const deleteAllProductsFromBasket = ({ url, accessToken }) =>
   request({ url: url, accessToken: accessToken })
 export const userLogin = ({ url, data }) => request({ url: url, data: data })
+export const sendMail = ({ url, data }) => request({ url: url, data: data })
+export const translationContact = ({ url }) =>
+  request({ url: url, method: 'GET' })

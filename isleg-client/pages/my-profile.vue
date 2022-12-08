@@ -188,7 +188,7 @@ export default {
                 const { customer_informations, status } = (
                   await getMyProfile({
                     url: `${this.$i18n.locale}/my-information`,
-                    accessToken: `Bearer ${lorem.auth.accessToken}`,
+                    accessToken: `Bearer ${access_token}`,
                   })
                 ).data
                 console.log(customer_informations, status)

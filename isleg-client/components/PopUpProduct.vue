@@ -215,4 +215,9 @@ figure.zoom img {
   display: block;
   width: inherit;
 }
+
+.product__btns .product__add-btn {
+  position: relative;
+  bottom: 0;
+}
 </style>

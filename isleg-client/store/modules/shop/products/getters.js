@@ -22,6 +22,9 @@ const isFavorite = (state) => {
 const removedFromBasket = (state) => {
   return state.removedFromBasket
 }
+const likesCount = (state) => {
+  return state.likesCount
+}
 export default {
   imgURL,
   productsCategories,
@@ -30,5 +33,6 @@ export default {
   fillColor,
   quantity,
   isFavorite,
-  removedFromBasket
+  removedFromBasket,
+  likesCount,
 }

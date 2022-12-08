@@ -7,7 +7,7 @@ export default {
       'Açar sözünde azyndan 6 harp ýa-da simbol bolmaly !',
     error: 'Ýalňyşlyk ýüze çykdy ýa-da Internet näsazlygy !',
     nameIsRequired: 'Adyňyz hökmany !',
-    phoneNumberIsRequired: 'Tel nädogry, mysal üçin: +993 6x xx-xx-xx !',
+    phoneNumberIsRequired: 'Tel nädogry, mysal üçin: +9936xxxxxxx !',
     isRepeatPassword: 'Açar sözüni tassyklamak nädogry !',
     checkedIsRequired: 'Bu meýdan hökmany !',
     nameMustHavetletters: 'Adyňyz azyndan 2 harp bolmaly !',
@@ -27,4 +27,6 @@ export default {
     paymentForm: 'Töleg şekili hökmany !',
     theDeliveryTime: 'Eltip bermek wagty hökmany !',
   },
+  textIsRequired: 'Hatyňyz hökmany !',
+  mailSendedSuccess: 'Hatyňyz üstünlikli ugradyldy !',
 }

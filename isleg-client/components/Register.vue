@@ -13,7 +13,7 @@
               <input
                 type="text"
                 :placeholder="name"
-                v-model.trim="$v.register.name.$model"
+                v-model="$v.register.name.$model"
               />
             </div>
             <span
@@ -33,7 +33,7 @@
               <input
                 type="text"
                 placeholder="Email"
-                v-model.trim="$v.register.email.$model"
+                v-model="$v.register.email.$model"
               />
             </div>
             <span

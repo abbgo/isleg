@@ -192,7 +192,7 @@ export default {
 }
 </script>
 
-<style scoped lang="scss">
+<!-- <style scoped lang="scss">
 .pagination {
   display: flex;
   background: #fff;
@@ -253,4 +253,4 @@ export default {
     display: none;
   }
 }
-</style>
+</style> -->

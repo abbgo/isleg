@@ -30,7 +30,17 @@ const SET_REMOVED_FROM_BASKET = (state, payload) => {
   state.removedFromBasket = payload
 }
 const SET_PRODUCT_COUNT_WHEN_PAYMENT = (state, payload) => {
+  console.log('SET_PRODUCT_COUNT_WHEN_PAYMENT')
   state.productCount = payload
+}
+const SET_LIKES_COUNT_INCREMENT = (state) => {
+  state.likesCount += 1
+}
+const SET_LIKES_COUNT_DECREMENT = (state) => {
+  state.likesCount -= 1
+}
+const SET_PRODUCT_LIKES = (state, payload) => {
+  state.likesCount = payload
 }
 export default {
   SET_PRODUCTS_CATEGORIES,
@@ -41,4 +51,7 @@ export default {
   SET_BASKET_PRODUCT_COUNT,
   SET_REMOVED_FROM_BASKET,
   SET_PRODUCT_COUNT_WHEN_PAYMENT,
+  SET_LIKES_COUNT_INCREMENT,
+  SET_LIKES_COUNT_DECREMENT,
+  SET_PRODUCT_LIKES,
 }

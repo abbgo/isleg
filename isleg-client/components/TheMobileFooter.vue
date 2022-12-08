@@ -2,7 +2,10 @@
   <footer class="footer">
     <div class="mobile__content">
       <ul>
-        <li>
+        <li
+          @click="$router.push(localeLocation(`/`))"
+          :class="{ active: $route.name === `index___${$i18n.locale}` }"
+        >
           <h4>Baş sahypa</h4>
           <svg
             width="20"
@@ -23,8 +26,18 @@
             alt=""
           />
         </li>
-        <li>
-          <h4>Halanlam</h4>
+        <li
+          @click="$router.push(localeLocation(`/wishlist`))"
+          :class="{ active: $route.name === `wishlist___${$i18n.locale}` }"
+        >
+          <h4>
+            Halanlarym
+            <span
+              class="footer__circle-like"
+              v-if="likesCount && likesCount > 0"
+              >{{ likesCount > 99 ? '99+' : likesCount }}</span
+            >
+          </h4>
           <svg
             width="22"
             height="20"
@@ -44,8 +57,19 @@
             alt=""
           />
         </li>
-        <li @click="$router.push(localeLocation(`/basket`))" class="active">
-          <h4>Sebet</h4>
+        <li
+          @click="$router.push(localeLocation(`/basket`))"
+          :class="{ active: $route.name === `basket___${$i18n.locale}` }"
+        >
+          <h4>
+            Sebet
+            <span
+              class="footer__circle"
+              v-if="productCount && productCount > 0"
+              >{{ productCount > 99 ? '99+' : productCount }}</span
+            >
+          </h4>
+
           <svg
             width="21"
             height="20"
@@ -92,7 +116,76 @@
 </template>
 
 <script>
-export default {}
+import { mapGetters } from 'vuex'
+export default {
+  data() {
+    return {
+      total: null,
+      likes: null,
+    }
+  },
+  watch: {
+    $route: async function () {
+      const cart = await JSON.parse(localStorage.getItem('lorem'))
+      if (cart && cart?.cart) {
+        if (!this.productCount) {
+          console.log('watch2', cart)
+          this.total = cart.cart?.reduce((total, num) => {
+            return total + num.quantity
+          }, 0)
+          this.$store.commit(
+            'products/SET_PRODUCT_COUNT_WHEN_PAYMENT',
+            this.total
+          )
+        }
+        if (!this.likesCount) {
+          this.likes =
+            cart.cart?.filter((product) => product.is_favorite === true)
+              ?.length || null
+          this.$store.commit('products/SET_PRODUCT_LIKES', this.likes)
+        }
+      } else {
+        console.log('watch3', cart)
+        this.$store.commit('products/SET_PRODUCT_COUNT_WHEN_PAYMENT', null)
+        this.$store.commit('products/SET_PRODUCT_LIKES', null)
+      }
+    },
+    productCount: function (val) {
+      if (!val) {
+        this.$store.commit('products/SET_PRODUCT_COUNT_WHEN_PAYMENT', null)
+        this.total = null
+      }
+    },
+  },
+  computed: {
+    ...mapGetters('products', ['productCount', 'likesCount']),
+  },
+  mounted() {
+    const cart = JSON.parse(localStorage.getItem('lorem'))
+    if (cart && cart?.cart) {
+      if (!this.productCount) {
+        this.total =
+          cart.cart?.reduce((total, num) => {
+            return total + num.quantity
+          }, 0) || null
+        console.log(this.total)
+        this.$store.commit(
+          'products/SET_PRODUCT_COUNT_WHEN_PAYMENT',
+          this.total
+        )
+      }
+      if (!this.likesCount) {
+        this.likes =
+          cart.cart?.filter((product) => product.is_favorite === true)
+            ?.length || null
+        this.$store.commit('products/SET_PRODUCT_LIKES', this.likes)
+      }
+    } else {
+      this.$store.commit('products/SET_PRODUCT_COUNT_WHEN_PAYMENT', null)
+      this.$store.commit('products/SET_PRODUCT_LIKES', null)
+    }
+  },
+}
 </script>
 
 <style>
@@ -116,6 +209,7 @@ export default {}
   flex-direction: column-reverse;
   justify-content: center;
   align-items: center;
+  cursor: pointer;
 }
 .mobile__content ul li h4 {
   font-family: TTNormsPro;
@@ -129,6 +223,8 @@ export default {}
   top: 0;
   display: none;
 }
+.mobile__content ul li {
+}
 .mobile__content ul li.active .footer__active {
   display: block;
 }
@@ -137,5 +233,41 @@ export default {}
 }
 .mobile__content ul li.active svg path {
   fill: #fd5e29;
+}
+
+.mobile__content ul li.active .footer__circle {
+  background-color: #fd5e29;
+}
+.mobile__content ul li.active .footer__circle-like {
+  background-color: #fd5e29;
+}
+.footer__circle {
+  width: 19px;
+  height: 19px;
+  background: #798393;
+  border-radius: 50%;
+  position: absolute;
+  top: -26px;
+  left: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  color: #fff;
+}
+
+.footer__circle-like {
+  width: 19px;
+  height: 19px;
+  background: #798393;
+  border-radius: 50%;
+  position: absolute;
+  top: -26px;
+  left: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  color: #fff;
 }
 </style>

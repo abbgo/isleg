@@ -65,8 +65,6 @@
 <script>
 import BasketProducts from '@/components/BasketProducts.vue'
 import BasketPrices from '@/components/BasketPrices.vue'
-import { getMyProfile } from '@/api/myProfile.api'
-
 import {
   productAdd,
   getRefreshToken,
@@ -137,21 +135,71 @@ export default {
     },
   },
   async mounted() {
-    await this.getBasketProducts()
+    await Promise.all([this.fetchProductsFromDataBase()])
   },
   methods: {
-    async getBasketProducts() {
-      let cart = await JSON.parse(localStorage.getItem('lorem'))
+    async fetchProductsFromDataBase() {
+      let product_ids = []
+      const cart = await JSON.parse(localStorage.getItem('lorem'))
       if (cart?.cart) {
-        let totalCount = cart?.cart.reduce((total, num) => {
-          return total + num.quantity
-        }, 0)
-        this.products =
-          cart.cart.filter((product) => product.quantity > 0) || []
-        this.$store.commit(
-          'products/SET_PRODUCT_COUNT',
-          totalCount == 0 ? null : totalCount
-        )
+        product_ids = cart.cart
+          .filter((product) => product.quantity > 0)
+          .map((item) => item.id)
+        try {
+          const { products, status } = await this.$axios.$post(
+            `/${this.$i18n.locale}/likes-or-orders-without-customer`,
+            { product_ids: product_ids }
+          )
+          if (status) {
+            console.log('>>>>>>>>', products)
+            let res = null
+            if (products) {
+              res = product_ids.filter(function (o1) {
+                return !products.some(function (o2) {
+                  return o1 === o2.id
+                })
+              })
+              cart?.cart?.forEach((elem) => {
+                products.forEach((product) => {
+                  if (elem.id === product.id) {
+                    if (elem.amount > product.amount) {
+                      elem.amount = product.amount
+                      elem.quantity = product.amount
+                      console.log('amount', elem)
+                    }
+                    if (elem.limit_amount > product.limit_amount) {
+                      elem.limit_amount = product.limit_amount
+                      elem.quantity = product.limit_amount
+                      console.log('limit_amount', elem)
+                    }
+                  }
+                })
+              })
+            }
+            console.log('result', res)
+            console.log('cart?.cart2', cart?.cart)
+            //  this.products = cart.cart
+            //  console.log('amount', amounts)
+            //  cart.cart = cart.cart.filter(function (o1) {
+            //    return !res.some(function (o2) {
+            //      return o1.id === o2
+            //    })
+            //  })
+            //  console.log();
+            localStorage.setItem('lorem', JSON.stringify(cart))
+            this.products =
+              cart.cart.filter((product) => product.quantity > 0) || []
+            let totalCount = cart?.cart.reduce((total, num) => {
+              return total + num.quantity
+            }, 0)
+            this.$store.commit(
+              'products/SET_PRODUCT_COUNT',
+              totalCount == 0 ? null : totalCount
+            )
+          }
+        } catch (err) {
+          console.log(err)
+        }
       }
     },
     async openPayment() {
@@ -349,7 +397,7 @@ export default {
                             quantity_of_product: 0,
                           },
                         ],
-                        accessToken: `Bearer ${lorem?.auth?.accessToken}`,
+                        accessToken: `Bearer ${access_token}`,
                       })
                     ).data
                     console.log('productAdd1', response)

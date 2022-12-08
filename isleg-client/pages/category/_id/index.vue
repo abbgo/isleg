@@ -124,11 +124,11 @@
       <client-only
         ><div class="category__section">
           <Products :products="categoryProducts" />
-          <pagination
+          <!-- <pagination
             :modelValue="page"
             @clickPage="(pagination) => updatePage(pagination)"
             :pageCount="paginationCount"
-          ></pagination>
+          ></pagination> -->
           <!-- <div class="pagination">
           <div class="pagination__box">
             <div class="left__arrows">
@@ -248,7 +248,7 @@ export default {
       try {
         const res = (
           await getCategoryProducts({
-            url: `${this.$i18n.locale}/${this.$route.params?.id}/${this.limit}/${this.page}`,
+            url: `${this.$i18n.locale}/category/${this.$route.params?.id}/${this.limit}/${this.page}`,
           })
         ).data
         console.log(res)

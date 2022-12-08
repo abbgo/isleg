@@ -247,9 +247,6 @@ export default {
       }
     },
   },
-  mounted() {
-    console.log(this.getProduct)
-  },
   methods: {
     async productLike(data) {
       const cart = await JSON.parse(localStorage.getItem('lorem'))
@@ -259,6 +256,14 @@ export default {
         if (this.isFavorite === false) {
           this.$emit('removeFromWishlist', data)
         }
+      }
+      console.log(this.isFavorite)
+      if (this.isFavorite) {
+        console.log('deken')
+
+        this.$store.commit('products/SET_LIKES_COUNT_INCREMENT')
+      } else {
+        this.$store.commit('products/SET_LIKES_COUNT_DECREMENT')
       }
       if (cart && cart.cart) {
         const findProduct = cart.cart.find((product) => product.id === data.id)
@@ -353,7 +358,7 @@ export default {
                     { product_ids: [data.id] },
                     {
                       headers: {
-                        Authorization: `Bearer ${cart.auth.accessToken}`,
+                        Authorization: `Bearer ${access_token}`,
                       },
                     }
                   )
@@ -486,7 +491,7 @@ export default {
                             quantity_of_product: this.quantity,
                           },
                         ],
-                        accessToken: `Bearer ${lorem?.auth?.accessToken}`,
+                        accessToken: `Bearer ${access_token}`,
                       })
                     ).data
                     console.log('productAdd1', response)
@@ -591,7 +596,7 @@ export default {
                           quantity_of_product: this.quantity,
                         },
                       ],
-                      accessToken: `Bearer ${lorem?.auth?.accessToken}`,
+                      accessToken: `Bearer ${access_token}`,
                     })
                   ).data
                   console.log('productAdd1', response)

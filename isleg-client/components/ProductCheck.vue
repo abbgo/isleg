@@ -103,7 +103,6 @@ export default {
     async fromBasketAdd(data) {
       const cart = JSON.parse(localStorage.getItem('lorem'))
       const array = []
-      // this.basketProductQuantity = data.quantity
       if (this.isDisabled) {
         if (this.count === 0) {
           if (this.basketProductQuantity === data.limit_amount) {
@@ -194,7 +193,7 @@ export default {
                             quantity_of_product: this.basketProductQuantity,
                           },
                         ],
-                        accessToken: `Bearer ${lorem?.auth?.accessToken}`,
+                        accessToken: `Bearer ${access_token}`,
                       })
                     ).data
                     console.log('productAdd1', response)
@@ -293,7 +292,7 @@ export default {
                             quantity_of_product: this.basketProductQuantity,
                           },
                         ],
-                        accessToken: `Bearer ${lorem?.auth?.accessToken}`,
+                        accessToken: `Bearer ${access_token}`,
                       })
                     ).data
                     console.log('productAdd1', response)
