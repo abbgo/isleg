@@ -8,7 +8,6 @@ import (
 	frontController "github/abbgo/isleg/isleg-backend/controllers/front"
 
 	"github/abbgo/isleg/isleg-backend/middlewares"
-	"time"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-contrib/gzip"
@@ -30,7 +29,7 @@ func Routes() *gin.Engine {
 		AllowHeaders:     []string{"Origin", "Content-Length", "Content-Type", "RefreshToken", "Authorization"},
 		AllowCredentials: true,
 		AllowAllOrigins:  true,
-		MaxAge:           12 * time.Hour,
+		// MaxAge:           12 * time.Hour,
 	}))
 
 	// routes belong to admin panel
@@ -347,8 +346,12 @@ func Routes() *gin.Engine {
 		front.GET("/homepage-categories", frontController.GetHomePageCategories)
 
 		// GetOneCategoryWithProducts funksiya dil boyunca dine bir kategoriyany
-		// ahli harytlary pagination edip getiryar
-		front.GET("/:category_id/:limit/:page", backController.GetOneCategoryWithProducts)
+		// ahli harytlary bilen pagination edip getiryar
+		front.GET("/category/:category_id/:limit/:page", backController.GetOneCategoryWithProducts)
+
+		// GetOneBrendWithProducts funksiya dil boyunca dine bir brendi
+		// ahli harytlary bilen pagination edip getiryar
+		front.GET("/brend/:brend_id/:limit/:page", backController.GetOneBrendWithProducts)
 
 		// GetOrderTime funksiya dil boyunca musderi ucin sargyt edilip bilinjek
 		// wagtlary getirip beryar
@@ -365,57 +368,79 @@ func Routes() *gin.Engine {
 		// ToOrder funksiya sargyt sebede gosulan harytlary sargyt etmek ucin ulanylyar
 		front.POST("/to-order", frontController.ToOrder)
 
-		// to order
+		// SendMail funksiya musderi habarlasmak sahypa girip hat yazanda firma hat ugratyar
 		front.POST("/send-mail", frontController.SendMail)
 
 		// get like products without customer by product id ->
 		// Eger musderi like - a haryt gosup sonam sol haryt bazadan ayrylan bolsa
 		// sony bildirmek ucin front - dan mana cookie - daki product_id - leri
-		// ugdurkdyryar we men yzyna sol id - leri product - lary ugratyan
-		front.POST("/likes-without-customer", frontController.GetLikedProductsWithoutCustomer)
+		// ugradyar we men yzyna sol id - leri product - lary ugratyan
 
 		// get order products without customer by product id ->
 		// Eger musderi sebede - e haryt gosup sonam sol haryt bazadan ayrylan bolsa
 		// sony bildirmek ucin front - dan mana cookie - daki product_id - leri
 		// ugdurkdyryar we men yzyna sol id - leri product - lary ugratyan
-		front.POST("/orders-without-customer", frontController.GetOrderedProductsWithoutCustomer)
+
+		front.POST("/likes-or-orders-without-customer", frontController.GetLikedOrOrderedProductsWithoutCustomer)
+
+		// get order products without customer by product id ->
+		// Eger musderi sebede - e haryt gosup sonam sol haryt bazadan ayrylan bolsa
+		// sony bildirmek ucin front - dan mana cookie - daki product_id - leri
+		// ugdurkdyryar we men yzyna sol id - leri product - lary ugratyan
+		// front.POST("/orders-without-customer", frontController.GetOrderedProductsWithoutCustomer)
 
 		securedCustomer := front.Group("/").Use(middlewares.Auth())
 		{
-			// add like if customer exists
-			securedCustomer.POST("/like", frontController.AddLike)
+			// AddOrRemoveLike funksiya musderinin tokeni bar bolan yagdayynda
+			// halanlarym sahypa haryt gosmak ucin ya-da halanlarym sahypadan
+			// haryt pozmak ucin ulanylyar
+			securedCustomer.POST("/like", frontController.AddOrRemoveLike)
 
 			// remove like if customer exists
 			// securedCustomer.POST("/like/:product_id", frontController.RemoveLike)
 
-			// get like products if customer exists
+			// GetCustomerLikes funksiya frontdan token bar bolan yagdayynda
+			// musderinin halanlarym sahypasyna gosan harytlaryny getiryar
 			securedCustomer.GET("/likes", frontController.GetCustomerLikes)
 
-			// add product to cart
+			// AddCart funksiya sebede haryt gosmak ucin ulanylyar
+			// musderinin tokeni gelen yagdayynda
 			securedCustomer.POST("/add-cart", frontController.AddCart)
 
-			// get product of cart
+			// GetCustomerCartProducts funksiya musderinin sebedindaki harytlary fronda bermek ucin ulanylyar
+			// token bar bolan yagdayynda
 			securedCustomer.GET("/get-cart", frontController.GetCustomerCartProducts)
 
-			// remove product from cart
+			// RemoveCart funksiya musderinin sebedinden haryt pozmak ucin ulanylyar
+			// token bar bolan yagdayynda
 			securedCustomer.POST("/remove-cart", frontController.RemoveCart)
 
-			// get customer orders
+			// GetCustomerOrders funkisya musderinin bazadaky onki sargytlaryny
+			// getirip beryar. token bar bolan yagdayynda
 			securedCustomer.GET("/orders/:limit/:page", frontController.GetCustomerOrders)
 
-			// get customer orders
+			// GetCustomerAddresses funksiya musderinin ahli salgylaryny alyar
+			// token bar bolan yagdayynda
 			securedCustomer.GET("/addresses", frontController.GetCustomerAddresses)
 
-			// get customer informations
+			// GetCustomerInformation funksiya musderinin maglumatllaryny alyar
+			// token bar bolan yagdayynda
 			securedCustomer.GET("/my-information", frontController.GetCustomerInformation)
 
-			// update customer informations
+			// UpdateCustomerInformation funksiya musderinin maglumatlary uytgetmek
+			// ucin ulanylyar. token bar bolan yagdayynda
 			securedCustomer.PUT("/my-information", frontController.UpdateCustomerInformation)
 
-			// update customer address status
+			// UpdateCustomerAddressStatus funksiya musderinin salgysynyn aktiwligini uytgetyar
+			// musderi haryt sargyt edende haysy salgysyny ulanjak bolsa sony aktiwe edip goyar yaly
 			securedCustomer.PUT("/address", frontController.UpdateCustomerAddressStatus)
 
-			// update customer password
+			// AddAddressToCustomer musderi ozune taze salgy gosup biler yaly yazylan funksiya
+			// token bar bolan yagdayynda
+			securedCustomer.POST("/address", frontController.AddAddressToCustomer)
+
+			// UpdateCustomerPassword funksiya musderinin parolyny uytgetmek ucin
+			// token bar bolan yagdayynda
 			securedCustomer.PUT("/customer-password", frontController.UpdateCustomerPassword)
 
 		}

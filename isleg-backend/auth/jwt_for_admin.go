@@ -17,38 +17,40 @@ type JWTClaimForAdmin struct {
 	jwt.StandardClaims
 }
 
-func GenerateAccessTokenForAdmin(phoneNumber, adminID, adminType string) (accessTokenString string, err error) {
+func GenerateAccessTokenForAdmin(phoneNumber, adminID, adminType string) (string, string, error) {
 
-	expirationTime := time.Now().Add(30 * time.Minute)
+	expirationTimeAccessToken := time.Now().Add(30 * time.Minute)
 
-	claims := &JWTClaimForAdmin{
+	claimsAccessToken := &JWTClaimForAdmin{
 		PhoneNumber: phoneNumber,
 		AdminID:     adminID,
 		Type:        adminType,
 		StandardClaims: jwt.StandardClaims{
-			ExpiresAt: expirationTime.Unix(),
+			ExpiresAt: expirationTimeAccessToken.Unix(),
 		},
 	}
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	accessTokenString, err = token.SignedString(JwtKey)
-	return
+	accessToken := jwt.NewWithClaims(jwt.SigningMethodHS256, claimsAccessToken)
+	accessTokenString, err := accessToken.SignedString(JwtKey)
+	if err != nil {
+		return "", "", err
+	}
 
-}
-
-func GenerateRefreshTokenForAdmin(phoneNumber, adminID, adminType string) (refreshTokenString string, err error) {
-
-	expirationTime := time.Now().Add(12 * time.Hour)
-	claims := &JWTClaimForAdmin{
+	expirationTimeRefreshToken := time.Now().Add(12 * time.Hour)
+	claimsRefreshToken := &JWTClaimForAdmin{
 		PhoneNumber: phoneNumber,
 		AdminID:     adminID,
 		Type:        adminType,
 		StandardClaims: jwt.StandardClaims{
-			ExpiresAt: expirationTime.Unix(),
+			ExpiresAt: expirationTimeRefreshToken.Unix(),
 		},
 	}
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	refreshTokenString, err = token.SignedString(JwtKey)
-	return
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claimsRefreshToken)
+	refreshTokenString, err := token.SignedString(JwtKey)
+	if err != nil {
+		return "", "", err
+	}
+
+	return accessTokenString, refreshTokenString, nil
 
 }
 
@@ -95,13 +97,7 @@ func RefreshTokenForAdmin(c *gin.Context) {
 		return
 	}
 
-	accessTokenString, err := GenerateAccessTokenForAdmin(claims.PhoneNumber, claims.AdminID, claims.Type)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
-		return
-	}
-
-	refreshTokenString, err := GenerateRefreshTokenForAdmin(claims.PhoneNumber, claims.AdminID, claims.Type)
+	accessTokenString, refreshTokenString, err := GenerateAccessTokenForAdmin(claims.PhoneNumber, claims.AdminID, claims.Type)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
 		return

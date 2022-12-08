@@ -448,13 +448,13 @@ SET default_table_access_method = heap;
 
 CREATE TABLE public.admins (
     id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
-    full_name character varying,
-    phone_number character varying,
-    password character varying,
+    full_name character varying(50) NOT NULL,
+    phone_number character varying(20) NOT NULL,
+    password character varying NOT NULL,
     created_at timestamp with time zone DEFAULT now(),
     updated_at timestamp with time zone DEFAULT now(),
     deleted_at timestamp with time zone,
-    type character varying
+    type character varying(15) NOT NULL
 );
 
 
@@ -466,7 +466,7 @@ ALTER TABLE public.admins OWNER TO postgres;
 
 CREATE TABLE public.afisa (
     id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
-    image character varying,
+    image character varying(100),
     created_at timestamp with time zone DEFAULT now(),
     updated_at timestamp with time zone DEFAULT now(),
     deleted_at timestamp with time zone
@@ -481,7 +481,7 @@ ALTER TABLE public.afisa OWNER TO postgres;
 
 CREATE TABLE public.banner (
     id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
-    image character varying,
+    image character varying(100) NOT NULL,
     url text,
     created_at timestamp with time zone DEFAULT now(),
     updated_at timestamp with time zone DEFAULT now(),
@@ -497,8 +497,8 @@ ALTER TABLE public.banner OWNER TO postgres;
 
 CREATE TABLE public.brends (
     id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
-    name character varying,
-    image character varying,
+    name character varying(1000) NOT NULL,
+    image character varying(100) NOT NULL,
     created_at timestamp with time zone DEFAULT now(),
     updated_at timestamp with time zone DEFAULT now(),
     deleted_at timestamp with time zone
@@ -513,9 +513,9 @@ ALTER TABLE public.brends OWNER TO postgres;
 
 CREATE TABLE public.cart (
     id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
-    product_id uuid,
-    customer_id uuid,
-    quantity_of_product bigint,
+    product_id uuid NOT NULL,
+    customer_id uuid NOT NULL,
+    quantity_of_product bigint NOT NULL,
     created_at timestamp with time zone DEFAULT now(),
     updated_at timestamp with time zone DEFAULT now(),
     deleted_at timestamp with time zone
@@ -531,7 +531,7 @@ ALTER TABLE public.cart OWNER TO postgres;
 CREATE TABLE public.categories (
     id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
     parent_category_id uuid,
-    image character varying,
+    image character varying(100),
     is_home_category boolean,
     created_at timestamp with time zone DEFAULT now(),
     updated_at timestamp with time zone DEFAULT now(),
@@ -547,8 +547,8 @@ ALTER TABLE public.categories OWNER TO postgres;
 
 CREATE TABLE public.category_product (
     id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
-    category_id uuid,
-    product_id uuid,
+    category_id uuid NOT NULL,
+    product_id uuid NOT NULL,
     created_at timestamp with time zone DEFAULT now(),
     updated_at timestamp with time zone DEFAULT now(),
     deleted_at timestamp with time zone
@@ -563,8 +563,8 @@ ALTER TABLE public.category_product OWNER TO postgres;
 
 CREATE TABLE public.company_address (
     id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
-    lang_id uuid,
-    address character varying DEFAULT 'uytget'::character varying,
+    lang_id uuid NOT NULL,
+    address character varying DEFAULT 'uytget'::character varying NOT NULL,
     created_at timestamp with time zone DEFAULT now(),
     updated_at timestamp with time zone DEFAULT now(),
     deleted_at timestamp with time zone
@@ -579,7 +579,7 @@ ALTER TABLE public.company_address OWNER TO postgres;
 
 CREATE TABLE public.company_phone (
     id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
-    phone character varying,
+    phone character varying(20) NOT NULL,
     created_at timestamp with time zone DEFAULT now(),
     updated_at timestamp with time zone DEFAULT now(),
     deleted_at timestamp with time zone
@@ -594,10 +594,10 @@ ALTER TABLE public.company_phone OWNER TO postgres;
 
 CREATE TABLE public.company_setting (
     id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
-    logo character varying,
-    favicon character varying,
-    email character varying,
-    instagram character varying,
+    logo character varying(100) NOT NULL,
+    favicon character varying(100) NOT NULL,
+    email character varying(100) NOT NULL,
+    instagram character varying(100) NOT NULL,
     created_at timestamp with time zone DEFAULT now(),
     updated_at timestamp with time zone DEFAULT now(),
     deleted_at timestamp without time zone
@@ -612,8 +612,8 @@ ALTER TABLE public.company_setting OWNER TO postgres;
 
 CREATE TABLE public.customer_address (
     id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
-    customer_id uuid,
-    address character varying,
+    customer_id uuid NOT NULL,
+    address character varying NOT NULL,
     created_at timestamp with time zone DEFAULT now(),
     updated_at timestamp with time zone DEFAULT now(),
     deleted_at timestamp with time zone,
@@ -629,15 +629,15 @@ ALTER TABLE public.customer_address OWNER TO postgres;
 
 CREATE TABLE public.customers (
     id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
-    full_name character varying,
-    phone_number character varying,
-    password character varying,
+    full_name character varying(50) NOT NULL,
+    phone_number character varying(20) NOT NULL,
+    password character varying NOT NULL,
     birthday date,
-    gender character varying,
+    gender character varying(10),
     created_at timestamp with time zone DEFAULT now(),
     updated_at timestamp with time zone DEFAULT now(),
     deleted_at timestamp with time zone,
-    email character varying,
+    email character varying(100),
     is_register boolean DEFAULT true
 );
 
@@ -665,9 +665,9 @@ ALTER TABLE public.district OWNER TO postgres;
 
 CREATE TABLE public.images (
     id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
-    product_id uuid,
-    small character varying,
-    large character varying,
+    product_id uuid NOT NULL,
+    small character varying(100) NOT NULL,
+    large character varying(100) NOT NULL,
     created_at timestamp with time zone DEFAULT now(),
     updated_at timestamp with time zone DEFAULT now(),
     deleted_at timestamp with time zone
@@ -682,8 +682,8 @@ ALTER TABLE public.images OWNER TO postgres;
 
 CREATE TABLE public.languages (
     id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
-    name_short character varying(5),
-    flag character varying,
+    name_short character varying(10) NOT NULL,
+    flag character varying(100) NOT NULL,
     created_at timestamp with time zone DEFAULT now(),
     updated_at timestamp with time zone DEFAULT now(),
     deleted_at timestamp with time zone
@@ -698,8 +698,8 @@ ALTER TABLE public.languages OWNER TO postgres;
 
 CREATE TABLE public.likes (
     id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
-    product_id uuid,
-    customer_id uuid,
+    product_id uuid NOT NULL,
+    customer_id uuid NOT NULL,
     created_at timestamp with time zone DEFAULT now(),
     updated_at timestamp with time zone DEFAULT now(),
     deleted_at timestamp with time zone
@@ -714,10 +714,10 @@ ALTER TABLE public.likes OWNER TO postgres;
 
 CREATE TABLE public.main_image (
     id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
-    product_id uuid,
-    small character varying,
-    medium character varying,
-    large character varying,
+    product_id uuid NOT NULL,
+    small character varying(100) NOT NULL,
+    medium character varying(100) NOT NULL,
+    large character varying(100) NOT NULL,
     created_at timestamp with time zone DEFAULT now(),
     updated_at timestamp with time zone DEFAULT now(),
     deleted_at timestamp with time zone
@@ -747,7 +747,7 @@ ALTER TABLE public.notifications OWNER TO postgres;
 
 CREATE TABLE public.order_dates (
     id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
-    date character varying,
+    date character varying(50),
     created_at timestamp with time zone DEFAULT now(),
     updated_at timestamp with time zone DEFAULT now(),
     deleted_at timestamp with time zone
@@ -762,8 +762,8 @@ ALTER TABLE public.order_dates OWNER TO postgres;
 
 CREATE TABLE public.order_times (
     id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
-    order_date_id uuid,
-    "time" character varying,
+    order_date_id uuid NOT NULL,
+    "time" character varying(50) NOT NULL,
     created_at timestamp with time zone DEFAULT now(),
     updated_at timestamp with time zone DEFAULT now(),
     deleted_at timestamp with time zone
@@ -778,9 +778,9 @@ ALTER TABLE public.order_times OWNER TO postgres;
 
 CREATE TABLE public.ordered_products (
     id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
-    product_id uuid,
-    quantity_of_product integer,
-    order_id uuid,
+    product_id uuid NOT NULL,
+    quantity_of_product integer NOT NULL,
+    order_id uuid NOT NULL,
     created_at timestamp with time zone DEFAULT now(),
     updated_at timestamp with time zone DEFAULT now(),
     deleted_at timestamp with time zone
@@ -795,18 +795,18 @@ ALTER TABLE public.ordered_products OWNER TO postgres;
 
 CREATE TABLE public.orders (
     id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
-    customer_id uuid,
+    customer_id uuid NOT NULL,
     customer_mark character varying,
-    order_time character varying,
-    payment_type character varying,
-    total_price numeric,
+    order_time character varying(50) NOT NULL,
+    payment_type character varying(50) NOT NULL,
+    total_price numeric NOT NULL,
     created_at timestamp with time zone DEFAULT now(),
     updated_at timestamp with time zone DEFAULT now(),
     deleted_at timestamp with time zone,
     order_number integer NOT NULL,
-    shipping_price numeric,
-    excel character varying,
-    address character varying DEFAULT 'uytget'::character varying
+    shipping_price numeric NOT NULL,
+    excel character varying(100) NOT NULL,
+    address character varying DEFAULT 'uytget'::character varying NOT NULL
 );
 
 
@@ -840,8 +840,8 @@ ALTER SEQUENCE public.orders_order_number_seq OWNED BY public.orders.order_numbe
 
 CREATE TABLE public.payment_types (
     id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
-    lang_id uuid,
-    type character varying DEFAULT 'uytget'::character varying,
+    lang_id uuid NOT NULL,
+    type character varying(100) DEFAULT 'uytget'::character varying NOT NULL,
     created_at timestamp with time zone DEFAULT now(),
     updated_at timestamp with time zone DEFAULT now(),
     deleted_at timestamp with time zone
@@ -856,14 +856,14 @@ ALTER TABLE public.payment_types OWNER TO postgres;
 
 CREATE TABLE public.products (
     id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
-    brend_id uuid,
-    price numeric,
+    brend_id uuid NOT NULL,
+    price numeric NOT NULL,
     old_price numeric,
-    amount bigint,
+    amount bigint NOT NULL,
     created_at timestamp with time zone DEFAULT now(),
     updated_at timestamp with time zone DEFAULT now(),
     deleted_at timestamp with time zone,
-    limit_amount bigint,
+    limit_amount bigint NOT NULL,
     is_new boolean DEFAULT false,
     shop_id uuid
 );
@@ -877,10 +877,10 @@ ALTER TABLE public.products OWNER TO postgres;
 
 CREATE TABLE public.shops (
     id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
-    owner_name character varying,
-    address character varying,
-    phone_number character varying,
-    running_time character varying,
+    owner_name character varying(50) NOT NULL,
+    address character varying NOT NULL,
+    phone_number character varying(20) NOT NULL,
+    running_time character varying(20) NOT NULL,
     created_at timestamp with time zone DEFAULT now(),
     updated_at timestamp with time zone DEFAULT now(),
     deleted_at timestamp with time zone
@@ -895,9 +895,9 @@ ALTER TABLE public.shops OWNER TO postgres;
 
 CREATE TABLE public.translation_about (
     id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
-    lang_id uuid,
-    title character varying DEFAULT 'uytget'::character varying,
-    content text DEFAULT 'uytget'::text,
+    lang_id uuid NOT NULL,
+    title character varying DEFAULT 'uytget'::character varying NOT NULL,
+    content text DEFAULT 'uytget'::text NOT NULL,
     created_at timestamp with time zone DEFAULT now(),
     updated_at timestamp with time zone DEFAULT now(),
     deleted_at timestamp with time zone
@@ -912,10 +912,10 @@ ALTER TABLE public.translation_about OWNER TO postgres;
 
 CREATE TABLE public.translation_afisa (
     id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
-    afisa_id uuid,
-    lang_id uuid,
-    title character varying DEFAULT 'uytget'::character varying,
-    description text DEFAULT 'uytget'::text,
+    afisa_id uuid NOT NULL,
+    lang_id uuid NOT NULL,
+    title character varying DEFAULT 'uytget'::character varying NOT NULL,
+    description text DEFAULT 'uytget'::text NOT NULL,
     created_at timestamp with time zone DEFAULT now(),
     updated_at timestamp with time zone DEFAULT now(),
     deleted_at timestamp with time zone
@@ -930,19 +930,19 @@ ALTER TABLE public.translation_afisa OWNER TO postgres;
 
 CREATE TABLE public.translation_basket_page (
     id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
-    lang_id uuid,
-    quantity_of_goods character varying DEFAULT 'uytget'::character varying,
-    total_price character varying DEFAULT 'uytget'::character varying,
-    discount character varying DEFAULT 'uytget'::character varying,
-    delivery character varying DEFAULT 'uytget'::character varying,
-    total character varying DEFAULT 'uytget'::character varying,
-    currency character varying DEFAULT 'uytget'::character varying,
-    to_order character varying DEFAULT 'uytget'::character varying,
-    your_basket character varying DEFAULT 'uytget'::character varying,
+    lang_id uuid NOT NULL,
+    quantity_of_goods character varying DEFAULT 'uytget'::character varying NOT NULL,
+    total_price character varying DEFAULT 'uytget'::character varying NOT NULL,
+    discount character varying DEFAULT 'uytget'::character varying NOT NULL,
+    delivery character varying DEFAULT 'uytget'::character varying NOT NULL,
+    total character varying DEFAULT 'uytget'::character varying NOT NULL,
+    currency character varying DEFAULT 'uytget'::character varying NOT NULL,
+    to_order character varying DEFAULT 'uytget'::character varying NOT NULL,
+    your_basket character varying DEFAULT 'uytget'::character varying NOT NULL,
     created_at timestamp with time zone DEFAULT now(),
     updated_at timestamp with time zone DEFAULT now(),
     deleted_at timestamp with time zone,
-    empty_the_basket character varying DEFAULT 'uytget'::character varying
+    empty_the_basket character varying DEFAULT 'uytget'::character varying NOT NULL
 );
 
 
@@ -954,9 +954,9 @@ ALTER TABLE public.translation_basket_page OWNER TO postgres;
 
 CREATE TABLE public.translation_category (
     id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
-    lang_id uuid,
-    category_id uuid,
-    name character varying DEFAULT 'uytget'::character varying,
+    lang_id uuid NOT NULL,
+    category_id uuid NOT NULL,
+    name character varying DEFAULT 'uytget'::character varying NOT NULL,
     created_at timestamp with time zone DEFAULT now(),
     updated_at timestamp with time zone DEFAULT now(),
     deleted_at timestamp with time zone
@@ -971,19 +971,19 @@ ALTER TABLE public.translation_category OWNER TO postgres;
 
 CREATE TABLE public.translation_contact (
     id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
-    lang_id uuid,
-    full_name character varying DEFAULT 'uytget'::character varying,
-    email character varying DEFAULT 'uytget'::character varying,
-    phone character varying DEFAULT 'uytget'::character varying,
-    letter character varying DEFAULT 'uytget'::character varying,
-    company_phone character varying DEFAULT 'uytget'::character varying,
-    imo character varying DEFAULT 'uytget'::character varying,
-    company_email character varying DEFAULT 'uytget'::character varying,
-    instagram character varying DEFAULT 'uytget'::character varying,
+    lang_id uuid NOT NULL,
+    full_name character varying DEFAULT 'uytget'::character varying NOT NULL,
+    email character varying DEFAULT 'uytget'::character varying NOT NULL,
+    phone character varying DEFAULT 'uytget'::character varying NOT NULL,
+    letter character varying DEFAULT 'uytget'::character varying NOT NULL,
+    company_phone character varying DEFAULT 'uytget'::character varying NOT NULL,
+    imo character varying DEFAULT 'uytget'::character varying NOT NULL,
+    company_email character varying DEFAULT 'uytget'::character varying NOT NULL,
+    instagram character varying DEFAULT 'uytget'::character varying NOT NULL,
     created_at timestamp with time zone DEFAULT now(),
     updated_at timestamp with time zone DEFAULT now(),
     deleted_at timestamp with time zone,
-    button_text character varying
+    button_text character varying NOT NULL
 );
 
 
@@ -1012,12 +1012,12 @@ ALTER TABLE public.translation_district OWNER TO postgres;
 
 CREATE TABLE public.translation_footer (
     id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
-    lang_id uuid,
-    about character varying DEFAULT 'uytget'::character varying,
-    payment character varying DEFAULT 'uytget'::character varying,
-    contact character varying DEFAULT 'uytget'::character varying,
-    secure character varying DEFAULT 'uytget'::character varying,
-    word character varying DEFAULT 'uytget'::character varying,
+    lang_id uuid NOT NULL,
+    about character varying DEFAULT 'uytget'::character varying NOT NULL,
+    payment character varying DEFAULT 'uytget'::character varying NOT NULL,
+    contact character varying DEFAULT 'uytget'::character varying NOT NULL,
+    secure character varying DEFAULT 'uytget'::character varying NOT NULL,
+    word character varying DEFAULT 'uytget'::character varying NOT NULL,
     created_at timestamp with time zone DEFAULT now(),
     updated_at timestamp with time zone DEFAULT now(),
     deleted_at timestamp with time zone
@@ -1032,26 +1032,26 @@ ALTER TABLE public.translation_footer OWNER TO postgres;
 
 CREATE TABLE public.translation_header (
     id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
-    lang_id uuid DEFAULT public.uuid_generate_v4(),
-    research character varying DEFAULT 'uytget'::character varying,
-    phone character varying DEFAULT 'uytget'::character varying,
-    password character varying DEFAULT 'uytget'::character varying,
-    forgot_password character varying DEFAULT 'uytget'::character varying,
-    sign_in character varying DEFAULT 'uytget'::character varying,
-    sign_up character varying DEFAULT 'uytget'::character varying,
-    name character varying DEFAULT 'uytget'::character varying,
-    password_verification character varying DEFAULT 'uytget'::character varying,
-    verify_secure character varying DEFAULT 'uytget'::character varying,
-    my_information character varying DEFAULT 'uytget'::character varying,
-    my_favorites character varying DEFAULT 'uytget'::character varying,
-    my_orders character varying DEFAULT 'uytget'::character varying,
-    log_out character varying DEFAULT 'uytget'::character varying,
+    lang_id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
+    research character varying DEFAULT 'uytget'::character varying NOT NULL,
+    phone character varying DEFAULT 'uytget'::character varying NOT NULL,
+    password character varying DEFAULT 'uytget'::character varying NOT NULL,
+    forgot_password character varying DEFAULT 'uytget'::character varying NOT NULL,
+    sign_in character varying DEFAULT 'uytget'::character varying NOT NULL,
+    sign_up character varying DEFAULT 'uytget'::character varying NOT NULL,
+    name character varying DEFAULT 'uytget'::character varying NOT NULL,
+    password_verification character varying DEFAULT 'uytget'::character varying NOT NULL,
+    verify_secure character varying DEFAULT 'uytget'::character varying NOT NULL,
+    my_information character varying DEFAULT 'uytget'::character varying NOT NULL,
+    my_favorites character varying DEFAULT 'uytget'::character varying NOT NULL,
+    my_orders character varying DEFAULT 'uytget'::character varying NOT NULL,
+    log_out character varying DEFAULT 'uytget'::character varying NOT NULL,
     created_at timestamp with time zone DEFAULT now(),
     updated_at timestamp with time zone DEFAULT now(),
     deleted_at timestamp with time zone,
-    basket character varying DEFAULT 'uytget'::character varying,
-    email character varying DEFAULT 'uytget'::character varying,
-    add_to_basket character varying DEFAULT 'uytget'::character varying
+    basket character varying DEFAULT 'uytget'::character varying NOT NULL,
+    email character varying DEFAULT 'uytget'::character varying NOT NULL,
+    add_to_basket character varying DEFAULT 'uytget'::character varying NOT NULL
 );
 
 
@@ -1063,14 +1063,14 @@ ALTER TABLE public.translation_header OWNER TO postgres;
 
 CREATE TABLE public.translation_my_information_page (
     id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
-    lang_id uuid,
-    address character varying DEFAULT 'uytget'::character varying,
+    lang_id uuid NOT NULL,
+    address character varying DEFAULT 'uytget'::character varying NOT NULL,
     created_at timestamp with time zone DEFAULT now(),
     updated_at timestamp with time zone DEFAULT now(),
     deleted_at timestamp with time zone,
-    birthday character varying DEFAULT 'uytget'::character varying,
-    update_password character varying DEFAULT 'uytegt'::character varying,
-    save character varying DEFAULT 'uytegt'::character varying
+    birthday character varying DEFAULT 'uytget'::character varying NOT NULL,
+    update_password character varying DEFAULT 'uytegt'::character varying NOT NULL,
+    save character varying DEFAULT 'uytegt'::character varying NOT NULL
 );
 
 
@@ -1082,17 +1082,17 @@ ALTER TABLE public.translation_my_information_page OWNER TO postgres;
 
 CREATE TABLE public.translation_my_order_page (
     id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
-    lang_id uuid,
-    orders character varying DEFAULT 'uytget'::character varying,
-    date character varying DEFAULT 'uytget'::character varying,
-    price character varying DEFAULT 'uytget'::character varying,
-    currency character varying DEFAULT 'uytget'::character varying,
-    image character varying DEFAULT 'uytget'::character varying,
-    name character varying DEFAULT 'uytget'::character varying,
-    brend character varying DEFAULT 'uytget'::character varying,
-    code character varying DEFAULT 'uytget'::character varying,
-    amount character varying DEFAULT 'uytget'::character varying,
-    total_price character varying DEFAULT 'uytget'::character varying,
+    lang_id uuid NOT NULL,
+    orders character varying DEFAULT 'uytget'::character varying NOT NULL,
+    date character varying DEFAULT 'uytget'::character varying NOT NULL,
+    price character varying DEFAULT 'uytget'::character varying NOT NULL,
+    currency character varying DEFAULT 'uytget'::character varying NOT NULL,
+    image character varying DEFAULT 'uytget'::character varying NOT NULL,
+    name character varying DEFAULT 'uytget'::character varying NOT NULL,
+    brend character varying DEFAULT 'uytget'::character varying NOT NULL,
+    code character varying DEFAULT 'uytget'::character varying NOT NULL,
+    amount character varying DEFAULT 'uytget'::character varying NOT NULL,
+    total_price character varying DEFAULT 'uytget'::character varying NOT NULL,
     created_at timestamp with time zone DEFAULT now(),
     updated_at timestamp with time zone DEFAULT now(),
     deleted_at timestamp with time zone
@@ -1107,9 +1107,9 @@ ALTER TABLE public.translation_my_order_page OWNER TO postgres;
 
 CREATE TABLE public.translation_notification (
     id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
-    notification_id uuid,
-    lang_id uuid,
-    translation character varying,
+    notification_id uuid NOT NULL,
+    lang_id uuid NOT NULL,
+    translation character varying NOT NULL,
     created_at timestamp with time zone DEFAULT now(),
     updated_at timestamp with time zone DEFAULT now(),
     deleted_at timestamp with time zone
@@ -1124,9 +1124,9 @@ ALTER TABLE public.translation_notification OWNER TO postgres;
 
 CREATE TABLE public.translation_order_dates (
     id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
-    lang_id uuid,
-    order_date_id uuid,
-    date character varying DEFAULT 'uytget'::character varying,
+    lang_id uuid NOT NULL,
+    order_date_id uuid NOT NULL,
+    date character varying(50) DEFAULT 'uytget'::character varying NOT NULL,
     created_at timestamp with time zone DEFAULT now(),
     updated_at timestamp with time zone DEFAULT now(),
     deleted_at timestamp with time zone
@@ -1141,13 +1141,13 @@ ALTER TABLE public.translation_order_dates OWNER TO postgres;
 
 CREATE TABLE public.translation_order_page (
     id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
-    lang_id uuid,
-    content character varying DEFAULT 'uytget'::character varying,
-    type_of_payment character varying DEFAULT 'uytget'::character varying,
-    choose_a_delivery_time character varying DEFAULT 'uytget'::character varying,
-    your_address character varying DEFAULT 'uytget'::character varying,
-    mark character varying DEFAULT 'uytget'::character varying,
-    to_order character varying DEFAULT 'uytget'::character varying,
+    lang_id uuid NOT NULL,
+    content character varying DEFAULT 'uytget'::character varying NOT NULL,
+    type_of_payment character varying DEFAULT 'uytget'::character varying NOT NULL,
+    choose_a_delivery_time character varying DEFAULT 'uytget'::character varying NOT NULL,
+    your_address character varying DEFAULT 'uytget'::character varying NOT NULL,
+    mark character varying DEFAULT 'uytget'::character varying NOT NULL,
+    to_order character varying DEFAULT 'uytget'::character varying NOT NULL,
     created_at timestamp with time zone DEFAULT now(),
     updated_at timestamp with time zone DEFAULT now(),
     deleted_at timestamp with time zone
@@ -1162,9 +1162,9 @@ ALTER TABLE public.translation_order_page OWNER TO postgres;
 
 CREATE TABLE public.translation_payment (
     id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
-    lang_id uuid,
-    title character varying DEFAULT 'uytget'::character varying,
-    content text DEFAULT 'uytget'::text,
+    lang_id uuid NOT NULL,
+    title character varying DEFAULT 'uytget'::character varying NOT NULL,
+    content text DEFAULT 'uytget'::text NOT NULL,
     created_at timestamp with time zone DEFAULT now(),
     updated_at timestamp with time zone DEFAULT now(),
     deleted_at timestamp with time zone
@@ -1179,14 +1179,14 @@ ALTER TABLE public.translation_payment OWNER TO postgres;
 
 CREATE TABLE public.translation_product (
     id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
-    lang_id uuid,
-    product_id uuid,
-    name character varying DEFAULT 'uytget'::character varying,
+    lang_id uuid NOT NULL,
+    product_id uuid NOT NULL,
+    name character varying DEFAULT 'uytget'::character varying NOT NULL,
     description text DEFAULT 'uytget'::text,
     created_at timestamp with time zone DEFAULT now(),
     updated_at timestamp with time zone DEFAULT now(),
     deleted_at timestamp with time zone,
-    slug character varying DEFAULT 'uytget'::character varying
+    slug character varying DEFAULT 'uytget'::character varying NOT NULL
 );
 
 
@@ -1198,9 +1198,9 @@ ALTER TABLE public.translation_product OWNER TO postgres;
 
 CREATE TABLE public.translation_secure (
     id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
-    lang_id uuid,
-    title character varying DEFAULT 'uytget'::character varying,
-    content text DEFAULT 'uytget'::text,
+    lang_id uuid NOT NULL,
+    title character varying DEFAULT 'uytget'::character varying NOT NULL,
+    content text DEFAULT 'uytget'::text NOT NULL,
     created_at timestamp with time zone DEFAULT now(),
     updated_at timestamp with time zone DEFAULT now(),
     deleted_at timestamp with time zone
@@ -1215,15 +1215,15 @@ ALTER TABLE public.translation_secure OWNER TO postgres;
 
 CREATE TABLE public.translation_update_password_page (
     id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
-    lang_id uuid,
-    title character varying DEFAULT 'uytget'::character varying,
-    verify_password character varying DEFAULT 'uytget'::character varying,
-    explanation character varying DEFAULT 'uytget'::character varying,
-    save character varying DEFAULT 'uytget'::character varying,
+    lang_id uuid NOT NULL,
+    title character varying DEFAULT 'uytget'::character varying NOT NULL,
+    verify_password character varying DEFAULT 'uytget'::character varying NOT NULL,
+    explanation character varying DEFAULT 'uytget'::character varying NOT NULL,
+    save character varying DEFAULT 'uytget'::character varying NOT NULL,
     created_at timestamp with time zone DEFAULT now(),
     updated_at timestamp with time zone DEFAULT now(),
     deleted_at timestamp with time zone,
-    password character varying DEFAULT 'uytget'::character varying
+    password character varying DEFAULT 'uytget'::character varying NOT NULL
 );
 
 
@@ -1284,6 +1284,17 @@ c4bcda34-7332-4ae5-8129-d7538d63fee4	Golden Eagle	uploads/brend/7a425220-7200-4e
 --
 
 COPY public.cart (id, product_id, customer_id, quantity_of_product, created_at, updated_at, deleted_at) FROM stdin;
+b96b4869-c152-48e1-9c32-54d906fbe689	45a9f186-2521-4eef-a4e0-b5c253c70878	1ae12390-03ae-49ac-a9ad-d7ba5c95b51a	2	2022-11-21 09:20:21.645886+05	2022-11-23 09:56:19.99435+05	\N
+68cf8e16-0cfd-45df-bbfa-4f25ac481cc8	32055a0a-2d59-45a9-89b0-761d1f6ad047	1ae12390-03ae-49ac-a9ad-d7ba5c95b51a	2	2022-11-21 09:46:10.30059+05	2022-11-23 09:56:20.026426+05	\N
+6e52fe31-555e-4203-97f2-47a7e8fac1b8	d6dfc8f9-27d9-45f9-811d-2a93fa0f7d35	1ae12390-03ae-49ac-a9ad-d7ba5c95b51a	2	2022-11-23 09:51:39.815449+05	2022-11-23 09:56:20.041402+05	\N
+ec9a7fb7-8672-498c-a48a-2ebb0b78905a	83da5c7b-bffe-4450-97c9-0f376441b1d4	1ae12390-03ae-49ac-a9ad-d7ba5c95b51a	1	2022-12-03 10:03:53.221395+05	2022-12-03 10:03:53.221395+05	\N
+c686d6cd-7ac1-4530-9d4e-b7584545d063	0946a0f5-d23f-4660-9151-80ef91ae9747	1ae12390-03ae-49ac-a9ad-d7ba5c95b51a	1	2022-12-03 10:03:53.409776+05	2022-12-03 10:03:53.409776+05	\N
+d77830b1-5512-4efc-8524-6dcf3a6fa7c6	febf699d-ca37-458a-b121-b5b70bbc7db0	1ae12390-03ae-49ac-a9ad-d7ba5c95b51a	1	2022-12-03 10:03:53.432429+05	2022-12-03 10:03:53.432429+05	\N
+0d02e514-0909-40cc-8c0d-31291c8cbd42	802b422b-710a-420b-860e-59b7f49d10bd	1ae12390-03ae-49ac-a9ad-d7ba5c95b51a	1	2022-12-03 10:03:53.449275+05	2022-12-03 10:03:53.449275+05	\N
+32866bf3-8a80-436c-8697-d3bafc2be8db	fe309360-c5dd-406a-9957-3d898ea85dfc	1ae12390-03ae-49ac-a9ad-d7ba5c95b51a	1	2022-12-03 10:03:53.460474+05	2022-12-03 10:03:53.460474+05	\N
+5798d428-3bcf-495d-b5bc-c79d09afa618	d6dfc8f9-27d9-45f9-811d-2a93fa0f7d35	19cdcf1a-f110-4510-a52b-063329d98607	2	2022-12-06 08:24:21.00357+05	2022-12-06 08:24:22.68441+05	\N
+79fef881-01e2-4741-91ca-5ca4e43cfef0	e34a20fa-3aef-4ba6-92ba-79d3649c61a6	19cdcf1a-f110-4510-a52b-063329d98607	1	2022-12-06 08:24:28.757878+05	2022-12-06 08:24:28.757878+05	\N
+1d3e678e-69b1-4100-812f-2e4a4addb487	febf699d-ca37-458a-b121-b5b70bbc7db0	19cdcf1a-f110-4510-a52b-063329d98607	1	2022-12-06 08:24:31.330066+05	2022-12-06 08:24:31.330066+05	\N
 \.
 
 
@@ -1330,11 +1341,6 @@ ad17e673-67ea-4a31-bb01-012cc45b9825	d154a3f1-7086-439f-b343-3998d6521efa	793be7
 321e5048-ca26-4a4e-8c7f-bfc758e6c099	d7862d17-0742-4bd5-8fc8-478fd7e868c4	793be71f-b0fa-43a2-b527-5fb09236f530	2022-10-27 13:22:11.437897+05	2022-10-27 13:22:11.437897+05	\N
 2db6e80f-0bc8-4688-8813-59def8634220	d154a3f1-7086-439f-b343-3998d6521efa	e34a20fa-3aef-4ba6-92ba-79d3649c61a6	2022-10-27 13:24:26.65126+05	2022-10-27 13:24:26.65126+05	\N
 3ce334ea-f8e2-41f7-b6c7-3dd71fec7c61	d7862d17-0742-4bd5-8fc8-478fd7e868c4	e34a20fa-3aef-4ba6-92ba-79d3649c61a6	2022-10-27 13:24:26.65126+05	2022-10-27 13:24:26.65126+05	\N
-f6840cbd-ae5e-42a4-8746-d90595d0d6a0	d154a3f1-7086-439f-b343-3998d6521efa	3f397126-6d8d-4a0d-982c-01fd00526957	2022-10-27 13:26:05.330899+05	2022-10-27 13:26:05.330899+05	\N
-79782ad3-0b26-4081-9c7f-c8ae45f39d0e	d7862d17-0742-4bd5-8fc8-478fd7e868c4	3f397126-6d8d-4a0d-982c-01fd00526957	2022-10-27 13:26:05.330899+05	2022-10-27 13:26:05.330899+05	\N
-eced4828-b523-446b-af5b-b5b78e5053b5	d154a3f1-7086-439f-b343-3998d6521efa	ccb43083-1c9e-4e84-bffd-ecb28474165e	2022-10-27 13:29:08.279964+05	2022-10-27 13:29:08.279964+05	\N
-2fd6bbe7-0b16-4605-a6e2-c8d82c62eff4	d7862d17-0742-4bd5-8fc8-478fd7e868c4	ccb43083-1c9e-4e84-bffd-ecb28474165e	2022-10-27 13:29:08.279964+05	2022-10-27 13:29:08.279964+05	\N
-f961661a-de6d-4cfe-8c52-4686406cce6b	ab28ad8f-72af-4e9e-841b-38a6e6881a6e	ccb43083-1c9e-4e84-bffd-ecb28474165e	2022-10-27 13:29:08.279964+05	2022-10-27 13:29:08.279964+05	\N
 395621d1-8269-4fd3-8626-8a6712916d74	d154a3f1-7086-439f-b343-3998d6521efa	83da5c7b-bffe-4450-97c9-0f376441b1d4	2022-10-27 13:30:49.724642+05	2022-10-27 13:30:49.724642+05	\N
 94a6f4a3-6d81-4c9e-a99e-b8dbfdc1b71a	d7862d17-0742-4bd5-8fc8-478fd7e868c4	83da5c7b-bffe-4450-97c9-0f376441b1d4	2022-10-27 13:30:49.724642+05	2022-10-27 13:30:49.724642+05	\N
 ecc4b4b6-9fb7-4371-8df8-d4c780c53098	ab28ad8f-72af-4e9e-841b-38a6e6881a6e	83da5c7b-bffe-4450-97c9-0f376441b1d4	2022-10-27 13:30:49.724642+05	2022-10-27 13:30:49.724642+05	\N
@@ -1344,9 +1350,6 @@ d9d36d7e-bc22-4b4f-aef9-9375aca69223	d154a3f1-7086-439f-b343-3998d6521efa	03050b
 14e3d2d1-eac0-45bd-9c2e-73ad51ad9c07	71994790-1b7b-41ab-90a8-b3df0d68e3e6	03050bc6-6223-49f3-b729-397fd3b6b285	2022-10-27 13:36:08.830146+05	2022-10-27 13:36:08.830146+05	\N
 93325946-9d80-40a4-9761-f2d3a8d7393a	d154a3f1-7086-439f-b343-3998d6521efa	8b481e58-cd39-4761-a052-75e30124689a	2022-10-27 13:38:14.209569+05	2022-10-27 13:38:14.209569+05	\N
 aeed9d4e-aa12-4874-859f-13cb5f178cfc	71994790-1b7b-41ab-90a8-b3df0d68e3e6	8b481e58-cd39-4761-a052-75e30124689a	2022-10-27 13:38:14.209569+05	2022-10-27 13:38:14.209569+05	\N
-9703c0b6-8106-424d-b8cc-245f5da75b7d	d154a3f1-7086-439f-b343-3998d6521efa	4bb06dbd-e4b2-4148-bb61-b1429d8cfc40	2022-10-27 23:15:36.102749+05	2022-10-27 23:15:36.102749+05	\N
-0a1a751b-ffa4-46f9-8ccd-2e3c60cfa24a	ab28ad8f-72af-4e9e-841b-38a6e6881a6e	4bb06dbd-e4b2-4148-bb61-b1429d8cfc40	2022-10-27 23:15:36.102749+05	2022-10-27 23:15:36.102749+05	\N
-c59db997-c4f9-4ed1-b596-7560787e775a	71994790-1b7b-41ab-90a8-b3df0d68e3e6	4bb06dbd-e4b2-4148-bb61-b1429d8cfc40	2022-10-27 23:15:36.102749+05	2022-10-27 23:15:36.102749+05	\N
 21ac7f67-ccec-4527-aeb1-d5312b30a4ff	d154a3f1-7086-439f-b343-3998d6521efa	81462bfa-36df-4e09-aa46-c6fa1ab86de6	2022-10-27 23:17:42.840691+05	2022-10-27 23:17:42.840691+05	\N
 1015b7f8-5f03-4479-bb01-a10abc974247	71994790-1b7b-41ab-90a8-b3df0d68e3e6	81462bfa-36df-4e09-aa46-c6fa1ab86de6	2022-10-27 23:17:42.840691+05	2022-10-27 23:17:42.840691+05	\N
 3dc2735c-d5e6-48be-ab75-cd85a52592c7	d154a3f1-7086-439f-b343-3998d6521efa	360ebeac-853e-45a5-ab7f-838430b0c442	2022-10-27 23:19:20.813712+05	2022-10-27 23:19:20.813712+05	\N
@@ -1402,10 +1405,11 @@ ebd8d48b-83ea-4faf-b4bf-ff01dc052e45	5e16c816-a24a-42a4-92a8-8f765e72a149	badd08
 7bf5cb40-f59f-47b9-806e-db503df0f7fc	28a5bd8a-318a-4acf-b3c9-8ba04be5a979	d6dfc8f9-27d9-45f9-811d-2a93fa0f7d35	2022-10-28 01:24:16.831459+05	2022-10-28 01:24:16.831459+05	\N
 32a85a29-2d39-48fd-ac05-2a498e5940b7	5e16c816-a24a-42a4-92a8-8f765e72a149	d6dfc8f9-27d9-45f9-811d-2a93fa0f7d35	2022-10-28 01:24:16.831459+05	2022-10-28 01:24:16.831459+05	\N
 52dc8810-0407-464f-9bdf-a6d85c40bb8c	ab28ad8f-72af-4e9e-841b-38a6e6881a6e	d6dfc8f9-27d9-45f9-811d-2a93fa0f7d35	2022-10-28 01:24:16.831459+05	2022-10-28 01:24:16.831459+05	\N
-d52dec4a-bd78-4df6-82b7-19acb1014878	789cbced-9141-4748-94d3-93476d276057	45a9f186-2521-4eef-a4e0-b5c253c70878	2022-10-28 01:24:52.910549+05	2022-10-28 01:24:52.910549+05	\N
-9ede1eaf-b4c5-4ade-915e-694e72228863	28a5bd8a-318a-4acf-b3c9-8ba04be5a979	45a9f186-2521-4eef-a4e0-b5c253c70878	2022-10-28 01:24:52.910549+05	2022-10-28 01:24:52.910549+05	\N
-7b9ffe2b-321e-4094-8d8b-26ac32bd2379	5e16c816-a24a-42a4-92a8-8f765e72a149	45a9f186-2521-4eef-a4e0-b5c253c70878	2022-10-28 01:24:52.910549+05	2022-10-28 01:24:52.910549+05	\N
-7b42704a-dbd3-4f8d-9eb0-88a9bff47ef7	ab28ad8f-72af-4e9e-841b-38a6e6881a6e	45a9f186-2521-4eef-a4e0-b5c253c70878	2022-10-28 01:24:52.910549+05	2022-10-28 01:24:52.910549+05	\N
+9703c0b6-8106-424d-b8cc-245f5da75b7d	d154a3f1-7086-439f-b343-3998d6521efa	4bb06dbd-e4b2-4148-bb61-b1429d8cfc40	2022-10-27 23:15:36.102749+05	2022-11-25 09:03:36.049575+05	2022-11-25 09:03:36.049575+05
+0a1a751b-ffa4-46f9-8ccd-2e3c60cfa24a	ab28ad8f-72af-4e9e-841b-38a6e6881a6e	4bb06dbd-e4b2-4148-bb61-b1429d8cfc40	2022-10-27 23:15:36.102749+05	2022-11-25 09:03:36.049575+05	2022-11-25 09:03:36.049575+05
+c59db997-c4f9-4ed1-b596-7560787e775a	71994790-1b7b-41ab-90a8-b3df0d68e3e6	4bb06dbd-e4b2-4148-bb61-b1429d8cfc40	2022-10-27 23:15:36.102749+05	2022-11-25 09:03:36.049575+05	2022-11-25 09:03:36.049575+05
+f6840cbd-ae5e-42a4-8746-d90595d0d6a0	d154a3f1-7086-439f-b343-3998d6521efa	3f397126-6d8d-4a0d-982c-01fd00526957	2022-10-27 13:26:05.330899+05	2022-12-01 00:59:45.59055+05	2022-12-01 00:59:45.59055+05
+79782ad3-0b26-4081-9c7f-c8ae45f39d0e	d7862d17-0742-4bd5-8fc8-478fd7e868c4	3f397126-6d8d-4a0d-982c-01fd00526957	2022-10-27 13:26:05.330899+05	2022-12-01 00:59:45.59055+05	2022-12-01 00:59:45.59055+05
 7df6c589-1ee6-49aa-8204-b9420fc0d98f	789cbced-9141-4748-94d3-93476d276057	fa148eb2-520f-430e-bd8d-9d5a166d0600	2022-10-28 01:25:37.444609+05	2022-10-28 01:25:37.444609+05	\N
 3f8ee642-3979-4a0d-9c42-3c3bf583192a	28a5bd8a-318a-4acf-b3c9-8ba04be5a979	fa148eb2-520f-430e-bd8d-9d5a166d0600	2022-10-28 01:25:37.444609+05	2022-10-28 01:25:37.444609+05	\N
 7b447e81-2987-47f0-82ce-b20424c24b06	5e16c816-a24a-42a4-92a8-8f765e72a149	fa148eb2-520f-430e-bd8d-9d5a166d0600	2022-10-28 01:25:37.444609+05	2022-10-28 01:25:37.444609+05	\N
@@ -1431,6 +1435,13 @@ ce1dfb43-c4ae-4fde-be63-115bef5883c2	57d072c8-4952-44c5-845e-d2d706677e16	ad2415
 ceffda14-f32c-4878-baa0-bb3563f4327d	789cbced-9141-4748-94d3-93476d276057	9c655c36-1832-48ca-9f88-c04197f191af	2022-10-28 01:31:07.066813+05	2022-10-28 01:31:07.066813+05	\N
 14c04bed-1cc8-41ff-868d-2646986d4dd2	7e3eeef8-4748-483c-bbf8-3767943135ee	9c655c36-1832-48ca-9f88-c04197f191af	2022-10-28 01:31:07.066813+05	2022-10-28 01:31:07.066813+05	\N
 0f01d1a6-3a83-4d83-8caf-a938f8c0cac2	57d072c8-4952-44c5-845e-d2d706677e16	9c655c36-1832-48ca-9f88-c04197f191af	2022-10-28 01:31:07.066813+05	2022-10-28 01:31:07.066813+05	\N
+eced4828-b523-446b-af5b-b5b78e5053b5	d154a3f1-7086-439f-b343-3998d6521efa	ccb43083-1c9e-4e84-bffd-ecb28474165e	2022-10-27 13:29:08.279964+05	2022-11-22 09:49:06.741919+05	2022-11-22 09:49:06.741919+05
+2fd6bbe7-0b16-4605-a6e2-c8d82c62eff4	d7862d17-0742-4bd5-8fc8-478fd7e868c4	ccb43083-1c9e-4e84-bffd-ecb28474165e	2022-10-27 13:29:08.279964+05	2022-11-22 09:49:06.741919+05	2022-11-22 09:49:06.741919+05
+f961661a-de6d-4cfe-8c52-4686406cce6b	ab28ad8f-72af-4e9e-841b-38a6e6881a6e	ccb43083-1c9e-4e84-bffd-ecb28474165e	2022-10-27 13:29:08.279964+05	2022-11-22 09:49:06.741919+05	2022-11-22 09:49:06.741919+05
+d52dec4a-bd78-4df6-82b7-19acb1014878	789cbced-9141-4748-94d3-93476d276057	45a9f186-2521-4eef-a4e0-b5c253c70878	2022-10-28 01:24:52.910549+05	2022-12-01 01:00:02.7551+05	2022-12-01 01:00:02.7551+05
+9ede1eaf-b4c5-4ade-915e-694e72228863	28a5bd8a-318a-4acf-b3c9-8ba04be5a979	45a9f186-2521-4eef-a4e0-b5c253c70878	2022-10-28 01:24:52.910549+05	2022-12-01 01:00:02.7551+05	2022-12-01 01:00:02.7551+05
+7b9ffe2b-321e-4094-8d8b-26ac32bd2379	5e16c816-a24a-42a4-92a8-8f765e72a149	45a9f186-2521-4eef-a4e0-b5c253c70878	2022-10-28 01:24:52.910549+05	2022-12-01 01:00:02.7551+05	2022-12-01 01:00:02.7551+05
+7b42704a-dbd3-4f8d-9eb0-88a9bff47ef7	ab28ad8f-72af-4e9e-841b-38a6e6881a6e	45a9f186-2521-4eef-a4e0-b5c253c70878	2022-10-28 01:24:52.910549+05	2022-12-01 01:00:02.7551+05	2022-12-01 01:00:02.7551+05
 \.
 
 
@@ -1468,7 +1479,8 @@ COPY public.company_setting (id, logo, favicon, email, instagram, created_at, up
 
 COPY public.customer_address (id, customer_id, address, created_at, updated_at, deleted_at, is_active) FROM stdin;
 41e86110-cc92-442e-b788-81959e56f668	19cdcf1a-f110-4510-a52b-063329d98607	Mir 2/2 jay 7 oy 36	2022-11-01 11:36:50.869926+05	2022-11-01 11:36:50.869926+05	\N	f
-d16fe7ec-9024-4745-8dab-0e79b13cc343	1ae12390-03ae-49ac-a9ad-d7ba5c95b51a	Mir 2/2 jay 7 oy 36	2022-11-03 22:00:31.880539+05	2022-11-03 22:00:31.880539+05	\N	f
+d3496ac8-f36f-40f8-8b40-0ba3a7e226e5	1ae12390-03ae-49ac-a9ad-d7ba5c95b51a	Mir 6/3 jay 56 	2022-11-22 10:02:14.214333+05	2022-11-22 10:02:14.214333+05	\N	t
+d16fe7ec-9024-4745-8dab-0e79b13cc343	1ae12390-03ae-49ac-a9ad-d7ba5c95b51a	Mir 2/2 jay 7 oy 36	2022-11-03 22:00:31.880539+05	2022-11-22 10:02:14.271009+05	\N	f
 \.
 
 
@@ -1478,7 +1490,7 @@ d16fe7ec-9024-4745-8dab-0e79b13cc343	1ae12390-03ae-49ac-a9ad-d7ba5c95b51a	Mir 2/
 
 COPY public.customers (id, full_name, phone_number, password, birthday, gender, created_at, updated_at, deleted_at, email, is_register) FROM stdin;
 19cdcf1a-f110-4510-a52b-063329d98607	Allanur Bayramgeldiyew	+99362420377	$2a$14$QLQ.Mkd6Oi3Qz4djp38KS.Y1BBwKNJL1Hy6qKS0piHnoNP4rvIMd2	\N	\N	2022-11-01 11:33:32.61818+05	2022-11-01 11:33:32.61818+05	\N	abb@gmail.com	t
-1ae12390-03ae-49ac-a9ad-d7ba5c95b51a	Muhammetmyrat	+99363747155	$2a$14$Ag0N0Otwyu7qmHaDCVVmWOz2UxHsYhqoEMkZcnCgzMzB1rAGqMZO2	\N	\N	2022-11-02 07:34:24.403632+05	2022-11-02 07:34:24.403632+05	\N	bayramovmuhammetmyrat97@gmail.com	t
+1ae12390-03ae-49ac-a9ad-d7ba5c95b51a	Muhammetmyrat Bayramov	+99363747155	$2a$14$Ag0N0Otwyu7qmHaDCVVmWOz2UxHsYhqoEMkZcnCgzMzB1rAGqMZO2	1997-03-11	\N	2022-11-02 07:34:24.403632+05	2022-11-28 08:39:44.990107+05	\N	muhammetmyrat@gmail.com	t
 \.
 
 
@@ -1500,8 +1512,6 @@ c1150204-74a8-4d1d-96bf-350c495ed4a0	81462bfa-36df-4e09-aa46-c6fa1ab86de6	upload
 d2ed160f-8df5-472b-bd68-79839dbe1b02	81462bfa-36df-4e09-aa46-c6fa1ab86de6	uploads/product/bb42c64f-0e97-4683-b121-e319cf4726cb.jpg	uploads/product/ba398d68-ee79-4866-b93a-bae00978f3e1.jpg	2022-10-27 23:17:42.808526+05	2022-11-09 15:11:14.496257+05	\N
 ea9ec679-e5fe-4e12-b74a-cd1f3e3dabb3	35f5f2d8-9271-469f-bde1-2314c18ea574	uploads/product/2c60a680-05b2-461f-9c45-9eaa159bcb0f.jpg	uploads/product/d0de12b7-26a7-4f18-a2af-13648d055f50.jpg	2022-10-27 23:23:19.432859+05	2022-11-09 15:11:14.496257+05	\N
 7a7f59d9-881d-4ae2-9aad-52385c861ccc	35f5f2d8-9271-469f-bde1-2314c18ea574	uploads/product/1c51123c-feef-4aac-af55-d900d0887c5b.jpg	uploads/product/7c4aaa6e-5bef-4219-b107-18e7bfcc50a2.jpg	2022-10-27 23:23:19.432859+05	2022-11-09 15:11:14.496257+05	\N
-6c1d1042-f8b2-4404-aa6e-8c8a64532545	ccb43083-1c9e-4e84-bffd-ecb28474165e	uploads/product/42f9cfe5-3c5d-4b69-a8e4-a3d9867a0f5b.jpg	uploads/product/c97ca423-724f-4713-b799-a011287c6aa5.jpg	2022-10-27 13:29:08.23347+05	2022-11-09 15:09:41.955371+05	\N
-987bfb34-af2c-40f1-b540-f3ab8430326d	ccb43083-1c9e-4e84-bffd-ecb28474165e	uploads/product/3127d757-72a9-44d9-9595-b7ed97963f3b.jpg	uploads/product/2275f3ec-9942-41de-9caa-9ef406ecfd00.jpg	2022-10-27 13:29:08.23347+05	2022-11-09 15:09:41.955371+05	\N
 abadfa0d-6999-40b1-b27b-b0084da7fcec	83da5c7b-bffe-4450-97c9-0f376441b1d4	uploads/product/162dec1d-64d9-4dda-84d2-0d065b7e0fe2.jpg	uploads/product/fda9bc4e-3727-48e8-aee2-b46737f0bf36.jpg	2022-10-27 13:30:49.679942+05	2022-11-09 15:09:41.955371+05	\N
 f1eedc22-c922-4aea-93e0-c5b44449a23e	83da5c7b-bffe-4450-97c9-0f376441b1d4	uploads/product/bc01f470-6db7-4e73-bfe9-f6ea46ba34c6.jpg	uploads/product/b152ac0e-e7f2-4668-a3d8-abdcd118a2b2.jpg	2022-10-27 13:30:49.679942+05	2022-11-09 15:09:41.955371+05	\N
 93d0b190-39e5-4419-89a3-c4b8d12b14c7	d987b7ad-257e-4ae2-befb-b7d369252a54	uploads/product/0b1d8d54-d7ec-445a-9536-254e74ccbf9d.jpg	uploads/product/d709e7ef-c65d-4cca-9275-7555f8ff0b58.jpg	2022-10-27 23:53:01.811227+05	2022-11-09 15:11:14.496257+05	\N
@@ -1510,8 +1520,6 @@ f1eedc22-c922-4aea-93e0-c5b44449a23e	83da5c7b-bffe-4450-97c9-0f376441b1d4	upload
 c13de883-9df2-4606-8e5c-fbd9749dcaf4	77ecf422-b48b-45fd-8e58-380e23d74c4c	uploads/product/01be5183-ab9b-4219-be51-6d30a0bdeb97.jpg	uploads/product/1a89dbd8-a0b0-4394-a49d-6c2a00a95766.jpg	2022-10-28 00:08:25.802076+05	2022-11-09 15:11:14.496257+05	\N
 bd3b7206-488c-4151-89ab-ce75d8968147	9b9ef1ce-2f3d-4051-8e88-5c301bd68554	uploads/product/5b615aea-ebe8-4c8c-ad40-c599ef434b89.jpg	uploads/product/22ff7898-dbf6-471b-8608-7ce76204dc24.jpg	2022-10-28 00:09:12.485443+05	2022-11-09 15:11:14.496257+05	\N
 5461340e-92fc-4845-b7cf-a6ada7d274ca	9b9ef1ce-2f3d-4051-8e88-5c301bd68554	uploads/product/a8b8e530-0418-4161-932a-f34cea1c86be.jpg	uploads/product/d5f7e4d3-9dea-46ca-aa82-5e0dda8e629b.jpg	2022-10-28 00:09:12.485443+05	2022-11-09 15:11:14.496257+05	\N
-3bc24ef3-5f6e-40d9-b50d-2ec46bcbe668	4bb06dbd-e4b2-4148-bb61-b1429d8cfc40	uploads/product/1211f76d-734e-4c49-8688-b6b11406b2e8.jpg	uploads/product/e543ea1f-3001-438d-9b98-6a5ef1e7fa4f.jpg	2022-10-27 23:15:36.04716+05	2022-11-09 15:09:41.955371+05	\N
-06b374a0-8af5-4cdf-b228-ee5668feb802	4bb06dbd-e4b2-4148-bb61-b1429d8cfc40	uploads/product/c175237d-bb04-42c2-a673-285c7297f671.jpg	uploads/product/fbb79b30-d4d8-4476-b584-59980e7484c4.jpg	2022-10-27 23:15:36.04716+05	2022-11-09 15:09:41.955371+05	\N
 8202b1ec-dffd-49cb-8ec6-7857487ea9ab	20a8c487-9a56-4fb6-8fa0-13facaf96109	uploads/product/5921b54b-490e-4594-9d49-37b43acb7ea1.jpg	uploads/product/816742ca-efc9-485a-a363-5873086f6aaf.jpg	2022-10-28 00:09:53.581469+05	2022-11-09 15:11:14.496257+05	\N
 a75ef72a-634c-47f5-8ca1-f5bc92a2fe22	20a8c487-9a56-4fb6-8fa0-13facaf96109	uploads/product/7c1acb87-c0dc-4127-81d0-dd6f02580485.jpg	uploads/product/bbe835cb-3738-4400-baf7-0181f8c6744d.jpg	2022-10-28 00:09:53.581469+05	2022-11-09 15:11:14.496257+05	\N
 56400764-56ba-450c-8f61-f892a74720fd	360ebeac-853e-45a5-ab7f-838430b0c442	uploads/product/d93f2aed-5e17-4e7c-aa80-f6f47edb28ad.jpg	uploads/product/75592e9f-1f90-41b6-9d62-600eba932325.jpg	2022-10-27 23:19:20.758383+05	2022-11-09 15:09:41.955371+05	\N
@@ -1537,10 +1545,10 @@ d23332be-54a7-4487-8448-6d19f95a58d4	89172d2f-b5b3-4b26-a299-dc7e8a71d16e	upload
 6600ce61-3124-4f14-b519-95f5b23ed844	c82fef0a-ad15-4b07-8855-910fc4708af1	uploads/product/401d6961-3148-4f19-9330-b618c3664859.jpg	uploads/product/61f6200f-ba08-4b70-86af-c62dab6ef0b9.jpg	2022-10-28 00:14:34.679499+05	2022-11-09 15:11:14.496257+05	\N
 c92b5c54-ba83-4ed0-ac59-f5805d7a968a	c82fef0a-ad15-4b07-8855-910fc4708af1	uploads/product/3059b7e8-515f-4180-98c1-af0c91d98b0f.jpg	uploads/product/853ac031-11c2-4e28-b957-4ff1c6200b42.jpg	2022-10-28 00:14:34.679499+05	2022-11-09 15:11:14.496257+05	\N
 4dea0a7a-e0a4-4663-b606-5e2ba02f9860	311aa4c1-6002-4acf-b1b5-e2aa7896def7	uploads/product/890360f1-417d-4782-ba42-2ab58fa314a0.jpg	uploads/product/64131571-2787-4cac-9313-2ceeee12d5f6.jpg	2022-10-28 00:15:19.584828+05	2022-11-09 15:11:14.496257+05	\N
+3bc24ef3-5f6e-40d9-b50d-2ec46bcbe668	4bb06dbd-e4b2-4148-bb61-b1429d8cfc40	uploads/product/1211f76d-734e-4c49-8688-b6b11406b2e8.jpg	uploads/product/e543ea1f-3001-438d-9b98-6a5ef1e7fa4f.jpg	2022-10-27 23:15:36.04716+05	2022-11-25 09:03:36.049575+05	2022-11-25 09:03:36.049575+05
+06b374a0-8af5-4cdf-b228-ee5668feb802	4bb06dbd-e4b2-4148-bb61-b1429d8cfc40	uploads/product/c175237d-bb04-42c2-a673-285c7297f671.jpg	uploads/product/fbb79b30-d4d8-4476-b584-59980e7484c4.jpg	2022-10-27 23:15:36.04716+05	2022-11-25 09:03:36.049575+05	2022-11-25 09:03:36.049575+05
 580ab999-7569-4e88-b345-27543cc96e8b	e34a20fa-3aef-4ba6-92ba-79d3649c61a6	uploads/product/0150db4e-e9bf-4cc8-b8f6-7f7f62ef898f.jpg	uploads/product/cf067d6f-ffcf-44ec-a125-758f35d85b37.jpg	2022-10-27 13:24:26.617604+05	2022-11-09 15:11:14.496257+05	\N
 865750f3-5d69-47a0-b312-9c2ab0cc2289	e34a20fa-3aef-4ba6-92ba-79d3649c61a6	uploads/product/a724631a-74e7-48ab-b976-7b89f808388d.jpg	uploads/product/4402bb7b-6d14-444d-a18e-d2c34b72a727.jpg	2022-10-27 13:24:26.617604+05	2022-11-09 15:11:14.496257+05	\N
-aecb0fb0-5a38-40a1-8af2-d09614a9b6bd	3f397126-6d8d-4a0d-982c-01fd00526957	uploads/product/2ea5faef-2ce3-44b6-80d1-7a7c15701f8c.jpg	uploads/product/9a0b4714-1ee7-4077-be1c-edd2018ade1c.jpg	2022-10-27 13:26:05.297633+05	2022-11-09 15:11:14.496257+05	\N
-4eb50f79-8829-4079-b0cd-8331435823d5	3f397126-6d8d-4a0d-982c-01fd00526957	uploads/product/6109cab7-8d18-4e29-8223-710a9b721ca8.jpg	uploads/product/281fe419-0068-4fb2-bdfc-072a82c0c082.jpg	2022-10-27 13:26:05.297633+05	2022-11-09 15:11:14.496257+05	\N
 b6c7be30-57c3-4406-963e-a0c74d0e731b	0946a0f5-d23f-4660-9151-80ef91ae9747	uploads/product/583d21a2-5b92-4d30-9062-a7b646e981ca.jpg	uploads/product/4783671a-16a8-4858-b7f6-17ba9f0f8305.jpg	2022-10-27 13:32:30.014698+05	2022-11-09 15:11:14.496257+05	\N
 80a99f3b-1586-4305-ab97-0af6b57785bd	0946a0f5-d23f-4660-9151-80ef91ae9747	uploads/product/3600b0d8-27ac-4bc8-adb1-e5826df56cff.jpg	uploads/product/802e22e1-b0a9-4f6b-9456-47e9dc309442.jpg	2022-10-27 13:32:30.014698+05	2022-11-09 15:11:14.496257+05	\N
 b93797c8-b747-4e9b-bc2e-6c83bc6b9b8b	03050bc6-6223-49f3-b729-397fd3b6b285	uploads/product/ee8ef999-a666-4c66-a775-61e3acabda1d.jpg	uploads/product/db4aec4d-e284-4eda-9441-77926a80cc35.jpg	2022-10-27 13:36:08.795988+05	2022-11-09 15:11:14.496257+05	\N
@@ -1550,8 +1558,6 @@ c92f6bfa-9139-433c-8177-52370121605e	8b481e58-cd39-4761-a052-75e30124689a	upload
 3cd664f7-b765-4171-b354-0e944a2fdd13	311aa4c1-6002-4acf-b1b5-e2aa7896def7	uploads/product/1bbf53cd-ca19-43fa-8d1c-d481475efd2d.jpg	uploads/product/e6b19777-9274-4f0d-aed6-8b1f4d3f2b19.jpg	2022-10-28 00:15:19.584828+05	2022-11-09 15:11:14.496257+05	\N
 e038a02e-ddda-4e31-a81a-6d92d8dbd75f	d6dfc8f9-27d9-45f9-811d-2a93fa0f7d35	uploads/product/604b9373-5efa-4530-a7dc-e38e5633ad20.jpg	uploads/product/6d8a9371-b9e3-4e10-9a12-98f5e5614f8e.jpg	2022-10-28 01:24:16.798646+05	2022-11-09 15:09:41.955371+05	\N
 45c9eb98-6d8d-4f29-b211-856b5ed5e90b	d6dfc8f9-27d9-45f9-811d-2a93fa0f7d35	uploads/product/ae8f6c4e-c034-4c75-974c-121631dce46e.jpg	uploads/product/4e29447b-65ab-487c-8e1b-4dea309423b0.jpg	2022-10-28 01:24:16.798646+05	2022-11-09 15:09:41.955371+05	\N
-62271c1b-e49e-4cd4-a098-cf23809b0dd1	45a9f186-2521-4eef-a4e0-b5c253c70878	uploads/product/398d721e-d844-4694-bcae-6e0c53563a98.jpg	uploads/product/afe3c3f5-c21f-4086-a917-085116c07705.jpg	2022-10-28 01:24:52.876387+05	2022-11-09 15:09:41.955371+05	\N
-e11d840f-dcde-4e3e-91f1-6c29d0d00b0d	45a9f186-2521-4eef-a4e0-b5c253c70878	uploads/product/6bc98fb2-e88e-42b2-bd28-b977bdcd335e.jpg	uploads/product/c824f9b4-7100-47ca-adfb-6db4c3cc721c.jpg	2022-10-28 01:24:52.876387+05	2022-11-09 15:09:41.955371+05	\N
 53b6b788-2dd3-4f99-a207-b30889ea21a6	fa148eb2-520f-430e-bd8d-9d5a166d0600	uploads/product/da73ddaa-a306-4c33-89cf-a807174187b3.jpg	uploads/product/3266c7cc-840e-4ea0-985c-d8012533c4c8.jpg	2022-10-28 01:25:37.4003+05	2022-11-09 15:09:41.955371+05	\N
 69caa4ae-d0da-4e87-9076-443648e46b98	fa148eb2-520f-430e-bd8d-9d5a166d0600	uploads/product/982e61b2-9fcd-489b-be86-cdc06b483c4b.jpg	uploads/product/0b326dc6-99a7-4ae2-b747-a4da0461573b.jpg	2022-10-28 01:25:37.4003+05	2022-11-09 15:09:41.955371+05	\N
 b541c4e4-525a-4fa5-878e-c4789c057284	9cd1e4e4-b15c-4ceb-a03c-01e9cfbb224b	uploads/product/ab04e2bd-2402-4dbf-882a-9f5f1a7bb5ae.jpg	uploads/product/ce2630d7-f8d1-429c-8340-2485308d4404.jpg	2022-10-28 01:26:46.936658+05	2022-11-09 15:11:14.496257+05	\N
@@ -1578,6 +1584,8 @@ c5e41ca8-f8e3-4383-bf82-3031ee3dfeb1	70a75d8b-d570-41d4-95cb-2199f4417542	upload
 136f7f16-a271-46da-8577-e756f3aa6847	ee1d67ed-5862-4dfc-8424-52531a240a6c	uploads/product/fae54003-461b-43d7-84aa-c6ae5128c4af.jpg	uploads/product/31d00bf3-7de5-463b-b591-b5775638cc75.jpg	2022-10-27 13:07:14.091292+05	2022-11-09 15:09:41.955371+05	\N
 5850c6bd-8c14-4fc0-bc76-ff909cb4f2ff	c14c7f18-77db-4e3c-8939-e6001cb95db0	uploads/product/304771ec-b010-40f3-92df-82b6a5b934de.jpg	uploads/product/2df895c6-4267-4232-82df-53212d785429.jpg	2022-10-27 13:09:04.147542+05	2022-11-09 15:09:41.955371+05	\N
 b4cd94cc-0c7f-4f92-8360-89ff7d73fe8f	c14c7f18-77db-4e3c-8939-e6001cb95db0	uploads/product/cbc2c8cd-052a-4d6f-b2ae-ccf785bf31fb.jpg	uploads/product/3b4a1295-860c-4066-8e87-d5515cb81d5c.jpg	2022-10-27 13:09:04.147542+05	2022-11-09 15:09:41.955371+05	\N
+62271c1b-e49e-4cd4-a098-cf23809b0dd1	45a9f186-2521-4eef-a4e0-b5c253c70878	uploads/product/398d721e-d844-4694-bcae-6e0c53563a98.jpg	uploads/product/afe3c3f5-c21f-4086-a917-085116c07705.jpg	2022-10-28 01:24:52.876387+05	2022-12-01 01:00:02.7551+05	2022-12-01 01:00:02.7551+05
+e11d840f-dcde-4e3e-91f1-6c29d0d00b0d	45a9f186-2521-4eef-a4e0-b5c253c70878	uploads/product/6bc98fb2-e88e-42b2-bd28-b977bdcd335e.jpg	uploads/product/c824f9b4-7100-47ca-adfb-6db4c3cc721c.jpg	2022-10-28 01:24:52.876387+05	2022-12-01 01:00:02.7551+05	2022-12-01 01:00:02.7551+05
 8c1c80a9-64cb-4d9a-9986-bb056697eaa3	793be71f-b0fa-43a2-b527-5fb09236f530	uploads/product/f8f1e4f7-be4a-4b6d-a571-c632f36add50.jpg	uploads/product/7b417a83-b629-497d-b757-b03beb029f85.jpg	2022-10-27 13:22:11.393609+05	2022-11-09 15:11:14.496257+05	\N
 e0eaf897-245e-421b-af9e-e899c6617e0e	793be71f-b0fa-43a2-b527-5fb09236f530	uploads/product/fa161b81-e4e1-4c22-bfa6-f5f7c7ae1756.jpg	uploads/product/36314b1f-a86d-4bf0-ae1d-f9a80745cdbf.jpg	2022-10-27 13:22:11.393609+05	2022-11-09 15:11:14.496257+05	\N
 179de5f5-cab0-4e18-95cf-9ae110b981b4	32055a0a-2d59-45a9-89b0-761d1f6ad047	uploads/product/3758efe5-ea12-469d-a241-5ee078119218.jpg	uploads/product/dfaf2986-a56e-43f7-90bd-f84a194fa7eb.jpg	2022-10-28 01:13:10.606082+05	2022-11-09 15:11:14.496257+05	\N
@@ -1592,6 +1600,10 @@ e82719d1-fc5f-4eb6-88c6-30e3d3bc42a6	bcb52dfc-c957-4d5e-9bbc-1fcb607d3fd6	upload
 47644433-677f-4c40-89c8-cb19ba965fc1	badd0869-99df-4df3-8a27-5e27c10a861d	uploads/product/67eedac3-24bb-4966-aa00-facb4317e2c1.jpg	uploads/product/b649a985-03f8-4412-a899-c2a9758a783b.jpg	2022-10-28 01:22:44.772789+05	2022-11-09 15:11:14.496257+05	\N
 4be76e8d-89d5-45ab-b2ff-5f0f04737675	9c655c36-1832-48ca-9f88-c04197f191af	uploads/product/8addee00-1d2e-4d34-af3b-240e16345757.jpg	uploads/product/6a41e8eb-9bcc-421c-96e8-2c02996048f1.jpg	2022-10-28 01:31:06.889648+05	2022-11-09 15:11:14.496257+05	\N
 f61c2ad2-7b9a-414d-8ecf-0fa233499af0	9c655c36-1832-48ca-9f88-c04197f191af	uploads/product/9d639611-4a70-4a4b-a2ae-d36a76caa194.jpg	uploads/product/cf6c2ff9-6209-446b-967b-fbc02309e21e.jpg	2022-10-28 01:31:06.889648+05	2022-11-09 15:11:14.496257+05	\N
+6c1d1042-f8b2-4404-aa6e-8c8a64532545	ccb43083-1c9e-4e84-bffd-ecb28474165e	uploads/product/42f9cfe5-3c5d-4b69-a8e4-a3d9867a0f5b.jpg	uploads/product/c97ca423-724f-4713-b799-a011287c6aa5.jpg	2022-10-27 13:29:08.23347+05	2022-11-22 09:49:06.741919+05	2022-11-22 09:49:06.741919+05
+987bfb34-af2c-40f1-b540-f3ab8430326d	ccb43083-1c9e-4e84-bffd-ecb28474165e	uploads/product/3127d757-72a9-44d9-9595-b7ed97963f3b.jpg	uploads/product/2275f3ec-9942-41de-9caa-9ef406ecfd00.jpg	2022-10-27 13:29:08.23347+05	2022-11-22 09:49:06.741919+05	2022-11-22 09:49:06.741919+05
+aecb0fb0-5a38-40a1-8af2-d09614a9b6bd	3f397126-6d8d-4a0d-982c-01fd00526957	uploads/product/2ea5faef-2ce3-44b6-80d1-7a7c15701f8c.jpg	uploads/product/9a0b4714-1ee7-4077-be1c-edd2018ade1c.jpg	2022-10-27 13:26:05.297633+05	2022-12-01 00:59:45.59055+05	2022-12-01 00:59:45.59055+05
+4eb50f79-8829-4079-b0cd-8331435823d5	3f397126-6d8d-4a0d-982c-01fd00526957	uploads/product/6109cab7-8d18-4e29-8223-710a9b721ca8.jpg	uploads/product/281fe419-0068-4fb2-bdfc-072a82c0c082.jpg	2022-10-27 13:26:05.297633+05	2022-12-01 00:59:45.59055+05	2022-12-01 00:59:45.59055+05
 \.
 
 
@@ -1612,6 +1624,9 @@ aea98b93-7bdf-455b-9ad4-a259d69dc76e	ru	uploads/language1c24e3a6-173e-4264-a631-
 COPY public.likes (id, product_id, customer_id, created_at, updated_at, deleted_at) FROM stdin;
 d11a3e9a-1d64-4fa9-931e-e649d4600665	4bb06dbd-e4b2-4148-bb61-b1429d8cfc40	1ae12390-03ae-49ac-a9ad-d7ba5c95b51a	2022-11-10 08:54:14.379992+05	2022-11-10 08:54:14.379992+05	\N
 7de0dbcc-5b39-4ab7-8637-2fb5c092d6f3	d6dfc8f9-27d9-45f9-811d-2a93fa0f7d35	1ae12390-03ae-49ac-a9ad-d7ba5c95b51a	2022-11-10 08:54:14.401298+05	2022-11-10 08:54:14.401298+05	\N
+453e0c4b-6613-4e3d-9a59-55e2f680b3e5	3f397126-6d8d-4a0d-982c-01fd00526957	1ae12390-03ae-49ac-a9ad-d7ba5c95b51a	2022-11-23 09:40:42.613078+05	2022-11-23 09:40:42.613078+05	\N
+a7a1e519-3ced-4d76-9994-318fc662cfe1	83da5c7b-bffe-4450-97c9-0f376441b1d4	1ae12390-03ae-49ac-a9ad-d7ba5c95b51a	2022-11-23 09:51:48.935859+05	2022-11-23 09:51:48.935859+05	\N
+0599a01d-e5c5-48e3-bc54-d861f0e1947c	fa148eb2-520f-430e-bd8d-9d5a166d0600	19cdcf1a-f110-4510-a52b-063329d98607	2022-12-06 08:19:38.020438+05	2022-12-06 08:19:38.020438+05	\N
 \.
 
 
@@ -1639,7 +1654,6 @@ da3408ea-1cd6-41b0-aa7d-361ed2325c55	332d15a5-8f2a-4ea5-8eac-a0e571fcdce5	upload
 8784f06e-d7cc-4516-951a-e9539e80ecf7	9c655c36-1832-48ca-9f88-c04197f191af	uploads/product/af808e6d-eab1-44f3-844c-51d59a1d01df.jpg	uploads/product/df743a98-6d36-48c0-ba39-5316b28c55cd.jpg	uploads/product/36639cb1-50bd-468b-8915-5f521884c198.jpg	2022-10-28 01:31:06.807562+05	2022-11-09 15:11:14.496257+05	\N
 69bbae4e-e69b-4e46-a0f5-8f6a6574843f	793be71f-b0fa-43a2-b527-5fb09236f530	uploads/product/c61c3627-e507-48ee-8287-e023d20a1339.jpg	uploads/product/5bf97605-7983-4767-84fb-6e11c3ac00cc.jpg	uploads/product/b302a6cb-eb01-4afb-991d-a95f2be25d9b.jpg	2022-10-27 13:22:11.378944+05	2022-11-09 15:11:14.496257+05	\N
 c325207e-dfbf-4986-96e6-26fd7e17ccd2	e34a20fa-3aef-4ba6-92ba-79d3649c61a6	uploads/product/d6338cc4-f07e-4068-a9f2-656e64886d62.jpg	uploads/product/ce1ced74-7e0d-4a97-bea7-63dfe2026a75.jpg	uploads/product/06ccab77-b6c9-4356-a182-46ff5de5e8d1.jpg	2022-10-27 13:24:26.603629+05	2022-11-09 15:11:14.496257+05	\N
-57233981-9813-4f95-b436-7962f56f2889	3f397126-6d8d-4a0d-982c-01fd00526957	uploads/product/4d7d4295-07e6-4756-af1c-789cf6b8512f.jpg	uploads/product/c766e9c4-787f-41c6-b66c-13adab39c4ac.jpg	uploads/product/ce597557-b988-4a31-a2aa-c22b9f6e960a.jpg	2022-10-27 13:26:05.283184+05	2022-11-09 15:11:14.496257+05	\N
 fa340958-a6c9-437d-9928-1f388892fb56	0946a0f5-d23f-4660-9151-80ef91ae9747	uploads/product/b627f961-60f8-40c9-91fa-21818c09cddb.jpg	uploads/product/09db62e8-d9ee-458a-be46-af4988bfe8cb.jpg	uploads/product/37db2574-b67a-4bca-b606-46273f27d63c.jpg	2022-10-27 13:32:30.000631+05	2022-11-09 15:11:14.496257+05	\N
 e948a556-f723-4e50-b9d2-2d94b7c7e619	03050bc6-6223-49f3-b729-397fd3b6b285	uploads/product/bb8433b9-3f0b-4f47-8e67-3acad07820a4.jpg	uploads/product/a8edb71f-4a7c-4940-851f-ea281b3d6039.jpg	uploads/product/2e34230d-7ce7-4403-9646-61581a914d65.jpg	2022-10-27 13:36:08.781822+05	2022-11-09 15:11:14.496257+05	\N
 8d74ecec-e8c9-4c36-8b90-361c5665a1b7	8b481e58-cd39-4761-a052-75e30124689a	uploads/product/17f209e5-1d6c-437e-b34d-adf5c62c8433.jpg	uploads/product/a998b549-d68a-4e47-8eb0-7cd345a2183a.jpg	uploads/product/96483dec-8e60-4c7c-9b45-f7f28713bac0.jpg	2022-10-27 13:38:14.095266+05	2022-11-09 15:11:14.496257+05	\N
@@ -1649,9 +1663,9 @@ b3460c07-2e1f-4110-94c2-14750748eec6	2e05c0d9-f7a0-4dc8-ab1a-171f8d725d33	upload
 258471e1-e002-4e3d-9be8-4a442a6d6d50	70a75d8b-d570-41d4-95cb-2199f4417542	uploads/product/1ec30d87-b8a3-4de8-a71f-1749328bf20e.jpg	uploads/product/88cf205f-c937-4f89-a29e-be0cc8b0d99e.jpg	uploads/product/82ad8ac8-251a-4432-9b07-19e3596198fb.jpg	2022-10-27 13:05:10.30663+05	2022-11-09 15:09:36.259608+05	\N
 a95f9bba-0dc1-4096-90c3-db2cc308bda7	ee1d67ed-5862-4dfc-8424-52531a240a6c	uploads/product/38457790-da1e-4ffb-bdae-c28c40fc6534.jpg	uploads/product/60eeed69-6577-42d9-a7f8-08000ea7dbc2.jpg	uploads/product/8c6655d0-eb65-4431-81fd-916d35f42850.jpg	2022-10-27 13:07:14.075976+05	2022-11-09 15:09:36.259608+05	\N
 bfffc5b6-956d-4460-9683-973289a4a76b	c14c7f18-77db-4e3c-8939-e6001cb95db0	uploads/product/0c009049-b607-44e3-8d25-140040506225.jpg	uploads/product/ed283bde-c753-49c7-8e3a-e40911da1ef6.jpg	uploads/product/48fc7ed3-5e18-4d57-88ee-bcd389377593.jpg	2022-10-27 13:09:04.132921+05	2022-11-09 15:09:36.259608+05	\N
-45456031-0230-493e-b897-bf218a376fbf	ccb43083-1c9e-4e84-bffd-ecb28474165e	uploads/product/e122a649-5132-45f5-99a7-ef299f683bcf.jpg	uploads/product/25d480da-32bc-42a2-a1ab-0780d1207171.jpg	uploads/product/63ad2aaf-0c61-4380-9b88-113b6b1eac5d.jpg	2022-10-27 13:29:08.219368+05	2022-11-09 15:09:36.259608+05	\N
 ef3d46dc-e961-472e-ad8c-e4e61a10e7a2	83da5c7b-bffe-4450-97c9-0f376441b1d4	uploads/product/e4dacbb0-3fe1-456d-bd26-23e382a0d536.jpg	uploads/product/05d9a4d6-fddf-4a72-8c0b-650c6940217f.jpg	uploads/product/0e3b5a4d-daef-4cfa-8847-dd1538ac6ce1.jpg	2022-10-27 13:30:49.665842+05	2022-11-09 15:09:36.259608+05	\N
-fa50db2f-5ceb-46b6-9941-62800d9d1aab	4bb06dbd-e4b2-4148-bb61-b1429d8cfc40	uploads/product/6006c020-ea15-4a58-a80a-3026d0624550.jpg	uploads/product/1d3f3d7a-fbbd-440c-8115-fb107e6c6356.jpg	uploads/product/5303fca2-9314-4bc6-88c8-6262e7b9c045.jpg	2022-10-27 23:15:36.031827+05	2022-11-09 15:09:36.259608+05	\N
+fa50db2f-5ceb-46b6-9941-62800d9d1aab	4bb06dbd-e4b2-4148-bb61-b1429d8cfc40	uploads/product/6006c020-ea15-4a58-a80a-3026d0624550.jpg	uploads/product/1d3f3d7a-fbbd-440c-8115-fb107e6c6356.jpg	uploads/product/5303fca2-9314-4bc6-88c8-6262e7b9c045.jpg	2022-10-27 23:15:36.031827+05	2022-11-25 09:03:36.049575+05	2022-11-25 09:03:36.049575+05
+57233981-9813-4f95-b436-7962f56f2889	3f397126-6d8d-4a0d-982c-01fd00526957	uploads/product/4d7d4295-07e6-4756-af1c-789cf6b8512f.jpg	uploads/product/c766e9c4-787f-41c6-b66c-13adab39c4ac.jpg	uploads/product/ce597557-b988-4a31-a2aa-c22b9f6e960a.jpg	2022-10-27 13:26:05.283184+05	2022-12-01 00:59:45.59055+05	2022-12-01 00:59:45.59055+05
 1c0b5103-5844-4678-b939-1d853989398b	81462bfa-36df-4e09-aa46-c6fa1ab86de6	uploads/product/f9f8496c-e46e-442c-8812-c665e3b776a4.jpg	uploads/product/c891cceb-618e-45ee-b350-a5e0c73ed169.jpg	uploads/product/d726dc68-f99d-4dbc-ad7d-3d5a876444a3.jpg	2022-10-27 23:17:42.792181+05	2022-11-09 15:11:14.496257+05	\N
 0e9f5a75-6930-495d-bf93-c9b1a0fd0b0e	35f5f2d8-9271-469f-bde1-2314c18ea574	uploads/product/36682327-39cd-44f2-834a-809257a2bd7d.jpg	uploads/product/3603e0b8-7d14-40ab-8d80-ab64517a16ea.jpg	uploads/product/e3a9704a-db38-4bbc-9a86-6c79fb884d26.jpg	2022-10-27 23:23:19.416485+05	2022-11-09 15:11:14.496257+05	\N
 d40e2562-52e0-490c-b047-2928955dd4a7	360ebeac-853e-45a5-ab7f-838430b0c442	uploads/product/de4b3324-0485-4abd-a568-37c4f6d470b8.jpg	uploads/product/c3fada3a-4421-4413-9ca2-bac4d3911016.jpg	uploads/product/919d1dbf-5348-42a8-a669-9c2bdb025114.jpg	2022-10-27 23:19:20.741606+05	2022-11-09 15:09:36.259608+05	\N
@@ -1659,7 +1673,6 @@ de10aba0-5cdf-4b28-8c9c-c3f20639c5fc	fe309360-c5dd-406a-9957-3d898ea85dfc	upload
 5e9fffdf-06cf-4944-b949-ee5715fc3c05	febf699d-ca37-458a-b121-b5b70bbc7db0	uploads/product/127368ed-e77d-4639-8ebd-aedef27c200c.jpg	uploads/product/25e133af-0198-4a14-a66e-36022db617b1.jpg	uploads/product/73eb6faf-fb5c-4395-9579-a5bba1bc8322.jpg	2022-10-27 23:21:07.444791+05	2022-11-09 15:09:36.259608+05	\N
 6dee238b-10ff-455a-ae38-f1f63d55f567	802b422b-710a-420b-860e-59b7f49d10bd	uploads/product/f24f0f5f-6954-462d-9795-1f895a89f707.jpg	uploads/product/623e606d-53cd-45cd-b67c-63bb74507b2a.jpg	uploads/product/9c325d22-1224-4586-a79a-508eef75124a.jpg	2022-10-27 23:22:15.680856+05	2022-11-09 15:09:36.259608+05	\N
 9aff278a-615b-440c-81df-5e33634b8ae3	d6dfc8f9-27d9-45f9-811d-2a93fa0f7d35	uploads/product/2d36f97c-397f-41d8-b503-9c404e0713da.jpg	uploads/product/3a05513c-310f-45ed-82c1-fb8f57b8f475.jpg	uploads/product/f4f607bf-c802-4cb2-8bdb-50ebb3619d77.jpg	2022-10-28 01:24:16.782147+05	2022-11-09 15:09:36.259608+05	\N
-e7a54110-ad06-4cf4-bea8-9935e99df168	45a9f186-2521-4eef-a4e0-b5c253c70878	uploads/product/44742d95-3475-4e0f-8846-a45a8781231b.jpg	uploads/product/af09bf0f-f441-4995-a508-400bf1e3d8f4.jpg	uploads/product/84f9c74f-8180-4273-8b77-95c69e95c808.jpg	2022-10-28 01:24:52.861397+05	2022-11-09 15:09:36.259608+05	\N
 2f3beb18-0836-465b-bc4f-c851c34aec1e	fa148eb2-520f-430e-bd8d-9d5a166d0600	uploads/product/38efbe3b-80d4-422a-8e02-d5e77c6c5191.jpg	uploads/product/2d09ae6a-ade2-481a-a073-39771a06ebf4.jpg	uploads/product/39774041-20ce-440f-8591-2e8e0a8a7615.jpg	2022-10-28 01:25:37.384738+05	2022-11-09 15:09:36.259608+05	\N
 322c9ce5-12a2-43ec-a533-2bbfd9b9dbb8	d987b7ad-257e-4ae2-befb-b7d369252a54	uploads/product/09dce57f-03b6-48c3-932b-dbb520eafac7.jpg	uploads/product/5ad27340-5ad3-4839-a5ef-3d09484afef7.jpg	uploads/product/f30bbffb-3cbc-4c2f-b847-da4a5c5752ae.jpg	2022-10-27 23:53:01.79677+05	2022-11-09 15:11:14.496257+05	\N
 1809a348-4705-4511-9485-5e7e72058159	77ecf422-b48b-45fd-8e58-380e23d74c4c	uploads/product/81e7eb9d-f900-4206-9e53-9b9947f0aa8f.jpg	uploads/product/aae92bed-0e94-4536-b79b-9266648ae1ac.jpg	uploads/product/d3ce4211-5aa2-4ef5-b18e-37fe2793f345.jpg	2022-10-28 00:08:25.784901+05	2022-11-09 15:11:14.496257+05	\N
@@ -1668,6 +1681,8 @@ fa5d4ac7-e082-4589-9af2-18fc434b3d63	9b9ef1ce-2f3d-4051-8e88-5c301bd68554	upload
 15dab5fb-955b-4b97-b27c-bf1c2c582358	7078e107-dd52-4da1-8007-29ed7cf731fb	uploads/product/8ada7e6a-e8f4-4164-a1e6-2c32ef6ba3eb.jpg	uploads/product/83e05a0b-5c84-4a22-ac61-1be1d65cb293.jpg	uploads/product/2a17b554-6652-4dec-bfdd-09ffb2550627.jpg	2022-10-28 00:10:28.333242+05	2022-11-09 15:11:14.496257+05	\N
 8c9d3a09-89f9-4830-b896-4f39b9a006b9	5f6aba1c-66df-4791-b85e-b0a90ccffc20	uploads/product/d5b2e5ac-6e29-49cf-bdbe-c8ac48927fc0.jpg	uploads/product/7d96bc51-3d16-48b0-b205-03a567da4142.jpg	uploads/product/2978b50f-ffe7-492a-9683-735e430e9182.jpg	2022-10-28 00:11:26.323714+05	2022-11-09 15:11:14.496257+05	\N
 ecd99db9-df34-4cad-b8a3-0b030e4e188d	01dc8537-7ec1-4c48-bcce-3734f1ac598a	uploads/product/f535c1ed-f6b8-41d7-9d44-9b3d602bcd05.jpg	uploads/product/f0930527-7aa3-4aa9-82c7-630847b894cf.jpg	uploads/product/74ce7c46-f94b-4498-9ff4-c4be74cd401a.jpg	2022-10-28 00:11:58.336604+05	2022-11-09 15:11:14.496257+05	\N
+45456031-0230-493e-b897-bf218a376fbf	ccb43083-1c9e-4e84-bffd-ecb28474165e	uploads/product/e122a649-5132-45f5-99a7-ef299f683bcf.jpg	uploads/product/25d480da-32bc-42a2-a1ab-0780d1207171.jpg	uploads/product/63ad2aaf-0c61-4380-9b88-113b6b1eac5d.jpg	2022-10-27 13:29:08.219368+05	2022-11-22 09:49:06.741919+05	2022-11-22 09:49:06.741919+05
+e7a54110-ad06-4cf4-bea8-9935e99df168	45a9f186-2521-4eef-a4e0-b5c253c70878	uploads/product/44742d95-3475-4e0f-8846-a45a8781231b.jpg	uploads/product/af09bf0f-f441-4995-a508-400bf1e3d8f4.jpg	uploads/product/84f9c74f-8180-4273-8b77-95c69e95c808.jpg	2022-10-28 01:24:52.861397+05	2022-12-01 01:00:02.7551+05	2022-12-01 01:00:02.7551+05
 \.
 
 
@@ -1739,8 +1754,6 @@ cb7e8cc9-9b2e-4cd8-921f-91b3bb5e5564	aea98b93-7bdf-455b-9ad4-a259d69dc76e	пла
 
 COPY public.products (id, brend_id, price, old_price, amount, created_at, updated_at, deleted_at, limit_amount, is_new, shop_id) FROM stdin;
 793be71f-b0fa-43a2-b527-5fb09236f530	fdd259c2-794a-42b9-a3ad-9e91502af23e	72.5	0	2	2022-10-27 13:22:11.35263+05	2022-11-09 15:11:14.496257+05	\N	5	f	a283d9a4-f38e-43ee-a228-6584b7406cc4
-3f397126-6d8d-4a0d-982c-01fd00526957	ddccb2dc-9697-4f4e-acf5-26b8bc2c8b72	95	0	2	2022-10-27 13:26:05.260347+05	2022-11-09 15:11:14.496257+05	\N	5	f	a283d9a4-f38e-43ee-a228-6584b7406cc4
-0946a0f5-d23f-4660-9151-80ef91ae9747	214be879-65c3-4710-86b4-3fc3bce2e974	141.2	0	2	2022-10-27 13:32:29.977781+05	2022-11-09 15:11:14.496257+05	\N	5	f	a283d9a4-f38e-43ee-a228-6584b7406cc4
 8b481e58-cd39-4761-a052-75e30124689a	ddccb2dc-9697-4f4e-acf5-26b8bc2c8b72	161	0	2	2022-10-27 13:38:14.068965+05	2022-11-09 15:11:14.496257+05	\N	5	f	a283d9a4-f38e-43ee-a228-6584b7406cc4
 81462bfa-36df-4e09-aa46-c6fa1ab86de6	214be879-65c3-4710-86b4-3fc3bce2e974	67	0	2	2022-10-27 23:17:42.767975+05	2022-11-09 15:11:14.496257+05	\N	5	f	a283d9a4-f38e-43ee-a228-6584b7406cc4
 35f5f2d8-9271-469f-bde1-2314c18ea574	c4bcda34-7332-4ae5-8129-d7538d63fee4	1	0	2	2022-10-27 23:23:19.34493+05	2022-11-09 15:11:14.496257+05	\N	5	t	a283d9a4-f38e-43ee-a228-6584b7406cc4
@@ -1757,15 +1770,10 @@ badd0869-99df-4df3-8a27-5e27c10a861d	fdd259c2-794a-42b9-a3ad-9e91502af23e	165.2	
 70a75d8b-d570-41d4-95cb-2199f4417542	46b13f0a-d584-4ad3-b270-437ecdc51449	74.8	94.4	2	2022-10-27 13:05:10.286344+05	2022-11-09 15:09:28.523722+05	\N	5	f	74cce5dc-6fc2-487c-8553-1f00850df257
 ee1d67ed-5862-4dfc-8424-52531a240a6c	f53a27b4-7810-4d8f-bd45-edad405d92b9	74.8	99.3	2	2022-10-27 13:07:14.050311+05	2022-11-09 15:09:28.523722+05	\N	5	f	74cce5dc-6fc2-487c-8553-1f00850df257
 c14c7f18-77db-4e3c-8939-e6001cb95db0	f53a27b4-7810-4d8f-bd45-edad405d92b9	68.9	74.8	2	2022-10-27 13:09:04.112256+05	2022-11-09 15:09:28.523722+05	\N	5	f	74cce5dc-6fc2-487c-8553-1f00850df257
-ccb43083-1c9e-4e84-bffd-ecb28474165e	ddccb2dc-9697-4f4e-acf5-26b8bc2c8b72	92	96.9	2	2022-10-27 13:29:08.198279+05	2022-11-09 15:09:28.523722+05	\N	5	f	74cce5dc-6fc2-487c-8553-1f00850df257
-83da5c7b-bffe-4450-97c9-0f376441b1d4	ddccb2dc-9697-4f4e-acf5-26b8bc2c8b72	50.1	85.8	2	2022-10-27 13:30:49.646484+05	2022-11-09 15:09:28.523722+05	\N	5	f	74cce5dc-6fc2-487c-8553-1f00850df257
-4bb06dbd-e4b2-4148-bb61-b1429d8cfc40	ddccb2dc-9697-4f4e-acf5-26b8bc2c8b72	25.9	37.5	2	2022-10-27 23:15:35.997022+05	2022-11-09 15:09:28.523722+05	\N	5	f	74cce5dc-6fc2-487c-8553-1f00850df257
 360ebeac-853e-45a5-ab7f-838430b0c442	ddccb2dc-9697-4f4e-acf5-26b8bc2c8b72	52.4	66	2	2022-10-27 23:19:20.710619+05	2022-11-09 15:09:28.523722+05	\N	5	t	74cce5dc-6fc2-487c-8553-1f00850df257
 fe309360-c5dd-406a-9957-3d898ea85dfc	fdd259c2-794a-42b9-a3ad-9e91502af23e	37.9	47	2	2022-10-27 23:20:14.720704+05	2022-11-09 15:09:28.523722+05	\N	5	t	74cce5dc-6fc2-487c-8553-1f00850df257
-febf699d-ca37-458a-b121-b5b70bbc7db0	fdd259c2-794a-42b9-a3ad-9e91502af23e	73.6	92.7	2	2022-10-27 23:21:07.422604+05	2022-11-09 15:09:28.523722+05	\N	5	t	74cce5dc-6fc2-487c-8553-1f00850df257
 802b422b-710a-420b-860e-59b7f49d10bd	46b13f0a-d584-4ad3-b270-437ecdc51449	55.2	69.6	2	2022-10-27 23:22:15.654712+05	2022-11-09 15:09:28.523722+05	\N	5	t	74cce5dc-6fc2-487c-8553-1f00850df257
 d6dfc8f9-27d9-45f9-811d-2a93fa0f7d35	fdd259c2-794a-42b9-a3ad-9e91502af23e	79.5	88.3	2	2022-10-28 01:24:16.759592+05	2022-11-09 15:09:28.523722+05	\N	5	f	74cce5dc-6fc2-487c-8553-1f00850df257
-45a9f186-2521-4eef-a4e0-b5c253c70878	fdd259c2-794a-42b9-a3ad-9e91502af23e	79.5	88.3	2	2022-10-28 01:24:52.841332+05	2022-11-09 15:09:28.523722+05	\N	5	f	74cce5dc-6fc2-487c-8553-1f00850df257
 fa148eb2-520f-430e-bd8d-9d5a166d0600	fdd259c2-794a-42b9-a3ad-9e91502af23e	49.3	54.8	2	2022-10-28 01:25:37.342021+05	2022-11-09 15:09:28.523722+05	\N	5	f	74cce5dc-6fc2-487c-8553-1f00850df257
 2e05c0d9-f7a0-4dc8-ab1a-171f8d725d33	c4bcda34-7332-4ae5-8129-d7538d63fee4	86.3	158	2	2022-10-27 12:49:37.648623+05	2022-11-09 15:09:28.523722+05	\N	5	f	74cce5dc-6fc2-487c-8553-1f00850df257
 d085e5a4-8229-4177-b5e1-623e80846017	c4bcda34-7332-4ae5-8129-d7538d63fee4	52.4	61.6	2	2022-10-27 12:45:23.437479+05	2022-11-09 15:09:28.523722+05	\N	5	f	74cce5dc-6fc2-487c-8553-1f00850df257
@@ -1781,11 +1789,18 @@ c82fef0a-ad15-4b07-8855-910fc4708af1	c4bcda34-7332-4ae5-8129-d7538d63fee4	4	0	2	
 18f957f2-216d-4810-b4d7-bd4dd49efd0d	c4bcda34-7332-4ae5-8129-d7538d63fee4	42.4	0	2	2022-10-28 01:29:49.510321+05	2022-11-09 15:11:14.496257+05	\N	5	f	a283d9a4-f38e-43ee-a228-6584b7406cc4
 ad24153a-997a-46d1-87bb-27aa1e3e8aea	c4bcda34-7332-4ae5-8129-d7538d63fee4	32.7	0	2	2022-10-28 01:30:32.769134+05	2022-11-09 15:11:14.496257+05	\N	5	f	a283d9a4-f38e-43ee-a228-6584b7406cc4
 9c655c36-1832-48ca-9f88-c04197f191af	c4bcda34-7332-4ae5-8129-d7538d63fee4	30.5	0	2	2022-10-28 01:31:06.759114+05	2022-11-09 15:11:14.496257+05	\N	5	f	a283d9a4-f38e-43ee-a228-6584b7406cc4
-e34a20fa-3aef-4ba6-92ba-79d3649c61a6	ddccb2dc-9697-4f4e-acf5-26b8bc2c8b72	109	0	2	2022-10-27 13:24:26.583694+05	2022-11-09 15:11:14.496257+05	\N	5	f	a283d9a4-f38e-43ee-a228-6584b7406cc4
 77ecf422-b48b-45fd-8e58-380e23d74c4c	ddccb2dc-9697-4f4e-acf5-26b8bc2c8b72	31.8	0	2	2022-10-28 00:08:25.761854+05	2022-11-09 15:11:14.496257+05	\N	5	f	a283d9a4-f38e-43ee-a228-6584b7406cc4
 4a5bdcbf-712d-45ca-baa8-1318c6e2fb3c	c4bcda34-7332-4ae5-8129-d7538d63fee4	82.7	91.8	10	2022-10-27 12:47:51.121005+05	2022-11-19 15:52:19.01745+05	\N	5	f	74cce5dc-6fc2-487c-8553-1f00850df257
 03050bc6-6223-49f3-b729-397fd3b6b285	ddccb2dc-9697-4f4e-acf5-26b8bc2c8b72	115	0	10	2022-10-27 13:36:08.764157+05	2022-11-19 15:52:19.01745+05	\N	5	f	a283d9a4-f38e-43ee-a228-6584b7406cc4
 214befd8-68bd-484a-a8d5-8e2d0b73931c	f53a27b4-7810-4d8f-bd45-edad405d92b9	4.2	0	10	2022-10-28 00:12:34.7569+05	2022-11-19 15:52:19.01745+05	\N	5	f	a283d9a4-f38e-43ee-a228-6584b7406cc4
+ccb43083-1c9e-4e84-bffd-ecb28474165e	ddccb2dc-9697-4f4e-acf5-26b8bc2c8b72	92	96.9	2	2022-10-27 13:29:08.198279+05	2022-11-22 09:49:06.741919+05	2022-11-22 09:49:06.741919+05	5	f	74cce5dc-6fc2-487c-8553-1f00850df257
+e34a20fa-3aef-4ba6-92ba-79d3649c61a6	ddccb2dc-9697-4f4e-acf5-26b8bc2c8b72	109	0	2	2022-10-27 13:24:26.583694+05	2022-11-28 08:21:56.414093+05	\N	1	f	a283d9a4-f38e-43ee-a228-6584b7406cc4
+83da5c7b-bffe-4450-97c9-0f376441b1d4	ddccb2dc-9697-4f4e-acf5-26b8bc2c8b72	50.1	85.8	1	2022-10-27 13:30:49.646484+05	2022-11-22 09:57:30.851479+05	\N	5	f	74cce5dc-6fc2-487c-8553-1f00850df257
+4bb06dbd-e4b2-4148-bb61-b1429d8cfc40	ddccb2dc-9697-4f4e-acf5-26b8bc2c8b72	25.9	37.5	2	2022-10-27 23:15:35.997022+05	2022-11-25 09:03:36.049575+05	2022-11-25 09:03:36.049575+05	5	f	74cce5dc-6fc2-487c-8553-1f00850df257
+3f397126-6d8d-4a0d-982c-01fd00526957	ddccb2dc-9697-4f4e-acf5-26b8bc2c8b72	95	0	1	2022-10-27 13:26:05.260347+05	2022-12-01 00:59:45.59055+05	2022-12-01 00:59:45.59055+05	5	f	a283d9a4-f38e-43ee-a228-6584b7406cc4
+45a9f186-2521-4eef-a4e0-b5c253c70878	fdd259c2-794a-42b9-a3ad-9e91502af23e	79.5	88.3	2	2022-10-28 01:24:52.841332+05	2022-12-01 01:00:02.7551+05	2022-12-01 01:00:02.7551+05	1	f	74cce5dc-6fc2-487c-8553-1f00850df257
+febf699d-ca37-458a-b121-b5b70bbc7db0	fdd259c2-794a-42b9-a3ad-9e91502af23e	73.6	92.7	1	2022-10-27 23:21:07.422604+05	2022-12-01 01:00:46.250906+05	\N	5	t	74cce5dc-6fc2-487c-8553-1f00850df257
+0946a0f5-d23f-4660-9151-80ef91ae9747	214be879-65c3-4710-86b4-3fc3bce2e974	141.2	0	2	2022-10-27 13:32:29.977781+05	2022-12-01 01:01:17.027517+05	\N	1	f	a283d9a4-f38e-43ee-a228-6584b7406cc4
 \.
 
 
@@ -1980,9 +1995,7 @@ e504255e-51cb-4583-b37d-d91624aa94b1	aea98b93-7bdf-455b-9ad4-a259d69dc76e	c14c7f
 e8b956d7-8e65-44bc-a7a1-02fd3df23338	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	03050bc6-6223-49f3-b729-397fd3b6b285	(Aksiýa!) Kofe Nescafe Gold, paket gapda 220 gr + Kofe Nescafe Classic, 3x1 kiçi paket 14.5 gr	(Aksiýa!) Kofe Nescafe Gold, paket gapda 220 gr + Kofe Nescafe Classic, 3x1 kiçi paket 14.5 gr	2022-10-27 13:36:08.808395+05	2022-11-09 15:11:14.496257+05	\N	aksiya-kofe-nescafe-gold-paket-gapda-220-gr-kofe-nescafe-classic-3x1-kici-paket-14-5-gr
 ee30076c-a648-4de4-9f62-238333d88481	aea98b93-7bdf-455b-9ad4-a259d69dc76e	03050bc6-6223-49f3-b729-397fd3b6b285	(Акция!) Кофе Nescafe Gold, пакет 220 г + Кофе Nescafe Classic 3в1, стик 14.5 гр	(Акция!) Кофе Nescafe Gold, пакет 220 г + Кофе Nescafe Classic 3в1, стик 14.5 гр	2022-10-27 13:36:08.818396+05	2022-11-09 15:11:14.496257+05	\N	aktsiia-kofe-nescafe-gold-paket-220-g-kofe-nescafe-classic-3v1-stik-14-5-gr
 015b37fc-77f0-49ff-818d-a4443e60a454	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	8b481e58-cd39-4761-a052-75e30124689a	(4+1) Kofe Jacobs Monarch 47.5 gr (5 sany)	(4+1) Kofe Jacobs Monarch 47.5 gr (5 sany)	2022-10-27 13:38:14.188215+05	2022-11-09 15:11:14.496257+05	\N	4-1-kofe-jacobs-monarch-47-5-gr-5-sany
-a440c88c-0030-445b-b675-94029afeacbc	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	ccb43083-1c9e-4e84-bffd-ecb28474165e	Sowgatlyk toplumy UFC x EXXE duş geli + dezodorant Ultimate Freshness	Sowgatlyk toplumy UFC x EXXE duş geli + dezodorant Ultimate Freshness	2022-10-27 13:29:08.24936+05	2022-11-09 15:09:20.835667+05	\N	sowgatlyk-toplumy-ufc-x-exxe-dus-geli-dezodorant-ultimate-freshness
 7bed1227-d2e6-4ba7-844f-3ffc70027a90	aea98b93-7bdf-455b-9ad4-a259d69dc76e	8b481e58-cd39-4761-a052-75e30124689a	(4+1) Кофе Jacobs Monarch 47.5 г (5 шт)	(4+1) Кофе Jacobs Monarch 47.5 г (5 шт)	2022-10-27 13:38:14.199712+05	2022-11-09 15:11:14.496257+05	\N	4-1-kofe-jacobs-monarch-47-5-g-5-sht
-f2d39fe8-264d-4394-964a-88b04f133187	aea98b93-7bdf-455b-9ad4-a259d69dc76e	ccb43083-1c9e-4e84-bffd-ecb28474165e	Подарочный набор UFC x EXXE гель для душа + дезодорант Ultimate Freshness	Подарочный набор UFC x EXXE гель для душа + дезодорант Ultimate Freshness	2022-10-27 13:29:08.266915+05	2022-11-09 15:09:20.835667+05	\N	podarochnyi-nabor-ufc-x-exxe-gel-dlia-dusha-dezodorant-ultimate-freshness
 db6e8eac-1e4b-48ab-9082-040f0635ebe1	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	83da5c7b-bffe-4450-97c9-0f376441b1d4	Sowgatlyk toplum Le Petit Marseillais erkekler üçin gel-şampun "Narpyz we Laým" 250 ml	Sowgatlyk toplum Le Petit Marseillais erkekler üçin gel-şampun "Narpyz we Laým" 250 ml	2022-10-27 13:30:49.691056+05	2022-11-09 15:09:20.835667+05	\N	sowgatlyk-toplum-le-petit-marseillais-erkekler-ucin-gel-sampun-narpyz-we-laym-250-ml
 e6457a78-48e1-4f73-b380-75f76892d146	aea98b93-7bdf-455b-9ad4-a259d69dc76e	83da5c7b-bffe-4450-97c9-0f376441b1d4	Подарочный набор Le Petit Marseillais гель-шампунь для мужчин "Мята и Лайм" 250 мл	Подарочный набор Le Petit Marseillais гель-шампунь для мужчин "Мята и Лайм" 250 мл	2022-10-27 13:30:49.702691+05	2022-11-09 15:09:20.835667+05	\N	podarochnyi-nabor-le-petit-marseillais-gel-shampun-dlia-muzhchin-miata-i-laim-250-ml
 eee6b1f8-7db8-492a-889d-70e232d1e2d7	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	81462bfa-36df-4e09-aa46-c6fa1ab86de6	(2+1) Dezodorant XO "Aqua joy" 150 ml, Dezodorant XO "Nice girl" 150 ml + Dezodorant XO MEN "Absolute blue" 150 ml	(2+1) Dezodorant XO "Aqua joy" 150 ml, Dezodorant XO "Nice girl" 150 ml + Dezodorant XO MEN "Absolute blue" 150 ml	2022-10-27 23:17:42.819236+05	2022-11-09 15:11:14.496257+05	\N	2-1-dezodorant-xo-aqua-joy-150-ml-dezodorant-xo-nice-girl-150-ml-dezodorant-xo-men-absolute-blue-150-ml
@@ -1991,11 +2004,11 @@ e4bb9f51-5ca4-4899-9ca0-05a70da2ec19	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	35f5f2
 00964051-1dfc-41bf-a4f5-b0f519f45aa4	aea98b93-7bdf-455b-9ad4-a259d69dc76e	35f5f2d8-9271-469f-bde1-2314c18ea574	Кофе Жокей "Триумф" sublimirlenen 2 г	Кофе Жокей "Триумф" sublimirlenen 2 г	2022-10-27 23:23:19.467008+05	2022-11-09 15:11:14.496257+05	\N	kofe-zhokei-triumf-sublimirlenen-2-g
 66e6eca6-3d7e-4143-9180-263c074d4a7b	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	d987b7ad-257e-4ae2-befb-b7d369252a54	Alma gülgüne Gök Önüm 1 kg (± 50 gr)	Alma gülgüne Gök Önüm 1 kg (± 50 gr)	2022-10-27 23:53:01.823656+05	2022-11-09 15:11:14.496257+05	\N	alma-gulgune-gok-onum-1-kg-50-gr
 ebafc0f4-eb8c-4ff8-94b3-2c34043bc2f7	aea98b93-7bdf-455b-9ad4-a259d69dc76e	d987b7ad-257e-4ae2-befb-b7d369252a54	Яблоки Gök Önüm 1 кг (± 50 г)	Яблоки Gök Önüm 1 кг (± 50 г)	2022-10-27 23:53:01.837748+05	2022-11-09 15:11:14.496257+05	\N	iabloki-gok-onum-1-kg-50-g
-42d862b6-68c9-4ecc-906c-9ee070414105	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	4bb06dbd-e4b2-4148-bb61-b1429d8cfc40	(2+1) Ýüz üçin gara maska plýonka "Zenix" paket 15 gr (3 sany)	(2+1) Ýüz üçin gara maska plýonka "Zenix" paket 15 gr (3 sany)	2022-10-27 23:15:36.076305+05	2022-11-09 15:09:20.835667+05	\N	2-1-yuz-ucin-gara-maska-plyonka-zenix-paket-15-gr-3-sany
-f81b6304-e768-45bc-9354-df9ba609cebe	aea98b93-7bdf-455b-9ad4-a259d69dc76e	4bb06dbd-e4b2-4148-bb61-b1429d8cfc40	(2+1) Черная маска пленка "Zenix" пакетик 15 г (3 шт)	(2+1) Черная маска пленка "Zenix" пакетик 15 г (3 шт)	2022-10-27 23:15:36.091709+05	2022-11-09 15:09:20.835667+05	\N	2-1-chernaia-maska-plenka-zenix-paketik-15-g-3-sht
 e1a326cb-e956-4695-a313-54410dc914ab	aea98b93-7bdf-455b-9ad4-a259d69dc76e	77ecf422-b48b-45fd-8e58-380e23d74c4c	Банан (~900-1.1 кг)	Банан (~900-1.1 кг)	2022-10-28 00:08:25.821742+05	2022-11-09 15:11:14.496257+05	\N	banan-900-1-1-kg
 b71c3749-9a42-44d0-bc07-0253c0d85a93	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	9b9ef1ce-2f3d-4051-8e88-5c301bd68554	Alma gyzyl Türkiýe Gök Önüm (1 kg ±50 gr)	Alma gyzyl Türkiýe Gök Önüm (1 kg ±50 gr)	2022-10-28 00:09:12.503503+05	2022-11-09 15:11:14.496257+05	\N	alma-gyzyl-turkiye-gok-onum-1-kg-50-gr
 c49cacd8-f994-4e52-9b65-3286c8c4e159	aea98b93-7bdf-455b-9ad4-a259d69dc76e	9b9ef1ce-2f3d-4051-8e88-5c301bd68554	Яблоки красные Турция Gök Önüm (1 кг ±50 г)	Яблоки красные Турция Gök Önüm (1 кг ±50 г)	2022-10-28 00:09:12.515179+05	2022-11-09 15:11:14.496257+05	\N	iabloki-krasnye-turtsiia-gok-onum-1-kg-50-g
+42d862b6-68c9-4ecc-906c-9ee070414105	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	4bb06dbd-e4b2-4148-bb61-b1429d8cfc40	(2+1) Ýüz üçin gara maska plýonka "Zenix" paket 15 gr (3 sany)	(2+1) Ýüz üçin gara maska plýonka "Zenix" paket 15 gr (3 sany)	2022-10-27 23:15:36.076305+05	2022-11-25 09:03:36.049575+05	2022-11-25 09:03:36.049575+05	2-1-yuz-ucin-gara-maska-plyonka-zenix-paket-15-gr-3-sany
+f81b6304-e768-45bc-9354-df9ba609cebe	aea98b93-7bdf-455b-9ad4-a259d69dc76e	4bb06dbd-e4b2-4148-bb61-b1429d8cfc40	(2+1) Черная маска пленка "Zenix" пакетик 15 г (3 шт)	(2+1) Черная маска пленка "Zenix" пакетик 15 г (3 шт)	2022-10-27 23:15:36.091709+05	2022-11-25 09:03:36.049575+05	2022-11-25 09:03:36.049575+05	2-1-chernaia-maska-plenka-zenix-paketik-15-g-3-sht
 f2011438-66f4-41f1-873b-f12728b5b2a1	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	214befd8-68bd-484a-a8d5-8e2d0b73931c	Kinza	Kinza	2022-10-28 00:12:34.811612+05	2022-11-09 15:11:14.496257+05	\N	kinza
 46dd8b80-ce85-4522-9ac9-ec67900551d3	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	20a8c487-9a56-4fb6-8fa0-13facaf96109	Armyt ýerli Gök Önüm (1 kg)	Armyt ýerli Gök Önüm (1 kg)	2022-10-28 00:09:53.593406+05	2022-11-09 15:11:14.496257+05	\N	armyt-yerli-gok-onum-1-kg
 73615719-aba4-4ea5-a724-ebf130063ffd	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	360ebeac-853e-45a5-ab7f-838430b0c442	Kofe Jardin 5 "Colombia Medellin" sublimirlenen 95 gr	Kofe Jardin 5 "Colombia Medellin" sublimirlenen 95 gr	2022-10-27 23:19:20.778041+05	2022-11-09 15:09:20.835667+05	\N	kofe-jardin-5-colombia-medellin-sublimirlenen-95-gr
@@ -2031,12 +2044,8 @@ d4199db1-5df5-4584-ac20-821c2606d7f8	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	fd2c14
 6d8cc27d-aa60-490a-b282-03f413bfa908	aea98b93-7bdf-455b-9ad4-a259d69dc76e	793be71f-b0fa-43a2-b527-5fb09236f530	Подарочный набор MEN DEEP CLEANINg крем-грель для душа 300 мл+грель для умыв HYDRO ENERgETIC 150 мл	Подарочный набор MEN DEEP CLEANINg крем-грель для душа 300 мл+грель для умыв HYDRO ENERgETIC 150 мл	2022-10-27 13:22:11.428036+05	2022-11-09 15:11:14.496257+05	\N	podarochnyi-nabor-men-deep-cleaning-krem-grel-dlia-dusha-300-ml-grel-dlia-umyv-hydro-energetic-150-ml
 950aa440-28cf-4c13-8685-d8baf19c2bf8	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	e34a20fa-3aef-4ba6-92ba-79d3649c61a6	Sowgatlyk toplumy UFC x EXXE sakgal syrmak üçin köpürjik + sakgal syrmak üçin gel + duş geli Ultimate freshness	Sowgatlyk toplumy UFC x EXXE sakgal syrmak üçin köpürjik + sakgal syrmak üçin gel + duş geli Ultimate freshness	2022-10-27 13:24:26.628997+05	2022-11-09 15:11:14.496257+05	\N	sowgatlyk-toplumy-ufc-x-exxe-sakgal-syrmak-ucin-kopurjik-sakgal-syrmak-ucin-gel-dus-geli-ultimate-freshness
 42c64158-3179-4b2e-9d3b-8766e3586931	aea98b93-7bdf-455b-9ad4-a259d69dc76e	e34a20fa-3aef-4ba6-92ba-79d3649c61a6	Подарочный набор UFC x EXXE пена для бритья + крем-бальзам после бритья + гель для душа Ultimate Freshness	Подарочный набор UFC x EXXE пена для бритья + крем-бальзам после бритья + гель для душа Ultimate Freshness	2022-10-27 13:24:26.641508+05	2022-11-09 15:11:14.496257+05	\N	podarochnyi-nabor-ufc-x-exxe-pena-dlia-brit-ia-krem-bal-zam-posle-brit-ia-gel-dlia-dusha-ultimate-freshness
-5c87b6d0-7b5d-40df-a32d-9a12f8205e69	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	3f397126-6d8d-4a0d-982c-01fd00526957	Sowgatlyk toplumy UFC x EXXE duş geli + şampun Carbon Hit	Sowgatlyk toplumy UFC x EXXE duş geli + şampun Carbon Hit	2022-10-27 13:26:05.309306+05	2022-11-09 15:11:14.496257+05	\N	sowgatlyk-toplumy-ufc-x-exxe-dus-geli-sampun-carbon-hit
-6caa3ccc-e904-413b-8730-80dbddf15790	aea98b93-7bdf-455b-9ad4-a259d69dc76e	3f397126-6d8d-4a0d-982c-01fd00526957	Подарочный набор UFC x EXXE гель для душа + шампунь Carbon Hit	Подарочный набор UFC x EXXE гель для душа + шампунь Carbon Hit	2022-10-27 13:26:05.319675+05	2022-11-09 15:11:14.496257+05	\N	podarochnyi-nabor-ufc-x-exxe-gel-dlia-dusha-shampun-carbon-hit
 0283d1be-d69a-467f-af88-d78dfbb76c59	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	d6dfc8f9-27d9-45f9-811d-2a93fa0f7d35	Dodak üçin suwuk pomada Farmasi "Nude Essence" Matte 4 ml (03)	Dodak üçin suwuk pomada Farmasi "Nude Essence" Matte 4 ml (03)	2022-10-28 01:24:16.809364+05	2022-11-09 15:09:20.835667+05	\N	dodak-ucin-suwuk-pomada-farmasi-nude-essence-matte-4-ml-03
 b39c1d8a-997c-4141-b54e-9b2d22bd9658	aea98b93-7bdf-455b-9ad4-a259d69dc76e	d6dfc8f9-27d9-45f9-811d-2a93fa0f7d35	Матовая жидкая губная помада Farmasi "Nude Essence" Matte 4 мл (03)	Матовая жидкая губная помада Farmasi "Nude Essence" Matte 4 мл (03)	2022-10-28 01:24:16.821316+05	2022-11-09 15:09:20.835667+05	\N	matovaia-zhidkaia-gubnaia-pomada-farmasi-nude-essence-matte-4-ml-03
-832430ab-524a-46d5-b34b-29904fc4ea57	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	45a9f186-2521-4eef-a4e0-b5c253c70878	Matte pomada Farmasi "Heat Wave" 4 ml (211)	Matte pomada Farmasi "Heat Wave" 4 ml (211)	2022-10-28 01:24:52.887674+05	2022-11-09 15:09:20.835667+05	\N	matte-pomada-farmasi-heat-wave-4-ml-211
-f9ae1956-4812-4412-a93c-e3d7460c8977	aea98b93-7bdf-455b-9ad4-a259d69dc76e	45a9f186-2521-4eef-a4e0-b5c253c70878	Матовая помада для губ Farmasi "Heat Wave" 4 мл (211)	Матовая помада для губ Farmasi "Heat Wave" 4 мл (211)	2022-10-28 01:24:52.900396+05	2022-11-09 15:09:20.835667+05	\N	matovaia-pomada-dlia-gub-farmasi-heat-wave-4-ml-211
 857cebf6-8605-4f4a-9962-d30f1d5f98fd	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	fa148eb2-520f-430e-bd8d-9d5a166d0600	Göz galamy Farmasi "Express" 1.14 gr (09)	Göz galamy Farmasi "Express" 1.14 gr (09)	2022-10-28 01:25:37.413225+05	2022-11-09 15:09:20.835667+05	\N	goz-galamy-farmasi-express-1-14-gr-09
 59ce55bb-932c-4a82-8cc7-208e43b9abfe	aea98b93-7bdf-455b-9ad4-a259d69dc76e	fa148eb2-520f-430e-bd8d-9d5a166d0600	Карандаш для глаз Farmasi "Express" 1.14 гр (09)	Карандаш для глаз Farmasi "Express" 1.14 гр (09)	2022-10-28 01:25:37.4344+05	2022-11-09 15:09:20.835667+05	\N	karandash-dlia-glaz-farmasi-express-1-14-gr-09
 fdecb62e-e026-400c-8146-269552268363	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	d085e5a4-8229-4177-b5e1-623e80846017	Tebigy ereýän kofe Maxwell House 150 gr	Tebigy ereýän kofe Maxwell House 150 gr	2022-10-27 12:45:23.512856+05	2022-11-09 15:09:20.835667+05	\N	tebigy-ereyan-kofe-maxwell-house-150-gr
@@ -2057,6 +2066,8 @@ da57822b-a5eb-4c96-bbfe-578bd40c389f	aea98b93-7bdf-455b-9ad4-a259d69dc76e	2eb8a1
 c7548ef9-4811-423c-b342-e8d5a55295b7	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	18f957f2-216d-4810-b4d7-bd4dd49efd0d	Diş pastasy Colgate "Total 12" Professional arassalaýjy pasta 75 ml	Diş pastasy Colgate "Total 12" Professional arassalaýjy pasta 75 ml	2022-10-28 01:29:49.665417+05	2022-11-09 15:11:14.496257+05	\N	dis-pastasy-colgate-total-12-professional-arassalayjy-pasta-75-ml
 6b47b833-242d-4d47-93cb-8d37ad93481b	aea98b93-7bdf-455b-9ad4-a259d69dc76e	18f957f2-216d-4810-b4d7-bd4dd49efd0d	Зубная паста Colgate "Total 12" Профессиональная чистка паста 75 мл	Зубная паста Colgate "Total 12" Профессиональная чистка паста 75 мл	2022-10-28 01:29:49.688606+05	2022-11-09 15:11:14.496257+05	\N	zubnaia-pasta-colgate-total-12-professional-naia-chistka-pasta-75-ml
 657c1f2d-54c6-4604-b1c4-d32b43fc2cbe	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	ad24153a-997a-46d1-87bb-27aa1e3e8aea	Diş pastasy 32 Жемчужины tutuş maşgala üçin hemmetaraplaýyn ideg 100 gr	Diş pastasy 32 Жемчужины tutuş maşgala üçin hemmetaraplaýyn ideg 100 gr	2022-10-28 01:30:32.911801+05	2022-11-09 15:11:14.496257+05	\N	dis-pastasy-32-zhemchuzhiny-tutus-masgala-ucin-hemmetaraplayyn-ideg-100-gr
+832430ab-524a-46d5-b34b-29904fc4ea57	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	45a9f186-2521-4eef-a4e0-b5c253c70878	Matte pomada Farmasi "Heat Wave" 4 ml (211)	Matte pomada Farmasi "Heat Wave" 4 ml (211)	2022-10-28 01:24:52.887674+05	2022-12-01 01:00:02.7551+05	2022-12-01 01:00:02.7551+05	matte-pomada-farmasi-heat-wave-4-ml-211
+f9ae1956-4812-4412-a93c-e3d7460c8977	aea98b93-7bdf-455b-9ad4-a259d69dc76e	45a9f186-2521-4eef-a4e0-b5c253c70878	Матовая помада для губ Farmasi "Heat Wave" 4 мл (211)	Матовая помада для губ Farmasi "Heat Wave" 4 мл (211)	2022-10-28 01:24:52.900396+05	2022-12-01 01:00:02.7551+05	2022-12-01 01:00:02.7551+05	matovaia-pomada-dlia-gub-farmasi-heat-wave-4-ml-211
 51b82883-c7aa-4539-a5a3-e5013f2406b8	aea98b93-7bdf-455b-9ad4-a259d69dc76e	ad24153a-997a-46d1-87bb-27aa1e3e8aea	Зубная паста 32 Жемчужины Комплексный уход для всей семьи 100 гр	Зубная паста 32 Жемчужины Комплексный уход для всей семьи 100 гр	2022-10-28 01:30:32.955604+05	2022-11-09 15:11:14.496257+05	\N	zubnaia-pasta-32-zhemchuzhiny-kompleksnyi-ukhod-dlia-vsei-sem-i-100-gr
 d59df776-a4b9-48f6-a222-1c426813e3e5	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	9c655c36-1832-48ca-9f88-c04197f191af	Diş pastasy "Blend-a-Med Complete 7" Herbal, 100 ml	Diş pastasy "Blend-a-Med Complete 7" Herbal, 100 ml	2022-10-28 01:31:06.952867+05	2022-11-09 15:11:14.496257+05	\N	dis-pastasy-blend-a-med-complete-7-herbal-100-ml
 8fcde624-a402-46c5-9266-fd2c126d3c06	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	c82fef0a-ad15-4b07-8855-910fc4708af1	Reýhan	Reýhan	2022-10-28 00:14:34.6898+05	2022-11-09 15:11:14.496257+05	\N	reyhan
@@ -2066,6 +2077,10 @@ e5f5a0cf-3ad4-418a-ac1d-50cb919b432b	aea98b93-7bdf-455b-9ad4-a259d69dc76e	bcb52d
 5861b129-de86-46ea-8ece-0523d36934db	aea98b93-7bdf-455b-9ad4-a259d69dc76e	badd0869-99df-4df3-8a27-5e27c10a861d	Тональний крем Farmasi VFX PRO Camera Ready 30 мл (07)	Тональний крем Farmasi VFX PRO Camera Ready 30 мл (07)	2022-10-28 01:22:44.795164+05	2022-11-09 15:11:14.496257+05	\N	tonal-nii-krem-farmasi-vfx-pro-camera-ready-30-ml-07
 8a2b1f41-c968-49e9-812d-ae3e04639cd9	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	9cd1e4e4-b15c-4ceb-a03c-01e9cfbb224b	Nemlendiriji syworotka Farmasi Dr. C.Tuna "Aqua" Hydra Drops 30 ml	Nemlendiriji syworotka Farmasi Dr. C.Tuna "Aqua" Hydra Drops 30 ml	2022-10-28 01:26:46.960127+05	2022-11-09 15:11:14.496257+05	\N	nemlendiriji-syworotka-farmasi-dr-c-tuna-aqua-hydra-drops-30-ml
 84f32104-7086-4282-a1f9-d82afac8d1ff	aea98b93-7bdf-455b-9ad4-a259d69dc76e	9c655c36-1832-48ca-9f88-c04197f191af	Зубная паста "Blend-a-Med Complete 7" с ополаскивателем 100 мл	Зубная паста "Blend-a-Med Complete 7" с ополаскивателем 100 мл	2022-10-28 01:31:07.002492+05	2022-11-09 15:11:14.496257+05	\N	zubnaia-pasta-blend-a-med-complete-7-s-opolaskivatelem-100-ml
+a440c88c-0030-445b-b675-94029afeacbc	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	ccb43083-1c9e-4e84-bffd-ecb28474165e	Sowgatlyk toplumy UFC x EXXE duş geli + dezodorant Ultimate Freshness	Sowgatlyk toplumy UFC x EXXE duş geli + dezodorant Ultimate Freshness	2022-10-27 13:29:08.24936+05	2022-11-22 09:49:06.741919+05	2022-11-22 09:49:06.741919+05	sowgatlyk-toplumy-ufc-x-exxe-dus-geli-dezodorant-ultimate-freshness
+f2d39fe8-264d-4394-964a-88b04f133187	aea98b93-7bdf-455b-9ad4-a259d69dc76e	ccb43083-1c9e-4e84-bffd-ecb28474165e	Подарочный набор UFC x EXXE гель для душа + дезодорант Ultimate Freshness	Подарочный набор UFC x EXXE гель для душа + дезодорант Ultimate Freshness	2022-10-27 13:29:08.266915+05	2022-11-22 09:49:06.741919+05	2022-11-22 09:49:06.741919+05	podarochnyi-nabor-ufc-x-exxe-gel-dlia-dusha-dezodorant-ultimate-freshness
+5c87b6d0-7b5d-40df-a32d-9a12f8205e69	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	3f397126-6d8d-4a0d-982c-01fd00526957	Sowgatlyk toplumy UFC x EXXE duş geli + şampun Carbon Hit	Sowgatlyk toplumy UFC x EXXE duş geli + şampun Carbon Hit	2022-10-27 13:26:05.309306+05	2022-12-01 00:59:45.59055+05	2022-12-01 00:59:45.59055+05	sowgatlyk-toplumy-ufc-x-exxe-dus-geli-sampun-carbon-hit
+6caa3ccc-e904-413b-8730-80dbddf15790	aea98b93-7bdf-455b-9ad4-a259d69dc76e	3f397126-6d8d-4a0d-982c-01fd00526957	Подарочный набор UFC x EXXE гель для душа + шампунь Carbon Hit	Подарочный набор UFC x EXXE гель для душа + шампунь Carbon Hit	2022-10-27 13:26:05.319675+05	2022-12-01 00:59:45.59055+05	2022-12-01 00:59:45.59055+05	podarochnyi-nabor-ufc-x-exxe-gel-dlia-dusha-shampun-carbon-hit
 \.
 
 

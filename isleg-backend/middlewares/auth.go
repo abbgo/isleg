@@ -11,6 +11,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// Auth middleware gelen tokenin musdera degislimi ya-da dalmi sony barlayar
+// eger gelen token dogry bolsa indi api gelen tokende musderinin id - sini alyp beryar
 func Auth() gin.HandlerFunc {
 
 	return func(context *gin.Context) {

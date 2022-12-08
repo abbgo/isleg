@@ -60,6 +60,22 @@ func RegisterCustomer(c *gin.Context) {
 		return
 	}
 
+	if customer.Password == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "customer password is required",
+		})
+		return
+	}
+
+	if len(customer.Password) < 5 || len(customer.Password) > 25 {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "password length should be between 5 and 25",
+		})
+		return
+	}
+
 	err = models.ValidateCustomerRegister(customer.PhoneNumber, customer.Email)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -175,14 +191,7 @@ func RegisterCustomer(c *gin.Context) {
 
 	}
 
-	accessTokenString, err := auth.GenerateAccessToken(customer.PhoneNumber, customerID)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
-		c.Abort()
-		return
-	}
-
-	refreshTokenString, err := auth.GenerateRefreshToken(customer.PhoneNumber, customerID)
+	accessTokenString, refreshTokenString, err := auth.GenerateTokenForCustomer(customer.PhoneNumber, customerID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
 		c.Abort()
@@ -223,6 +232,22 @@ func LoginCustomer(c *gin.Context) {
 
 	if err := c.BindJSON(&customer); err != nil {
 		c.JSON(http.StatusBadRequest, err.Error())
+		return
+	}
+
+	if customer.Password == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "customer password is required",
+		})
+		return
+	}
+
+	if len(customer.Password) < 5 || len(customer.Password) > 25 {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "password length should be between 5 and 25",
+		})
 		return
 	}
 
@@ -280,16 +305,7 @@ func LoginCustomer(c *gin.Context) {
 		return
 	}
 
-	accessTokenString, err := auth.GenerateAccessToken(customer.Password, customerID)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-
-	refreshTokenString, err := auth.GenerateRefreshToken(customer.PhoneNumber, customerID)
+	accessTokenString, refreshTokenString, err := auth.GenerateTokenForCustomer(customer.PhoneNumber, customerID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -335,6 +351,7 @@ func GetCustomerInformation(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, "customer_id must be string")
 	}
 
+	// bazadan musderinin maglumatlary alynyar
 	rowCustomer, err := db.Query("SELECT id , full_name , phone_number , birthday , email FROM customers WHERE id = $1 AND is_register = true AND deleted_at IS NULL", customerID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -373,6 +390,7 @@ func GetCustomerInformation(c *gin.Context) {
 		return
 	}
 
+	// bazadan musderinin salgylary alynyar
 	rowsCustomerAddress, err := db.Query("SELECT id , address , is_active FROM customer_address WHERE deleted_at IS NULL AND customer_id = $1", customer.ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -453,6 +471,7 @@ func UpdateCustomerInformation(c *gin.Context) {
 		return
 	}
 
+	// musderinin  maglumatlaryny uytgetyar
 	resultCustomer, err := db.Query("UPDATE customers SET full_name = $1, phone_number = $2, email = $3, birthday = $4 WHERE id = $5", customer.FullName, customer.PhoneNumber, customer.Email, customer.Birthday, customerID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -510,6 +529,7 @@ func UpdateCustomerPassword(c *gin.Context) {
 
 	password := c.PostForm("password")
 
+	// parol update edilmanka paroly kotlayas
 	hashPassword, err := models.HashPassword(password)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -519,6 +539,7 @@ func UpdateCustomerPassword(c *gin.Context) {
 		return
 	}
 
+	// sonrada musderinin parolyny uytgetyas
 	resultCustomer, err := db.Query("UPDATE customers SET password = $1 WHERE id = $2", hashPassword, customerID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
