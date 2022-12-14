@@ -323,7 +323,7 @@ func ToOrder(c *gin.Context) {
 		// eger sargyt edilen haryt bazada yok bolsa , onda yzyna error iberyas/
 		// sebabi bazada yok bolan harydy sargyt edip bolmayar
 		if product_id == "" {
-			c.JSON(http.StatusBadRequest, gin.H{
+			c.JSON(http.StatusNotFound, gin.H{
 				"status":  false,
 				"message": "product not found",
 			})
@@ -617,7 +617,7 @@ func ToOrder(c *gin.Context) {
 	}
 
 	// dolduryljak excel fayly acmaly
-	f, err := excelize.OpenFile(ServerPath + "/uploads/orders/order.xlsx")
+	f, err := excelize.OpenFile(ServerPath + "uploads/orders/order.xlsx")
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -625,7 +625,6 @@ func ToOrder(c *gin.Context) {
 		})
 		return
 	}
-
 	defer func() {
 		if err := f.Close(); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
@@ -776,7 +775,7 @@ func ToOrder(c *gin.Context) {
 	f.SetCellValue("Лист1", "b13", "Jemi: "+strconv.FormatFloat(pkg.RoundFloat(sargyt.TotalPrice, 2), 'f', -1, 64))
 
 	// tayyar bolan excel fayl uploads papka yazdyrylyar
-	if err := f.SaveAs(ServerPath + "/uploads/orders/" + strconv.Itoa(int(sargyt.OrderNumber)) + ".xlsx"); err != nil {
+	if err := f.SaveAs(ServerPath + "uploads/orders/" + strconv.Itoa(int(sargyt.OrderNumber)) + ".xlsx"); err != nil {
 		c.JSON(http.StatusBadRequest, err.Error())
 		return
 	}
