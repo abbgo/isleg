@@ -73,31 +73,13 @@ const brends = (state) => {
 const isOpenSignUp = (state) => {
   return state.isOpenSignUp
 }
-const categoryProductsName = (state) => {
-  return (
-    state.categoryProducts &&
-    state.categoryProducts.category &&
-    state.categoryProducts.category.name
-  )
-}
-const categoryProducts = (state) => {
-  return (
-    state.categoryProducts &&
-    state.categoryProducts.category &&
-    state.categoryProducts.category.products
-  )
-}
 const myProfile = (state) => {
   return state.myProfile
 }
 const isUserLoggined = (state) => {
   return state.isUserLoggined
 }
-const isAuthenticated = (state) => {
-  return state.authenticated
-}
 export default {
-  isAuthenticated,
   isUserLoggined,
   imgURL,
   logo,
@@ -124,7 +106,5 @@ export default {
   word,
   brends,
   isOpenSignUp,
-  categoryProductsName,
-  categoryProducts,
   myProfile,
 }

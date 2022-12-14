@@ -30,7 +30,6 @@ const SET_REMOVED_FROM_BASKET = (state, payload) => {
   state.removedFromBasket = payload
 }
 const SET_PRODUCT_COUNT_WHEN_PAYMENT = (state, payload) => {
-  console.log('SET_PRODUCT_COUNT_WHEN_PAYMENT')
   state.productCount = payload
 }
 const SET_LIKES_COUNT_INCREMENT = (state) => {

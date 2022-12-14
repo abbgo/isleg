@@ -1,7 +1,7 @@
 <template>
   <nav class="menu-header__nav __container">
     <span @click="scrollLeft" class="nav__arrow nav__arrow-left"
-      ><img src="/img/arrow.svg" alt=""
+      ><img src="@/assets/img/arrow.svg" alt=""
     /></span>
     <div class="menu-header__wrapper">
       <ul class="menu-header__list">
@@ -57,7 +57,7 @@
       </ul>
     </div>
     <span @click="scrollRight" class="nav__arrow nav__arrow-right"
-      ><img src="/img/arrow.svg" alt=""
+      ><img src="@/assets/img/arrow.svg" alt=""
     /></span>
   </nav>
 </template>

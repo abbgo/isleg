@@ -12,7 +12,12 @@
             :key="brend.id"
             class="brends__animation-slide swiper-slide"
           >
-            <img :data-src="`${imgURL}/${brend.image}`" loading="lazy" alt="" />
+            <img
+              :data-src="`${imgURL}/${brend.image}`"
+              loading="lazy"
+              alt=""
+              @click="$router.push(localeLocation(`/brend/${brend.id}`))"
+            />
           </swiper-slide>
         </swiper>
       </div>

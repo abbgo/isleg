@@ -1,5 +1,82 @@
 <template>
-  <section class="agreement __container" v-if="myProfileDatas.fillName">
+  <div class="__container">
+    <div class="myprofile">
+      <div class="myprofile__wrapper">
+        <div class="myprofile__content">
+          <div class="myprofile__title">
+            <h4>Maglumatlarym</h4>
+          </div>
+          <div class="myprofile__form">
+            <text-filed
+              placeholder="Kemal Hanow "
+              label="Doly Adyňyz"
+              :value="myProfileDatas.fullName"
+              @updateValue="(val) => (myProfileDatas.fullName = val)"
+            ></text-filed>
+            <text-filed
+              placeholder="Email"
+              label="Email"
+              :value="myProfileDatas.email"
+              @updateValue="(val) => (myProfileDatas.email = val)"
+            ></text-filed>
+            <text-filed
+              label="Telefon"
+              :type="'tel'"
+              :value="myProfileDatas.phone_number"
+              @updateValue="(val) => update(val)"
+            ></text-filed>
+            <text-filed
+              label="Doglan senäňiz"
+              :value="some"
+              type="date"
+              @updateValue="(val) => (some = val)"
+            ></text-filed>
+            <text-filed
+              placeholder=""
+              label="Salgyňyz"
+              :value="myProfileDatas.address"
+              prepenedIcon="chevron-left.svg"
+              appendIcon="chevron-left.svg"
+              @updateValue="(val) => (myProfileDatas.address = val)"
+            ></text-filed>
+            <div class="form__box gender__input">
+              <span>Jynsy</span>
+              <div class="gender__checkbox">
+                <div>
+                  <input
+                    class="custom"
+                    v-model="myProfileDatas.male.boy"
+                    id="male"
+                    name="gender"
+                    type="radio"
+                  />
+                  <label for="male">Erkek</label>
+                </div>
+                <div>
+                  <input
+                    class="custom"
+                    v-model="myProfileDatas.male.girl"
+                    id="woman"
+                    name="gender"
+                    type="radio"
+                  />
+                  <label for="woman"> Aýal</label>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="myprofile__btns">
+            <button class="myprofile__btn btn__key">
+              <img src="@/assets/img/key.png" alt="" />
+              <span>Açar söz üýtget</span>
+            </button>
+            <button class="myprofile__btn">Ýatda sakla</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- <section class="agreement __container" v-if="myProfileDatas.fillName">
     <h4 class="agreement__title">Profilim</h4>
     <div class="communication_form">
       <div class="form__box">
@@ -32,7 +109,6 @@
       </div>
       <div class="form__box born__date">
         <span>Doglan senäňiz</span>
-        <!-- <label class="born__lable" for="born">{{ born }}</label> -->
         <input
           v-model="myProfileDatas.birthday"
           id="born"
@@ -70,18 +146,7 @@
           class="product__add-btn confirim__btn"
           @click="openChangePassword"
         >
-          <svg
-            width="18"
-            height="18"
-            viewBox="0 0 21 28"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M19.3606 11.3309C18.969 12.0073 18.464 12.6114 17.8677 13.1167C17.2877 13.6088 16.6312 14.0028 15.9241 14.2831C15.2146 14.5653 14.4654 14.7347 13.7036 14.7851C12.9261 14.8371 12.1452 14.768 11.3889 14.5803C11.379 14.6105 11.3674 14.64 11.354 14.6687L9.93949 17.1187C10.1041 17.3804 10.2518 17.6523 10.3816 17.9329C10.4847 18.1498 10.5641 18.3771 10.6183 18.6111C10.6734 18.7949 10.6606 18.9924 10.5822 19.1676C10.4377 19.4178 10.0325 19.4657 9.60334 19.517C9.07541 19.5794 8.47662 19.6505 8.21312 20.1069C7.94962 20.5633 8.21247 21.088 8.44609 21.5474C8.63767 21.9235 8.80317 22.2489 8.66767 22.4836C8.53217 22.7183 8.15336 22.7744 7.71805 22.8464C7.15713 22.9359 6.52199 23.038 6.23399 23.5368C5.94599 24.0357 6.20311 24.5663 6.42636 25.0416C6.6103 25.433 6.76917 25.7719 6.62217 26.0265C6.51169 26.1813 6.34758 26.2895 6.16176 26.3299C5.93615 26.3937 5.70387 26.4308 5.46965 26.4407C5.168 26.457 4.86559 26.4522 4.56462 26.4263L4.17462 27.1018C3.9677 27.3344 3.7209 27.5282 3.44584 27.6741C3.1985 27.8079 2.92506 27.8864 2.64441 27.9042C2.29739 27.9192 1.95315 27.8362 1.65121 27.6645C1.33093 27.4907 1.06367 27.2334 0.877809 26.92C0.719961 26.6498 0.612672 26.3531 0.561199 26.0444C0.501339 25.7014 0.493656 25.3512 0.538411 25.0059C0.567411 24.9556 3.59052 19.8075 5.67952 16.1892C6.91452 14.0501 7.59902 12.8345 7.71591 12.5741L7.75211 12.5234C7.19314 11.9613 6.72635 11.3146 6.36896 10.6071C6.01955 9.91734 5.78154 9.17663 5.66378 8.41247C5.54613 7.65154 5.55511 6.8764 5.69037 6.11841C6.00201 4.38687 6.96813 2.84169 8.38839 1.80331C9.13965 1.25565 9.99151 0.861477 10.8952 0.643324C11.813 0.419022 12.7651 0.371861 13.7006 0.504368C15.6794 0.787087 17.4728 1.82251 18.707 3.39487C19.2895 4.13872 19.7247 4.98687 19.9894 5.89382C20.2523 6.78555 20.3369 7.72037 20.2382 8.64481C20.137 9.59174 19.838 10.5068 19.3606 11.3309ZM12.6196 4.35472C12.4893 4.58303 12.4109 4.83727 12.3902 5.09933C12.3694 5.36138 12.4067 5.62479 12.4994 5.87077C12.6753 6.33791 13.0225 6.7205 13.4705 6.94073C13.9184 7.16095 14.4334 7.20226 14.9107 7.05625C15.1409 6.98437 15.3539 6.86608 15.5365 6.70868C15.7191 6.55127 15.8676 6.3581 15.9726 6.14109C16.0777 5.92408 16.1371 5.68783 16.1473 5.44694C16.1575 5.20605 16.1182 4.96563 16.0318 4.74053C15.8577 4.27105 15.509 3.88691 15.0586 3.66825C14.6125 3.44582 14.0974 3.40559 13.6222 3.55605C13.2007 3.6877 12.8436 3.97188 12.6206 4.35298L12.6196 4.35472Z"
-              fill="white"
-            />
-          </svg>
+         
           <h4 class="confirm__text">Açar sözi üýtget</h4>
         </button>
       </div>
@@ -95,21 +160,25 @@
       :isChangePassword="isChangePassword"
       @closeChangePassword="closeChangePassword"
     ></pop-up-change-password>
-  </section>
+  </section> -->
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
 import { getMyProfile } from '@/api/myProfile.api'
-import { getRefreshToken } from '@/api/user.api'
+import { getRefreshToken, getMyInformation } from '@/api/user.api'
+import TextFiled from '@/components/app/TextFiled.vue'
+
 export default {
+  components: { TextFiled },
   //   middleware: ['check-auth', 'user-auth'],
   data() {
     return {
+      some: '',
       isChangePassword: false,
       myProfileDatas: {
-        fillName: '',
-        phone_number: '',
+        fullName: '',
+        phone_number: '+9936',
         email: '',
         address: '',
         male: {
@@ -136,6 +205,10 @@ export default {
     }
   },
   methods: {
+    update(val) {
+      console.log('val', val)
+      this.myProfileDatas.phone_number = val
+    },
     async fetchMyProfile() {
       const cart = await JSON.parse(localStorage.getItem('lorem'))
       try {
@@ -147,7 +220,7 @@ export default {
         ).data
         console.log(customer_informations, status)
         if (status) {
-          this.myProfileDatas.fillName = customer_informations.full_name
+          this.myProfileDatas.fullName = customer_informations.full_name
           this.myProfileDatas.phone_number = customer_informations.phone_number
           this.myProfileDatas.email = customer_informations.email
           this.myProfileDatas.birthday = customer_informations.birthday
@@ -193,7 +266,7 @@ export default {
                 ).data
                 console.log(customer_informations, status)
                 if (status) {
-                  this.myProfileDatas.fillName = customer_informations.full_name
+                  this.myProfileDatas.fullName = customer_informations.full_name
                   this.myProfileDatas.phone_number =
                     customer_informations.phone_number
                   this.myProfileDatas.email = customer_informations.email
@@ -218,23 +291,22 @@ export default {
       }
     },
     async postMyInformation() {
-      const access_token = this.$cookies.set('access_token', access_token)
-      const refresh_token = this.$cookies.set('refresh_token', refresh_token)
+      const cart = await JSON.parse(localStorage.getItem('lorem'))
       try {
         const { customer_informations, status } = (
-          await myInformation({
+          await getMyInformation({
             url: `${this.$i18n.locale}/my-information`,
-            accessToken: `Bearer ${accessToken}`,
+            accessToken: `Bearer ${cart.auth.accessToken}`,
           })
         ).data
         console.log(customer_informations, status)
         if (status) {
-          this.myProfileDatas.fillName = customer_informations.full_name
+          this.myProfileDatas.fullName = customer_informations.full_name
           this.myProfileDatas.phone_number = customer_informations.phone_number
           this.myProfileDatas.email = customer_informations.email
         }
       } catch (error) {
-        console.log('getMyProfile1', error.response.status)
+        console.log('getMyProfile1', error)
       }
     },
     openChangePassword() {
@@ -248,3 +320,90 @@ export default {
   },
 }
 </script>
+<style lang="scss">
+.myprofile {
+  width: 100%;
+  @media (max-width: 950px) {
+    margin-bottom: 100px;
+  }
+  &__wrapper {
+    background: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    @media (max-width: 950px) {
+      margin: 20px;
+      border-radius: 5px;
+    }
+  }
+  &__content {
+    width: 75%;
+    // padding: 10px 150px 30px 150px;
+
+    @media (max-width: 950px) {
+      width: 80%;
+    }
+    @media (max-width: 530px) {
+      width: 100%;
+    }
+  }
+  &__title {
+    h4 {
+      padding: 15px 0;
+      font-family: TTNormsPro-Bold;
+      font-style: normal;
+      font-weight: 800;
+      font-size: 18px;
+      line-height: 120%;
+      text-align: center;
+      text-decoration-line: underline;
+      color: #1b3254;
+    }
+  }
+  &__form {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  &__btns {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 40px 20px;
+    @media (max-width: 435px) {
+      padding: 40px 0 20px 0;
+    }
+    @media (max-width: 435px) {
+      flex-direction: column;
+      align-items: flex-start;
+      padding-left: 20px;
+      padding-right: 20px;
+    }
+  }
+  &__btn {
+    border-radius: 5px;
+    padding: 8px 5px;
+    background: #fd5e29;
+    font-family: TTNormsPro;
+    font-style: normal;
+    font-weight: 700;
+    font-size: 18px;
+    line-height: 120%;
+    color: #ffffff;
+    margin-bottom: 10px;
+    @media (max-width: 435px) {
+      width: 100%;
+    }
+    img {
+      width: 16px;
+      height: 16px;
+      object-fit: contain;
+      object-position: center;
+    }
+  }
+}
+.btn__key {
+  background: #8d98a9;
+}
+</style>

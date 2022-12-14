@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="__container">
     <section class="menu__filter menu__like">
       <div class="like__product">
         <span>
