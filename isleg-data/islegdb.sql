@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 12.12 (Ubuntu 12.12-0ubuntu0.20.04.1)
--- Dumped by pg_dump version 12.12 (Ubuntu 12.12-0ubuntu0.20.04.1)
+-- Dumped from database version 14.6 (Homebrew)
+-- Dumped by pg_dump version 14.6 (Homebrew)
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -31,10 +31,10 @@ COMMENT ON EXTENSION "uuid-ossp" IS 'generate universally unique identifiers (UU
 
 
 --
--- Name: after_delete_category(uuid); Type: PROCEDURE; Schema: public; Owner: postgres
+-- Name: after_delete_category(uuid); Type: PROCEDURE; Schema: public; Owner: allanurbayramgeldiyev
 --
 
-CREATE PROCEDURE public.after_delete_category(cat_id uuid)
+CREATE PROCEDURE public.after_delete_category(IN cat_id uuid)
     LANGUAGE plpgsql
     AS $$
 DECLARE category_uuid uuid;
@@ -51,10 +51,10 @@ UPDATE shops SET deleted_at = now() FROM category_shop WHERE category_shop.shop_
 $$;
 
 
-ALTER PROCEDURE public.after_delete_category(cat_id uuid) OWNER TO postgres;
+ALTER PROCEDURE public.after_delete_category(IN cat_id uuid) OWNER TO allanurbayramgeldiyev;
 
 --
--- Name: after_insert_language(); Type: FUNCTION; Schema: public; Owner: postgres
+-- Name: after_insert_language(); Type: FUNCTION; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 CREATE FUNCTION public.after_insert_language() RETURNS trigger
@@ -89,13 +89,13 @@ INSERT INTO translation_update_password_page (lang_id) VALUES (language_id);
 RETURN NEW; END; $$;
 
 
-ALTER FUNCTION public.after_insert_language() OWNER TO postgres;
+ALTER FUNCTION public.after_insert_language() OWNER TO allanurbayramgeldiyev;
 
 --
--- Name: after_restore_category(uuid); Type: PROCEDURE; Schema: public; Owner: postgres
+-- Name: after_restore_category(uuid); Type: PROCEDURE; Schema: public; Owner: allanurbayramgeldiyev
 --
 
-CREATE PROCEDURE public.after_restore_category(cat_id uuid)
+CREATE PROCEDURE public.after_restore_category(IN cat_id uuid)
     LANGUAGE plpgsql
     AS $$
 DECLARE category_uuid uuid;
@@ -112,13 +112,13 @@ UPDATE shops SET deleted_at = NULL FROM category_shop WHERE category_shop.shop_i
 END LOOP; END; $$;
 
 
-ALTER PROCEDURE public.after_restore_category(cat_id uuid) OWNER TO postgres;
+ALTER PROCEDURE public.after_restore_category(IN cat_id uuid) OWNER TO allanurbayramgeldiyev;
 
 --
--- Name: delete_afisa(uuid); Type: PROCEDURE; Schema: public; Owner: postgres
+-- Name: delete_afisa(uuid); Type: PROCEDURE; Schema: public; Owner: allanurbayramgeldiyev
 --
 
-CREATE PROCEDURE public.delete_afisa(a_id uuid)
+CREATE PROCEDURE public.delete_afisa(IN a_id uuid)
     LANGUAGE plpgsql
     AS $$
 BEGIN
@@ -127,13 +127,13 @@ UPDATE translation_afisa SET deleted_at = now() WHERE afisa_id = a_id;
 END; $$;
 
 
-ALTER PROCEDURE public.delete_afisa(a_id uuid) OWNER TO postgres;
+ALTER PROCEDURE public.delete_afisa(IN a_id uuid) OWNER TO allanurbayramgeldiyev;
 
 --
--- Name: delete_brend(uuid); Type: PROCEDURE; Schema: public; Owner: postgres
+-- Name: delete_brend(uuid); Type: PROCEDURE; Schema: public; Owner: allanurbayramgeldiyev
 --
 
-CREATE PROCEDURE public.delete_brend(b_id uuid)
+CREATE PROCEDURE public.delete_brend(IN b_id uuid)
     LANGUAGE plpgsql
     AS $$
 BEGIN
@@ -145,13 +145,13 @@ UPDATE images SET deleted_at = now() FROM products WHERE images.product_id=produ
 END; $$;
 
 
-ALTER PROCEDURE public.delete_brend(b_id uuid) OWNER TO postgres;
+ALTER PROCEDURE public.delete_brend(IN b_id uuid) OWNER TO allanurbayramgeldiyev;
 
 --
--- Name: delete_category(uuid); Type: PROCEDURE; Schema: public; Owner: postgres
+-- Name: delete_category(uuid); Type: PROCEDURE; Schema: public; Owner: allanurbayramgeldiyev
 --
 
-CREATE PROCEDURE public.delete_category(category_uuid uuid)
+CREATE PROCEDURE public.delete_category(IN category_uuid uuid)
     LANGUAGE plpgsql
     AS $$
 BEGIN
@@ -166,13 +166,13 @@ UPDATE images SET deleted_at = now() FROM products,category_product WHERE images
 END; $$;
 
 
-ALTER PROCEDURE public.delete_category(category_uuid uuid) OWNER TO postgres;
+ALTER PROCEDURE public.delete_category(IN category_uuid uuid) OWNER TO allanurbayramgeldiyev;
 
 --
--- Name: delete_language(uuid); Type: PROCEDURE; Schema: public; Owner: postgres
+-- Name: delete_language(uuid); Type: PROCEDURE; Schema: public; Owner: allanurbayramgeldiyev
 --
 
-CREATE PROCEDURE public.delete_language(language_id uuid)
+CREATE PROCEDURE public.delete_language(IN language_id uuid)
     LANGUAGE plpgsql
     AS $$
 BEGIN
@@ -199,13 +199,13 @@ UPDATE translation_notification SET deleted_at = now() WHERE lang_id = language_
 END; $$;
 
 
-ALTER PROCEDURE public.delete_language(language_id uuid) OWNER TO postgres;
+ALTER PROCEDURE public.delete_language(IN language_id uuid) OWNER TO allanurbayramgeldiyev;
 
 --
--- Name: delete_notification(uuid); Type: PROCEDURE; Schema: public; Owner: postgres
+-- Name: delete_notification(uuid); Type: PROCEDURE; Schema: public; Owner: allanurbayramgeldiyev
 --
 
-CREATE PROCEDURE public.delete_notification(n_id uuid)
+CREATE PROCEDURE public.delete_notification(IN n_id uuid)
     LANGUAGE plpgsql
     AS $$
 BEGIN
@@ -214,13 +214,13 @@ UPDATE translation_notification SET deleted_at = now() WHERE notification_id = n
 END; $$;
 
 
-ALTER PROCEDURE public.delete_notification(n_id uuid) OWNER TO postgres;
+ALTER PROCEDURE public.delete_notification(IN n_id uuid) OWNER TO allanurbayramgeldiyev;
 
 --
--- Name: delete_order_date(uuid); Type: PROCEDURE; Schema: public; Owner: postgres
+-- Name: delete_order_date(uuid); Type: PROCEDURE; Schema: public; Owner: allanurbayramgeldiyev
 --
 
-CREATE PROCEDURE public.delete_order_date(od_id uuid)
+CREATE PROCEDURE public.delete_order_date(IN od_id uuid)
     LANGUAGE plpgsql
     AS $$
 BEGIN
@@ -230,13 +230,13 @@ UPDATE translation_order_dates SET deleted_at = now() WHERE order_date_id = od_i
 END; $$;
 
 
-ALTER PROCEDURE public.delete_order_date(od_id uuid) OWNER TO postgres;
+ALTER PROCEDURE public.delete_order_date(IN od_id uuid) OWNER TO allanurbayramgeldiyev;
 
 --
--- Name: delete_product(uuid); Type: PROCEDURE; Schema: public; Owner: postgres
+-- Name: delete_product(uuid); Type: PROCEDURE; Schema: public; Owner: allanurbayramgeldiyev
 --
 
-CREATE PROCEDURE public.delete_product(p_id uuid)
+CREATE PROCEDURE public.delete_product(IN p_id uuid)
     LANGUAGE plpgsql
     AS $$
 BEGIN
@@ -248,13 +248,13 @@ UPDATE images SET deleted_at = now() WHERE product_id = p_id;
 END; $$;
 
 
-ALTER PROCEDURE public.delete_product(p_id uuid) OWNER TO postgres;
+ALTER PROCEDURE public.delete_product(IN p_id uuid) OWNER TO allanurbayramgeldiyev;
 
 --
--- Name: delete_shop(uuid); Type: PROCEDURE; Schema: public; Owner: postgres
+-- Name: delete_shop(uuid); Type: PROCEDURE; Schema: public; Owner: allanurbayramgeldiyev
 --
 
-CREATE PROCEDURE public.delete_shop(s_id uuid)
+CREATE PROCEDURE public.delete_shop(IN s_id uuid)
     LANGUAGE plpgsql
     AS $$
 BEGIN
@@ -266,13 +266,13 @@ UPDATE images SET deleted_at = now() FROM products WHERE images.product_id = pro
 END; $$;
 
 
-ALTER PROCEDURE public.delete_shop(s_id uuid) OWNER TO postgres;
+ALTER PROCEDURE public.delete_shop(IN s_id uuid) OWNER TO allanurbayramgeldiyev;
 
 --
--- Name: restore_afisa(uuid); Type: PROCEDURE; Schema: public; Owner: postgres
+-- Name: restore_afisa(uuid); Type: PROCEDURE; Schema: public; Owner: allanurbayramgeldiyev
 --
 
-CREATE PROCEDURE public.restore_afisa(a_id uuid)
+CREATE PROCEDURE public.restore_afisa(IN a_id uuid)
     LANGUAGE plpgsql
     AS $$
 BEGIN
@@ -281,13 +281,13 @@ UPDATE translation_afisa SET deleted_at = NULL WHERE afisa_id = a_id;
 END; $$;
 
 
-ALTER PROCEDURE public.restore_afisa(a_id uuid) OWNER TO postgres;
+ALTER PROCEDURE public.restore_afisa(IN a_id uuid) OWNER TO allanurbayramgeldiyev;
 
 --
--- Name: restore_brend(uuid); Type: PROCEDURE; Schema: public; Owner: postgres
+-- Name: restore_brend(uuid); Type: PROCEDURE; Schema: public; Owner: allanurbayramgeldiyev
 --
 
-CREATE PROCEDURE public.restore_brend(b_id uuid)
+CREATE PROCEDURE public.restore_brend(IN b_id uuid)
     LANGUAGE plpgsql
     AS $$
 BEGIN
@@ -299,13 +299,13 @@ UPDATE images SET deleted_at = NULL FROM products WHERE images.product_id=produc
 END; $$;
 
 
-ALTER PROCEDURE public.restore_brend(b_id uuid) OWNER TO postgres;
+ALTER PROCEDURE public.restore_brend(IN b_id uuid) OWNER TO allanurbayramgeldiyev;
 
 --
--- Name: restore_category(uuid); Type: PROCEDURE; Schema: public; Owner: postgres
+-- Name: restore_category(uuid); Type: PROCEDURE; Schema: public; Owner: allanurbayramgeldiyev
 --
 
-CREATE PROCEDURE public.restore_category(cat_id uuid)
+CREATE PROCEDURE public.restore_category(IN cat_id uuid)
     LANGUAGE plpgsql
     AS $$
 BEGIN
@@ -322,13 +322,13 @@ UPDATE shops SET deleted_at = NULL FROM category_shop WHERE category_shop.shop_i
 END; $$;
 
 
-ALTER PROCEDURE public.restore_category(cat_id uuid) OWNER TO postgres;
+ALTER PROCEDURE public.restore_category(IN cat_id uuid) OWNER TO allanurbayramgeldiyev;
 
 --
--- Name: restore_language(uuid); Type: PROCEDURE; Schema: public; Owner: postgres
+-- Name: restore_language(uuid); Type: PROCEDURE; Schema: public; Owner: allanurbayramgeldiyev
 --
 
-CREATE PROCEDURE public.restore_language(language_id uuid)
+CREATE PROCEDURE public.restore_language(IN language_id uuid)
     LANGUAGE plpgsql
     AS $$
 BEGIN
@@ -355,13 +355,13 @@ UPDATE translation_notification SET deleted_at = NULL WHERE lang_id = language_i
 END; $$;
 
 
-ALTER PROCEDURE public.restore_language(language_id uuid) OWNER TO postgres;
+ALTER PROCEDURE public.restore_language(IN language_id uuid) OWNER TO allanurbayramgeldiyev;
 
 --
--- Name: restore_notification(uuid); Type: PROCEDURE; Schema: public; Owner: postgres
+-- Name: restore_notification(uuid); Type: PROCEDURE; Schema: public; Owner: allanurbayramgeldiyev
 --
 
-CREATE PROCEDURE public.restore_notification(n_id uuid)
+CREATE PROCEDURE public.restore_notification(IN n_id uuid)
     LANGUAGE plpgsql
     AS $$
 BEGIN
@@ -370,13 +370,13 @@ UPDATE translation_notification SET deleted_at = NULL WHERE notification_id = n_
 END; $$;
 
 
-ALTER PROCEDURE public.restore_notification(n_id uuid) OWNER TO postgres;
+ALTER PROCEDURE public.restore_notification(IN n_id uuid) OWNER TO allanurbayramgeldiyev;
 
 --
--- Name: restore_order_date(uuid); Type: PROCEDURE; Schema: public; Owner: postgres
+-- Name: restore_order_date(uuid); Type: PROCEDURE; Schema: public; Owner: allanurbayramgeldiyev
 --
 
-CREATE PROCEDURE public.restore_order_date(od_id uuid)
+CREATE PROCEDURE public.restore_order_date(IN od_id uuid)
     LANGUAGE plpgsql
     AS $$
 BEGIN
@@ -386,13 +386,13 @@ UPDATE translation_order_dates SET deleted_at = NULL WHERE order_date_id = od_id
 END; $$;
 
 
-ALTER PROCEDURE public.restore_order_date(od_id uuid) OWNER TO postgres;
+ALTER PROCEDURE public.restore_order_date(IN od_id uuid) OWNER TO allanurbayramgeldiyev;
 
 --
--- Name: restore_product(uuid); Type: PROCEDURE; Schema: public; Owner: postgres
+-- Name: restore_product(uuid); Type: PROCEDURE; Schema: public; Owner: allanurbayramgeldiyev
 --
 
-CREATE PROCEDURE public.restore_product(p_id uuid)
+CREATE PROCEDURE public.restore_product(IN p_id uuid)
     LANGUAGE plpgsql
     AS $$
 BEGIN
@@ -404,13 +404,13 @@ UPDATE images SET deleted_at = NULL WHERE product_id = p_id;
 END; $$;
 
 
-ALTER PROCEDURE public.restore_product(p_id uuid) OWNER TO postgres;
+ALTER PROCEDURE public.restore_product(IN p_id uuid) OWNER TO allanurbayramgeldiyev;
 
 --
--- Name: restore_shop(uuid); Type: PROCEDURE; Schema: public; Owner: postgres
+-- Name: restore_shop(uuid); Type: PROCEDURE; Schema: public; Owner: allanurbayramgeldiyev
 --
 
-CREATE PROCEDURE public.restore_shop(s_id uuid)
+CREATE PROCEDURE public.restore_shop(IN s_id uuid)
     LANGUAGE plpgsql
     AS $$
 BEGIN
@@ -422,10 +422,10 @@ UPDATE images SET deleted_at = NULL FROM products WHERE images.product_id = prod
 END; $$;
 
 
-ALTER PROCEDURE public.restore_shop(s_id uuid) OWNER TO postgres;
+ALTER PROCEDURE public.restore_shop(IN s_id uuid) OWNER TO allanurbayramgeldiyev;
 
 --
--- Name: update_updated_at(); Type: FUNCTION; Schema: public; Owner: postgres
+-- Name: update_updated_at(); Type: FUNCTION; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 CREATE FUNCTION public.update_updated_at() RETURNS trigger
@@ -436,14 +436,14 @@ RETURN NEW;
 END; $$;
 
 
-ALTER FUNCTION public.update_updated_at() OWNER TO postgres;
+ALTER FUNCTION public.update_updated_at() OWNER TO allanurbayramgeldiyev;
 
 SET default_tablespace = '';
 
 SET default_table_access_method = heap;
 
 --
--- Name: admins; Type: TABLE; Schema: public; Owner: postgres
+-- Name: admins; Type: TABLE; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 CREATE TABLE public.admins (
@@ -458,10 +458,10 @@ CREATE TABLE public.admins (
 );
 
 
-ALTER TABLE public.admins OWNER TO postgres;
+ALTER TABLE public.admins OWNER TO allanurbayramgeldiyev;
 
 --
--- Name: afisa; Type: TABLE; Schema: public; Owner: postgres
+-- Name: afisa; Type: TABLE; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 CREATE TABLE public.afisa (
@@ -473,10 +473,10 @@ CREATE TABLE public.afisa (
 );
 
 
-ALTER TABLE public.afisa OWNER TO postgres;
+ALTER TABLE public.afisa OWNER TO allanurbayramgeldiyev;
 
 --
--- Name: banner; Type: TABLE; Schema: public; Owner: postgres
+-- Name: banner; Type: TABLE; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 CREATE TABLE public.banner (
@@ -489,10 +489,10 @@ CREATE TABLE public.banner (
 );
 
 
-ALTER TABLE public.banner OWNER TO postgres;
+ALTER TABLE public.banner OWNER TO allanurbayramgeldiyev;
 
 --
--- Name: brends; Type: TABLE; Schema: public; Owner: postgres
+-- Name: brends; Type: TABLE; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 CREATE TABLE public.brends (
@@ -505,10 +505,10 @@ CREATE TABLE public.brends (
 );
 
 
-ALTER TABLE public.brends OWNER TO postgres;
+ALTER TABLE public.brends OWNER TO allanurbayramgeldiyev;
 
 --
--- Name: cart; Type: TABLE; Schema: public; Owner: postgres
+-- Name: cart; Type: TABLE; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 CREATE TABLE public.cart (
@@ -522,10 +522,10 @@ CREATE TABLE public.cart (
 );
 
 
-ALTER TABLE public.cart OWNER TO postgres;
+ALTER TABLE public.cart OWNER TO allanurbayramgeldiyev;
 
 --
--- Name: categories; Type: TABLE; Schema: public; Owner: postgres
+-- Name: categories; Type: TABLE; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 CREATE TABLE public.categories (
@@ -539,10 +539,10 @@ CREATE TABLE public.categories (
 );
 
 
-ALTER TABLE public.categories OWNER TO postgres;
+ALTER TABLE public.categories OWNER TO allanurbayramgeldiyev;
 
 --
--- Name: category_product; Type: TABLE; Schema: public; Owner: postgres
+-- Name: category_product; Type: TABLE; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 CREATE TABLE public.category_product (
@@ -555,10 +555,10 @@ CREATE TABLE public.category_product (
 );
 
 
-ALTER TABLE public.category_product OWNER TO postgres;
+ALTER TABLE public.category_product OWNER TO allanurbayramgeldiyev;
 
 --
--- Name: company_address; Type: TABLE; Schema: public; Owner: postgres
+-- Name: company_address; Type: TABLE; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 CREATE TABLE public.company_address (
@@ -571,10 +571,10 @@ CREATE TABLE public.company_address (
 );
 
 
-ALTER TABLE public.company_address OWNER TO postgres;
+ALTER TABLE public.company_address OWNER TO allanurbayramgeldiyev;
 
 --
--- Name: company_phone; Type: TABLE; Schema: public; Owner: postgres
+-- Name: company_phone; Type: TABLE; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 CREATE TABLE public.company_phone (
@@ -586,10 +586,10 @@ CREATE TABLE public.company_phone (
 );
 
 
-ALTER TABLE public.company_phone OWNER TO postgres;
+ALTER TABLE public.company_phone OWNER TO allanurbayramgeldiyev;
 
 --
--- Name: company_setting; Type: TABLE; Schema: public; Owner: postgres
+-- Name: company_setting; Type: TABLE; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 CREATE TABLE public.company_setting (
@@ -600,14 +600,15 @@ CREATE TABLE public.company_setting (
     instagram character varying(100) NOT NULL,
     created_at timestamp with time zone DEFAULT now(),
     updated_at timestamp with time zone DEFAULT now(),
-    deleted_at timestamp without time zone
+    deleted_at timestamp without time zone,
+    imo character varying(20) NOT NULL
 );
 
 
-ALTER TABLE public.company_setting OWNER TO postgres;
+ALTER TABLE public.company_setting OWNER TO allanurbayramgeldiyev;
 
 --
--- Name: customer_address; Type: TABLE; Schema: public; Owner: postgres
+-- Name: customer_address; Type: TABLE; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 CREATE TABLE public.customer_address (
@@ -621,10 +622,10 @@ CREATE TABLE public.customer_address (
 );
 
 
-ALTER TABLE public.customer_address OWNER TO postgres;
+ALTER TABLE public.customer_address OWNER TO allanurbayramgeldiyev;
 
 --
--- Name: customers; Type: TABLE; Schema: public; Owner: postgres
+-- Name: customers; Type: TABLE; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 CREATE TABLE public.customers (
@@ -642,10 +643,10 @@ CREATE TABLE public.customers (
 );
 
 
-ALTER TABLE public.customers OWNER TO postgres;
+ALTER TABLE public.customers OWNER TO allanurbayramgeldiyev;
 
 --
--- Name: district; Type: TABLE; Schema: public; Owner: postgres
+-- Name: district; Type: TABLE; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 CREATE TABLE public.district (
@@ -657,10 +658,10 @@ CREATE TABLE public.district (
 );
 
 
-ALTER TABLE public.district OWNER TO postgres;
+ALTER TABLE public.district OWNER TO allanurbayramgeldiyev;
 
 --
--- Name: images; Type: TABLE; Schema: public; Owner: postgres
+-- Name: images; Type: TABLE; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 CREATE TABLE public.images (
@@ -674,10 +675,10 @@ CREATE TABLE public.images (
 );
 
 
-ALTER TABLE public.images OWNER TO postgres;
+ALTER TABLE public.images OWNER TO allanurbayramgeldiyev;
 
 --
--- Name: languages; Type: TABLE; Schema: public; Owner: postgres
+-- Name: languages; Type: TABLE; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 CREATE TABLE public.languages (
@@ -690,10 +691,10 @@ CREATE TABLE public.languages (
 );
 
 
-ALTER TABLE public.languages OWNER TO postgres;
+ALTER TABLE public.languages OWNER TO allanurbayramgeldiyev;
 
 --
--- Name: likes; Type: TABLE; Schema: public; Owner: postgres
+-- Name: likes; Type: TABLE; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 CREATE TABLE public.likes (
@@ -706,10 +707,10 @@ CREATE TABLE public.likes (
 );
 
 
-ALTER TABLE public.likes OWNER TO postgres;
+ALTER TABLE public.likes OWNER TO allanurbayramgeldiyev;
 
 --
--- Name: main_image; Type: TABLE; Schema: public; Owner: postgres
+-- Name: main_image; Type: TABLE; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 CREATE TABLE public.main_image (
@@ -724,10 +725,10 @@ CREATE TABLE public.main_image (
 );
 
 
-ALTER TABLE public.main_image OWNER TO postgres;
+ALTER TABLE public.main_image OWNER TO allanurbayramgeldiyev;
 
 --
--- Name: notifications; Type: TABLE; Schema: public; Owner: postgres
+-- Name: notifications; Type: TABLE; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 CREATE TABLE public.notifications (
@@ -739,10 +740,10 @@ CREATE TABLE public.notifications (
 );
 
 
-ALTER TABLE public.notifications OWNER TO postgres;
+ALTER TABLE public.notifications OWNER TO allanurbayramgeldiyev;
 
 --
--- Name: order_dates; Type: TABLE; Schema: public; Owner: postgres
+-- Name: order_dates; Type: TABLE; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 CREATE TABLE public.order_dates (
@@ -754,10 +755,10 @@ CREATE TABLE public.order_dates (
 );
 
 
-ALTER TABLE public.order_dates OWNER TO postgres;
+ALTER TABLE public.order_dates OWNER TO allanurbayramgeldiyev;
 
 --
--- Name: order_times; Type: TABLE; Schema: public; Owner: postgres
+-- Name: order_times; Type: TABLE; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 CREATE TABLE public.order_times (
@@ -770,10 +771,10 @@ CREATE TABLE public.order_times (
 );
 
 
-ALTER TABLE public.order_times OWNER TO postgres;
+ALTER TABLE public.order_times OWNER TO allanurbayramgeldiyev;
 
 --
--- Name: ordered_products; Type: TABLE; Schema: public; Owner: postgres
+-- Name: ordered_products; Type: TABLE; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 CREATE TABLE public.ordered_products (
@@ -787,10 +788,10 @@ CREATE TABLE public.ordered_products (
 );
 
 
-ALTER TABLE public.ordered_products OWNER TO postgres;
+ALTER TABLE public.ordered_products OWNER TO allanurbayramgeldiyev;
 
 --
--- Name: orders; Type: TABLE; Schema: public; Owner: postgres
+-- Name: orders; Type: TABLE; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 CREATE TABLE public.orders (
@@ -810,10 +811,10 @@ CREATE TABLE public.orders (
 );
 
 
-ALTER TABLE public.orders OWNER TO postgres;
+ALTER TABLE public.orders OWNER TO allanurbayramgeldiyev;
 
 --
--- Name: orders_order_number_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+-- Name: orders_order_number_seq; Type: SEQUENCE; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 CREATE SEQUENCE public.orders_order_number_seq
@@ -825,17 +826,17 @@ CREATE SEQUENCE public.orders_order_number_seq
     CACHE 1;
 
 
-ALTER TABLE public.orders_order_number_seq OWNER TO postgres;
+ALTER TABLE public.orders_order_number_seq OWNER TO allanurbayramgeldiyev;
 
 --
--- Name: orders_order_number_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+-- Name: orders_order_number_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 ALTER SEQUENCE public.orders_order_number_seq OWNED BY public.orders.order_number;
 
 
 --
--- Name: payment_types; Type: TABLE; Schema: public; Owner: postgres
+-- Name: payment_types; Type: TABLE; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 CREATE TABLE public.payment_types (
@@ -848,10 +849,10 @@ CREATE TABLE public.payment_types (
 );
 
 
-ALTER TABLE public.payment_types OWNER TO postgres;
+ALTER TABLE public.payment_types OWNER TO allanurbayramgeldiyev;
 
 --
--- Name: products; Type: TABLE; Schema: public; Owner: postgres
+-- Name: products; Type: TABLE; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 CREATE TABLE public.products (
@@ -869,10 +870,10 @@ CREATE TABLE public.products (
 );
 
 
-ALTER TABLE public.products OWNER TO postgres;
+ALTER TABLE public.products OWNER TO allanurbayramgeldiyev;
 
 --
--- Name: shops; Type: TABLE; Schema: public; Owner: postgres
+-- Name: shops; Type: TABLE; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 CREATE TABLE public.shops (
@@ -887,10 +888,10 @@ CREATE TABLE public.shops (
 );
 
 
-ALTER TABLE public.shops OWNER TO postgres;
+ALTER TABLE public.shops OWNER TO allanurbayramgeldiyev;
 
 --
--- Name: translation_about; Type: TABLE; Schema: public; Owner: postgres
+-- Name: translation_about; Type: TABLE; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 CREATE TABLE public.translation_about (
@@ -904,10 +905,10 @@ CREATE TABLE public.translation_about (
 );
 
 
-ALTER TABLE public.translation_about OWNER TO postgres;
+ALTER TABLE public.translation_about OWNER TO allanurbayramgeldiyev;
 
 --
--- Name: translation_afisa; Type: TABLE; Schema: public; Owner: postgres
+-- Name: translation_afisa; Type: TABLE; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 CREATE TABLE public.translation_afisa (
@@ -922,10 +923,10 @@ CREATE TABLE public.translation_afisa (
 );
 
 
-ALTER TABLE public.translation_afisa OWNER TO postgres;
+ALTER TABLE public.translation_afisa OWNER TO allanurbayramgeldiyev;
 
 --
--- Name: translation_basket_page; Type: TABLE; Schema: public; Owner: postgres
+-- Name: translation_basket_page; Type: TABLE; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 CREATE TABLE public.translation_basket_page (
@@ -946,10 +947,10 @@ CREATE TABLE public.translation_basket_page (
 );
 
 
-ALTER TABLE public.translation_basket_page OWNER TO postgres;
+ALTER TABLE public.translation_basket_page OWNER TO allanurbayramgeldiyev;
 
 --
--- Name: translation_category; Type: TABLE; Schema: public; Owner: postgres
+-- Name: translation_category; Type: TABLE; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 CREATE TABLE public.translation_category (
@@ -963,10 +964,10 @@ CREATE TABLE public.translation_category (
 );
 
 
-ALTER TABLE public.translation_category OWNER TO postgres;
+ALTER TABLE public.translation_category OWNER TO allanurbayramgeldiyev;
 
 --
--- Name: translation_contact; Type: TABLE; Schema: public; Owner: postgres
+-- Name: translation_contact; Type: TABLE; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 CREATE TABLE public.translation_contact (
@@ -987,10 +988,10 @@ CREATE TABLE public.translation_contact (
 );
 
 
-ALTER TABLE public.translation_contact OWNER TO postgres;
+ALTER TABLE public.translation_contact OWNER TO allanurbayramgeldiyev;
 
 --
--- Name: translation_district; Type: TABLE; Schema: public; Owner: postgres
+-- Name: translation_district; Type: TABLE; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 CREATE TABLE public.translation_district (
@@ -1004,10 +1005,10 @@ CREATE TABLE public.translation_district (
 );
 
 
-ALTER TABLE public.translation_district OWNER TO postgres;
+ALTER TABLE public.translation_district OWNER TO allanurbayramgeldiyev;
 
 --
--- Name: translation_footer; Type: TABLE; Schema: public; Owner: postgres
+-- Name: translation_footer; Type: TABLE; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 CREATE TABLE public.translation_footer (
@@ -1024,10 +1025,10 @@ CREATE TABLE public.translation_footer (
 );
 
 
-ALTER TABLE public.translation_footer OWNER TO postgres;
+ALTER TABLE public.translation_footer OWNER TO allanurbayramgeldiyev;
 
 --
--- Name: translation_header; Type: TABLE; Schema: public; Owner: postgres
+-- Name: translation_header; Type: TABLE; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 CREATE TABLE public.translation_header (
@@ -1055,10 +1056,10 @@ CREATE TABLE public.translation_header (
 );
 
 
-ALTER TABLE public.translation_header OWNER TO postgres;
+ALTER TABLE public.translation_header OWNER TO allanurbayramgeldiyev;
 
 --
--- Name: translation_my_information_page; Type: TABLE; Schema: public; Owner: postgres
+-- Name: translation_my_information_page; Type: TABLE; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 CREATE TABLE public.translation_my_information_page (
@@ -1074,10 +1075,10 @@ CREATE TABLE public.translation_my_information_page (
 );
 
 
-ALTER TABLE public.translation_my_information_page OWNER TO postgres;
+ALTER TABLE public.translation_my_information_page OWNER TO allanurbayramgeldiyev;
 
 --
--- Name: translation_my_order_page; Type: TABLE; Schema: public; Owner: postgres
+-- Name: translation_my_order_page; Type: TABLE; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 CREATE TABLE public.translation_my_order_page (
@@ -1099,10 +1100,10 @@ CREATE TABLE public.translation_my_order_page (
 );
 
 
-ALTER TABLE public.translation_my_order_page OWNER TO postgres;
+ALTER TABLE public.translation_my_order_page OWNER TO allanurbayramgeldiyev;
 
 --
--- Name: translation_notification; Type: TABLE; Schema: public; Owner: postgres
+-- Name: translation_notification; Type: TABLE; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 CREATE TABLE public.translation_notification (
@@ -1116,10 +1117,10 @@ CREATE TABLE public.translation_notification (
 );
 
 
-ALTER TABLE public.translation_notification OWNER TO postgres;
+ALTER TABLE public.translation_notification OWNER TO allanurbayramgeldiyev;
 
 --
--- Name: translation_order_dates; Type: TABLE; Schema: public; Owner: postgres
+-- Name: translation_order_dates; Type: TABLE; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 CREATE TABLE public.translation_order_dates (
@@ -1133,10 +1134,10 @@ CREATE TABLE public.translation_order_dates (
 );
 
 
-ALTER TABLE public.translation_order_dates OWNER TO postgres;
+ALTER TABLE public.translation_order_dates OWNER TO allanurbayramgeldiyev;
 
 --
--- Name: translation_order_page; Type: TABLE; Schema: public; Owner: postgres
+-- Name: translation_order_page; Type: TABLE; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 CREATE TABLE public.translation_order_page (
@@ -1154,10 +1155,10 @@ CREATE TABLE public.translation_order_page (
 );
 
 
-ALTER TABLE public.translation_order_page OWNER TO postgres;
+ALTER TABLE public.translation_order_page OWNER TO allanurbayramgeldiyev;
 
 --
--- Name: translation_payment; Type: TABLE; Schema: public; Owner: postgres
+-- Name: translation_payment; Type: TABLE; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 CREATE TABLE public.translation_payment (
@@ -1171,10 +1172,10 @@ CREATE TABLE public.translation_payment (
 );
 
 
-ALTER TABLE public.translation_payment OWNER TO postgres;
+ALTER TABLE public.translation_payment OWNER TO allanurbayramgeldiyev;
 
 --
--- Name: translation_product; Type: TABLE; Schema: public; Owner: postgres
+-- Name: translation_product; Type: TABLE; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 CREATE TABLE public.translation_product (
@@ -1190,10 +1191,10 @@ CREATE TABLE public.translation_product (
 );
 
 
-ALTER TABLE public.translation_product OWNER TO postgres;
+ALTER TABLE public.translation_product OWNER TO allanurbayramgeldiyev;
 
 --
--- Name: translation_secure; Type: TABLE; Schema: public; Owner: postgres
+-- Name: translation_secure; Type: TABLE; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 CREATE TABLE public.translation_secure (
@@ -1207,10 +1208,10 @@ CREATE TABLE public.translation_secure (
 );
 
 
-ALTER TABLE public.translation_secure OWNER TO postgres;
+ALTER TABLE public.translation_secure OWNER TO allanurbayramgeldiyev;
 
 --
--- Name: translation_update_password_page; Type: TABLE; Schema: public; Owner: postgres
+-- Name: translation_update_password_page; Type: TABLE; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 CREATE TABLE public.translation_update_password_page (
@@ -1227,17 +1228,17 @@ CREATE TABLE public.translation_update_password_page (
 );
 
 
-ALTER TABLE public.translation_update_password_page OWNER TO postgres;
+ALTER TABLE public.translation_update_password_page OWNER TO allanurbayramgeldiyev;
 
 --
--- Name: orders order_number; Type: DEFAULT; Schema: public; Owner: postgres
+-- Name: orders order_number; Type: DEFAULT; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 ALTER TABLE ONLY public.orders ALTER COLUMN order_number SET DEFAULT nextval('public.orders_order_number_seq'::regclass);
 
 
 --
--- Data for Name: admins; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: admins; Type: TABLE DATA; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 COPY public.admins (id, full_name, phone_number, password, created_at, updated_at, deleted_at, type) FROM stdin;
@@ -1250,7 +1251,7 @@ c97bfc6a-fd85-4aa8-82db-e788f6b0d70a	Muhammet Bayramov	+99363747155	$2a$14$IXSdY
 
 
 --
--- Data for Name: afisa; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: afisa; Type: TABLE DATA; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 COPY public.afisa (id, image, created_at, updated_at, deleted_at) FROM stdin;
@@ -1258,7 +1259,7 @@ COPY public.afisa (id, image, created_at, updated_at, deleted_at) FROM stdin;
 
 
 --
--- Data for Name: banner; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: banner; Type: TABLE DATA; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 COPY public.banner (id, image, url, created_at, updated_at, deleted_at) FROM stdin;
@@ -1266,7 +1267,7 @@ COPY public.banner (id, image, url, created_at, updated_at, deleted_at) FROM std
 
 
 --
--- Data for Name: brends; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: brends; Type: TABLE DATA; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 COPY public.brends (id, name, image, created_at, updated_at, deleted_at) FROM stdin;
@@ -1280,7 +1281,7 @@ c4bcda34-7332-4ae5-8129-d7538d63fee4	Golden Eagle	uploads/brend/7a425220-7200-4e
 
 
 --
--- Data for Name: cart; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: cart; Type: TABLE DATA; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 COPY public.cart (id, product_id, customer_id, quantity_of_product, created_at, updated_at, deleted_at) FROM stdin;
@@ -1299,7 +1300,7 @@ d77830b1-5512-4efc-8524-6dcf3a6fa7c6	febf699d-ca37-458a-b121-b5b70bbc7db0	1ae123
 
 
 --
--- Data for Name: categories; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: categories; Type: TABLE DATA; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 COPY public.categories (id, parent_category_id, image, is_home_category, created_at, updated_at, deleted_at) FROM stdin;
@@ -1321,7 +1322,7 @@ f47ad001-2fbf-49bd-948d-e5c7fa373712	44d2783f-133e-4bb7-b4c2-9e03dc04e2dd		f	202
 
 
 --
--- Data for Name: category_product; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: category_product; Type: TABLE DATA; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 COPY public.category_product (id, category_id, product_id, created_at, updated_at, deleted_at) FROM stdin;
@@ -1446,7 +1447,7 @@ d52dec4a-bd78-4df6-82b7-19acb1014878	789cbced-9141-4748-94d3-93476d276057	45a9f1
 
 
 --
--- Data for Name: company_address; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: company_address; Type: TABLE DATA; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 COPY public.company_address (id, lang_id, address, created_at, updated_at, deleted_at) FROM stdin;
@@ -1456,7 +1457,7 @@ d2c66808-e5fe-435f-ba01-cb717f80d9e0	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	adres_
 
 
 --
--- Data for Name: company_phone; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: company_phone; Type: TABLE DATA; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 COPY public.company_phone (id, phone, created_at, updated_at, deleted_at) FROM stdin;
@@ -1465,16 +1466,16 @@ COPY public.company_phone (id, phone, created_at, updated_at, deleted_at) FROM s
 
 
 --
--- Data for Name: company_setting; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: company_setting; Type: TABLE DATA; Schema: public; Owner: allanurbayramgeldiyev
 --
 
-COPY public.company_setting (id, logo, favicon, email, instagram, created_at, updated_at, deleted_at) FROM stdin;
-7d193677-e0b1-4df0-be88-dc6e16a47ca7	uploads/logode9c4f45-acba-42ce-b435-e744631a98ba.jpeg	uploads/favicon8a413c02-108d-4d2f-8e92-d24a18cea1d3.jpeg	isleg-bazar@gmail.com	@islegbazarinstagram	2022-06-15 19:57:04.54457+05	2022-06-15 19:57:04.54457+05	\N
+COPY public.company_setting (id, logo, favicon, email, instagram, created_at, updated_at, deleted_at, imo) FROM stdin;
+7d193677-e0b1-4df0-be88-dc6e16a47ca7	uploads/logode9c4f45-acba-42ce-b435-e744631a98ba.jpeg	uploads/favicon8a413c02-108d-4d2f-8e92-d24a18cea1d3.jpeg	isleg-bazar@gmail.com	@islegbazarinstagram	2022-06-15 19:57:04.54457+05	2022-12-14 15:11:38.550502+05	\N	+99362946805
 \.
 
 
 --
--- Data for Name: customer_address; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: customer_address; Type: TABLE DATA; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 COPY public.customer_address (id, customer_id, address, created_at, updated_at, deleted_at, is_active) FROM stdin;
@@ -1485,7 +1486,7 @@ d16fe7ec-9024-4745-8dab-0e79b13cc343	1ae12390-03ae-49ac-a9ad-d7ba5c95b51a	Mir 2/
 
 
 --
--- Data for Name: customers; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: customers; Type: TABLE DATA; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 COPY public.customers (id, full_name, phone_number, password, birthday, gender, created_at, updated_at, deleted_at, email, is_register) FROM stdin;
@@ -1495,7 +1496,7 @@ COPY public.customers (id, full_name, phone_number, password, birthday, gender, 
 
 
 --
--- Data for Name: district; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: district; Type: TABLE DATA; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 COPY public.district (id, price, created_at, updated_at, deleted_at) FROM stdin;
@@ -1504,7 +1505,7 @@ a58294d3-efe5-4cb7-82d3-8df8c37563c5	15	2022-06-25 10:23:25.640364+05	2022-06-25
 
 
 --
--- Data for Name: images; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: images; Type: TABLE DATA; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 COPY public.images (id, product_id, small, large, created_at, updated_at, deleted_at) FROM stdin;
@@ -1608,7 +1609,7 @@ aecb0fb0-5a38-40a1-8af2-d09614a9b6bd	3f397126-6d8d-4a0d-982c-01fd00526957	upload
 
 
 --
--- Data for Name: languages; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: languages; Type: TABLE DATA; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 COPY public.languages (id, name_short, flag, created_at, updated_at, deleted_at) FROM stdin;
@@ -1618,7 +1619,7 @@ aea98b93-7bdf-455b-9ad4-a259d69dc76e	ru	uploads/language1c24e3a6-173e-4264-a631-
 
 
 --
--- Data for Name: likes; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: likes; Type: TABLE DATA; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 COPY public.likes (id, product_id, customer_id, created_at, updated_at, deleted_at) FROM stdin;
@@ -1631,7 +1632,7 @@ a7a1e519-3ced-4d76-9994-318fc662cfe1	83da5c7b-bffe-4450-97c9-0f376441b1d4	1ae123
 
 
 --
--- Data for Name: main_image; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: main_image; Type: TABLE DATA; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 COPY public.main_image (id, product_id, small, medium, large, created_at, updated_at, deleted_at) FROM stdin;
@@ -1687,7 +1688,7 @@ e7a54110-ad06-4cf4-bea8-9935e99df168	45a9f186-2521-4eef-a4e0-b5c253c70878	upload
 
 
 --
--- Data for Name: notifications; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: notifications; Type: TABLE DATA; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 COPY public.notifications (id, name, created_at, updated_at, deleted_at) FROM stdin;
@@ -1696,7 +1697,7 @@ f832e5da-d969-43d7-9cd0-7eae6c6c59e9	sargyt_ucin	2022-11-08 23:08:35.4564+05	202
 
 
 --
--- Data for Name: order_dates; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: order_dates; Type: TABLE DATA; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 COPY public.order_dates (id, date, created_at, updated_at, deleted_at) FROM stdin;
@@ -1706,7 +1707,7 @@ c1f2beca-a6b6-4971-a6a7-ed50079c6912	tomorrow	2022-09-28 17:36:46.804343+05	2022
 
 
 --
--- Data for Name: order_times; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: order_times; Type: TABLE DATA; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 COPY public.order_times (id, order_date_id, "time", created_at, updated_at, deleted_at) FROM stdin;
@@ -1718,7 +1719,7 @@ de31361b-9fba-48f2-9341-9e3dd08cf9fd	c1f2beca-a6b6-4971-a6a7-ed50079c6912	18:00 
 
 
 --
--- Data for Name: ordered_products; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: ordered_products; Type: TABLE DATA; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 COPY public.ordered_products (id, product_id, quantity_of_product, order_id, created_at, updated_at, deleted_at) FROM stdin;
@@ -1728,7 +1729,7 @@ COPY public.ordered_products (id, product_id, quantity_of_product, order_id, cre
 
 
 --
--- Data for Name: orders; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: orders; Type: TABLE DATA; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 COPY public.orders (id, customer_id, customer_mark, order_time, payment_type, total_price, created_at, updated_at, deleted_at, order_number, shipping_price, excel, address) FROM stdin;
@@ -1737,7 +1738,7 @@ COPY public.orders (id, customer_id, customer_mark, order_time, payment_type, to
 
 
 --
--- Data for Name: payment_types; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: payment_types; Type: TABLE DATA; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 COPY public.payment_types (id, lang_id, type, created_at, updated_at, deleted_at) FROM stdin;
@@ -1749,7 +1750,7 @@ cb7e8cc9-9b2e-4cd8-921f-91b3bb5e5564	aea98b93-7bdf-455b-9ad4-a259d69dc76e	пла
 
 
 --
--- Data for Name: products; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: products; Type: TABLE DATA; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 COPY public.products (id, brend_id, price, old_price, amount, created_at, updated_at, deleted_at, limit_amount, is_new, shop_id) FROM stdin;
@@ -1805,7 +1806,7 @@ febf699d-ca37-458a-b121-b5b70bbc7db0	fdd259c2-794a-42b9-a3ad-9e91502af23e	73.6	9
 
 
 --
--- Data for Name: shops; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: shops; Type: TABLE DATA; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 COPY public.shops (id, owner_name, address, phone_number, running_time, created_at, updated_at, deleted_at) FROM stdin;
@@ -1815,7 +1816,7 @@ a283d9a4-f38e-43ee-a228-6584b7406cc4	Arslan Kerimow	Asgabat saher Mir 2/2 jay 2 
 
 
 --
--- Data for Name: translation_about; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: translation_about; Type: TABLE DATA; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 COPY public.translation_about (id, lang_id, title, content, created_at, updated_at, deleted_at) FROM stdin;
@@ -1825,7 +1826,7 @@ e50bb3d1-14a1-400e-83d9-8bc15969b914	aea98b93-7bdf-455b-9ad4-a259d69dc76e	Рад
 
 
 --
--- Data for Name: translation_afisa; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: translation_afisa; Type: TABLE DATA; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 COPY public.translation_afisa (id, afisa_id, lang_id, title, description, created_at, updated_at, deleted_at) FROM stdin;
@@ -1833,7 +1834,7 @@ COPY public.translation_afisa (id, afisa_id, lang_id, title, description, create
 
 
 --
--- Data for Name: translation_basket_page; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: translation_basket_page; Type: TABLE DATA; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 COPY public.translation_basket_page (id, lang_id, quantity_of_goods, total_price, discount, delivery, total, currency, to_order, your_basket, created_at, updated_at, deleted_at, empty_the_basket) FROM stdin;
@@ -1843,7 +1844,7 @@ COPY public.translation_basket_page (id, lang_id, quantity_of_goods, total_price
 
 
 --
--- Data for Name: translation_category; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: translation_category; Type: TABLE DATA; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 COPY public.translation_category (id, lang_id, category_id, name, created_at, updated_at, deleted_at) FROM stdin;
@@ -1879,7 +1880,7 @@ b4c2a314-4687-47e0-8a5a-cad0b922b191	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	57d072
 
 
 --
--- Data for Name: translation_contact; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: translation_contact; Type: TABLE DATA; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 COPY public.translation_contact (id, lang_id, full_name, email, phone, letter, company_phone, imo, company_email, instagram, created_at, updated_at, deleted_at, button_text) FROM stdin;
@@ -1889,7 +1890,7 @@ f1693167-0c68-4a54-9831-56f124d629a3	aea98b93-7bdf-455b-9ad4-a259d69dc76e	at_ru	
 
 
 --
--- Data for Name: translation_district; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: translation_district; Type: TABLE DATA; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 COPY public.translation_district (id, lang_id, district_id, name, created_at, updated_at, deleted_at) FROM stdin;
@@ -1899,7 +1900,7 @@ aa1cfa48-3132-4dd4-abfb-070a2986690b	aea98b93-7bdf-455b-9ad4-a259d69dc76e	a58294
 
 
 --
--- Data for Name: translation_footer; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: translation_footer; Type: TABLE DATA; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 COPY public.translation_footer (id, lang_id, about, payment, contact, secure, word, created_at, updated_at, deleted_at) FROM stdin;
@@ -1909,7 +1910,7 @@ COPY public.translation_footer (id, lang_id, about, payment, contact, secure, wo
 
 
 --
--- Data for Name: translation_header; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: translation_header; Type: TABLE DATA; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 COPY public.translation_header (id, lang_id, research, phone, password, forgot_password, sign_in, sign_up, name, password_verification, verify_secure, my_information, my_favorites, my_orders, log_out, created_at, updated_at, deleted_at, basket, email, add_to_basket) FROM stdin;
@@ -1919,7 +1920,7 @@ eaf206e6-d515-4bdb-9323-a047cd0edae5	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	gözle
 
 
 --
--- Data for Name: translation_my_information_page; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: translation_my_information_page; Type: TABLE DATA; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 COPY public.translation_my_information_page (id, lang_id, address, created_at, updated_at, deleted_at, birthday, update_password, save) FROM stdin;
@@ -1929,7 +1930,7 @@ d294138e-b808-41ae-9ac5-1826751fda3d	aea98b93-7bdf-455b-9ad4-a259d69dc76e	ваш
 
 
 --
--- Data for Name: translation_my_order_page; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: translation_my_order_page; Type: TABLE DATA; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 COPY public.translation_my_order_page (id, lang_id, orders, date, price, currency, image, name, brend, code, amount, total_price, created_at, updated_at, deleted_at) FROM stdin;
@@ -1939,7 +1940,7 @@ ff43b90d-e22d-4364-b358-6fd56bb3a305	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	orders
 
 
 --
--- Data for Name: translation_notification; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: translation_notification; Type: TABLE DATA; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 COPY public.translation_notification (id, notification_id, lang_id, translation, created_at, updated_at, deleted_at) FROM stdin;
@@ -1949,7 +1950,7 @@ b0e087dd-60c8-4f47-8755-95e9678d4405	f832e5da-d969-43d7-9cd0-7eae6c6c59e9	8723c1
 
 
 --
--- Data for Name: translation_order_dates; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: translation_order_dates; Type: TABLE DATA; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 COPY public.translation_order_dates (id, lang_id, order_date_id, date, created_at, updated_at, deleted_at) FROM stdin;
@@ -1961,7 +1962,7 @@ dcd0c70b-9fa2-4327-8b35-de29bd3febcb	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	326463
 
 
 --
--- Data for Name: translation_order_page; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: translation_order_page; Type: TABLE DATA; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 COPY public.translation_order_page (id, lang_id, content, type_of_payment, choose_a_delivery_time, your_address, mark, to_order, created_at, updated_at, deleted_at) FROM stdin;
@@ -1971,7 +1972,7 @@ COPY public.translation_order_page (id, lang_id, content, type_of_payment, choos
 
 
 --
--- Data for Name: translation_payment; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: translation_payment; Type: TABLE DATA; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 COPY public.translation_payment (id, lang_id, title, content, created_at, updated_at, deleted_at) FROM stdin;
@@ -1981,7 +1982,7 @@ ea7f4c0c-4b1a-41d3-94eb-e058aba9c99f	aea98b93-7bdf-455b-9ad4-a259d69dc76e	Пор
 
 
 --
--- Data for Name: translation_product; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: translation_product; Type: TABLE DATA; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 COPY public.translation_product (id, lang_id, product_id, name, description, created_at, updated_at, deleted_at, slug) FROM stdin;
@@ -2085,7 +2086,7 @@ f2d39fe8-264d-4394-964a-88b04f133187	aea98b93-7bdf-455b-9ad4-a259d69dc76e	ccb430
 
 
 --
--- Data for Name: translation_secure; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: translation_secure; Type: TABLE DATA; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 COPY public.translation_secure (id, lang_id, title, content, created_at, updated_at, deleted_at) FROM stdin;
@@ -2095,7 +2096,7 @@ COPY public.translation_secure (id, lang_id, title, content, created_at, updated
 
 
 --
--- Data for Name: translation_update_password_page; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: translation_update_password_page; Type: TABLE DATA; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 COPY public.translation_update_password_page (id, lang_id, title, verify_password, explanation, save, created_at, updated_at, deleted_at, password) FROM stdin;
@@ -2105,14 +2106,14 @@ de12082b-baab-4b83-ac07-119df09d1230	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	açar 
 
 
 --
--- Name: orders_order_number_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+-- Name: orders_order_number_seq; Type: SEQUENCE SET; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 SELECT pg_catalog.setval('public.orders_order_number_seq', 49, true);
 
 
 --
--- Name: admins admins_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: admins admins_pkey; Type: CONSTRAINT; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 ALTER TABLE ONLY public.admins
@@ -2120,7 +2121,7 @@ ALTER TABLE ONLY public.admins
 
 
 --
--- Name: afisa afisa_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: afisa afisa_pkey; Type: CONSTRAINT; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 ALTER TABLE ONLY public.afisa
@@ -2128,7 +2129,7 @@ ALTER TABLE ONLY public.afisa
 
 
 --
--- Name: banner banner_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: banner banner_pkey; Type: CONSTRAINT; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 ALTER TABLE ONLY public.banner
@@ -2136,7 +2137,7 @@ ALTER TABLE ONLY public.banner
 
 
 --
--- Name: cart basket_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: cart basket_pkey; Type: CONSTRAINT; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 ALTER TABLE ONLY public.cart
@@ -2144,7 +2145,7 @@ ALTER TABLE ONLY public.cart
 
 
 --
--- Name: brends brends_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: brends brends_pkey; Type: CONSTRAINT; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 ALTER TABLE ONLY public.brends
@@ -2152,7 +2153,7 @@ ALTER TABLE ONLY public.brends
 
 
 --
--- Name: categories categories_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: categories categories_pkey; Type: CONSTRAINT; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 ALTER TABLE ONLY public.categories
@@ -2160,7 +2161,7 @@ ALTER TABLE ONLY public.categories
 
 
 --
--- Name: category_product category_product_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: category_product category_product_pkey; Type: CONSTRAINT; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 ALTER TABLE ONLY public.category_product
@@ -2168,7 +2169,7 @@ ALTER TABLE ONLY public.category_product
 
 
 --
--- Name: company_address company_address_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: company_address company_address_pkey; Type: CONSTRAINT; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 ALTER TABLE ONLY public.company_address
@@ -2176,7 +2177,7 @@ ALTER TABLE ONLY public.company_address
 
 
 --
--- Name: company_phone company_phone_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: company_phone company_phone_pkey; Type: CONSTRAINT; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 ALTER TABLE ONLY public.company_phone
@@ -2184,7 +2185,7 @@ ALTER TABLE ONLY public.company_phone
 
 
 --
--- Name: company_setting company_setting_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: company_setting company_setting_pkey; Type: CONSTRAINT; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 ALTER TABLE ONLY public.company_setting
@@ -2192,7 +2193,7 @@ ALTER TABLE ONLY public.company_setting
 
 
 --
--- Name: customer_address customer_address_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: customer_address customer_address_pkey; Type: CONSTRAINT; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 ALTER TABLE ONLY public.customer_address
@@ -2200,7 +2201,7 @@ ALTER TABLE ONLY public.customer_address
 
 
 --
--- Name: customers customers_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: customers customers_pkey; Type: CONSTRAINT; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 ALTER TABLE ONLY public.customers
@@ -2208,7 +2209,7 @@ ALTER TABLE ONLY public.customers
 
 
 --
--- Name: district district_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: district district_pkey; Type: CONSTRAINT; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 ALTER TABLE ONLY public.district
@@ -2216,7 +2217,7 @@ ALTER TABLE ONLY public.district
 
 
 --
--- Name: images images_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: images images_pkey; Type: CONSTRAINT; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 ALTER TABLE ONLY public.images
@@ -2224,7 +2225,7 @@ ALTER TABLE ONLY public.images
 
 
 --
--- Name: languages languages_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: languages languages_pkey; Type: CONSTRAINT; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 ALTER TABLE ONLY public.languages
@@ -2232,7 +2233,7 @@ ALTER TABLE ONLY public.languages
 
 
 --
--- Name: likes likes_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: likes likes_pkey; Type: CONSTRAINT; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 ALTER TABLE ONLY public.likes
@@ -2240,7 +2241,7 @@ ALTER TABLE ONLY public.likes
 
 
 --
--- Name: main_image main_image_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: main_image main_image_pkey; Type: CONSTRAINT; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 ALTER TABLE ONLY public.main_image
@@ -2248,7 +2249,7 @@ ALTER TABLE ONLY public.main_image
 
 
 --
--- Name: notifications notifications_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: notifications notifications_pkey; Type: CONSTRAINT; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 ALTER TABLE ONLY public.notifications
@@ -2256,7 +2257,7 @@ ALTER TABLE ONLY public.notifications
 
 
 --
--- Name: order_dates order_dates_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: order_dates order_dates_pkey; Type: CONSTRAINT; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 ALTER TABLE ONLY public.order_dates
@@ -2264,7 +2265,7 @@ ALTER TABLE ONLY public.order_dates
 
 
 --
--- Name: order_times order_times_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: order_times order_times_pkey; Type: CONSTRAINT; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 ALTER TABLE ONLY public.order_times
@@ -2272,7 +2273,7 @@ ALTER TABLE ONLY public.order_times
 
 
 --
--- Name: ordered_products ordered_products_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: ordered_products ordered_products_pkey; Type: CONSTRAINT; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 ALTER TABLE ONLY public.ordered_products
@@ -2280,7 +2281,7 @@ ALTER TABLE ONLY public.ordered_products
 
 
 --
--- Name: orders orders_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: orders orders_pkey; Type: CONSTRAINT; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 ALTER TABLE ONLY public.orders
@@ -2288,7 +2289,7 @@ ALTER TABLE ONLY public.orders
 
 
 --
--- Name: payment_types payment_types_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: payment_types payment_types_pkey; Type: CONSTRAINT; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 ALTER TABLE ONLY public.payment_types
@@ -2296,7 +2297,7 @@ ALTER TABLE ONLY public.payment_types
 
 
 --
--- Name: products product_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: products product_pkey; Type: CONSTRAINT; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 ALTER TABLE ONLY public.products
@@ -2304,7 +2305,7 @@ ALTER TABLE ONLY public.products
 
 
 --
--- Name: shops shops_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: shops shops_pkey; Type: CONSTRAINT; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 ALTER TABLE ONLY public.shops
@@ -2312,7 +2313,7 @@ ALTER TABLE ONLY public.shops
 
 
 --
--- Name: translation_about translation_about_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: translation_about translation_about_pkey; Type: CONSTRAINT; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 ALTER TABLE ONLY public.translation_about
@@ -2320,7 +2321,7 @@ ALTER TABLE ONLY public.translation_about
 
 
 --
--- Name: translation_afisa translation_afisa_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: translation_afisa translation_afisa_pkey; Type: CONSTRAINT; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 ALTER TABLE ONLY public.translation_afisa
@@ -2328,7 +2329,7 @@ ALTER TABLE ONLY public.translation_afisa
 
 
 --
--- Name: translation_basket_page translation_basket_page_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: translation_basket_page translation_basket_page_pkey; Type: CONSTRAINT; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 ALTER TABLE ONLY public.translation_basket_page
@@ -2336,7 +2337,7 @@ ALTER TABLE ONLY public.translation_basket_page
 
 
 --
--- Name: translation_category translation_category_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: translation_category translation_category_pkey; Type: CONSTRAINT; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 ALTER TABLE ONLY public.translation_category
@@ -2344,7 +2345,7 @@ ALTER TABLE ONLY public.translation_category
 
 
 --
--- Name: translation_contact translation_contact_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: translation_contact translation_contact_pkey; Type: CONSTRAINT; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 ALTER TABLE ONLY public.translation_contact
@@ -2352,7 +2353,7 @@ ALTER TABLE ONLY public.translation_contact
 
 
 --
--- Name: translation_district translation_district_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: translation_district translation_district_pkey; Type: CONSTRAINT; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 ALTER TABLE ONLY public.translation_district
@@ -2360,7 +2361,7 @@ ALTER TABLE ONLY public.translation_district
 
 
 --
--- Name: translation_footer translation_footer_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: translation_footer translation_footer_pkey; Type: CONSTRAINT; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 ALTER TABLE ONLY public.translation_footer
@@ -2368,7 +2369,7 @@ ALTER TABLE ONLY public.translation_footer
 
 
 --
--- Name: translation_header translation_header_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: translation_header translation_header_pkey; Type: CONSTRAINT; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 ALTER TABLE ONLY public.translation_header
@@ -2376,7 +2377,7 @@ ALTER TABLE ONLY public.translation_header
 
 
 --
--- Name: translation_my_information_page translation_my_information_page_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: translation_my_information_page translation_my_information_page_pkey; Type: CONSTRAINT; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 ALTER TABLE ONLY public.translation_my_information_page
@@ -2384,7 +2385,7 @@ ALTER TABLE ONLY public.translation_my_information_page
 
 
 --
--- Name: translation_my_order_page translation_my_order_page_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: translation_my_order_page translation_my_order_page_pkey; Type: CONSTRAINT; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 ALTER TABLE ONLY public.translation_my_order_page
@@ -2392,7 +2393,7 @@ ALTER TABLE ONLY public.translation_my_order_page
 
 
 --
--- Name: translation_notification translation_notification_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: translation_notification translation_notification_pkey; Type: CONSTRAINT; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 ALTER TABLE ONLY public.translation_notification
@@ -2400,7 +2401,7 @@ ALTER TABLE ONLY public.translation_notification
 
 
 --
--- Name: translation_order_dates translation_order_dates_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: translation_order_dates translation_order_dates_pkey; Type: CONSTRAINT; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 ALTER TABLE ONLY public.translation_order_dates
@@ -2408,7 +2409,7 @@ ALTER TABLE ONLY public.translation_order_dates
 
 
 --
--- Name: translation_order_page translation_order_page_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: translation_order_page translation_order_page_pkey; Type: CONSTRAINT; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 ALTER TABLE ONLY public.translation_order_page
@@ -2416,7 +2417,7 @@ ALTER TABLE ONLY public.translation_order_page
 
 
 --
--- Name: translation_payment translation_payment_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: translation_payment translation_payment_pkey; Type: CONSTRAINT; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 ALTER TABLE ONLY public.translation_payment
@@ -2424,7 +2425,7 @@ ALTER TABLE ONLY public.translation_payment
 
 
 --
--- Name: translation_product translation_product_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: translation_product translation_product_pkey; Type: CONSTRAINT; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 ALTER TABLE ONLY public.translation_product
@@ -2432,7 +2433,7 @@ ALTER TABLE ONLY public.translation_product
 
 
 --
--- Name: translation_secure translation_secure_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: translation_secure translation_secure_pkey; Type: CONSTRAINT; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 ALTER TABLE ONLY public.translation_secure
@@ -2440,7 +2441,7 @@ ALTER TABLE ONLY public.translation_secure
 
 
 --
--- Name: translation_update_password_page translation_update_password_page_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: translation_update_password_page translation_update_password_page_pkey; Type: CONSTRAINT; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 ALTER TABLE ONLY public.translation_update_password_page
@@ -2448,308 +2449,308 @@ ALTER TABLE ONLY public.translation_update_password_page
 
 
 --
--- Name: languages after_insert_language; Type: TRIGGER; Schema: public; Owner: postgres
+-- Name: languages after_insert_language; Type: TRIGGER; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 CREATE TRIGGER after_insert_language AFTER INSERT ON public.languages FOR EACH ROW EXECUTE FUNCTION public.after_insert_language();
 
 
 --
--- Name: admins updated_admins_updated_at; Type: TRIGGER; Schema: public; Owner: postgres
+-- Name: admins updated_admins_updated_at; Type: TRIGGER; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 CREATE TRIGGER updated_admins_updated_at BEFORE UPDATE ON public.admins FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
 
 
 --
--- Name: afisa updated_afisa_updated_at; Type: TRIGGER; Schema: public; Owner: postgres
+-- Name: afisa updated_afisa_updated_at; Type: TRIGGER; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 CREATE TRIGGER updated_afisa_updated_at BEFORE UPDATE ON public.afisa FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
 
 
 --
--- Name: banner updated_banner_updated_at; Type: TRIGGER; Schema: public; Owner: postgres
+-- Name: banner updated_banner_updated_at; Type: TRIGGER; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 CREATE TRIGGER updated_banner_updated_at BEFORE UPDATE ON public.banner FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
 
 
 --
--- Name: brends updated_brends_updated_at; Type: TRIGGER; Schema: public; Owner: postgres
+-- Name: brends updated_brends_updated_at; Type: TRIGGER; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 CREATE TRIGGER updated_brends_updated_at BEFORE UPDATE ON public.brends FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
 
 
 --
--- Name: cart updated_cart_updated_at; Type: TRIGGER; Schema: public; Owner: postgres
+-- Name: cart updated_cart_updated_at; Type: TRIGGER; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 CREATE TRIGGER updated_cart_updated_at BEFORE UPDATE ON public.cart FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
 
 
 --
--- Name: categories updated_categories_updated_at; Type: TRIGGER; Schema: public; Owner: postgres
+-- Name: categories updated_categories_updated_at; Type: TRIGGER; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 CREATE TRIGGER updated_categories_updated_at BEFORE UPDATE ON public.categories FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
 
 
 --
--- Name: category_product updated_category_product_updated_at; Type: TRIGGER; Schema: public; Owner: postgres
+-- Name: category_product updated_category_product_updated_at; Type: TRIGGER; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 CREATE TRIGGER updated_category_product_updated_at BEFORE UPDATE ON public.category_product FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
 
 
 --
--- Name: company_address updated_company_address_updated_at; Type: TRIGGER; Schema: public; Owner: postgres
+-- Name: company_address updated_company_address_updated_at; Type: TRIGGER; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 CREATE TRIGGER updated_company_address_updated_at BEFORE UPDATE ON public.company_address FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
 
 
 --
--- Name: company_phone updated_company_phone_updated_at; Type: TRIGGER; Schema: public; Owner: postgres
+-- Name: company_phone updated_company_phone_updated_at; Type: TRIGGER; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 CREATE TRIGGER updated_company_phone_updated_at BEFORE UPDATE ON public.company_phone FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
 
 
 --
--- Name: company_setting updated_company_setting_updated_at; Type: TRIGGER; Schema: public; Owner: postgres
+-- Name: company_setting updated_company_setting_updated_at; Type: TRIGGER; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 CREATE TRIGGER updated_company_setting_updated_at BEFORE UPDATE ON public.company_setting FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
 
 
 --
--- Name: customer_address updated_customer_address_updated_at; Type: TRIGGER; Schema: public; Owner: postgres
+-- Name: customer_address updated_customer_address_updated_at; Type: TRIGGER; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 CREATE TRIGGER updated_customer_address_updated_at BEFORE UPDATE ON public.customer_address FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
 
 
 --
--- Name: customers updated_customers_updated_at; Type: TRIGGER; Schema: public; Owner: postgres
+-- Name: customers updated_customers_updated_at; Type: TRIGGER; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 CREATE TRIGGER updated_customers_updated_at BEFORE UPDATE ON public.customers FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
 
 
 --
--- Name: district updated_district_updated_at; Type: TRIGGER; Schema: public; Owner: postgres
+-- Name: district updated_district_updated_at; Type: TRIGGER; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 CREATE TRIGGER updated_district_updated_at BEFORE UPDATE ON public.district FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
 
 
 --
--- Name: images updated_images_updated_at; Type: TRIGGER; Schema: public; Owner: postgres
+-- Name: images updated_images_updated_at; Type: TRIGGER; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 CREATE TRIGGER updated_images_updated_at BEFORE UPDATE ON public.images FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
 
 
 --
--- Name: languages updated_languages_updated_at; Type: TRIGGER; Schema: public; Owner: postgres
+-- Name: languages updated_languages_updated_at; Type: TRIGGER; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 CREATE TRIGGER updated_languages_updated_at BEFORE UPDATE ON public.languages FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
 
 
 --
--- Name: likes updated_likes_updated_at; Type: TRIGGER; Schema: public; Owner: postgres
+-- Name: likes updated_likes_updated_at; Type: TRIGGER; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 CREATE TRIGGER updated_likes_updated_at BEFORE UPDATE ON public.likes FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
 
 
 --
--- Name: main_image updated_main_image_updated_at; Type: TRIGGER; Schema: public; Owner: postgres
+-- Name: main_image updated_main_image_updated_at; Type: TRIGGER; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 CREATE TRIGGER updated_main_image_updated_at BEFORE UPDATE ON public.main_image FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
 
 
 --
--- Name: notifications updated_notifications_updated_at; Type: TRIGGER; Schema: public; Owner: postgres
+-- Name: notifications updated_notifications_updated_at; Type: TRIGGER; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 CREATE TRIGGER updated_notifications_updated_at BEFORE UPDATE ON public.notifications FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
 
 
 --
--- Name: order_dates updated_order_dates_updated_at; Type: TRIGGER; Schema: public; Owner: postgres
+-- Name: order_dates updated_order_dates_updated_at; Type: TRIGGER; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 CREATE TRIGGER updated_order_dates_updated_at BEFORE UPDATE ON public.order_dates FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
 
 
 --
--- Name: order_times updated_order_times_updated_at; Type: TRIGGER; Schema: public; Owner: postgres
+-- Name: order_times updated_order_times_updated_at; Type: TRIGGER; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 CREATE TRIGGER updated_order_times_updated_at BEFORE UPDATE ON public.order_times FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
 
 
 --
--- Name: ordered_products updated_ordered_products_updated_at; Type: TRIGGER; Schema: public; Owner: postgres
+-- Name: ordered_products updated_ordered_products_updated_at; Type: TRIGGER; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 CREATE TRIGGER updated_ordered_products_updated_at BEFORE UPDATE ON public.ordered_products FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
 
 
 --
--- Name: orders updated_orders_updated_at; Type: TRIGGER; Schema: public; Owner: postgres
+-- Name: orders updated_orders_updated_at; Type: TRIGGER; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 CREATE TRIGGER updated_orders_updated_at BEFORE UPDATE ON public.orders FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
 
 
 --
--- Name: payment_types updated_payment_types_updated_at; Type: TRIGGER; Schema: public; Owner: postgres
+-- Name: payment_types updated_payment_types_updated_at; Type: TRIGGER; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 CREATE TRIGGER updated_payment_types_updated_at BEFORE UPDATE ON public.payment_types FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
 
 
 --
--- Name: products updated_products_updated_at; Type: TRIGGER; Schema: public; Owner: postgres
+-- Name: products updated_products_updated_at; Type: TRIGGER; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 CREATE TRIGGER updated_products_updated_at BEFORE UPDATE ON public.products FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
 
 
 --
--- Name: shops updated_shops_updated_at; Type: TRIGGER; Schema: public; Owner: postgres
+-- Name: shops updated_shops_updated_at; Type: TRIGGER; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 CREATE TRIGGER updated_shops_updated_at BEFORE UPDATE ON public.shops FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
 
 
 --
--- Name: translation_about updated_translation_about_updated_at; Type: TRIGGER; Schema: public; Owner: postgres
+-- Name: translation_about updated_translation_about_updated_at; Type: TRIGGER; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 CREATE TRIGGER updated_translation_about_updated_at BEFORE UPDATE ON public.translation_about FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
 
 
 --
--- Name: translation_afisa updated_translation_afisa_updated_at; Type: TRIGGER; Schema: public; Owner: postgres
+-- Name: translation_afisa updated_translation_afisa_updated_at; Type: TRIGGER; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 CREATE TRIGGER updated_translation_afisa_updated_at BEFORE UPDATE ON public.translation_afisa FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
 
 
 --
--- Name: translation_basket_page updated_translation_basket_page_updated_at; Type: TRIGGER; Schema: public; Owner: postgres
+-- Name: translation_basket_page updated_translation_basket_page_updated_at; Type: TRIGGER; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 CREATE TRIGGER updated_translation_basket_page_updated_at BEFORE UPDATE ON public.translation_basket_page FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
 
 
 --
--- Name: translation_category updated_translation_category_updated_at; Type: TRIGGER; Schema: public; Owner: postgres
+-- Name: translation_category updated_translation_category_updated_at; Type: TRIGGER; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 CREATE TRIGGER updated_translation_category_updated_at BEFORE UPDATE ON public.translation_category FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
 
 
 --
--- Name: translation_contact updated_translation_contact_updated_at; Type: TRIGGER; Schema: public; Owner: postgres
+-- Name: translation_contact updated_translation_contact_updated_at; Type: TRIGGER; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 CREATE TRIGGER updated_translation_contact_updated_at BEFORE UPDATE ON public.translation_contact FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
 
 
 --
--- Name: translation_district updated_translation_district_updated_at; Type: TRIGGER; Schema: public; Owner: postgres
+-- Name: translation_district updated_translation_district_updated_at; Type: TRIGGER; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 CREATE TRIGGER updated_translation_district_updated_at BEFORE UPDATE ON public.translation_district FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
 
 
 --
--- Name: translation_footer updated_translation_footer_updated_at; Type: TRIGGER; Schema: public; Owner: postgres
+-- Name: translation_footer updated_translation_footer_updated_at; Type: TRIGGER; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 CREATE TRIGGER updated_translation_footer_updated_at BEFORE UPDATE ON public.translation_footer FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
 
 
 --
--- Name: translation_header updated_translation_header_updated_at; Type: TRIGGER; Schema: public; Owner: postgres
+-- Name: translation_header updated_translation_header_updated_at; Type: TRIGGER; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 CREATE TRIGGER updated_translation_header_updated_at BEFORE UPDATE ON public.translation_header FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
 
 
 --
--- Name: translation_my_information_page updated_translation_my_information_page_updated_at; Type: TRIGGER; Schema: public; Owner: postgres
+-- Name: translation_my_information_page updated_translation_my_information_page_updated_at; Type: TRIGGER; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 CREATE TRIGGER updated_translation_my_information_page_updated_at BEFORE UPDATE ON public.translation_my_information_page FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
 
 
 --
--- Name: translation_my_order_page updated_translation_my_order_page_updated_at; Type: TRIGGER; Schema: public; Owner: postgres
+-- Name: translation_my_order_page updated_translation_my_order_page_updated_at; Type: TRIGGER; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 CREATE TRIGGER updated_translation_my_order_page_updated_at BEFORE UPDATE ON public.translation_my_order_page FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
 
 
 --
--- Name: translation_notification updated_translation_notification_updated_at; Type: TRIGGER; Schema: public; Owner: postgres
+-- Name: translation_notification updated_translation_notification_updated_at; Type: TRIGGER; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 CREATE TRIGGER updated_translation_notification_updated_at BEFORE UPDATE ON public.translation_notification FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
 
 
 --
--- Name: translation_order_dates updated_translation_order_dates_updated_at; Type: TRIGGER; Schema: public; Owner: postgres
+-- Name: translation_order_dates updated_translation_order_dates_updated_at; Type: TRIGGER; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 CREATE TRIGGER updated_translation_order_dates_updated_at BEFORE UPDATE ON public.translation_order_dates FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
 
 
 --
--- Name: translation_order_page updated_translation_order_page_updated_at; Type: TRIGGER; Schema: public; Owner: postgres
+-- Name: translation_order_page updated_translation_order_page_updated_at; Type: TRIGGER; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 CREATE TRIGGER updated_translation_order_page_updated_at BEFORE UPDATE ON public.translation_order_page FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
 
 
 --
--- Name: translation_payment updated_translation_payment_updated_at; Type: TRIGGER; Schema: public; Owner: postgres
+-- Name: translation_payment updated_translation_payment_updated_at; Type: TRIGGER; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 CREATE TRIGGER updated_translation_payment_updated_at BEFORE UPDATE ON public.translation_payment FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
 
 
 --
--- Name: translation_product updated_translation_product_updated_at; Type: TRIGGER; Schema: public; Owner: postgres
+-- Name: translation_product updated_translation_product_updated_at; Type: TRIGGER; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 CREATE TRIGGER updated_translation_product_updated_at BEFORE UPDATE ON public.translation_product FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
 
 
 --
--- Name: translation_secure updated_translation_secure_updated_at; Type: TRIGGER; Schema: public; Owner: postgres
+-- Name: translation_secure updated_translation_secure_updated_at; Type: TRIGGER; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 CREATE TRIGGER updated_translation_secure_updated_at BEFORE UPDATE ON public.translation_secure FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
 
 
 --
--- Name: translation_update_password_page updated_translation_update_password_page_updated_at; Type: TRIGGER; Schema: public; Owner: postgres
+-- Name: translation_update_password_page updated_translation_update_password_page_updated_at; Type: TRIGGER; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 CREATE TRIGGER updated_translation_update_password_page_updated_at BEFORE UPDATE ON public.translation_update_password_page FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
 
 
 --
--- Name: customer_address customer_customer_address; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: customer_address customer_customer_address; Type: FK CONSTRAINT; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 ALTER TABLE ONLY public.customer_address
@@ -2757,7 +2758,7 @@ ALTER TABLE ONLY public.customer_address
 
 
 --
--- Name: orders customers_orders; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: orders customers_orders; Type: FK CONSTRAINT; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 ALTER TABLE ONLY public.orders
@@ -2765,7 +2766,7 @@ ALTER TABLE ONLY public.orders
 
 
 --
--- Name: translation_afisa fk_afisa_translation_afisa; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: translation_afisa fk_afisa_translation_afisa; Type: FK CONSTRAINT; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 ALTER TABLE ONLY public.translation_afisa
@@ -2773,7 +2774,7 @@ ALTER TABLE ONLY public.translation_afisa
 
 
 --
--- Name: products fk_brend_product; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: products fk_brend_product; Type: FK CONSTRAINT; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 ALTER TABLE ONLY public.products
@@ -2781,7 +2782,7 @@ ALTER TABLE ONLY public.products
 
 
 --
--- Name: category_product fk_category_category_product; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: category_product fk_category_category_product; Type: FK CONSTRAINT; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 ALTER TABLE ONLY public.category_product
@@ -2789,7 +2790,7 @@ ALTER TABLE ONLY public.category_product
 
 
 --
--- Name: categories fk_category_child_category; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: categories fk_category_child_category; Type: FK CONSTRAINT; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 ALTER TABLE ONLY public.categories
@@ -2797,7 +2798,7 @@ ALTER TABLE ONLY public.categories
 
 
 --
--- Name: translation_category fk_category_translation_category; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: translation_category fk_category_translation_category; Type: FK CONSTRAINT; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 ALTER TABLE ONLY public.translation_category
@@ -2805,7 +2806,7 @@ ALTER TABLE ONLY public.translation_category
 
 
 --
--- Name: cart fk_customer_basket; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: cart fk_customer_basket; Type: FK CONSTRAINT; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 ALTER TABLE ONLY public.cart
@@ -2813,7 +2814,7 @@ ALTER TABLE ONLY public.cart
 
 
 --
--- Name: likes fk_customer_like; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: likes fk_customer_like; Type: FK CONSTRAINT; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 ALTER TABLE ONLY public.likes
@@ -2821,7 +2822,7 @@ ALTER TABLE ONLY public.likes
 
 
 --
--- Name: translation_district fk_district_translation_district; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: translation_district fk_district_translation_district; Type: FK CONSTRAINT; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 ALTER TABLE ONLY public.translation_district
@@ -2829,7 +2830,7 @@ ALTER TABLE ONLY public.translation_district
 
 
 --
--- Name: company_address fk_language_company_address; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: company_address fk_language_company_address; Type: FK CONSTRAINT; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 ALTER TABLE ONLY public.company_address
@@ -2837,7 +2838,7 @@ ALTER TABLE ONLY public.company_address
 
 
 --
--- Name: translation_about fk_language_translation_about; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: translation_about fk_language_translation_about; Type: FK CONSTRAINT; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 ALTER TABLE ONLY public.translation_about
@@ -2845,7 +2846,7 @@ ALTER TABLE ONLY public.translation_about
 
 
 --
--- Name: translation_afisa fk_language_translation_afisa; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: translation_afisa fk_language_translation_afisa; Type: FK CONSTRAINT; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 ALTER TABLE ONLY public.translation_afisa
@@ -2853,7 +2854,7 @@ ALTER TABLE ONLY public.translation_afisa
 
 
 --
--- Name: translation_category fk_language_translation_category; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: translation_category fk_language_translation_category; Type: FK CONSTRAINT; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 ALTER TABLE ONLY public.translation_category
@@ -2861,7 +2862,7 @@ ALTER TABLE ONLY public.translation_category
 
 
 --
--- Name: translation_contact fk_language_translation_contact; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: translation_contact fk_language_translation_contact; Type: FK CONSTRAINT; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 ALTER TABLE ONLY public.translation_contact
@@ -2869,7 +2870,7 @@ ALTER TABLE ONLY public.translation_contact
 
 
 --
--- Name: translation_district fk_language_translation_district; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: translation_district fk_language_translation_district; Type: FK CONSTRAINT; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 ALTER TABLE ONLY public.translation_district
@@ -2877,7 +2878,7 @@ ALTER TABLE ONLY public.translation_district
 
 
 --
--- Name: translation_header fk_language_translation_header; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: translation_header fk_language_translation_header; Type: FK CONSTRAINT; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 ALTER TABLE ONLY public.translation_header
@@ -2885,7 +2886,7 @@ ALTER TABLE ONLY public.translation_header
 
 
 --
--- Name: translation_my_information_page fk_language_translation_my_information_page; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: translation_my_information_page fk_language_translation_my_information_page; Type: FK CONSTRAINT; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 ALTER TABLE ONLY public.translation_my_information_page
@@ -2893,7 +2894,7 @@ ALTER TABLE ONLY public.translation_my_information_page
 
 
 --
--- Name: translation_payment fk_language_translation_payment; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: translation_payment fk_language_translation_payment; Type: FK CONSTRAINT; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 ALTER TABLE ONLY public.translation_payment
@@ -2901,7 +2902,7 @@ ALTER TABLE ONLY public.translation_payment
 
 
 --
--- Name: translation_product fk_language_translation_product; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: translation_product fk_language_translation_product; Type: FK CONSTRAINT; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 ALTER TABLE ONLY public.translation_product
@@ -2909,7 +2910,7 @@ ALTER TABLE ONLY public.translation_product
 
 
 --
--- Name: translation_secure fk_language_translation_secure; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: translation_secure fk_language_translation_secure; Type: FK CONSTRAINT; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 ALTER TABLE ONLY public.translation_secure
@@ -2917,7 +2918,7 @@ ALTER TABLE ONLY public.translation_secure
 
 
 --
--- Name: translation_update_password_page fk_language_translation_update_password_page; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: translation_update_password_page fk_language_translation_update_password_page; Type: FK CONSTRAINT; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 ALTER TABLE ONLY public.translation_update_password_page
@@ -2925,7 +2926,7 @@ ALTER TABLE ONLY public.translation_update_password_page
 
 
 --
--- Name: translation_footer fk_languages_translation_footer; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: translation_footer fk_languages_translation_footer; Type: FK CONSTRAINT; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 ALTER TABLE ONLY public.translation_footer
@@ -2933,7 +2934,7 @@ ALTER TABLE ONLY public.translation_footer
 
 
 --
--- Name: cart fk_product_basket; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: cart fk_product_basket; Type: FK CONSTRAINT; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 ALTER TABLE ONLY public.cart
@@ -2941,7 +2942,7 @@ ALTER TABLE ONLY public.cart
 
 
 --
--- Name: category_product fk_product_category_product; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: category_product fk_product_category_product; Type: FK CONSTRAINT; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 ALTER TABLE ONLY public.category_product
@@ -2949,7 +2950,7 @@ ALTER TABLE ONLY public.category_product
 
 
 --
--- Name: likes fk_product_like; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: likes fk_product_like; Type: FK CONSTRAINT; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 ALTER TABLE ONLY public.likes
@@ -2957,7 +2958,7 @@ ALTER TABLE ONLY public.likes
 
 
 --
--- Name: translation_product fk_product_translation_product; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: translation_product fk_product_translation_product; Type: FK CONSTRAINT; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 ALTER TABLE ONLY public.translation_product
@@ -2965,7 +2966,7 @@ ALTER TABLE ONLY public.translation_product
 
 
 --
--- Name: translation_basket_page language_translation_basket_page; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: translation_basket_page language_translation_basket_page; Type: FK CONSTRAINT; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 ALTER TABLE ONLY public.translation_basket_page
@@ -2973,7 +2974,7 @@ ALTER TABLE ONLY public.translation_basket_page
 
 
 --
--- Name: translation_my_order_page language_translation_my_order_page; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: translation_my_order_page language_translation_my_order_page; Type: FK CONSTRAINT; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 ALTER TABLE ONLY public.translation_my_order_page
@@ -2981,7 +2982,7 @@ ALTER TABLE ONLY public.translation_my_order_page
 
 
 --
--- Name: translation_order_page language_translation_order_page; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: translation_order_page language_translation_order_page; Type: FK CONSTRAINT; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 ALTER TABLE ONLY public.translation_order_page
@@ -2989,7 +2990,7 @@ ALTER TABLE ONLY public.translation_order_page
 
 
 --
--- Name: payment_types languages_payment_types; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: payment_types languages_payment_types; Type: FK CONSTRAINT; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 ALTER TABLE ONLY public.payment_types
@@ -2997,7 +2998,7 @@ ALTER TABLE ONLY public.payment_types
 
 
 --
--- Name: translation_notification languages_translation_notification; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: translation_notification languages_translation_notification; Type: FK CONSTRAINT; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 ALTER TABLE ONLY public.translation_notification
@@ -3005,7 +3006,7 @@ ALTER TABLE ONLY public.translation_notification
 
 
 --
--- Name: translation_order_dates languages_translation_order_dates; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: translation_order_dates languages_translation_order_dates; Type: FK CONSTRAINT; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 ALTER TABLE ONLY public.translation_order_dates
@@ -3013,7 +3014,7 @@ ALTER TABLE ONLY public.translation_order_dates
 
 
 --
--- Name: translation_notification notifications_translation_notification; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: translation_notification notifications_translation_notification; Type: FK CONSTRAINT; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 ALTER TABLE ONLY public.translation_notification
@@ -3021,7 +3022,7 @@ ALTER TABLE ONLY public.translation_notification
 
 
 --
--- Name: order_times order_dates_order_times; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: order_times order_dates_order_times; Type: FK CONSTRAINT; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 ALTER TABLE ONLY public.order_times
@@ -3029,7 +3030,7 @@ ALTER TABLE ONLY public.order_times
 
 
 --
--- Name: translation_order_dates order_dates_translation_order_dates; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: translation_order_dates order_dates_translation_order_dates; Type: FK CONSTRAINT; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 ALTER TABLE ONLY public.translation_order_dates
@@ -3037,7 +3038,7 @@ ALTER TABLE ONLY public.translation_order_dates
 
 
 --
--- Name: ordered_products orders_ordered_products; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: ordered_products orders_ordered_products; Type: FK CONSTRAINT; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 ALTER TABLE ONLY public.ordered_products
@@ -3045,7 +3046,7 @@ ALTER TABLE ONLY public.ordered_products
 
 
 --
--- Name: images products_images; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: images products_images; Type: FK CONSTRAINT; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 ALTER TABLE ONLY public.images
@@ -3053,7 +3054,7 @@ ALTER TABLE ONLY public.images
 
 
 --
--- Name: main_image products_main_image; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: main_image products_main_image; Type: FK CONSTRAINT; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 ALTER TABLE ONLY public.main_image
@@ -3061,7 +3062,7 @@ ALTER TABLE ONLY public.main_image
 
 
 --
--- Name: ordered_products products_ordered_products; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: ordered_products products_ordered_products; Type: FK CONSTRAINT; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 ALTER TABLE ONLY public.ordered_products
@@ -3069,7 +3070,7 @@ ALTER TABLE ONLY public.ordered_products
 
 
 --
--- Name: products shops_products; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: products shops_products; Type: FK CONSTRAINT; Schema: public; Owner: allanurbayramgeldiyev
 --
 
 ALTER TABLE ONLY public.products
