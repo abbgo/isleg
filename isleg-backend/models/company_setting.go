@@ -11,6 +11,7 @@ type CompanySetting struct {
 	Favicon   string `json:"favicon,omitempty"`
 	Email     string `json:"email,omitempty"`
 	Instagram string `json:"instagram,omitempty"`
+	Imo       string `json:"imo,omitempty"`
 	CreatedAt string `json:"-"`
 	UpdatedAt string `json:"-"`
 	DeletedAt string `json:"-"`
