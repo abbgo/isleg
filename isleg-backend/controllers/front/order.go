@@ -17,6 +17,8 @@ import (
 	"github.com/xuri/excelize/v2"
 )
 
+var ServerPath = os.Getenv("SERVER_PATH")
+
 type OrderForAdmin struct {
 	ID            string          `json:"id"`
 	CustomerID    string          `json:"-"`
@@ -615,7 +617,7 @@ func ToOrder(c *gin.Context) {
 	}
 
 	// dolduryljak excel fayly acmaly
-	f, err := excelize.OpenFile("./uploads/orders/order.xlsx")
+	f, err := excelize.OpenFile(ServerPath + "/uploads/orders/order.xlsx")
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -774,7 +776,7 @@ func ToOrder(c *gin.Context) {
 	f.SetCellValue("Лист1", "b13", "Jemi: "+strconv.FormatFloat(pkg.RoundFloat(sargyt.TotalPrice, 2), 'f', -1, 64))
 
 	// tayyar bolan excel fayl uploads papka yazdyrylyar
-	if err := f.SaveAs("./uploads/orders/" + strconv.Itoa(int(sargyt.OrderNumber)) + ".xlsx"); err != nil {
+	if err := f.SaveAs(ServerPath + "/uploads/orders/" + strconv.Itoa(int(sargyt.OrderNumber)) + ".xlsx"); err != nil {
 		c.JSON(http.StatusBadRequest, err.Error())
 		return
 	}
