@@ -16,17 +16,11 @@ const SET_CLOSE_ISOPENSIGNUP = (state) => {
 const SET_OPEN_ISOPENSIGNUP = (state) => {
   state.isOpenSignUp = true
 }
-const SET_CATEGORY_PRODUCTS = (state, payload) => {
-  state.categoryProducts = payload
-}
 const SET_MY_PROFILE = (state, payload) => {
   state.myProfile = payload
 }
 const SET_USER_LOGGINED = (state, payload) => {
   state.isUserLoggined = payload
-}
-const SET_AUTHENTICATION = (state, auth) => {
-  state.authenticated = auth
 }
 export default {
   SET_HEADER,
@@ -34,7 +28,6 @@ export default {
   SET_BRENDS,
   SET_CLOSE_ISOPENSIGNUP,
   SET_OPEN_ISOPENSIGNUP,
-  SET_CATEGORY_PRODUCTS,
   SET_MY_PROFILE,
   SET_USER_LOGGINED,
 }

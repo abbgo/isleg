@@ -71,8 +71,9 @@
                 v-model="$v.register.password.$model"
               />
               <img
+                style="cursor: pointer"
                 @click="showPass = !showPass"
-                :src="showPass ? '/img/Hide.svg' : '/img/Show.svg'"
+                :src="require(`@/assets/img/${showPass ? 'Hide' : 'Show'}.svg`)"
                 alt=""
               />
             </div>
@@ -98,8 +99,13 @@
                 v-model="$v.register.repeatPassword.$model"
               />
               <img
+                style="cursor: pointer"
                 @click="showConfirmPass = !showConfirmPass"
-                :src="showConfirmPass ? '/img/Hide.svg' : '/img/Show.svg'"
+                :src="
+                  require(`@/assets/img/${
+                    showConfirmPass ? 'Hide' : 'Show'
+                  }.svg`)
+                "
                 alt=""
               />
             </div>

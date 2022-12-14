@@ -173,10 +173,9 @@ export default {
       if (!this.productCount) {
         this.totalCount =
           cart.cart.reduce((total, num) => {
-            if (num.quantity) {
-              return total + num?.quantity
-            }
+            return total + num?.quantity
           }, 0) || null
+        console.log(this.totalCount)
         this.$store.commit(
           'products/SET_PRODUCT_COUNT_WHEN_PAYMENT',
           this.totalCount
@@ -184,8 +183,8 @@ export default {
       }
       if (!this.likesCount) {
         this.likes =
-          cart.cart?.filter((product) => product.is_favorite === true)
-            ?.length || null
+          cart.cart.filter((product) => product.is_favorite === true).length ||
+          null
         this.$store.commit('products/SET_PRODUCT_LIKES', this.likes)
       }
     } else {

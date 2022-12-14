@@ -3,7 +3,6 @@ import mutations from './mutations'
 import getters from './getters'
 
 const state = () => ({
-  authenticated: false,
   isUserLoggined: false,
   imgURL: process.env.IMAGE_URL,
   isOpenSignUp: false,

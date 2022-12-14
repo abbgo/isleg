@@ -31,8 +31,9 @@
                 v-model="$v.signUp.password.$model"
               />
               <img
+                style="cursor: pointer"
                 @click="showPass = !showPass"
-                :src="showPass ? '/img/Hide.svg' : '/img/Show.svg'"
+                :src="require(`@/assets/img/${showPass ? 'Hide' : 'Show'}.svg`)"
                 alt=""
               />
             </div>
