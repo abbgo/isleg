@@ -17,7 +17,7 @@ type CompanySetting struct {
 	DeletedAt string `json:"-"`
 }
 
-func ValidateCompanySettingData(email, instagram string) error {
+func ValidateCompanySettingData(email, instagram, imo string) error {
 
 	emailResult := helpers.IsEmailValid(email)
 	if email == "" || !emailResult {
@@ -26,6 +26,10 @@ func ValidateCompanySettingData(email, instagram string) error {
 
 	if instagram == "" {
 		return errors.New("instagram is required")
+	}
+
+	if imo == "" {
+		return errors.New("imo is required")
 	}
 
 	return nil
