@@ -284,9 +284,40 @@ func GetCompanyPhones(c *gin.Context) {
 		companyPhones = append(companyPhones, companyPhone)
 	}
 
+	rowCompanySetting, err := db.Query("SELECT email,instagram,imo FROM company_setting ORDER BY created_at LIMIT 1")
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer func() {
+		if err := rowCompanySetting.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
+
+	var companySetting models.CompanySetting
+
+	for rowCompanySetting.Next() {
+		if err := rowCompanySetting.Scan(&companySetting.Email, &companySetting.Instagram, &companySetting.Imo); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}
+
 	c.JSON(http.StatusOK, gin.H{
-		"status":         true,
-		"company_phones": companyPhones,
+		"status":          true,
+		"company_phones":  companyPhones,
+		"company_setting": companySetting,
 	})
 
 }
