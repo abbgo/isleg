@@ -759,7 +759,7 @@ func RestoreOrderTimeByID(c *gin.Context) {
 	}
 
 	if order_date_id == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
+		c.JSON(http.StatusNotFound, gin.H{
 			"status":  false,
 			"message": "order date not found",
 		})
