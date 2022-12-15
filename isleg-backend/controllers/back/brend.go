@@ -618,7 +618,7 @@ func DeletePermanentlyBrendByID(c *gin.Context) {
 		return
 	}
 
-	if err := os.Remove("./" + image); err != nil {
+	if err := os.Remove(pkg.ServerPath + image); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
 			"message": err.Error(),
@@ -661,7 +661,7 @@ func DeletePermanentlyBrendByID(c *gin.Context) {
 	}
 
 	for _, v := range mainImages {
-		if err := os.Remove("./" + v.Small); err != nil {
+		if err := os.Remove(pkg.ServerPath + v.Small); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
@@ -669,7 +669,7 @@ func DeletePermanentlyBrendByID(c *gin.Context) {
 			return
 		}
 
-		if err := os.Remove("./" + v.Medium); err != nil {
+		if err := os.Remove(pkg.ServerPath + v.Medium); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
@@ -677,7 +677,7 @@ func DeletePermanentlyBrendByID(c *gin.Context) {
 			return
 		}
 
-		if err := os.Remove("./" + v.Large); err != nil {
+		if err := os.Remove(pkg.ServerPath + v.Large); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
@@ -721,7 +721,7 @@ func DeletePermanentlyBrendByID(c *gin.Context) {
 	}
 
 	for _, v := range images {
-		if err := os.Remove("./" + v.Small); err != nil {
+		if err := os.Remove(pkg.ServerPath + v.Small); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
@@ -729,7 +729,7 @@ func DeletePermanentlyBrendByID(c *gin.Context) {
 			return
 		}
 
-		if err := os.Remove("./" + v.Large); err != nil {
+		if err := os.Remove(pkg.ServerPath + v.Large); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
