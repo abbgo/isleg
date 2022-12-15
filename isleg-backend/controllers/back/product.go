@@ -425,7 +425,7 @@ func UpdateProductByID(c *gin.Context) {
 				return
 			}
 			fileName := uuid.New().String() + extension
-			c.SaveUploadedFile(v, "./uploads/product/"+fileName)
+			c.SaveUploadedFile(v, pkg.ServerPath+"uploads/product/"+fileName)
 			smalls = append(smalls, "uploads/product/"+fileName)
 		}
 
@@ -440,7 +440,7 @@ func UpdateProductByID(c *gin.Context) {
 				return
 			}
 			fileName := uuid.New().String() + extension
-			c.SaveUploadedFile(v, "./uploads/product/"+fileName)
+			c.SaveUploadedFile(v, pkg.ServerPath+"uploads/product/"+fileName)
 			larges = append(larges, "uploads/product/"+fileName)
 		}
 
