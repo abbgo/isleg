@@ -248,7 +248,7 @@ func GetBrendByID(c *gin.Context) {
 	}
 
 	if brend.ID == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
+		c.JSON(http.StatusNotFound, gin.H{
 			"status":  false,
 			"message": "record not found",
 		})
