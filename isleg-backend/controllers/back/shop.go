@@ -168,7 +168,7 @@ func UpdateShopByID(c *gin.Context) {
 	}
 
 	if shopID == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
+		c.JSON(http.StatusNotFound, gin.H{
 			"status":  false,
 			"message": "record not found",
 		})
@@ -256,7 +256,7 @@ func GetShopByID(c *gin.Context) {
 	}
 
 	if shop.ID == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
+		c.JSON(http.StatusNotFound, gin.H{
 			"status":  false,
 			"message": "record not found",
 		})
@@ -388,7 +388,7 @@ func DeleteShopByID(c *gin.Context) {
 	}
 
 	if shopID == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
+		c.JSON(http.StatusNotFound, gin.H{
 			"status":  false,
 			"message": "record not found",
 		})
@@ -476,7 +476,7 @@ func RestoreShopByID(c *gin.Context) {
 	}
 
 	if shopID == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
+		c.JSON(http.StatusNotFound, gin.H{
 			"status":  false,
 			"message": "record not found",
 		})
@@ -564,7 +564,7 @@ func DeletePermanentlyShopByID(c *gin.Context) {
 	}
 
 	if shopID == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
+		c.JSON(http.StatusNotFound, gin.H{
 			"status":  false,
 			"message": "record not found",
 		})
