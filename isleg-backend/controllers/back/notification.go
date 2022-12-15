@@ -72,7 +72,7 @@ func CreateNotification(c *gin.Context) {
 		}
 
 		if lang_id == "" {
-			c.JSON(http.StatusBadRequest, gin.H{
+			c.JSON(http.StatusNotFound, gin.H{
 				"status":  false,
 				"message": "langauge not found",
 			})

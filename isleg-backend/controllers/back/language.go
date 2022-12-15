@@ -81,7 +81,7 @@ func CreateLanguage(c *gin.Context) {
 
 }
 
-func g(c *gin.Context) {
+func UpdateLanguage(c *gin.Context) {
 
 	// initialize database connection
 	db, err := config.ConnDB()
