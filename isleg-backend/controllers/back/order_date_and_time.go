@@ -396,7 +396,7 @@ func GetOrderTimeByID(c *gin.Context) {
 		}
 
 		if orderDate.ID == "" {
-			c.JSON(http.StatusBadRequest, gin.H{
+			c.JSON(http.StatusNotFound, gin.H{
 				"status":  false,
 				"message": "order date not found",
 			})
