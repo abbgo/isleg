@@ -140,7 +140,7 @@ func CreateNotification(c *gin.Context) {
 
 }
 
-func UpdateNotification(c *gin.Context) {
+func UpdateNotificationByID(c *gin.Context) {
 
 	// initialize database connection
 	db, err := config.ConnDB()
