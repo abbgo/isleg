@@ -1977,7 +1977,7 @@ func ReturnOrder(c *gin.Context) {
 	}
 
 	if order_id == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
+		c.JSON(http.StatusNotFound, gin.H{
 			"status":  false,
 			"message": "order not found",
 		})
