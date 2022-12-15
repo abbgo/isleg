@@ -611,7 +611,7 @@ func DeletePermanentlyBrendByID(c *gin.Context) {
 	}
 
 	if image == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
+		c.JSON(http.StatusNotFound, gin.H{
 			"status":  false,
 			"message": "record not found",
 		})
