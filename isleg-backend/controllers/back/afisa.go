@@ -725,7 +725,7 @@ func DeletePermanentlyAfisaByID(c *gin.Context) {
 	}
 
 	if image != "" {
-		if err := os.Remove("./" + image); err != nil {
+		if err := os.Remove(pkg.ServerPath + image); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
