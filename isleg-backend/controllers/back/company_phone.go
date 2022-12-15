@@ -128,7 +128,7 @@ func UpdateCompanyPhoneByID(c *gin.Context) {
 	}
 
 	if comPhoneID == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
+		c.JSON(http.StatusNotFound, gin.H{
 			"status":  false,
 			"message": "record not found",
 		})
