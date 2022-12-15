@@ -436,7 +436,7 @@ func GetCategoryByID(c *gin.Context) {
 	}
 
 	if category.ID == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
+		c.JSON(http.StatusNotFound, gin.H{
 			"status":  false,
 			"message": "category not found",
 		})
