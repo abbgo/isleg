@@ -202,7 +202,7 @@ func UpdateNotificationByID(c *gin.Context) {
 	}
 
 	if notification_id == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
+		c.JSON(http.StatusNotFound, gin.H{
 			"status":  false,
 			"message": "notification not found",
 		})
