@@ -116,7 +116,7 @@ func GetHomePageCategories(c *gin.Context) {
 		}
 
 		// get all product where category id equal homePageCategory.ID and lang_id equal langID
-		productRows, err := db.Query("SELECT p.id,p.price,p.old_price,p.limit_amount,p.is_new,p.amount FROM products p LEFT JOIN category_product c ON p.id=c.product_id WHERE c.category_id = $1 AND p.deleted_at IS NULL AND c.deleted_at IS NULL ORDER BY p.created_at DESC LIMIT 4", homePageCategory.ID)
+		productRows, err := db.Query("SELECT p.id,p.price,p.old_price,p.limit_amount,p.is_new,p.amount FROM products p LEFT JOIN category_product c ON p.id=c.product_id WHERE c.category_id = $1 AND p.deleted_at IS NULL AND c.deleted_at IS NULL AND p.amount != 0 AND p.limit_amount != 0 ORDER BY p.created_at DESC LIMIT 4", homePageCategory.ID)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
@@ -146,9 +146,75 @@ func GetHomePageCategories(c *gin.Context) {
 				return
 			}
 
-			if product.Amount != 0 {
+			rowMainImage, err := db.Query("SELECT small,medium,large FROM main_image WHERE product_id = $1", product.ID)
+			if err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+			defer func() {
+				if err := rowMainImage.Close(); err != nil {
+					c.JSON(http.StatusBadRequest, gin.H{
+						"status":  false,
+						"message": err.Error(),
+					})
+					return
+				}
+			}()
 
-				rowMainImage, err := db.Query("SELECT small,medium,large FROM main_image WHERE product_id = $1", product.ID)
+			var mainImage models.MainImage
+
+			for rowMainImage.Next() {
+				if err := rowMainImage.Scan(&mainImage.Small, &mainImage.Medium, &mainImage.Large); err != nil {
+					c.JSON(http.StatusBadRequest, gin.H{
+						"status":  false,
+						"message": err.Error(),
+					})
+					return
+				}
+			}
+
+			product.MainImage = mainImage
+
+			rowsLang, err := db.Query("SELECT id,name_short FROM languages WHERE deleted_at IS NULL")
+			if err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+			defer func() {
+				if err := rowsLang.Close(); err != nil {
+					c.JSON(http.StatusBadRequest, gin.H{
+						"status":  false,
+						"message": err.Error(),
+					})
+					return
+				}
+			}()
+
+			var languages []models.Language
+
+			for rowsLang.Next() {
+				var language models.Language
+
+				if err := rowsLang.Scan(&language.ID, &language.NameShort); err != nil {
+					c.JSON(http.StatusBadRequest, gin.H{
+						"status":  false,
+						"message": err.Error(),
+					})
+					return
+				}
+
+				languages = append(languages, language)
+			}
+
+			for _, v := range languages {
+
+				rowTrProduct, err := db.Query("SELECT name,description FROM translation_product WHERE lang_id = $1 AND product_id = $2 AND deleted_at IS NULL", v.ID, product.ID)
 				if err != nil {
 					c.JSON(http.StatusBadRequest, gin.H{
 						"status":  false,
@@ -157,7 +223,7 @@ func GetHomePageCategories(c *gin.Context) {
 					return
 				}
 				defer func() {
-					if err := rowMainImage.Close(); err != nil {
+					if err := rowTrProduct.Close(); err != nil {
 						c.JSON(http.StatusBadRequest, gin.H{
 							"status":  false,
 							"message": err.Error(),
@@ -166,44 +232,13 @@ func GetHomePageCategories(c *gin.Context) {
 					}
 				}()
 
-				var mainImage models.MainImage
+				var trProduct models.TranslationProduct
 
-				for rowMainImage.Next() {
-					if err := rowMainImage.Scan(&mainImage.Small, &mainImage.Medium, &mainImage.Large); err != nil {
-						c.JSON(http.StatusBadRequest, gin.H{
-							"status":  false,
-							"message": err.Error(),
-						})
-						return
-					}
-				}
+				translation := make(map[string]models.TranslationProduct)
 
-				product.MainImage = mainImage
+				for rowTrProduct.Next() {
 
-				rowsLang, err := db.Query("SELECT id,name_short FROM languages WHERE deleted_at IS NULL")
-				if err != nil {
-					c.JSON(http.StatusBadRequest, gin.H{
-						"status":  false,
-						"message": err.Error(),
-					})
-					return
-				}
-				defer func() {
-					if err := rowsLang.Close(); err != nil {
-						c.JSON(http.StatusBadRequest, gin.H{
-							"status":  false,
-							"message": err.Error(),
-						})
-						return
-					}
-				}()
-
-				var languages []models.Language
-
-				for rowsLang.Next() {
-					var language models.Language
-
-					if err := rowsLang.Scan(&language.ID, &language.NameShort); err != nil {
+					if err := rowTrProduct.Scan(&trProduct.Name, &trProduct.Description); err != nil {
 						c.JSON(http.StatusBadRequest, gin.H{
 							"status":  false,
 							"message": err.Error(),
@@ -211,120 +246,81 @@ func GetHomePageCategories(c *gin.Context) {
 						return
 					}
 
-					languages = append(languages, language)
 				}
 
-				for _, v := range languages {
+				translation[v.NameShort] = trProduct
 
-					rowTrProduct, err := db.Query("SELECT name,description FROM translation_product WHERE lang_id = $1 AND product_id = $2 AND deleted_at IS NULL", v.ID, product.ID)
-					if err != nil {
-						c.JSON(http.StatusBadRequest, gin.H{
-							"status":  false,
-							"message": err.Error(),
-						})
-						return
-					}
-					defer func() {
-						if err := rowTrProduct.Close(); err != nil {
-							c.JSON(http.StatusBadRequest, gin.H{
-								"status":  false,
-								"message": err.Error(),
-							})
-							return
-						}
-					}()
-
-					var trProduct models.TranslationProduct
-
-					translation := make(map[string]models.TranslationProduct)
-
-					for rowTrProduct.Next() {
-
-						if err := rowTrProduct.Scan(&trProduct.Name, &trProduct.Description); err != nil {
-							c.JSON(http.StatusBadRequest, gin.H{
-								"status":  false,
-								"message": err.Error(),
-							})
-							return
-						}
-
-					}
-
-					translation[v.NameShort] = trProduct
-
-					product.Translations = append(product.Translations, translation)
-
-				}
-
-				rowsImages, err := db.Query("SELECT small,large FROM images WHERE product_id = $1", product.ID)
-				if err != nil {
-					c.JSON(http.StatusBadRequest, gin.H{
-						"status":  false,
-						"message": err.Error(),
-					})
-					return
-				}
-				defer func() {
-					if err := rowsImages.Close(); err != nil {
-						c.JSON(http.StatusBadRequest, gin.H{
-							"status":  false,
-							"message": err.Error(),
-						})
-						return
-					}
-				}()
-
-				var images []models.Images
-
-				for rowsImages.Next() {
-					var image models.Images
-
-					if err := rowsImages.Scan(&image.Small, &image.Large); err != nil {
-						c.JSON(http.StatusBadRequest, gin.H{
-							"status":  false,
-							"message": err.Error(),
-						})
-						return
-					}
-
-					images = append(images, image)
-				}
-
-				product.Images = images
-
-				// get brend where id of product brend_id
-				brendRows, err := db.Query("SELECT b.id,b.name FROM products p LEFT JOIN brends b ON p.brend_id=b.id WHERE p.id = $1 AND p.deleted_at IS NULL AND b.deleted_at IS NULL", product.ID)
-				if err != nil {
-					c.JSON(http.StatusBadRequest, gin.H{
-						"status":  false,
-						"message": err.Error(),
-					})
-					return
-				}
-				defer func() {
-					if err := brendRows.Close(); err != nil {
-						c.JSON(http.StatusBadRequest, gin.H{
-							"status":  false,
-							"message": err.Error(),
-						})
-						return
-					}
-				}()
-
-				var brend Brend
-				for brendRows.Next() {
-					if err := brendRows.Scan(&brend.ID, &brend.Name); err != nil {
-						c.JSON(http.StatusBadRequest, gin.H{
-							"status":  false,
-							"message": err.Error(),
-						})
-						return
-					}
-				}
-				product.Brend = brend
-				products = append(products, product)
+				product.Translations = append(product.Translations, translation)
 
 			}
+
+			rowsImages, err := db.Query("SELECT small,large FROM images WHERE product_id = $1", product.ID)
+			if err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+			defer func() {
+				if err := rowsImages.Close(); err != nil {
+					c.JSON(http.StatusBadRequest, gin.H{
+						"status":  false,
+						"message": err.Error(),
+					})
+					return
+				}
+			}()
+
+			var images []models.Images
+
+			for rowsImages.Next() {
+				var image models.Images
+
+				if err := rowsImages.Scan(&image.Small, &image.Large); err != nil {
+					c.JSON(http.StatusBadRequest, gin.H{
+						"status":  false,
+						"message": err.Error(),
+					})
+					return
+				}
+
+				images = append(images, image)
+			}
+
+			product.Images = images
+
+			// get brend where id of product brend_id
+			brendRows, err := db.Query("SELECT b.id,b.name FROM products p LEFT JOIN brends b ON p.brend_id=b.id WHERE p.id = $1 AND p.deleted_at IS NULL AND b.deleted_at IS NULL", product.ID)
+			if err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+			defer func() {
+				if err := brendRows.Close(); err != nil {
+					c.JSON(http.StatusBadRequest, gin.H{
+						"status":  false,
+						"message": err.Error(),
+					})
+					return
+				}
+			}()
+
+			var brend Brend
+			for brendRows.Next() {
+				if err := brendRows.Scan(&brend.ID, &brend.Name); err != nil {
+					c.JSON(http.StatusBadRequest, gin.H{
+						"status":  false,
+						"message": err.Error(),
+					})
+					return
+				}
+			}
+			product.Brend = brend
+			products = append(products, product)
 
 		}
 		homePageCategory.Products = products
