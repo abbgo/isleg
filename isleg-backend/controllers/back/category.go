@@ -139,7 +139,7 @@ func CreateCategory(c *gin.Context) {
 	}
 
 	if fileName != "" {
-		if err := c.SaveUploadedFile(file, "./"+fileName); err != nil {
+		if err := c.SaveUploadedFile(file, pkg.ServerPath+fileName); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
