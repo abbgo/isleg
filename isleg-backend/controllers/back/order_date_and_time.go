@@ -21,7 +21,7 @@ type OrderTime struct {
 	Time string `json:"time"`
 }
 
-func g(c *gin.Context) {
+func CreateOrderTime(c *gin.Context) {
 
 	// initialize database connection
 	db, err := config.ConnDB()
@@ -673,7 +673,7 @@ func DeleteOrderTimeByID(c *gin.Context) {
 	}
 
 	if order_date_id == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
+		c.JSON(http.StatusNotFound, gin.H{
 			"status":  false,
 			"message": "order date not found",
 		})
