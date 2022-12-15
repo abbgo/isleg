@@ -544,7 +544,7 @@ func DeletePermanentlyLanguageByID(c *gin.Context) {
 	}
 
 	// remove image of language
-	if err := os.Remove("./" + flag); err != nil {
+	if err := os.Remove(pkg.ServerPath + flag); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
 			"message": err.Error(),
