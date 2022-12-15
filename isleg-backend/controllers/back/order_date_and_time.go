@@ -705,7 +705,7 @@ func DeleteOrderTimeByID(c *gin.Context) {
 
 }
 
-func gi(c *gin.Context) {
+func RestoreOrderTimeByID(c *gin.Context) {
 
 	// initialize database connection
 	db, err := config.ConnDB()
