@@ -73,7 +73,7 @@ func CreateCompanyAddress(c *gin.Context) {
 		}
 
 		if langID == "" {
-			c.JSON(http.StatusBadRequest, gin.H{
+			c.JSON(http.StatusNotFound, gin.H{
 				"status":  false,
 				"message": "language not found",
 			})
