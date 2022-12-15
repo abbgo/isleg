@@ -81,7 +81,7 @@ func CreateLanguage(c *gin.Context) {
 
 }
 
-func UpdateLanguageByID(c *gin.Context) {
+func g(c *gin.Context) {
 
 	// initialize database connection
 	db, err := config.ConnDB()
@@ -254,7 +254,7 @@ func GetLanguageByID(c *gin.Context) {
 	}
 
 	if lang.ID == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
+		c.JSON(http.StatusNotFound, gin.H{
 			"status":  false,
 			"message": "language not found",
 		})
