@@ -460,7 +460,7 @@ func GetNotifications(c *gin.Context) {
 
 }
 
-func DeleteNotificationByID(c *gin.Context) {
+func g(c *gin.Context) {
 
 	// initialize database connection
 	db, err := config.ConnDB()
@@ -600,7 +600,7 @@ func RestoreNotificationByID(c *gin.Context) {
 	}
 
 	if notification_id == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
+		c.JSON(http.StatusNotFound, gin.H{
 			"status":  false,
 			"message": "notification not found",
 		})
