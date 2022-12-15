@@ -383,7 +383,7 @@ func GetCustomerInformation(c *gin.Context) {
 	}
 
 	if customer.ID == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
+		c.JSON(http.StatusNotFound, gin.H{
 			"status":  false,
 			"message": "customer not found",
 		})
