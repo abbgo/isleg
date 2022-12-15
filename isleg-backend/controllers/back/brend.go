@@ -141,7 +141,7 @@ func UpdateBrendByID(c *gin.Context) {
 	}
 
 	if brendID == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
+		c.JSON(http.StatusNotFound, gin.H{
 			"status":  false,
 			"message": "record not found",
 		})
