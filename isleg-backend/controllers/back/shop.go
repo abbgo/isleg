@@ -3,6 +3,7 @@ package controllers
 import (
 	"github/abbgo/isleg/isleg-backend/config"
 	"github/abbgo/isleg/isleg-backend/models"
+	"github/abbgo/isleg/isleg-backend/pkg"
 	"net/http"
 	"os"
 
@@ -605,21 +606,21 @@ func DeletePermanentlyShopByID(c *gin.Context) {
 	}
 
 	for _, v := range mainImages {
-		if err := os.Remove("./" + v.Small); err != nil {
+		if err := os.Remove(pkg.ServerPath + v.Small); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
 			})
 			return
 		}
-		if err := os.Remove("./" + v.Medium); err != nil {
+		if err := os.Remove(pkg.ServerPath + v.Medium); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
 			})
 			return
 		}
-		if err := os.Remove("./" + v.Large); err != nil {
+		if err := os.Remove(pkg.ServerPath + v.Large); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
@@ -663,7 +664,7 @@ func DeletePermanentlyShopByID(c *gin.Context) {
 	}
 
 	for _, v := range images {
-		if err := os.Remove("./" + v.Small); err != nil {
+		if err := os.Remove(pkg.ServerPath + v.Small); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
@@ -671,7 +672,7 @@ func DeletePermanentlyShopByID(c *gin.Context) {
 			return
 		}
 
-		if err := os.Remove("./" + v.Large); err != nil {
+		if err := os.Remove(pkg.ServerPath + v.Large); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
