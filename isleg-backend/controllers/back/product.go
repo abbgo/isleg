@@ -1231,7 +1231,7 @@ func DeletePermanentlyProductByID(c *gin.Context) {
 	}
 
 	if productID == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
+		c.JSON(http.StatusNotFound, gin.H{
 			"status":  false,
 			"message": "product not found",
 		})
