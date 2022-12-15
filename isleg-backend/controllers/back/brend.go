@@ -381,7 +381,7 @@ func DeleteBrendByID(c *gin.Context) {
 	}
 
 	if id == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
+		c.JSON(http.StatusNotFound, gin.H{
 			"status":  false,
 			"message": "record not found",
 		})
