@@ -74,7 +74,7 @@ func CreateTranslationContact(c *gin.Context) {
 		}
 
 		if langID == "" {
-			c.JSON(http.StatusBadRequest, gin.H{
+			c.JSON(http.StatusNotFound, gin.H{
 				"status":  false,
 				"message": "language not found",
 			})
@@ -177,7 +177,7 @@ func UpdateTranslationContactByID(c *gin.Context) {
 	}
 
 	if id == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
+		c.JSON(http.StatusNotFound, gin.H{
 			"status":  false,
 			"message": "record not found",
 		})
@@ -265,7 +265,7 @@ func GetTranslationContactByID(c *gin.Context) {
 	}
 
 	if t.ID == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
+		c.JSON(http.StatusNotFound, gin.H{
 			"status":  false,
 			"message": "record not found",
 		})
@@ -340,7 +340,7 @@ func GetTranslationContactByLangID(c *gin.Context) {
 	}
 
 	if translationContact.FullName == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
+		c.JSON(http.StatusNotFound, gin.H{
 			"status":  false,
 			"message": "record not found",
 		})
