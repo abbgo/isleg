@@ -1984,7 +1984,7 @@ func ReturnOrder(c *gin.Context) {
 		return
 	}
 
-	if err := os.Remove("./" + excel); err != nil {
+	if err := os.Remove(pkg.ServerPath + excel); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
 			"message": err.Error(),
