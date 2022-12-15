@@ -379,14 +379,14 @@ func UpdateProductByID(c *gin.Context) {
 
 		for _, v := range images {
 
-			if err := os.Remove("./" + v.Small); err != nil {
+			if err := os.Remove(pkg.ServerPath + v.Small); err != nil {
 				c.JSON(http.StatusBadRequest, gin.H{
 					"status":  false,
 					"message": err.Error(),
 				})
 				return
 			}
-			if err := os.Remove("./" + v.Large); err != nil {
+			if err := os.Remove(pkg.ServerPath + v.Large); err != nil {
 				c.JSON(http.StatusBadRequest, gin.H{
 					"status":  false,
 					"message": err.Error(),
@@ -1270,7 +1270,7 @@ func DeletePermanentlyProductByID(c *gin.Context) {
 	}
 
 	// remove main image of product
-	if err := os.Remove("./" + mainImage.Small); err != nil {
+	if err := os.Remove(pkg.ServerPath + mainImage.Small); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
 			"message": err.Error(),
@@ -1278,7 +1278,7 @@ func DeletePermanentlyProductByID(c *gin.Context) {
 		return
 	}
 
-	if err := os.Remove("./" + mainImage.Medium); err != nil {
+	if err := os.Remove(pkg.ServerPath + mainImage.Medium); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
 			"message": err.Error(),
@@ -1286,7 +1286,7 @@ func DeletePermanentlyProductByID(c *gin.Context) {
 		return
 	}
 
-	if err := os.Remove("./" + mainImage.Large); err != nil {
+	if err := os.Remove(pkg.ServerPath + mainImage.Large); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
 			"message": err.Error(),
@@ -1334,14 +1334,14 @@ func DeletePermanentlyProductByID(c *gin.Context) {
 
 		for _, v := range images {
 
-			if err := os.Remove("./" + v.Small); err != nil {
+			if err := os.Remove(pkg.ServerPath + v.Small); err != nil {
 				c.JSON(http.StatusBadRequest, gin.H{
 					"status":  false,
 					"message": err.Error(),
 				})
 				return
 			}
-			if err := os.Remove("./" + v.Large); err != nil {
+			if err := os.Remove(pkg.ServerPath + v.Large); err != nil {
 				c.JSON(http.StatusBadRequest, gin.H{
 					"status":  false,
 					"message": err.Error(),
