@@ -581,7 +581,7 @@ func DeletePermanentlyBannerByID(c *gin.Context) {
 		return
 	}
 
-	if err := os.Remove("./" + image); err != nil {
+	if err := os.Remove(pkg.ServerPath + image); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
 			"message": err.Error(),
