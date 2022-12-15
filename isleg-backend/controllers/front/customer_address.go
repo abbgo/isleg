@@ -152,7 +152,7 @@ func UpdateCustomerAddressStatus(c *gin.Context) {
 
 	// eger salgy yok bolsa yzyna yalnyslyk goyberyas
 	if address_id == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
+		c.JSON(http.StatusNotFound, gin.H{
 			"status":  false,
 			"message": "address of customer not found",
 		})
