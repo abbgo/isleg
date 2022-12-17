@@ -1,2 +1,2 @@
-!isleg-backend/.env
-!isleg-backend/uploads/*
+.isleg-backend/.env
+.isleg-backend/uploads
