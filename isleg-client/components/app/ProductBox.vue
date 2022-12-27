@@ -99,16 +99,30 @@
       @remove="basketRemove"
       @close="closePopUpPoduct"
     />
+    <LazyPopUpProductMobile
+      v-if="isProductMobile"
+      :productData="getProduct"
+      :quantity="quantity"
+      @add="basketAdd"
+      @remove="basketRemove"
+      @close="closePopUpPoduct"
+    />
   </div>
 </template>
 
 <script>
+import { Swiper, SwiperSlide } from 'vue-awesome-swiper'
+
 import { mapGetters } from 'vuex'
 import observer from '@/mixins/observer'
 import translation from '@/mixins/translation'
 import { productAdd, productLike, getRefreshToken } from '@/api/user.api'
 export default {
   mixins: [observer, translation],
+  components: {
+    Swiper,
+    SwiperSlide,
+  },
   props: {
     product: {
       type: Object,
@@ -122,17 +136,21 @@ export default {
       quantity: 0,
       isFavorite: false,
       isProduct: false,
+      isProductMobile: false,
       isDisabled: false,
       count: 0,
     }
   },
+
   computed: {
     ...mapGetters('products', ['imgURL', 'removedFromBasket']),
     ...mapGetters('ui', ['isUserLoggined']),
+    swiper() {
+      return this.$refs?.mySwiper?.$swiper
+    },
     getProduct() {
       if (this.isUserLoggined) {
         const cart = JSON.parse(localStorage.getItem('lorem'))
-        console.log('computed propertyyy')
         if (cart) {
           if (this.$route.name === `wishlist___${this.$i18n.locale}`) {
             this.isFavorite = this.product.is_favorite
@@ -257,10 +275,7 @@ export default {
           this.$emit('removeFromWishlist', data)
         }
       }
-      console.log(this.isFavorite)
       if (this.isFavorite) {
-        console.log('deken')
-
         this.$store.commit('products/SET_LIKES_COUNT_INCREMENT')
       } else {
         this.$store.commit('products/SET_LIKES_COUNT_DECREMENT')
@@ -308,7 +323,6 @@ export default {
           })
         )
       }
-      console.log(cart, this.isFavorite, [data.id])
       if (cart && cart?.auth?.accessToken) {
         try {
           const res = await this.$axios.$post(
@@ -320,8 +334,6 @@ export default {
               },
             }
           )
-          console.log(res)
-          console.log('productLike', res)
         } catch (error) {
           console.log(error.response)
           if (error?.response?.status === 403) {
@@ -362,8 +374,6 @@ export default {
                       },
                     }
                   )
-                  console.log(res)
-                  console.log('productLike', response)
                 } catch (error) {
                   console.log('productLike1', error)
                 }
@@ -450,7 +460,6 @@ export default {
                 accessToken: `Bearer ${cart?.auth?.accessToken}`,
               })
             ).data
-            console.log('productAdd', res)
           } catch (error) {
             console.log(error.response)
             if (error?.response?.status === 403) {
@@ -494,7 +503,6 @@ export default {
                         accessToken: `Bearer ${access_token}`,
                       })
                     ).data
-                    console.log('productAdd1', response)
                   } catch (error) {
                     console.log('productAdd1', error)
                   }
@@ -511,7 +519,6 @@ export default {
             }
           }
         }
-        console.log(this.quantity)
         if (
           this.quantity === data.limit_amount ||
           this.quantity === data.amount
@@ -540,7 +547,6 @@ export default {
       } else {
         this.quantity = 0
       }
-      console.log(this.quantity)
       if (cart && cart?.auth?.accessToken) {
         try {
           const res = (
@@ -555,7 +561,6 @@ export default {
               accessToken: `Bearer ${cart?.auth?.accessToken}`,
             })
           ).data
-          console.log('productAdd', res)
         } catch (error) {
           console.log(error.response)
           if (error?.response?.status === 403) {
@@ -599,7 +604,6 @@ export default {
                       accessToken: `Bearer ${access_token}`,
                     })
                   ).data
-                  console.log('productAdd1', response)
                 } catch (error) {
                   console.log('productAdd1', error)
                 }
@@ -618,12 +622,22 @@ export default {
       }
     },
     openPopUpPoduct() {
-      this.isProduct = true
-      document.body.classList.add('_lock')
+      if (window.innerWidth <= 950) {
+        this.isProductMobile = true
+        document.body.classList.add('_lock')
+      } else {
+        this.isProduct = true
+        document.body.classList.add('_lock')
+      }
     },
     closePopUpPoduct() {
-      this.isProduct = false
-      document.body.classList.remove('_lock')
+      if (window.innerWidth <= 950) {
+        this.isProductMobile = false
+        document.body.classList.remove('_lock')
+      } else {
+        this.isProduct = false
+        document.body.classList.remove('_lock')
+      }
     },
   },
 }

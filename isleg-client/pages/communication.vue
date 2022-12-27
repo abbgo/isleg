@@ -4,7 +4,7 @@
       <div class="communication__wrapper">
         <div class="communication__form">
           <div class="communication__form-title">
-            <h4>Aragatnaşyk</h4>
+            <h4>{{ contact }}</h4>
           </div>
           <div class="communication__form-control">
             <div
@@ -149,7 +149,7 @@
 
 <script>
 import { sendMail, translationContact, companyPhones } from '@/api/user.api'
-
+import { mapGetters } from 'vuex'
 export default {
   data() {
     return {
@@ -189,6 +189,7 @@ export default {
     },
   },
   computed: {
+    ...mapGetters('ui', ['contact']),
     checkValidate() {
       if (
         /^[a-z0-9._-]{2,}@[a-z0-9]{2,}\.[a-z]{2,}$/i.test(
@@ -216,7 +217,6 @@ export default {
       const { data, status } = await companyPhones({
         url: `${this.$i18n.locale}/company-phones`,
       })
-      console.log(data, status)
       if (status === 200) {
         this.companyInformations = data
       }
@@ -264,7 +264,6 @@ export default {
               email: this.communicationForm.email,
             },
           })
-          console.log('>>', data)
           if (status) {
             this.$toast(this.$t('mailSendedSuccess'))
             this.clear()

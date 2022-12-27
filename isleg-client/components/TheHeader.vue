@@ -29,6 +29,9 @@
             />
           </div>
         </div>
+        <div class="mobile__search-logo">
+          <img src="@/assets/img/mobile__search.svg" alt="" />
+        </div>
         <the-header-items
           @openSignUp="openPopUp"
           :isProfile="isProfile"
@@ -151,7 +154,6 @@ export default {
           this.$store.commit('ui/SET_HEADER', header_data)
         }
       } catch (error) {
-        console.log('header', error)
         if (error) {
           return this.$nuxt.error({
             statusCode: error?.response?.status,
@@ -212,3 +214,18 @@ export default {
   },
 }
 </script>
+
+<style lang="scss">
+.mobile__search {
+  &-logo {
+    display: none;
+  }
+  @media (max-width: 950px) {
+    &-logo {
+      display: block;
+      position: absolute;
+      right: 20px;
+    }
+  }
+}
+</style>

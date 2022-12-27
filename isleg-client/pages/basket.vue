@@ -65,6 +65,7 @@
 <script>
 import BasketProducts from '@/components/BasketProducts.vue'
 import BasketPrices from '@/components/BasketPrices.vue'
+import { getTranslationBasketPage } from '@/api/ui.api'
 import {
   productAdd,
   getRefreshToken,
@@ -104,12 +105,13 @@ export default {
           times: [],
         },
       },
+      translationBasketPage: null,
     }
   },
   watch: {
     isUserLoggined: async function (val) {
       if (val) {
-        await this.getBasketProducts()
+        await this.fetchProductsFromDataBase()
       }
     },
   },
@@ -127,15 +129,33 @@ export default {
         } else {
           this.productsChek.delivery = Number(15).toFixed(2)
         }
-        console.log('totalSum', totalSum)
         return Number(totalSum).toFixed(2) > 0
           ? Number(totalSum).toFixed(2)
           : '0'
       }, 0)
     },
   },
+  async fetch() {
+    try {
+      const { status, translation_basket_page } = (
+        await getTranslationBasketPage({
+          url: `${this.$i18n.locale}/translation-basket-page`,
+        })
+      ).data
+      if (status) {
+        this.translationBasketPage = translation_basket_page
+      }
+    } catch (error) {
+      console.log('error', error)
+    }
+  },
   async mounted() {
-    await Promise.all([this.fetchProductsFromDataBase()])
+    await this.fetchProductsFromDataBase()
+    if (window.innerWidth <= 950) {
+      if (document.body.classList.contains('_lock')) {
+        document.body.classList.remove('_lock')
+      }
+    }
   },
   methods: {
     async fetchProductsFromDataBase() {
@@ -151,7 +171,6 @@ export default {
             { product_ids: product_ids }
           )
           if (status) {
-            console.log('>>>>>>>>', products)
             let res = null
             if (products) {
               res = product_ids.filter(function (o1) {
@@ -165,27 +184,15 @@ export default {
                     if (elem.amount > product.amount) {
                       elem.amount = product.amount
                       elem.quantity = product.amount
-                      console.log('amount', elem)
                     }
                     if (elem.limit_amount > product.limit_amount) {
                       elem.limit_amount = product.limit_amount
                       elem.quantity = product.limit_amount
-                      console.log('limit_amount', elem)
                     }
                   }
                 })
               })
             }
-            console.log('result', res)
-            console.log('cart?.cart2', cart?.cart)
-            //  this.products = cart.cart
-            //  console.log('amount', amounts)
-            //  cart.cart = cart.cart.filter(function (o1) {
-            //    return !res.some(function (o2) {
-            //      return o1.id === o2
-            //    })
-            //  })
-            //  console.log();
             localStorage.setItem('lorem', JSON.stringify(cart))
             this.products =
               cart.cart.filter((product) => product.quantity > 0) || []
@@ -218,7 +225,6 @@ export default {
             url: `${this.$i18n.locale}/translation-order-page`,
           })
         ).data
-        console.log(translation_order_page)
         if (status) {
           this.paymentDatas.text = translation_order_page
         }
@@ -233,7 +239,6 @@ export default {
             url: `${this.$i18n.locale}/payment-types`,
           })
         ).data
-        console.log(payment_types)
         if (status) {
           for (let i = 0; i < payment_types.length; i++) {
             this.paymentDatas.types.push({
@@ -242,7 +247,6 @@ export default {
               checked: false,
             })
           }
-          console.log(this.paymentDatas.types)
         }
       } catch (error) {
         console.log('payment', error)
@@ -255,7 +259,6 @@ export default {
             url: `${this.$i18n.locale}/order-time`,
           })
         ).data
-        console.log('order_times', order_times)
         if (status) {
           for (let i = 0; i < order_times.length; i++) {
             for (let j = 0; j < order_times[i].times.length; j++) {
@@ -267,7 +270,6 @@ export default {
               time: order_times[i].times,
             })
           }
-          console.log(this.paymentDatas.orderTimes.times)
         }
       } catch (error) {
         console.log('payment', error)
@@ -305,8 +307,6 @@ export default {
         for (let i = 0; i < cart.cart.length; i++) {
           cart.cart[i].quantity = 0
         }
-        console.log(cart.cart)
-        console.log('this.isCartEmpty')
         this.$store.commit('products/SET_PRODUCT_COUNT_WHEN_PAYMENT', null)
         localStorage.setItem('lorem', JSON.stringify(cart))
         if (cart && cart?.auth?.accessToken) {
@@ -317,7 +317,6 @@ export default {
                 accessToken: `Bearer ${cart?.auth?.accessToken}`,
               })
             ).data
-            console.log(res)
           } catch (error) {
             console.log(error)
           }
@@ -356,7 +355,6 @@ export default {
                 accessToken: `Bearer ${cart?.auth?.accessToken}`,
               })
             ).data
-            console.log('productAdd', res)
           } catch (error) {
             console.log(error)
             if (error?.response?.status === 403) {
@@ -400,7 +398,6 @@ export default {
                         accessToken: `Bearer ${access_token}`,
                       })
                     ).data
-                    console.log('productAdd1', response)
                   } catch (error) {
                     console.log('productAdd1', error)
                   }

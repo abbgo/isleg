@@ -161,14 +161,6 @@ export default {
   data() {
     return {
       bigSlider: this.productData.main_image.large,
-      images: [
-        { id: 1, src: '1.jpg' },
-        { id: 2, src: '2.jpg' },
-        { id: 3, src: '3.jpg' },
-        { id: 4, src: '1.jpg' },
-        { id: 5, src: '2.jpg' },
-        { id: 6, src: '3.jpg' },
-      ],
     }
   },
   computed: {
@@ -216,7 +208,7 @@ figure.zoom img {
   width: inherit;
 }
 
-.product__btns .product__add-btn {
+.product__btns . {
   position: relative;
   bottom: 0;
 }

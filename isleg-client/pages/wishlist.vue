@@ -41,6 +41,11 @@ export default {
     } else {
       this.productsWishList = []
     }
+    if (window.innerWidth <= 950) {
+      if (document.body.classList.contains('_lock')) {
+        document.body.classList.remove('_lock')
+      }
+    }
   },
   methods: {
     remove(data) {

@@ -58,32 +58,14 @@ const fetchMyInformation = async (
         Authorization: `Bearer ${accessToken}`,
       },
     })
-    console.log(data)
     if (data?.status) {
       commit('SET_MY_PROFILE', data.customer_informations)
     }
   } catch (e) {
     console.log(e)
-    // if (e.response.status == 401) {
-    //   try {
-    //     const res = await axios.post(`${process.env.BASE_API}/auth/refresh`, {
-    //       headers: {
-    //         RefreshToken: `Bearer ${refreshToken}`,
-    //       },
-    //     })
-    //     console.log(res);
-    //   } catch (e) { console.log('sonky', e.response) }
-    // } else {
-    //   return $nuxt.error({
-    //     statusCode: e?.response?.status,
-    //     message: e?.message,
-    //   })
-    // }
   }
 }
 const initAuth = ({ commit }) => {
-  //   const cart = JSON.parse(localStorage.getItem('lorem'))
-  //   console.log('>>', cart)
   if (localStorage.getItem('lorem')) {
     commit('SET_AUTHENTICATION', true)
   } else {

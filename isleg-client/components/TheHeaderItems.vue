@@ -131,39 +131,6 @@ export default {
       likes: null,
     }
   },
-  //   watch: {
-  //     $route: async function () {
-  //       const cart = await JSON.parse(localStorage.getItem('lorem'))
-  //       if (cart && cart?.cart) {
-  //         if (!this.productCount) {
-  //           console.log('watch2', cart)
-  //           this.totalCount = cart.cart.reduce((total, num) => {
-  //             return total + num.quantity
-  //           }, 0)
-  //           this.$store.commit(
-  //             'products/SET_PRODUCT_COUNT_WHEN_PAYMENT',
-  //             this.totalCount
-  //           )
-  //         }
-  //         if (!this.likesCount) {
-  //           this.likes =
-  //             cart.cart?.filter((product) => product.is_favorite === true)
-  //               ?.length || null
-  //           this.$store.commit('products/SET_PRODUCT_LIKES', this.likes)
-  //         }
-  //       } else {
-  //         console.log('watch3', cart)
-  //         this.$store.commit('products/SET_PRODUCT_COUNT_WHEN_PAYMENT', null)
-  //         this.$store.commit('products/SET_PRODUCT_LIKES', null)
-  //       }
-  //     },
-  //     productCount: function (val) {
-  //       if (!val) {
-  //         this.$store.commit('products/SET_PRODUCT_COUNT_WHEN_PAYMENT', null)
-  //         this.total = null
-  //       }
-  //     },
-  //   },
   computed: {
     ...mapGetters('products', ['productCount', 'likesCount']),
   },
@@ -175,7 +142,6 @@ export default {
           cart.cart.reduce((total, num) => {
             return total + num?.quantity
           }, 0) || null
-        console.log(this.totalCount)
         this.$store.commit(
           'products/SET_PRODUCT_COUNT_WHEN_PAYMENT',
           this.totalCount

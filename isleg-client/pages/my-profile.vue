@@ -206,7 +206,6 @@ export default {
   },
   methods: {
     update(val) {
-      console.log('val', val)
       this.myProfileDatas.phone_number = val
     },
     async fetchMyProfile() {
@@ -218,7 +217,6 @@ export default {
             accessToken: `Bearer ${cart.auth.accessToken}`,
           })
         ).data
-        console.log(customer_informations, status)
         if (status) {
           this.myProfileDatas.fullName = customer_informations.full_name
           this.myProfileDatas.phone_number = customer_informations.phone_number
@@ -264,7 +262,6 @@ export default {
                     accessToken: `Bearer ${access_token}`,
                   })
                 ).data
-                console.log(customer_informations, status)
                 if (status) {
                   this.myProfileDatas.fullName = customer_informations.full_name
                   this.myProfileDatas.phone_number =
@@ -299,7 +296,6 @@ export default {
             accessToken: `Bearer ${cart.auth.accessToken}`,
           })
         ).data
-        console.log(customer_informations, status)
         if (status) {
           this.myProfileDatas.fullName = customer_informations.full_name
           this.myProfileDatas.phone_number = customer_informations.phone_number

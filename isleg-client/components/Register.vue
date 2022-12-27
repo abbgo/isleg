@@ -324,7 +324,6 @@ export default {
         this.isPhoneNumber = false
       }
       if (this.$v.$invalid) {
-        console.log('>>>')
         if (
           this.$v.register.email.$model !== '' &&
           this.checkValidate === false
@@ -358,7 +357,6 @@ export default {
                 email: this.register.email,
               },
             })
-            console.log(response)
             if (response.status === 200) {
               const { access_token, refresh_token } = response.data
               const cart = await JSON.parse(localStorage.getItem('lorem'))

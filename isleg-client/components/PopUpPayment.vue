@@ -273,9 +273,7 @@ export default {
     },
     isAuth() {
       const cart = JSON.parse(localStorage.getItem('lorem'))
-      console.log('cart?.auth?.accessToken1', cart?.auth?.accessToken)
       if (cart?.auth?.accessToken) {
-        console.log('cart?.auth?.accessToken2', cart?.auth?.accessToken)
         return false
       } else {
         return true
@@ -291,19 +289,12 @@ export default {
             accessToken: `Bearer ${cart.auth.accessToken}`,
           })
         ).data
-        console.log(
-          'deeeeeeeeeeeeeeeeeeeeeeeeeede',
-          customer_informations,
-          status
-        )
         if (status) {
           this.payment.fullName = customer_informations.full_name
           this.payment.phone_number = customer_informations.phone_number
           this.payment.address = customer_informations.addresses[0]?.address
-          console.log(' this.userInformation', this.userInformation)
         }
       } catch (error) {
-        console.log('err', error)
         if (error?.response?.status === 403) {
           try {
             const { access_token, refresh_token, status } = (
@@ -312,7 +303,6 @@ export default {
                 refreshToken: `Bearer ${cart.auth.refreshToken}`,
               })
             ).data
-            console.log('new', access_token, refresh_token, status)
             if (status) {
               const lorem = await JSON.parse(localStorage.getItem('lorem'))
               if (lorem) {
@@ -339,24 +329,17 @@ export default {
                     accessToken: `Bearer ${access_token}`,
                   })
                 ).data
-                console.log(
-                  'deeeeeeeeeeeeeeeeeeeeeeeeeede',
-                  customer_informations,
-                  status
-                )
                 if (status) {
                   this.payment.fullName = customer_informations.full_name
                   this.payment.phone_number = customer_informations.phone_number
                   this.payment.address =
                     customer_informations.addresses[0]?.address
-                  console.log(' this.userInformation', this.userInformation)
                 }
               } catch (error) {
                 console.log('getMyProfile2', error)
               }
             }
           } catch (error) {
-            console.log('ref', error.response.status)
             if (error.response.status === 403) {
               cart.auth.accessToken = null
               cart.auth.refreshToken = null
@@ -392,7 +375,6 @@ export default {
       }
       payload.checked = true
       this.selectedPaymentType = payload
-      console.log(this.selectedPaymentType)
       this.isPaymentForm = false
     },
     theDeliveryTimeChecked(payload) {
@@ -404,7 +386,6 @@ export default {
       }
       payload.checked = true
       this.selectedPaymentTime = payload
-      console.log(this.selectedPaymentTime)
       this.isTheDeliveryTime = false
     },
     order: async function () {
@@ -445,16 +426,6 @@ export default {
               }
             }
           }
-          console.log(products, {
-            full_name: this.payment.fullName,
-            phone_number: this.payment.phone_number,
-            address: this.payment.address,
-            customer_mark: this.payment.note,
-            order_time: this.selectedPaymentTime.time,
-            payment_type: this.selectedPaymentType.name,
-            total_price: this.totalPrice,
-            products: products,
-          })
           try {
             const { status } = (
               await postPaymentDatas({
@@ -471,7 +442,6 @@ export default {
                 },
               })
             ).data
-            console.log(status)
             if (status) {
               cart.cart = cart.cart
                 .filter((product) => product.is_favorite === true)
@@ -483,7 +453,6 @@ export default {
               this.$emit('paymentSuccesfullySended')
             }
           } catch (error) {
-            console.log('payment', error)
             this.$toast(this.$t('register.error'))
           }
         } else {

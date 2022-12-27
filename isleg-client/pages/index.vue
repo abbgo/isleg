@@ -48,5 +48,14 @@ export default {
     ...mapGetters('ui', ['imgURL', 'brends']),
     ...mapGetters('products', ['productsCategories']),
   },
+  mounted() {
+    if (window.innerWidth <= 950) {
+      if (window.innerWidth <= 950) {
+        if (document.body.classList.contains('_lock')) {
+          document.body.classList.remove('_lock')
+        }
+      }
+    }
+  },
 }
 </script>

@@ -44,6 +44,7 @@
       > -->
       <span
         ><img
+          v-if="categoryProducts && categoryProducts.image"
           style="margin-right: 8px; width: 30px; height: 30px"
           :src="`${imgURL}/${categoryProducts && categoryProducts.image}`"
           alt="isleg"

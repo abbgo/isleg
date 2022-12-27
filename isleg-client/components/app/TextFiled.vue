@@ -83,7 +83,6 @@ export default {
         let x = this.modelValue
           .replace(/\D/g, '')
           .match(/(\d{0,3})(\d{0,1})(\d{0,1})(\d{0,2})(\d{0,2})(\d{0,2})/)
-        //   console.log(x)
         this.modelValue = !x[2]
           ? '+9936'
           : '+9936' +
@@ -91,7 +90,6 @@ export default {
             (x[4] ? x[4] : '') +
             (x[5] ? x[5] : '') +
             (x[6] ? x[6] : '')
-        console.log(this.modelValue)
         this.$emit('updateValue', this.modelValue)
       } else {
         this.$emit('updateValue', this.modelValue)

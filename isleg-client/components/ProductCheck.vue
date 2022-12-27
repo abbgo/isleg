@@ -137,7 +137,6 @@ export default {
             })
           )
         }
-        console.log(this.basketProductQuantity)
         if (cart && cart?.auth?.accessToken) {
           try {
             const res = (
@@ -152,7 +151,6 @@ export default {
                 accessToken: `Bearer ${cart?.auth?.accessToken}`,
               })
             ).data
-            console.log('productAdd', res)
           } catch (error) {
             console.log(error.response)
             if (error?.response?.status === 403) {
@@ -163,7 +161,6 @@ export default {
                     refreshToken: `Bearer ${cart.auth.refreshToken}`,
                   })
                 ).data
-                console.log('new', access_token, refresh_token, status)
                 if (status) {
                   const lorem = await JSON.parse(localStorage.getItem('lorem'))
                   if (lorem) {
@@ -196,7 +193,6 @@ export default {
                         accessToken: `Bearer ${access_token}`,
                       })
                     ).data
-                    console.log('productAdd1', response)
                   } catch (error) {
                     console.log('productAdd1', error)
                   }
@@ -236,7 +232,6 @@ export default {
         const findProduct = cart.cart.find((product) => product.id === data.id)
         findProduct.quantity = this.basketProductQuantity
         localStorage.setItem('lorem', JSON.stringify(cart))
-        console.log('else', this.basketProductQuantity)
         if (cart && cart?.auth?.accessToken) {
           try {
             const res = (
@@ -251,7 +246,6 @@ export default {
                 accessToken: `Bearer ${cart?.auth?.accessToken}`,
               })
             ).data
-            console.log('productAdd', res)
           } catch (error) {
             console.log(error.response)
             if (error?.response?.status === 403) {
@@ -295,7 +289,6 @@ export default {
                         accessToken: `Bearer ${access_token}`,
                       })
                     ).data
-                    console.log('productAdd1', response)
                   } catch (error) {
                     console.log('productAdd1', error)
                   }
