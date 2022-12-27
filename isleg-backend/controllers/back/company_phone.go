@@ -128,7 +128,7 @@ func UpdateCompanyPhoneByID(c *gin.Context) {
 	}
 
 	if comPhoneID == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
+		c.JSON(http.StatusNotFound, gin.H{
 			"status":  false,
 			"message": "record not found",
 		})
@@ -216,7 +216,7 @@ func GetCompanyPhoneByID(c *gin.Context) {
 	}
 
 	if phoneNumber == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
+		c.JSON(http.StatusNotFound, gin.H{
 			"status":  false,
 			"message": "record not found",
 		})
@@ -378,7 +378,7 @@ func DeleteCompanyPhoneByID(c *gin.Context) {
 	}
 
 	if comPhoneID == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
+		c.JSON(http.StatusNotFound, gin.H{
 			"status":  false,
 			"message": "record not found",
 		})
@@ -466,7 +466,7 @@ func RestoreCompanyPhoneByID(c *gin.Context) {
 	}
 
 	if comPhoneID == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
+		c.JSON(http.StatusNotFound, gin.H{
 			"status":  false,
 			"message": "record not found",
 		})
@@ -554,7 +554,7 @@ func DeletePermanentlyCompanyPhoneByID(c *gin.Context) {
 	}
 
 	if comPhoneID == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
+		c.JSON(http.StatusNotFound, gin.H{
 			"status":  false,
 			"message": "record not found",
 		})

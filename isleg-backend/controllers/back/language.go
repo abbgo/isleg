@@ -142,7 +142,7 @@ func UpdateLanguageByID(c *gin.Context) {
 	}
 
 	if flag == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
+		c.JSON(http.StatusNotFound, gin.H{
 			"status":  false,
 			"message": "language not found",
 		})
@@ -254,7 +254,7 @@ func GetLanguageByID(c *gin.Context) {
 	}
 
 	if lang.ID == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
+		c.JSON(http.StatusNotFound, gin.H{
 			"status":  false,
 			"message": "language not found",
 		})
@@ -342,7 +342,7 @@ func DeleteLanguageByID(c *gin.Context) {
 	}
 
 	if id == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
+		c.JSON(http.StatusNotFound, gin.H{
 			"status":  false,
 			"message": "language not found",
 		})
@@ -439,7 +439,7 @@ func RestoreLanguageByID(c *gin.Context) {
 	}
 
 	if id == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
+		c.JSON(http.StatusNotFound, gin.H{
 			"status":  false,
 			"message": "language not found",
 		})
@@ -528,7 +528,7 @@ func DeletePermanentlyLanguageByID(c *gin.Context) {
 	}
 
 	if flag == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
+		c.JSON(http.StatusNotFound, gin.H{
 			"status":  false,
 			"message": "language not found",
 		})
@@ -544,7 +544,7 @@ func DeletePermanentlyLanguageByID(c *gin.Context) {
 	}
 
 	// remove image of language
-	if err := os.Remove("./" + flag); err != nil {
+	if err := os.Remove(pkg.ServerPath + flag); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
 			"message": err.Error(),

@@ -73,7 +73,7 @@ func CreateTranslationFooter(c *gin.Context) {
 		}
 
 		if langID == "" {
-			c.JSON(http.StatusBadRequest, gin.H{
+			c.JSON(http.StatusNotFound, gin.H{
 				"status":  false,
 				"message": "lamguage not found",
 			})
@@ -168,7 +168,7 @@ func UpdateTranslationFooterByID(c *gin.Context) {
 	}
 
 	if id == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
+		c.JSON(http.StatusNotFound, gin.H{
 			"status":  false,
 			"message": "record not found",
 		})
@@ -257,7 +257,7 @@ func GetTranslationFooterByID(c *gin.Context) {
 	}
 
 	if t.About == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
+		c.JSON(http.StatusNotFound, gin.H{
 			"status":  false,
 			"message": "record not found",
 		})

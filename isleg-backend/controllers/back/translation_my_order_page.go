@@ -75,7 +75,7 @@ func CreateTranslationMyOrderPage(c *gin.Context) {
 		}
 
 		if langID == "" {
-			c.JSON(http.StatusBadRequest, gin.H{
+			c.JSON(http.StatusNotFound, gin.H{
 				"status":  false,
 				"message": "language not found",
 			})
@@ -178,7 +178,7 @@ func UpdateTranslationMyOrderPageByID(c *gin.Context) {
 	}
 
 	if id == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
+		c.JSON(http.StatusNotFound, gin.H{
 			"status":  false,
 			"message": "record not found",
 		})
@@ -267,7 +267,7 @@ func GetTranslationMyOrderPageByID(c *gin.Context) {
 	}
 
 	if t.ID == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
+		c.JSON(http.StatusNotFound, gin.H{
 			"status":  false,
 			"message": "record not found",
 		})
@@ -346,7 +346,7 @@ func GetTranslationMyOrderPageByLangID(c *gin.Context) {
 	}
 
 	if t.Orders == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
+		c.JSON(http.StatusNotFound, gin.H{
 			"status":  false,
 			"message": "record not found",
 		})

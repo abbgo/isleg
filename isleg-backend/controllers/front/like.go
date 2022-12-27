@@ -260,7 +260,7 @@ func AddOrRemoveLike(c *gin.Context) {
 			// eger haryt halanlarym tablisada yok bolsa
 			// yzyna yalnyslyk goyberyas
 			if product_id == "" {
-				c.JSON(http.StatusBadRequest, gin.H{
+				c.JSON(http.StatusNotFound, gin.H{
 					"status":  false,
 					"message": "this product not found in this customer",
 				})

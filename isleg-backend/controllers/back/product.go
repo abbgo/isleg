@@ -379,14 +379,14 @@ func UpdateProductByID(c *gin.Context) {
 
 		for _, v := range images {
 
-			if err := os.Remove("./" + v.Small); err != nil {
+			if err := os.Remove(pkg.ServerPath + v.Small); err != nil {
 				c.JSON(http.StatusBadRequest, gin.H{
 					"status":  false,
 					"message": err.Error(),
 				})
 				return
 			}
-			if err := os.Remove("./" + v.Large); err != nil {
+			if err := os.Remove(pkg.ServerPath + v.Large); err != nil {
 				c.JSON(http.StatusBadRequest, gin.H{
 					"status":  false,
 					"message": err.Error(),
@@ -425,7 +425,7 @@ func UpdateProductByID(c *gin.Context) {
 				return
 			}
 			fileName := uuid.New().String() + extension
-			c.SaveUploadedFile(v, "./uploads/product/"+fileName)
+			c.SaveUploadedFile(v, pkg.ServerPath+"uploads/product/"+fileName)
 			smalls = append(smalls, "uploads/product/"+fileName)
 		}
 
@@ -440,7 +440,7 @@ func UpdateProductByID(c *gin.Context) {
 				return
 			}
 			fileName := uuid.New().String() + extension
-			c.SaveUploadedFile(v, "./uploads/product/"+fileName)
+			c.SaveUploadedFile(v, pkg.ServerPath+"uploads/product/"+fileName)
 			larges = append(larges, "uploads/product/"+fileName)
 		}
 
@@ -634,7 +634,7 @@ func GetProductByID(c *gin.Context) {
 	}
 
 	if product.ID == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
+		c.JSON(http.StatusNotFound, gin.H{
 			"status":  false,
 			"message": "record not found",
 		})
@@ -740,7 +740,7 @@ func GetProductByID(c *gin.Context) {
 	}
 
 	if len(categories) == 0 {
-		c.JSON(http.StatusBadRequest, gin.H{
+		c.JSON(http.StatusNotFound, gin.H{
 			"status":  false,
 			"message": "record not found",
 		})
@@ -779,7 +779,7 @@ func GetProductByID(c *gin.Context) {
 			return
 		}
 		if translation.Name == "" {
-			c.JSON(http.StatusBadRequest, gin.H{
+			c.JSON(http.StatusNotFound, gin.H{
 				"status":  false,
 				"message": "record not found",
 			})
@@ -1055,7 +1055,7 @@ func DeleteProductByID(c *gin.Context) {
 	}
 
 	if productID == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
+		c.JSON(http.StatusNotFound, gin.H{
 			"status":  false,
 			"message": "record not found",
 		})
@@ -1143,7 +1143,7 @@ func RestoreProductByID(c *gin.Context) {
 	}
 
 	if productID == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
+		c.JSON(http.StatusNotFound, gin.H{
 			"status":  false,
 			"message": "record not found",
 		})
@@ -1231,7 +1231,7 @@ func DeletePermanentlyProductByID(c *gin.Context) {
 	}
 
 	if productID == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
+		c.JSON(http.StatusNotFound, gin.H{
 			"status":  false,
 			"message": "product not found",
 		})
@@ -1270,7 +1270,7 @@ func DeletePermanentlyProductByID(c *gin.Context) {
 	}
 
 	// remove main image of product
-	if err := os.Remove("./" + mainImage.Small); err != nil {
+	if err := os.Remove(pkg.ServerPath + mainImage.Small); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
 			"message": err.Error(),
@@ -1278,7 +1278,7 @@ func DeletePermanentlyProductByID(c *gin.Context) {
 		return
 	}
 
-	if err := os.Remove("./" + mainImage.Medium); err != nil {
+	if err := os.Remove(pkg.ServerPath + mainImage.Medium); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
 			"message": err.Error(),
@@ -1286,7 +1286,7 @@ func DeletePermanentlyProductByID(c *gin.Context) {
 		return
 	}
 
-	if err := os.Remove("./" + mainImage.Large); err != nil {
+	if err := os.Remove(pkg.ServerPath + mainImage.Large); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
 			"message": err.Error(),
@@ -1334,14 +1334,14 @@ func DeletePermanentlyProductByID(c *gin.Context) {
 
 		for _, v := range images {
 
-			if err := os.Remove("./" + v.Small); err != nil {
+			if err := os.Remove(pkg.ServerPath + v.Small); err != nil {
 				c.JSON(http.StatusBadRequest, gin.H{
 					"status":  false,
 					"message": err.Error(),
 				})
 				return
 			}
-			if err := os.Remove("./" + v.Large); err != nil {
+			if err := os.Remove(pkg.ServerPath + v.Large); err != nil {
 				c.JSON(http.StatusBadRequest, gin.H{
 					"status":  false,
 					"message": err.Error(),

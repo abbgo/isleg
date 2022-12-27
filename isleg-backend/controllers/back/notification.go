@@ -72,7 +72,7 @@ func CreateNotification(c *gin.Context) {
 		}
 
 		if lang_id == "" {
-			c.JSON(http.StatusBadRequest, gin.H{
+			c.JSON(http.StatusNotFound, gin.H{
 				"status":  false,
 				"message": "langauge not found",
 			})
@@ -202,7 +202,7 @@ func UpdateNotificationByID(c *gin.Context) {
 	}
 
 	if notification_id == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
+		c.JSON(http.StatusNotFound, gin.H{
 			"status":  false,
 			"message": "notification not found",
 		})
@@ -310,7 +310,7 @@ func GetNotificationByID(c *gin.Context) {
 		}
 
 		if notification.ID == "" {
-			c.JSON(http.StatusBadRequest, gin.H{
+			c.JSON(http.StatusNotFound, gin.H{
 				"status":  false,
 				"message": "notification not found",
 			})
@@ -514,7 +514,7 @@ func DeleteNotificationByID(c *gin.Context) {
 	}
 
 	if notification_id == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
+		c.JSON(http.StatusNotFound, gin.H{
 			"status":  false,
 			"message": "notification not found",
 		})
@@ -600,7 +600,7 @@ func RestoreNotificationByID(c *gin.Context) {
 	}
 
 	if notification_id == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
+		c.JSON(http.StatusNotFound, gin.H{
 			"status":  false,
 			"message": "notification not found",
 		})
@@ -686,7 +686,7 @@ func DeletePermanentlyNotificationByID(c *gin.Context) {
 	}
 
 	if notification_id == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
+		c.JSON(http.StatusNotFound, gin.H{
 			"status":  false,
 			"message": "notification not found",
 		})

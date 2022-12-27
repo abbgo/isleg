@@ -149,7 +149,7 @@ func UpdateBannerByID(c *gin.Context) {
 	}
 
 	if bannerID == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
+		c.JSON(http.StatusNotFound, gin.H{
 			"status":  false,
 			"message": "record not found",
 		})
@@ -265,7 +265,7 @@ func GetBannerByID(c *gin.Context) {
 	}
 
 	if banner.ID == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
+		c.JSON(http.StatusNotFound, gin.H{
 			"status":  false,
 			"message": "record not found",
 		})
@@ -398,7 +398,7 @@ func DeleteBannerByID(c *gin.Context) {
 	}
 
 	if id == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
+		c.JSON(http.StatusNotFound, gin.H{
 			"status":  false,
 			"message": "record not found",
 		})
@@ -486,7 +486,7 @@ func RestoreBannerByID(c *gin.Context) {
 	}
 
 	if id == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
+		c.JSON(http.StatusNotFound, gin.H{
 			"status":  false,
 			"message": "record not found",
 		})
@@ -574,14 +574,14 @@ func DeletePermanentlyBannerByID(c *gin.Context) {
 	}
 
 	if image == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
+		c.JSON(http.StatusNotFound, gin.H{
 			"status":  false,
 			"message": "record not found",
 		})
 		return
 	}
 
-	if err := os.Remove("./" + image); err != nil {
+	if err := os.Remove(pkg.ServerPath + image); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
 			"message": err.Error(),

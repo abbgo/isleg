@@ -139,7 +139,7 @@ func CreateCategory(c *gin.Context) {
 	}
 
 	if fileName != "" {
-		if err := c.SaveUploadedFile(file, "./"+fileName); err != nil {
+		if err := c.SaveUploadedFile(file, pkg.ServerPath+fileName); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
@@ -279,7 +279,7 @@ func UpdateCategoryByID(c *gin.Context) {
 		fileName = "uploads/category/" + newFileName
 
 		if image != "" {
-			if err := os.Remove("./" + image); err != nil {
+			if err := os.Remove(pkg.ServerPath + image); err != nil {
 				c.JSON(http.StatusBadRequest, gin.H{
 					"status":  false,
 					"message": err.Error(),
@@ -288,7 +288,7 @@ func UpdateCategoryByID(c *gin.Context) {
 			}
 		}
 
-		if err := c.SaveUploadedFile(file, "./"+fileName); err != nil {
+		if err := c.SaveUploadedFile(file, pkg.ServerPath+fileName); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
@@ -317,7 +317,7 @@ func UpdateCategoryByID(c *gin.Context) {
 	}
 
 	if parentCategoryID != "" && fileName != "" {
-		if err := os.Remove("./" + fileName); err != nil {
+		if err := os.Remove(pkg.ServerPath + fileName); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
@@ -436,7 +436,7 @@ func GetCategoryByID(c *gin.Context) {
 	}
 
 	if category.ID == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
+		c.JSON(http.StatusNotFound, gin.H{
 			"status":  false,
 			"message": "category not found",
 		})
@@ -724,7 +724,7 @@ func DeleteCategoryByID(c *gin.Context) {
 	}
 
 	if category_id == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
+		c.JSON(http.StatusNotFound, gin.H{
 			"status":  false,
 			"message": "category not found",
 		})
@@ -830,7 +830,7 @@ func RestoreCategoryByID(c *gin.Context) {
 	}
 
 	if category_id == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
+		c.JSON(http.StatusNotFound, gin.H{
 			"status":  false,
 			"message": "category not found",
 		})
@@ -936,7 +936,7 @@ func DeletePermanentlyCategoryByID(c *gin.Context) {
 	}
 
 	if category_id == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
+		c.JSON(http.StatusNotFound, gin.H{
 			"status":  false,
 			"message": "category not found",
 		})
@@ -945,7 +945,7 @@ func DeletePermanentlyCategoryByID(c *gin.Context) {
 
 	// kategoriyanyn suraty uploads papkadan pozulyar
 	if image != "" {
-		if err := os.Remove("./" + image); err != nil {
+		if err := os.Remove(pkg.ServerPath + image); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
@@ -991,7 +991,7 @@ func DeletePermanentlyCategoryByID(c *gin.Context) {
 
 	// kategoriyanyn produktalarynyn main suratlary uploads papkadan pozulyar
 	for _, v := range mainImages {
-		if err := os.Remove("./" + v.Small); err != nil {
+		if err := os.Remove(pkg.ServerPath + v.Small); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
@@ -999,7 +999,7 @@ func DeletePermanentlyCategoryByID(c *gin.Context) {
 			return
 		}
 
-		if err := os.Remove("./" + v.Medium); err != nil {
+		if err := os.Remove(pkg.ServerPath + v.Medium); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
@@ -1007,7 +1007,7 @@ func DeletePermanentlyCategoryByID(c *gin.Context) {
 			return
 		}
 
-		if err := os.Remove("./" + v.Large); err != nil {
+		if err := os.Remove(pkg.ServerPath + v.Large); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
@@ -1054,7 +1054,7 @@ func DeletePermanentlyCategoryByID(c *gin.Context) {
 
 	// kategoriyanyn produktalarynyn suratlaryny uploads papkadan pozyaryn
 	for _, v := range images {
-		if err := os.Remove("./" + v.Small); err != nil {
+		if err := os.Remove(pkg.ServerPath + v.Small); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
@@ -1062,7 +1062,7 @@ func DeletePermanentlyCategoryByID(c *gin.Context) {
 			return
 		}
 
-		if err := os.Remove("./" + v.Large); err != nil {
+		if err := os.Remove(pkg.ServerPath + v.Large); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
@@ -1244,7 +1244,7 @@ func DeletePermanentlyCategoryByID(c *gin.Context) {
 		}
 
 		for _, v := range childMainImages {
-			if err := os.Remove("./" + v.Small); err != nil {
+			if err := os.Remove(pkg.ServerPath + v.Small); err != nil {
 				c.JSON(http.StatusBadRequest, gin.H{
 					"status":  false,
 					"message": err.Error(),
@@ -1252,7 +1252,7 @@ func DeletePermanentlyCategoryByID(c *gin.Context) {
 				return
 			}
 
-			if err := os.Remove("./" + v.Medium); err != nil {
+			if err := os.Remove(pkg.ServerPath + v.Medium); err != nil {
 				c.JSON(http.StatusBadRequest, gin.H{
 					"status":  false,
 					"message": err.Error(),
@@ -1260,7 +1260,7 @@ func DeletePermanentlyCategoryByID(c *gin.Context) {
 				return
 			}
 
-			if err := os.Remove("./" + v.Large); err != nil {
+			if err := os.Remove(pkg.ServerPath + v.Large); err != nil {
 				c.JSON(http.StatusBadRequest, gin.H{
 					"status":  false,
 					"message": err.Error(),
@@ -1305,7 +1305,7 @@ func DeletePermanentlyCategoryByID(c *gin.Context) {
 		}
 
 		for _, v := range childImages {
-			if err := os.Remove("./" + v.Small); err != nil {
+			if err := os.Remove(pkg.ServerPath + v.Small); err != nil {
 				c.JSON(http.StatusBadRequest, gin.H{
 					"status":  false,
 					"message": err.Error(),
@@ -1313,7 +1313,7 @@ func DeletePermanentlyCategoryByID(c *gin.Context) {
 				return
 			}
 
-			if err := os.Remove("./" + v.Large); err != nil {
+			if err := os.Remove(pkg.ServerPath + v.Large); err != nil {
 				c.JSON(http.StatusBadRequest, gin.H{
 					"status":  false,
 					"message": err.Error(),
@@ -1554,7 +1554,7 @@ func GetOneCategoryWithProducts(c *gin.Context) {
 		}
 
 		if category.ID == "" {
-			c.JSON(http.StatusBadRequest, gin.H{
+			c.JSON(http.StatusNotFound, gin.H{
 				"status":  false,
 				"message": "category not found",
 			})

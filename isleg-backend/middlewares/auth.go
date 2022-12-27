@@ -87,7 +87,7 @@ func Auth() gin.HandlerFunc {
 		}
 
 		if customer_id == "" {
-			context.AbortWithStatusJSON(400, gin.H{"message": "customer not found"})
+			context.AbortWithStatusJSON(404, gin.H{"message": "customer not found"})
 			return
 		}
 
@@ -228,7 +228,7 @@ func CheckAdmin() gin.HandlerFunc {
 		}
 
 		if admin_id == "" {
-			context.AbortWithStatusJSON(400, gin.H{"message": "admin not found"})
+			context.AbortWithStatusJSON(404, gin.H{"message": "admin not found"})
 			return
 		}
 

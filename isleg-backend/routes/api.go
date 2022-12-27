@@ -33,7 +33,7 @@ func Routes() *gin.Engine {
 	}))
 
 	// routes belong to admin panel
-	back := routes.Group("/admin")
+	back := routes.Group("/api/admin")
 	{
 
 		admin := back.Group("/auth")

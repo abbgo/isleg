@@ -66,7 +66,7 @@ func CreateAfisa(c *gin.Context) {
 			return
 		}
 
-		if err = c.SaveUploadedFile(file, "./"+fileName); err != nil {
+		if err = c.SaveUploadedFile(file, pkg.ServerPath+fileName); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
@@ -204,7 +204,7 @@ func UpdateAfisaByID(c *gin.Context) {
 	}
 
 	if afisaID == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
+		c.JSON(http.StatusNotFound, gin.H{
 			"status":  false,
 			"message": "record not found",
 		})
@@ -341,7 +341,7 @@ func GetAfisaByID(c *gin.Context) {
 	}
 
 	if afisa.ID == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
+		c.JSON(http.StatusNotFound, gin.H{
 			"status":  false,
 			"message": "record not found",
 		})
@@ -541,7 +541,7 @@ func DeleteAfisaByID(c *gin.Context) {
 	}
 
 	if afisaID == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
+		c.JSON(http.StatusNotFound, gin.H{
 			"status":  false,
 			"message": "record not found",
 		})
@@ -629,7 +629,7 @@ func RestoreAfisaByID(c *gin.Context) {
 	}
 
 	if afisaID == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
+		c.JSON(http.StatusNotFound, gin.H{
 			"status":  false,
 			"message": "record not found",
 		})
@@ -717,7 +717,7 @@ func DeletePermanentlyAfisaByID(c *gin.Context) {
 	}
 
 	if afisaID == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
+		c.JSON(http.StatusNotFound, gin.H{
 			"status":  false,
 			"message": "record not found",
 		})
@@ -725,7 +725,7 @@ func DeletePermanentlyAfisaByID(c *gin.Context) {
 	}
 
 	if image != "" {
-		if err := os.Remove("./" + image); err != nil {
+		if err := os.Remove(pkg.ServerPath + image); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),

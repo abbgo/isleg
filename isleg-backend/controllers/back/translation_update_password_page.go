@@ -74,7 +74,7 @@ func CreateTranslationUpdatePasswordPage(c *gin.Context) {
 		}
 
 		if langID == "" {
-			c.JSON(http.StatusBadRequest, gin.H{
+			c.JSON(http.StatusNotFound, gin.H{
 				"status":  false,
 				"message": "language not found",
 			})
@@ -177,7 +177,7 @@ func UpdateTranslationUpdatePasswordPageByID(c *gin.Context) {
 	}
 
 	if id == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
+		c.JSON(http.StatusNotFound, gin.H{
 			"status":  false,
 			"message": "record not found",
 		})
@@ -265,7 +265,7 @@ func GetTranslationUpdatePasswordPageByID(c *gin.Context) {
 	}
 
 	if t.ID == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
+		c.JSON(http.StatusNotFound, gin.H{
 			"status":  false,
 			"message": "record not found",
 		})
@@ -340,7 +340,7 @@ func GetTranslationUpdatePasswordPageByLangID(c *gin.Context) {
 	}
 
 	if trUpdatePasswordPage.Title == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
+		c.JSON(http.StatusNotFound, gin.H{
 			"status":  false,
 			"message": "record not found",
 		})

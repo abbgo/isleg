@@ -94,7 +94,7 @@ func CreateOrderTime(c *gin.Context) {
 		}
 
 		if langID == "" {
-			c.JSON(http.StatusBadRequest, gin.H{
+			c.JSON(http.StatusNotFound, gin.H{
 				"status":  false,
 				"message": "language not found",
 			})
@@ -249,7 +249,7 @@ func UpdateOrderTimeByID(c *gin.Context) {
 	}
 
 	if order_date_id == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
+		c.JSON(http.StatusNotFound, gin.H{
 			"status":  false,
 			"message": "order date not found",
 		})
@@ -396,7 +396,7 @@ func GetOrderTimeByID(c *gin.Context) {
 		}
 
 		if orderDate.ID == "" {
-			c.JSON(http.StatusBadRequest, gin.H{
+			c.JSON(http.StatusNotFound, gin.H{
 				"status":  false,
 				"message": "order date not found",
 			})
@@ -673,7 +673,7 @@ func DeleteOrderTimeByID(c *gin.Context) {
 	}
 
 	if order_date_id == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
+		c.JSON(http.StatusNotFound, gin.H{
 			"status":  false,
 			"message": "order date not found",
 		})
@@ -759,7 +759,7 @@ func RestoreOrderTimeByID(c *gin.Context) {
 	}
 
 	if order_date_id == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
+		c.JSON(http.StatusNotFound, gin.H{
 			"status":  false,
 			"message": "order date not found",
 		})
@@ -845,7 +845,7 @@ func DeletePermanentlyOrderTimeByID(c *gin.Context) {
 	}
 
 	if order_date_id == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
+		c.JSON(http.StatusNotFound, gin.H{
 			"status":  false,
 			"message": "order date not found",
 		})

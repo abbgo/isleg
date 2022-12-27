@@ -25,7 +25,7 @@ func MultipartFileUpload(nameUploadedFile, path string, context *gin.Context) ([
 		}
 		fileName := uuid.New().String() + extension
 
-		if err := context.SaveUploadedFile(v, "./uploads/"+path+"/"+fileName); err != nil {
+		if err := context.SaveUploadedFile(v, ServerPath+"/uploads/"+path+"/"+fileName); err != nil {
 			return []string{}, err
 		}
 
@@ -52,7 +52,7 @@ func FileUpload(fileName, path string, context *gin.Context) (string, error) {
 	}
 
 	newFileName := uuid.New().String() + extensionFile
-	if err := context.SaveUploadedFile(file, "./uploads/"+path+"/"+newFileName); err != nil {
+	if err := context.SaveUploadedFile(file, ServerPath+"uploads/"+path+"/"+newFileName); err != nil {
 		return "", err
 	}
 
@@ -81,11 +81,11 @@ func FileUploadForUpdate(fileName, path, oldFileName string, context *gin.Contex
 		}
 
 		newFileName = uuid.New().String() + extensionFile
-		if err := context.SaveUploadedFile(file, "./uploads/"+path+"/"+newFileName); err != nil {
+		if err := context.SaveUploadedFile(file, ServerPath+"uploads/"+path+"/"+newFileName); err != nil {
 			return "", err
 		}
 
-		if err := os.Remove("./" + oldFileName); err != nil {
+		if err := os.Remove(ServerPath + oldFileName); err != nil {
 			return "", err
 		}
 
