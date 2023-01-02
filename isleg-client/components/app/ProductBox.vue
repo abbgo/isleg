@@ -114,11 +114,11 @@
 import { Swiper, SwiperSlide } from 'vue-awesome-swiper'
 
 import { mapGetters } from 'vuex'
-import observer from '@/mixins/observer'
+// import observer from '@/mixins/observer'
 import translation from '@/mixins/translation'
 import { productAdd, productLike, getRefreshToken } from '@/api/user.api'
 export default {
-  mixins: [observer, translation],
+  mixins: [translation],
   components: {
     Swiper,
     SwiperSlide,

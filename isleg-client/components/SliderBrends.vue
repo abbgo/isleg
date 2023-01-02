@@ -48,10 +48,10 @@ export default {
   data() {
     return {
       swiperSmallOptions: {
-        slidesPerView: 3,
         spaceBetween: 25,
         speed: 1000,
         loop: true,
+        autoplayStopOnLast: false,
         keyboard: {
           enabled: true,
           onlyInViewport: true,
@@ -59,11 +59,17 @@ export default {
         },
         autoplay: {
           delay: 2000,
-          reverseDirection: true,
           disableOnInteraction: false,
-          pauseOnMouseEnter: true,
         },
         breakpoints: {
+          300: {
+            slidesPerView: 2,
+            spaceBetween: 10,
+          },
+          400: {
+            slidesPerView: 3,
+            spaceBetween: 10,
+          },
           600: {
             slidesPerView: 4,
           },
@@ -91,5 +97,16 @@ export default {
 <style scoped>
 .swiper-slide {
   background: url('../assets/img/isloading.svg') center no-repeat;
+  background-size: 150px;
+}
+@media (max-width: 700px) {
+  .swiper-slide {
+    background-size: 130px;
+  }
+}
+@media (max-width: 530px) {
+  .swiper-slide {
+    background-size: 100px;
+  }
 }
 </style>

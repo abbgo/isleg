@@ -49,7 +49,7 @@
         :imgURL="imgURL"
       ></the-header-nav>
     </div>
-
+    <div class="search__result"></div>
     <sign-up
       :isOpenSignUp="isOpenSignUp"
       :phone="phone"
@@ -227,5 +227,11 @@ export default {
       right: 20px;
     }
   }
+}
+.search__result {
+  position: absolute;
+  width: 100%;
+  height: 20px;
+  background-color: red;
 }
 </style>
