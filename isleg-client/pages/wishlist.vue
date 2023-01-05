@@ -8,7 +8,7 @@
         <span>Halanlarym</span>
       </div>
     </section>
-    <section class="product__categoty __container">
+    <section class="product__categoty">
       <div class="category__section">
         <Products
           v-if="productsWishList.length"

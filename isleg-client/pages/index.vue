@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="__container">
     <client-only>
       <LazySliderMain
         v-if="brends && brends.length"
@@ -7,7 +7,7 @@
         :brends="brends"
       />
     </client-only>
-    <section class="product__categoty __container">
+    <section class="product__categoty">
       <client-only>
         <ProductColumn
           v-for="productsCategory in productsCategories.filter(

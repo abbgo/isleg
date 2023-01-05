@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <section class="menu__filter __container">
+  <div class="__container">
+    <section class="menu__filter">
       <!-- <span @click="openOrdering"
 			><svg
 			  width="18"
@@ -82,7 +82,7 @@
 			</svg>
 		 </span> -->
     </section>
-    <section class="product__categoty __container">
+    <section class="product__categoty">
       <client-only
         ><div class="category__section">
           <Products :products="brendProducts && brendProducts.products" />

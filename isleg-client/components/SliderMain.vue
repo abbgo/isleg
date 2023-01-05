@@ -1,5 +1,5 @@
 <template>
-  <section class="slider __container">
+  <section class="slider">
     <swiper ref="mySwiper" :options="swiperOptions" class="big__slider">
       <swiper-slide v-for="brend in brends" :key="brend.id">
         <img :data-src="`${imgURL}/${brend.image}`" loading="lazy" alt="" />

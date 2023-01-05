@@ -258,7 +258,7 @@ export default {
         .basket__button {
           background-color: #fd5e29;
           border-radius: 50%;
-          padding: 5px;
+          padding: 7px;
           img {
             width: 22px;
             height: 22px;

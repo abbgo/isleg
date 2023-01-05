@@ -1,6 +1,6 @@
 <template>
   <div class="brends">
-    <div class="brends__container __container">
+    <div class="brends__container">
       <div>
         <swiper
           ref="mySwiperSmall"

@@ -2,9 +2,13 @@
   <header class="header">
     <div class="header__wrapper __container">
       <div class="header__container">
-        <!-- <div class="mobile__false"></div> -->
+        <div class="mobile__menu-burger" @click.stop="isBurgerMenu = true">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
         <the-header-logo :imgURL="imgURL" :logo="logo"></the-header-logo>
-        <div class="search__wrapper">
+        <div class="search__wrapper" :class="{ active: active }">
           <div class="serach">
             <span class="search__icon">
               <svg
@@ -29,9 +33,11 @@
             />
           </div>
         </div>
-        <div class="mobile__search-logo">
-          <img src="@/assets/img/mobile__search.svg" alt="" />
+        <div @click="active = !active" class="mobile__search-logo">
+          <img v-if="!active" src="@/assets/img/mobile__search.svg" alt="" />
+          <div v-else class="mobile__search-close"></div>
         </div>
+
         <the-header-items
           @openSignUp="openPopUp"
           :isProfile="isProfile"
@@ -49,7 +55,6 @@
         :imgURL="imgURL"
       ></the-header-nav>
     </div>
-    <div class="search__result"></div>
     <sign-up
       :isOpenSignUp="isOpenSignUp"
       :phone="phone"
@@ -75,6 +80,12 @@
       @closeRegisterPopUp="closeRegister"
       @registerPost="registerPost"
     ></register>
+    <the-menu-burger
+      v-if="isBurgerMenu"
+      :categories="categories"
+      :imgURL="imgURL"
+      @close="isBurgerMenu = false"
+    ></the-menu-burger>
   </header>
 </template>
 
@@ -88,6 +99,8 @@ export default {
     return {
       isOpenRegister: false,
       isProfile: false,
+      active: false,
+      isBurgerMenu: false,
     }
   },
   watch: {
@@ -225,6 +238,61 @@ export default {
       display: block;
       position: absolute;
       right: 20px;
+      width: 22px;
+      height: 22px;
+      img {
+        width: 100%;
+        height: 100%;
+      }
+    }
+    &-close {
+      width: 22px;
+      height: 22px;
+      position: relative;
+      &::after {
+        position: absolute;
+        content: '';
+        width: 100%;
+        height: 3px;
+        background: #fd5e29;
+        top: 50%;
+        transform: rotate(45deg);
+      }
+      &::before {
+        position: absolute;
+        content: '';
+        width: 100%;
+        height: 3px;
+        background: #fd5e29;
+        top: 50%;
+        transform: rotate(-45deg);
+      }
+    }
+  }
+}
+.mobile__menu {
+  &-burger {
+    position: absolute;
+    left: 20px;
+    width: 24px;
+    height: 15px;
+    cursor: pointer;
+    span {
+      width: 100%;
+      height: 3px;
+      border-radius: 1.5px;
+      position: absolute;
+      background-color: #fd5e29;
+      transition: 0.3s background-color;
+    }
+    span:nth-child(1) {
+      top: 0;
+    }
+    span:nth-child(2) {
+      top: calc(50% - 1.5px);
+    }
+    span:nth-child(3) {
+      top: calc(100% - 3px);
     }
   }
 }
