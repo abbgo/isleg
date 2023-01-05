@@ -277,6 +277,7 @@ export default {
     width: 24px;
     height: 15px;
     cursor: pointer;
+    display: none;
     span {
       width: 100%;
       height: 3px;
@@ -293,6 +294,9 @@ export default {
     }
     span:nth-child(3) {
       top: calc(100% - 3px);
+    }
+    @media (max-width: 950px) {
+      display: block;
     }
   }
 }
