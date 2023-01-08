@@ -179,7 +179,7 @@ func ValidateProductModel(productID, brendID, shopID, priceStr, oldPriceStr, amo
 	}
 
 	if shop_id == "" {
-		return []Images{}, MainImage{}, 0, 0, 0, 0, false, errors.New("brend not found")
+		return []Images{}, MainImage{}, 0, 0, 0, 0, false, errors.New("shop not found")
 	}
 
 	// validate brend_id
