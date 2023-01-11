@@ -4,6 +4,7 @@ import (
 	"errors"
 	"net/http"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 
@@ -21,7 +22,11 @@ type JWTClaim struct {
 
 func GenerateTokenForCustomer(phoneNumber, customerID string) (string, string, error) {
 
-	expirationTimeAccessToken := time.Now().Add(30 * time.Minute)
+	accessTokenTimeOut, err := strconv.Atoi(os.Getenv("ACCESS_TOKEN_TIMEOUT"))
+	if err != nil {
+		return "", "", err
+	}
+	expirationTimeAccessToken := time.Now().Add(time.Duration(accessTokenTimeOut) * time.Second)
 
 	claimsAccessToken := &JWTClaim{
 		PhoneNumber: phoneNumber,
@@ -36,7 +41,11 @@ func GenerateTokenForCustomer(phoneNumber, customerID string) (string, string, e
 		return "", "", nil
 	}
 
-	expirationTimeRefreshToken := time.Now().Add(12 * time.Hour)
+	refreshTokenTimeOut, err := strconv.Atoi(os.Getenv("REFRESH_TOKEN_TIMEOUT"))
+	if err != nil {
+		return "", "", err
+	}
+	expirationTimeRefreshToken := time.Now().Add(time.Duration(refreshTokenTimeOut) * time.Second)
 	claimsRefreshToken := &JWTClaim{
 		PhoneNumber: phoneNumber,
 		CustomerID:  customerID,

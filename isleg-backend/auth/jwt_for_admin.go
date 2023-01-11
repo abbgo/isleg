@@ -3,6 +3,8 @@ package auth
 import (
 	"errors"
 	"net/http"
+	"os"
+	"strconv"
 	"strings"
 	"time"
 
@@ -19,7 +21,11 @@ type JWTClaimForAdmin struct {
 
 func GenerateAccessTokenForAdmin(phoneNumber, adminID, adminType string) (string, string, error) {
 
-	expirationTimeAccessToken := time.Now().Add(30 * time.Minute)
+	accessTokenTimeOut, err := strconv.Atoi(os.Getenv("ACCESS_TOKEN_TIMEOUT"))
+	if err != nil {
+		return "", "", err
+	}
+	expirationTimeAccessToken := time.Now().Add(time.Duration(accessTokenTimeOut) * time.Second)
 
 	claimsAccessToken := &JWTClaimForAdmin{
 		PhoneNumber: phoneNumber,
@@ -35,7 +41,11 @@ func GenerateAccessTokenForAdmin(phoneNumber, adminID, adminType string) (string
 		return "", "", err
 	}
 
-	expirationTimeRefreshToken := time.Now().Add(12 * time.Hour)
+	refreshTokenTimeOut, err := strconv.Atoi(os.Getenv("REFRESH_TOKEN_TIMEOUT"))
+	if err != nil {
+		return "", "", err
+	}
+	expirationTimeRefreshToken := time.Now().Add(time.Duration(refreshTokenTimeOut) * time.Second)
 	claimsRefreshToken := &JWTClaimForAdmin{
 		PhoneNumber: phoneNumber,
 		AdminID:     adminID,
