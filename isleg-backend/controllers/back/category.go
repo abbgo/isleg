@@ -1521,7 +1521,7 @@ func GetOneCategoryWithProducts(c *gin.Context) {
 
 	offset := limit * (page - 1)
 
-	categoryID := c.Param("category_id")
+	categoryID := c.Param("id")
 
 	// get category where id equal categiryID
 	categoryRow, err := db.Query("SELECT c.id,c.image,t.name FROM categories c LEFT JOIN translation_category t ON c.id=t.category_id WHERE t.lang_id = $1 AND c.id = $2 AND c.deleted_at IS NULL AND t.deleted_at IS NULL", langID, categoryID)
