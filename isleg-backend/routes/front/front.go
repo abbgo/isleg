@@ -76,7 +76,7 @@ func FrontRoutes(front *gin.RouterGroup) {
 
 		// GetOneBrendWithProducts funksiya dil boyunca dine bir brendi
 		// ahli harytlary bilen pagination edip getiryar
-		frontRoutes.GET("brend/:brend_id/:limit/:page", backController.GetOneBrendWithProducts)
+		frontRoutes.GET("brend/:id/:limit/:page", backController.GetOneBrendWithProducts)
 
 		// GetOrderTime funksiya dil boyunca musderi ucin sargyt edilip bilinjek
 		// wagtlary getirip beryar

@@ -873,7 +873,7 @@ func GetOneBrendWithProducts(c *gin.Context) {
 
 	offset := limit * (page - 1)
 
-	brendID := c.Param("brend_id")
+	brendID := c.Param("id")
 
 	// get brend where id equal brendID
 	brendRow, err := db.Query("SELECT id,image,name FROM brends where id = $1", brendID)
