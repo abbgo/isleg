@@ -303,3 +303,176 @@ func Search(c *gin.Context) {
 	})
 
 }
+
+// func FilterAndSort(c *gin.Context) {
+
+// 	db, err := config.ConnDB()
+// 	if err != nil {
+// 		c.JSON(http.StatusBadRequest, gin.H{
+// 			"status":  false,
+// 			"message": err.Error(),
+// 		})
+// 		return
+// 	}
+// 	defer func() {
+// 		if err := db.Close(); err != nil {
+// 			c.JSON(http.StatusBadRequest, gin.H{
+// 				"status":  false,
+// 				"message": err.Error(),
+// 			})
+// 			return
+// 		}
+// 	}()
+
+// 	// GET DATA FROM ROUTE PARAMETER
+// 	langShortName := c.Param("lang")
+
+// 	// GET language id
+// 	langID, err := backController.GetLangID(langShortName)
+// 	if err != nil {
+// 		c.JSON(http.StatusBadRequest, gin.H{
+// 			"status":  false,
+// 			"message": err.Error(),
+// 		})
+// 		return
+// 	}
+
+// 	//get category_id from param
+// 	categoryID := c.Param("id")
+// 	if categoryID == "" {
+// 		c.JSON(http.StatusBadRequest, gin.H{
+// 			"status":  false,
+// 			"message": " category_id is required",
+// 		})
+// 		return
+// 	}
+
+// 	// get limit from param
+// 	limitStr := c.Param("limit")
+// 	if limitStr == "" {
+// 		c.JSON(http.StatusBadRequest, gin.H{
+// 			"status":  false,
+// 			"message": "limit is required",
+// 		})
+// 		return
+// 	}
+// 	limit, err := strconv.ParseUint(limitStr, 10, 64)
+// 	if err != nil {
+// 		c.JSON(http.StatusBadRequest, gin.H{
+// 			"status":  false,
+// 			"message": err.Error(),
+// 		})
+// 		return
+// 	}
+
+// 	// get page from param
+// 	pageStr := c.Param("page")
+// 	if pageStr == "" {
+// 		c.JSON(http.StatusBadRequest, gin.H{
+// 			"status":  false,
+// 			"message": "page is required",
+// 		})
+// 		return
+// 	}
+// 	page, err := strconv.ParseUint(pageStr, 10, 64)
+// 	if err != nil {
+// 		c.JSON(http.StatusBadRequest, gin.H{
+// 			"status":  false,
+// 			"message": err.Error(),
+// 		})
+// 		return
+// 	}
+
+// 	offset := limit * (page - 1)
+
+// 	priceSort := c.Query("price_sort")
+// 	if priceSort != "" {
+// 		if priceSort != "asc" || priceSort != "desc" {
+// 			c.JSON(http.StatusBadRequest, gin.H{
+// 				"status":  false,
+// 				"message": "price_sort is invalid",
+// 			})
+// 			return
+// 		}
+// 	}
+
+// 	var minPrice uint
+// 	minPriceStr := c.Query("min_price")
+// 	if minPriceStr != "" {
+// 		min_price, err := strconv.ParseUint(minPriceStr, 10, 32)
+// 		if err != nil {
+// 			c.JSON(http.StatusBadRequest, gin.H{
+// 				"status":  false,
+// 				"message": err.Error(),
+// 			})
+// 			return
+// 		}
+// 		minPrice = uint(min_price)
+// 	}
+
+// 	var maxPrice uint
+// 	maxPriceStr := c.Query("max_price")
+// 	if maxPriceStr != "" {
+// 		max_price, err := strconv.ParseUint(maxPriceStr, 10, 32)
+// 		if err != nil {
+// 			c.JSON(http.StatusBadRequest, gin.H{
+// 				"status":  false,
+// 				"message": err.Error(),
+// 			})
+// 			return
+// 		}
+// 		maxPrice = uint(max_price)
+// 	}
+
+// 	isDiscountStr := c.Query("is_discount")
+// 	isDiscount, err := strconv.ParseBool(isDiscountStr)
+// 	if err != nil {
+// 		c.JSON(http.StatusBadRequest, gin.H{
+// 			"status":  false,
+// 			"message": err.Error(),
+// 		})
+// 		return
+// 	}
+
+// 	brendID := c.Query("brend")
+// 	if brendID != "" {
+// 		row, err := db.Query("SELECT id FROM brends WHERE id = $1 AND deleted_at IS NULL", brendID)
+// 		if err != nil {
+// 			c.JSON(http.StatusBadRequest, gin.H{
+// 				"status":  false,
+// 				"message": err.Error(),
+// 			})
+// 			return
+// 		}
+// 		defer func() {
+// 			if err := row.Close(); err != nil {
+// 				c.JSON(http.StatusBadRequest, gin.H{
+// 					"status":  false,
+// 					"message": err.Error(),
+// 				})
+// 				return
+// 			}
+// 		}()
+
+// 		var brend_id string
+
+// 		for row.Next() {
+// 			if err := row.Scan(&brend_id); err != nil {
+// 				c.JSON(http.StatusBadRequest, gin.H{
+// 					"status":  false,
+// 					"message": err.Error(),
+// 				})
+// 				return
+// 			}
+// 		}
+
+// 		if brend_id == "" {
+// 			c.JSON(http.StatusBadRequest, gin.H{
+// 				"status":  false,
+// 				"message": "brend not found",
+// 			})
+// 			return
+// 		}
+// 	}
+
+// }

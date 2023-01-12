@@ -86,6 +86,10 @@ func FrontRoutes(front *gin.RouterGroup) {
 		// getirip beryar
 		frontRoutes.POST("search/:limit/:page", frontController.Search)
 
+		// FilterAndSort funksiya dil boyunca tertiplenen we filter edilen harytlary pagination edip
+		// getirip beryar
+		// frontRoutes.GET("category/:id/filter-and-sort/:limit/:page", frontController.FilterAndSort)
+
 		// GetTranslationMyInformationPageByLangID funksiya dil boyunca musderinin maglumatlarym
 		// sahypasynyn terjimesinin   getirip beryar
 		frontRoutes.GET("translation-my-information-page", backController.GetTranslationMyInformationPageByLangID)
