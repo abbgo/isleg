@@ -20,7 +20,7 @@ func MultipartFileUpload(nameUploadedFile, path string, context *gin.Context) ([
 
 		extension := filepath.Ext(v.Filename)
 		//validate image
-		if extension != ".jpg" && extension != ".jpeg" && extension != ".png" && extension != ".gif" {
+		if extension != ".jpg" && extension != ".JPG" && extension != ".jpeg" && extension != ".JPEG" && extension != ".png" && extension != ".PNG" && extension != ".gif" && extension != ".GIF" && extension != ".svg" && extension != ".SVG" && extension != ".WEBP" && extension != ".webp" {
 			return []string{}, errors.New("the file must be an image")
 		}
 		fileName := uuid.New().String() + extension
@@ -47,7 +47,7 @@ func FileUpload(fileName, path string, context *gin.Context) (string, error) {
 	extensionFile := filepath.Ext(file.Filename)
 
 	// VALIDATE IMAGE
-	if extensionFile != ".jpg" && extensionFile != ".jpeg" && extensionFile != ".png" && extensionFile != ".gif" {
+	if extensionFile != ".jpg" && extensionFile != ".JPG" && extensionFile != ".jpeg" && extensionFile != ".JPEG" && extensionFile != ".png" && extensionFile != ".PNG" && extensionFile != ".gif" && extensionFile != ".GIF" && extensionFile != ".svg" && extensionFile != ".SVG" && extensionFile != ".WEBP" && extensionFile != ".webp" {
 		return "", errors.New("the file must be an image")
 	}
 
@@ -76,7 +76,7 @@ func FileUploadForUpdate(fileName, path, oldFileName string, context *gin.Contex
 		extensionFile := filepath.Ext(file.Filename)
 
 		// VALIDATE IMAGE
-		if extensionFile != ".jpg" && extensionFile != ".jpeg" && extensionFile != ".png" && extensionFile != ".gif" {
+		if extensionFile != ".jpg" && extensionFile != ".JPG" && extensionFile != ".jpeg" && extensionFile != ".JPEG" && extensionFile != ".png" && extensionFile != ".PNG" && extensionFile != ".gif" && extensionFile != ".GIF" && extensionFile != ".svg" && extensionFile != ".SVG" && extensionFile != ".WEBP" && extensionFile != ".webp" {
 			return "", errors.New("the file must be an image")
 		}
 
