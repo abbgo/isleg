@@ -142,8 +142,21 @@ func CreateProduct(c *gin.Context) {
 		return
 	}
 
+	var brend_id, shop_id interface{}
+	if brendID != "" {
+		brend_id = brendID
+	} else {
+		brend_id = nil
+	}
+
+	if shopID != "" {
+		shop_id = shopID
+	} else {
+		shop_id = nil
+	}
+
 	// create product
-	resultProducts, err := db.Query("INSERT INTO products (brend_id,price,old_price,amount,limit_amount,is_new,shop_id) VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING id", brendID, price, oldPrice, amount, limitAmount, isNew, shopID)
+	resultProducts, err := db.Query("INSERT INTO products (brend_id,price,old_price,amount,limit_amount,is_new,shop_id) VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING id", brend_id, price, oldPrice, amount, limitAmount, isNew, shop_id)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{
 			"status":  false,
@@ -468,7 +481,20 @@ func UpdateProductByID(c *gin.Context) {
 
 	}
 
-	resultProducts, err := db.Query("UPDATE products SET brend_id = $1 , price = $2 , old_price = $3, amount = $4, limit_amount = $5 , is_new = $6, shop_id = $8 WHERE id = $7", brendID, price, oldPrice, amount, limitAmount, isNew, ID, shopID)
+	var brend_id, shop_id interface{}
+	if brendID != "" {
+		brend_id = brendID
+	} else {
+		brend_id = nil
+	}
+
+	if shopID != "" {
+		shop_id = shopID
+	} else {
+		shop_id = nil
+	}
+
+	resultProducts, err := db.Query("UPDATE products SET brend_id = $1 , price = $2 , old_price = $3, amount = $4, limit_amount = $5 , is_new = $6, shop_id = $8 WHERE id = $7", brend_id, price, oldPrice, amount, limitAmount, isNew, ID, shop_id)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,

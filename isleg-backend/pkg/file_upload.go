@@ -25,7 +25,7 @@ func MultipartFileUpload(nameUploadedFile, path string, context *gin.Context) ([
 		}
 		fileName := uuid.New().String() + extension
 
-		if err := context.SaveUploadedFile(v, ServerPath+"/uploads/"+path+"/"+fileName); err != nil {
+		if err := context.SaveUploadedFile(v, ServerPath+"uploads/"+path+"/"+fileName); err != nil {
 			return []string{}, err
 		}
 
