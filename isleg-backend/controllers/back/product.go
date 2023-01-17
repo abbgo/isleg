@@ -417,7 +417,7 @@ func UpdateProductByID(c *gin.Context) {
 		for _, v := range smallFiles {
 			extension := filepath.Ext(v.Filename)
 			//validate image
-			if extension != ".jpg" && extension != ".jpeg" && extension != ".png" && extension != ".gif" {
+			if extension != ".jpg" && extension != ".JPG" && extension != ".jpeg" && extension != ".JPEG" && extension != ".png" && extension != ".PNG" && extension != ".gif" && extension != ".GIF" && extension != ".svg" && extension != ".SVG" && extension != ".WEBP" && extension != ".webp" {
 				c.JSON(http.StatusBadRequest, gin.H{
 					"status":  false,
 					"message": "the file must be an image.",
@@ -432,7 +432,7 @@ func UpdateProductByID(c *gin.Context) {
 		for _, v := range largeFiles {
 			extension := filepath.Ext(v.Filename)
 			//validate image
-			if extension != ".jpg" && extension != ".jpeg" && extension != ".png" && extension != ".gif" {
+			if extension != ".jpg" && extension != ".JPG" && extension != ".jpeg" && extension != ".JPEG" && extension != ".png" && extension != ".PNG" && extension != ".gif" && extension != ".GIF" && extension != ".svg" && extension != ".SVG" && extension != ".WEBP" && extension != ".webp" {
 				c.JSON(http.StatusBadRequest, gin.H{
 					"status":  false,
 					"message": "the file must be an image.",
