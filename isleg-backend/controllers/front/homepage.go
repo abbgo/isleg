@@ -331,7 +331,7 @@ func GetHomePageCategories(c *gin.Context) {
 	var home_page_categories []HomePageCategory
 
 	for _, v := range homePageCategories {
-		if len(v.Products) == 0 {
+		if len(v.Products) != 0 {
 			home_page_categories = append(home_page_categories, v)
 		}
 	}
