@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"database/sql"
 	"net/http"
 
 	"github/abbgo/isleg/isleg-backend/config"
@@ -11,28 +12,28 @@ import (
 )
 
 type HomePageCategory struct {
-	ID       string    `json:"id"`
-	Name     string    `json:"name"`
-	Products []Product `json:"products"`
+	ID       string    `json:"id,omitempty"`
+	Name     string    `json:"name,omitempty"`
+	Products []Product `json:"products,omitempty"`
 }
 
 type Product struct {
-	ID          string           `json:"id"`
-	Price       float64          `json:"price"`
-	OldPrice    float64          `json:"old_price"`
-	MainImage   models.MainImage `json:"main_image"`
-	Images      []models.Images  `json:"images"`
-	Brend       Brend            `json:"brend"`
-	LimitAmount int              `json:"limit_amount"`
-	IsNew       bool             `json:"is_new"`
-	Amount      int              `json:"amount"`
-	// Translation models.TranslationProduct `json:"translation"`
-	Translations []map[string]models.TranslationProduct `json:"translations"`
+	ID          string           `json:"id,omitempty"`
+	Price       float64          `json:"price,omitempty"`
+	OldPrice    float64          `json:"old_price,omitempty"`
+	MainImage   models.MainImage `json:"main_image,omitempty"`
+	Images      []models.Images  `json:"images,omitempty"`
+	Brend       Brend            `json:"brend,omitempty"`
+	LimitAmount int              `json:"limit_amount,omitempty"`
+	IsNew       bool             `json:"is_new,omitempty"`
+	Amount      int              `json:"amount,omitempty"`
+	// Translation models.TranslationProduct `json:"translation,omitempty"`
+	Translations []map[string]models.TranslationProduct `json:"translations,omitempty"`
 }
 
 type Brend struct {
-	ID   string `json:"id"`
-	Name string `json:"name"`
+	ID   sql.NullString `json:"id,omitempty"`
+	Name sql.NullString `json:"name,omitempty"`
 }
 
 // ahli brendlerin suratlaryny we id - lerini getiryar
