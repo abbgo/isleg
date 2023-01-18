@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"database/sql"
 	"github/abbgo/isleg/isleg-backend/config"
 	"github/abbgo/isleg/isleg-backend/models"
 	"github/abbgo/isleg/isleg-backend/pkg"
@@ -15,48 +16,48 @@ import (
 )
 
 type ResultCategory struct {
-	ID            string          `json:"id"`
-	Image         string          `json:"image"`
-	Name          string          `json:"name"`
-	ResultCategor []ResultCategor `json:"child_category"`
+	ID            string          `json:"id,omitempty"`
+	Image         string          `json:"image,omitempty"`
+	Name          string          `json:"name,omitempty"`
+	ResultCategor []ResultCategor `json:"child_category,omitempty"`
 }
 
 type ResultCategor struct {
-	ID           string         `json:"id"`
-	Name         string         `json:"name"`
-	ResultCatego []ResultCatego `json:"child_category"`
+	ID           string         `json:"id,omitempty"`
+	Name         string         `json:"name,omitempty"`
+	ResultCatego []ResultCatego `json:"child_category,omitempty"`
 }
 
 type ResultCatego struct {
-	ID   string `json:"id"`
-	Name string `json:"name"`
+	ID   string `json:"id,omitempty"`
+	Name string `json:"name,omitempty"`
 }
 
 type Category struct {
-	ID       string    `json:"id"`
-	Name     string    `json:"name"`
-	Image    string    `json:"image"`
-	Products []Product `json:"products"`
+	ID       string    `json:"id,omitempty"`
+	Name     string    `json:"name,omitempty"`
+	Image    string    `json:"image,omitempty"`
+	Products []Product `json:"products,omitempty"`
 }
 
 type Product struct {
-	ID          string           `json:"id"`
-	Price       float64          `json:"price"`
-	OldPrice    float64          `json:"old_price"`
-	Percentage  float64          `json:"percentage"`
-	MainImage   models.MainImage `json:"main_image"`
-	Images      []models.Images  `json:"images"`
-	Brend       Brend            `json:"brend"`
-	LimitAmount int              `json:"limit_amount"`
-	Amount      int              `json:"amount"`
-	IsNew       bool             `json:"is_new"`
+	ID          string           `json:"id,omitempty"`
+	Price       float64          `json:"price,omitempty"`
+	OldPrice    float64          `json:"old_price,omitempty"`
+	Percentage  float64          `json:"percentage,omitempty"`
+	MainImage   models.MainImage `json:"main_image,omitempty"`
+	Images      []models.Images  `json:"images,omitempty"`
+	Brend       Brend            `json:"brend,omitempty"`
+	LimitAmount int              `json:"limit_amount,omitempty"`
+	Amount      int              `json:"amount,omitempty"`
+	IsNew       bool             `json:"is_new,omitempty"`
 	// Translation models.TranslationProduct `json:"translation"`
 	Translations []map[string]models.TranslationProduct `json:"translations"`
 }
 
 type Brend struct {
-	ID   string `json:"id"`
-	Name string `json:"name"`
+	ID   sql.NullString `json:"id,omitempty"`
+	Name sql.NullString `json:"name,omitempty"`
 }
 
 func CreateCategory(c *gin.Context) {
