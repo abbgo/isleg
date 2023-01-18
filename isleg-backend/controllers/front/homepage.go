@@ -328,9 +328,17 @@ func GetHomePageCategories(c *gin.Context) {
 		homePageCategories = append(homePageCategories, homePageCategory)
 	}
 
+	var home_page_categories []HomePageCategory
+
+	for _, v := range homePageCategories {
+		if len(v.Products) == 0 {
+			home_page_categories = append(home_page_categories, v)
+		}
+	}
+
 	c.JSON(http.StatusOK, gin.H{
 		"status":              true,
-		"homepage_categories": homePageCategories,
+		"homepage_categories": home_page_categories,
 	})
 
 }
