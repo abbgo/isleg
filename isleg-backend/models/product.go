@@ -1,6 +1,7 @@
 package models
 
 import (
+	"database/sql"
 	"errors"
 	"github/abbgo/isleg/isleg-backend/config"
 	"strconv"
@@ -8,8 +9,8 @@ import (
 
 type Product struct {
 	ID                 string               `json:"id,omitempty"`
-	BrendID            string               `json:"brend_id,omitempty"`
-	ShopID             string               `json:"shop_id,omitempty"`
+	BrendID            sql.NullString       `json:"brend_id,omitempty"`
+	ShopID             sql.NullString       `json:"shop_id,omitempty"`
 	Price              float64              `json:"price,omitempty"`
 	OldPrice           float64              `json:"old_price"`
 	Percentage         float64              `json:"percentage"`

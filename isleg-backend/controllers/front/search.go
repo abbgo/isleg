@@ -154,7 +154,7 @@ func Search(c *gin.Context) {
 			product.Percentage = 0
 		}
 
-		rowMainImage, err := db.Query("SELECT small,medium,large FROM main_image WHERE deleted_at IS NULL AND product_id = $1", product.ID)
+		rowMainImage, err := db.Query("SELECT image FROM main_image WHERE deleted_at IS NULL AND product_id = $1", product.ID)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
@@ -173,7 +173,7 @@ func Search(c *gin.Context) {
 		}()
 
 		for rowMainImage.Next() {
-			if err := rowMainImage.Scan(&product.MainImage.Small, &product.MainImage.Medium, &product.MainImage.Large); err != nil {
+			if err := rowMainImage.Scan(&product.MainImage.Image); err != nil {
 				c.JSON(http.StatusBadRequest, gin.H{
 					"status":  false,
 					"message": err.Error(),
@@ -182,7 +182,7 @@ func Search(c *gin.Context) {
 			}
 		}
 
-		rowsImages, err := db.Query("SELECT small,large FROM images WHERE deleted_at IS NULL AND product_id = $1", product.ID)
+		rowsImages, err := db.Query("SELECT image FROM images WHERE deleted_at IS NULL AND product_id = $1", product.ID)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
@@ -205,7 +205,7 @@ func Search(c *gin.Context) {
 		for rowsImages.Next() {
 			var image models.Images
 
-			if err := rowsImages.Scan(&image.Small, &image.Large); err != nil {
+			if err := rowsImages.Scan(&image.Image); err != nil {
 				c.JSON(http.StatusBadRequest, gin.H{
 					"status":  false,
 					"message": err.Error(),

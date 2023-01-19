@@ -571,7 +571,7 @@ func DeletePermanentlyShopByID(c *gin.Context) {
 		return
 	}
 
-	rowsMainImage, err := db.Query("SELECT m.small,m.medium,m.large FROM main_image m INNER JOIN products p ON p.id = m.product_id WHERE p.shop_id = $1", ID)
+	rowsMainImage, err := db.Query("SELECT m.image FROM main_image m INNER JOIN products p ON p.id = m.product_id WHERE p.shop_id = $1", ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -594,7 +594,7 @@ func DeletePermanentlyShopByID(c *gin.Context) {
 	for rowsMainImage.Next() {
 		var mainImage models.MainImage
 
-		if err := rowsMainImage.Scan(&mainImage.Small, &mainImage.Medium, &mainImage.Large); err != nil {
+		if err := rowsMainImage.Scan(&mainImage.Image); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
@@ -606,21 +606,7 @@ func DeletePermanentlyShopByID(c *gin.Context) {
 	}
 
 	for _, v := range mainImages {
-		if err := os.Remove(pkg.ServerPath + v.Small); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-		if err := os.Remove(pkg.ServerPath + v.Medium); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-		if err := os.Remove(pkg.ServerPath + v.Large); err != nil {
+		if err := os.Remove(pkg.ServerPath + v.Image); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
@@ -629,7 +615,7 @@ func DeletePermanentlyShopByID(c *gin.Context) {
 		}
 	}
 
-	rowsImages, err := db.Query("SELECT i.small,i.large FROM images i INNER JOIN products p ON p.id = i.product_id WHERE p.shop_id = $1", ID)
+	rowsImages, err := db.Query("SELECT i.image FROM images i INNER JOIN products p ON p.id = i.product_id WHERE p.shop_id = $1", ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -652,7 +638,7 @@ func DeletePermanentlyShopByID(c *gin.Context) {
 	for rowsImages.Next() {
 		var image models.Images
 
-		if err := rowsImages.Scan(&image.Small, &image.Large); err != nil {
+		if err := rowsImages.Scan(&image.Image); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
@@ -664,15 +650,7 @@ func DeletePermanentlyShopByID(c *gin.Context) {
 	}
 
 	for _, v := range images {
-		if err := os.Remove(pkg.ServerPath + v.Small); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-
-		if err := os.Remove(pkg.ServerPath + v.Large); err != nil {
+		if err := os.Remove(pkg.ServerPath + v.Image); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),

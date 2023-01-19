@@ -464,7 +464,7 @@ func GetLikes(customerID string) ([]LikeProduct, error) {
 			product.Percentage = 0
 		}
 
-		rowMainImage, err := db.Query("SELECT small,medium,large FROM main_image WHERE product_id = $1 AND deleted_at IS NULL", product.ID)
+		rowMainImage, err := db.Query("SELECT image FROM main_image WHERE product_id = $1 AND deleted_at IS NULL", product.ID)
 		if err != nil {
 			return []LikeProduct{}, err
 		}
@@ -473,14 +473,14 @@ func GetLikes(customerID string) ([]LikeProduct, error) {
 		var mainImage models.MainImage
 
 		for rowMainImage.Next() {
-			if err := rowMainImage.Scan(&mainImage.Small, &mainImage.Medium, &mainImage.Large); err != nil {
+			if err := rowMainImage.Scan(&mainImage.Image); err != nil {
 				return []LikeProduct{}, err
 			}
 		}
 
 		product.MainImage = mainImage
 
-		rowsImages, err := db.Query("SELECT small,large FROM images WHERE product_id = $1 AND deleted_at IS NULL", product.ID)
+		rowsImages, err := db.Query("SELECT image FROM images WHERE product_id = $1 AND deleted_at IS NULL", product.ID)
 		if err != nil {
 			return []LikeProduct{}, err
 		}
@@ -491,7 +491,7 @@ func GetLikes(customerID string) ([]LikeProduct, error) {
 		for rowsImages.Next() {
 			var image models.Images
 
-			if err := rowsImages.Scan(&image.Small, &image.Large); err != nil {
+			if err := rowsImages.Scan(&image.Image); err != nil {
 				return []LikeProduct{}, err
 			}
 
@@ -955,7 +955,7 @@ func GetLikedOrOrderedProductsWithoutCustomer(c *gin.Context) {
 			product.Percentage = 0
 		}
 
-		rowMainImage, err := db.Query("SELECT small,medium,large FROM main_image WHERE product_id = $1 AND deleted_at IS NULL", product.ID)
+		rowMainImage, err := db.Query("SELECT image FROM main_image WHERE product_id = $1 AND deleted_at IS NULL", product.ID)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
@@ -976,7 +976,7 @@ func GetLikedOrOrderedProductsWithoutCustomer(c *gin.Context) {
 		var mainImage models.MainImage
 
 		for rowMainImage.Next() {
-			if err := rowMainImage.Scan(&mainImage.Small, &mainImage.Medium, &mainImage.Large); err != nil {
+			if err := rowMainImage.Scan(&mainImage.Image); err != nil {
 				c.JSON(http.StatusBadRequest, gin.H{
 					"status":  false,
 					"message": err.Error(),
@@ -987,7 +987,7 @@ func GetLikedOrOrderedProductsWithoutCustomer(c *gin.Context) {
 
 		product.MainImage = mainImage
 
-		rowsImages, err := db.Query("SELECT small,large FROM images WHERE product_id = $1 AND deleted_at IS NULL", product.ID)
+		rowsImages, err := db.Query("SELECT image FROM images WHERE product_id = $1 AND deleted_at IS NULL", product.ID)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
@@ -1010,7 +1010,7 @@ func GetLikedOrOrderedProductsWithoutCustomer(c *gin.Context) {
 		for rowsImages.Next() {
 			var image models.Images
 
-			if err := rowsImages.Scan(&image.Small, &image.Large); err != nil {
+			if err := rowsImages.Scan(&image.Image); err != nil {
 				c.JSON(http.StatusBadRequest, gin.H{
 					"status":  false,
 					"message": err.Error(),

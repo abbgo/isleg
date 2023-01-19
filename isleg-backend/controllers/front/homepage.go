@@ -147,7 +147,7 @@ func GetHomePageCategories(c *gin.Context) {
 				return
 			}
 
-			rowMainImage, err := db.Query("SELECT small,medium,large FROM main_image WHERE product_id = $1", product.ID)
+			rowMainImage, err := db.Query("SELECT image FROM main_image WHERE product_id = $1", product.ID)
 			if err != nil {
 				c.JSON(http.StatusBadRequest, gin.H{
 					"status":  false,
@@ -168,7 +168,7 @@ func GetHomePageCategories(c *gin.Context) {
 			var mainImage models.MainImage
 
 			for rowMainImage.Next() {
-				if err := rowMainImage.Scan(&mainImage.Small, &mainImage.Medium, &mainImage.Large); err != nil {
+				if err := rowMainImage.Scan(&mainImage.Image); err != nil {
 					c.JSON(http.StatusBadRequest, gin.H{
 						"status":  false,
 						"message": err.Error(),
@@ -255,7 +255,7 @@ func GetHomePageCategories(c *gin.Context) {
 
 			}
 
-			rowsImages, err := db.Query("SELECT small,large FROM images WHERE product_id = $1", product.ID)
+			rowsImages, err := db.Query("SELECT image FROM images WHERE product_id = $1", product.ID)
 			if err != nil {
 				c.JSON(http.StatusBadRequest, gin.H{
 					"status":  false,
@@ -278,7 +278,7 @@ func GetHomePageCategories(c *gin.Context) {
 			for rowsImages.Next() {
 				var image models.Images
 
-				if err := rowsImages.Scan(&image.Small, &image.Large); err != nil {
+				if err := rowsImages.Scan(&image.Image); err != nil {
 					c.JSON(http.StatusBadRequest, gin.H{
 						"status":  false,
 						"message": err.Error(),

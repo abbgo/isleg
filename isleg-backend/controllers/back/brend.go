@@ -494,60 +494,6 @@ func RestoreBrendByID(c *gin.Context) {
 		}
 	}()
 
-	// resultBrends, err := db.Query("UPDATE brends SET deleted_at = NULL WHERE id = $1", ID)
-	// if err != nil {
-	// 	c.JSON(http.StatusBadRequest, gin.H{
-	// 		"status":  false,
-	// 		"message": err.Error(),
-	// 	})
-	// 	return
-	// }
-	// defer func() {
-	// 	if err := resultBrends.Close(); err != nil {
-	// 		c.JSON(http.StatusBadRequest, gin.H{
-	// 			"status":  false,
-	// 			"message": err.Error(),
-	// 		})
-	// 		return
-	// 	}
-	// }()
-
-	// resultProducts, err := db.Query("UPDATE products SET deleted_at = NULL WHERE brend_id = $1", ID)
-	// if err != nil {
-	// 	c.JSON(http.StatusBadRequest, gin.H{
-	// 		"status":  false,
-	// 		"message": err.Error(),
-	// 	})
-	// 	return
-	// }
-	// defer func() {
-	// 	if err := resultProducts.Close(); err != nil {
-	// 		c.JSON(http.StatusBadRequest, gin.H{
-	// 			"status":  false,
-	// 			"message": err.Error(),
-	// 		})
-	// 		return
-	// 	}
-	// }()
-
-	// resultTRProduct, err := db.Query("UPDATE translation_product SET deleted_at = NULL FROM products WHERE translation_product.product_id=products.id AND products.brend_id = $1", ID)
-	// if err != nil {
-	// 	c.JSON(http.StatusBadRequest, gin.H{
-	// 		"status":  false,
-	// 		"message": err.Error(),
-	// 	})
-	// 	return
-	// }
-	// defer func() {
-	// 	if err := resultTRProduct.Close(); err != nil {
-	// 		c.JSON(http.StatusBadRequest, gin.H{
-	// 			"status":  false,
-	// 			"message": err.Error(),
-	// 		})
-	// 		return
-	// 	}
-	// }()
-
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
 		"message": "data successfully restored",
@@ -626,7 +572,7 @@ func DeletePermanentlyBrendByID(c *gin.Context) {
 		return
 	}
 
-	rowsMainImage, err := db.Query("SELECT m.small,m.medium,m.large FROM main_image m INNER JOIN products p ON p.id = m.product_id WHERE p.brend_id = $1", ID)
+	rowsMainImage, err := db.Query("SELECT m.image FROM main_image m INNER JOIN products p ON p.id = m.product_id WHERE p.brend_id = $1", ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -649,7 +595,7 @@ func DeletePermanentlyBrendByID(c *gin.Context) {
 	for rowsMainImage.Next() {
 		var mainImage models.MainImage
 
-		if err := rowsMainImage.Scan(&mainImage.Small, &mainImage.Medium, &mainImage.Large); err != nil {
+		if err := rowsMainImage.Scan(&mainImage.Image); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
@@ -661,23 +607,7 @@ func DeletePermanentlyBrendByID(c *gin.Context) {
 	}
 
 	for _, v := range mainImages {
-		if err := os.Remove(pkg.ServerPath + v.Small); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-
-		if err := os.Remove(pkg.ServerPath + v.Medium); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-
-		if err := os.Remove(pkg.ServerPath + v.Large); err != nil {
+		if err := os.Remove(pkg.ServerPath + v.Image); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
@@ -686,7 +616,7 @@ func DeletePermanentlyBrendByID(c *gin.Context) {
 		}
 	}
 
-	rowsImages, err := db.Query("SELECT i.small,i.large FROM images i INNER JOIN products p ON p.id = i.product_id WHERE p.brend_id = $1", ID)
+	rowsImages, err := db.Query("SELECT i.image FROM images i INNER JOIN products p ON p.id = i.product_id WHERE p.brend_id = $1", ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -709,7 +639,7 @@ func DeletePermanentlyBrendByID(c *gin.Context) {
 	for rowsImages.Next() {
 		var image models.Images
 
-		if err := rowsImages.Scan(&image.Small, &image.Large); err != nil {
+		if err := rowsImages.Scan(&image.Image); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
@@ -721,15 +651,7 @@ func DeletePermanentlyBrendByID(c *gin.Context) {
 	}
 
 	for _, v := range images {
-		if err := os.Remove(pkg.ServerPath + v.Small); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-
-		if err := os.Remove(pkg.ServerPath + v.Large); err != nil {
+		if err := os.Remove(pkg.ServerPath + v.Image); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
@@ -984,7 +906,7 @@ func GetOneBrendWithProducts(c *gin.Context) {
 
 			if product.Amount != 0 {
 
-				rowMainImage, err := db.Query("SELECT small,medium,large FROM main_image WHERE product_id = $1", product.ID)
+				rowMainImage, err := db.Query("SELECT image FROM main_image WHERE product_id = $1", product.ID)
 				if err != nil {
 					c.JSON(http.StatusBadRequest, gin.H{
 						"status":  false,
@@ -1005,7 +927,7 @@ func GetOneBrendWithProducts(c *gin.Context) {
 				var mainImage models.MainImage
 
 				for rowMainImage.Next() {
-					if err := rowMainImage.Scan(&mainImage.Small, &mainImage.Medium, &mainImage.Large); err != nil {
+					if err := rowMainImage.Scan(&mainImage.Image); err != nil {
 						c.JSON(http.StatusBadRequest, gin.H{
 							"status":  false,
 							"message": err.Error(),
@@ -1090,7 +1012,7 @@ func GetOneBrendWithProducts(c *gin.Context) {
 
 				product.MainImage = mainImage
 
-				rowsImages, err := db.Query("SELECT small,large FROM images WHERE product_id = $1", product.ID)
+				rowsImages, err := db.Query("SELECT image FROM images WHERE product_id = $1", product.ID)
 				if err != nil {
 					c.JSON(http.StatusBadRequest, gin.H{
 						"status":  false,
@@ -1113,7 +1035,7 @@ func GetOneBrendWithProducts(c *gin.Context) {
 				for rowsImages.Next() {
 					var image models.Images
 
-					if err := rowsImages.Scan(&image.Small, &image.Large); err != nil {
+					if err := rowsImages.Scan(&image.Image); err != nil {
 						c.JSON(http.StatusBadRequest, gin.H{
 							"status":  false,
 							"message": err.Error(),

@@ -87,25 +87,7 @@ func CreateProduct(c *gin.Context) {
 		return
 	}
 
-	mainSamll, err := pkg.FileUpload("main_small", "product", c)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-
-	mainMedium, err := pkg.FileUpload("main_medium", "product", c)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-
-	mainLarge, err := pkg.FileUpload("main_large", "product", c)
+	mainImage, err := pkg.FileUpload("main_image", "product", c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -115,29 +97,11 @@ func CreateProduct(c *gin.Context) {
 	}
 
 	// upload small images of product
-	smalls, err := pkg.MultipartFileUpload("small", "product", c)
+	images, err := pkg.MultipartFileUpload("image", "product", c)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{
 			"status":  false,
 			"message": err.Error(),
-		})
-		return
-	}
-
-	// upload large images of product
-	larges, err := pkg.MultipartFileUpload("large", "product", c)
-	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-
-	if len(smalls) != len(larges) {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": "images are incomplete",
 		})
 		return
 	}
@@ -186,7 +150,7 @@ func CreateProduct(c *gin.Context) {
 		}
 	}
 
-	resultMainImage, err := db.Query("INSERT INTO main_image (product_id,small,medium,large) VALUES ($1,$2,$3,$4)", productID, mainSamll, mainMedium, mainLarge)
+	resultMainImage, err := db.Query("INSERT INTO main_image (product_id,image) VALUES ($1,$2)", productID, mainImage)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -205,7 +169,7 @@ func CreateProduct(c *gin.Context) {
 	}()
 
 	// create images of product
-	resultImages, err := db.Query("INSERT INTO images (product_id,small,large) VALUES ($1,unnest($2::varchar[]),unnest($3::varchar[]))", productID, pq.Array(smalls), pq.Array(larges))
+	resultImages, err := db.Query("INSERT INTO images (product_id,image) VALUES ($1,unnest($2::varchar[]))", productID, pq.Array(images))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -305,7 +269,7 @@ func UpdateProductByID(c *gin.Context) {
 	categories, _ := c.GetPostFormArray("category_id")
 
 	// validate data
-	images, mainImage, price, oldPrice, amount, limitAmount, isNew, nil := models.ValidateProductModel(ID, brendID, shopID, priceStr, oldPriceStr, amountStr, limitAmountStr, isNewStr, categories)
+	images, mainImage, price, oldPrice, amount, limitAmount, isNew, err := models.ValidateProductModel(ID, brendID, shopID, priceStr, oldPriceStr, amountStr, limitAmountStr, isNewStr, categories)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -345,7 +309,7 @@ func UpdateProductByID(c *gin.Context) {
 	}
 
 	// update small main image of product if exists
-	mainSmall, err := pkg.FileUploadForUpdate("main_small", "product", mainImage.Small, c)
+	mainSmall, err := pkg.FileUploadForUpdate("main_image", "product", mainImage.Image, c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -354,59 +318,19 @@ func UpdateProductByID(c *gin.Context) {
 		return
 	}
 
-	// update medium main image of product if exists
-	mainMedium, err := pkg.FileUploadForUpdate("main_medium", "product", mainImage.Medium, c)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-
-	// update large main image of product if exists
-	mainLarge, err := pkg.FileUploadForUpdate("main_large", "product", mainImage.Large, c)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-
-	smallFiles := c.Request.MultipartForm.File["small"]
+	smallFiles := c.Request.MultipartForm.File["image"]
 	var smalls []string
-
-	largeFiles := c.Request.MultipartForm.File["large"]
-	var larges []string
-
-	if len(smallFiles) != len(largeFiles) {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": "images are incomplete",
-		})
-		return
-	}
 
 	if len(smallFiles) != 0 {
 
 		for _, v := range images {
-
-			if err := os.Remove(pkg.ServerPath + v.Small); err != nil {
+			if err := os.Remove(pkg.ServerPath + v.Image); err != nil {
 				c.JSON(http.StatusBadRequest, gin.H{
 					"status":  false,
 					"message": err.Error(),
 				})
 				return
 			}
-			if err := os.Remove(pkg.ServerPath + v.Large); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
-				return
-			}
-
 		}
 
 		resultImages, err := db.Query("DELETE FROM images WHERE product_id = $1", ID)
@@ -442,24 +366,9 @@ func UpdateProductByID(c *gin.Context) {
 			smalls = append(smalls, "uploads/product/"+fileName)
 		}
 
-		for _, v := range largeFiles {
-			extension := filepath.Ext(v.Filename)
-			//validate image
-			if extension != ".jpg" && extension != ".JPG" && extension != ".jpeg" && extension != ".JPEG" && extension != ".png" && extension != ".PNG" && extension != ".gif" && extension != ".GIF" && extension != ".svg" && extension != ".SVG" && extension != ".WEBP" && extension != ".webp" {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": "the file must be an image.",
-				})
-				return
-			}
-			fileName := uuid.New().String() + extension
-			c.SaveUploadedFile(v, pkg.ServerPath+"uploads/product/"+fileName)
-			larges = append(larges, "uploads/product/"+fileName)
-		}
-
 		for i := 0; i < len(smalls); i++ {
 
-			resultImages, err := db.Query("INSERT INTO images (product_id,small,large) VALUES ($1,$2,$3)", ID, smalls[i], larges[i])
+			resultImages, err := db.Query("INSERT INTO images (product_id,image) VALUES ($1,$2)", ID, smalls[i])
 			if err != nil {
 				c.JSON(http.StatusBadRequest, gin.H{
 					"status":  false,
@@ -512,7 +421,7 @@ func UpdateProductByID(c *gin.Context) {
 		}
 	}()
 
-	resultMainImage, err := db.Query("UPDATE main_image SET small = $1 , medium = $2 , large = $3 WHERE product_id = $4", mainSmall, mainMedium, mainLarge, ID)
+	resultMainImage, err := db.Query("UPDATE main_image SET image = $1 WHERE product_id = $2", mainSmall, ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -667,7 +576,7 @@ func GetProductByID(c *gin.Context) {
 		return
 	}
 
-	rowMainImage, err := db.Query("SELECT small,medium,large FROM main_image WHERE deleted_at IS NULL AND product_id = $1", ID)
+	rowMainImage, err := db.Query("SELECT image FROM main_image WHERE deleted_at IS NULL AND product_id = $1", ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -686,7 +595,7 @@ func GetProductByID(c *gin.Context) {
 	}()
 
 	for rowMainImage.Next() {
-		if err := rowMainImage.Scan(&product.MainImage.Small, &product.MainImage.Medium, &product.MainImage.Large); err != nil {
+		if err := rowMainImage.Scan(&product.MainImage.Image); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
@@ -695,7 +604,7 @@ func GetProductByID(c *gin.Context) {
 		}
 	}
 
-	rowsImages, err := db.Query("SELECT small,large FROM images WHERE deleted_at IS NULL AND product_id = $1", ID)
+	rowsImages, err := db.Query("SELECT image FROM images WHERE deleted_at IS NULL AND product_id = $1", ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -718,7 +627,7 @@ func GetProductByID(c *gin.Context) {
 	for rowsImages.Next() {
 		var image models.Images
 
-		if err := rowsImages.Scan(&image.Small, &image.Large); err != nil {
+		if err := rowsImages.Scan(&image.Image); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
@@ -882,7 +791,7 @@ func GetProducts(c *gin.Context) {
 			product.Percentage = 0
 		}
 
-		rowMainImage, err := db.Query("SELECT small,medium,large FROM main_image WHERE deleted_at IS NULL AND product_id = $1", product.ID)
+		rowMainImage, err := db.Query("SELECT image FROM main_image WHERE deleted_at IS NULL AND product_id = $1", product.ID)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
@@ -901,7 +810,7 @@ func GetProducts(c *gin.Context) {
 		}()
 
 		for rowMainImage.Next() {
-			if err := rowMainImage.Scan(&product.MainImage.Small, &product.MainImage.Medium, &product.MainImage.Large); err != nil {
+			if err := rowMainImage.Scan(&product.MainImage.Image); err != nil {
 				c.JSON(http.StatusBadRequest, gin.H{
 					"status":  false,
 					"message": err.Error(),
@@ -910,7 +819,7 @@ func GetProducts(c *gin.Context) {
 			}
 		}
 
-		rowsImages, err := db.Query("SELECT small,large FROM images WHERE deleted_at IS NULL AND product_id = $1", product.ID)
+		rowsImages, err := db.Query("SELECT image FROM images WHERE deleted_at IS NULL AND product_id = $1", product.ID)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
@@ -933,7 +842,7 @@ func GetProducts(c *gin.Context) {
 		for rowsImages.Next() {
 			var image models.Images
 
-			if err := rowsImages.Scan(&image.Small, &image.Large); err != nil {
+			if err := rowsImages.Scan(&image.Image); err != nil {
 				c.JSON(http.StatusBadRequest, gin.H{
 					"status":  false,
 					"message": err.Error(),
@@ -1265,7 +1174,7 @@ func DeletePermanentlyProductByID(c *gin.Context) {
 	}
 
 	// get main image of product
-	rowMainImage, err := db.Query("SELECT small,medium,large FROM main_image WHERE product_id = $1", productID)
+	rowMainImage, err := db.Query("SELECT image FROM main_image WHERE product_id = $1", productID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -1286,7 +1195,7 @@ func DeletePermanentlyProductByID(c *gin.Context) {
 	var mainImage models.MainImage
 
 	for rowMainImage.Next() {
-		if err := rowMainImage.Scan(&mainImage.Small, &mainImage.Medium, &mainImage.Large); err != nil {
+		if err := rowMainImage.Scan(&mainImage.Image); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
@@ -1296,23 +1205,7 @@ func DeletePermanentlyProductByID(c *gin.Context) {
 	}
 
 	// remove main image of product
-	if err := os.Remove(pkg.ServerPath + mainImage.Small); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-
-	if err := os.Remove(pkg.ServerPath + mainImage.Medium); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-
-	if err := os.Remove(pkg.ServerPath + mainImage.Large); err != nil {
+	if err := os.Remove(pkg.ServerPath + mainImage.Image); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
 			"message": err.Error(),
@@ -1321,7 +1214,7 @@ func DeletePermanentlyProductByID(c *gin.Context) {
 	}
 
 	// get images of product
-	rowsImages, err := db.Query("SELECT small,large FROM images WHERE product_id = $1", productID)
+	rowsImages, err := db.Query("SELECT image FROM images WHERE product_id = $1", productID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -1344,7 +1237,7 @@ func DeletePermanentlyProductByID(c *gin.Context) {
 	for rowsImages.Next() {
 		var image models.Images
 
-		if err := rowsImages.Scan(&image.Small, &image.Large); err != nil {
+		if err := rowsImages.Scan(&image.Image); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
@@ -1360,14 +1253,7 @@ func DeletePermanentlyProductByID(c *gin.Context) {
 
 		for _, v := range images {
 
-			if err := os.Remove(pkg.ServerPath + v.Small); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
-				return
-			}
-			if err := os.Remove(pkg.ServerPath + v.Large); err != nil {
+			if err := os.Remove(pkg.ServerPath + v.Image); err != nil {
 				c.JSON(http.StatusBadRequest, gin.H{
 					"status":  false,
 					"message": err.Error(),
