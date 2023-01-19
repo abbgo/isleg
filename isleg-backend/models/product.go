@@ -30,9 +30,7 @@ type Product struct {
 type MainImage struct {
 	ID        string `json:"id,omitempty"`
 	ProductID string `json:"product_id,omitempty"`
-	Small     string `json:"small,omitempty"`
-	Medium    string `json:"medium,omitempty"`
-	Large     string `json:"large,omitempty"`
+	Image     string `json:"image,omitempty"`
 	CreatedAt string `json:"-"`
 	UpdatedAt string `json:"-"`
 	DeletedAt string `json:"-"`
@@ -41,8 +39,7 @@ type MainImage struct {
 type Images struct {
 	ID        string `json:"id,omitempty"`
 	ProductID string `json:"product_id,omitempty"`
-	Small     string `json:"small,omitempty"`
-	Large     string `json:"large,omitempty"`
+	Image     string `json:"image,omitempty"`
 	CreatedAt string `json:"-"`
 	UpdatedAt string `json:"-"`
 	DeletedAt string `json:"-"`
@@ -236,7 +233,7 @@ func ValidateProductModel(productID, brendID, shopID, priceStr, oldPriceStr, amo
 			return []Images{}, MainImage{}, 0, 0, 0, 0, false, errors.New("record not found")
 		}
 
-		rowMainImage, err := db.Query("SELECT small,medium,large FROM main_image WHERE deleted_at IS NULL AND product_id = $1", productID)
+		rowMainImage, err := db.Query("SELECT image FROM main_image WHERE deleted_at IS NULL AND product_id = $1", productID)
 		if err != nil {
 			return []Images{}, MainImage{}, 0, 0, 0, 0, false, err
 		}
@@ -250,16 +247,16 @@ func ValidateProductModel(productID, brendID, shopID, priceStr, oldPriceStr, amo
 		var mainImage MainImage
 
 		for rowMainImage.Next() {
-			if err := rowMainImage.Scan(&mainImage.Small, &mainImage.Medium, &mainImage.Large); err != nil {
+			if err := rowMainImage.Scan(&mainImage.Image); err != nil {
 				return []Images{}, MainImage{}, 0, 0, 0, 0, false, err
 			}
 		}
 
-		if mainImage.Small == "" || mainImage.Medium == "" || mainImage.Large == "" {
+		if mainImage.Image == "" {
 			return []Images{}, MainImage{}, 0, 0, 0, 0, false, errors.New("main image of product not found")
 		}
 
-		rowImages, err := db.Query("SELECT small,large FROM images WHERE deleted_at IS NULL AND product_id = $1", productID)
+		rowImages, err := db.Query("SELECT image FROM images WHERE deleted_at IS NULL AND product_id = $1", productID)
 		if err != nil {
 			return []Images{}, MainImage{}, 0, 0, 0, 0, false, err
 		}
@@ -275,7 +272,7 @@ func ValidateProductModel(productID, brendID, shopID, priceStr, oldPriceStr, amo
 		for rowImages.Next() {
 			var image Images
 
-			if err := rowImages.Scan(&image.Small, &image.Large); err != nil {
+			if err := rowImages.Scan(&image.Image); err != nil {
 				return []Images{}, MainImage{}, 0, 0, 0, 0, false, err
 			}
 
