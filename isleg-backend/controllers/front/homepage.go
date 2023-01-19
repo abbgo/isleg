@@ -22,7 +22,6 @@ type Product struct {
 	Price       float64          `json:"price,omitempty"`
 	OldPrice    float64          `json:"old_price,omitempty"`
 	MainImage   models.MainImage `json:"main_image,omitempty"`
-	Images      []models.Images  `json:"images,omitempty"`
 	Brend       Brend            `json:"brend,omitempty"`
 	LimitAmount int              `json:"limit_amount,omitempty"`
 	IsNew       bool             `json:"is_new,omitempty"`
@@ -254,42 +253,6 @@ func GetHomePageCategories(c *gin.Context) {
 				product.Translations = append(product.Translations, translation)
 
 			}
-
-			rowsImages, err := db.Query("SELECT image FROM images WHERE product_id = $1", product.ID)
-			if err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
-				return
-			}
-			defer func() {
-				if err := rowsImages.Close(); err != nil {
-					c.JSON(http.StatusBadRequest, gin.H{
-						"status":  false,
-						"message": err.Error(),
-					})
-					return
-				}
-			}()
-
-			var images []models.Images
-
-			for rowsImages.Next() {
-				var image models.Images
-
-				if err := rowsImages.Scan(&image.Image); err != nil {
-					c.JSON(http.StatusBadRequest, gin.H{
-						"status":  false,
-						"message": err.Error(),
-					})
-					return
-				}
-
-				images = append(images, image)
-			}
-
-			product.Images = images
 
 			// get brend where id of product brend_id
 			brendRows, err := db.Query("SELECT b.id,b.name FROM products p LEFT JOIN brends b ON p.brend_id=b.id WHERE p.id = $1 AND p.deleted_at IS NULL AND b.deleted_at IS NULL", product.ID)
