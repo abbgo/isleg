@@ -45,7 +45,7 @@ type Product struct {
 	Price        float64                                `json:"price,omitempty"`
 	OldPrice     float64                                `json:"old_price,omitempty"`
 	Percentage   float64                                `json:"percentage,omitempty"`
-	MainImage    models.MainImage                       `json:"main_image,omitempty"`
+	MainImage    string                                 `json:"main_image,omitempty"`
 	Brend        Brend                                  `json:"brend,omitempty"`
 	LimitAmount  int                                    `json:"limit_amount,omitempty"`
 	Amount       int                                    `json:"amount,omitempty"`
@@ -1597,10 +1597,10 @@ func GetOneCategoryWithProducts(c *gin.Context) {
 					}
 				}()
 
-				var mainImage models.MainImage
+				var mainImage string
 
 				for rowMainImage.Next() {
-					if err := rowMainImage.Scan(&mainImage.Image); err != nil {
+					if err := rowMainImage.Scan(&mainImage); err != nil {
 						c.JSON(http.StatusBadRequest, gin.H{
 							"status":  false,
 							"message": err.Error(),

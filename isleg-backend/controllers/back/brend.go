@@ -748,15 +748,6 @@ func GetOneBrendWithProducts(c *gin.Context) {
 
 	var countOfProducts uint64
 
-	// langID, err := CheckLanguage(c)
-	// if err != nil {
-	// 	c.JSON(http.StatusBadRequest, gin.H{
-	// 		"status":  false,
-	// 		"message": err.Error(),
-	// 	})
-	// 	return
-	// }
-
 	// get limit from param
 	limitStr := c.Param("limit")
 	if limitStr == "" {
@@ -924,10 +915,10 @@ func GetOneBrendWithProducts(c *gin.Context) {
 					}
 				}()
 
-				var mainImage models.MainImage
+				var mainImage string
 
 				for rowMainImage.Next() {
-					if err := rowMainImage.Scan(&mainImage.Image); err != nil {
+					if err := rowMainImage.Scan(&mainImage); err != nil {
 						c.JSON(http.StatusBadRequest, gin.H{
 							"status":  false,
 							"message": err.Error(),
