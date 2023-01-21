@@ -1120,10 +1120,10 @@ func GetOrders(c *gin.Context) {
 				}
 			}()
 
-			var mainImage models.MainImage
+			var mainImage string
 
 			for rowMainImage.Next() {
-				if err := rowMainImage.Scan(&mainImage.Image); err != nil {
+				if err := rowMainImage.Scan(&mainImage); err != nil {
 					c.JSON(http.StatusBadRequest, gin.H{
 						"status":  false,
 						"message": err.Error(),
@@ -1133,42 +1133,6 @@ func GetOrders(c *gin.Context) {
 			}
 
 			product.MainImage = mainImage
-
-			rowsImages, err := db.Query("SELECT image FROM images WHERE product_id = $1 AND deleted_at IS NULL", product.ID)
-			if err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
-				return
-			}
-			defer func() {
-				if err := rowsImages.Close(); err != nil {
-					c.JSON(http.StatusBadRequest, gin.H{
-						"status":  false,
-						"message": err.Error(),
-					})
-					return
-				}
-			}()
-
-			var images []models.Images
-
-			for rowsImages.Next() {
-				var image models.Images
-
-				if err := rowsImages.Scan(&image.Image); err != nil {
-					c.JSON(http.StatusBadRequest, gin.H{
-						"status":  false,
-						"message": err.Error(),
-					})
-					return
-				}
-
-				images = append(images, image)
-			}
-
-			product.Images = images
 
 			rowTrProduct, err := db.Query("SELECT name,description FROM translation_product WHERE product_id = $1 AND lang_id = $2 AND deleted_at IS NULL", product.ID, langID)
 			if err != nil {
@@ -1519,10 +1483,10 @@ func GetCustomerOrders(c *gin.Context) {
 				}
 			}()
 
-			var mainImage models.MainImage
+			var mainImage string
 
 			for rowMainImage.Next() {
-				if err := rowMainImage.Scan(&mainImage.Image); err != nil {
+				if err := rowMainImage.Scan(&mainImage); err != nil {
 					c.JSON(http.StatusBadRequest, gin.H{
 						"status":  false,
 						"message": err.Error(),
@@ -1532,42 +1496,6 @@ func GetCustomerOrders(c *gin.Context) {
 			}
 
 			product.MainImage = mainImage
-
-			rowsImages, err := db.Query("SELECT image FROM images WHERE product_id = $1 AND deleted_at IS NULL", product.ID)
-			if err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
-				return
-			}
-			defer func() {
-				if err := rowsImages.Close(); err != nil {
-					c.JSON(http.StatusBadRequest, gin.H{
-						"status":  false,
-						"message": err.Error(),
-					})
-					return
-				}
-			}()
-
-			var images []models.Images
-
-			for rowsImages.Next() {
-				var image models.Images
-
-				if err := rowsImages.Scan(&image.Image); err != nil {
-					c.JSON(http.StatusBadRequest, gin.H{
-						"status":  false,
-						"message": err.Error(),
-					})
-					return
-				}
-
-				images = append(images, image)
-			}
-
-			product.Images = images
 
 			rowsLang, err := db.Query("SELECT id,name_short FROM languages WHERE deleted_at IS NULL")
 			if err != nil {

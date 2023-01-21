@@ -21,19 +21,17 @@ type CartProduct struct {
 }
 
 type ProductOfCart struct {
-	ID                uuid.UUID        `json:"id"`
-	BrendID           uuid.UUID        `json:"brend_id"`
-	Price             float64          `json:"price"`
-	OldPrice          float64          `json:"old_price"`
-	Percentage        float64          `json:"percentage"`
-	Amount            uint             `json:"amount"`
-	LimitAmount       uint             `json:"limit_amount"`
-	IsNew             bool             `json:"is_new"`
-	QuantityOfProduct int              `json:"quantity_of_product"`
-	MainImage         models.MainImage `json:"main_image"`
-	Images            []models.Images  `json:"images"`
-	// TranslationProduct models.TranslationProduct `json:"translation"`
-	Translations []map[string]models.TranslationProduct `json:"translations"`
+	ID                uuid.UUID                              `json:"id"`
+	BrendID           uuid.UUID                              `json:"brend_id"`
+	Price             float64                                `json:"price"`
+	OldPrice          float64                                `json:"old_price"`
+	Percentage        float64                                `json:"percentage"`
+	Amount            uint                                   `json:"amount"`
+	LimitAmount       uint                                   `json:"limit_amount"`
+	IsNew             bool                                   `json:"is_new"`
+	QuantityOfProduct int                                    `json:"quantity_of_product"`
+	MainImage         string                                 `json:"main_image"`
+	Translations      []map[string]models.TranslationProduct `json:"translations"`
 }
 
 func AddCart(c *gin.Context) {
@@ -299,35 +297,15 @@ func GetCartProducts(customerID string) ([]ProductOfCart, error) {
 		}
 		defer rowMainImage.Close()
 
-		var mainImage models.MainImage
+		var mainImage string
 
 		for rowMainImage.Next() {
-			if err := rowMainImage.Scan(&mainImage.Image); err != nil {
+			if err := rowMainImage.Scan(&mainImage); err != nil {
 				return []ProductOfCart{}, err
 			}
 		}
 
 		product.MainImage = mainImage
-
-		rowsImages, err := db.Query("SELECT image FROM images WHERE product_id = $1 AND deleted_at IS NULL", product.ID)
-		if err != nil {
-			return []ProductOfCart{}, err
-		}
-		defer rowsImages.Close()
-
-		var images []models.Images
-
-		for rowsImages.Next() {
-			var image models.Images
-
-			if err := rowsImages.Scan(&image.Image); err != nil {
-				return []ProductOfCart{}, err
-			}
-
-			images = append(images, image)
-		}
-
-		product.Images = images
 
 		rowsLang, err := db.Query("SELECT id,name_short FROM languages WHERE deleted_at IS NULL")
 		if err != nil {

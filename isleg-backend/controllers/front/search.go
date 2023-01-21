@@ -173,7 +173,7 @@ func Search(c *gin.Context) {
 		}()
 
 		for rowMainImage.Next() {
-			if err := rowMainImage.Scan(&product.MainImage.Image); err != nil {
+			if err := rowMainImage.Scan(&product.MainImage); err != nil {
 				c.JSON(http.StatusBadRequest, gin.H{
 					"status":  false,
 					"message": err.Error(),
@@ -181,42 +181,6 @@ func Search(c *gin.Context) {
 				return
 			}
 		}
-
-		rowsImages, err := db.Query("SELECT image FROM images WHERE deleted_at IS NULL AND product_id = $1", product.ID)
-		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-		defer func() {
-			if err := rowsImages.Close(); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
-				return
-			}
-		}()
-
-		var images []models.Images
-
-		for rowsImages.Next() {
-			var image models.Images
-
-			if err := rowsImages.Scan(&image.Image); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
-				return
-			}
-
-			images = append(images, image)
-		}
-
-		product.Images = images
 
 		rowsLang, err := db.Query("SELECT id,name_short FROM languages WHERE deleted_at IS NULL")
 		if err != nil {
