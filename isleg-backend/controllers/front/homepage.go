@@ -18,14 +18,14 @@ type HomePageCategory struct {
 }
 
 type Product struct {
-	ID          string           `json:"id,omitempty"`
-	Price       float64          `json:"price,omitempty"`
-	OldPrice    float64          `json:"old_price,omitempty"`
-	MainImage   models.MainImage `json:"main_image,omitempty"`
-	Brend       Brend            `json:"brend,omitempty"`
-	LimitAmount int              `json:"limit_amount,omitempty"`
-	IsNew       bool             `json:"is_new,omitempty"`
-	Amount      int              `json:"amount,omitempty"`
+	ID          string  `json:"id,omitempty"`
+	Price       float64 `json:"price,omitempty"`
+	OldPrice    float64 `json:"old_price,omitempty"`
+	MainImage   string  `json:"main_image,omitempty"`
+	Brend       Brend   `json:"brend,omitempty"`
+	LimitAmount int     `json:"limit_amount,omitempty"`
+	IsNew       bool    `json:"is_new,omitempty"`
+	Amount      int     `json:"amount,omitempty"`
 	// Translation models.TranslationProduct `json:"translation,omitempty"`
 	Translations []map[string]models.TranslationProduct `json:"translations,omitempty"`
 }
@@ -164,10 +164,10 @@ func GetHomePageCategories(c *gin.Context) {
 				}
 			}()
 
-			var mainImage models.MainImage
+			var mainImage string
 
 			for rowMainImage.Next() {
-				if err := rowMainImage.Scan(&mainImage.Image); err != nil {
+				if err := rowMainImage.Scan(&mainImage); err != nil {
 					c.JSON(http.StatusBadRequest, gin.H{
 						"status":  false,
 						"message": err.Error(),
