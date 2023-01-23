@@ -725,7 +725,7 @@ func GetProducts(c *gin.Context) {
 		}
 	}()
 
-	rowsProduct, err := db.Query("SELECT id,brend_id,price,old_price,amount,limit_amount,is_new FROM products WHERE deleted_at IS NULL")
+	rowsProduct, err := db.Query("SELECT id,brend_id,price,old_price,amount,limit_amount,is_new,main_image FROM products WHERE deleted_at IS NULL")
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -749,7 +749,7 @@ func GetProducts(c *gin.Context) {
 	for rowsProduct.Next() {
 		var product models.Product
 
-		if err := rowsProduct.Scan(&product.ID, &product.BrendID, &product.Price, &product.OldPrice, &product.Amount, &product.LimitAmount, &product.IsNew); err != nil {
+		if err := rowsProduct.Scan(&product.ID, &product.BrendID, &product.Price, &product.OldPrice, &product.Amount, &product.LimitAmount, &product.IsNew, &product.MainImage); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
@@ -761,34 +761,6 @@ func GetProducts(c *gin.Context) {
 			product.Percentage = -math.Round(((product.OldPrice - product.Price) * 100) / product.OldPrice)
 		} else {
 			product.Percentage = 0
-		}
-
-		rowMainImage, err := db.Query("SELECT image FROM main_image WHERE deleted_at IS NULL AND product_id = $1", product.ID)
-		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-		defer func() {
-			if err := rowMainImage.Close(); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
-				return
-			}
-		}()
-
-		for rowMainImage.Next() {
-			if err := rowMainImage.Scan(&product.MainImage); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
-				return
-			}
 		}
 
 		rowsImages, err := db.Query("SELECT image FROM images WHERE deleted_at IS NULL AND product_id = $1", product.ID)
