@@ -243,7 +243,6 @@ BEGIN
 UPDATE products SET deleted_at = now() WHERE id = p_id;
 UPDATE category_product SET deleted_at = now() WHERE product_id = p_id;
 UPDATE translation_product SET deleted_at = now() WHERE product_id = p_id;
-UPDATE main_image SET deleted_at = now() WHERE product_id = p_id;
 UPDATE images SET deleted_at = now() WHERE product_id = p_id;
 END; $$;
 
@@ -395,13 +394,12 @@ ALTER PROCEDURE public.restore_order_date(od_id uuid) OWNER TO postgres;
 CREATE PROCEDURE public.restore_product(p_id uuid)
     LANGUAGE plpgsql
     AS $$
-BEGIN
+begin
 UPDATE products SET deleted_at = NULL WHERE id = p_id;
 UPDATE category_product SET deleted_at = NULL WHERE product_id = p_id;
 UPDATE translation_product SET deleted_at = NULL WHERE product_id = p_id;
-UPDATE main_image SET deleted_at = NULL WHERE product_id = p_id;
 UPDATE images SET deleted_at = NULL WHERE product_id = p_id;
-END; $$;
+end; $$;
 
 
 ALTER PROCEDURE public.restore_product(p_id uuid) OWNER TO postgres;
@@ -709,22 +707,6 @@ CREATE TABLE public.likes (
 ALTER TABLE public.likes OWNER TO postgres;
 
 --
--- Name: main_image; Type: TABLE; Schema: public; Owner: postgres
---
-
-CREATE TABLE public.main_image (
-    id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
-    product_id uuid NOT NULL,
-    image character varying(100) NOT NULL,
-    created_at timestamp with time zone DEFAULT now(),
-    updated_at timestamp with time zone DEFAULT now(),
-    deleted_at timestamp with time zone
-);
-
-
-ALTER TABLE public.main_image OWNER TO postgres;
-
---
 -- Name: notifications; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -863,7 +845,8 @@ CREATE TABLE public.products (
     deleted_at timestamp with time zone,
     limit_amount bigint NOT NULL,
     is_new boolean DEFAULT false,
-    shop_id uuid
+    shop_id uuid,
+    main_image character varying(100) NOT NULL
 );
 
 
@@ -1283,7 +1266,6 @@ e9b7cc3b-bc80-4682-95e1-7db3bfd8f9b7	MAPED	uploads/brend/9834457a-af44-4764-b601
 --
 
 COPY public.cart (id, product_id, customer_id, quantity_of_product, created_at, updated_at, deleted_at) FROM stdin;
-58ba2cd1-d928-4420-ab10-61b39c6883b9	67188135-dfd6-4a26-8070-092e33764b85	dad96943-886e-4ee3-9ca5-3723423b4191	2	2023-01-18 12:25:35.824607+00	2023-01-18 12:25:36.885606+00	\N
 \.
 
 
@@ -1325,8 +1307,6 @@ b969cd61-af6a-4bae-88c5-cbd3cdb36a53	\N	uploads/category/716a71c4-aa9e-4cd2-9124
 --
 
 COPY public.category_product (id, category_id, product_id, created_at, updated_at, deleted_at) FROM stdin;
-6142eddb-a20b-4c67-b36b-cf2a6c9d509b	75dd289a-f72b-42fa-975e-ee10cd796135	67188135-dfd6-4a26-8070-092e33764b85	2023-01-17 11:43:06.727766+00	2023-01-17 11:43:06.727766+00	\N
-4bd9f454-5388-49d1-bcd7-0fd307243901	d5e7a59e-b272-4a77-9a95-5efebee00eb0	67188135-dfd6-4a26-8070-092e33764b85	2023-01-17 11:43:06.727766+00	2023-01-17 11:43:06.727766+00	\N
 \.
 
 
@@ -1404,8 +1384,6 @@ a58294d3-efe5-4cb7-82d3-8df8c37563c5	15	2022-06-25 05:23:25.640364+00	2022-06-25
 --
 
 COPY public.images (id, product_id, image, created_at, updated_at, deleted_at) FROM stdin;
-cbc786d9-a171-44c8-b4c6-e472b883015a	67188135-dfd6-4a26-8070-092e33764b85	uploads/product/4af845ac-2148-4d67-a63d-b26b9df107ba.JPG	2023-01-17 11:43:06.698299+00	2023-01-17 11:43:06.698299+00	\N
-5eb3a39c-3dca-4f5e-b2ab-f44eaddb30a1	67188135-dfd6-4a26-8070-092e33764b85	uploads/product/7f2547fc-db25-474c-bb8f-32841026ffeb.JPG	2023-01-17 11:43:06.698299+00	2023-01-17 11:43:06.698299+00	\N
 \.
 
 
@@ -1424,15 +1402,6 @@ aea98b93-7bdf-455b-9ad4-a259d69dc76e	ru	uploads/language/22a2ad57-4686-44d2-aded
 --
 
 COPY public.likes (id, product_id, customer_id, created_at, updated_at, deleted_at) FROM stdin;
-\.
-
-
---
--- Data for Name: main_image; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-COPY public.main_image (id, product_id, image, created_at, updated_at, deleted_at) FROM stdin;
-260f3335-68e3-45f7-ab16-056cb21cd91a	67188135-dfd6-4a26-8070-092e33764b85	uploads/product/82465969-0d40-41f3-bc14-0711306d94c2.JPG	2023-01-17 11:43:06.693579+00	2023-01-17 11:43:06.693579+00	\N
 \.
 
 
@@ -1513,8 +1482,7 @@ cb7e8cc9-9b2e-4cd8-921f-91b3bb5e5564	aea98b93-7bdf-455b-9ad4-a259d69dc76e	пла
 -- Data for Name: products; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.products (id, brend_id, price, old_price, amount, created_at, updated_at, deleted_at, limit_amount, is_new, shop_id) FROM stdin;
-67188135-dfd6-4a26-8070-092e33764b85	\N	100	0	100	2023-01-17 11:43:06.690799+00	2023-01-17 11:43:06.690799+00	\N	50	t	\N
+COPY public.products (id, brend_id, price, old_price, amount, created_at, updated_at, deleted_at, limit_amount, is_new, shop_id, main_image) FROM stdin;
 \.
 
 
@@ -1721,8 +1689,6 @@ ea7f4c0c-4b1a-41d3-94eb-e058aba9c99f	aea98b93-7bdf-455b-9ad4-a259d69dc76e	Пор
 --
 
 COPY public.translation_product (id, lang_id, product_id, name, description, created_at, updated_at, deleted_at, slug) FROM stdin;
-e3de6635-f5da-43d4-9931-1dca4538b9a1	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	67188135-dfd6-4a26-8070-092e33764b85	"Bianyo" firmaň çyzgy üçin niýetlenen gara galamy	12 sany naborly karton gutyda - ýokary hilli ajaýyp kombinasiýa. Urga çydamly we aňsat arassalanýan berk agaç	2023-01-17 11:43:06.706062+00	2023-01-17 11:43:06.706062+00	\N	bianyo-firman-cyzgy-ucin-niyetlenen-gara-galamy
-b071d714-391f-4fa5-8684-0d5dfd97868c	aea98b93-7bdf-455b-9ad4-a259d69dc76e	67188135-dfd6-4a26-8070-092e33764b85	Набор карандашей чернографитных фирма "Bianyo"	Набор карандашей чернографитных, 12 шт., "Bianyo" гранённые, заточенные, в картонной коробке — прекрасное сочетание высокого качества. Прочный стержень не крошится, а деревянный корпус легко затачивается	2023-01-17 11:43:06.717536+00	2023-01-17 11:43:06.717536+00	\N	nabor-karandashei-chernografitnykh-firma-bianyo
 \.
 
 
@@ -1879,14 +1845,6 @@ ALTER TABLE ONLY public.languages
 
 ALTER TABLE ONLY public.likes
     ADD CONSTRAINT likes_pkey PRIMARY KEY (id);
-
-
---
--- Name: main_image main_image_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.main_image
-    ADD CONSTRAINT main_image_pkey PRIMARY KEY (id);
 
 
 --
@@ -2206,13 +2164,6 @@ CREATE TRIGGER updated_languages_updated_at BEFORE UPDATE ON public.languages FO
 --
 
 CREATE TRIGGER updated_likes_updated_at BEFORE UPDATE ON public.likes FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
-
-
---
--- Name: main_image updated_main_image_updated_at; Type: TRIGGER; Schema: public; Owner: postgres
---
-
-CREATE TRIGGER updated_main_image_updated_at BEFORE UPDATE ON public.main_image FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
 
 
 --
@@ -2692,14 +2643,6 @@ ALTER TABLE ONLY public.ordered_products
 
 ALTER TABLE ONLY public.images
     ADD CONSTRAINT products_images FOREIGN KEY (product_id) REFERENCES public.products(id) ON UPDATE CASCADE ON DELETE CASCADE;
-
-
---
--- Name: main_image products_main_image; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.main_image
-    ADD CONSTRAINT products_main_image FOREIGN KEY (product_id) REFERENCES public.products(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
