@@ -120,7 +120,7 @@ func CreateProduct(c *gin.Context) {
 	}
 
 	// create product
-	resultProducts, err := db.Query("INSERT INTO products (brend_id,price,old_price,amount,limit_amount,is_new,shop_id) VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING id", brend_id, price, oldPrice, amount, limitAmount, isNew, shop_id)
+	resultProducts, err := db.Query("INSERT INTO products (brend_id,price,old_price,amount,limit_amount,is_new,shop_id,main_image) VALUES ($1,$2,$3,$4,$5,$6,$7,$8) RETURNING id", brend_id, price, oldPrice, amount, limitAmount, isNew, shop_id, mainImage)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{
 			"status":  false,
@@ -149,24 +149,6 @@ func CreateProduct(c *gin.Context) {
 			return
 		}
 	}
-
-	resultMainImage, err := db.Query("INSERT INTO main_image (product_id,image) VALUES ($1,$2)", productID, mainImage)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-	defer func() {
-		if err := resultMainImage.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
 
 	// create images of product
 	resultImages, err := db.Query("INSERT INTO images (product_id,image) VALUES ($1,unnest($2::varchar[]))", productID, pq.Array(images))
