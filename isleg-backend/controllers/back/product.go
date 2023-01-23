@@ -1082,7 +1082,7 @@ func DeletePermanentlyProductByID(c *gin.Context) {
 	}
 
 	// get main image of product
-	rowMainImage, err := db.Query("SELECT image FROM products WHERE product_id = $1", productID)
+	rowMainImage, err := db.Query("SELECT main_image FROM products WHERE id = $1", productID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
