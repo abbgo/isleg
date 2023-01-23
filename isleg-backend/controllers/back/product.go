@@ -309,7 +309,7 @@ func UpdateProductByID(c *gin.Context) {
 	}
 
 	// update small main image of product if exists
-	mainSmall, err := pkg.FileUploadForUpdate("main_image", "product", mainImage.Image, c)
+	mainSmall, err := pkg.FileUploadForUpdate("main_image", "product", mainImage, c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -595,7 +595,7 @@ func GetProductByID(c *gin.Context) {
 	}()
 
 	for rowMainImage.Next() {
-		if err := rowMainImage.Scan(&product.MainImage.Image); err != nil {
+		if err := rowMainImage.Scan(&product.MainImage); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
@@ -810,7 +810,7 @@ func GetProducts(c *gin.Context) {
 		}()
 
 		for rowMainImage.Next() {
-			if err := rowMainImage.Scan(&product.MainImage.Image); err != nil {
+			if err := rowMainImage.Scan(&product.MainImage); err != nil {
 				c.JSON(http.StatusBadRequest, gin.H{
 					"status":  false,
 					"message": err.Error(),
@@ -1174,7 +1174,7 @@ func DeletePermanentlyProductByID(c *gin.Context) {
 	}
 
 	// get main image of product
-	rowMainImage, err := db.Query("SELECT image FROM main_image WHERE product_id = $1", productID)
+	rowMainImage, err := db.Query("SELECT image FROM products WHERE product_id = $1", productID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -1192,10 +1192,10 @@ func DeletePermanentlyProductByID(c *gin.Context) {
 		}
 	}()
 
-	var mainImage models.MainImage
+	var mainImage string
 
 	for rowMainImage.Next() {
-		if err := rowMainImage.Scan(&mainImage.Image); err != nil {
+		if err := rowMainImage.Scan(&mainImage); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
@@ -1205,7 +1205,7 @@ func DeletePermanentlyProductByID(c *gin.Context) {
 	}
 
 	// remove main image of product
-	if err := os.Remove(pkg.ServerPath + mainImage.Image); err != nil {
+	if err := os.Remove(pkg.ServerPath + mainImage); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
 			"message": err.Error(),
