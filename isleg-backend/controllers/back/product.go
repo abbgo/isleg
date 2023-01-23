@@ -385,7 +385,7 @@ func UpdateProductByID(c *gin.Context) {
 		shop_id = nil
 	}
 
-	resultProducts, err := db.Query("UPDATE products SET brend_id = $1 , price = $2 , old_price = $3, amount = $4, limit_amount = $5 , is_new = $6, shop_id = $8 WHERE id = $7", brend_id, price, oldPrice, amount, limitAmount, isNew, ID, shop_id)
+	resultProducts, err := db.Query("UPDATE products SET brend_id = $1 , price = $2 , old_price = $3, amount = $4, limit_amount = $5 , is_new = $6, shop_id = $8 , main_image = $9 WHERE id = $7", brend_id, price, oldPrice, amount, limitAmount, isNew, ID, shop_id, mainSmall)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -395,24 +395,6 @@ func UpdateProductByID(c *gin.Context) {
 	}
 	defer func() {
 		if err := resultProducts.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
-
-	resultMainImage, err := db.Query("UPDATE main_image SET image = $1 WHERE product_id = $2", mainSmall, ID)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-	defer func() {
-		if err := resultMainImage.Close(); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
