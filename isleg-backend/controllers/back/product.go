@@ -558,12 +558,12 @@ func GetProductByID(c *gin.Context) {
 		}
 	}()
 
-	var images []models.Images
+	var images []string
 
 	for rowsImages.Next() {
-		var image models.Images
+		var image string
 
-		if err := rowsImages.Scan(&image.Image); err != nil {
+		if err := rowsImages.Scan(&image); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
@@ -745,12 +745,12 @@ func GetProducts(c *gin.Context) {
 			}
 		}()
 
-		var images []models.Images
+		var images []string
 
 		for rowsImages.Next() {
-			var image models.Images
+			var image string
 
-			if err := rowsImages.Scan(&image.Image); err != nil {
+			if err := rowsImages.Scan(&image); err != nil {
 				c.JSON(http.StatusBadRequest, gin.H{
 					"status":  false,
 					"message": err.Error(),

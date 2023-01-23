@@ -21,7 +21,7 @@ type Product struct {
 	UpdatedAt          string               `json:"-"`
 	DeletedAt          string               `json:"-"`
 	MainImage          string               `json:"main_image,omitempty"`
-	Images             []Images             `json:"images,omitempty"`              // one to many
+	Images             []string             `json:"images,omitempty"`              // one to many
 	TranslationProduct []TranslationProduct `json:"translation_product,omitempty"` // one to many
 	Categories         []string             `json:"categories,omitempty"`
 	Brend              Brend                `json:"brend,omitempty"`
