@@ -154,7 +154,7 @@ func BackRoutes(back *gin.RouterGroup) {
 		// Baslayar --- haryt ucin CRUD
 		securedAdmin.POST("product", backController.CreateProduct)
 		securedAdmin.PUT("product/:id", backController.UpdateProductByID)
-		securedAdmin.GET("product/:id", backController.GetProductByID)
+		// securedAdmin.GET("product/:id", backController.GetProductByID)
 		securedAdmin.GET("products", backController.GetProducts)
 		securedAdmin.DELETE("product/:id", backController.DeleteProductByID)
 		securedAdmin.GET("restore-product/:id", backController.RestoreProductByID)
