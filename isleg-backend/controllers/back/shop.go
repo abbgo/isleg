@@ -571,7 +571,7 @@ func DeletePermanentlyShopByID(c *gin.Context) {
 		return
 	}
 
-	rowsMainImage, err := db.Query("SELECT m.image FROM main_image m INNER JOIN products p ON p.id = m.product_id WHERE p.shop_id = $1", ID)
+	rowsMainImage, err := db.Query("SELECT main_image FROM products WHERE shop_id = $1", ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -589,12 +589,12 @@ func DeletePermanentlyShopByID(c *gin.Context) {
 		}
 	}()
 
-	var mainImages []models.MainImage
+	var mainImages []string
 
 	for rowsMainImage.Next() {
-		var mainImage models.MainImage
+		var mainImage string
 
-		if err := rowsMainImage.Scan(&mainImage.Image); err != nil {
+		if err := rowsMainImage.Scan(&mainImage); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
@@ -606,7 +606,7 @@ func DeletePermanentlyShopByID(c *gin.Context) {
 	}
 
 	for _, v := range mainImages {
-		if err := os.Remove(pkg.ServerPath + v.Image); err != nil {
+		if err := os.Remove(pkg.ServerPath + v); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
