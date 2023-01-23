@@ -572,7 +572,7 @@ func DeletePermanentlyBrendByID(c *gin.Context) {
 		return
 	}
 
-	rowsMainImage, err := db.Query("SELECT m.image FROM main_image m INNER JOIN products p ON p.id = m.product_id WHERE p.brend_id = $1", ID)
+	rowsMainImage, err := db.Query("SELECT main_image FROM products WHERE brend_id = $1", ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -590,12 +590,12 @@ func DeletePermanentlyBrendByID(c *gin.Context) {
 		}
 	}()
 
-	var mainImages []models.MainImage
+	var mainImages []string
 
 	for rowsMainImage.Next() {
-		var mainImage models.MainImage
+		var mainImage string
 
-		if err := rowsMainImage.Scan(&mainImage.Image); err != nil {
+		if err := rowsMainImage.Scan(&mainImage); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
@@ -607,7 +607,7 @@ func DeletePermanentlyBrendByID(c *gin.Context) {
 	}
 
 	for _, v := range mainImages {
-		if err := os.Remove(pkg.ServerPath + v.Image); err != nil {
+		if err := os.Remove(pkg.ServerPath + v); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
@@ -858,7 +858,7 @@ func GetOneBrendWithProducts(c *gin.Context) {
 		}
 
 		// get all product where brend id equal brendID
-		productRows, err := db.Query("SELECT id,price,old_price,limit_amount,is_new,amount FROM products WHERE brend_id = $1 AND deleted_at IS NULL ORDER BY created_at ASC LIMIT $2 OFFSET $3", brendID, limit, offset)
+		productRows, err := db.Query("SELECT id,price,old_price,limit_amount,is_new,amount,main_image FROM products WHERE brend_id = $1 AND deleted_at IS NULL ORDER BY created_at ASC LIMIT $2 OFFSET $3", brendID, limit, offset)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
@@ -881,7 +881,7 @@ func GetOneBrendWithProducts(c *gin.Context) {
 		for productRows.Next() {
 			var product Product
 
-			if err := productRows.Scan(&product.ID, &product.Price, &product.OldPrice, &product.LimitAmount, &product.IsNew, &product.Amount); err != nil {
+			if err := productRows.Scan(&product.ID, &product.Price, &product.OldPrice, &product.LimitAmount, &product.IsNew, &product.Amount, &product.MainImage); err != nil {
 				c.JSON(http.StatusBadRequest, gin.H{
 					"status":  false,
 					"message": err.Error(),
@@ -896,36 +896,6 @@ func GetOneBrendWithProducts(c *gin.Context) {
 			}
 
 			if product.Amount != 0 {
-
-				rowMainImage, err := db.Query("SELECT image FROM main_image WHERE product_id = $1", product.ID)
-				if err != nil {
-					c.JSON(http.StatusBadRequest, gin.H{
-						"status":  false,
-						"message": err.Error(),
-					})
-					return
-				}
-				defer func() {
-					if err := rowMainImage.Close(); err != nil {
-						c.JSON(http.StatusBadRequest, gin.H{
-							"status":  false,
-							"message": err.Error(),
-						})
-						return
-					}
-				}()
-
-				var mainImage string
-
-				for rowMainImage.Next() {
-					if err := rowMainImage.Scan(&mainImage); err != nil {
-						c.JSON(http.StatusBadRequest, gin.H{
-							"status":  false,
-							"message": err.Error(),
-						})
-						return
-					}
-				}
 
 				rowsLang, err := db.Query("SELECT id,name_short FROM languages WHERE deleted_at IS NULL")
 				if err != nil {
@@ -1000,8 +970,6 @@ func GetOneBrendWithProducts(c *gin.Context) {
 					product.Translations = append(product.Translations, translation)
 
 				}
-
-				product.MainImage = mainImage
 
 				// get brend where id equal brend_id of product
 				brendRows, err := db.Query("SELECT b.id,b.name FROM products p LEFT JOIN brends b ON p.brend_id=b.id WHERE p.id = $1 AND p.deleted_at IS NULL AND b.deleted_at IS NULL", product.ID)
