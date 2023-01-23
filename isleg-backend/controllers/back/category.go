@@ -954,7 +954,7 @@ func DeletePermanentlyCategoryByID(c *gin.Context) {
 	}
 
 	// kategoriyanyn produktalarynyn main suratlaryn direktlary bazadan alynyar
-	rowsMainImageProduct, err := db.Query("SELECT m.product_id,m.image FROM products p INNER JOIN category_product c ON c.product_id=p.id INNER JOIN main_image m ON m.product_id = p.id WHERE c.category_id = $1", ID)
+	rowsMainImageProduct, err := db.Query("SELECT p.id,p.main_image FROM products p INNER JOIN category_product c ON c.product_id=p.id c.category_id = $1", ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -972,12 +972,12 @@ func DeletePermanentlyCategoryByID(c *gin.Context) {
 		}
 	}()
 
-	var mainImages []models.MainImage
+	var mainImages []models.Product
 
 	for rowsMainImageProduct.Next() {
-		var mainImage models.MainImage
+		var mainImage models.Product
 
-		if err := rowsMainImageProduct.Scan(&mainImage.ProductID, &mainImage.Image); err != nil {
+		if err := rowsMainImageProduct.Scan(&mainImage.ID, &mainImage.MainImage); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
@@ -990,7 +990,7 @@ func DeletePermanentlyCategoryByID(c *gin.Context) {
 
 	// kategoriyanyn produktalarynyn main suratlary uploads papkadan pozulyar
 	for _, v := range mainImages {
-		if err := os.Remove(pkg.ServerPath + v.Image); err != nil {
+		if err := os.Remove(pkg.ServerPath + v.MainImage); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
@@ -1066,7 +1066,7 @@ func DeletePermanentlyCategoryByID(c *gin.Context) {
 
 	// haryt pozulanda sol haryda degisli likelar hem pozulmaly
 	for _, v := range mainImages {
-		resultLike, err := db.Query("DELETE FROM likes WHERE product_id = $1", v.ProductID)
+		resultLike, err := db.Query("DELETE FROM likes WHERE product_id = $1", v.ID)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
@@ -1087,7 +1087,7 @@ func DeletePermanentlyCategoryByID(c *gin.Context) {
 
 	// haryt pozulanda sol haryda degisli sebetdaki harytlar hem pozulmaly
 	for _, v := range mainImages {
-		resultCart, err := db.Query("DELETE FROM cart WHERE product_id = $1", v.ProductID)
+		resultCart, err := db.Query("DELETE FROM cart WHERE product_id = $1", v.ID)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
@@ -1108,7 +1108,7 @@ func DeletePermanentlyCategoryByID(c *gin.Context) {
 
 	// haryt pozulanda sol haryda degisli sargyt edilen harytlar hem pozulmaly
 	for _, v := range mainImages {
-		resultOrderedProduct, err := db.Query("DELETE FROM ordered_products WHERE product_id = $1", v.ProductID)
+		resultOrderedProduct, err := db.Query("DELETE FROM ordered_products WHERE product_id = $1", v.ID)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
@@ -1182,7 +1182,7 @@ func DeletePermanentlyCategoryByID(c *gin.Context) {
 
 	// child kategoriya degisli harytlaryn suratlarynyn direktleri bazadan alynyar we uploads papkadam pozulyar
 	for _, v := range childCategoryIDS {
-		rowPrdcs, err := db.Query("SELECT m.product_id,m.image FROM products p INNER JOIN category_product c ON c.product_id=p.id INNER JOIN main_image m ON m.product_id = p.id WHERE c.category_id = $1", v)
+		rowPrdcs, err := db.Query("SELECT p.id,p.main_image FROM products p INNER JOIN category_product c ON c.product_id=p.id WHERE c.category_id = $1", v)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
@@ -1200,12 +1200,12 @@ func DeletePermanentlyCategoryByID(c *gin.Context) {
 			}
 		}()
 
-		var childMainImages []models.MainImage
+		var childMainImages []models.Product
 
 		for rowsMainImageProduct.Next() {
-			var childMainImage models.MainImage
+			var childMainImage models.Product
 
-			if err := rowsMainImageProduct.Scan(&childMainImage.ProductID, &childMainImage.Image); err != nil {
+			if err := rowsMainImageProduct.Scan(&childMainImage.ID, &childMainImage.MainImage); err != nil {
 				c.JSON(http.StatusBadRequest, gin.H{
 					"status":  false,
 					"message": err.Error(),
@@ -1217,7 +1217,7 @@ func DeletePermanentlyCategoryByID(c *gin.Context) {
 		}
 
 		for _, v := range childMainImages {
-			if err := os.Remove(pkg.ServerPath + v.Image); err != nil {
+			if err := os.Remove(pkg.ServerPath + v.MainImage); err != nil {
 				c.JSON(http.StatusBadRequest, gin.H{
 					"status":  false,
 					"message": err.Error(),
@@ -1291,7 +1291,7 @@ func DeletePermanentlyCategoryByID(c *gin.Context) {
 
 		// haryt pozulanda sol haryda degisli likelar hem pozulmaly
 		for _, v := range childMainImages {
-			resultLike, err := db.Query("DELETE FROM likes WHERE product_id = $1", v.ProductID)
+			resultLike, err := db.Query("DELETE FROM likes WHERE product_id = $1", v.ID)
 			if err != nil {
 				c.JSON(http.StatusBadRequest, gin.H{
 					"status":  false,
@@ -1312,7 +1312,7 @@ func DeletePermanentlyCategoryByID(c *gin.Context) {
 
 		// haryt pozulanda sol haryda degisli sebetdaki harytlar hem pozulmaly
 		for _, v := range childMainImages {
-			resultCart, err := db.Query("DELETE FROM cart WHERE product_id = $1", v.ProductID)
+			resultCart, err := db.Query("DELETE FROM cart WHERE product_id = $1", v.ID)
 			if err != nil {
 				c.JSON(http.StatusBadRequest, gin.H{
 					"status":  false,
@@ -1333,7 +1333,7 @@ func DeletePermanentlyCategoryByID(c *gin.Context) {
 
 		// haryt pozulanda sol haryda degisli sargyt edilen harytlar hem pozulmaly
 		for _, v := range childMainImages {
-			resultOrderedProduct, err := db.Query("DELETE FROM ordered_products WHERE product_id = $1", v.ProductID)
+			resultOrderedProduct, err := db.Query("DELETE FROM ordered_products WHERE product_id = $1", v.ID)
 			if err != nil {
 				c.JSON(http.StatusBadRequest, gin.H{
 					"status":  false,
@@ -1540,7 +1540,7 @@ func GetOneCategoryWithProducts(c *gin.Context) {
 		}
 
 		// get all product where category id equal categoryID
-		productRows, err := db.Query("SELECT p.id,p.price,p.old_price,p.limit_amount,p.is_new,p.amount FROM products p LEFT JOIN category_product c ON p.id=c.product_id WHERE c.category_id = $1 AND p.deleted_at IS NULL AND c.deleted_at IS NULL ORDER BY p.created_at ASC LIMIT $2 OFFSET $3", categoryID, limit, offset)
+		productRows, err := db.Query("SELECT p.id,p.price,p.old_price,p.limit_amount,p.is_new,p.amount,p.main_image FROM products p LEFT JOIN category_product c ON p.id=c.product_id WHERE c.category_id = $1 AND p.deleted_at IS NULL AND c.deleted_at IS NULL ORDER BY p.created_at ASC LIMIT $2 OFFSET $3", categoryID, limit, offset)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
@@ -1563,7 +1563,7 @@ func GetOneCategoryWithProducts(c *gin.Context) {
 		for productRows.Next() {
 			var product Product
 
-			if err := productRows.Scan(&product.ID, &product.Price, &product.OldPrice, &product.LimitAmount, &product.IsNew, &product.Amount); err != nil {
+			if err := productRows.Scan(&product.ID, &product.Price, &product.OldPrice, &product.LimitAmount, &product.IsNew, &product.Amount, &product.MainImage); err != nil {
 				c.JSON(http.StatusBadRequest, gin.H{
 					"status":  false,
 					"message": err.Error(),
@@ -1578,36 +1578,6 @@ func GetOneCategoryWithProducts(c *gin.Context) {
 			}
 
 			if product.Amount != 0 {
-
-				rowMainImage, err := db.Query("SELECT image FROM main_image WHERE product_id = $1", product.ID)
-				if err != nil {
-					c.JSON(http.StatusBadRequest, gin.H{
-						"status":  false,
-						"message": err.Error(),
-					})
-					return
-				}
-				defer func() {
-					if err := rowMainImage.Close(); err != nil {
-						c.JSON(http.StatusBadRequest, gin.H{
-							"status":  false,
-							"message": err.Error(),
-						})
-						return
-					}
-				}()
-
-				var mainImage string
-
-				for rowMainImage.Next() {
-					if err := rowMainImage.Scan(&mainImage); err != nil {
-						c.JSON(http.StatusBadRequest, gin.H{
-							"status":  false,
-							"message": err.Error(),
-						})
-						return
-					}
-				}
 
 				rowsLang, err := db.Query("SELECT id,name_short FROM languages WHERE deleted_at IS NULL")
 				if err != nil {
@@ -1682,8 +1652,6 @@ func GetOneCategoryWithProducts(c *gin.Context) {
 					product.Translations = append(product.Translations, translation)
 
 				}
-
-				product.MainImage = mainImage
 
 				// get brend where id equal brend_id of product
 				brendRows, err := db.Query("SELECT b.id,b.name FROM products p LEFT JOIN brends b ON p.brend_id=b.id WHERE p.id = $1 AND p.deleted_at IS NULL AND b.deleted_at IS NULL", product.ID)
