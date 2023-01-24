@@ -116,7 +116,7 @@ func GetHomePageCategories(c *gin.Context) {
 		}
 
 		// get all product where category id equal homePageCategory.ID and lang_id equal langID
-		productRows, err := db.Query("SELECT p.id,p.price,p.old_price,p.limit_amount,p.is_new,p.amount FROM products p LEFT JOIN category_product c ON p.id=c.product_id WHERE c.category_id = $1 AND p.deleted_at IS NULL AND c.deleted_at IS NULL AND p.amount != 0 AND p.limit_amount != 0 ORDER BY p.created_at DESC LIMIT 4", homePageCategory.ID)
+		productRows, err := db.Query("SELECT p.id,p.price,p.old_price,p.limit_amount,p.is_new,p.amount,p.main_image FROM products p LEFT JOIN category_product c ON p.id=c.product_id WHERE c.category_id = $1 AND p.deleted_at IS NULL AND c.deleted_at IS NULL AND p.amount > 0 AND p.limit_amount > 0 ORDER BY p.created_at DESC LIMIT 4", homePageCategory.ID)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
@@ -138,45 +138,13 @@ func GetHomePageCategories(c *gin.Context) {
 
 		for productRows.Next() {
 			var product Product
-			if err := productRows.Scan(&product.ID, &product.Price, &product.OldPrice, &product.LimitAmount, &product.IsNew, &product.Amount); err != nil {
+			if err := productRows.Scan(&product.ID, &product.Price, &product.OldPrice, &product.LimitAmount, &product.IsNew, &product.Amount, &product.MainImage); err != nil {
 				c.JSON(http.StatusBadRequest, gin.H{
 					"status":  false,
 					"message": err.Error(),
 				})
 				return
 			}
-
-			rowMainImage, err := db.Query("SELECT image FROM main_image WHERE product_id = $1", product.ID)
-			if err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
-				return
-			}
-			defer func() {
-				if err := rowMainImage.Close(); err != nil {
-					c.JSON(http.StatusBadRequest, gin.H{
-						"status":  false,
-						"message": err.Error(),
-					})
-					return
-				}
-			}()
-
-			var mainImage string
-
-			for rowMainImage.Next() {
-				if err := rowMainImage.Scan(&mainImage); err != nil {
-					c.JSON(http.StatusBadRequest, gin.H{
-						"status":  false,
-						"message": err.Error(),
-					})
-					return
-				}
-			}
-
-			product.MainImage = mainImage
 
 			rowsLang, err := db.Query("SELECT id,name_short FROM languages WHERE deleted_at IS NULL")
 			if err != nil {
