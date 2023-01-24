@@ -1509,7 +1509,7 @@ func GetOneCategoryWithProducts(c *gin.Context) {
 		}
 
 		// get count product where product_id equal categoryID
-		productCount, err := db.Query("SELECT COUNT(p.id) FROM products p LEFT JOIN category_product c ON p.id=c.product_id WHERE c.category_id = $1 AND p.deleted_at IS NULL AND c.deleted_at IS NULL", categoryID)
+		productCount, err := db.Query("SELECT COUNT(p.id) FROM products p LEFT JOIN category_product c ON p.id=c.product_id WHERE c.category_id = $1 AND p.amount > 0 AND p.limit_amount > 0 AND p.deleted_at IS NULL AND c.deleted_at IS NULL", categoryID)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
@@ -1540,7 +1540,7 @@ func GetOneCategoryWithProducts(c *gin.Context) {
 		}
 
 		// get all product where category id equal categoryID
-		productRows, err := db.Query("SELECT p.id,p.price,p.old_price,p.limit_amount,p.is_new,p.amount,p.main_image FROM products p LEFT JOIN category_product c ON p.id=c.product_id WHERE c.category_id = $1 AND p.deleted_at IS NULL AND c.deleted_at IS NULL ORDER BY p.created_at ASC LIMIT $2 OFFSET $3", categoryID, limit, offset)
+		productRows, err := db.Query("SELECT p.id,p.price,p.old_price,p.limit_amount,p.is_new,p.amount,p.main_image FROM products p LEFT JOIN category_product c ON p.id=c.product_id WHERE c.category_id = $1 AND p.amount > 0 AND p.limit_amount > 0 AND p.deleted_at IS NULL AND c.deleted_at IS NULL ORDER BY p.created_at ASC LIMIT $2 OFFSET $3", categoryID, limit, offset)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
@@ -1577,9 +1577,43 @@ func GetOneCategoryWithProducts(c *gin.Context) {
 				product.Percentage = 0
 			}
 
-			if product.Amount != 0 {
+			rowsLang, err := db.Query("SELECT id,name_short FROM languages WHERE deleted_at IS NULL")
+			if err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+			defer func() {
+				if err := rowsLang.Close(); err != nil {
+					c.JSON(http.StatusBadRequest, gin.H{
+						"status":  false,
+						"message": err.Error(),
+					})
+					return
+				}
+			}()
 
-				rowsLang, err := db.Query("SELECT id,name_short FROM languages WHERE deleted_at IS NULL")
+			var languages []models.Language
+
+			for rowsLang.Next() {
+				var language models.Language
+
+				if err := rowsLang.Scan(&language.ID, &language.NameShort); err != nil {
+					c.JSON(http.StatusBadRequest, gin.H{
+						"status":  false,
+						"message": err.Error(),
+					})
+					return
+				}
+
+				languages = append(languages, language)
+			}
+
+			for _, v := range languages {
+
+				rowTrProduct, err := db.Query("SELECT name,description FROM translation_product WHERE lang_id = $1 AND product_id = $2 AND deleted_at IS NULL", v.ID, product.ID)
 				if err != nil {
 					c.JSON(http.StatusBadRequest, gin.H{
 						"status":  false,
@@ -1588,7 +1622,7 @@ func GetOneCategoryWithProducts(c *gin.Context) {
 					return
 				}
 				defer func() {
-					if err := rowsLang.Close(); err != nil {
+					if err := rowTrProduct.Close(); err != nil {
 						c.JSON(http.StatusBadRequest, gin.H{
 							"status":  false,
 							"message": err.Error(),
@@ -1597,85 +1631,12 @@ func GetOneCategoryWithProducts(c *gin.Context) {
 					}
 				}()
 
-				var languages []models.Language
+				var trProduct models.TranslationProduct
 
-				for rowsLang.Next() {
-					var language models.Language
+				translation := make(map[string]models.TranslationProduct)
 
-					if err := rowsLang.Scan(&language.ID, &language.NameShort); err != nil {
-						c.JSON(http.StatusBadRequest, gin.H{
-							"status":  false,
-							"message": err.Error(),
-						})
-						return
-					}
-
-					languages = append(languages, language)
-				}
-
-				for _, v := range languages {
-
-					rowTrProduct, err := db.Query("SELECT name,description FROM translation_product WHERE lang_id = $1 AND product_id = $2 AND deleted_at IS NULL", v.ID, product.ID)
-					if err != nil {
-						c.JSON(http.StatusBadRequest, gin.H{
-							"status":  false,
-							"message": err.Error(),
-						})
-						return
-					}
-					defer func() {
-						if err := rowTrProduct.Close(); err != nil {
-							c.JSON(http.StatusBadRequest, gin.H{
-								"status":  false,
-								"message": err.Error(),
-							})
-							return
-						}
-					}()
-
-					var trProduct models.TranslationProduct
-
-					translation := make(map[string]models.TranslationProduct)
-
-					for rowTrProduct.Next() {
-						if err := rowTrProduct.Scan(&trProduct.Name, &trProduct.Description); err != nil {
-							c.JSON(http.StatusBadRequest, gin.H{
-								"status":  false,
-								"message": err.Error(),
-							})
-							return
-						}
-					}
-
-					translation[v.NameShort] = trProduct
-
-					product.Translations = append(product.Translations, translation)
-
-				}
-
-				// get brend where id equal brend_id of product
-				brendRows, err := db.Query("SELECT b.id,b.name FROM products p LEFT JOIN brends b ON p.brend_id=b.id WHERE p.id = $1 AND p.deleted_at IS NULL AND b.deleted_at IS NULL", product.ID)
-				if err != nil {
-					c.JSON(http.StatusBadRequest, gin.H{
-						"status":  false,
-						"message": err.Error(),
-					})
-					return
-				}
-				defer func() {
-					if err := brendRows.Close(); err != nil {
-						c.JSON(http.StatusBadRequest, gin.H{
-							"status":  false,
-							"message": err.Error(),
-						})
-						return
-					}
-				}()
-
-				var brend Brend
-
-				for brendRows.Next() {
-					if err := brendRows.Scan(&brend.ID, &brend.Name); err != nil {
+				for rowTrProduct.Next() {
+					if err := rowTrProduct.Scan(&trProduct.Name, &trProduct.Description); err != nil {
 						c.JSON(http.StatusBadRequest, gin.H{
 							"status":  false,
 							"message": err.Error(),
@@ -1683,10 +1644,46 @@ func GetOneCategoryWithProducts(c *gin.Context) {
 						return
 					}
 				}
-				product.Brend = brend
-				products = append(products, product)
+
+				translation[v.NameShort] = trProduct
+
+				product.Translations = append(product.Translations, translation)
 
 			}
+
+			// get brend where id equal brend_id of product
+			brendRows, err := db.Query("SELECT b.id,b.name FROM products p LEFT JOIN brends b ON p.brend_id=b.id WHERE p.id = $1 AND p.deleted_at IS NULL AND b.deleted_at IS NULL", product.ID)
+			if err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+			defer func() {
+				if err := brendRows.Close(); err != nil {
+					c.JSON(http.StatusBadRequest, gin.H{
+						"status":  false,
+						"message": err.Error(),
+					})
+					return
+				}
+			}()
+
+			var brend Brend
+
+			for brendRows.Next() {
+				if err := brendRows.Scan(&brend.ID, &brend.Name); err != nil {
+					c.JSON(http.StatusBadRequest, gin.H{
+						"status":  false,
+						"message": err.Error(),
+					})
+					return
+				}
+			}
+			product.Brend = brend
+			products = append(products, product)
+
 		}
 		category.Products = products
 	}
