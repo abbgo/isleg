@@ -1068,7 +1068,7 @@ func GetOrders(c *gin.Context) {
 				return
 			}
 
-			rowProduct, err := db.Query("SELECT brend_id,price,old_price,amount,limit_amount,is_new FROM products WHERE id = $1 AND deleted_at IS NULL", product.ID)
+			rowProduct, err := db.Query("SELECT brend_id,price,old_price,amount,limit_amount,is_new,main_image FROM products WHERE id = $1 AND deleted_at IS NULL", product.ID)
 			if err != nil {
 				c.JSON(http.StatusBadRequest, gin.H{
 					"status":  false,
@@ -1087,7 +1087,7 @@ func GetOrders(c *gin.Context) {
 			}()
 
 			for rowProduct.Next() {
-				if err := rowProduct.Scan(&product.BrendID, &product.Price, &product.OldPrice, &product.Amount, &product.LimitAmount, &product.IsNew); err != nil {
+				if err := rowProduct.Scan(&product.BrendID, &product.Price, &product.OldPrice, &product.Amount, &product.LimitAmount, &product.IsNew, &product.MainImage); err != nil {
 					c.JSON(http.StatusBadRequest, gin.H{
 						"status":  false,
 						"message": err.Error(),
@@ -1101,38 +1101,6 @@ func GetOrders(c *gin.Context) {
 			} else {
 				product.Percentage = 0
 			}
-
-			rowMainImage, err := db.Query("SELECT image FROM main_image WHERE product_id = $1 AND deleted_at IS NULL", product.ID)
-			if err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
-				return
-			}
-			defer func() {
-				if err := rowMainImage.Close(); err != nil {
-					c.JSON(http.StatusBadRequest, gin.H{
-						"status":  false,
-						"message": err.Error(),
-					})
-					return
-				}
-			}()
-
-			var mainImage string
-
-			for rowMainImage.Next() {
-				if err := rowMainImage.Scan(&mainImage); err != nil {
-					c.JSON(http.StatusBadRequest, gin.H{
-						"status":  false,
-						"message": err.Error(),
-					})
-					return
-				}
-			}
-
-			product.MainImage = mainImage
 
 			rowTrProduct, err := db.Query("SELECT name,description FROM translation_product WHERE product_id = $1 AND lang_id = $2 AND deleted_at IS NULL", product.ID, langID)
 			if err != nil {
