@@ -5,8 +5,6 @@ import (
 	"github/abbgo/isleg/isleg-backend/routes"
 	"log"
 	"os"
-
-	"github.com/joho/godotenv"
 )
 
 // func init() {
@@ -30,9 +28,9 @@ func main() {
 		log.Fatal(err)
 	}
 
-	if err := godotenv.Load(); err != nil {
-		log.Fatal(err)
-	}
+	// if err := godotenv.Load(); err != nil {
+	// 	log.Fatal(err)
+	// }
 
 	defer func() {
 		if err := db.Close(); err != nil {

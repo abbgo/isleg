@@ -37,18 +37,15 @@ COMMENT ON EXTENSION "uuid-ossp" IS 'generate universally unique identifiers (UU
 CREATE PROCEDURE public.after_delete_category(cat_id uuid)
     LANGUAGE plpgsql
     AS $$
-DECLARE category_uuid uuid;
-BEGIN
+declare category_uuid uuid;
+begin
 FOR category_uuid IN SELECT id FROM categories WHERE parent_category_id = cat_id
 LOOP UPDATE translation_category SET deleted_at = now() WHERE category_id = category_uuid;
 UPDATE category_product SET deleted_at = now() WHERE category_id = category_uuid;
 UPDATE products SET deleted_at = now() FROM category_product WHERE category_product.product_id = products.id AND category_product.category_id = category_uuid;
 UPDATE translation_product SET deleted_at = now() FROM products,category_product WHERE translation_product.product_id = products.id AND category_product.product_id = products.id  AND category_product.category_id = category_uuid;
-UPDATE main_image SET deleted_at = now() FROM products,category_product WHERE main_image.product_id = products.id AND category_product.product_id = products.id  AND category_product.category_id = category_uuid;
 UPDATE images SET deleted_at = now() FROM products,category_product WHERE images.product_id = products.id AND category_product.product_id = products.id  AND category_product.category_id = category_uuid;
-UPDATE category_shop SET deleted_at = now() WHERE category_id = category_uuid;
-UPDATE shops SET deleted_at = now() FROM category_shop WHERE category_shop.shop_id = shops.id AND category_shop.category_id = category_uuid; END LOOP; END;
-$$;
+end loop; end; $$;
 
 
 ALTER PROCEDURE public.after_delete_category(cat_id uuid) OWNER TO postgres;
@@ -98,18 +95,15 @@ ALTER FUNCTION public.after_insert_language() OWNER TO postgres;
 CREATE PROCEDURE public.after_restore_category(cat_id uuid)
     LANGUAGE plpgsql
     AS $$
-DECLARE category_uuid uuid;
-BEGIN
+declare category_uuid uuid;
+begin
 FOR category_uuid IN SELECT id FROM categories WHERE parent_category_id = cat_id
 LOOP UPDATE translation_category SET deleted_at = NULL WHERE category_id = category_uuid;
 UPDATE category_product SET deleted_at = NULL WHERE category_id = category_uuid;
 UPDATE products SET deleted_at = NULL FROM category_product WHERE category_product.product_id = products.id AND category_product.category_id = category_uuid;
 UPDATE translation_product SET deleted_at = NULL FROM products,category_product WHERE translation_product.product_id = products.id AND category_product.product_id = products.id  AND category_product.category_id = category_uuid;
-UPDATE main_image SET deleted_at = NULL FROM products,category_product WHERE main_image.product_id = products.id AND category_product.product_id = products.id  AND category_product.category_id = category_uuid;
 UPDATE images SET deleted_at = NULL FROM products,category_product WHERE images.product_id = products.id AND category_product.product_id = products.id  AND category_product.category_id = category_uuid;
-UPDATE category_shop SET deleted_at = NULL WHERE category_id = category_uuid;
-UPDATE shops SET deleted_at = NULL FROM category_shop WHERE category_shop.shop_id = shops.id AND category_shop.category_id = category_uuid;
-END LOOP; END; $$;
+end loop; end; $$;
 
 
 ALTER PROCEDURE public.after_restore_category(cat_id uuid) OWNER TO postgres;
@@ -136,13 +130,12 @@ ALTER PROCEDURE public.delete_afisa(a_id uuid) OWNER TO postgres;
 CREATE PROCEDURE public.delete_brend(b_id uuid)
     LANGUAGE plpgsql
     AS $$
-BEGIN
+begin
 UPDATE brends SET deleted_at = now() WHERE id = b_id;
 UPDATE products SET deleted_at = now() WHERE brend_id = b_id;
 UPDATE translation_product SET deleted_at = now() FROM products WHERE translation_product.product_id=products.id AND products.brend_id = b_id;
-UPDATE main_image SET deleted_at = now() FROM products WHERE main_image.product_id=products.id AND products.brend_id = b_id;
 UPDATE images SET deleted_at = now() FROM products WHERE images.product_id=products.id AND products.brend_id = b_id;
-END; $$;
+end; $$;
 
 
 ALTER PROCEDURE public.delete_brend(b_id uuid) OWNER TO postgres;
@@ -154,16 +147,15 @@ ALTER PROCEDURE public.delete_brend(b_id uuid) OWNER TO postgres;
 CREATE PROCEDURE public.delete_category(category_uuid uuid)
     LANGUAGE plpgsql
     AS $$
-BEGIN
+begin
 UPDATE categories SET deleted_at = now() WHERE id = category_uuid;
 UPDATE translation_category SET deleted_at = now() WHERE category_id = category_uuid;
 UPDATE categories SET deleted_at = now() WHERE parent_category_id = category_uuid;
 UPDATE category_product SET deleted_at = now() WHERE category_id = category_uuid;
 UPDATE products SET deleted_at = now() FROM category_product WHERE category_product.product_id = products.id AND category_product.category_id = category_uuid;
 UPDATE translation_product SET deleted_at = now() FROM products,category_product WHERE translation_product.product_id = products.id AND category_product.product_id = products.id  AND category_product.category_id = category_uuid;
-UPDATE main_image SET deleted_at = now() FROM products,category_product WHERE main_image.product_id = products.id AND category_product.product_id = products.id  AND category_product.category_id = category_uuid;
 UPDATE images SET deleted_at = now() FROM products,category_product WHERE images.product_id = products.id AND category_product.product_id = products.id  AND category_product.category_id = category_uuid;
-END; $$;
+end; $$;
 
 
 ALTER PROCEDURE public.delete_category(category_uuid uuid) OWNER TO postgres;
@@ -256,13 +248,12 @@ ALTER PROCEDURE public.delete_product(p_id uuid) OWNER TO postgres;
 CREATE PROCEDURE public.delete_shop(s_id uuid)
     LANGUAGE plpgsql
     AS $$
-BEGIN
+begin
 UPDATE shops SET deleted_at = now() WHERE id = s_id;
 UPDATE products SET deleted_at = now() WHERE shop_id = s_id;
 UPDATE translation_product SET deleted_at = now() FROM products WHERE translation_product.product_id = products.id AND products.shop_id = s_id;
-UPDATE main_image SET deleted_at = now() FROM products WHERE main_image.product_id = products.id AND products.shop_id = s_id;
 UPDATE images SET deleted_at = now() FROM products WHERE images.product_id = products.id AND products.shop_id = s_id;
-END; $$;
+end; $$;
 
 
 ALTER PROCEDURE public.delete_shop(s_id uuid) OWNER TO postgres;
@@ -289,13 +280,12 @@ ALTER PROCEDURE public.restore_afisa(a_id uuid) OWNER TO postgres;
 CREATE PROCEDURE public.restore_brend(b_id uuid)
     LANGUAGE plpgsql
     AS $$
-BEGIN
+begin
 UPDATE brends SET deleted_at = NULL WHERE id = b_id;
 UPDATE products SET deleted_at = NULL WHERE brend_id = b_id;
 UPDATE translation_product SET deleted_at = NULL FROM products WHERE translation_product.product_id=products.id AND products.brend_id = b_id;
-UPDATE main_image SET deleted_at = NULL FROM products WHERE main_image.product_id=products.id AND products.brend_id = b_id;
 UPDATE images SET deleted_at = NULL FROM products WHERE images.product_id=products.id AND products.brend_id = b_id;
-END; $$;
+end; $$;
 
 
 ALTER PROCEDURE public.restore_brend(b_id uuid) OWNER TO postgres;
@@ -307,18 +297,15 @@ ALTER PROCEDURE public.restore_brend(b_id uuid) OWNER TO postgres;
 CREATE PROCEDURE public.restore_category(cat_id uuid)
     LANGUAGE plpgsql
     AS $$
-BEGIN
+begin
 UPDATE categories SET deleted_at = NULL WHERE id = cat_id;
 UPDATE translation_category SET deleted_at = NULL WHERE category_id = cat_id;
 UPDATE categories SET deleted_at = NULL WHERE parent_category_id = cat_id;
 UPDATE category_product SET deleted_at = NULL WHERE category_id = cat_id;
 UPDATE products SET deleted_at = NULL FROM category_product WHERE category_product.product_id = products.id AND category_product.category_id = cat_id;
 UPDATE translation_product SET deleted_at = NULL FROM products,category_product WHERE translation_product.product_id = products.id AND category_product.product_id = products.id  AND category_product.category_id = cat_id;
-UPDATE main_image SET deleted_at = NULL FROM products,category_product WHERE main_image.product_id = products.id AND category_product.product_id = products.id  AND category_product.category_id = cat_id;
 UPDATE images SET deleted_at = NULL FROM products,category_product WHERE images.product_id = products.id AND category_product.product_id = products.id  AND category_product.category_id = cat_id;
-UPDATE category_shop SET deleted_at = NULL WHERE category_id = cat_id;
-UPDATE shops SET deleted_at = NULL FROM category_shop WHERE category_shop.shop_id = shops.id AND category_shop.category_id = cat_id;
-END; $$;
+end; $$;
 
 
 ALTER PROCEDURE public.restore_category(cat_id uuid) OWNER TO postgres;
@@ -411,13 +398,12 @@ ALTER PROCEDURE public.restore_product(p_id uuid) OWNER TO postgres;
 CREATE PROCEDURE public.restore_shop(s_id uuid)
     LANGUAGE plpgsql
     AS $$
-BEGIN
+begin
 UPDATE shops SET deleted_at = NULL WHERE id = s_id;
 UPDATE products SET deleted_at = NULL WHERE shop_id = s_id;
 UPDATE translation_product SET deleted_at = NULL FROM products WHERE translation_product.product_id = products.id AND products.shop_id = s_id;
-UPDATE main_image SET deleted_at = NULL FROM products WHERE main_image.product_id = products.id AND products.shop_id = s_id;
 UPDATE images SET deleted_at = NULL FROM products WHERE images.product_id = products.id AND products.shop_id = s_id;
-END; $$;
+end; $$;
 
 
 ALTER PROCEDURE public.restore_shop(s_id uuid) OWNER TO postgres;
@@ -1307,6 +1293,8 @@ b969cd61-af6a-4bae-88c5-cbd3cdb36a53	\N	uploads/category/716a71c4-aa9e-4cd2-9124
 --
 
 COPY public.category_product (id, category_id, product_id, created_at, updated_at, deleted_at) FROM stdin;
+29a72236-0d1b-4929-bfa2-db9bf0d8cf84	75dd289a-f72b-42fa-975e-ee10cd796135	0251118a-54e8-41bb-8404-7c08d1f8e9f0	2023-01-24 07:55:51.174949+00	2023-01-24 07:55:51.174949+00	\N
+a5836f21-a2e7-4593-b28e-1d1dedc9b181	d5e7a59e-b272-4a77-9a95-5efebee00eb0	0251118a-54e8-41bb-8404-7c08d1f8e9f0	2023-01-24 07:55:51.174949+00	2023-01-24 07:55:51.174949+00	\N
 \.
 
 
@@ -1367,6 +1355,10 @@ e9db1ea7-5ce4-4284-bdc2-0fc39da2b7f2	Allanur	+99365684712	\N	\N	\N	2023-01-13 17
 a28db6ca-17a6-4879-ba0b-4741633d1395	Oraz	+99362986819	$2a$14$k/3rRQzdZWN026OZg5HCCeUZzb2QbHO8FZB7v8CdGNNlMmEOGZBIm	\N	\N	2023-01-14 11:34:16.599034+00	2023-01-14 11:34:16.599034+00	\N	orazdurdyyew3762@gmail.com	t
 392e6586-b3aa-4086-92d9-35e1dc29253e	Serdar Berdiyew	+99365432187	\N	\N	\N	2023-01-15 14:41:59.970261+00	2023-01-15 14:41:59.970261+00	\N	\N	f
 dad96943-886e-4ee3-9ca5-3723423b4191	Eziz	+99363558110	$2a$14$IZz8MRoQNJkMhC4hJ9ey7uLnrYNAQ0cakkf52lJA6mDgx/s6bODmC	\N	\N	2023-01-15 15:04:02.885068+00	2023-01-15 15:04:02.885068+00	\N	eziz@gmail.com	t
+75cc7b9d-96b6-4189-a62e-1acd6f16851d	dnkjndkjndkwed	+99363747656	$2a$14$WPsa3EMQWzA5gZavgRmInuWMsPzpBgmWk39lh1Mys45gkN6/D6F4u	\N	\N	2023-01-23 15:30:56.851327+00	2023-01-23 15:30:56.851327+00	\N	ewjdnjwkednw@gmail.com	t
+f12aec9a-7e10-4c6b-8121-4b5ce334bfa9	jkbdjcbewjhbdwebh	+99363744664	$2a$14$.wtw3vCqNxVizxEqy1w1ruld8hk9V5sFvmuisv.hThfMpFHtF90fm	\N	\N	2023-01-23 15:48:42.721254+00	2023-01-23 15:48:42.721254+00	\N	wejdwkedwehb@gmail.com	t
+878502bc-3aaf-4ffc-9b8c-1423efb829dc	w3jeduw3h32	+99363747154	$2a$14$B8RCoD0zD1VOoZ4sjFgDPeLoOVl.mzw/2MMx9MGMiyQfpblor.Cle	\N	\N	2023-01-23 15:53:02.024195+00	2023-01-23 15:53:02.024195+00	\N	23oei23jen@gmail.com	t
+12c4d76a-e3a6-4f35-97ba-efed264f849a	54jkwnefjkewbhd	+99363745454	$2a$14$mriNhEaRJYqLbrpygPJeUOG1MKgKLHPdmDE/CX9arGhcLSpR0Ovsy	\N	\N	2023-01-23 15:54:38.267322+00	2023-01-23 15:54:38.267322+00	\N	wejdweu@gmail.com	t
 \.
 
 
@@ -1384,6 +1376,8 @@ a58294d3-efe5-4cb7-82d3-8df8c37563c5	15	2022-06-25 05:23:25.640364+00	2022-06-25
 --
 
 COPY public.images (id, product_id, image, created_at, updated_at, deleted_at) FROM stdin;
+5b261148-e020-4b32-9a16-a5c73a12a38c	0251118a-54e8-41bb-8404-7c08d1f8e9f0	uploads/product/716211e8-8ba0-4c8c-9163-fe7817e4f19d.jpg	2023-01-24 07:55:51.139633+00	2023-01-24 07:55:51.139633+00	\N
+5615a2d1-e5ea-4167-8485-9d3115ef0acf	0251118a-54e8-41bb-8404-7c08d1f8e9f0	uploads/product/fe2f417e-85f3-4213-b821-98553ba1e1f7.jpg	2023-01-24 07:55:51.139633+00	2023-01-24 07:55:51.139633+00	\N
 \.
 
 
@@ -1449,20 +1443,6 @@ COPY public.ordered_products (id, product_id, quantity_of_product, order_id, cre
 --
 
 COPY public.orders (id, customer_id, customer_mark, order_time, payment_type, total_price, created_at, updated_at, deleted_at, order_number, shipping_price, excel, address) FROM stdin;
-668a5cbf-f1ce-4804-a811-b9fd25fd7c10	1ae12390-03ae-49ac-a9ad-d7ba5c95b51a	isleg market bet cykypdyr	12:00 - 16:00	nagt	934.8	2022-11-19 10:41:20.784455+00	2022-11-19 10:41:21.402377+00	\N	49	10	uploads/orders/49.xlsx	Mir 2/2 jay 7 oy 36
-6bba125e-25ec-4a97-ac49-697e4ebf2683	1ae12390-03ae-49ac-a9ad-d7ba5c95b51a	isleg market bet cykypdyr	12:00 - 16:00	nagt	934.8	2022-12-14 12:55:18.619672+00	2022-12-14 12:55:18.774303+00	\N	51	10	uploads/orders/51.xlsx	Mir 2/2 jay 7 oy 36
-135cafd1-27d6-429d-bba6-057d5866c209	1ae12390-03ae-49ac-a9ad-d7ba5c95b51a		18:00 - 21:00	nagt_tm	137.8	2023-01-08 13:15:53.690688+00	2023-01-08 13:15:53.748542+00	\N	52	0	uploads/orders/52.xlsx	Mir 6/3 jay 56 
-1fe37aac-2d19-4cff-a1af-09d520b418a8	1ae12390-03ae-49ac-a9ad-d7ba5c95b51a		18:00 - 21:00	töleg terminaly	74.8	2023-01-08 13:16:20.179098+00	2023-01-08 13:16:20.223665+00	\N	53	0	uploads/orders/53.xlsx	Mir 6/3 jay 56 
-2f2d1a2c-617a-4930-bfe0-ea704a5e7019	1ae12390-03ae-49ac-a9ad-d7ba5c95b51a		18:00 - 21:00	nagt_tm	49.3	2023-01-08 13:17:43.401901+00	2023-01-08 13:17:43.445335+00	\N	54	0	uploads/orders/54.xlsx	Mir 6/3 jay 56 
-17f98b48-aec3-413b-9797-3905d4a1dd46	1ae12390-03ae-49ac-a9ad-d7ba5c95b51a		18:00 - 21:00	nagt_tm	149.6	2023-01-08 13:18:34.374903+00	2023-01-08 13:18:34.433757+00	\N	55	0	uploads/orders/55.xlsx	Mir 6/3 jay 56 
-7afb52f2-74ec-4498-9b6e-0c3eaac004f9	1ae12390-03ae-49ac-a9ad-d7ba5c95b51a		09:00 - 12:00	nagt_tm	74.8	2023-01-08 13:18:59.865031+00	2023-01-08 13:18:59.909679+00	\N	56	0	uploads/orders/56.xlsx	Mir 6/3 jay 56 
-153fc6fa-cd89-41d3-b47a-46d8cf5fa7e0	95595b3c-c1ca-4363-b9c0-9916ce88b82a	dfsgsdfg	09:00 - 12:00	töleg terminaly	49.3	2023-01-08 13:31:51.310605+00	2023-01-08 13:31:51.356479+00	\N	57	0	uploads/orders/57.xlsx	sdfgsdfhsdfghdf
-6898e2d1-a457-47f6-8773-a28c15910499	1ae12390-03ae-49ac-a9ad-d7ba5c95b51a		18:00 - 21:00	töleg terminaly	82.7	2023-01-08 13:33:42.798348+00	2023-01-08 13:33:42.839018+00	\N	58	0	uploads/orders/58.xlsx	Mir 6/3 jay 56 
-b7164152-400a-4cac-94e9-a6072bc7b0a3	1ae12390-03ae-49ac-a9ad-d7ba5c95b51a		18:00 - 21:00	töleg terminaly	217.8	2023-01-08 13:35:15.73717+00	2023-01-08 13:35:15.803509+00	\N	59	0	uploads/orders/59.xlsx	Mir 6/3 jay 56 
-7cb54eca-47ac-4f22-bf3c-a2f1ad3b021c	e9db1ea7-5ce4-4284-bdc2-0fc39da2b7f2		09:00 - 12:00	nagt_tm	196.4	2023-01-13 17:18:08.812615+00	2023-01-13 17:18:08.878211+00	\N	60	0	uploads/orders/60.xlsx	qwkjdwidwnfjkfnwefnjwef
-602552b1-37c4-4799-8903-d7eb9cfc0c73	1ae12390-03ae-49ac-a9ad-d7ba5c95b51a		09:00 - 12:00	töleg terminaly	427	2023-01-13 18:50:36.781639+00	2023-01-13 18:50:36.827459+00	\N	61	0	uploads/orders/61.xlsx	Mir 6/3 jay 56 
-a0e19f83-7728-4602-b71a-b26881b8814e	1ae12390-03ae-49ac-a9ad-d7ba5c95b51a		18:00 - 21:00	töleg terminaly	50.1	2023-01-13 20:37:08.280668+00	2023-01-13 20:37:08.330058+00	\N	62	0	uploads/orders/62.xlsx	Mir 6/3 jay 56 
-66ab4ec3-d99b-4e3b-a6cc-b74be610b18f	392e6586-b3aa-4086-92d9-35e1dc29253e		09:00 - 12:00	наличные	100.2	2023-01-15 14:41:59.97967+00	2023-01-15 14:42:00.035388+00	\N	63	0	uploads/orders/63.xlsx	Mir 2/2
 \.
 
 
@@ -1483,6 +1463,7 @@ cb7e8cc9-9b2e-4cd8-921f-91b3bb5e5564	aea98b93-7bdf-455b-9ad4-a259d69dc76e	пла
 --
 
 COPY public.products (id, brend_id, price, old_price, amount, created_at, updated_at, deleted_at, limit_amount, is_new, shop_id, main_image) FROM stdin;
+0251118a-54e8-41bb-8404-7c08d1f8e9f0	9b838628-fd75-4232-862d-998635f24f52	100	101	100	2023-01-24 07:55:51.135561+00	2023-01-24 07:55:51.135561+00	\N	50	t	74cce5dc-6fc2-487c-8553-1f00850df257	uploads/product/5d4ddc3f-f8b8-4f75-984b-3e9074062fdf.JPG
 \.
 
 
@@ -1689,6 +1670,8 @@ ea7f4c0c-4b1a-41d3-94eb-e058aba9c99f	aea98b93-7bdf-455b-9ad4-a259d69dc76e	Пор
 --
 
 COPY public.translation_product (id, lang_id, product_id, name, description, created_at, updated_at, deleted_at, slug) FROM stdin;
+361414af-9146-4955-8310-790bb3ec221f	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	0251118a-54e8-41bb-8404-7c08d1f8e9f0	"Bianyo" firmaň çyzgy üçin niýetlenen gara galamy	12 sany naborly karton gutyda - ýokary hilli ajaýyp kombinasiýa. Urga çydamly we aňsat arassalanýan berk agaç	2023-01-24 07:55:51.157934+00	2023-01-24 07:55:51.157934+00	\N	bianyo-firman-cyzgy-ucin-niyetlenen-gara-galamy
+e00082a5-921e-418f-88e0-b12cc4796988	aea98b93-7bdf-455b-9ad4-a259d69dc76e	0251118a-54e8-41bb-8404-7c08d1f8e9f0	Набор карандашей чернографитных фирма "Bianyo"	Набор карандашей чернографитных, 12 шт., "Bianyo" гранённые, заточенные, в картонной коробке — прекрасное сочетание высокого качества. Прочный стержень не крошится, а деревянный корпус легко затачивается	2023-01-24 07:55:51.166144+00	2023-01-24 07:55:51.166144+00	\N	nabor-karandashei-chernografitnykh-firma-bianyo
 \.
 
 
