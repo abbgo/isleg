@@ -1043,7 +1043,7 @@ func DeletePermanentlyProductByID(c *gin.Context) {
 	ID := c.Param("id")
 
 	// check id
-	rowProduct, err := db.Query("SELECT id FROM products WHERE id = $1 AND deleted_at IS NOT NULL", ID)
+	rowProduct, err := db.Query("SELECT id,main_image FROM products WHERE id = $1 AND deleted_at IS NOT NULL", ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -1061,10 +1061,10 @@ func DeletePermanentlyProductByID(c *gin.Context) {
 		}
 	}()
 
-	var productID string
+	var productID, mainImage string
 
 	for rowProduct.Next() {
-		if err := rowProduct.Scan(&productID); err != nil {
+		if err := rowProduct.Scan(&productID, &mainImage); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
@@ -1079,37 +1079,6 @@ func DeletePermanentlyProductByID(c *gin.Context) {
 			"message": "product not found",
 		})
 		return
-	}
-
-	// get main image of product
-	rowMainImage, err := db.Query("SELECT main_image FROM products WHERE id = $1", productID)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-	defer func() {
-		if err := rowMainImage.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
-
-	var mainImage string
-
-	for rowMainImage.Next() {
-		if err := rowMainImage.Scan(&mainImage); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
 	}
 
 	// remove main image of product
