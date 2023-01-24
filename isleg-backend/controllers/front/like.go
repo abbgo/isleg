@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"database/sql"
 	"github/abbgo/isleg/isleg-backend/config"
 	"github/abbgo/isleg/isleg-backend/models"
 	"math"
@@ -14,7 +15,7 @@ import (
 
 type LikeProduct struct {
 	ID           uuid.UUID                              `json:"id"`
-	BrendID      uuid.UUID                              `json:"brend_id"`
+	BrendID      sql.NullString                         `json:"brend_id,omitempty"`
 	Price        float64                                `json:"price"`
 	OldPrice     float64                                `json:"old_price"`
 	Percentage   float64                                `json:"percentage"`
@@ -441,7 +442,7 @@ func GetLikes(customerID string) ([]LikeProduct, error) {
 	}
 	defer db.Close()
 
-	rowsProduct, err := db.Query("SELECT p.id,p.brend_id,p.price,p.old_price,p.amount,p.limit_amount,p.is_new FROM products p LEFT JOIN likes l ON l.product_id = p.id WHERE l.customer_id = $1 AND l.deleted_at IS NULL AND p.deleted_at IS NULL", customerID)
+	rowsProduct, err := db.Query("SELECT p.id,p.brend_id,p.price,p.old_price,p.amount,p.limit_amount,p.is_new,p.main_image FROM products p LEFT JOIN likes l ON l.product_id = p.id WHERE l.customer_id = $1 AND p.amount > 0 AND p.limit_amount > 0 AND l.deleted_at IS NULL AND p.deleted_at IS NULL", customerID)
 	if err != nil {
 		return []LikeProduct{}, err
 	}
@@ -452,7 +453,7 @@ func GetLikes(customerID string) ([]LikeProduct, error) {
 	for rowsProduct.Next() {
 		var product LikeProduct
 
-		if err := rowsProduct.Scan(&product.ID, &product.BrendID, &product.Price, &product.OldPrice, &product.Amount, &product.LimitAmount, &product.IsNew); err != nil {
+		if err := rowsProduct.Scan(&product.ID, &product.BrendID, &product.Price, &product.OldPrice, &product.Amount, &product.LimitAmount, &product.IsNew, &product.MainImage); err != nil {
 			return []LikeProduct{}, err
 		}
 
@@ -461,22 +462,6 @@ func GetLikes(customerID string) ([]LikeProduct, error) {
 		} else {
 			product.Percentage = 0
 		}
-
-		rowMainImage, err := db.Query("SELECT image FROM main_image WHERE product_id = $1 AND deleted_at IS NULL", product.ID)
-		if err != nil {
-			return []LikeProduct{}, err
-		}
-		defer rowMainImage.Close()
-
-		var mainImage string
-
-		for rowMainImage.Next() {
-			if err := rowMainImage.Scan(&mainImage); err != nil {
-				return []LikeProduct{}, err
-			}
-		}
-
-		product.MainImage = mainImage
 
 		rowsLang, err := db.Query("SELECT id,name_short FROM languages WHERE deleted_at IS NULL")
 		if err != nil {
@@ -854,7 +839,7 @@ func GetLikedOrOrderedProductsWithoutCustomer(c *gin.Context) {
 	}
 
 	// front - dan gelen id - ler boyunca id - si gelen id den bolan harytlar yzyna ugradylyar
-	rowLikes, err := db.Query("SELECT id,brend_id,price,old_price,amount,limit_amount,is_new FROM products WHERE id = ANY($1) AND deleted_at IS NULL", pq.Array(productIds.IDS))
+	rowLikes, err := db.Query("SELECT id,brend_id,price,old_price,amount,limit_amount,is_new,main_image FROM products WHERE id = ANY($1) AND amount > 0 AND limit_amount > 0 AND deleted_at IS NULL", pq.Array(productIds.IDS))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -877,7 +862,7 @@ func GetLikedOrOrderedProductsWithoutCustomer(c *gin.Context) {
 	for rowLikes.Next() {
 		var product LikeProduct
 
-		if err := rowLikes.Scan(&product.ID, &product.BrendID, &product.Price, &product.OldPrice, &product.Amount, &product.LimitAmount, &product.IsNew); err != nil {
+		if err := rowLikes.Scan(&product.ID, &product.BrendID, &product.Price, &product.OldPrice, &product.Amount, &product.LimitAmount, &product.IsNew, &product.MainImage); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
@@ -890,38 +875,6 @@ func GetLikedOrOrderedProductsWithoutCustomer(c *gin.Context) {
 		} else {
 			product.Percentage = 0
 		}
-
-		rowMainImage, err := db.Query("SELECT image FROM main_image WHERE product_id = $1 AND deleted_at IS NULL", product.ID)
-		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-		defer func() {
-			if err := rowMainImage.Close(); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
-				return
-			}
-		}()
-
-		var mainImage string
-
-		for rowMainImage.Next() {
-			if err := rowMainImage.Scan(&mainImage); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
-				return
-			}
-		}
-
-		product.MainImage = mainImage
 
 		rowsLang, err := db.Query("SELECT id,name_short FROM languages WHERE deleted_at IS NULL")
 		if err != nil {

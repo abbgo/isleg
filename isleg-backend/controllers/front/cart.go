@@ -25,7 +25,7 @@ type ProductOfCart struct {
 	ID                uuid.UUID                              `json:"id"`
 	BrendID           sql.NullString                         `json:"brend_id,omitempty"`
 	Price             float64                                `json:"price"`
-	OldPrice          sql.NullFloat64                        `json:"old_price,omitempty"`
+	OldPrice          float64                                `json:"old_price"`
 	Percentage        float64                                `json:"percentage"`
 	Amount            uint                                   `json:"amount"`
 	LimitAmount       uint                                   `json:"limit_amount"`
@@ -286,8 +286,8 @@ func GetCartProducts(customerID string) ([]ProductOfCart, error) {
 			return []ProductOfCart{}, err
 		}
 
-		if product.OldPrice.Float64 != 0 {
-			product.Percentage = -math.Round(((product.OldPrice.Float64 - product.Price) * 100) / product.OldPrice.Float64)
+		if product.OldPrice != 0 {
+			product.Percentage = -math.Round(((product.OldPrice - product.Price) * 100) / product.OldPrice)
 		} else {
 			product.Percentage = 0
 		}
