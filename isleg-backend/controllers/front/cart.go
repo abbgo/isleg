@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"database/sql"
 	"errors"
 	"github/abbgo/isleg/isleg-backend/config"
 	"github/abbgo/isleg/isleg-backend/models"
@@ -22,9 +23,9 @@ type CartProduct struct {
 
 type ProductOfCart struct {
 	ID                uuid.UUID                              `json:"id"`
-	BrendID           uuid.UUID                              `json:"brend_id"`
+	BrendID           sql.NullString                         `json:"brend_id,omitempty"`
 	Price             float64                                `json:"price"`
-	OldPrice          float64                                `json:"old_price"`
+	OldPrice          sql.NullFloat64                        `json:"old_price,omitempty"`
 	Percentage        float64                                `json:"percentage"`
 	Amount            uint                                   `json:"amount"`
 	LimitAmount       uint                                   `json:"limit_amount"`
@@ -270,7 +271,7 @@ func GetCartProducts(customerID string) ([]ProductOfCart, error) {
 	}
 	defer db.Close()
 
-	rowsProduct, err := db.Query("SELECT p.id,p.brend_id,p.price,p.old_price,p.amount,p.limit_amount,p.is_new,c.quantity_of_product FROM products p LEFT JOIN cart c ON c.product_id = p.id WHERE c.customer_id = $1 AND c.deleted_at IS NULL AND p.deleted_at IS NULL", customerID)
+	rowsProduct, err := db.Query("SELECT p.id,p.brend_id,p.price,p.old_price,p.amount,p.limit_amount,p.is_new,c.quantity_of_product,p.main_image FROM products p LEFT JOIN cart c ON c.product_id = p.id WHERE c.customer_id = $1 AND c.deleted_at IS NULL AND p.deleted_at IS NULL", customerID)
 	if err != nil {
 		return []ProductOfCart{}, err
 	}
@@ -281,31 +282,15 @@ func GetCartProducts(customerID string) ([]ProductOfCart, error) {
 	for rowsProduct.Next() {
 		var product ProductOfCart
 
-		if err := rowsProduct.Scan(&product.ID, &product.BrendID, &product.Price, &product.OldPrice, &product.Amount, &product.LimitAmount, &product.IsNew, &product.QuantityOfProduct); err != nil {
+		if err := rowsProduct.Scan(&product.ID, &product.BrendID, &product.Price, &product.OldPrice, &product.Amount, &product.LimitAmount, &product.IsNew, &product.QuantityOfProduct, &product.MainImage); err != nil {
 			return []ProductOfCart{}, err
 		}
 
-		if product.OldPrice != 0 {
-			product.Percentage = -math.Round(((product.OldPrice - product.Price) * 100) / product.OldPrice)
+		if product.OldPrice.Float64 != 0 {
+			product.Percentage = -math.Round(((product.OldPrice.Float64 - product.Price) * 100) / product.OldPrice.Float64)
 		} else {
 			product.Percentage = 0
 		}
-
-		rowMainImage, err := db.Query("SELECT image FROM main_image WHERE product_id = $1 AND deleted_at IS NULL", product.ID)
-		if err != nil {
-			return []ProductOfCart{}, err
-		}
-		defer rowMainImage.Close()
-
-		var mainImage string
-
-		for rowMainImage.Next() {
-			if err := rowMainImage.Scan(&mainImage); err != nil {
-				return []ProductOfCart{}, err
-			}
-		}
-
-		product.MainImage = mainImage
 
 		rowsLang, err := db.Query("SELECT id,name_short FROM languages WHERE deleted_at IS NULL")
 		if err != nil {
