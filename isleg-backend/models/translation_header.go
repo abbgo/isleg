@@ -1,6 +1,8 @@
 package models
 
-import "github.com/google/uuid"
+import (
+	"github.com/google/uuid"
+)
 
 type TranslationHeader struct {
 	ID                   string        `json:"id,omitempty"`
