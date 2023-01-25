@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"database/sql"
 	"github/abbgo/isleg/isleg-backend/config"
 	"github/abbgo/isleg/isleg-backend/models"
 	"github/abbgo/isleg/isleg-backend/pkg"
@@ -13,6 +12,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	"gopkg.in/guregu/null.v4"
 )
 
 type ResultCategory struct {
@@ -54,8 +54,8 @@ type Product struct {
 }
 
 type Brend struct {
-	ID   sql.NullString `json:"id,omitempty"`
-	Name sql.NullString `json:"name,omitempty"`
+	ID   uuid.NullUUID `json:"id,omitempty"`
+	Name null.String   `json:"name,omitempty"`
 }
 
 func CreateCategory(c *gin.Context) {

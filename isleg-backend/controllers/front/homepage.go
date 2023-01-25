@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"database/sql"
 	"net/http"
 
 	"github/abbgo/isleg/isleg-backend/config"
@@ -9,6 +8,8 @@ import (
 	"github/abbgo/isleg/isleg-backend/models"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
+	"gopkg.in/guregu/null.v4"
 )
 
 type HomePageCategory struct {
@@ -31,8 +32,8 @@ type Product struct {
 }
 
 type Brend struct {
-	ID   sql.NullString `json:"id,omitempty"`
-	Name sql.NullString `json:"name,omitempty"`
+	ID   uuid.NullUUID `json:"id,omitempty"`
+	Name null.String   `json:"name,omitempty"`
 }
 
 // ahli brendlerin suratlaryny we id - lerini getiryar

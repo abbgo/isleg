@@ -1293,8 +1293,8 @@ b969cd61-af6a-4bae-88c5-cbd3cdb36a53	\N	uploads/category/716a71c4-aa9e-4cd2-9124
 --
 
 COPY public.category_product (id, category_id, product_id, created_at, updated_at, deleted_at) FROM stdin;
-29a72236-0d1b-4929-bfa2-db9bf0d8cf84	75dd289a-f72b-42fa-975e-ee10cd796135	0251118a-54e8-41bb-8404-7c08d1f8e9f0	2023-01-24 07:55:51.174949+00	2023-01-24 07:55:51.174949+00	\N
-a5836f21-a2e7-4593-b28e-1d1dedc9b181	d5e7a59e-b272-4a77-9a95-5efebee00eb0	0251118a-54e8-41bb-8404-7c08d1f8e9f0	2023-01-24 07:55:51.174949+00	2023-01-24 07:55:51.174949+00	\N
+48f453a1-525f-441c-8582-a41e328baa4d	75dd289a-f72b-42fa-975e-ee10cd796135	14d95413-2c8a-472f-8f89-9458dc1bde33	2023-01-25 05:18:32.597208+00	2023-01-25 05:18:32.597208+00	\N
+210556dd-4742-44d7-b046-ce46f6d0bc05	d5e7a59e-b272-4a77-9a95-5efebee00eb0	14d95413-2c8a-472f-8f89-9458dc1bde33	2023-01-25 05:18:32.597208+00	2023-01-25 05:18:32.597208+00	\N
 \.
 
 
@@ -1376,8 +1376,8 @@ a58294d3-efe5-4cb7-82d3-8df8c37563c5	15	2022-06-25 05:23:25.640364+00	2022-06-25
 --
 
 COPY public.images (id, product_id, image, created_at, updated_at, deleted_at) FROM stdin;
-5b261148-e020-4b32-9a16-a5c73a12a38c	0251118a-54e8-41bb-8404-7c08d1f8e9f0	uploads/product/716211e8-8ba0-4c8c-9163-fe7817e4f19d.jpg	2023-01-24 07:55:51.139633+00	2023-01-24 07:55:51.139633+00	\N
-5615a2d1-e5ea-4167-8485-9d3115ef0acf	0251118a-54e8-41bb-8404-7c08d1f8e9f0	uploads/product/fe2f417e-85f3-4213-b821-98553ba1e1f7.jpg	2023-01-24 07:55:51.139633+00	2023-01-24 07:55:51.139633+00	\N
+abe6b7ca-5982-4ff4-815b-37d30e22d515	14d95413-2c8a-472f-8f89-9458dc1bde33	uploads/product/fcc38775-f791-4f8f-9b24-2bce41200729.jpg	2023-01-25 05:18:32.564523+00	2023-01-25 05:18:32.564523+00	\N
+7d51bb70-d816-43ea-ad40-27a7348895cc	14d95413-2c8a-472f-8f89-9458dc1bde33	uploads/product/271ebb94-45a8-4578-a91a-67d2886f9efd.jpg	2023-01-25 05:18:32.564523+00	2023-01-25 05:18:32.564523+00	\N
 \.
 
 
@@ -1463,7 +1463,7 @@ cb7e8cc9-9b2e-4cd8-921f-91b3bb5e5564	aea98b93-7bdf-455b-9ad4-a259d69dc76e	пла
 --
 
 COPY public.products (id, brend_id, price, old_price, amount, created_at, updated_at, deleted_at, limit_amount, is_new, shop_id, main_image) FROM stdin;
-0251118a-54e8-41bb-8404-7c08d1f8e9f0	9b838628-fd75-4232-862d-998635f24f52	100	101	100	2023-01-24 07:55:51.135561+00	2023-01-24 07:55:51.135561+00	\N	50	t	74cce5dc-6fc2-487c-8553-1f00850df257	uploads/product/5d4ddc3f-f8b8-4f75-984b-3e9074062fdf.JPG
+14d95413-2c8a-472f-8f89-9458dc1bde33	9b838628-fd75-4232-862d-998635f24f52	100	101	100	2023-01-25 05:18:32.560308+00	2023-01-25 05:18:32.560308+00	\N	50	t	74cce5dc-6fc2-487c-8553-1f00850df257	uploads/product/8ec51cf3-6770-42b3-912b-a1226f234996.JPG
 \.
 
 
@@ -1670,8 +1670,8 @@ ea7f4c0c-4b1a-41d3-94eb-e058aba9c99f	aea98b93-7bdf-455b-9ad4-a259d69dc76e	Пор
 --
 
 COPY public.translation_product (id, lang_id, product_id, name, description, created_at, updated_at, deleted_at, slug) FROM stdin;
-361414af-9146-4955-8310-790bb3ec221f	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	0251118a-54e8-41bb-8404-7c08d1f8e9f0	"Bianyo" firmaň çyzgy üçin niýetlenen gara galamy	12 sany naborly karton gutyda - ýokary hilli ajaýyp kombinasiýa. Urga çydamly we aňsat arassalanýan berk agaç	2023-01-24 07:55:51.157934+00	2023-01-24 07:55:51.157934+00	\N	bianyo-firman-cyzgy-ucin-niyetlenen-gara-galamy
-e00082a5-921e-418f-88e0-b12cc4796988	aea98b93-7bdf-455b-9ad4-a259d69dc76e	0251118a-54e8-41bb-8404-7c08d1f8e9f0	Набор карандашей чернографитных фирма "Bianyo"	Набор карандашей чернографитных, 12 шт., "Bianyo" гранённые, заточенные, в картонной коробке — прекрасное сочетание высокого качества. Прочный стержень не крошится, а деревянный корпус легко затачивается	2023-01-24 07:55:51.166144+00	2023-01-24 07:55:51.166144+00	\N	nabor-karandashei-chernografitnykh-firma-bianyo
+98621106-ba5c-410f-a9c0-a37d97460047	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	14d95413-2c8a-472f-8f89-9458dc1bde33	"Bianyo" firmaň çyzgy üçin niýetlenen gara galamy	12 sany naborly karton gutyda - ýokary hilli ajaýyp kombinasiýa. Urga çydamly we aňsat arassalanýan berk agaç	2023-01-25 05:18:32.58376+00	2023-01-25 05:18:32.58376+00	\N	bianyo-firman-cyzgy-ucin-niyetlenen-gara-galamy
+93450fc6-1de4-4bfc-b407-d7f5bfef9578	aea98b93-7bdf-455b-9ad4-a259d69dc76e	14d95413-2c8a-472f-8f89-9458dc1bde33	Набор карандашей чернографитных фирма "Bianyo"	Набор карандашей чернографитных, 12 шт., "Bianyo" гранённые, заточенные, в картонной коробке — прекрасное сочетание высокого качества. Прочный стержень не крошится, а деревянный корпус легко затачивается	2023-01-25 05:18:32.59094+00	2023-01-25 05:18:32.59094+00	\N	nabor-karandashei-chernografitnykh-firma-bianyo
 \.
 
 
