@@ -4,6 +4,8 @@ import (
 	"errors"
 	"regexp"
 	"strings"
+
+	"github.com/google/uuid"
 )
 
 type OrderDates struct {
@@ -17,22 +19,22 @@ type OrderDates struct {
 }
 
 type OrderTimes struct {
-	ID          string `json:"id,omitempty"`
-	OrderDateID string `json:"order_date_id,omitempty"`
-	Time        string `json:"time,omitempty" binding:"required"`
-	CreatedAt   string `json:"-"`
-	UpdatedAt   string `json:"-"`
-	DeletedAt   string `json:"-"`
+	ID          string        `json:"id,omitempty"`
+	OrderDateID uuid.NullUUID `json:"order_date_id,omitempty"`
+	Time        string        `json:"time,omitempty" binding:"required"`
+	CreatedAt   string        `json:"-"`
+	UpdatedAt   string        `json:"-"`
+	DeletedAt   string        `json:"-"`
 }
 
 type TranslationOrderDates struct {
-	ID          string `json:"id,omitempty"`
-	LangID      string `json:"lang_id,omitempty" binding:"required"`
-	OrderDateID string `json:"order_date_id,omitempty"`
-	Date        string `json:"date,omitempty" binding:"required"`
-	CreatedAt   string `json:"-"`
-	UpdatedAt   string `json:"-"`
-	DeletedAt   string `json:"-"`
+	ID          string        `json:"id,omitempty"`
+	LangID      uuid.NullUUID `json:"lang_id,omitempty" binding:"required"`
+	OrderDateID uuid.NullUUID `json:"order_date_id,omitempty"`
+	Date        string        `json:"date,omitempty" binding:"required"`
+	CreatedAt   string        `json:"-"`
+	UpdatedAt   string        `json:"-"`
+	DeletedAt   string        `json:"-"`
 }
 
 func ValidateOrderDateAndTime(date string, times []OrderTimes) error {
