@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"database/sql"
 	"github/abbgo/isleg/isleg-backend/config"
 	"github/abbgo/isleg/isleg-backend/models"
 	"math"
@@ -15,7 +14,7 @@ import (
 
 type LikeProduct struct {
 	ID           uuid.UUID                              `json:"id"`
-	BrendID      sql.NullString                         `json:"brend_id,omitempty"`
+	BrendID      uuid.NullUUID                          `json:"brend_id,omitempty"`
 	Price        float64                                `json:"price"`
 	OldPrice     float64                                `json:"old_price"`
 	Percentage   float64                                `json:"percentage"`
