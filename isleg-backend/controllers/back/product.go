@@ -15,7 +15,19 @@ import (
 	"github.com/lib/pq"
 )
 
-// struct used in function GetProductByID
+type ProductForFront struct {
+	ID           string                                 `json:"id,omitempty"`
+	Price        float64                                `json:"price,omitempty"`
+	OldPrice     float64                                `json:"old_price,omitempty"`
+	Percentage   float64                                `json:"percentage,omitempty"`
+	MainImage    string                                 `json:"main_image,omitempty"`
+	Brend        Brend                                  `json:"brend,omitempty"`
+	LimitAmount  int                                    `json:"limit_amount,omitempty"`
+	Amount       int                                    `json:"amount,omitempty"`
+	IsNew        bool                                   `json:"is_new,omitempty"`
+	Images       []string                               `json:"images,omitempty"`
+	Translations []map[string]models.TranslationProduct `json:"translations"`
+}
 
 func CreateProduct(c *gin.Context) {
 
@@ -1217,6 +1229,223 @@ func DeletePermanentlyProductByID(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
 		"message": "data successfully deleted",
+	})
+
+}
+
+func GetProductByIDForFront(c *gin.Context) {
+
+	// initialize database connection
+	db, err := config.ConnDB()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
+
+	// get id from request parameter
+	ID := c.Param("id")
+
+	rowProduct, err := db.Query("SELECT id,price,old_price,amount,limit_amount,is_new,main_image FROM products WHERE id = $1 AND deleted_at IS NULL", ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer func() {
+		if err := rowProduct.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
+
+	var product ProductForFront
+
+	for rowProduct.Next() {
+		if err := rowProduct.Scan(&product.ID, &product.Price, &product.OldPrice, &product.Amount, &product.LimitAmount, &product.IsNew, &product.MainImage); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}
+
+	if product.OldPrice != 0 {
+		product.Percentage = -math.Round(((product.OldPrice - product.Price) * 100) / product.OldPrice)
+	} else {
+		product.Percentage = 0
+	}
+
+	if product.ID == "" {
+		c.JSON(http.StatusNotFound, gin.H{
+			"status":  false,
+			"message": "record not found",
+		})
+		return
+	}
+
+	rowsImages, err := db.Query("SELECT image FROM images WHERE deleted_at IS NULL AND product_id = $1", ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer func() {
+		if err := rowsImages.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
+
+	var images []string
+
+	for rowsImages.Next() {
+		var image string
+
+		if err := rowsImages.Scan(&image); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+
+		images = append(images, image)
+	}
+
+	product.Images = images
+
+	rowsLang, err := db.Query("SELECT id,name_short FROM languages WHERE deleted_at IS NULL")
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer func() {
+		if err := rowsLang.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
+
+	var languages []models.Language
+
+	for rowsLang.Next() {
+		var language models.Language
+
+		if err := rowsLang.Scan(&language.ID, &language.NameShort); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+
+		languages = append(languages, language)
+	}
+
+	for _, v := range languages {
+
+		rowTrProduct, err := db.Query("SELECT name,description FROM translation_product WHERE lang_id = $1 AND product_id = $2 AND deleted_at IS NULL", v.ID, product.ID)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+		defer func() {
+			if err := rowTrProduct.Close(); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}()
+
+		var trProduct models.TranslationProduct
+
+		translation := make(map[string]models.TranslationProduct)
+
+		for rowTrProduct.Next() {
+			if err := rowTrProduct.Scan(&trProduct.Name, &trProduct.Description); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}
+
+		translation[v.NameShort] = trProduct
+
+		product.Translations = append(product.Translations, translation)
+
+	}
+
+	// get brend where id equal brend_id of product
+	brendRows, err := db.Query("SELECT b.id,b.name FROM products p LEFT JOIN brends b ON p.brend_id=b.id WHERE p.id = $1 AND p.deleted_at IS NULL AND b.deleted_at IS NULL", product.ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer func() {
+		if err := brendRows.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
+
+	var brend Brend
+
+	for brendRows.Next() {
+		if err := brendRows.Scan(&brend.ID, &brend.Name); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}
+	product.Brend = brend
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":  true,
+		"product": product,
 	})
 
 }

@@ -118,7 +118,7 @@ func FrontRoutes(front *gin.RouterGroup) {
 		// ugdurkdyryar we men yzyna sol id - leri product - lary ugratyan
 		// frontRoutes.POST("orders-without-customer", frontController.GetOrderedProductsWithoutCustomer)
 
-		frontRoutes.GET("product/:id", backController.GetProductByID)
+		frontRoutes.GET("product/:id", backController.GetProductByIDForFront)
 
 		SecuredCustomerRoutes(frontRoutes)
 	}
