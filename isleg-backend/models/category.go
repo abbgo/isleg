@@ -5,12 +5,12 @@ import (
 	"github/abbgo/isleg/isleg-backend/config"
 	"strconv"
 
-	"gopkg.in/guregu/null.v4"
+	"github.com/google/uuid"
 )
 
 type Category struct {
 	ID                  string                `json:"id,omitempty"`
-	ParentCategoryID    null.String           `json:"parent_category_id,omitempty"`
+	ParentCategoryID    uuid.NullUUID         `json:"parent_category_id,omitempty"`
 	Image               string                `json:"image,omitempty"`
 	IsHomeCategory      bool                  `json:"is_home_category,omitempty"`
 	CreatedAt           string                `json:"-"`
@@ -20,13 +20,13 @@ type Category struct {
 }
 
 type TranslationCategory struct {
-	ID         string `json:"id,omitempty"`
-	LangID     string `json:"lang_id,omitempty"`
-	CategoryID string `json:"category_id,omitempty"`
-	Name       string `json:"name,omitempty"`
-	CreatedAt  string `json:"-"`
-	UpdatedAt  string `json:"-"`
-	DeletedAt  string `json:"-"`
+	ID         string        `json:"id,omitempty"`
+	LangID     uuid.NullUUID `json:"lang_id,omitempty"`
+	CategoryID uuid.NullUUID `json:"category_id,omitempty"`
+	Name       string        `json:"name,omitempty"`
+	CreatedAt  string        `json:"-"`
+	UpdatedAt  string        `json:"-"`
+	DeletedAt  string        `json:"-"`
 }
 
 func ValidateCategory(isHomeCategory, parentCategoryID, fileName string) (bool, string, error) {
