@@ -1037,7 +1037,10 @@ CREATE TABLE public.translation_my_information_page (
     deleted_at timestamp with time zone,
     birthday character varying DEFAULT 'uytget'::character varying NOT NULL,
     update_password character varying DEFAULT 'uytegt'::character varying NOT NULL,
-    save character varying DEFAULT 'uytegt'::character varying NOT NULL
+    save character varying DEFAULT 'uytegt'::character varying NOT NULL,
+    gender character varying DEFAULT 'uytget'::character varying NOT NULL,
+    male character varying DEFAULT 'uytget'::character varying NOT NULL,
+    female character varying DEFAULT 'uytget'::character varying NOT NULL
 );
 
 
@@ -1252,6 +1255,8 @@ e9b7cc3b-bc80-4682-95e1-7db3bfd8f9b7	MAPED	uploads/brend/9834457a-af44-4764-b601
 --
 
 COPY public.cart (id, product_id, customer_id, quantity_of_product, created_at, updated_at, deleted_at) FROM stdin;
+96197f01-8f8f-4b33-bf26-a3df612718bd	14d95413-2c8a-472f-8f89-9458dc1bde33	12c4d76a-e3a6-4f35-97ba-efed264f849a	9	2023-01-25 18:27:15.654486+00	2023-01-25 18:33:34.603621+00	\N
+ea709fda-c538-4fb6-ab2e-8eb302e7fe5a	14d95413-2c8a-472f-8f89-9458dc1bde33	1ae12390-03ae-49ac-a9ad-d7ba5c95b51a	48	2023-01-26 04:24:17.714638+00	2023-01-26 05:59:30.377878+00	\N
 \.
 
 
@@ -1337,6 +1342,8 @@ d16fe7ec-9024-4745-8dab-0e79b13cc343	1ae12390-03ae-49ac-a9ad-d7ba5c95b51a	Mir 2/
 226a81d9-f317-43cd-808e-76fb3b54e783	95595b3c-c1ca-4363-b9c0-9916ce88b82a	sdfgsdfhsdfghdf	2023-01-08 13:31:51.302567+00	2023-01-08 13:31:51.302567+00	\N	f
 b556ebd9-cae4-4265-bf80-cba92cb39da7	e9db1ea7-5ce4-4284-bdc2-0fc39da2b7f2	qwkjdwidwnfjkfnwefnjwef	2023-01-13 17:18:08.808941+00	2023-01-13 17:18:08.808941+00	\N	f
 71dd6ebd-bdb2-4cc2-8010-d5a2771f2192	392e6586-b3aa-4086-92d9-35e1dc29253e	Mir 2/2	2023-01-15 14:41:59.97412+00	2023-01-15 14:41:59.97412+00	\N	f
+27fe094a-0093-4837-9f36-5e251f8b77c9	eb132b01-c9e7-4836-af89-1c2184439544	,ksnedkjewnf	2023-01-26 06:50:59.62467+00	2023-01-26 06:50:59.62467+00	\N	f
+3a52b3d9-4bd3-4d36-8dcc-31ea123540fe	ec5da332-10e5-4c82-9195-a2479a200c25	jabdjhegfh	2023-01-26 06:52:53.847892+00	2023-01-26 06:52:53.847892+00	\N	f
 \.
 
 
@@ -1359,6 +1366,8 @@ dad96943-886e-4ee3-9ca5-3723423b4191	Eziz	+99363558110	$2a$14$IZz8MRoQNJkMhC4hJ9
 f12aec9a-7e10-4c6b-8121-4b5ce334bfa9	jkbdjcbewjhbdwebh	+99363744664	$2a$14$.wtw3vCqNxVizxEqy1w1ruld8hk9V5sFvmuisv.hThfMpFHtF90fm	\N	\N	2023-01-23 15:48:42.721254+00	2023-01-23 15:48:42.721254+00	\N	wejdwkedwehb@gmail.com	t
 878502bc-3aaf-4ffc-9b8c-1423efb829dc	w3jeduw3h32	+99363747154	$2a$14$B8RCoD0zD1VOoZ4sjFgDPeLoOVl.mzw/2MMx9MGMiyQfpblor.Cle	\N	\N	2023-01-23 15:53:02.024195+00	2023-01-23 15:53:02.024195+00	\N	23oei23jen@gmail.com	t
 12c4d76a-e3a6-4f35-97ba-efed264f849a	54jkwnefjkewbhd	+99363745454	$2a$14$mriNhEaRJYqLbrpygPJeUOG1MKgKLHPdmDE/CX9arGhcLSpR0Ovsy	\N	\N	2023-01-23 15:54:38.267322+00	2023-01-23 15:54:38.267322+00	\N	wejdweu@gmail.com	t
+eb132b01-c9e7-4836-af89-1c2184439544	jshfjkew	+99365454121	\N	\N	\N	2023-01-26 06:50:59.620772+00	2023-01-26 06:50:59.620772+00	\N	\N	f
+ec5da332-10e5-4c82-9195-a2479a200c25	jewdkjweb	+99363265326	\N	\N	\N	2023-01-26 06:52:53.844755+00	2023-01-26 06:52:53.844755+00	\N	\N	f
 \.
 
 
@@ -1396,6 +1405,7 @@ aea98b93-7bdf-455b-9ad4-a259d69dc76e	ru	uploads/language/22a2ad57-4686-44d2-aded
 --
 
 COPY public.likes (id, product_id, customer_id, created_at, updated_at, deleted_at) FROM stdin;
+3251b463-7870-403c-bb16-e442e4b2e5c7	14d95413-2c8a-472f-8f89-9458dc1bde33	1ae12390-03ae-49ac-a9ad-d7ba5c95b51a	2023-01-26 05:07:03.878968+00	2023-01-26 05:07:03.878968+00	\N
 \.
 
 
@@ -1435,6 +1445,12 @@ de31361b-9fba-48f2-9341-9e3dd08cf9fd	c1f2beca-a6b6-4971-a6a7-ed50079c6912	18:00 
 --
 
 COPY public.ordered_products (id, product_id, quantity_of_product, order_id, created_at, updated_at, deleted_at) FROM stdin;
+31380923-020c-476b-8393-d65b5f878256	14d95413-2c8a-472f-8f89-9458dc1bde33	9	4171967e-d9e6-47bc-bc93-250603e1ec95	2023-01-25 20:17:31.165542+00	2023-01-25 20:17:31.165542+00	\N
+45444772-0c7f-4556-b44d-b1c9baffdd9d	14d95413-2c8a-472f-8f89-9458dc1bde33	7	478588e5-28ce-4a95-be74-a8e3cbbf9021	2023-01-25 20:19:55.21329+00	2023-01-25 20:19:55.21329+00	\N
+1c6fbaf9-3697-45a2-8e4c-753de5c58399	14d95413-2c8a-472f-8f89-9458dc1bde33	3	b95c90ab-5238-4539-99c0-67d7b1535302	2023-01-25 20:22:00.673763+00	2023-01-25 20:22:00.673763+00	\N
+7d578802-d6f7-4f13-ac73-d8e612a267da	14d95413-2c8a-472f-8f89-9458dc1bde33	1	792c651e-9ca5-430d-b7e0-0bde7756b4c1	2023-01-25 20:26:22.085655+00	2023-01-25 20:26:22.085655+00	\N
+11042686-0159-4546-a1d3-db12a9b569e5	14d95413-2c8a-472f-8f89-9458dc1bde33	48	4d9c0319-cf86-4b9a-9b89-e2db2ebab627	2023-01-26 06:50:59.634617+00	2023-01-26 06:50:59.634617+00	\N
+0c469c5a-901d-430d-b878-9c6de765cbe0	14d95413-2c8a-472f-8f89-9458dc1bde33	32	8565bf0e-bb0d-4e91-9a2c-8e619635fa40	2023-01-26 06:52:53.855888+00	2023-01-26 06:52:53.855888+00	\N
 \.
 
 
@@ -1443,6 +1459,13 @@ COPY public.ordered_products (id, product_id, quantity_of_product, order_id, cre
 --
 
 COPY public.orders (id, customer_id, customer_mark, order_time, payment_type, total_price, created_at, updated_at, deleted_at, order_number, shipping_price, excel, address) FROM stdin;
+4171967e-d9e6-47bc-bc93-250603e1ec95	1ae12390-03ae-49ac-a9ad-d7ba5c95b51a		18:00 - 21:00	nagt_tm	900	2023-01-25 20:17:31.160054+00	2023-01-25 20:17:31.216885+00	\N	64	0	uploads/orders/64.xlsx	Mir 6/3 jay 56 
+6e94ad1b-863e-4041-89d9-0b700c59107d	1ae12390-03ae-49ac-a9ad-d7ba5c95b51a		09:00 - 12:00	töleg terminaly	900	2023-01-25 20:18:06.695167+00	2023-01-25 20:18:06.711328+00	\N	65	0	uploads/orders/65.xlsx	Mir 6/3 jay 56 
+478588e5-28ce-4a95-be74-a8e3cbbf9021	1ae12390-03ae-49ac-a9ad-d7ba5c95b51a		09:00 - 12:00	töleg terminaly	700	2023-01-25 20:19:55.209153+00	2023-01-25 20:19:55.259347+00	\N	66	0	uploads/orders/66.xlsx	Mir 6/3 jay 56 
+b95c90ab-5238-4539-99c0-67d7b1535302	1ae12390-03ae-49ac-a9ad-d7ba5c95b51a		09:00 - 12:00	töleg terminaly	300	2023-01-25 20:22:00.668768+00	2023-01-25 20:22:00.703872+00	\N	67	0	uploads/orders/67.xlsx	Mir 6/3 jay 56 
+792c651e-9ca5-430d-b7e0-0bde7756b4c1	1ae12390-03ae-49ac-a9ad-d7ba5c95b51a		09:00 - 12:00	nagt_tm	100	2023-01-25 20:26:22.080437+00	2023-01-25 20:26:22.125813+00	\N	68	0	uploads/orders/68.xlsx	Mir 6/3 jay 56 
+4d9c0319-cf86-4b9a-9b89-e2db2ebab627	eb132b01-c9e7-4836-af89-1c2184439544		09:00 - 12:00	töleg terminaly	4800	2023-01-26 06:50:59.630586+00	2023-01-26 06:50:59.674048+00	\N	69	0	uploads/orders/69.xlsx	,ksnedkjewnf
+8565bf0e-bb0d-4e91-9a2c-8e619635fa40	ec5da332-10e5-4c82-9195-a2479a200c25		09:00 - 12:00	töleg terminaly	3200	2023-01-26 06:52:53.852555+00	2023-01-26 06:52:53.896105+00	\N	70	0	uploads/orders/70.xlsx	jabdjhegfh
 \.
 
 
@@ -1463,7 +1486,7 @@ cb7e8cc9-9b2e-4cd8-921f-91b3bb5e5564	aea98b93-7bdf-455b-9ad4-a259d69dc76e	пла
 --
 
 COPY public.products (id, brend_id, price, old_price, amount, created_at, updated_at, deleted_at, limit_amount, is_new, shop_id, main_image) FROM stdin;
-14d95413-2c8a-472f-8f89-9458dc1bde33	9b838628-fd75-4232-862d-998635f24f52	100	101	100	2023-01-25 05:18:32.560308+00	2023-01-25 05:18:32.560308+00	\N	50	t	74cce5dc-6fc2-487c-8553-1f00850df257	uploads/product/8ec51cf3-6770-42b3-912b-a1226f234996.JPG
+14d95413-2c8a-472f-8f89-9458dc1bde33	9b838628-fd75-4232-862d-998635f24f52	100	101	1000000	2023-01-25 05:18:32.560308+00	2023-01-26 07:25:06.298016+00	\N	50	t	74cce5dc-6fc2-487c-8553-1f00850df257	uploads/product/8ec51cf3-6770-42b3-912b-a1226f234996.JPG
 \.
 
 
@@ -1598,8 +1621,8 @@ COPY public.translation_footer (id, lang_id, about, payment, contact, secure, wo
 --
 
 COPY public.translation_header (id, lang_id, research, phone, password, forgot_password, sign_in, sign_up, name, password_verification, verify_secure, my_information, my_favorites, my_orders, log_out, created_at, updated_at, deleted_at, basket, email, add_to_basket) FROM stdin;
-eaf206e6-d515-4bdb-9323-a047cd0edae5	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	gözleg	telefon	parol	Acar sozumi unutdym	ulgama girmek	agza bolmak	Ady	Acar sozi tassyklamak	Ulanyş Düzgünlerini we Gizlinlik Şertnamasyny okadym we kabul edýärin	maglumatym	halanlarym	sargytlarym	cykmak	2022-06-15 23:48:26.460534+00	2022-06-15 23:48:26.460534+00	\N	sebet	uytget	uytget
-9154e800-2a92-47de-b4ff-1e63b213e5f7	aea98b93-7bdf-455b-9ad4-a259d69dc76e	поиск	tелефон	пароль	забыл пароль	войти	зарегистрироваться	имя	Подтвердить Пароль	Я прочитал и принимаю Условия Обслуживания и Политика Конфиденциальности	моя информация	мои любимые	мои заказы	выйти	2022-06-15 23:48:26.491672+00	2022-10-26 07:29:21.210919+00	\N	корзина	uytget_ru	uytget_ru
+eaf206e6-d515-4bdb-9323-a047cd0edae5	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	Gözleg	Telefon	Parol	Açar sözümi unutdym	Ulgama girmek	Agza bolmak	Ady	Açar sözi tassyklamak	Ulanyş Düzgünlerini we Gizlinlik Şertnamasyny okadym we kabul edýärin	Maglumatym	Halanlarym	Sargytlarym	Çykmak	2022-06-15 23:48:26.460534+00	2023-01-26 07:27:57.415557+00	\N	Sebet	Mail adres	Sebede goş
+9154e800-2a92-47de-b4ff-1e63b213e5f7	aea98b93-7bdf-455b-9ad4-a259d69dc76e	Поиск	Телефон	Пароль	Забыл пароль	Войти	Зарегистрироваться	Имя	Подтвердить Пароль	Я прочитал и принимаю Условия Обслуживания и Политика Конфиденциальности	Моя информация	Мои любимые	Мои заказы	Выйти	2022-06-15 23:48:26.491672+00	2023-01-26 07:32:36.090082+00	\N	Корзина	Почта	Добавить в корзину
 \.
 
 
@@ -1607,9 +1630,9 @@ eaf206e6-d515-4bdb-9323-a047cd0edae5	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	gözle
 -- Data for Name: translation_my_information_page; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.translation_my_information_page (id, lang_id, address, created_at, updated_at, deleted_at, birthday, update_password, save) FROM stdin;
-d294138e-b808-41ae-9ac5-1826751fda3d	aea98b93-7bdf-455b-9ad4-a259d69dc76e	ваш адрес	2022-07-04 14:28:46.603058+00	2022-07-04 14:28:46.603058+00	\N	дата рождения	изменить пароль	запомнить
-11074158-69f2-473a-b4fe-94304ff0d8a7	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	salgyňyz	2022-07-04 14:28:46.529935+00	2022-07-04 14:28:46.529935+00	\N	doglan senäň	açar sözi üýtget	ýatda sakla
+COPY public.translation_my_information_page (id, lang_id, address, created_at, updated_at, deleted_at, birthday, update_password, save, gender, male, female) FROM stdin;
+11074158-69f2-473a-b4fe-94304ff0d8a7	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	Salgyňyz	2022-07-04 14:28:46.529935+00	2023-01-26 07:52:59.821765+00	\N	Doglan senäň	Açar sözi üýtget	Ýatda sakla	gender_uytget	male_uytget	female_uytget
+d294138e-b808-41ae-9ac5-1826751fda3d	aea98b93-7bdf-455b-9ad4-a259d69dc76e	Ваш адрес	2022-07-04 14:28:46.603058+00	2023-01-26 07:52:59.821765+00	\N	Дата рождения	Изменить пароль	Запомнить	gender_uytget	male_uytget	female_uytget
 \.
 
 
@@ -1650,8 +1673,8 @@ dcd0c70b-9fa2-4327-8b35-de29bd3febcb	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	326463
 --
 
 COPY public.translation_order_page (id, lang_id, content, type_of_payment, choose_a_delivery_time, your_address, mark, to_order, created_at, updated_at, deleted_at) FROM stdin;
-474a15e9-1a05-49aa-9a61-c92837d9c9a8	aea98b93-7bdf-455b-9ad4-a259d69dc76e	content_ru	type_of_payment_ru	choose_a_delivery_time_ru	your_address_ru	mark_ru	to_order_ru	2022-09-01 07:47:16.802639+00	2022-09-01 07:47:16.802639+00	\N
-75810722-07fd-400e-94b4-cd230de08cbf	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	content	type_of_payment	choose_a_delivery_time	your_address	mark	to_order	2022-09-01 07:47:16.720956+00	2022-09-01 07:55:25.638676+00	\N
+75810722-07fd-400e-94b4-cd230de08cbf	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	Eltip bermek hyzmaty Aşgabat şäheriniň çägi bilen bir hatarda Büzmeýine we Änew şäherine hem elýeterlidir. Hyzmat mugt amala aşyrylýar. Saýtdan sargyt edeniňizden soňra operator size jaň edip sargydy tassyklar (eger hemişelik müşderi bolsaňyz sargytlaryňyz islegiňize görä awtomatik usulda hem tassyklanýar). Sargydy barlap alanyňyzdan soňra töleg amala aşyrylýar. Eltip berijiniň size gowşurýan töleg resminamasynda siziň tölemeli puluňyz bellenendir. Töleg nagt we nagt däl görnüşde milli manatda amala aşyrylýar. Kabul edip tölegini geçiren harydyňyz yzyna alynmaýar	Töleg şekili	Eltip berme wagtyny saýlaň	Salgyňyz	Bellik	Sargyt et	2022-09-01 07:47:16.720956+00	2023-01-26 06:33:07.714052+00	\N
+474a15e9-1a05-49aa-9a61-c92837d9c9a8	aea98b93-7bdf-455b-9ad4-a259d69dc76e	Помимо Ашхабада, услуга доставки доступна в Бузмеин и Анью. Услуга предоставляется бесплатно. После того, как вы сделаете заказ с сайта, вам позвонит оператор для подтверждения заказа (если вы постоянный клиент, ваш заказ при желании будет подтвержден автоматически). Оплата производится после подтверждения заказа. Платежный документ, который дает вам поставщик, является суммой, которую вы должны заплатить. Оплата производится в манатах в наличной и безналичной форме. Ваша покупка после принятия и оплаты не подлежит возврату	Форма оплаты	Выберите время доставки	Ваш адресс	Примечание	Разместить заказ	2022-09-01 07:47:16.802639+00	2023-01-26 06:35:14.87903+00	\N
 \.
 
 
@@ -1699,7 +1722,7 @@ de12082b-baab-4b83-ac07-119df09d1230	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	açar 
 -- Name: orders_order_number_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.orders_order_number_seq', 63, true);
+SELECT pg_catalog.setval('public.orders_order_number_seq', 70, true);
 
 
 --
