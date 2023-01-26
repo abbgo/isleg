@@ -10,7 +10,6 @@ type TranslationBasketPage struct {
 	Discount        string        `json:"discount,omitempty" binding:"required"`
 	Delivery        string        `json:"delivery,omitempty" binding:"required"`
 	Total           string        `json:"total,omitempty" binding:"required"`
-	Currency        string        `json:"currency,omitempty" binding:"required"`
 	ToOrder         string        `json:"to_order,omitempty" binding:"required"`
 	YourBasket      string        `json:"your_basket,omitempty" binding:"required"`
 	EmptyTheBasket  string        `json:"empty_the_basket,omitempty" binding:"required"`
