@@ -184,7 +184,7 @@ func UpdateTranslationMyInformationPageByID(c *gin.Context) {
 		return
 	}
 
-	resultTRMyInfPage, err := db.Query("UPDATE translation_my_information_page SET address = $1, birthday = $2 , update_password = $3, save = $4, lang_id = $6 WHERE id = $5", trMyInforPage.Address, trMyInforPage.Birthday, trMyInforPage.UpdatePassword, trMyInforPage.Save, trMyInforPage.ID, trMyInforPage.LangID)
+	resultTRMyInfPage, err := db.Query("UPDATE translation_my_information_page SET address = $1, birthday = $2 , update_password = $3, save = $4, lang_id = $6, gender = $7, male = $8, female = $9 WHERE id = $5", trMyInforPage.Address, trMyInforPage.Birthday, trMyInforPage.UpdatePassword, trMyInforPage.Save, trMyInforPage.ID, trMyInforPage.LangID, trMyInforPage.Gender, trMyInforPage.Male, trMyInforPage.Female)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
