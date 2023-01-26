@@ -87,7 +87,7 @@ func CreateTranslationMyOrderPage(c *gin.Context) {
 	// create translation_my_order_page
 	for _, v := range trMyOrderPages {
 
-		resultTrMyOrderPage, err := db.Query("INSERT INTO translation_my_order_page (lang_id,orders,date,price,currency,image,name,brend,code,amount,total_price) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)", v.LangID, v.Orders, v.Date, v.Price, v.Currency, v.Image, v.Name, v.Brend, v.Code, v.Amount, v.TotalPrice)
+		resultTrMyOrderPage, err := db.Query("INSERT INTO translation_my_order_page (lang_id,orders,date,price,currency,image,name,brend,product_price,amount,total_price) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)", v.LangID, v.Orders, v.Date, v.Price, v.Currency, v.Image, v.Name, v.Brend, v.ProcuctPrice, v.Amount, v.TotalPrice)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
@@ -186,7 +186,7 @@ func UpdateTranslationMyOrderPageByID(c *gin.Context) {
 	}
 
 	// update data
-	resultTrMyOrderPage, err := db.Query("UPDATE translation_my_order_page SET orders = $1, date = $2 , price = $3, currency = $4 , image = $5 , name = $6 , brend = $7, code = $8 , amount = $9, total_price = $10, lang_id = $12 WHERE id = $11", trMyOrderPage.Orders, trMyOrderPage.Date, trMyOrderPage.Price, trMyOrderPage.Currency, trMyOrderPage.Image, trMyOrderPage.Name, trMyOrderPage.Brend, trMyOrderPage.Code, trMyOrderPage.Amount, trMyOrderPage.TotalPrice, trMyOrderPage.ID, trMyOrderPage.LangID)
+	resultTrMyOrderPage, err := db.Query("UPDATE translation_my_order_page SET orders = $1, date = $2 , price = $3, currency = $4 , image = $5 , name = $6 , brend = $7, product_price = $8 , amount = $9, total_price = $10, lang_id = $12 WHERE id = $11", trMyOrderPage.Orders, trMyOrderPage.Date, trMyOrderPage.Price, trMyOrderPage.Currency, trMyOrderPage.Image, trMyOrderPage.Name, trMyOrderPage.Brend, trMyOrderPage.ProcuctPrice, trMyOrderPage.Amount, trMyOrderPage.TotalPrice, trMyOrderPage.ID, trMyOrderPage.LangID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -236,7 +236,7 @@ func GetTranslationMyOrderPageByID(c *gin.Context) {
 	ID := c.Param("id")
 
 	// check id and get data from database
-	rowTrMyOrderPage, err := db.Query("SELECT id,orders,date,price,currency,image,name,brend,code,amount,total_price FROM translation_my_order_page WHERE id = $1 AND deleted_at IS NULL", ID)
+	rowTrMyOrderPage, err := db.Query("SELECT id,orders,date,price,currency,image,name,brend,product_price,amount,total_price FROM translation_my_order_page WHERE id = $1 AND deleted_at IS NULL", ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -257,7 +257,7 @@ func GetTranslationMyOrderPageByID(c *gin.Context) {
 	var t models.TranslationMyOrderPage
 
 	for rowTrMyOrderPage.Next() {
-		if err := rowTrMyOrderPage.Scan(&t.ID, &t.Orders, &t.Date, &t.Price, &t.Currency, &t.Image, &t.Name, &t.Brend, &t.Code, &t.Amount, &t.TotalPrice); err != nil {
+		if err := rowTrMyOrderPage.Scan(&t.ID, &t.Orders, &t.Date, &t.Price, &t.Currency, &t.Image, &t.Name, &t.Brend, &t.ProcuctPrice, &t.Amount, &t.TotalPrice); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
@@ -315,7 +315,7 @@ func GetTranslationMyOrderPageByLangID(c *gin.Context) {
 	}
 
 	// get translation-basket-page where lang_id equal langID
-	rowTrMyOrderPage, err := db.Query("SELECT orders,date,price,currency,image,name,brend,code,amount,total_price FROM translation_my_order_page WHERE lang_id = $1 AND deleted_at IS NULL", langID)
+	rowTrMyOrderPage, err := db.Query("SELECT orders,date,price,currency,image,name,brend,product_price,amount,total_price FROM translation_my_order_page WHERE lang_id = $1 AND deleted_at IS NULL", langID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -336,7 +336,7 @@ func GetTranslationMyOrderPageByLangID(c *gin.Context) {
 	var t models.TranslationMyOrderPage
 
 	for rowTrMyOrderPage.Next() {
-		if err := rowTrMyOrderPage.Scan(&t.Orders, &t.Date, &t.Price, &t.Currency, &t.Image, &t.Name, &t.Brend, &t.Code, &t.Amount, &t.TotalPrice); err != nil {
+		if err := rowTrMyOrderPage.Scan(&t.Orders, &t.Date, &t.Price, &t.Currency, &t.Image, &t.Name, &t.Brend, &t.ProcuctPrice, &t.Amount, &t.TotalPrice); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
