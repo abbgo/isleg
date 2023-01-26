@@ -84,7 +84,7 @@ func CreateTranslationMyOrderPage(c *gin.Context) {
 
 	}
 
-	// create translation_my_information_page
+	// create translation_my_order_page
 	for _, v := range trMyOrderPages {
 
 		resultTrMyOrderPage, err := db.Query("INSERT INTO translation_my_order_page (lang_id,orders,date,price,currency,image,name,brend,code,amount,total_price) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)", v.LangID, v.Orders, v.Date, v.Price, v.Currency, v.Image, v.Name, v.Brend, v.Code, v.Amount, v.TotalPrice)

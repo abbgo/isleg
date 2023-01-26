@@ -83,7 +83,7 @@ func CreateTranslationBasketPage(c *gin.Context) {
 
 	}
 
-	// create translation_my_information_page
+	// create translation_basket_page
 	for _, v := range trBasketPages {
 
 		resultTrBasketPage, err := db.Query("INSERT INTO translation_basket_page (lang_id,quantity_of_goods,total_price,discount,delivery,total,currency,to_order,your_basket,empty_the_basket) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)", v.LangID, v.QuantityOfGoods, v.TotalPrice, v.Discount, v.Delivery, v.Total, v.Currency, v.ToOrder, v.YourBasket, v.EmptyTheBasket)
