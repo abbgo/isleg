@@ -284,7 +284,7 @@ func AddAddressToCustomer(c *gin.Context) {
 	}
 
 	// eger salgy on sol musderide yok bolsa , onda sol musderinin salgylarynyn arasyna gosyas
-	resultCustomerAddress, err := db.Query("INSERT INTO customer_address (customer_id,address,is_active) VALUES ($1,$2,true)", customerID, address)
+	resultCustomerAddress, err := db.Query("INSERT INTO customer_address (customer_id,address,is_active) VALUES ($1,$2,true) RETURNING id", customerID, address)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -301,6 +301,17 @@ func AddAddressToCustomer(c *gin.Context) {
 			return
 		}
 	}()
+
+	var addresID string
+	for resultCustomerAddress.Next() {
+		if err := resultCustomerAddress.Scan(&addresID); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}
 
 	// gosulan salgyny aktiwe edip musdera degisli beyleki ahli salgylaryn statusynyn false etyas
 	resultCustAddressStatus, err := db.Query("UPDATE customer_address SET is_active = false WHERE address != $1 AND customer_id = $2", address, customerID)
@@ -324,6 +335,7 @@ func AddAddressToCustomer(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
 		"message": "customer address successfully created",
+		"id":      addresID,
 	})
 
 }
