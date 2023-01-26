@@ -234,7 +234,7 @@ func GetTranslationMyInformationPageByID(c *gin.Context) {
 	ID := c.Param("id")
 
 	// check id and get data
-	rowFlag, err := db.Query("SELECT id,address,birthday,update_password,save FROM translation_my_information_page WHERE id = $1 AND deleted_at IS NULL", ID)
+	rowFlag, err := db.Query("SELECT id,address,birthday,update_password,save,gender,male,female FROM translation_my_information_page WHERE id = $1 AND deleted_at IS NULL", ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -255,7 +255,7 @@ func GetTranslationMyInformationPageByID(c *gin.Context) {
 	var t models.TranslationMyInformationPage
 
 	for rowFlag.Next() {
-		if err := rowFlag.Scan(&t.ID, &t.Address, &t.Birthday, &t.UpdatePassword, &t.Save); err != nil {
+		if err := rowFlag.Scan(&t.ID, &t.Address, &t.Birthday, &t.UpdatePassword, &t.Save, &t.Gender, &t.Male, &t.Female); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
