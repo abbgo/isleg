@@ -313,7 +313,7 @@ func GetTranslationMyInformationPageByLangID(c *gin.Context) {
 	}
 
 	// get translation-my-information-page where lang_id equal langID
-	aboutRow, err := db.Query("SELECT address,birthday,update_password,save FROM translation_my_information_page WHERE lang_id = $1 AND deleted_at IS NULL", langID)
+	aboutRow, err := db.Query("SELECT address,birthday,update_password,save,gender,male,female FROM translation_my_information_page WHERE lang_id = $1 AND deleted_at IS NULL", langID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -334,7 +334,7 @@ func GetTranslationMyInformationPageByLangID(c *gin.Context) {
 	var trMyInformationPage models.TranslationMyInformationPage
 
 	for aboutRow.Next() {
-		if err := aboutRow.Scan(&trMyInformationPage.Address, &trMyInformationPage.Birthday, &trMyInformationPage.UpdatePassword, &trMyInformationPage.Save); err != nil {
+		if err := aboutRow.Scan(&trMyInformationPage.Address, &trMyInformationPage.Birthday, &trMyInformationPage.UpdatePassword, &trMyInformationPage.Save, &trMyInformationPage.Gender, &trMyInformationPage.Male, &trMyInformationPage.Female); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
