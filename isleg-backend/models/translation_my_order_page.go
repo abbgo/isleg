@@ -8,7 +8,6 @@ type TranslationMyOrderPage struct {
 	Orders       string        `json:"orders,omitempty" binding:"required"`
 	Date         string        `json:"date,omitempty" binding:"required"`
 	Price        string        `json:"price,omitempty" binding:"required"`
-	Currency     string        `json:"currency,omitempty" binding:"required"`
 	Image        string        `json:"image,omitempty" binding:"required"`
 	Name         string        `json:"name,omitempty" binding:"required"`
 	Brend        string        `json:"brend,omitempty" binding:"required"`
