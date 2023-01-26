@@ -59,6 +59,10 @@ func SecuredCustomerRoutes(front *gin.RouterGroup) {
 		// token bar bolan yagdayynda
 		securedCustomer.POST("address", frontController.AddAddressToCustomer)
 
+		// DeleteCustomerAddress musderi onki gosan salgysyny pozup biler yaly yazylan funksiya
+		// token bar bolan yagdayynda
+		securedCustomer.DELETE("address/:id", frontController.DeleteCustomerAddress)
+
 		// UpdateCustomerPassword funksiya musderinin parolyny uytgetmek ucin
 		// token bar bolan yagdayynda
 		securedCustomer.PUT("customer-password", frontController.UpdateCustomerPassword)
