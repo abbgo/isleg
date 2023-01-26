@@ -86,7 +86,7 @@ func CreateTranslationMyInformationPage(c *gin.Context) {
 	// create translation_my_information_page
 	for _, v := range trMyInforPages {
 
-		resutlTRMyInfPage, err := db.Query("INSERT INTO translation_my_information_page (lang_id,address,birthday,update_password,save) VALUES ($1,$2,$3,$4,$5)", v.LangID, v.Address, v.Birthday, v.UpdatePassword, v.Save)
+		resutlTRMyInfPage, err := db.Query("INSERT INTO translation_my_information_page (lang_id,address,birthday,update_password,save,gender,male,female) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)", v.LangID, v.Address, v.Birthday, v.UpdatePassword, v.Save, v.Gender, v.Male, v.Female)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
