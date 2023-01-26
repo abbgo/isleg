@@ -53,7 +53,7 @@ func SecuredCustomerRoutes(front *gin.RouterGroup) {
 
 		// UpdateCustomerAddressStatus funksiya musderinin salgysynyn aktiwligini uytgetyar
 		// musderi haryt sargyt edende haysy salgysyny ulanjak bolsa sony aktiwe edip goyar yaly
-		securedCustomer.PUT("address", frontController.UpdateCustomerAddressStatus)
+		securedCustomer.PUT("address/:id", frontController.UpdateCustomerAddressStatus)
 
 		// AddAddressToCustomer musderi ozune taze salgy gosup biler yaly yazylan funksiya
 		// token bar bolan yagdayynda

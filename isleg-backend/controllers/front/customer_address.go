@@ -107,7 +107,7 @@ func UpdateCustomerAddressStatus(c *gin.Context) {
 		}
 	}()
 
-	addressID := c.Query("address_id")
+	addressID := c.Param("id")
 
 	custID, hasCustomer := c.Get("customer_id")
 	if !hasCustomer {
