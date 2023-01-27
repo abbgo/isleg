@@ -903,7 +903,6 @@ CREATE TABLE public.translation_basket_page (
     discount character varying DEFAULT 'uytget'::character varying NOT NULL,
     delivery character varying DEFAULT 'uytget'::character varying NOT NULL,
     total character varying DEFAULT 'uytget'::character varying NOT NULL,
-    currency character varying DEFAULT 'uytget'::character varying NOT NULL,
     to_order character varying DEFAULT 'uytget'::character varying NOT NULL,
     your_basket character varying DEFAULT 'uytget'::character varying NOT NULL,
     created_at timestamp with time zone DEFAULT now(),
@@ -1018,7 +1017,8 @@ CREATE TABLE public.translation_header (
     deleted_at timestamp with time zone,
     basket character varying DEFAULT 'uytget'::character varying NOT NULL,
     email character varying DEFAULT 'uytget'::character varying NOT NULL,
-    add_to_basket character varying DEFAULT 'uytget'::character varying NOT NULL
+    add_to_basket character varying DEFAULT 'uytget'::character varying NOT NULL,
+    add_button character varying DEFAULT 'uytget'::character varying NOT NULL
 );
 
 
@@ -1056,11 +1056,10 @@ CREATE TABLE public.translation_my_order_page (
     orders character varying DEFAULT 'uytget'::character varying NOT NULL,
     date character varying DEFAULT 'uytget'::character varying NOT NULL,
     price character varying DEFAULT 'uytget'::character varying NOT NULL,
-    currency character varying DEFAULT 'uytget'::character varying NOT NULL,
     image character varying DEFAULT 'uytget'::character varying NOT NULL,
     name character varying DEFAULT 'uytget'::character varying NOT NULL,
     brend character varying DEFAULT 'uytget'::character varying NOT NULL,
-    code character varying DEFAULT 'uytget'::character varying NOT NULL,
+    product_price character varying DEFAULT 'uytget'::character varying NOT NULL,
     amount character varying DEFAULT 'uytget'::character varying NOT NULL,
     total_price character varying DEFAULT 'uytget'::character varying NOT NULL,
     created_at timestamp with time zone DEFAULT now(),
@@ -1256,7 +1255,7 @@ e9b7cc3b-bc80-4682-95e1-7db3bfd8f9b7	MAPED	uploads/brend/9834457a-af44-4764-b601
 
 COPY public.cart (id, product_id, customer_id, quantity_of_product, created_at, updated_at, deleted_at) FROM stdin;
 96197f01-8f8f-4b33-bf26-a3df612718bd	14d95413-2c8a-472f-8f89-9458dc1bde33	12c4d76a-e3a6-4f35-97ba-efed264f849a	9	2023-01-25 18:27:15.654486+00	2023-01-25 18:33:34.603621+00	\N
-ea709fda-c538-4fb6-ab2e-8eb302e7fe5a	14d95413-2c8a-472f-8f89-9458dc1bde33	1ae12390-03ae-49ac-a9ad-d7ba5c95b51a	48	2023-01-26 04:24:17.714638+00	2023-01-26 05:59:30.377878+00	\N
+900a226f-9565-4b88-ad69-f4b55de939b2	14d95413-2c8a-472f-8f89-9458dc1bde33	19cdcf1a-f110-4510-a52b-063329d98607	1	2023-01-26 18:30:34.127449+00	2023-01-26 18:30:34.127449+00	\N
 \.
 
 
@@ -1337,13 +1336,14 @@ COPY public.company_setting (id, logo, favicon, email, instagram, created_at, up
 
 COPY public.customer_address (id, customer_id, address, created_at, updated_at, deleted_at, is_active) FROM stdin;
 41e86110-cc92-442e-b788-81959e56f668	19cdcf1a-f110-4510-a52b-063329d98607	Mir 2/2 jay 7 oy 36	2022-11-01 06:36:50.869926+00	2022-11-01 06:36:50.869926+00	\N	f
-d3496ac8-f36f-40f8-8b40-0ba3a7e226e5	1ae12390-03ae-49ac-a9ad-d7ba5c95b51a	Mir 6/3 jay 56 	2022-11-22 05:02:14.214333+00	2022-11-22 05:02:14.214333+00	\N	t
-d16fe7ec-9024-4745-8dab-0e79b13cc343	1ae12390-03ae-49ac-a9ad-d7ba5c95b51a	Mir 2/2 jay 7 oy 36	2022-11-03 17:00:31.880539+00	2022-11-22 05:02:14.271009+00	\N	f
 226a81d9-f317-43cd-808e-76fb3b54e783	95595b3c-c1ca-4363-b9c0-9916ce88b82a	sdfgsdfhsdfghdf	2023-01-08 13:31:51.302567+00	2023-01-08 13:31:51.302567+00	\N	f
 b556ebd9-cae4-4265-bf80-cba92cb39da7	e9db1ea7-5ce4-4284-bdc2-0fc39da2b7f2	qwkjdwidwnfjkfnwefnjwef	2023-01-13 17:18:08.808941+00	2023-01-13 17:18:08.808941+00	\N	f
 71dd6ebd-bdb2-4cc2-8010-d5a2771f2192	392e6586-b3aa-4086-92d9-35e1dc29253e	Mir 2/2	2023-01-15 14:41:59.97412+00	2023-01-15 14:41:59.97412+00	\N	f
 27fe094a-0093-4837-9f36-5e251f8b77c9	eb132b01-c9e7-4836-af89-1c2184439544	,ksnedkjewnf	2023-01-26 06:50:59.62467+00	2023-01-26 06:50:59.62467+00	\N	f
 3a52b3d9-4bd3-4d36-8dcc-31ea123540fe	ec5da332-10e5-4c82-9195-a2479a200c25	jabdjhegfh	2023-01-26 06:52:53.847892+00	2023-01-26 06:52:53.847892+00	\N	f
+d3496ac8-f36f-40f8-8b40-0ba3a7e226e5	1ae12390-03ae-49ac-a9ad-d7ba5c95b51a	Mir 6/3 jay 56 	2022-11-22 05:02:14.214333+00	2023-01-27 04:06:06.424171+00	\N	t
+f9e7f338-aad1-4f25-aef9-7c597979f346	1ae12390-03ae-49ac-a9ad-d7ba5c95b51a	Hitrowka	2023-01-26 19:09:11.693+00	2023-01-27 04:06:06.436138+00	\N	f
+567546cf-85e4-482d-9ad1-0c551982aaf5	1ae12390-03ae-49ac-a9ad-d7ba5c95b51a	Howdan	2023-01-26 19:17:12.00161+00	2023-01-27 04:06:06.436138+00	\N	f
 \.
 
 
@@ -1522,9 +1522,9 @@ COPY public.translation_afisa (id, afisa_id, lang_id, title, description, create
 -- Data for Name: translation_basket_page; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.translation_basket_page (id, lang_id, quantity_of_goods, total_price, discount, delivery, total, currency, to_order, your_basket, created_at, updated_at, deleted_at, empty_the_basket) FROM stdin;
-456dcb5a-fabb-47f8-b216-0cddd3077124	aea98b93-7bdf-455b-9ad4-a259d69dc76e	quantity_of_goods_ru	total_price_ru	discount_ru	delivery_ru	total_ru	currency_ru	to_order_ru	your_basket_ru	2022-08-30 07:36:24.978404+00	2022-08-30 07:36:37.967063+00	\N	uytget
-51b3699e-1c7b-442a-be7b-6b2ad1f111b4	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	quantity_of_goods	total_price	discount	delivery	total	currency	to_order	your_basket	2022-08-30 07:36:24.978404+00	2022-09-19 09:28:12.008122+00	\N	empty_the_basket
+COPY public.translation_basket_page (id, lang_id, quantity_of_goods, total_price, discount, delivery, total, to_order, your_basket, created_at, updated_at, deleted_at, empty_the_basket) FROM stdin;
+51b3699e-1c7b-442a-be7b-6b2ad1f111b4	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	Haryt mukdary	Doly bahasy	Arzanladyş	Eltip berme	Jemi	Sargyt et	Sebet	2022-08-30 07:36:24.978404+00	2023-01-27 06:03:42.080664+00	\N	Siziň sebediňiz boş
+456dcb5a-fabb-47f8-b216-0cddd3077124	aea98b93-7bdf-455b-9ad4-a259d69dc76e	Количество товара	Полная стоимость	Скидка	Доставкa	Общее	Заказ	Корзина	2022-08-30 07:36:24.978404+00	2023-01-27 06:07:03.497811+00	\N	Ваша корзина пуста
 \.
 
 
@@ -1591,8 +1591,8 @@ fded73ff-c5b8-4846-88f8-7cbe7758a578	aea98b93-7bdf-455b-9ad4-a259d69dc76e	05d315
 --
 
 COPY public.translation_contact (id, lang_id, full_name, email, phone, letter, company_phone, imo, company_email, instagram, created_at, updated_at, deleted_at, button_text) FROM stdin;
-f1693167-0c68-4a54-9831-56f124d629a3	aea98b93-7bdf-455b-9ad4-a259d69dc76e	at_ru	mail_ru	phone_ru	letter ru	cp ru	imo ru	ce ru	instagram ru	2022-06-27 06:29:48.050553+00	2022-06-27 06:29:48.050553+00	\N	Отправить
-73253999-7355-42b4-8700-94de76f0058a	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	at_tm	mail_tm	phone_tm	letter_tm	cp_tm	imo_tm	ce_tm	ins_tm	2022-06-27 06:29:47.914891+00	2022-06-27 06:29:47.914891+00	\N	ugrat
+73253999-7355-42b4-8700-94de76f0058a	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	Doly Adyňyz	Email	Telefon	Hatyňyz	Telefon belgimiz	Imo	E-mail	Instagram	2022-06-27 06:29:47.914891+00	2023-01-26 18:26:20.379585+00	\N	Ugrat
+f1693167-0c68-4a54-9831-56f124d629a3	aea98b93-7bdf-455b-9ad4-a259d69dc76e	Ваше полное имя	Эл. адрес	Телефон	Твое письмо	Наш номер телефона	Имо	Эл. адрес	Инстаграм	2022-06-27 06:29:48.050553+00	2023-01-26 18:31:03.105358+00	\N	Отправить
 \.
 
 
@@ -1620,9 +1620,9 @@ COPY public.translation_footer (id, lang_id, about, payment, contact, secure, wo
 -- Data for Name: translation_header; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.translation_header (id, lang_id, research, phone, password, forgot_password, sign_in, sign_up, name, password_verification, verify_secure, my_information, my_favorites, my_orders, log_out, created_at, updated_at, deleted_at, basket, email, add_to_basket) FROM stdin;
-eaf206e6-d515-4bdb-9323-a047cd0edae5	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	Gözleg	Telefon	Parol	Açar sözümi unutdym	Ulgama girmek	Agza bolmak	Ady	Açar sözi tassyklamak	Ulanyş Düzgünlerini we Gizlinlik Şertnamasyny okadym we kabul edýärin	Maglumatym	Halanlarym	Sargytlarym	Çykmak	2022-06-15 23:48:26.460534+00	2023-01-26 07:27:57.415557+00	\N	Sebet	Mail adres	Sebede goş
-9154e800-2a92-47de-b4ff-1e63b213e5f7	aea98b93-7bdf-455b-9ad4-a259d69dc76e	Поиск	Телефон	Пароль	Забыл пароль	Войти	Зарегистрироваться	Имя	Подтвердить Пароль	Я прочитал и принимаю Условия Обслуживания и Политика Конфиденциальности	Моя информация	Мои любимые	Мои заказы	Выйти	2022-06-15 23:48:26.491672+00	2023-01-26 07:32:36.090082+00	\N	Корзина	Почта	Добавить в корзину
+COPY public.translation_header (id, lang_id, research, phone, password, forgot_password, sign_in, sign_up, name, password_verification, verify_secure, my_information, my_favorites, my_orders, log_out, created_at, updated_at, deleted_at, basket, email, add_to_basket, add_button) FROM stdin;
+eaf206e6-d515-4bdb-9323-a047cd0edae5	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	Gözleg	Telefon	Parol	Açar sözümi unutdym	Ulgama girmek	Agza bolmak	Ady	Açar sözi tassyklamak	Ulanyş Düzgünlerini we Gizlinlik Şertnamasyny okadym we kabul edýärin	Maglumatym	Halanlarym	Sargytlarym	Çykmak	2022-06-15 23:48:26.460534+00	2023-01-26 18:50:20.020483+00	\N	Sebet	Mail adres	Sebede goş	Goşmak
+9154e800-2a92-47de-b4ff-1e63b213e5f7	aea98b93-7bdf-455b-9ad4-a259d69dc76e	Поиск	Телефон	Пароль	Забыл пароль	Войти	Зарегистрироваться	Имя	Подтвердить Пароль	Я прочитал и принимаю Условия Обслуживания и Политика Конфиденциальности	Моя информация	Мои любимые	Мои заказы	Выйти	2022-06-15 23:48:26.491672+00	2023-01-26 18:50:56.407227+00	\N	Корзина	Почта	Добавить в корзину	Добавить
 \.
 
 
@@ -1631,8 +1631,8 @@ eaf206e6-d515-4bdb-9323-a047cd0edae5	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	Gözle
 --
 
 COPY public.translation_my_information_page (id, lang_id, address, created_at, updated_at, deleted_at, birthday, update_password, save, gender, male, female) FROM stdin;
-11074158-69f2-473a-b4fe-94304ff0d8a7	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	Salgyňyz	2022-07-04 14:28:46.529935+00	2023-01-26 07:52:59.821765+00	\N	Doglan senäň	Açar sözi üýtget	Ýatda sakla	gender_uytget	male_uytget	female_uytget
-d294138e-b808-41ae-9ac5-1826751fda3d	aea98b93-7bdf-455b-9ad4-a259d69dc76e	Ваш адрес	2022-07-04 14:28:46.603058+00	2023-01-26 07:52:59.821765+00	\N	Дата рождения	Изменить пароль	Запомнить	gender_uytget	male_uytget	female_uytget
+11074158-69f2-473a-b4fe-94304ff0d8a7	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	Salgyňyz	2022-07-04 14:28:46.529935+00	2023-01-26 12:17:39.361424+00	\N	Doglan senäň	Açar sözi üýtget	Ýatda sakla	Jynsy	Oglan	Gyz
+d294138e-b808-41ae-9ac5-1826751fda3d	aea98b93-7bdf-455b-9ad4-a259d69dc76e	Ваш адрес	2022-07-04 14:28:46.603058+00	2023-01-26 12:21:46.5462+00	\N	Дата рождения	Изменить пароль	Запомнить	Пол	Мужчина	Женщина
 \.
 
 
@@ -1640,9 +1640,9 @@ d294138e-b808-41ae-9ac5-1826751fda3d	aea98b93-7bdf-455b-9ad4-a259d69dc76e	Ваш
 -- Data for Name: translation_my_order_page; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.translation_my_order_page (id, lang_id, orders, date, price, currency, image, name, brend, code, amount, total_price, created_at, updated_at, deleted_at) FROM stdin;
-6f30b588-94d8-49f5-a558-a90c2ec9150e	aea98b93-7bdf-455b-9ad4-a259d69dc76e	orders_ru	date_ru	price_ru	currency_ru	image_ru	name_ru	brend_ru	code_ru	amount_ru	total_price_ru	2022-09-02 08:04:39.394714+00	2022-09-02 08:04:39.394714+00	\N
-ff43b90d-e22d-4364-b358-6fd56bb3a305	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	orders	date	price	currency	image	name	brend	code	amount	total_price	2022-09-02 08:04:39.36328+00	2022-09-02 08:12:48.119751+00	\N
+COPY public.translation_my_order_page (id, lang_id, orders, date, price, image, name, brend, product_price, amount, total_price, created_at, updated_at, deleted_at) FROM stdin;
+ff43b90d-e22d-4364-b358-6fd56bb3a305	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	Edilen sargytlar	Senesi	Bahasy	Surat	Ady	Brendy	Bahasy	Sany	Jemi	2022-09-02 08:04:39.36328+00	2023-01-26 13:50:31.058384+00	\N
+6f30b588-94d8-49f5-a558-a90c2ec9150e	aea98b93-7bdf-455b-9ad4-a259d69dc76e	Заказы	Дата	Цена	Рисунок	Имя	Бренди	Цена	Количество	Общая цена	2022-09-02 08:04:39.394714+00	2023-01-26 18:16:58.168531+00	\N
 \.
 
 
