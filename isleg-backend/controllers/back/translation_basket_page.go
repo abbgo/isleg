@@ -86,7 +86,7 @@ func CreateTranslationBasketPage(c *gin.Context) {
 	// create translation_basket_page
 	for _, v := range trBasketPages {
 
-		resultTrBasketPage, err := db.Query("INSERT INTO translation_basket_page (lang_id,quantity_of_goods,total_price,discount,delivery,total,to_order,your_basket,empty_the_basket) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)", v.LangID, v.QuantityOfGoods, v.TotalPrice, v.Discount, v.Delivery, v.Total, v.ToOrder, v.YourBasket, v.EmptyTheBasket)
+		resultTrBasketPage, err := db.Query("INSERT INTO translation_basket_page (lang_id,quantity_of_goods,total_price,discount,delivery,total,to_order,your_basket,empty_the_basket,empty_the_like_page) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)", v.LangID, v.QuantityOfGoods, v.TotalPrice, v.Discount, v.Delivery, v.Total, v.ToOrder, v.YourBasket, v.EmptyTheBasket, v.EmptyTheLikePage)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
@@ -184,7 +184,7 @@ func UpdateTranslationBasketPageByID(c *gin.Context) {
 		return
 	}
 
-	resultTrBasketPage, err := db.Query("UPDATE translation_basket_page SET quantity_of_goods = $1, total_price = $2 , discount = $3, delivery = $4 , total = $5, to_order = $6, your_basket = $7 , empty_the_basket = $8, lang_id = $10  WHERE id = $9", trBasketPage.QuantityOfGoods, trBasketPage.TotalPrice, trBasketPage.Discount, trBasketPage.Delivery, trBasketPage.Total, trBasketPage.ToOrder, trBasketPage.YourBasket, trBasketPage.EmptyTheBasket, trBasketPage.ID, trBasketPage.LangID)
+	resultTrBasketPage, err := db.Query("UPDATE translation_basket_page SET quantity_of_goods = $1, total_price = $2 , discount = $3, delivery = $4 , total = $5, to_order = $6, your_basket = $7 , empty_the_basket = $8, lang_id = $10 , empty_the_like_page = $11  WHERE id = $9", trBasketPage.QuantityOfGoods, trBasketPage.TotalPrice, trBasketPage.Discount, trBasketPage.Delivery, trBasketPage.Total, trBasketPage.ToOrder, trBasketPage.YourBasket, trBasketPage.EmptyTheBasket, trBasketPage.ID, trBasketPage.LangID, trBasketPage.EmptyTheLikePage)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -234,7 +234,7 @@ func GetTranslationBasketPageByID(c *gin.Context) {
 	ID := c.Param("id")
 
 	// check id and get data from database
-	rowTRBasketPage, err := db.Query("SELECT id,quantity_of_goods,total_price,discount,delivery,total,to_order,your_basket,empty_the_basket FROM translation_basket_page WHERE id = $1 AND deleted_at IS NULL", ID)
+	rowTRBasketPage, err := db.Query("SELECT id,quantity_of_goods,total_price,discount,delivery,total,to_order,your_basket,empty_the_basket,empty_the_like_page FROM translation_basket_page WHERE id = $1 AND deleted_at IS NULL", ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -255,7 +255,7 @@ func GetTranslationBasketPageByID(c *gin.Context) {
 	var t models.TranslationBasketPage
 
 	for rowTRBasketPage.Next() {
-		if err := rowTRBasketPage.Scan(&t.ID, &t.QuantityOfGoods, &t.TotalPrice, &t.Discount, &t.Delivery, &t.Total, &t.ToOrder, &t.YourBasket, &t.EmptyTheBasket); err != nil {
+		if err := rowTRBasketPage.Scan(&t.ID, &t.QuantityOfGoods, &t.TotalPrice, &t.Discount, &t.Delivery, &t.Total, &t.ToOrder, &t.YourBasket, &t.EmptyTheBasket, &t.EmptyTheLikePage); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
@@ -313,7 +313,7 @@ func GetTranslationBasketPageByLangID(c *gin.Context) {
 	}
 
 	// get translation-basket-page where lang_id equal langID
-	rowTRBasketPage, err := db.Query("SELECT quantity_of_goods,total_price,discount,delivery,total,to_order,your_basket,empty_the_basket FROM translation_basket_page WHERE lang_id = $1 AND deleted_at IS NULL", langID)
+	rowTRBasketPage, err := db.Query("SELECT quantity_of_goods,total_price,discount,delivery,total,to_order,your_basket,empty_the_basket,empty_the_like_page FROM translation_basket_page WHERE lang_id = $1 AND deleted_at IS NULL", langID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -334,7 +334,7 @@ func GetTranslationBasketPageByLangID(c *gin.Context) {
 	var t models.TranslationBasketPage
 
 	for rowTRBasketPage.Next() {
-		if err := rowTRBasketPage.Scan(&t.QuantityOfGoods, &t.TotalPrice, &t.Discount, &t.Delivery, &t.Total, &t.ToOrder, &t.YourBasket, &t.EmptyTheBasket); err != nil {
+		if err := rowTRBasketPage.Scan(&t.QuantityOfGoods, &t.TotalPrice, &t.Discount, &t.Delivery, &t.Total, &t.ToOrder, &t.YourBasket, &t.EmptyTheBasket, &t.EmptyTheLikePage); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
