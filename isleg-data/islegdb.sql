@@ -908,7 +908,8 @@ CREATE TABLE public.translation_basket_page (
     created_at timestamp with time zone DEFAULT now(),
     updated_at timestamp with time zone DEFAULT now(),
     deleted_at timestamp with time zone,
-    empty_the_basket character varying DEFAULT 'uytget'::character varying NOT NULL
+    empty_the_basket character varying DEFAULT 'uytget'::character varying NOT NULL,
+    empty_the_like_page character varying DEFAULT 'uytget'::character varying NOT NULL
 );
 
 
@@ -1522,9 +1523,9 @@ COPY public.translation_afisa (id, afisa_id, lang_id, title, description, create
 -- Data for Name: translation_basket_page; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.translation_basket_page (id, lang_id, quantity_of_goods, total_price, discount, delivery, total, to_order, your_basket, created_at, updated_at, deleted_at, empty_the_basket) FROM stdin;
-51b3699e-1c7b-442a-be7b-6b2ad1f111b4	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	Haryt mukdary	Doly bahasy	Arzanladyş	Eltip berme	Jemi	Sargyt et	Sebet	2022-08-30 07:36:24.978404+00	2023-01-27 06:03:42.080664+00	\N	Siziň sebediňiz boş
-456dcb5a-fabb-47f8-b216-0cddd3077124	aea98b93-7bdf-455b-9ad4-a259d69dc76e	Количество товара	Полная стоимость	Скидка	Доставкa	Общее	Заказ	Корзина	2022-08-30 07:36:24.978404+00	2023-01-27 06:07:03.497811+00	\N	Ваша корзина пуста
+COPY public.translation_basket_page (id, lang_id, quantity_of_goods, total_price, discount, delivery, total, to_order, your_basket, created_at, updated_at, deleted_at, empty_the_basket, empty_the_like_page) FROM stdin;
+51b3699e-1c7b-442a-be7b-6b2ad1f111b4	8723c1c7-aa6d-429f-b8af-ee9ace61f0d7	Haryt mukdary	Doly bahasy	Arzanladyş	Eltip berme	Jemi	Sargyt et	Sebet	2022-08-30 07:36:24.978404+00	2023-01-27 06:38:00.127486+00	\N	Siziň sebediňiz boş	Halan harytlaryňyzyň sanawy boş
+456dcb5a-fabb-47f8-b216-0cddd3077124	aea98b93-7bdf-455b-9ad4-a259d69dc76e	Количество товара	Полная стоимость	Скидка	Доставкa	Общее	Заказ	Корзина	2022-08-30 07:36:24.978404+00	2023-01-27 06:39:27.405953+00	\N	Ваша корзина пуста	У вас нет любимого продукта
 \.
 
 
