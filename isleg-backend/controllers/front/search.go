@@ -87,7 +87,7 @@ func Search(c *gin.Context) {
 
 	var countOfProduct uint
 
-	incomingsSarch := slug.MakeLang(c.PostForm("search"), "en")
+	incomingsSarch := slug.MakeLang(c.Query("search"), "en")
 	search := strings.ReplaceAll(incomingsSarch, "-", " | ")
 
 	countProduct, err := db.Query("SELECT COUNT(*) FROM products p inner join translation_product tp on tp.product_id = p.id WHERE to_tsvector(slug) @@ to_tsquery($1) AND tp.lang_id = $2 AND tp.deleted_at IS NULL AND p.amount > 0 AND p.limit_amount > 0 AND p.deleted_at IS NULL", search, langID)

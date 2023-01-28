@@ -84,7 +84,7 @@ func FrontRoutes(front *gin.RouterGroup) {
 
 		// Search funksiya dil boyunca gozlenilen harytlary pagination edip
 		// getirip beryar
-		frontRoutes.POST("search/:limit/:page", frontController.Search)
+		frontRoutes.GET("search/:limit/:page", frontController.Search)
 
 		// FilterAndSort funksiya dil boyunca tertiplenen we filter edilen harytlary pagination edip
 		// getirip beryar
