@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"fmt"
 	"github/abbgo/isleg/isleg-backend/config"
 	backController "github/abbgo/isleg/isleg-backend/controllers/back"
 	"github/abbgo/isleg/isleg-backend/models"
@@ -12,6 +11,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/gosimple/slug"
+	"github.com/lib/pq"
 )
 
 func Search(c *gin.Context) {
@@ -284,55 +284,90 @@ func FilterAndSort(c *gin.Context) {
 		return
 	}
 
+	rowCategory, err := db.Query("SELECT id FROM categories WHERE id = $1 AND deleted_at IS NULL", categoryID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer func() {
+		if err := rowCategory.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
+	var category_id string
+	for rowCategory.Next() {
+		if err := rowCategory.Scan(&category_id); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}
+	if category_id == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "category not found",
+		})
+		return
+	}
+
 	// get limit from param
-	// limitStr := c.Param("limit")
-	// if limitStr == "" {
-	// 	c.JSON(http.StatusBadRequest, gin.H{
-	// 		"status":  false,
-	// 		"message": "limit is required",
-	// 	})
-	// 	return
-	// }
-	// limit, err := strconv.ParseUint(limitStr, 10, 64)
-	// if err != nil {
-	// 	c.JSON(http.StatusBadRequest, gin.H{
-	// 		"status":  false,
-	// 		"message": err.Error(),
-	// 	})
-	// 	return
-	// }
+	limitStr := c.Param("limit")
+	if limitStr == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "limit is required",
+		})
+		return
+	}
+	limit, err := strconv.ParseUint(limitStr, 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
 
 	// get page from param
-	// pageStr := c.Param("page")
-	// if pageStr == "" {
-	// 	c.JSON(http.StatusBadRequest, gin.H{
-	// 		"status":  false,
-	// 		"message": "page is required",
-	// 	})
-	// 	return
-	// }
-	// page, err := strconv.ParseUint(pageStr, 10, 64)
-	// if err != nil {
-	// 	c.JSON(http.StatusBadRequest, gin.H{
-	// 		"status":  false,
-	// 		"message": err.Error(),
-	// 	})
-	// 	return
-	// }
+	pageStr := c.Param("page")
+	if pageStr == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "page is required",
+		})
+		return
+	}
+	page, err := strconv.ParseUint(pageStr, 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
 
-	// offset := limit * (page - 1)
+	offset := limit * (page - 1)
+
+	var countOfProduct uint
 
 	priceSort := c.Query("price_sort")
-	priceSortQuery := ""
 	if priceSort != "" {
-		if priceSort != "asc" && priceSort != "desc" {
+		if priceSort != "ASC" && priceSort != "DESC" {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": "price_sort is invalid",
 			})
 			return
 		}
-		priceSortQuery = fmt.Sprintf("order by p.price %s", priceSort)
 	}
 
 	var minPrice float32
@@ -361,7 +396,6 @@ func FilterAndSort(c *gin.Context) {
 		}
 		minPrice = float32(min_price)
 	}
-	fmt.Println("minPrice: ", minPrice)
 
 	var maxPrice float32
 	maxPriceStr := c.Query("max_price")
@@ -389,62 +423,97 @@ func FilterAndSort(c *gin.Context) {
 		}
 		maxPrice = float32(max_price)
 	}
-	fmt.Println("maxPrice: ", maxPrice)
 
-	// isDiscountStr := c.Query("is_discount")
-	// isDiscount, err := strconv.ParseBool(isDiscountStr)
-	// if err != nil {
-	// 	c.JSON(http.StatusBadRequest, gin.H{
-	// 		"status":  false,
-	// 		"message": err.Error(),
-	// 	})
-	// 	return
-	// }
+	isDiscountStr := c.Query("is_discount")
+	discount := -1
+	isDiscount, err := strconv.ParseBool(isDiscountStr)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	if isDiscount {
+		discount = 0
+	}
 
-	// brendIDs := c.QueryArray("brend_ids")
-	// if len(brendIDs) != 0 {
-	// 	for _, v := range brendIDs {
-	// 		row, err := db.Query("SELECT id FROM brends WHERE id = $1 AND deleted_at IS NULL", v)
-	// 		if err != nil {
-	// 			c.JSON(http.StatusBadRequest, gin.H{
-	// 				"status":  false,
-	// 				"message": err.Error(),
-	// 			})
-	// 			return
-	// 		}
-	// 		defer func() {
-	// 			if err := row.Close(); err != nil {
-	// 				c.JSON(http.StatusBadRequest, gin.H{
-	// 					"status":  false,
-	// 					"message": err.Error(),
-	// 				})
-	// 				return
-	// 			}
-	// 		}()
+	brendIDs := c.QueryArray("brend_ids")
+	if len(brendIDs) != 0 {
+		for _, v := range brendIDs {
+			row, err := db.Query("SELECT id FROM brends WHERE id = $1 AND deleted_at IS NULL", v)
+			if err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+			defer func() {
+				if err := row.Close(); err != nil {
+					c.JSON(http.StatusBadRequest, gin.H{
+						"status":  false,
+						"message": err.Error(),
+					})
+					return
+				}
+			}()
 
-	// 		var brend_id string
+			var brend_id string
 
-	// 		for row.Next() {
-	// 			if err := row.Scan(&brend_id); err != nil {
-	// 				c.JSON(http.StatusBadRequest, gin.H{
-	// 					"status":  false,
-	// 					"message": err.Error(),
-	// 				})
-	// 				return
-	// 			}
-	// 		}
+			for row.Next() {
+				if err := row.Scan(&brend_id); err != nil {
+					c.JSON(http.StatusBadRequest, gin.H{
+						"status":  false,
+						"message": err.Error(),
+					})
+					return
+				}
+			}
 
-	// 		if brend_id == "" {
-	// 			c.JSON(http.StatusBadRequest, gin.H{
-	// 				"status":  false,
-	// 				"message": "brend not found",
-	// 			})
-	// 			return
-	// 		}
-	// 	}
-	// }
+			if brend_id == "" {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": "brend not found",
+				})
+				return
+			}
+		}
+	}
 
-	rowsProduct, err := db.Query(fmt.Sprintf("SELECT p.id,p.brend_id,p.price,p.old_price,p.amount,p.limit_amount,p.is_new,p.main_image FROM products p LEFT JOIN category_product c ON p.id=c.product_id INNER JOIN translation_product tp ON tp.product_id = p.id WHERE tp.lang_id = '%s' AND c.category_id = '%s' AND tp.deleted_at IS NULL AND p.amount > 0 AND p.limit_amount > 0 AND p.deleted_at IS NULL AND p.price >= '%f' AND p.price <= '%f' %s", langID, categoryID, minPrice, maxPrice, priceSortQuery))
+	countProduct, err := db.Query("SELECT COUNT(*) FROM products p LEFT JOIN category_product c ON p.id=c.product_id INNER JOIN translation_product tp ON tp.product_id = p.id WHERE p.brend_id = ANY($1) AND tp.lang_id = $2 AND c.category_id = $3 AND tp.deleted_at IS NULL AND p.amount > 0 AND p.limit_amount > 0 AND p.deleted_at IS NULL AND p.price >= $4 AND p.price <= $5 AND p.old_price > $6", pq.Array(brendIDs), langID, categoryID, minPrice, maxPrice, discount)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer func() {
+		if err := countProduct.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
+
+	for countProduct.Next() {
+		if err := countProduct.Scan(&countOfProduct); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}
+
+	rowQuery := "SELECT p.id,p.brend_id,p.price,p.old_price,p.amount,p.limit_amount,p.is_new,p.main_image FROM products p LEFT JOIN category_product c ON p.id=c.product_id INNER JOIN translation_product tp ON tp.product_id = p.id WHERE p.brend_id = ANY($1) AND tp.lang_id = $2 AND c.category_id = $3 AND tp.deleted_at IS NULL AND p.amount > 0 AND p.limit_amount > 0 AND p.deleted_at IS NULL AND p.price >= $4 AND p.price <= $5 AND p.old_price > $6 ORDER BY p.price ASC LIMIT $7 OFFSET $8"
+	if priceSort == "DESC" {
+		rowQuery = "SELECT p.id,p.brend_id,p.price,p.old_price,p.amount,p.limit_amount,p.is_new,p.main_image FROM products p LEFT JOIN category_product c ON p.id=c.product_id INNER JOIN translation_product tp ON tp.product_id = p.id WHERE p.brend_id = ANY($1) AND tp.lang_id = $2 AND c.category_id = $3 AND tp.deleted_at IS NULL AND p.amount > 0 AND p.limit_amount > 0 AND p.deleted_at IS NULL AND p.price >= $4 AND p.price <= $5 AND p.old_price > $6 ORDER BY p.price DESC LIMIT $7 OFFSET $8"
+	}
+	rowsProduct, err := db.Query(rowQuery, pq.Array(brendIDs), langID, categoryID, minPrice, maxPrice, discount, limit, offset)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -560,9 +629,9 @@ func FilterAndSort(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"status":   true,
-		"products": products,
-		// "count_of_products": countOfProduct,
+		"status":            true,
+		"products":          products,
+		"count_of_products": countOfProduct,
 	})
 
 }
