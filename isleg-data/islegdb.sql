@@ -1232,7 +1232,7 @@ COPY public.afisa (id, image, created_at, updated_at, deleted_at) FROM stdin;
 --
 
 COPY public.banner (id, image, url, created_at, updated_at, deleted_at) FROM stdin;
-785d48b7-8600-4ff4-8608-23e5114ac3f5	uploads/banner/f07abf59-09ab-4900-92df-2f6d54f9864b.jpeg	/category/44d2783f-133e-4bb7-b4c2-9e03dc04e2dd	2022-12-16 04:07:23.802027+00	2022-12-16 04:07:23.802027+00	\N
+ce791a84-8b00-4a02-8f56-b1be6a69910e	uploads/banner/ae756735-5f12-4330-ba9b-e38e55215c9b.png	/category/44d2783f-133e-4bb7-b4c2-9e03dc04e2dd	2023-01-27 17:18:18.10717+00	2023-01-27 17:18:18.10717+00	\N
 \.
 
 
@@ -1257,6 +1257,7 @@ e9b7cc3b-bc80-4682-95e1-7db3bfd8f9b7	MAPED	uploads/brend/9834457a-af44-4764-b601
 COPY public.cart (id, product_id, customer_id, quantity_of_product, created_at, updated_at, deleted_at) FROM stdin;
 96197f01-8f8f-4b33-bf26-a3df612718bd	14d95413-2c8a-472f-8f89-9458dc1bde33	12c4d76a-e3a6-4f35-97ba-efed264f849a	9	2023-01-25 18:27:15.654486+00	2023-01-25 18:33:34.603621+00	\N
 900a226f-9565-4b88-ad69-f4b55de939b2	14d95413-2c8a-472f-8f89-9458dc1bde33	19cdcf1a-f110-4510-a52b-063329d98607	1	2023-01-26 18:30:34.127449+00	2023-01-26 18:30:34.127449+00	\N
+2493112a-9429-40a1-83db-994f4216d1a0	14d95413-2c8a-472f-8f89-9458dc1bde33	1ae12390-03ae-49ac-a9ad-d7ba5c95b51a	2	2023-01-27 08:51:53.438808+00	2023-01-27 17:35:53.964022+00	\N
 \.
 
 
@@ -1342,9 +1343,9 @@ b556ebd9-cae4-4265-bf80-cba92cb39da7	e9db1ea7-5ce4-4284-bdc2-0fc39da2b7f2	qwkjdw
 71dd6ebd-bdb2-4cc2-8010-d5a2771f2192	392e6586-b3aa-4086-92d9-35e1dc29253e	Mir 2/2	2023-01-15 14:41:59.97412+00	2023-01-15 14:41:59.97412+00	\N	f
 27fe094a-0093-4837-9f36-5e251f8b77c9	eb132b01-c9e7-4836-af89-1c2184439544	,ksnedkjewnf	2023-01-26 06:50:59.62467+00	2023-01-26 06:50:59.62467+00	\N	f
 3a52b3d9-4bd3-4d36-8dcc-31ea123540fe	ec5da332-10e5-4c82-9195-a2479a200c25	jabdjhegfh	2023-01-26 06:52:53.847892+00	2023-01-26 06:52:53.847892+00	\N	f
-d3496ac8-f36f-40f8-8b40-0ba3a7e226e5	1ae12390-03ae-49ac-a9ad-d7ba5c95b51a	Mir 6/3 jay 56 	2022-11-22 05:02:14.214333+00	2023-01-27 04:06:06.424171+00	\N	t
-f9e7f338-aad1-4f25-aef9-7c597979f346	1ae12390-03ae-49ac-a9ad-d7ba5c95b51a	Hitrowka	2023-01-26 19:09:11.693+00	2023-01-27 04:06:06.436138+00	\N	f
-567546cf-85e4-482d-9ad1-0c551982aaf5	1ae12390-03ae-49ac-a9ad-d7ba5c95b51a	Howdan	2023-01-26 19:17:12.00161+00	2023-01-27 04:06:06.436138+00	\N	f
+567546cf-85e4-482d-9ad1-0c551982aaf5	1ae12390-03ae-49ac-a9ad-d7ba5c95b51a	Howdan	2023-01-26 19:17:12.00161+00	2023-01-27 08:57:12.502106+00	\N	t
+d3496ac8-f36f-40f8-8b40-0ba3a7e226e5	1ae12390-03ae-49ac-a9ad-d7ba5c95b51a	Mir 6/3 jay 56 	2022-11-22 05:02:14.214333+00	2023-01-27 08:57:12.513859+00	\N	f
+f9e7f338-aad1-4f25-aef9-7c597979f346	1ae12390-03ae-49ac-a9ad-d7ba5c95b51a	Hitrowka	2023-01-26 19:09:11.693+00	2023-01-27 08:57:12.513859+00	\N	f
 \.
 
 
@@ -1354,7 +1355,6 @@ f9e7f338-aad1-4f25-aef9-7c597979f346	1ae12390-03ae-49ac-a9ad-d7ba5c95b51a	Hitrow
 
 COPY public.customers (id, full_name, phone_number, password, birthday, gender, created_at, updated_at, deleted_at, email, is_register) FROM stdin;
 19cdcf1a-f110-4510-a52b-063329d98607	Allanur Bayramgeldiyew	+99362420377	$2a$14$QLQ.Mkd6Oi3Qz4djp38KS.Y1BBwKNJL1Hy6qKS0piHnoNP4rvIMd2	\N	\N	2022-11-01 06:33:32.61818+00	2022-11-01 06:33:32.61818+00	\N	abb@gmail.com	t
-1ae12390-03ae-49ac-a9ad-d7ba5c95b51a	Muhammetmyrat Bayramov	+99363747155	$2a$14$Ag0N0Otwyu7qmHaDCVVmWOz2UxHsYhqoEMkZcnCgzMzB1rAGqMZO2	1997-03-11	\N	2022-11-02 02:34:24.403632+00	2022-11-28 03:39:44.990107+00	\N	muhammetmyrat@gmail.com	t
 1f949ae7-f59b-4846-9b3f-f9ed1938174c	Kemal	+99362766780	$2a$14$6qycGfXrbnySmfTLBroXE.lXMJuF2VT.9Arn9F34SzQM9qtFB6GiW	\N	\N	2023-01-04 10:31:22.767892+00	2023-01-04 10:31:22.767892+00	\N	Kemal@gmail.com	t
 37e44e45-ed7e-4ff8-8167-886595349855	dsgjhdgfjhsdfg	+99363463456	$2a$14$vmmZV8x31Otg25QbOTAyae1enF1Leo0fzjK4JdaNWUUx6SMgLxZFi	\N	\N	2023-01-04 17:44:12.445059+00	2023-01-04 17:44:12.445059+00	\N	awgserhgdfh@gmail.com	t
 938fb63a-e7c8-41a7-b2d6-624156094d8f	sdagarfgadf	+99363254634	$2a$14$26kRxXVAglPoYNrzynb2tuM9k4LF1NfVYFZkfpJTChqVA/5.VLAx2	\N	\N	2023-01-08 11:19:22.357132+00	2023-01-08 11:19:22.357132+00	\N	345gdfbndfg@gmail.com	t
@@ -1369,6 +1369,7 @@ f12aec9a-7e10-4c6b-8121-4b5ce334bfa9	jkbdjcbewjhbdwebh	+99363744664	$2a$14$.wtw3
 12c4d76a-e3a6-4f35-97ba-efed264f849a	54jkwnefjkewbhd	+99363745454	$2a$14$mriNhEaRJYqLbrpygPJeUOG1MKgKLHPdmDE/CX9arGhcLSpR0Ovsy	\N	\N	2023-01-23 15:54:38.267322+00	2023-01-23 15:54:38.267322+00	\N	wejdweu@gmail.com	t
 eb132b01-c9e7-4836-af89-1c2184439544	jshfjkew	+99365454121	\N	\N	\N	2023-01-26 06:50:59.620772+00	2023-01-26 06:50:59.620772+00	\N	\N	f
 ec5da332-10e5-4c82-9195-a2479a200c25	jewdkjweb	+99363265326	\N	\N	\N	2023-01-26 06:52:53.844755+00	2023-01-26 06:52:53.844755+00	\N	\N	f
+1ae12390-03ae-49ac-a9ad-d7ba5c95b51a	Muhammetmyrat Bayramov	+99363747155	$2a$14$UFya4p3mHbDA/T3jtMDSTO3M5recM88XjCPjU80RdqmKB7hKrnryW	1997-03-11	\N	2022-11-02 02:34:24.403632+00	2023-01-27 15:23:41.185602+00	\N	muhammetmyrat@gmail.com	t
 \.
 
 
@@ -1406,7 +1407,7 @@ aea98b93-7bdf-455b-9ad4-a259d69dc76e	ru	uploads/language/22a2ad57-4686-44d2-aded
 --
 
 COPY public.likes (id, product_id, customer_id, created_at, updated_at, deleted_at) FROM stdin;
-3251b463-7870-403c-bb16-e442e4b2e5c7	14d95413-2c8a-472f-8f89-9458dc1bde33	1ae12390-03ae-49ac-a9ad-d7ba5c95b51a	2023-01-26 05:07:03.878968+00	2023-01-26 05:07:03.878968+00	\N
+23c7a2d3-e0ae-4576-9787-9594d955c0e2	14d95413-2c8a-472f-8f89-9458dc1bde33	1ae12390-03ae-49ac-a9ad-d7ba5c95b51a	2023-01-28 03:51:06.102398+00	2023-01-28 03:51:06.102398+00	\N
 \.
 
 
