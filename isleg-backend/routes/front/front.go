@@ -121,6 +121,8 @@ func FrontRoutes(front *gin.RouterGroup) {
 
 		frontRoutes.GET("product/:id", backController.GetProductByIDForFront)
 
+		frontRoutes.GET("banners", backController.GetBanners)
+
 		SecuredCustomerRoutes(frontRoutes)
 	}
 
