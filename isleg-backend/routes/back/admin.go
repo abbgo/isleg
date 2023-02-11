@@ -35,6 +35,9 @@ func AdminRoutes(back *gin.RouterGroup) {
 
 			// GetAdmins funksiya hemme adminlerin spisoygyny almak ucin ulanylyar.
 			admin.GET("admins/:limit/:page", middlewares.CheckAdmin(), adminController.GetAdmins)
+
+			admin.GET("admin", middlewares.CheckAdmin(), adminController.GetAdmin)
+
 		}
 	}
 

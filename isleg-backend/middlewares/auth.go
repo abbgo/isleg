@@ -232,7 +232,7 @@ func CheckAdmin() gin.HandlerFunc {
 			return
 		}
 
-		// context.Set("admin_id", claims.AdminID)
+		context.Set("admin_id", claims.AdminID)
 		context.Next()
 
 	}

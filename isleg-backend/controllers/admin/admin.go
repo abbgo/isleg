@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"errors"
 	"github/abbgo/isleg/isleg-backend/auth"
 	"github/abbgo/isleg/isleg-backend/config"
 	"github/abbgo/isleg/isleg-backend/models"
@@ -187,8 +188,36 @@ func LoginAdmin(c *gin.Context) {
 
 }
 
-func GetAdminByID(id string) (models.Admin, error) {
+func GetAdmin(c *gin.Context) {
 
+	adminID, hasAdminID := c.Get("admin_id")
+	if !hasAdminID {
+		c.JSON(http.StatusBadRequest, "adminID is required")
+		return
+	}
+
+	var ok bool
+	admin_id, ok := adminID.(string)
+	if !ok {
+		c.JSON(http.StatusBadRequest, "EnterpriseID must be uint")
+	}
+
+	adm, err := GetAdminByID(admin_id)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"admin": adm,
+	})
+
+}
+
+func GetAdminByID(id string) (models.Admin, error) {
 	db, err := config.ConnDB()
 	if err != nil {
 		return models.Admin{}, err
@@ -217,6 +246,10 @@ func GetAdminByID(id string) (models.Admin, error) {
 		if err := rowsAdmin.Scan(&admin.FullName, &admin.PhoneNumber); err != nil {
 			return models.Admin{}, err
 		}
+	}
+
+	if admin.PhoneNumber == "" {
+		return models.Admin{}, errors.New("admin not found")
 	}
 
 	return admin, nil
