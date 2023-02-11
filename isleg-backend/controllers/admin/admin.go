@@ -169,11 +169,57 @@ func LoginAdmin(c *gin.Context) {
 		return
 	}
 
+	adm, err := GetAdminByID(adminID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
 	c.JSON(http.StatusOK, gin.H{
 		"access_token":  accessTokenString,
 		"refresh_token": refreshTokenString,
 		"admin_type":    adminType,
+		"admin":         adm,
 	})
+
+}
+
+func GetAdminByID(id string) (models.Admin, error) {
+
+	db, err := config.ConnDB()
+	if err != nil {
+		return models.Admin{}, err
+	}
+	defer func() (models.Admin, error) {
+		if err := db.Close(); err != nil {
+			return models.Admin{}, err
+		}
+		return models.Admin{}, nil
+	}()
+
+	var admin models.Admin
+
+	rowsAdmin, err := db.Query("SELECT full_name,phone_number FROM admins WHERE deleted_at IS NULL AND id = $1", id)
+	if err != nil {
+		return models.Admin{}, err
+	}
+	defer func() (models.Admin, error) {
+		if err := rowsAdmin.Close(); err != nil {
+			return models.Admin{}, err
+		}
+		return models.Admin{}, nil
+	}()
+
+	for rowsAdmin.Next() {
+		if err := rowsAdmin.Scan(&admin.FullName, &admin.PhoneNumber); err != nil {
+			return models.Admin{}, err
+		}
+	}
+
+	return admin, nil
 
 }
 

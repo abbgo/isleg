@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"github/abbgo/isleg/isleg-backend/config"
 	"github/abbgo/isleg/isleg-backend/models"
 	"net/http"
@@ -907,6 +908,7 @@ func GetOrderTime(c *gin.Context) {
 	}
 
 	currentHour := time.Now().Hour()
+	fmt.Println("currentHour: ", currentHour)
 	dates := []string{}
 	times := []string{}
 
