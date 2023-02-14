@@ -90,10 +90,9 @@ func Search(c *gin.Context) {
 
 	incomingsSarch := slug.MakeLang(c.Query("search"), "en")
 	search := strings.ReplaceAll(incomingsSarch, "-", " | ")
-	fmt.Println("search: ", search)
 	searchStr := fmt.Sprintf("%%%s%%", search)
 
-	countProduct, err := db.Query("SELECT COUNT(*) FROM products p inner join translation_product tp on tp.product_id = p.id WHERE to_tsvector(tp.slug) @@ to_tsquery($1) OR tp.slug LIKE $3 AND tp.lang_id = $2 AND tp.deleted_at IS NULL AND p.amount > 0 AND p.limit_amount > 0 AND p.deleted_at IS NULL", search, langID, searchStr)
+	countProduct, err := db.Query("SELECT COUNT(DISTINCT p.id) FROM products p inner join translation_product tp on tp.product_id = p.id WHERE to_tsvector(tp.slug) @@ to_tsquery($1) OR tp.slug LIKE $3 AND tp.lang_id = $2 AND tp.deleted_at IS NULL AND p.amount > 0 AND p.limit_amount > 0 AND p.deleted_at IS NULL", search, langID, searchStr)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -121,11 +120,12 @@ func Search(c *gin.Context) {
 		}
 	}
 
-	rowsProduct, err := db.Query("SELECT p.id,p.brend_id,p.price,p.old_price,p.amount,p.limit_amount,p.is_new,p.main_image FROM products p inner join translation_product tp on tp.product_id = p.id WHERE to_tsvector(tp.slug) @@ to_tsquery($1) OR tp.slug LIKE $5 AND tp.lang_id = $2 AND tp.deleted_at IS NULL AND p.amount > 0 AND p.limit_amount > 0 AND p.deleted_at IS NULL ORDER BY p.created_at ASC LIMIT $3 OFFSET $4", search, langID, limit, offset, searchStr)
+	rowsProduct, err := db.Query("SELECT DISTINCT ON (p.created_at) p.id,p.brend_id,p.price,p.old_price,p.amount,p.limit_amount,p.is_new,p.main_image FROM products p inner join translation_product tp on tp.product_id = p.id WHERE to_tsvector(tp.slug) @@ to_tsquery($1) OR tp.slug LIKE $5 AND tp.lang_id = $2 AND tp.deleted_at IS NULL AND p.amount > 0 AND p.limit_amount > 0 AND p.deleted_at IS NULL ORDER BY p.created_at ASC LIMIT $3 OFFSET $4", search, langID, limit, offset, searchStr)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
 			"message": err.Error(),
+			"yalnys":  "yalnys",
 		})
 		return
 	}
