@@ -79,16 +79,16 @@ func CreateProduct(c *gin.Context) {
 		return
 	}
 
-	// dataNames := []string{"name", "description"}
+	dataNames := []string{"name"}
 
 	// validate name and description
-	// if err := pkg.ValidateTranslations(languages, dataNames, c); err != nil {
-	// 	c.JSON(http.StatusBadRequest, gin.H{
-	// 		"status":  false,
-	// 		"message": err.Error(),
-	// 	})
-	// 	return
-	// }
+	if err := pkg.ValidateTranslations(languages, dataNames, c); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
 
 	// file upload
 	if err := c.Request.ParseMultipartForm(2000000); err != nil {
