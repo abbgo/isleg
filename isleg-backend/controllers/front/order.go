@@ -1810,7 +1810,7 @@ func ReturnOrder(c *gin.Context) {
 
 	orderID := c.Param("id")
 
-	rowOrder, err := db.Query("SELECT id,excel FROM orders WHERE id = $1 AND deleted_at IS NULL", orderID)
+	rowOrder, err := db.Query("SELECT id,excel FROM orders WHERE id = $1", orderID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -1856,7 +1856,7 @@ func ReturnOrder(c *gin.Context) {
 		return
 	}
 
-	rowsOrderedProduct, err := db.Query("SELECT product_id,quantity_of_product FROM ordered_products WHERE order_id = $1 AND deleted_at IS NULL", order_id)
+	rowsOrderedProduct, err := db.Query("SELECT product_id,quantity_of_product FROM ordered_products WHERE order_id = $1", order_id)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
