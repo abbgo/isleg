@@ -23,7 +23,7 @@ func BackRoutes(back *gin.RouterGroup) {
 
 		// OrderConfirmation funksiya musderiler tarapyndan edilen sargydy
 		// tassyklamak ucin ulanylyar
-		securedAdmin.POST("order-confirmation/:id", frontController.OrderConfirmation)
+		securedAdmin.GET("order-confirmation/:id", frontController.OrderConfirmation)
 
 		// ReturnOrder funksiya musderi eden sargydyny tassyklamasa edilen sargydy
 		// yzyna gaytarmak ucin ulanylyar

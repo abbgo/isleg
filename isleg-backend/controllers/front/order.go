@@ -13,24 +13,39 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"github.com/lib/pq"
 	"github.com/xuri/excelize/v2"
 )
 
 type OrderForAdmin struct {
-	ID            string          `json:"id"`
-	CustomerID    string          `json:"-"`
-	FullName      string          `json:"full_name"`
-	PhoneNumber   string          `json:"phone_number"`
-	Address       string          `json:"address"`
-	CustomerMark  string          `json:"customer_mark"`
-	OrderTime     string          `json:"order_time"`
-	PaymentType   string          `json:"payment_type"`
-	TotalPrice    float64         `json:"total_price"`
-	ShippingPrice float64         `json:"shipping_price"`
-	CreatedAt     string          `json:"created_at"`
-	Excel         string          `json:"excel"`
-	Products      []ProductOfCart `json:"products"`
+	ID            string            `json:"id"`
+	CustomerID    string            `json:"-"`
+	FullName      string            `json:"full_name"`
+	PhoneNumber   string            `json:"phone_number"`
+	Address       string            `json:"address"`
+	CustomerMark  string            `json:"customer_mark"`
+	OrderTime     string            `json:"order_time"`
+	PaymentType   string            `json:"payment_type"`
+	TotalPrice    float64           `json:"total_price"`
+	ShippingPrice float64           `json:"shipping_price"`
+	CreatedAt     string            `json:"created_at"`
+	Excel         string            `json:"excel"`
+	Products      []ProductForAdmin `json:"products"`
+}
+
+type ProductForAdmin struct {
+	ID                uuid.UUID                 `json:"id"`
+	BrendID           uuid.NullUUID             `json:"brend_id,omitempty"`
+	Price             float64                   `json:"price"`
+	OldPrice          float64                   `json:"old_price"`
+	Percentage        float64                   `json:"percentage"`
+	Amount            uint                      `json:"amount"`
+	LimitAmount       uint                      `json:"limit_amount"`
+	IsNew             bool                      `json:"is_new"`
+	QuantityOfProduct int                       `json:"quantity_of_product"`
+	MainImage         string                    `json:"main_image"`
+	Translations      models.TranslationProduct `json:"translations"`
 }
 
 type Order struct {
@@ -1055,10 +1070,10 @@ func GetOrders(c *gin.Context) {
 			}
 		}()
 
-		var products []ProductOfCart
+		var products []ProductForAdmin
 
 		for rowsOrderedProducts.Next() {
-			var product ProductOfCart
+			var product ProductForAdmin
 
 			if err := rowsOrderedProducts.Scan(&product.ID, &product.QuantityOfProduct); err != nil {
 				c.JSON(http.StatusBadRequest, gin.H{
@@ -1132,6 +1147,8 @@ func GetOrders(c *gin.Context) {
 				}
 			}
 
+			product.Translations = trProduct
+
 			products = append(products, product)
 
 		}
@@ -1173,14 +1190,38 @@ func OrderConfirmation(c *gin.Context) {
 	// get id of language from request parameter
 	orderID := c.Param("id")
 
-	// check orderID
-	rowOrder, err := db.Query("SELECT id FROM orders WHERE id = $1 AND deleted_at IS NULL", orderID)
+	statusStr := c.Query("status")
+	status, err := strconv.ParseBool(statusStr)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
 			"message": err.Error(),
 		})
 		return
+	}
+
+	var rowOrder, resultOrder *sql.Rows
+	// check orderID
+	if status {
+		row, err := db.Query("SELECT id FROM orders WHERE id = $1 AND deleted_at IS NOT NULL", orderID)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+		rowOrder = row
+	} else {
+		row, err := db.Query("SELECT id FROM orders WHERE id = $1 AND deleted_at IS NULL", orderID)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+		rowOrder = row
 	}
 	defer func() {
 		if err := rowOrder.Close(); err != nil {
@@ -1212,13 +1253,26 @@ func OrderConfirmation(c *gin.Context) {
 		return
 	}
 
-	resultOrder, err := db.Query("UPDATE orders SET deleted_at = now() WHERE id = $1", orderID)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
+	if status {
+		result, err := db.Query("UPDATE orders SET deleted_at = NULL WHERE id = $1", orderID)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+		resultOrder = result
+	} else {
+		result, err := db.Query("UPDATE orders SET deleted_at = now() WHERE id = $1", orderID)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+		resultOrder = result
 	}
 	defer func() {
 		if err := resultOrder.Close(); err != nil {
@@ -1229,6 +1283,14 @@ func OrderConfirmation(c *gin.Context) {
 			return
 		}
 	}()
+
+	if status {
+		c.JSON(http.StatusOK, gin.H{
+			"status":  true,
+			"message": "the order has been moved to the unconfirmed table",
+		})
+		return
+	}
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
