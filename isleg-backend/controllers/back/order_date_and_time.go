@@ -19,7 +19,7 @@ type OrderTime struct {
 	Time string `json:"time"`
 }
 
-func CreateOrderTime(c *gin.Context) {
+func CreateOrderDate(c *gin.Context) {
 
 	// initialize database connection
 	db, err := config.ConnDB()

@@ -46,7 +46,7 @@ func BackRoutes(back *gin.RouterGroup) {
 		// Gutaryar --- firmanyn sazlamalary ucin CRUD
 
 		// Baslayar --- Musderilerin harydy sargyt edip biljek wagtlary ucin CRUD
-		securedAdmin.POST("order-time", backController.CreateOrderTime)
+		securedAdmin.POST("order-time", backController.CreateOrderDate)
 		// securedAdmin.PUT("order-time", backController.UpdateOrderTimeByID)
 		// securedAdmin.GET("order-time/:id", backController.GetOrderTimeByID)
 		// securedAdmin.GET("order-times", backController.GetOrderTimes)
