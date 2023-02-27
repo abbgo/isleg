@@ -57,6 +57,8 @@ func BackRoutes(back *gin.RouterGroup) {
 
 		securedAdmin.POST("order-time", backController.CreateOrderTime)
 
+		securedAdmin.POST("order-date-hour", backController.CreateOrderDateHour)
+
 		// Baslayar --- Bas sahypada duryan banner ucin CRUD
 		securedAdmin.POST("banner", backController.CreateBanner)
 		securedAdmin.PUT("banner/:id", backController.UpdateBannerByID)

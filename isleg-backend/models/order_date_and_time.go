@@ -9,12 +9,22 @@ import (
 )
 
 type DateHours struct {
-	ID        string        `json:"id,omitempty"`
-	Hour      uint          `json:"hour,omitempty" binding:"required"`
-	DateID    uuid.NullUUID `json:"date_id,omitempty" binding:"required"`
-	CreatedAt string        `json:"-"`
-	UpdatedAt string        `json:"-"`
-	DeletedAt string        `json:"-"`
+	ID        string          `json:"id,omitempty"`
+	Hour      uint            `json:"hour,omitempty" binding:"required"`
+	DateID    uuid.NullUUID   `json:"date_id,omitempty" binding:"required"`
+	CreatedAt string          `json:"-"`
+	UpdatedAt string          `json:"-"`
+	DeletedAt string          `json:"-"`
+	DateTimes []DateHourTimes `json:"date_times,omitempty" binding:"required"`
+}
+
+type DateHourTimes struct {
+	ID         string        `json:"id,omitempty"`
+	DateHourID uuid.NullUUID `json:"date_hour_id,omitempty" binding:"required"`
+	TimeID     uuid.NullUUID `json:"time_id,omitempty" binding:"required"`
+	CreatedAt  string        `json:"-"`
+	UpdatedAt  string        `json:"-"`
+	DeletedAt  string        `json:"-"`
 }
 
 type OrderDates struct {
@@ -41,15 +51,6 @@ type TranslationOrderDates struct {
 	CreatedAt   string        `json:"-"`
 	UpdatedAt   string        `json:"-"`
 	DeletedAt   string        `json:"-"`
-}
-
-type DateHourTimes struct {
-	ID         string        `json:"id,omitempty"`
-	DateHourID uuid.NullUUID `json:"date_hour_id,omitempty" binding:"required"`
-	TimeID     uuid.NullUUID `json:"time_id,omitempty" binding:"required"`
-	CreatedAt  string        `json:"-"`
-	UpdatedAt  string        `json:"-"`
-	DeletedAt  string        `json:"-"`
 }
 
 type OrderTimes struct {

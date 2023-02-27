@@ -132,29 +132,6 @@ func CreateOrderDate(c *gin.Context) {
 		}
 	}
 
-	// add data to order_times table
-	// for _, v := range orderDate.OrderTimes {
-
-	// 	resultOrderTimes, err := db.Query("INSERT INTO order_times (order_date_id,time) VALUES ($1,$2)", orderDateID, v.Time)
-	// 	if err != nil {
-	// 		c.JSON(http.StatusBadRequest, gin.H{
-	// 			"status":  false,
-	// 			"message": err.Error(),
-	// 		})
-	// 		return
-	// 	}
-	// 	defer func() {
-	// 		if err := resultOrderTimes.Close(); err != nil {
-	// 			c.JSON(http.StatusBadRequest, gin.H{
-	// 				"status":  false,
-	// 				"message": err.Error(),
-	// 			})
-	// 			return
-	// 		}
-	// 	}()
-
-	// }
-
 	// add translation order date to database
 	for _, v := range orderDate.TranslationOrderDates {
 
