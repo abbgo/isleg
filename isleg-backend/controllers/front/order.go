@@ -623,6 +623,14 @@ func ToOrder(c *gin.Context) {
 		for i := 0; i < count; i++ {
 			f.InsertRows("Лист1", 20+lenProductsArr, 1)
 		}
+		// if err := f.AddPicture("Лист1", "c"+strconv.Itoa(lenProductsArr+count+21), pkg.ServerPath+"uploads/orders/isleg.png", nil); err != nil {
+		// 	fmt.Println(err)
+		// }
+
+		// if err := f.AddPicture("Лист1", "a82", pkg.ServerPath+"uploads/orders/image1.png", nil); err != nil {
+		// 	log.Fatal(err)
+		// 	return
+		// }
 		f.SetCellValue("Лист1", "c"+strconv.Itoa(lenProductsArr+count+21), "Telefon: "+companyPhone)
 		f.SetCellValue("Лист1", "c"+strconv.Itoa(lenProductsArr+count+22), "IMO: "+companyPhone)
 		f.SetCellValue("Лист1", "c"+strconv.Itoa(lenProductsArr+count+23), "Instagram: "+instagram)
