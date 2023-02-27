@@ -17,7 +17,7 @@ import (
 
 type CartProduct struct {
 	ProductID         string `json:"product_id" binding:"required"`
-	QuantityOfProduct int    `json:"quantity_of_product"`
+	QuantityOfProduct uint   `json:"quantity_of_product"`
 }
 
 type ProductOfCart struct {

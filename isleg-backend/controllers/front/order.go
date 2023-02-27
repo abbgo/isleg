@@ -259,7 +259,7 @@ func ToOrder(c *gin.Context) {
 
 	// musderinin baza bilen barlag isleri gutarandan son musderinin sargydyny baza gosyas we
 	// gosulan sargydyn id - sini alyarys, ordered_prodcuts tablisa ucin
-	resultOrders, err := db.Query("INSERT INTO orders (customer_id,customer_mark,order_time,payment_type,total_price,shipping_price,address) VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING id", customerID, order.CustomerMark, order.OrderTime, order.PaymentType, order.TotalPrice, order.ShippingPrice, order.Address)
+	resultOrders, err := db.Query("INSERT INTO orders (customer_id,customer_mark,order_time,payment_type,total_price,shipping_price,address) VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING id,TO_CHAR(created_at,'DD.MM.YYYY HH24:MI'),order_number", customerID, order.CustomerMark, order.OrderTime, order.PaymentType, order.TotalPrice, order.ShippingPrice, order.Address)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -277,10 +277,11 @@ func ToOrder(c *gin.Context) {
 		}
 	}()
 
-	var order_id string
+	var order_id, createdAt string
+	var orderNumber uint
 
 	for resultOrders.Next() {
-		if err := resultOrders.Scan(&order_id); err != nil {
+		if err := resultOrders.Scan(&order_id, &createdAt, &orderNumber); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
@@ -298,47 +299,6 @@ func ToOrder(c *gin.Context) {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": "quantity of product cannot be less than 1",
-			})
-			return
-		}
-
-		// gelen product_id boyunca sol haryt bazadaky harytlaryn arasynda barmy ya-da yokmy sony barlayas
-		rowProduct, err := db.Query("SELECT id FROM products WHERE id = $1 AND deleted_at IS NULL", v.ProductID)
-		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-		defer func() {
-			if err := rowProduct.Close(); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
-				return
-			}
-		}()
-
-		var product_id string
-
-		for rowProduct.Next() {
-			if err := rowProduct.Scan(&product_id); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
-				return
-			}
-		}
-
-		// eger sargyt edilen haryt bazada yok bolsa , onda yzyna error iberyas/
-		// sebabi bazada yok bolan harydy sargyt edip bolmayar
-		if product_id == "" {
-			c.JSON(http.StatusNotFound, gin.H{
-				"status":  false,
-				"message": "product not found",
 			})
 			return
 		}
@@ -465,106 +425,9 @@ func ToOrder(c *gin.Context) {
 		}
 	}
 
-	// excel fayly doldurmak ucin edilen sargydyn maglumatlaryny bazadan almaly
-	rowOrder, err := db.Query("SELECT order_number,TO_CHAR(created_at,'DD.MM.YYYY HH24:MI'),order_time,customer_mark,total_price,shipping_price,payment_type FROM orders WHERE id = $1 AND deleted_at IS NULL", order_id)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-	defer func() {
-		if err := rowOrder.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
-
-	var sargyt models.Orders
-
-	for rowOrder.Next() {
-		if err := rowOrder.Scan(&sargyt.OrderNumber, &sargyt.CreatedAt, &sargyt.OrderTime, &sargyt.CustomerMark, &sargyt.TotalPrice, &sargyt.ShippingPrice, &sargyt.PaymentType); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}
-
-	// excel fayly doldurmak ucin sargyt eden musderinin maglumatlaryny bazadan almaly
-	rowsCustomer, err := db.Query("SELECT full_name,phone_number FROM customers WHERE id = $1 AND deleted_at IS NULL", customerID)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-	defer func() {
-		if err := rowsCustomer.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
-
-	var customerName, customerPhone string
-
-	for rowsCustomer.Next() {
-		if err := rowsCustomer.Scan(&customerName, &customerPhone); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}
-
-	// excel fayly doldurmak ucin sargyt edilen harytlary bazadan almaly
-	rowsOrderedProducts, err := db.Query("SELECT product_id,quantity_of_product FROM ordered_products WHERE order_id = $1 AND deleted_at IS NULL", order_id)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-	defer func() {
-		if err := rowsOrderedProducts.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
-
-	var orderedProducts []models.OrderedProducts
-
-	for rowsOrderedProducts.Next() {
-		var orderedProduct models.OrderedProducts
-
-		if err := rowsOrderedProducts.Scan(&orderedProduct.ProductID, &orderedProduct.QuantityOfProduct); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-		orderedProducts = append(orderedProducts, orderedProduct)
-
-	}
-
 	var products []OrderedProduct
 
-	for _, v := range orderedProducts {
+	for _, v := range order.Products {
 
 		var product OrderedProduct
 
@@ -653,15 +516,15 @@ func ToOrder(c *gin.Context) {
 	f.SetCellValue("Лист1", "c2", "IMO: "+companyPhone)
 	f.SetCellValue("Лист1", "c3", "Instagram: "+instagram)
 	f.SetCellValue("Лист1", "c4", "Mail: "+email)
-	f.SetCellValue("Лист1", "a6", "Sargyt No: "+strconv.Itoa(sargyt.OrderNumber))
-	f.SetCellValue("Лист1", "a9", "Ady: "+customerName)
-	f.SetCellValue("Лист1", "a10", "Telefon nomer: "+customerPhone)
+	f.SetCellValue("Лист1", "a6", "Sargyt No: "+strconv.Itoa(int(orderNumber)))
+	f.SetCellValue("Лист1", "a9", "Ady: "+order.FullName)
+	f.SetCellValue("Лист1", "a10", "Telefon nomer: "+order.PhoneNumber)
 	f.SetCellValue("Лист1", "a11", "Salgy: "+order.Address)
-	f.SetCellValue("Лист1", "a12", "Bellik: "+sargyt.CustomerMark)
-	f.SetCellValue("Лист1", "B9", "Sargyt edilen senesi: "+sargyt.CreatedAt)
-	f.SetCellValue("Лист1", "b10", "Eltip bermeli wagty: "+sargyt.OrderTime)
-	f.SetCellValue("Лист1", "b11", "Toleg sekili: "+sargyt.PaymentType)
-	f.SetCellValue("Лист1", "b12", "Eltip bermek hyzmaty: "+strconv.FormatFloat(pkg.RoundFloat(sargyt.ShippingPrice, 2), 'f', -1, 64))
+	f.SetCellValue("Лист1", "a12", "Bellik: "+order.CustomerMark)
+	f.SetCellValue("Лист1", "B9", "Sargyt edilen senesi: "+createdAt)
+	f.SetCellValue("Лист1", "b10", "Eltip bermeli wagty: "+order.OrderTime)
+	f.SetCellValue("Лист1", "b11", "Toleg sekili: "+order.PaymentType)
+	f.SetCellValue("Лист1", "b12", "Eltip bermek hyzmaty: "+strconv.FormatFloat(pkg.RoundFloat(order.ShippingPrice, 2), 'f', -1, 64))
 
 	style, err := f.NewStyle(&excelize.Style{
 		Border: []excelize.Border{
@@ -745,6 +608,11 @@ func ToOrder(c *gin.Context) {
 			return
 		}
 
+		if err = f.SetCellStyle("Лист1", "b16", "b16", style2); err != nil {
+			c.JSON(http.StatusBadRequest, err.Error())
+			return
+		}
+
 		if err = f.SetCellStyle("Лист1", "c16", "c16", style); err != nil {
 			c.JSON(http.StatusBadRequest, err.Error())
 			return
@@ -785,16 +653,16 @@ func ToOrder(c *gin.Context) {
 
 	// sargyt edilen harytlaryn jemi bahasy we sargydyn jemi bahasy excel fayla yazdyrylyar
 	f.SetCellValue("Лист1", "d"+strconv.Itoa(17+counter), totalPrice)
-	f.SetCellValue("Лист1", "b13", "Jemi: "+strconv.FormatFloat(pkg.RoundFloat(sargyt.TotalPrice, 2), 'f', -1, 64))
+	f.SetCellValue("Лист1", "b13", "Jemi: "+strconv.FormatFloat(pkg.RoundFloat(order.TotalPrice, 2), 'f', -1, 64))
 
 	// tayyar bolan excel fayl uploads papka yazdyrylyar
-	if err := f.SaveAs(pkg.ServerPath + "uploads/orders/" + strconv.Itoa(int(sargyt.OrderNumber)) + ".xlsx"); err != nil {
+	if err := f.SaveAs(pkg.ServerPath + "uploads/orders/" + strconv.Itoa(int(orderNumber)) + ".xlsx"); err != nil {
 		c.JSON(http.StatusBadRequest, err.Error())
 		return
 	}
 
 	// excel fayl tayyar bolanson sargydyn fayly hokmunde baza yazdyrylyar
-	resultOrderUpdate, err := db.Query("UPDATE orders SET excel = $1 WHERE id = $2", "uploads/orders/"+strconv.Itoa(int(sargyt.OrderNumber))+".xlsx", order_id)
+	resultOrderUpdate, err := db.Query("UPDATE orders SET excel = $1 WHERE id = $2", "uploads/orders/"+strconv.Itoa(int(orderNumber))+".xlsx", order_id)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
