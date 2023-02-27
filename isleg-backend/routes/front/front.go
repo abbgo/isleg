@@ -80,7 +80,7 @@ func FrontRoutes(front *gin.RouterGroup) {
 
 		// GetOrderTime funksiya dil boyunca musderi ucin sargyt edilip bilinjek
 		// wagtlary getirip beryar
-		// frontRoutes.GET("order-time", backController.GetOrderTime)
+		frontRoutes.GET("order-time", backController.GetOrderTime)
 
 		// Search funksiya dil boyunca gozlenilen harytlary pagination edip
 		// getirip beryar

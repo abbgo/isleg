@@ -8,14 +8,19 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type OrderDateAndTime struct {
-	ID              string      `json:"-"`
-	Date            string      `json:"date"`
-	Times           []OrderTime `json:"times"`
-	TranslationDate string      `json:"translation_date"`
-}
+// type OrderDateAndTime struct {
+// 	ID              string      `json:"-"`
+// 	Date            string      `json:"date"`
+// 	Times           []OrderTime `json:"times"`
+// 	TranslationDate string      `json:"translation_date"`
+// }
 
-type OrderTime struct {
+// type OrderTime struct {
+// 	Time string `json:"time"`
+// }
+
+type OrderDateAndTime struct {
+	Date string `json:"date"`
 	Time string `json:"time"`
 }
 
@@ -852,230 +857,75 @@ func CreateOrderDate(c *gin.Context) {
 
 // }
 
-// func GetOrderTime(c *gin.Context) {
+func GetOrderTime(c *gin.Context) {
 
-// 	db, err := config.ConnDB()
-// 	if err != nil {
-// 		c.JSON(http.StatusBadRequest, gin.H{
-// 			"status":  false,
-// 			"message": err.Error(),
-// 		})
-// 		return
-// 	}
-// 	defer func() {
-// 		if err := db.Close(); err != nil {
-// 			c.JSON(http.StatusBadRequest, gin.H{
-// 				"status":  false,
-// 				"message": err.Error(),
-// 			})
-// 			return
-// 		}
-// 	}()
+	db, err := config.ConnDB()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
-// 	langID, err := CheckLanguage(c)
-// 	if err != nil {
-// 		c.JSON(http.StatusBadRequest, gin.H{
-// 			"status":  false,
-// 			"message": err.Error(),
-// 		})
-// 		return
-// 	}
+	langID, err := CheckLanguage(c)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
 
-// 	currentHour := time.Now().Hour()
-// 	fmt.Println("currentHour: ", currentHour)
-// 	dates := []string{}
-// 	times := []string{}
+	currentHour := 20
 
-// 	if 18 < currentHour && currentHour < 24 || 0 <= currentHour && currentHour < 9 {
-// 		dates = append(dates, "tomorrow")
-// 	} else if 9 <= currentHour && currentHour < 12 {
-// 		dates = append(dates, "today")
-// 		times = append(times, "12:00 - 15:00", "15:00 - 18:00", "18:00 - 21:00")
-// 	} else if 12 <= currentHour && currentHour < 15 {
-// 		dates = append(dates, "today", "tomorrow")
-// 		times = append(times, "15:00 - 18:00", "18:00 - 21:00", "9:00 - 18:00")
-// 	} else if 15 <= currentHour && currentHour <= 18 {
-// 		dates = append(dates, "today", "tomorrow")
-// 		times = append(times, "18:00 - 21:00", "9:00 - 12:00", "12:00 - 15:00")
-// 	}
+	rowsOrderDate, err := db.Query("select tod.date , ot.time from order_dates od inner join translation_order_dates tod on tod.order_date_id = od.id inner join date_hours dh on dh.date_id = od.id inner join date_hour_times dht on dht.date_hour_id = dh.id inner join order_times ot on ot.id = dht.time_id where ot.deleted_at is null and dht.deleted_at is null and dh.deleted_at is null and tod.lang_id = $1 and od.deleted_at is null and tod.deleted_at is null and dh.hour = $2", langID, currentHour)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer func() {
+		if err := rowsOrderDate.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
-// 	// if 0 <= currentHour && currentHour < 6 {
+	var orderDates []OrderDateAndTime
 
-// 	// 	dates = append(dates, "today")
+	// var orderDateAndTimes []OrderDateAndTime
 
-// 	// } else if 6 <= currentHour && currentHour < 14 {
+	for rowsOrderDate.Next() {
+		var orderDate OrderDateAndTime
 
-// 	// 	dates = append(dates, "today", "tomorrow")
+		if err := rowsOrderDate.Scan(&orderDate.Date, &orderDate.Time); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+		orderDates = append(orderDates, orderDate)
+	}
 
-// 	// 	times = append(times, "18:00 - 21:00", "09:00 - 12:00")
+	c.JSON(http.StatusOK, gin.H{
+		"status":      true,
+		"order_times": orderDates,
+	})
 
-// 	// } else if 14 <= currentHour && currentHour < 24 {
-
-// 	// 	dates = append(dates, "tomorrow")
-
-// 	// }
-
-// 	rowsOrderDate, err := db.Query("select od.id , od.date , tod.date from order_dates od inner join translation_order_dates tod on tod.order_date_id = od.id where tod.lang_id = $1 and od.deleted_at is null and tod.deleted_at is null and od.date = any($2)", langID, pq.Array(dates))
-// 	if err != nil {
-// 		c.JSON(http.StatusBadRequest, gin.H{
-// 			"status":  false,
-// 			"message": err.Error(),
-// 		})
-// 		return
-// 	}
-// 	defer func() {
-// 		if err := rowsOrderDate.Close(); err != nil {
-// 			c.JSON(http.StatusBadRequest, gin.H{
-// 				"status":  false,
-// 				"message": err.Error(),
-// 			})
-// 			return
-// 		}
-// 	}()
-
-// 	var orderDateAndTimes []OrderDateAndTime
-
-// 	for rowsOrderDate.Next() {
-// 		var orderDateAndTime OrderDateAndTime
-
-// 		if err := rowsOrderDate.Scan(&orderDateAndTime.ID, &orderDateAndTime.Date, &orderDateAndTime.TranslationDate); err != nil {
-// 			c.JSON(http.StatusBadRequest, gin.H{
-// 				"status":  false,
-// 				"message": err.Error(),
-// 			})
-// 			return
-// 		}
-
-// 		if len(times) == 0 {
-
-// 			rowsOrderTime, err := db.Query("SELECT time FROM order_times WHERE order_date_id = $1 AND deleted_at IS NULL", orderDateAndTime.ID)
-// 			if err != nil {
-// 				c.JSON(http.StatusBadRequest, gin.H{
-// 					"status":  false,
-// 					"message": err.Error(),
-// 				})
-// 				return
-// 			}
-// 			defer func() {
-// 				if err := rowsOrderTime.Close(); err != nil {
-// 					c.JSON(http.StatusBadRequest, gin.H{
-// 						"status":  false,
-// 						"message": err.Error(),
-// 					})
-// 					return
-// 				}
-// 			}()
-
-// 			var orderTimes []OrderTime
-
-// 			for rowsOrderTime.Next() {
-// 				var orderTime OrderTime
-
-// 				if err := rowsOrderTime.Scan(&orderTime.Time); err != nil {
-// 					c.JSON(http.StatusBadRequest, gin.H{
-// 						"status":  false,
-// 						"message": err.Error(),
-// 					})
-// 					return
-// 				}
-
-// 				orderTimes = append(orderTimes, orderTime)
-
-// 			}
-
-// 			orderDateAndTime.Times = orderTimes
-
-// 		} else {
-
-// 			if orderDateAndTime.Date == "today" {
-
-// 				rowsOrderTime, err := db.Query("SELECT time FROM order_times WHERE order_date_id = $1 AND deleted_at IS NULL AND time = $2", orderDateAndTime.ID, times[0])
-// 				if err != nil {
-// 					c.JSON(http.StatusBadRequest, gin.H{
-// 						"status":  false,
-// 						"message": err.Error(),
-// 					})
-// 					return
-// 				}
-// 				defer func() {
-// 					if err := rowsOrderTime.Close(); err != nil {
-// 						c.JSON(http.StatusBadRequest, gin.H{
-// 							"status":  false,
-// 							"message": err.Error(),
-// 						})
-// 						return
-// 					}
-// 				}()
-
-// 				var orderTimes []OrderTime
-
-// 				for rowsOrderTime.Next() {
-// 					var orderTime OrderTime
-
-// 					if err := rowsOrderTime.Scan(&orderTime.Time); err != nil {
-// 						c.JSON(http.StatusBadRequest, gin.H{
-// 							"status":  false,
-// 							"message": err.Error(),
-// 						})
-// 						return
-// 					}
-
-// 					orderTimes = append(orderTimes, orderTime)
-
-// 				}
-
-// 				orderDateAndTime.Times = orderTimes
-
-// 			} else if orderDateAndTime.Date == "tomorrow" {
-
-// 				rowsOrderTime, err := db.Query("SELECT time FROM order_times WHERE order_date_id = $1 AND deleted_at IS NULL AND time = $2", orderDateAndTime.ID, times[1])
-// 				if err != nil {
-// 					c.JSON(http.StatusBadRequest, gin.H{
-// 						"status":  false,
-// 						"message": err.Error(),
-// 					})
-// 					return
-// 				}
-// 				defer func() {
-// 					if err := rowsOrderTime.Close(); err != nil {
-// 						c.JSON(http.StatusBadRequest, gin.H{
-// 							"status":  false,
-// 							"message": err.Error(),
-// 						})
-// 						return
-// 					}
-// 				}()
-
-// 				var orderTimes []OrderTime
-
-// 				for rowsOrderTime.Next() {
-// 					var orderTime OrderTime
-
-// 					if err := rowsOrderTime.Scan(&orderTime.Time); err != nil {
-// 						c.JSON(http.StatusBadRequest, gin.H{
-// 							"status":  false,
-// 							"message": err.Error(),
-// 						})
-// 						return
-// 					}
-
-// 					orderTimes = append(orderTimes, orderTime)
-
-// 				}
-
-// 				orderDateAndTime.Times = orderTimes
-
-// 			}
-
-// 		}
-
-// 		orderDateAndTimes = append(orderDateAndTimes, orderDateAndTime)
-
-// 	}
-
-// 	c.JSON(http.StatusOK, gin.H{
-// 		"status":      true,
-// 		"order_times": orderDateAndTimes,
-// 	})
-
-// }
+}
