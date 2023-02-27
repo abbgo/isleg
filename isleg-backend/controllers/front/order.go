@@ -6,7 +6,6 @@ import (
 	backController "github/abbgo/isleg/isleg-backend/controllers/back"
 	"github/abbgo/isleg/isleg-backend/models"
 	"github/abbgo/isleg/isleg-backend/pkg"
-	"log"
 	"math"
 	"net/http"
 	"os"
@@ -592,68 +591,67 @@ func ToOrder(c *gin.Context) {
 	}
 
 	// sargyt edilen harytlar excel fayla yazdyrylyar
-	for i := 0; i < len(products); i++ {
-
-		if err = f.InsertRow("Лист1", 16); err != nil {
-			log.Fatal(err)
-		}
-
-		if err := f.MergeCell("Лист1", "a16", "b16"); err != nil {
-			c.JSON(http.StatusBadRequest, err.Error())
-			return
-		}
-
-		if err = f.SetCellStyle("Лист1", "a16", "a16", style2); err != nil {
-			c.JSON(http.StatusBadRequest, err.Error())
-			return
-		}
-
-		if err = f.SetCellStyle("Лист1", "b16", "b16", style2); err != nil {
-			c.JSON(http.StatusBadRequest, err.Error())
-			return
-		}
-
-		if err = f.SetCellStyle("Лист1", "c16", "c16", style); err != nil {
-			c.JSON(http.StatusBadRequest, err.Error())
-			return
-		}
-
-		if err = f.SetCellStyle("Лист1", "d16", "d16", style); err != nil {
-			c.JSON(http.StatusBadRequest, err.Error())
-			return
-		}
-
-		if err = f.SetCellStyle("Лист1", "e16", "e16", style); err != nil {
-			c.JSON(http.StatusBadRequest, err.Error())
-			return
-		}
-
-		if err = f.SetCellStyle("Лист1", "f16", "f16", style1); err != nil {
-			c.JSON(http.StatusBadRequest, err.Error())
-			return
-		}
-
+	lenProductsArr := len(products)
+	for i := 0; i < lenProductsArr; i++ {
+		f.InsertRow("Лист1", 16)
+		f.MergeCell("Лист1", "a16", "b16")
+		f.SetCellStyle("Лист1", "a16", "a16", style2)
+		f.SetCellStyle("Лист1", "b16", "b16", style2)
+		f.SetCellStyle("Лист1", "c16", "c16", style)
+		f.SetCellStyle("Лист1", "d16", "d16", style)
+		f.SetCellStyle("Лист1", "e16", "e16", style)
+		f.SetCellStyle("Лист1", "f16", "f16", style1)
 	}
 
 	var totalPrice float64 = 0
-	var counter int
 
 	for k, v2 := range products {
-
 		f.SetCellValue("Лист1", "a"+strconv.Itoa(16+k), v2.Name)
 		f.SetCellValue("Лист1", "c"+strconv.Itoa(16+k), v2.Amount)
 		f.SetCellValue("Лист1", "d"+strconv.Itoa(16+k), v2.Price)
 		f.SetCellValue("Лист1", "e"+strconv.Itoa(16+k), float64(v2.Amount)*v2.Price)
 
 		totalPrice = totalPrice + float64(v2.Amount)*v2.Price
-
-		counter++
-
 	}
 
 	// sargyt edilen harytlaryn jemi bahasy we sargydyn jemi bahasy excel fayla yazdyrylyar
-	f.SetCellValue("Лист1", "d"+strconv.Itoa(17+counter), totalPrice)
+	f.SetCellValue("Лист1", "d"+strconv.Itoa(17+lenProductsArr), totalPrice)
 	f.SetCellValue("Лист1", "b13", "Jemi: "+strconv.FormatFloat(pkg.RoundFloat(order.TotalPrice, 2), 'f', -1, 64))
+
+	f.SetCellValue("Лист1", "c"+strconv.Itoa(lenProductsArr+21), "Telefon: "+companyPhone)
+	f.SetCellValue("Лист1", "c"+strconv.Itoa(lenProductsArr+22), "IMO: "+companyPhone)
+	f.SetCellValue("Лист1", "c"+strconv.Itoa(lenProductsArr+23), "Instagram: "+instagram)
+	f.SetCellValue("Лист1", "c"+strconv.Itoa(lenProductsArr+24), "Mail: "+email)
+	f.SetCellValue("Лист1", "a"+strconv.Itoa(lenProductsArr+26), "Sargyt No: "+strconv.Itoa(int(orderNumber)))
+	f.SetCellValue("Лист1", "a"+strconv.Itoa(lenProductsArr+29), "Ady: "+order.FullName)
+	f.SetCellValue("Лист1", "a"+strconv.Itoa(lenProductsArr+30), "Telefon nomer: "+order.PhoneNumber)
+	f.SetCellValue("Лист1", "a"+strconv.Itoa(lenProductsArr+31), "Salgy: "+order.Address)
+	f.SetCellValue("Лист1", "a"+strconv.Itoa(lenProductsArr+32), "Bellik: "+order.CustomerMark)
+	f.SetCellValue("Лист1", "B"+strconv.Itoa(lenProductsArr+29), "Sargyt edilen senesi: "+createdAt)
+	f.SetCellValue("Лист1", "b"+strconv.Itoa(lenProductsArr+30), "Eltip bermeli wagty: "+order.OrderTime)
+	f.SetCellValue("Лист1", "b"+strconv.Itoa(lenProductsArr+31), "Toleg sekili: "+order.PaymentType)
+	f.SetCellValue("Лист1", "b"+strconv.Itoa(lenProductsArr+32), "Eltip bermek hyzmaty: "+strconv.FormatFloat(pkg.RoundFloat(order.ShippingPrice, 2), 'f', -1, 64))
+	f.SetCellValue("Лист1", "b"+strconv.Itoa(lenProductsArr+33), "Jemi: "+strconv.FormatFloat(pkg.RoundFloat(order.TotalPrice, 2), 'f', -1, 64))
+
+	for i := 0; i < lenProductsArr; i++ {
+		f.InsertRow("Лист1", 36+lenProductsArr)
+		f.MergeCell("Лист1", "a"+strconv.Itoa(lenProductsArr+36), "b"+strconv.Itoa(lenProductsArr+36))
+		f.SetCellStyle("Лист1", "a"+strconv.Itoa(lenProductsArr+36), "a"+strconv.Itoa(lenProductsArr+36), style2)
+		f.SetCellStyle("Лист1", "b"+strconv.Itoa(lenProductsArr+36), "b"+strconv.Itoa(lenProductsArr+36), style2)
+		f.SetCellStyle("Лист1", "c"+strconv.Itoa(lenProductsArr+36), "c"+strconv.Itoa(lenProductsArr+36), style)
+		f.SetCellStyle("Лист1", "d"+strconv.Itoa(lenProductsArr+36), "d"+strconv.Itoa(lenProductsArr+36), style)
+		f.SetCellStyle("Лист1", "e"+strconv.Itoa(lenProductsArr+36), "e"+strconv.Itoa(lenProductsArr+36), style)
+		f.SetCellStyle("Лист1", "f"+strconv.Itoa(lenProductsArr+36), "f"+strconv.Itoa(lenProductsArr+36), style1)
+	}
+
+	for k, v2 := range products {
+		f.SetCellValue("Лист1", "a"+strconv.Itoa(36+k+lenProductsArr), v2.Name)
+		f.SetCellValue("Лист1", "c"+strconv.Itoa(36+k+lenProductsArr), v2.Amount)
+		f.SetCellValue("Лист1", "d"+strconv.Itoa(36+k+lenProductsArr), v2.Price)
+		f.SetCellValue("Лист1", "e"+strconv.Itoa(36+k+lenProductsArr), float64(v2.Amount)*v2.Price)
+	}
+
+	f.SetCellValue("Лист1", "d"+strconv.Itoa(37+2*lenProductsArr), totalPrice)
 
 	// tayyar bolan excel fayl uploads papka yazdyrylyar
 	if err := f.SaveAs(pkg.ServerPath + "uploads/orders/" + strconv.Itoa(int(orderNumber)) + ".xlsx"); err != nil {
