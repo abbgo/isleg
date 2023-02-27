@@ -2,8 +2,6 @@ package models
 
 import (
 	"errors"
-	"regexp"
-	"strings"
 
 	"github.com/google/uuid"
 )
@@ -53,28 +51,27 @@ type OrderTimes struct {
 	DeletedAt string `json:"-"`
 }
 
-func ValidateOrderDateAndTime(date string, times []OrderTimes) error {
-
-	hourAndMinute := regexp.MustCompile("([01]?[0-9]|2[0-3]):[0-5][0-9]")
+func ValidateOrderDateAndTime(date string) error {
 
 	if date != "today" && date != "tomorrow" {
 		return errors.New("the date should be today or tomorrow")
 	}
 
-	for _, v := range times {
+	// hourAndMinute := regexp.MustCompile("([01]?[0-9]|2[0-3]):[0-5][0-9]")
+	// for _, v := range times {
 
-		ts := strings.Split(v.Time, " - ")
+	// 	ts := strings.Split(v.Time, " - ")
 
-		for _, v1 := range ts {
+	// 	for _, v1 := range ts {
 
-			checkHour := hourAndMinute.MatchString(v1)
-			if !checkHour {
-				return errors.New("the data type should be hour")
-			}
+	// 		checkHour := hourAndMinute.MatchString(v1)
+	// 		if !checkHour {
+	// 			return errors.New("the data type should be hour")
+	// 		}
 
-		}
+	// 	}
 
-	}
+	// }
 
 	return nil
 

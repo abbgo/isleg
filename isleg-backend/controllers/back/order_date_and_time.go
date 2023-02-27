@@ -1,5 +1,13 @@
 package controllers
 
+import (
+	"github/abbgo/isleg/isleg-backend/config"
+	"github/abbgo/isleg/isleg-backend/models"
+	"net/http"
+
+	"github.com/gin-gonic/gin"
+)
+
 type OrderDateAndTime struct {
 	ID              string      `json:"-"`
 	Date            string      `json:"date"`
@@ -11,171 +19,171 @@ type OrderTime struct {
 	Time string `json:"time"`
 }
 
-// func CreateOrderTime(c *gin.Context) {
+func CreateOrderTime(c *gin.Context) {
 
-// 	// initialize database connection
-// 	db, err := config.ConnDB()
-// 	if err != nil {
-// 		c.JSON(http.StatusBadRequest, gin.H{
-// 			"status":  false,
-// 			"message": err.Error(),
-// 		})
-// 		return
-// 	}
-// 	defer func() {
-// 		if err := db.Close(); err != nil {
-// 			c.JSON(http.StatusBadRequest, gin.H{
-// 				"status":  false,
-// 				"message": err.Error(),
-// 			})
-// 			return
-// 		}
-// 	}()
+	// initialize database connection
+	db, err := config.ConnDB()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
-// 	var orderDate models.OrderDates
+	var orderDate models.OrderDates
 
-// 	if err := c.BindJSON(&orderDate); err != nil {
-// 		c.JSON(http.StatusBadRequest, gin.H{
-// 			"status":  false,
-// 			"message": err.Error(),
-// 		})
-// 		return
-// 	}
+	if err := c.BindJSON(&orderDate); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
 
-// 	// validate data
-// 	if err := models.ValidateOrderDateAndTime(orderDate.Date, orderDate.OrderTimes); err != nil {
-// 		c.JSON(http.StatusBadRequest, gin.H{
-// 			"status":  false,
-// 			"message": err.Error(),
-// 		})
-// 		return
-// 	}
+	// validate data
+	if err := models.ValidateOrderDateAndTime(orderDate.Date); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
 
-// 	for _, v := range orderDate.TranslationOrderDates {
+	for _, v := range orderDate.TranslationOrderDates {
 
-// 		rowLang, err := db.Query("SELECT id FROM languages WHERE id = $1 AND deleted_at IS NULL", v.LangID)
-// 		if err != nil {
-// 			c.JSON(http.StatusBadRequest, gin.H{
-// 				"status":  false,
-// 				"message": err.Error(),
-// 			})
-// 			return
-// 		}
-// 		defer func() {
-// 			if err := rowLang.Close(); err != nil {
-// 				c.JSON(http.StatusBadRequest, gin.H{
-// 					"status":  false,
-// 					"message": err.Error(),
-// 				})
-// 				return
-// 			}
-// 		}()
+		rowLang, err := db.Query("SELECT id FROM languages WHERE id = $1 AND deleted_at IS NULL", v.LangID)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+		defer func() {
+			if err := rowLang.Close(); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}()
 
-// 		var langID string
+		var langID string
 
-// 		for rowLang.Next() {
-// 			if err := rowLang.Scan(&langID); err != nil {
-// 				c.JSON(http.StatusBadRequest, gin.H{
-// 					"status":  false,
-// 					"message": err.Error(),
-// 				})
-// 				return
-// 			}
-// 		}
+		for rowLang.Next() {
+			if err := rowLang.Scan(&langID); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}
 
-// 		if langID == "" {
-// 			c.JSON(http.StatusNotFound, gin.H{
-// 				"status":  false,
-// 				"message": "language not found",
-// 			})
-// 			return
-// 		}
+		if langID == "" {
+			c.JSON(http.StatusNotFound, gin.H{
+				"status":  false,
+				"message": "language not found",
+			})
+			return
+		}
 
-// 	}
+	}
 
-// 	// add data to order_dates table and return last id
-// 	resultOrderDates, err := db.Query("INSERT INTO order_dates (date) VALUES ($1) RETURNING id", orderDate.Date)
-// 	if err != nil {
-// 		c.JSON(http.StatusBadRequest, gin.H{
-// 			"status":  false,
-// 			"message": err.Error(),
-// 		})
-// 		return
-// 	}
-// 	defer func() {
-// 		if err := resultOrderDates.Close(); err != nil {
-// 			c.JSON(http.StatusBadRequest, gin.H{
-// 				"status":  false,
-// 				"message": err.Error(),
-// 			})
-// 			return
-// 		}
-// 	}()
+	// add data to order_dates table and return last id
+	resultOrderDates, err := db.Query("INSERT INTO order_dates (date) VALUES ($1) RETURNING id", orderDate.Date)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer func() {
+		if err := resultOrderDates.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
-// 	var orderDateID string
+	var orderDateID string
 
-// 	for resultOrderDates.Next() {
-// 		if err := resultOrderDates.Scan(&orderDateID); err != nil {
-// 			c.JSON(http.StatusBadRequest, gin.H{
-// 				"status":  false,
-// 				"message": err.Error(),
-// 			})
-// 			return
-// 		}
-// 	}
+	for resultOrderDates.Next() {
+		if err := resultOrderDates.Scan(&orderDateID); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}
 
-// 	// add data to order_times table
-// 	for _, v := range orderDate.OrderTimes {
+	// add data to order_times table
+	// for _, v := range orderDate.OrderTimes {
 
-// 		resultOrderTimes, err := db.Query("INSERT INTO order_times (order_date_id,time) VALUES ($1,$2)", orderDateID, v.Time)
-// 		if err != nil {
-// 			c.JSON(http.StatusBadRequest, gin.H{
-// 				"status":  false,
-// 				"message": err.Error(),
-// 			})
-// 			return
-// 		}
-// 		defer func() {
-// 			if err := resultOrderTimes.Close(); err != nil {
-// 				c.JSON(http.StatusBadRequest, gin.H{
-// 					"status":  false,
-// 					"message": err.Error(),
-// 				})
-// 				return
-// 			}
-// 		}()
+	// 	resultOrderTimes, err := db.Query("INSERT INTO order_times (order_date_id,time) VALUES ($1,$2)", orderDateID, v.Time)
+	// 	if err != nil {
+	// 		c.JSON(http.StatusBadRequest, gin.H{
+	// 			"status":  false,
+	// 			"message": err.Error(),
+	// 		})
+	// 		return
+	// 	}
+	// 	defer func() {
+	// 		if err := resultOrderTimes.Close(); err != nil {
+	// 			c.JSON(http.StatusBadRequest, gin.H{
+	// 				"status":  false,
+	// 				"message": err.Error(),
+	// 			})
+	// 			return
+	// 		}
+	// 	}()
 
-// 	}
+	// }
 
-// 	// add translation order date to database
-// 	for _, v := range orderDate.TranslationOrderDates {
+	// add translation order date to database
+	for _, v := range orderDate.TranslationOrderDates {
 
-// 		resultTrOrderDates, err := db.Query("INSERT INTO translation_order_dates (lang_id,order_date_id,date) VALUES ($1,$2,$3)", v.LangID, orderDateID, v.Date)
-// 		if err != nil {
-// 			c.JSON(http.StatusBadRequest, gin.H{
-// 				"status":  false,
-// 				"message": err.Error(),
-// 			})
-// 			return
-// 		}
-// 		defer func() {
-// 			if err := resultTrOrderDates.Close(); err != nil {
-// 				c.JSON(http.StatusBadRequest, gin.H{
-// 					"status":  false,
-// 					"message": err.Error(),
-// 				})
-// 				return
-// 			}
-// 		}()
+		resultTrOrderDates, err := db.Query("INSERT INTO translation_order_dates (lang_id,order_date_id,date) VALUES ($1,$2,$3)", v.LangID, orderDateID, v.Date)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+		defer func() {
+			if err := resultTrOrderDates.Close(); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}()
 
-// 	}
+	}
 
-// 	c.JSON(http.StatusOK, gin.H{
-// 		"status":  true,
-// 		"message": "data successfully added",
-// 	})
+	c.JSON(http.StatusOK, gin.H{
+		"status":  true,
+		"message": "data successfully added",
+	})
 
-// }
+}
 
 // func UpdateOrderTimeByID(c *gin.Context) {
 
