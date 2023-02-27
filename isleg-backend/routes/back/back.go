@@ -46,13 +46,13 @@ func BackRoutes(back *gin.RouterGroup) {
 		// Gutaryar --- firmanyn sazlamalary ucin CRUD
 
 		// Baslayar --- Musderilerin harydy sargyt edip biljek wagtlary ucin CRUD
-		securedAdmin.POST("order-time", backController.CreateOrderTime)
-		securedAdmin.PUT("order-time", backController.UpdateOrderTimeByID)
-		securedAdmin.GET("order-time/:id", backController.GetOrderTimeByID)
-		securedAdmin.GET("order-times", backController.GetOrderTimes)
-		securedAdmin.DELETE("order-time/:id", backController.DeleteOrderTimeByID)
-		securedAdmin.GET("restore-order-time/:id", backController.RestoreOrderTimeByID)
-		securedAdmin.DELETE("delete-order-time/:id", backController.DeletePermanentlyOrderTimeByID)
+		// securedAdmin.POST("order-time", backController.CreateOrderTime)
+		// securedAdmin.PUT("order-time", backController.UpdateOrderTimeByID)
+		// securedAdmin.GET("order-time/:id", backController.GetOrderTimeByID)
+		// securedAdmin.GET("order-times", backController.GetOrderTimes)
+		// securedAdmin.DELETE("order-time/:id", backController.DeleteOrderTimeByID)
+		// securedAdmin.GET("restore-order-time/:id", backController.RestoreOrderTimeByID)
+		// securedAdmin.DELETE("delete-order-time/:id", backController.DeletePermanentlyOrderTimeByID)
 		// GUtaryar --- Musderilerin harydy sargyt edip biljek wagtlary ucin CRUD
 
 		// Baslayar --- Bas sahypada duryan banner ucin CRUD
