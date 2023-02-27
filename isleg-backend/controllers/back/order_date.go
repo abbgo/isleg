@@ -51,7 +51,7 @@ func CreateOrderDate(c *gin.Context) {
 	}
 
 	// validate data
-	if err := models.ValidateOrderDateAndTime(orderDate.Date); err != nil {
+	if err := models.ValidateOrderDate(orderDate.Date); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
 			"message": err.Error(),
