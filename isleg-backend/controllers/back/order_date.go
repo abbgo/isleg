@@ -4,6 +4,8 @@ import (
 	"github/abbgo/isleg/isleg-backend/config"
 	"github/abbgo/isleg/isleg-backend/models"
 	"net/http"
+	"strconv"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 )
@@ -896,7 +898,7 @@ func GetOrderTime(c *gin.Context) {
 		return
 	}
 
-	currentHour := 13
+	currentHour := 19
 
 	rowsOrderDate, err := db.Query("select distinct on (ot.time) od.date, tod.date , ot.time from order_dates od inner join translation_order_dates tod on tod.order_date_id = od.id inner join date_hours dh on dh.date_id = od.id inner join date_hour_times dht on dht.date_hour_id = dh.id inner join order_times ot on ot.id = dht.time_id where ot.deleted_at is null and dht.deleted_at is null and dh.deleted_at is null and tod.lang_id = $1 and od.deleted_at is null and tod.deleted_at is null and dh.hour = $2", langID, currentHour)
 	if err != nil {
@@ -949,6 +951,34 @@ func GetOrderTime(c *gin.Context) {
 
 			tomorrows = append(tomorrows, tomorrow)
 			trTomorrow = v.Translation
+		}
+	}
+
+	lenTodayArr := len(todays)
+	for i := 0; i < lenTodayArr; i++ {
+		for j := i; j < lenTodayArr; j++ {
+			iInt, _ := strconv.Atoi(strings.Split(strings.Split(todays[i].Time, " - ")[0], ":")[0])
+			jInt, _ := strconv.Atoi(strings.Split(strings.Split(todays[j].Time, " - ")[0], ":")[0])
+			var str string
+			if iInt > jInt {
+				str = todays[i].Time
+				todays[i].Time = todays[j].Time
+				todays[j].Time = str
+			}
+		}
+	}
+
+	lenTomorrowArr := len(tomorrows)
+	for i := 0; i < lenTomorrowArr; i++ {
+		for j := i; j < lenTomorrowArr; j++ {
+			iInt, _ := strconv.Atoi(strings.Split(strings.Split(tomorrows[i].Time, " - ")[0], ":")[0])
+			jInt, _ := strconv.Atoi(strings.Split(strings.Split(tomorrows[j].Time, " - ")[0], ":")[0])
+			var str string
+			if iInt > jInt {
+				str = tomorrows[i].Time
+				tomorrows[i].Time = tomorrows[j].Time
+				tomorrows[j].Time = str
+			}
 		}
 	}
 
