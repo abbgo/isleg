@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -179,7 +180,7 @@ func CreateOrderDate(c *gin.Context) {
 
 }
 
-// func UpdateOrderTimeByID(c *gin.Context) {
+// func UpdateOrderDateByID(c *gin.Context) {
 
 // 	// initialize database connection
 // 	db, err := config.ConnDB()
@@ -898,7 +899,7 @@ func GetOrderTime(c *gin.Context) {
 		return
 	}
 
-	currentHour := 23
+	currentHour := time.Now().Hour()
 
 	rowsOrderDate, err := db.Query("select distinct on (ot.time) od.date, tod.date , ot.time from order_dates od inner join translation_order_dates tod on tod.order_date_id = od.id inner join date_hours dh on dh.date_id = od.id inner join date_hour_times dht on dht.date_hour_id = dh.id inner join order_times ot on ot.id = dht.time_id where ot.deleted_at is null and dht.deleted_at is null and dh.deleted_at is null and tod.lang_id = $1 and od.deleted_at is null and tod.deleted_at is null and dh.hour = $2", langID, currentHour)
 	if err != nil {
