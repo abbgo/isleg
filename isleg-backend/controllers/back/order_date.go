@@ -20,7 +20,17 @@ import (
 // }
 
 type OrderDateAndTime struct {
-	Date string `json:"date"`
+	Date        string `json:"date"`
+	Translation string `json:"translation"`
+	Time        string `json:"time"`
+}
+
+type OrderTimes struct {
+	Translation string `json:"translation"`
+	Times       []Wagt `json:"times"`
+}
+
+type Wagt struct {
 	Time string `json:"time"`
 }
 
@@ -888,7 +898,7 @@ func GetOrderTime(c *gin.Context) {
 
 	currentHour := 13
 
-	rowsOrderDate, err := db.Query("select distinct on (ot.time) tod.date , ot.time from order_dates od inner join translation_order_dates tod on tod.order_date_id = od.id inner join date_hours dh on dh.date_id = od.id inner join date_hour_times dht on dht.date_hour_id = dh.id inner join order_times ot on ot.id = dht.time_id where ot.deleted_at is null and dht.deleted_at is null and dh.deleted_at is null and tod.lang_id = $1 and od.deleted_at is null and tod.deleted_at is null and dh.hour = $2", langID, currentHour)
+	rowsOrderDate, err := db.Query("select distinct on (ot.time) od.date, tod.date , ot.time from order_dates od inner join translation_order_dates tod on tod.order_date_id = od.id inner join date_hours dh on dh.date_id = od.id inner join date_hour_times dht on dht.date_hour_id = dh.id inner join order_times ot on ot.id = dht.time_id where ot.deleted_at is null and dht.deleted_at is null and dh.deleted_at is null and tod.lang_id = $1 and od.deleted_at is null and tod.deleted_at is null and dh.hour = $2", langID, currentHour)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -911,7 +921,7 @@ func GetOrderTime(c *gin.Context) {
 	for rowsOrderDate.Next() {
 		var orderDate OrderDateAndTime
 
-		if err := rowsOrderDate.Scan(&orderDate.Date, &orderDate.Time); err != nil {
+		if err := rowsOrderDate.Scan(&orderDate.Date, &orderDate.Translation, &orderDate.Time); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
@@ -921,9 +931,38 @@ func GetOrderTime(c *gin.Context) {
 		orderDates = append(orderDates, orderDate)
 	}
 
+	var orderTimes []OrderTimes
+	var orderTime OrderTimes
+	var todays, tomorrows []Wagt
+	var trToday, trTomorrow string
+
+	for _, v := range orderDates {
+		var today, tomorrow Wagt
+		if v.Date == "today" {
+			today.Time = v.Time
+			todays = append(todays, today)
+			trToday = v.Translation
+			continue
+		}
+		if v.Date == "tomorrow" {
+			tomorrow.Time = v.Time
+
+			tomorrows = append(tomorrows, tomorrow)
+			trTomorrow = v.Translation
+		}
+	}
+
+	orderTime.Translation = trToday
+	orderTime.Times = todays
+	orderTimes = append(orderTimes, orderTime)
+
+	orderTime.Translation = trTomorrow
+	orderTime.Times = tomorrows
+	orderTimes = append(orderTimes, orderTime)
+
 	c.JSON(http.StatusOK, gin.H{
 		"status":      true,
-		"order_times": orderDates,
+		"order_times": orderTimes,
 	})
 
 }
