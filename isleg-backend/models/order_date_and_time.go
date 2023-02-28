@@ -10,7 +10,7 @@ import (
 
 type DateHours struct {
 	ID        string          `json:"id,omitempty"`
-	Hour      uint            `json:"hour,omitempty" binding:"required"`
+	Hour      uint            `json:"hour,omitempty"`
 	DateID    uuid.NullUUID   `json:"date_id,omitempty" binding:"required"`
 	CreatedAt string          `json:"-"`
 	UpdatedAt string          `json:"-"`

@@ -9,7 +9,7 @@ import (
 )
 
 type DateHour struct {
-	Hour   uint     `json:"hour,omitempty" binding:"required"`
+	Hour   uint     `json:"hour,omitempty"`
 	DateID string   `json:"date_id,omitempty" binding:"required"`
 	Times  []string `json:"times,omitempty" binding:"required"`
 }
