@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"database/sql"
+	"fmt"
 	"github/abbgo/isleg/isleg-backend/config"
 	backController "github/abbgo/isleg/isleg-backend/controllers/back"
 	"github/abbgo/isleg/isleg-backend/models"
@@ -11,10 +12,14 @@ import (
 	"os"
 	"strconv"
 
+	_ "image/jpeg"
+	_ "image/png"
+
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/lib/pq"
 	"github.com/xuri/excelize/v2"
+	"gopkg.in/guregu/null.v4"
 )
 
 type OrderForAdmin struct {
@@ -29,7 +34,7 @@ type OrderForAdmin struct {
 	TotalPrice    float64           `json:"total_price"`
 	ShippingPrice float64           `json:"shipping_price"`
 	CreatedAt     string            `json:"created_at"`
-	Excel         string            `json:"excel"`
+	Excel         null.String       `json:"excel,omitempty"`
 	Products      []ProductForAdmin `json:"products"`
 }
 
@@ -492,7 +497,7 @@ func ToOrder(c *gin.Context) {
 	}
 
 	// dolduryljak excel fayly acmaly
-	f, err := excelize.OpenFile(pkg.ServerPath + "uploads/orders/order.xlsx")
+	f, err := excelize.OpenFile(pkg.ServerPath + "uploads/orders/order-copy.xlsx")
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -511,19 +516,20 @@ func ToOrder(c *gin.Context) {
 	}()
 
 	// excel fayly maglumatlar bilen doldurmaly
-	f.SetCellValue("Лист1", "c1", "Telefon: "+companyPhone)
-	f.SetCellValue("Лист1", "c2", "IMO: "+companyPhone)
-	f.SetCellValue("Лист1", "c3", "Instagram: "+instagram)
-	f.SetCellValue("Лист1", "c4", "Mail: "+email)
-	f.SetCellValue("Лист1", "a6", "Sargyt No: "+strconv.Itoa(int(orderNumber)))
-	f.SetCellValue("Лист1", "a9", "Ady: "+order.FullName)
-	f.SetCellValue("Лист1", "a10", "Telefon nomer: "+order.PhoneNumber)
-	f.SetCellValue("Лист1", "a11", "Salgy: "+order.Address)
-	f.SetCellValue("Лист1", "a12", "Bellik: "+order.CustomerMark)
-	f.SetCellValue("Лист1", "B9", "Sargyt edilen senesi: "+createdAt)
-	f.SetCellValue("Лист1", "b10", "Eltip bermeli wagty: "+order.OrderTime)
-	f.SetCellValue("Лист1", "b11", "Toleg sekili: "+order.PaymentType)
-	f.SetCellValue("Лист1", "b12", "Eltip bermek hyzmaty: "+strconv.FormatFloat(pkg.RoundFloat(order.ShippingPrice, 2), 'f', -1, 64))
+	f.SetCellValue("Sheet1", "f1", "Telefon: "+companyPhone)
+	f.SetCellValue("Sheet1", "f2", "IMO: "+companyPhone)
+	f.SetCellValue("Sheet1", "f3", "Instagram: "+instagram)
+	f.SetCellValue("Sheet1", "f4", "Mail: "+email)
+	f.SetCellValue("Sheet1", "a6", "Sargyt No: "+strconv.Itoa(int(orderNumber)))
+	f.SetCellValue("Sheet1", "a9", "Ady: "+order.FullName)
+	f.SetCellValue("Sheet1", "a10", "Telefon nomer: "+order.PhoneNumber)
+	f.SetCellValue("Sheet1", "a11", "Salgy: "+order.Address)
+	f.SetCellValue("Sheet1", "a12", "Bellik: "+order.CustomerMark)
+	f.SetCellValue("Sheet1", "e9", "Sargyt edilen senesi: "+createdAt)
+	f.SetCellValue("Sheet1", "e10", "Eltip bermeli wagty: "+order.OrderTime)
+	f.SetCellValue("Sheet1", "e11", "Toleg sekili: "+order.PaymentType)
+	f.SetCellValue("Sheet1", "e12", "Eltip bermek hyzmaty: "+strconv.FormatFloat(pkg.RoundFloat(order.ShippingPrice, 2), 'f', -1, 64))
+	f.SetCellValue("Sheet1", "e13", "Jemi: "+strconv.FormatFloat(pkg.RoundFloat(order.TotalPrice, 2), 'f', -1, 64))
 
 	style, err := f.NewStyle(&excelize.Style{
 		Border: []excelize.Border{
@@ -536,7 +542,7 @@ func ToOrder(c *gin.Context) {
 			Bold:   false,
 			Italic: false,
 			Family: "Calibri",
-			Size:   9,
+			Size:   10,
 			Color:  "#000000",
 		},
 		Alignment: &excelize.Alignment{
@@ -562,7 +568,7 @@ func ToOrder(c *gin.Context) {
 			Bold:   false,
 			Italic: false,
 			Family: "Calibri",
-			Size:   9,
+			Size:   10,
 			Color:  "#000000",
 		},
 		Alignment: &excelize.Alignment{
@@ -593,113 +599,134 @@ func ToOrder(c *gin.Context) {
 	// sargyt edilen harytlar excel fayla yazdyrylyar
 	lenProductsArr := len(products)
 	for i := 0; i < lenProductsArr; i++ {
-		f.InsertRows("Лист1", 16, 1)
-		f.MergeCell("Лист1", "a16", "b16")
-		f.SetCellStyle("Лист1", "a16", "a16", style2)
-		f.SetCellStyle("Лист1", "b16", "b16", style2)
-		f.SetCellStyle("Лист1", "c16", "c16", style)
-		f.SetCellStyle("Лист1", "d16", "d16", style)
-		f.SetCellStyle("Лист1", "e16", "e16", style)
-		f.SetCellStyle("Лист1", "f16", "f16", style1)
+		f.InsertRows("Sheet1", 16, 1)
+		f.MergeCell("Sheet1", "a16", "e16")
+		f.SetCellStyle("Sheet1", "a16", "a16", style2)
+		f.SetCellStyle("Sheet1", "b16", "b16", style2)
+		f.SetCellStyle("Sheet1", "c16", "c16", style2)
+		f.SetCellStyle("Sheet1", "d16", "d16", style2)
+		f.SetCellStyle("Sheet1", "e16", "e16", style2)
+		f.SetCellStyle("Sheet1", "f16", "f16", style)
+		f.SetCellStyle("Sheet1", "g16", "g16", style)
+		f.SetCellStyle("Sheet1", "h16", "h16", style)
+		f.SetCellStyle("Sheet1", "i16", "i16", style1)
 	}
 
 	var totalPrice float64 = 0
 
 	for k, v2 := range products {
-		f.SetCellValue("Лист1", "a"+strconv.Itoa(16+k), v2.Name)
-		f.SetCellValue("Лист1", "c"+strconv.Itoa(16+k), v2.Amount)
-		f.SetCellValue("Лист1", "d"+strconv.Itoa(16+k), v2.Price)
-		f.SetCellValue("Лист1", "e"+strconv.Itoa(16+k), float64(v2.Amount)*v2.Price)
+		f.SetCellValue("Sheet1", "a"+strconv.Itoa(16+k), v2.Name)
+		f.SetCellValue("Sheet1", "f"+strconv.Itoa(16+k), v2.Amount)
+		f.SetCellValue("Sheet1", "g"+strconv.Itoa(16+k), v2.Price)
+		f.SetCellValue("Sheet1", "h"+strconv.Itoa(16+k), float64(v2.Amount)*v2.Price)
 
 		totalPrice = totalPrice + float64(v2.Amount)*v2.Price
 	}
 
 	// sargyt edilen harytlaryn jemi bahasy we sargydyn jemi bahasy excel fayla yazdyrylyar
-	f.SetCellValue("Лист1", "d"+strconv.Itoa(17+lenProductsArr), totalPrice)
-	f.SetCellValue("Лист1", "b13", "Jemi: "+strconv.FormatFloat(pkg.RoundFloat(order.TotalPrice, 2), 'f', -1, 64))
+	f.SetCellValue("Sheet1", "g"+strconv.Itoa(17+lenProductsArr), totalPrice)
 
-	if 2*(20+lenProductsArr) > 52 {
-		count := 52 - (20 + lenProductsArr)
+	if 2*(20+lenProductsArr) > 54 {
+		count := 54 - (20 + lenProductsArr)
 		for i := 0; i < count; i++ {
-			f.InsertRows("Лист1", 20+lenProductsArr, 1)
+			f.InsertRows("Sheet1", 20+lenProductsArr, 1)
 		}
-		// if err := f.AddPicture("Лист1", "c"+strconv.Itoa(lenProductsArr+count+21), pkg.ServerPath+"uploads/orders/isleg.png", nil); err != nil {
-		// 	fmt.Println(err)
-		// }
 
-		// if err := f.AddPicture("Лист1", "a82", pkg.ServerPath+"uploads/orders/image1.png", nil); err != nil {
-		// 	log.Fatal(err)
-		// 	return
-		// }
-		f.SetCellValue("Лист1", "c"+strconv.Itoa(lenProductsArr+count+21), "Telefon: "+companyPhone)
-		f.SetCellValue("Лист1", "c"+strconv.Itoa(lenProductsArr+count+22), "IMO: "+companyPhone)
-		f.SetCellValue("Лист1", "c"+strconv.Itoa(lenProductsArr+count+23), "Instagram: "+instagram)
-		f.SetCellValue("Лист1", "c"+strconv.Itoa(lenProductsArr+count+24), "Mail: "+email)
-		f.SetCellValue("Лист1", "a"+strconv.Itoa(lenProductsArr+count+26), "Sargyt No: "+strconv.Itoa(int(orderNumber)))
-		f.SetCellValue("Лист1", "a"+strconv.Itoa(lenProductsArr+count+29), "Ady: "+order.FullName)
-		f.SetCellValue("Лист1", "a"+strconv.Itoa(lenProductsArr+count+30), "Telefon nomer: "+order.PhoneNumber)
-		f.SetCellValue("Лист1", "a"+strconv.Itoa(lenProductsArr+count+31), "Salgy: "+order.Address)
-		f.SetCellValue("Лист1", "a"+strconv.Itoa(lenProductsArr+count+32), "Bellik: "+order.CustomerMark)
-		f.SetCellValue("Лист1", "B"+strconv.Itoa(lenProductsArr+count+29), "Sargyt edilen senesi: "+createdAt)
-		f.SetCellValue("Лист1", "b"+strconv.Itoa(lenProductsArr+count+30), "Eltip bermeli wagty: "+order.OrderTime)
-		f.SetCellValue("Лист1", "b"+strconv.Itoa(lenProductsArr+count+31), "Toleg sekili: "+order.PaymentType)
-		f.SetCellValue("Лист1", "b"+strconv.Itoa(lenProductsArr+count+32), "Eltip bermek hyzmaty: "+strconv.FormatFloat(pkg.RoundFloat(order.ShippingPrice, 2), 'f', -1, 64))
-		f.SetCellValue("Лист1", "b"+strconv.Itoa(lenProductsArr+count+33), "Jemi: "+strconv.FormatFloat(pkg.RoundFloat(order.TotalPrice, 2), 'f', -1, 64))
+		if err := f.AddPicture("Sheet1", "b"+strconv.Itoa(lenProductsArr+count+21), pkg.ServerPath+"uploads/orders/isleg.png", &excelize.GraphicOptions{
+			ScaleX:  0.5,
+			ScaleY:  0.65,
+			OffsetX: 40,
+			OffsetY: 7,
+		}); err != nil {
+			fmt.Println(err)
+			return
+		}
+
+		f.SetCellValue("Sheet1", "f"+strconv.Itoa(lenProductsArr+count+21), "Telefon: "+companyPhone)
+		f.SetCellValue("Sheet1", "f"+strconv.Itoa(lenProductsArr+count+22), "IMO: "+companyPhone)
+		f.SetCellValue("Sheet1", "f"+strconv.Itoa(lenProductsArr+count+23), "Instagram: "+instagram)
+		f.SetCellValue("Sheet1", "f"+strconv.Itoa(lenProductsArr+count+24), "Mail: "+email)
+		f.SetCellValue("Sheet1", "a"+strconv.Itoa(lenProductsArr+count+26), "Sargyt No: "+strconv.Itoa(int(orderNumber)))
+		f.SetCellValue("Sheet1", "a"+strconv.Itoa(lenProductsArr+count+29), "Ady: "+order.FullName)
+		f.SetCellValue("Sheet1", "a"+strconv.Itoa(lenProductsArr+count+30), "Telefon nomer: "+order.PhoneNumber)
+		f.SetCellValue("Sheet1", "a"+strconv.Itoa(lenProductsArr+count+31), "Salgy: "+order.Address)
+		f.SetCellValue("Sheet1", "a"+strconv.Itoa(lenProductsArr+count+32), "Bellik: "+order.CustomerMark)
+		f.SetCellValue("Sheet1", "e"+strconv.Itoa(lenProductsArr+count+29), "Sargyt edilen senesi: "+createdAt)
+		f.SetCellValue("Sheet1", "e"+strconv.Itoa(lenProductsArr+count+30), "Eltip bermeli wagty: "+order.OrderTime)
+		f.SetCellValue("Sheet1", "e"+strconv.Itoa(lenProductsArr+count+31), "Toleg sekili: "+order.PaymentType)
+		f.SetCellValue("Sheet1", "e"+strconv.Itoa(lenProductsArr+count+32), "Eltip bermek hyzmaty: "+strconv.FormatFloat(pkg.RoundFloat(order.ShippingPrice, 2), 'f', -1, 64))
+		f.SetCellValue("Sheet1", "e"+strconv.Itoa(lenProductsArr+count+33), "Jemi: "+strconv.FormatFloat(pkg.RoundFloat(order.TotalPrice, 2), 'f', -1, 64))
 
 		for i := 0; i < lenProductsArr; i++ {
-			f.InsertRows("Лист1", 36+lenProductsArr+count, 1)
-			f.MergeCell("Лист1", "a"+strconv.Itoa(lenProductsArr+count+36), "b"+strconv.Itoa(lenProductsArr+count+36))
-			f.SetCellStyle("Лист1", "a"+strconv.Itoa(lenProductsArr+count+36), "a"+strconv.Itoa(lenProductsArr+count+36), style2)
-			f.SetCellStyle("Лист1", "b"+strconv.Itoa(lenProductsArr+count+36), "b"+strconv.Itoa(lenProductsArr+count+36), style2)
-			f.SetCellStyle("Лист1", "c"+strconv.Itoa(lenProductsArr+count+36), "c"+strconv.Itoa(lenProductsArr+count+36), style)
-			f.SetCellStyle("Лист1", "d"+strconv.Itoa(lenProductsArr+count+36), "d"+strconv.Itoa(lenProductsArr+count+36), style)
-			f.SetCellStyle("Лист1", "e"+strconv.Itoa(lenProductsArr+count+36), "e"+strconv.Itoa(lenProductsArr+count+36), style)
-			f.SetCellStyle("Лист1", "f"+strconv.Itoa(lenProductsArr+count+36), "f"+strconv.Itoa(lenProductsArr+count+36), style1)
+			f.InsertRows("Sheet1", 36+lenProductsArr+count, 1)
+			f.MergeCell("Sheet1", "a"+strconv.Itoa(lenProductsArr+count+36), "e"+strconv.Itoa(lenProductsArr+count+36))
+			f.SetCellStyle("Sheet1", "a"+strconv.Itoa(lenProductsArr+count+36), "a"+strconv.Itoa(lenProductsArr+count+36), style2)
+			f.SetCellStyle("Sheet1", "b"+strconv.Itoa(lenProductsArr+count+36), "b"+strconv.Itoa(lenProductsArr+count+36), style2)
+			f.SetCellStyle("Sheet1", "c"+strconv.Itoa(lenProductsArr+count+36), "c"+strconv.Itoa(lenProductsArr+count+36), style2)
+			f.SetCellStyle("Sheet1", "d"+strconv.Itoa(lenProductsArr+count+36), "d"+strconv.Itoa(lenProductsArr+count+36), style2)
+			f.SetCellStyle("Sheet1", "e"+strconv.Itoa(lenProductsArr+count+36), "e"+strconv.Itoa(lenProductsArr+count+36), style2)
+			f.SetCellStyle("Sheet1", "f"+strconv.Itoa(lenProductsArr+count+36), "f"+strconv.Itoa(lenProductsArr+count+36), style)
+			f.SetCellStyle("Sheet1", "g"+strconv.Itoa(lenProductsArr+count+36), "g"+strconv.Itoa(lenProductsArr+count+36), style)
+			f.SetCellStyle("Sheet1", "h"+strconv.Itoa(lenProductsArr+count+36), "h"+strconv.Itoa(lenProductsArr+count+36), style)
+			f.SetCellStyle("Sheet1", "i"+strconv.Itoa(lenProductsArr+count+36), "i"+strconv.Itoa(lenProductsArr+count+36), style1)
 		}
 
 		for k, v2 := range products {
-			f.SetCellValue("Лист1", "a"+strconv.Itoa(36+k+lenProductsArr+count), v2.Name)
-			f.SetCellValue("Лист1", "c"+strconv.Itoa(36+k+lenProductsArr+count), v2.Amount)
-			f.SetCellValue("Лист1", "d"+strconv.Itoa(36+k+lenProductsArr+count), v2.Price)
-			f.SetCellValue("Лист1", "e"+strconv.Itoa(36+k+lenProductsArr+count), float64(v2.Amount)*v2.Price)
+			f.SetCellValue("Sheet1", "a"+strconv.Itoa(36+k+lenProductsArr+count), v2.Name)
+			f.SetCellValue("Sheet1", "f"+strconv.Itoa(36+k+lenProductsArr+count), v2.Amount)
+			f.SetCellValue("Sheet1", "g"+strconv.Itoa(36+k+lenProductsArr+count), v2.Price)
+			f.SetCellValue("Sheet1", "h"+strconv.Itoa(36+k+lenProductsArr+count), float64(v2.Amount)*v2.Price)
 		}
 
-		f.SetCellValue("Лист1", "d"+strconv.Itoa(37+2*lenProductsArr+count), totalPrice)
+		f.SetCellValue("Sheet1", "g"+strconv.Itoa(37+2*lenProductsArr+count), totalPrice)
 	} else {
-		f.SetCellValue("Лист1", "c"+strconv.Itoa(lenProductsArr+21), "Telefon: "+companyPhone)
-		f.SetCellValue("Лист1", "c"+strconv.Itoa(lenProductsArr+22), "IMO: "+companyPhone)
-		f.SetCellValue("Лист1", "c"+strconv.Itoa(lenProductsArr+23), "Instagram: "+instagram)
-		f.SetCellValue("Лист1", "c"+strconv.Itoa(lenProductsArr+24), "Mail: "+email)
-		f.SetCellValue("Лист1", "a"+strconv.Itoa(lenProductsArr+26), "Sargyt No: "+strconv.Itoa(int(orderNumber)))
-		f.SetCellValue("Лист1", "a"+strconv.Itoa(lenProductsArr+29), "Ady: "+order.FullName)
-		f.SetCellValue("Лист1", "a"+strconv.Itoa(lenProductsArr+30), "Telefon nomer: "+order.PhoneNumber)
-		f.SetCellValue("Лист1", "a"+strconv.Itoa(lenProductsArr+31), "Salgy: "+order.Address)
-		f.SetCellValue("Лист1", "a"+strconv.Itoa(lenProductsArr+32), "Bellik: "+order.CustomerMark)
-		f.SetCellValue("Лист1", "B"+strconv.Itoa(lenProductsArr+29), "Sargyt edilen senesi: "+createdAt)
-		f.SetCellValue("Лист1", "b"+strconv.Itoa(lenProductsArr+30), "Eltip bermeli wagty: "+order.OrderTime)
-		f.SetCellValue("Лист1", "b"+strconv.Itoa(lenProductsArr+31), "Toleg sekili: "+order.PaymentType)
-		f.SetCellValue("Лист1", "b"+strconv.Itoa(lenProductsArr+32), "Eltip bermek hyzmaty: "+strconv.FormatFloat(pkg.RoundFloat(order.ShippingPrice, 2), 'f', -1, 64))
-		f.SetCellValue("Лист1", "b"+strconv.Itoa(lenProductsArr+33), "Jemi: "+strconv.FormatFloat(pkg.RoundFloat(order.TotalPrice, 2), 'f', -1, 64))
+		if err := f.AddPicture("Sheet1", "b"+strconv.Itoa(lenProductsArr+21), pkg.ServerPath+"uploads/orders/isleg.png", &excelize.GraphicOptions{
+			ScaleX:  0.5,
+			ScaleY:  0.65,
+			OffsetX: 40,
+			OffsetY: 7,
+		}); err != nil {
+			fmt.Println(err)
+			return
+		}
+
+		f.SetCellValue("Sheet1", "f"+strconv.Itoa(lenProductsArr+21), "Telefon: "+companyPhone)
+		f.SetCellValue("Sheet1", "f"+strconv.Itoa(lenProductsArr+22), "IMO: "+companyPhone)
+		f.SetCellValue("Sheet1", "f"+strconv.Itoa(lenProductsArr+23), "Instagram: "+instagram)
+		f.SetCellValue("Sheet1", "f"+strconv.Itoa(lenProductsArr+24), "Mail: "+email)
+		f.SetCellValue("Sheet1", "a"+strconv.Itoa(lenProductsArr+26), "Sargyt No: "+strconv.Itoa(int(orderNumber)))
+		f.SetCellValue("Sheet1", "a"+strconv.Itoa(lenProductsArr+29), "Ady: "+order.FullName)
+		f.SetCellValue("Sheet1", "a"+strconv.Itoa(lenProductsArr+30), "Telefon nomer: "+order.PhoneNumber)
+		f.SetCellValue("Sheet1", "a"+strconv.Itoa(lenProductsArr+31), "Salgy: "+order.Address)
+		f.SetCellValue("Sheet1", "a"+strconv.Itoa(lenProductsArr+32), "Bellik: "+order.CustomerMark)
+		f.SetCellValue("Sheet1", "e"+strconv.Itoa(lenProductsArr+29), "Sargyt edilen senesi: "+createdAt)
+		f.SetCellValue("Sheet1", "e"+strconv.Itoa(lenProductsArr+30), "Eltip bermeli wagty: "+order.OrderTime)
+		f.SetCellValue("Sheet1", "e"+strconv.Itoa(lenProductsArr+31), "Toleg sekili: "+order.PaymentType)
+		f.SetCellValue("Sheet1", "e"+strconv.Itoa(lenProductsArr+32), "Eltip bermek hyzmaty: "+strconv.FormatFloat(pkg.RoundFloat(order.ShippingPrice, 2), 'f', -1, 64))
+		f.SetCellValue("Sheet1", "e"+strconv.Itoa(lenProductsArr+33), "Jemi: "+strconv.FormatFloat(pkg.RoundFloat(order.TotalPrice, 2), 'f', -1, 64))
 
 		for i := 0; i < lenProductsArr; i++ {
-			f.InsertRows("Лист1", 36+lenProductsArr, 1)
-			f.MergeCell("Лист1", "a"+strconv.Itoa(lenProductsArr+36), "b"+strconv.Itoa(lenProductsArr+36))
-			f.SetCellStyle("Лист1", "a"+strconv.Itoa(lenProductsArr+36), "a"+strconv.Itoa(lenProductsArr+36), style2)
-			f.SetCellStyle("Лист1", "b"+strconv.Itoa(lenProductsArr+36), "b"+strconv.Itoa(lenProductsArr+36), style2)
-			f.SetCellStyle("Лист1", "c"+strconv.Itoa(lenProductsArr+36), "c"+strconv.Itoa(lenProductsArr+36), style)
-			f.SetCellStyle("Лист1", "d"+strconv.Itoa(lenProductsArr+36), "d"+strconv.Itoa(lenProductsArr+36), style)
-			f.SetCellStyle("Лист1", "e"+strconv.Itoa(lenProductsArr+36), "e"+strconv.Itoa(lenProductsArr+36), style)
-			f.SetCellStyle("Лист1", "f"+strconv.Itoa(lenProductsArr+36), "f"+strconv.Itoa(lenProductsArr+36), style1)
+			f.InsertRows("Sheet1", 36+lenProductsArr, 1)
+			f.MergeCell("Sheet1", "a"+strconv.Itoa(lenProductsArr+36), "e"+strconv.Itoa(lenProductsArr+36))
+			f.SetCellStyle("Sheet1", "a"+strconv.Itoa(lenProductsArr+36), "a"+strconv.Itoa(lenProductsArr+36), style2)
+			f.SetCellStyle("Sheet1", "b"+strconv.Itoa(lenProductsArr+36), "b"+strconv.Itoa(lenProductsArr+36), style2)
+			f.SetCellStyle("Sheet1", "c"+strconv.Itoa(lenProductsArr+36), "c"+strconv.Itoa(lenProductsArr+36), style2)
+			f.SetCellStyle("Sheet1", "d"+strconv.Itoa(lenProductsArr+36), "d"+strconv.Itoa(lenProductsArr+36), style2)
+			f.SetCellStyle("Sheet1", "e"+strconv.Itoa(lenProductsArr+36), "e"+strconv.Itoa(lenProductsArr+36), style2)
+			f.SetCellStyle("Sheet1", "f"+strconv.Itoa(lenProductsArr+36), "f"+strconv.Itoa(lenProductsArr+36), style)
+			f.SetCellStyle("Sheet1", "g"+strconv.Itoa(lenProductsArr+36), "g"+strconv.Itoa(lenProductsArr+36), style)
+			f.SetCellStyle("Sheet1", "h"+strconv.Itoa(lenProductsArr+36), "h"+strconv.Itoa(lenProductsArr+36), style)
+			f.SetCellStyle("Sheet1", "i"+strconv.Itoa(lenProductsArr+36), "i"+strconv.Itoa(lenProductsArr+36), style1)
 		}
 
 		for k, v2 := range products {
-			f.SetCellValue("Лист1", "a"+strconv.Itoa(36+k+lenProductsArr), v2.Name)
-			f.SetCellValue("Лист1", "c"+strconv.Itoa(36+k+lenProductsArr), v2.Amount)
-			f.SetCellValue("Лист1", "d"+strconv.Itoa(36+k+lenProductsArr), v2.Price)
-			f.SetCellValue("Лист1", "e"+strconv.Itoa(36+k+lenProductsArr), float64(v2.Amount)*v2.Price)
+			f.SetCellValue("Sheet1", "a"+strconv.Itoa(36+k+lenProductsArr), v2.Name)
+			f.SetCellValue("Sheet1", "f"+strconv.Itoa(36+k+lenProductsArr), v2.Amount)
+			f.SetCellValue("Sheet1", "g"+strconv.Itoa(36+k+lenProductsArr), v2.Price)
+			f.SetCellValue("Sheet1", "h"+strconv.Itoa(36+k+lenProductsArr), float64(v2.Amount)*v2.Price)
 		}
 
-		f.SetCellValue("Лист1", "d"+strconv.Itoa(37+2*lenProductsArr), totalPrice)
+		f.SetCellValue("Sheet1", "g"+strconv.Itoa(37+2*lenProductsArr), totalPrice)
 	}
 
 	// tayyar bolan excel fayl uploads papka yazdyrylyar
