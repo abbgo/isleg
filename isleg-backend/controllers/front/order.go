@@ -497,7 +497,7 @@ func ToOrder(c *gin.Context) {
 	}
 
 	// dolduryljak excel fayly acmaly
-	f, err := excelize.OpenFile(pkg.ServerPath + "uploads/orders/order-copy.xlsx")
+	f, err := excelize.OpenFile(pkg.ServerPath + "uploads/orders/order.xlsx")
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -583,19 +583,6 @@ func ToOrder(c *gin.Context) {
 		return
 	}
 
-	style1, err := f.NewStyle(&excelize.Style{
-		Border: []excelize.Border{
-			{Type: "left", Color: "#000000", Style: 1},
-		},
-	})
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-
 	// sargyt edilen harytlar excel fayla yazdyrylyar
 	lenProductsArr := len(products)
 	for i := 0; i < lenProductsArr; i++ {
@@ -609,7 +596,6 @@ func ToOrder(c *gin.Context) {
 		f.SetCellStyle("Sheet1", "f16", "f16", style)
 		f.SetCellStyle("Sheet1", "g16", "g16", style)
 		f.SetCellStyle("Sheet1", "h16", "h16", style)
-		f.SetCellStyle("Sheet1", "i16", "i16", style1)
 	}
 
 	var totalPrice float64 = 0
@@ -658,27 +644,26 @@ func ToOrder(c *gin.Context) {
 		f.SetCellValue("Sheet1", "e"+strconv.Itoa(lenProductsArr+count+33), "Jemi: "+strconv.FormatFloat(pkg.RoundFloat(order.TotalPrice, 2), 'f', -1, 64))
 
 		for i := 0; i < lenProductsArr; i++ {
-			f.InsertRows("Sheet1", 36+lenProductsArr+count, 1)
-			f.MergeCell("Sheet1", "a"+strconv.Itoa(lenProductsArr+count+36), "e"+strconv.Itoa(lenProductsArr+count+36))
-			f.SetCellStyle("Sheet1", "a"+strconv.Itoa(lenProductsArr+count+36), "a"+strconv.Itoa(lenProductsArr+count+36), style2)
-			f.SetCellStyle("Sheet1", "b"+strconv.Itoa(lenProductsArr+count+36), "b"+strconv.Itoa(lenProductsArr+count+36), style2)
-			f.SetCellStyle("Sheet1", "c"+strconv.Itoa(lenProductsArr+count+36), "c"+strconv.Itoa(lenProductsArr+count+36), style2)
-			f.SetCellStyle("Sheet1", "d"+strconv.Itoa(lenProductsArr+count+36), "d"+strconv.Itoa(lenProductsArr+count+36), style2)
-			f.SetCellStyle("Sheet1", "e"+strconv.Itoa(lenProductsArr+count+36), "e"+strconv.Itoa(lenProductsArr+count+36), style2)
-			f.SetCellStyle("Sheet1", "f"+strconv.Itoa(lenProductsArr+count+36), "f"+strconv.Itoa(lenProductsArr+count+36), style)
-			f.SetCellStyle("Sheet1", "g"+strconv.Itoa(lenProductsArr+count+36), "g"+strconv.Itoa(lenProductsArr+count+36), style)
-			f.SetCellStyle("Sheet1", "h"+strconv.Itoa(lenProductsArr+count+36), "h"+strconv.Itoa(lenProductsArr+count+36), style)
-			f.SetCellStyle("Sheet1", "i"+strconv.Itoa(lenProductsArr+count+36), "i"+strconv.Itoa(lenProductsArr+count+36), style1)
+			f.InsertRows("Sheet1", 37+lenProductsArr+count, 1)
+			f.MergeCell("Sheet1", "a"+strconv.Itoa(lenProductsArr+count+37), "e"+strconv.Itoa(lenProductsArr+count+37))
+			f.SetCellStyle("Sheet1", "a"+strconv.Itoa(lenProductsArr+count+37), "a"+strconv.Itoa(lenProductsArr+count+37), style2)
+			f.SetCellStyle("Sheet1", "b"+strconv.Itoa(lenProductsArr+count+37), "b"+strconv.Itoa(lenProductsArr+count+37), style2)
+			f.SetCellStyle("Sheet1", "c"+strconv.Itoa(lenProductsArr+count+37), "c"+strconv.Itoa(lenProductsArr+count+37), style2)
+			f.SetCellStyle("Sheet1", "d"+strconv.Itoa(lenProductsArr+count+37), "d"+strconv.Itoa(lenProductsArr+count+37), style2)
+			f.SetCellStyle("Sheet1", "e"+strconv.Itoa(lenProductsArr+count+37), "e"+strconv.Itoa(lenProductsArr+count+37), style2)
+			f.SetCellStyle("Sheet1", "f"+strconv.Itoa(lenProductsArr+count+37), "f"+strconv.Itoa(lenProductsArr+count+37), style)
+			f.SetCellStyle("Sheet1", "g"+strconv.Itoa(lenProductsArr+count+37), "g"+strconv.Itoa(lenProductsArr+count+37), style)
+			f.SetCellStyle("Sheet1", "h"+strconv.Itoa(lenProductsArr+count+37), "h"+strconv.Itoa(lenProductsArr+count+37), style)
 		}
 
 		for k, v2 := range products {
-			f.SetCellValue("Sheet1", "a"+strconv.Itoa(36+k+lenProductsArr+count), v2.Name)
-			f.SetCellValue("Sheet1", "f"+strconv.Itoa(36+k+lenProductsArr+count), v2.Amount)
-			f.SetCellValue("Sheet1", "g"+strconv.Itoa(36+k+lenProductsArr+count), v2.Price)
-			f.SetCellValue("Sheet1", "h"+strconv.Itoa(36+k+lenProductsArr+count), float64(v2.Amount)*v2.Price)
+			f.SetCellValue("Sheet1", "a"+strconv.Itoa(37+k+lenProductsArr+count), v2.Name)
+			f.SetCellValue("Sheet1", "f"+strconv.Itoa(37+k+lenProductsArr+count), v2.Amount)
+			f.SetCellValue("Sheet1", "g"+strconv.Itoa(37+k+lenProductsArr+count), v2.Price)
+			f.SetCellValue("Sheet1", "h"+strconv.Itoa(37+k+lenProductsArr+count), float64(v2.Amount)*v2.Price)
 		}
 
-		f.SetCellValue("Sheet1", "g"+strconv.Itoa(37+2*lenProductsArr+count), totalPrice)
+		f.SetCellValue("Sheet1", "g"+strconv.Itoa(38+2*lenProductsArr+count), totalPrice)
 	} else {
 		if err := f.AddPicture("Sheet1", "b"+strconv.Itoa(lenProductsArr+21), pkg.ServerPath+"uploads/orders/isleg.png", &excelize.GraphicOptions{
 			ScaleX:  0.5,
@@ -706,27 +691,26 @@ func ToOrder(c *gin.Context) {
 		f.SetCellValue("Sheet1", "e"+strconv.Itoa(lenProductsArr+33), "Jemi: "+strconv.FormatFloat(pkg.RoundFloat(order.TotalPrice, 2), 'f', -1, 64))
 
 		for i := 0; i < lenProductsArr; i++ {
-			f.InsertRows("Sheet1", 36+lenProductsArr, 1)
-			f.MergeCell("Sheet1", "a"+strconv.Itoa(lenProductsArr+36), "e"+strconv.Itoa(lenProductsArr+36))
-			f.SetCellStyle("Sheet1", "a"+strconv.Itoa(lenProductsArr+36), "a"+strconv.Itoa(lenProductsArr+36), style2)
-			f.SetCellStyle("Sheet1", "b"+strconv.Itoa(lenProductsArr+36), "b"+strconv.Itoa(lenProductsArr+36), style2)
-			f.SetCellStyle("Sheet1", "c"+strconv.Itoa(lenProductsArr+36), "c"+strconv.Itoa(lenProductsArr+36), style2)
-			f.SetCellStyle("Sheet1", "d"+strconv.Itoa(lenProductsArr+36), "d"+strconv.Itoa(lenProductsArr+36), style2)
-			f.SetCellStyle("Sheet1", "e"+strconv.Itoa(lenProductsArr+36), "e"+strconv.Itoa(lenProductsArr+36), style2)
-			f.SetCellStyle("Sheet1", "f"+strconv.Itoa(lenProductsArr+36), "f"+strconv.Itoa(lenProductsArr+36), style)
-			f.SetCellStyle("Sheet1", "g"+strconv.Itoa(lenProductsArr+36), "g"+strconv.Itoa(lenProductsArr+36), style)
-			f.SetCellStyle("Sheet1", "h"+strconv.Itoa(lenProductsArr+36), "h"+strconv.Itoa(lenProductsArr+36), style)
-			f.SetCellStyle("Sheet1", "i"+strconv.Itoa(lenProductsArr+36), "i"+strconv.Itoa(lenProductsArr+36), style1)
+			f.InsertRows("Sheet1", 37+lenProductsArr, 1)
+			f.MergeCell("Sheet1", "a"+strconv.Itoa(lenProductsArr+37), "e"+strconv.Itoa(lenProductsArr+37))
+			f.SetCellStyle("Sheet1", "a"+strconv.Itoa(lenProductsArr+37), "a"+strconv.Itoa(lenProductsArr+37), style2)
+			f.SetCellStyle("Sheet1", "b"+strconv.Itoa(lenProductsArr+37), "b"+strconv.Itoa(lenProductsArr+37), style2)
+			f.SetCellStyle("Sheet1", "c"+strconv.Itoa(lenProductsArr+37), "c"+strconv.Itoa(lenProductsArr+37), style2)
+			f.SetCellStyle("Sheet1", "d"+strconv.Itoa(lenProductsArr+37), "d"+strconv.Itoa(lenProductsArr+37), style2)
+			f.SetCellStyle("Sheet1", "e"+strconv.Itoa(lenProductsArr+37), "e"+strconv.Itoa(lenProductsArr+37), style2)
+			f.SetCellStyle("Sheet1", "f"+strconv.Itoa(lenProductsArr+37), "f"+strconv.Itoa(lenProductsArr+37), style)
+			f.SetCellStyle("Sheet1", "g"+strconv.Itoa(lenProductsArr+37), "g"+strconv.Itoa(lenProductsArr+37), style)
+			f.SetCellStyle("Sheet1", "h"+strconv.Itoa(lenProductsArr+37), "h"+strconv.Itoa(lenProductsArr+37), style)
 		}
 
 		for k, v2 := range products {
-			f.SetCellValue("Sheet1", "a"+strconv.Itoa(36+k+lenProductsArr), v2.Name)
-			f.SetCellValue("Sheet1", "f"+strconv.Itoa(36+k+lenProductsArr), v2.Amount)
-			f.SetCellValue("Sheet1", "g"+strconv.Itoa(36+k+lenProductsArr), v2.Price)
-			f.SetCellValue("Sheet1", "h"+strconv.Itoa(36+k+lenProductsArr), float64(v2.Amount)*v2.Price)
+			f.SetCellValue("Sheet1", "a"+strconv.Itoa(37+k+lenProductsArr), v2.Name)
+			f.SetCellValue("Sheet1", "f"+strconv.Itoa(37+k+lenProductsArr), v2.Amount)
+			f.SetCellValue("Sheet1", "g"+strconv.Itoa(37+k+lenProductsArr), v2.Price)
+			f.SetCellValue("Sheet1", "h"+strconv.Itoa(37+k+lenProductsArr), float64(v2.Amount)*v2.Price)
 		}
 
-		f.SetCellValue("Sheet1", "g"+strconv.Itoa(37+2*lenProductsArr), totalPrice)
+		f.SetCellValue("Sheet1", "g"+strconv.Itoa(38+2*lenProductsArr), totalPrice)
 	}
 
 	// tayyar bolan excel fayl uploads papka yazdyrylyar
