@@ -528,8 +528,8 @@ func ToOrder(c *gin.Context) {
 	f.SetCellValue("Sheet1", "e9", "Sargyt edilen senesi: "+createdAt)
 	f.SetCellValue("Sheet1", "e10", "Eltip bermeli wagty: "+order.OrderTime)
 	f.SetCellValue("Sheet1", "e11", "Toleg sekili: "+order.PaymentType)
-	f.SetCellValue("Sheet1", "e12", "Eltip bermek hyzmaty: "+strconv.FormatFloat(pkg.RoundFloat(order.ShippingPrice, 2), 'f', -1, 64))
-	f.SetCellValue("Sheet1", "e13", "Jemi: "+strconv.FormatFloat(pkg.RoundFloat(order.TotalPrice, 2), 'f', -1, 64))
+	f.SetCellValue("Sheet1", "e12", "Eltip bermek hyzmaty: "+strconv.FormatFloat(pkg.RoundFloat(order.ShippingPrice, 2), 'f', -1, 64)+" TMT")
+	f.SetCellValue("Sheet1", "e13", "Jemi: "+strconv.FormatFloat(pkg.RoundFloat(order.TotalPrice, 2), 'f', -1, 64)+" TMT")
 
 	style, err := f.NewStyle(&excelize.Style{
 		Border: []excelize.Border{
@@ -610,7 +610,7 @@ func ToOrder(c *gin.Context) {
 	}
 
 	// sargyt edilen harytlaryn jemi bahasy we sargydyn jemi bahasy excel fayla yazdyrylyar
-	f.SetCellValue("Sheet1", "g"+strconv.Itoa(17+lenProductsArr), totalPrice)
+	f.SetCellValue("Sheet1", "g"+strconv.Itoa(17+lenProductsArr), strconv.FormatFloat(totalPrice, 'f', -1, 64)+" TMT")
 
 	if 2*(20+lenProductsArr) > 54 {
 		count := 54 - (20 + lenProductsArr)
@@ -640,8 +640,8 @@ func ToOrder(c *gin.Context) {
 		f.SetCellValue("Sheet1", "e"+strconv.Itoa(lenProductsArr+count+29), "Sargyt edilen senesi: "+createdAt)
 		f.SetCellValue("Sheet1", "e"+strconv.Itoa(lenProductsArr+count+30), "Eltip bermeli wagty: "+order.OrderTime)
 		f.SetCellValue("Sheet1", "e"+strconv.Itoa(lenProductsArr+count+31), "Toleg sekili: "+order.PaymentType)
-		f.SetCellValue("Sheet1", "e"+strconv.Itoa(lenProductsArr+count+32), "Eltip bermek hyzmaty: "+strconv.FormatFloat(pkg.RoundFloat(order.ShippingPrice, 2), 'f', -1, 64))
-		f.SetCellValue("Sheet1", "e"+strconv.Itoa(lenProductsArr+count+33), "Jemi: "+strconv.FormatFloat(pkg.RoundFloat(order.TotalPrice, 2), 'f', -1, 64))
+		f.SetCellValue("Sheet1", "e"+strconv.Itoa(lenProductsArr+count+32), "Eltip bermek hyzmaty: "+strconv.FormatFloat(pkg.RoundFloat(order.ShippingPrice, 2), 'f', -1, 64)+" TMT")
+		f.SetCellValue("Sheet1", "e"+strconv.Itoa(lenProductsArr+count+33), "Jemi: "+strconv.FormatFloat(pkg.RoundFloat(order.TotalPrice, 2), 'f', -1, 64)+" TMT")
 
 		for i := 0; i < lenProductsArr; i++ {
 			f.InsertRows("Sheet1", 37+lenProductsArr+count, 1)
@@ -663,7 +663,7 @@ func ToOrder(c *gin.Context) {
 			f.SetCellValue("Sheet1", "h"+strconv.Itoa(37+k+lenProductsArr+count), float64(v2.Amount)*v2.Price)
 		}
 
-		f.SetCellValue("Sheet1", "g"+strconv.Itoa(38+2*lenProductsArr+count), totalPrice)
+		f.SetCellValue("Sheet1", "g"+strconv.Itoa(38+2*lenProductsArr+count), strconv.FormatFloat(totalPrice, 'f', -1, 64)+" TMT")
 	} else {
 		if err := f.AddPicture("Sheet1", "b"+strconv.Itoa(lenProductsArr+21), pkg.ServerPath+"uploads/orders/isleg.png", &excelize.GraphicOptions{
 			ScaleX:  0.5,
@@ -687,8 +687,8 @@ func ToOrder(c *gin.Context) {
 		f.SetCellValue("Sheet1", "e"+strconv.Itoa(lenProductsArr+29), "Sargyt edilen senesi: "+createdAt)
 		f.SetCellValue("Sheet1", "e"+strconv.Itoa(lenProductsArr+30), "Eltip bermeli wagty: "+order.OrderTime)
 		f.SetCellValue("Sheet1", "e"+strconv.Itoa(lenProductsArr+31), "Toleg sekili: "+order.PaymentType)
-		f.SetCellValue("Sheet1", "e"+strconv.Itoa(lenProductsArr+32), "Eltip bermek hyzmaty: "+strconv.FormatFloat(pkg.RoundFloat(order.ShippingPrice, 2), 'f', -1, 64))
-		f.SetCellValue("Sheet1", "e"+strconv.Itoa(lenProductsArr+33), "Jemi: "+strconv.FormatFloat(pkg.RoundFloat(order.TotalPrice, 2), 'f', -1, 64))
+		f.SetCellValue("Sheet1", "e"+strconv.Itoa(lenProductsArr+32), "Eltip bermek hyzmaty: "+strconv.FormatFloat(pkg.RoundFloat(order.ShippingPrice, 2), 'f', -1, 64)+" TMT")
+		f.SetCellValue("Sheet1", "e"+strconv.Itoa(lenProductsArr+33), "Jemi: "+strconv.FormatFloat(pkg.RoundFloat(order.TotalPrice, 2), 'f', -1, 64)+" TMT")
 
 		for i := 0; i < lenProductsArr; i++ {
 			f.InsertRows("Sheet1", 37+lenProductsArr, 1)
@@ -710,7 +710,7 @@ func ToOrder(c *gin.Context) {
 			f.SetCellValue("Sheet1", "h"+strconv.Itoa(37+k+lenProductsArr), float64(v2.Amount)*v2.Price)
 		}
 
-		f.SetCellValue("Sheet1", "g"+strconv.Itoa(38+2*lenProductsArr), totalPrice)
+		f.SetCellValue("Sheet1", "g"+strconv.Itoa(38+2*lenProductsArr), strconv.FormatFloat(totalPrice, 'f', -1, 64)+" TMT")
 	}
 
 	// tayyar bolan excel fayl uploads papka yazdyrylyar
