@@ -17,13 +17,14 @@ type Login struct {
 }
 
 type CustomerInformation struct {
-	ID          string    `json:"id"`
-	FullName    string    `json:"full_name" binding:"required,min=3"`
-	PhoneNumber string    `json:"phone_number" binding:"required,e164,len=12"`
-	Birthday    null.Time `json:"birthday"`
-	Email       string    `json:"email" binding:"email"`
-	IsRegister  bool      `json:"is_register"`
-	Addresses   []Address `json:"addresses"`
+	ID          string      `json:"id"`
+	FullName    string      `json:"full_name" binding:"required,min=3"`
+	PhoneNumber string      `json:"phone_number" binding:"required,e164,len=12"`
+	Birthday    null.String `json:"birthday"`
+	Email       string      `json:"email" binding:"email"`
+	Gender      null.String `json:"gender" binding:"email"`
+	IsRegister  bool        `json:"is_register"`
+	Addresses   []Address   `json:"addresses"`
 }
 
 type Address struct {
@@ -352,7 +353,7 @@ func GetCustomerInformation(c *gin.Context) {
 	}
 
 	// bazadan musderinin maglumatlary alynyar
-	rowCustomer, err := db.Query("SELECT id , full_name , phone_number , birthday , email FROM customers WHERE id = $1 AND is_register = true AND deleted_at IS NULL", customerID)
+	rowCustomer, err := db.Query("SELECT id , full_name , phone_number , birthday , email , gender FROM customers WHERE id = $1 AND is_register = true AND deleted_at IS NULL", customerID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -373,7 +374,7 @@ func GetCustomerInformation(c *gin.Context) {
 	var customer CustomerInformation
 
 	for rowCustomer.Next() {
-		if err := rowCustomer.Scan(&customer.ID, &customer.FullName, &customer.PhoneNumber, &customer.Birthday, &customer.Email); err != nil {
+		if err := rowCustomer.Scan(&customer.ID, &customer.FullName, &customer.PhoneNumber, &customer.Birthday, &customer.Email, &customer.Gender); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
@@ -472,7 +473,7 @@ func UpdateCustomerInformation(c *gin.Context) {
 	}
 
 	// musderinin  maglumatlaryny uytgetyar
-	resultCustomer, err := db.Query("UPDATE customers SET full_name = $1, phone_number = $2, email = $3, birthday = $4 WHERE id = $5", customer.FullName, customer.PhoneNumber, customer.Email, customer.Birthday, customerID)
+	resultCustomer, err := db.Query("UPDATE customers SET full_name = $1, phone_number = $2, email = $3, birthday = $4 , gender = $6 WHERE id = $5", customer.FullName, customer.PhoneNumber, customer.Email, customer.Birthday, customerID, customer.Gender)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
