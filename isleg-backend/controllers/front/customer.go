@@ -565,3 +565,98 @@ func UpdateCustomerPassword(c *gin.Context) {
 	})
 
 }
+
+func UpdateCustPassword(c *gin.Context) {
+
+	db, err := config.ConnDB()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
+
+	phoneNumber := c.PostForm("phone_number")
+
+	// sonrada musderinin parolyny uytgetyas
+	row, err := db.Query("SELECT id FROM customers WHERE phone_number =  $1 AND deleted_at IS NULL AND is_register = true", phoneNumber)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer func() {
+		if err := row.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
+	var customerID string
+	for row.Next() {
+		if err := row.Scan(&customerID); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}
+	if customerID == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "customer not found",
+		})
+		return
+	}
+
+	password := c.PostForm("password")
+	// parol update edilmanka paroly kotlayas
+	hashPassword, err := models.HashPassword(password)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	// sonrada musderinin parolyny uytgetyas
+	resultCustomer, err := db.Query("UPDATE customers SET password = $1 WHERE phone_number = $2", hashPassword, phoneNumber)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer func() {
+		if err := resultCustomer.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":  true,
+		"message": "password of customer successfuly updated",
+	})
+
+}

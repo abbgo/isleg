@@ -122,6 +122,8 @@ func FrontRoutes(front *gin.RouterGroup) {
 
 		frontRoutes.GET("banners", backController.GetBanners)
 
+		frontRoutes.PUT("update-customer-password", frontController.UpdateCustPassword)
+
 		SecuredCustomerRoutes(frontRoutes)
 	}
 
