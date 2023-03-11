@@ -67,7 +67,6 @@ func GetHeaderData(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
 			"message": err.Error(),
-			// "message": "yalnys bar",
 		})
 		return
 	}

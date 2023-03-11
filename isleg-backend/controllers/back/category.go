@@ -483,10 +483,106 @@ func GetCategoryByID(c *gin.Context) {
 
 }
 
+// func GetCategories(c *gin.Context) {
+
+// 	// initialize database connection
+// 	db, err := config.ConnDB()
+// 	if err != nil {
+// 		c.JSON(http.StatusBadRequest, gin.H{
+// 			"status":  false,
+// 			"message": err.Error(),
+// 		})
+// 		return
+// 	}
+// 	defer func() {
+// 		if err := db.Close(); err != nil {
+// 			c.JSON(http.StatusBadRequest, gin.H{
+// 				"status":  false,
+// 				"message": err.Error(),
+// 			})
+// 			return
+// 		}
+// 	}()
+
+// 	// get data from deatabase
+// 	rowCategor, err := db.Query("SELECT id,parent_category_id,image,is_home_category FROM categories WHERE deleted_at IS NULL")
+// 	if err != nil {
+// 		c.JSON(http.StatusBadRequest, gin.H{
+// 			"status":  false,
+// 			"message": err.Error(),
+// 		})
+// 		return
+// 	}
+// 	defer func() {
+// 		if err := rowCategor.Close(); err != nil {
+// 			c.JSON(http.StatusBadRequest, gin.H{
+// 				"status":  false,
+// 				"message": err.Error(),
+// 			})
+// 			return
+// 		}
+// 	}()
+
+// 	var categories []models.Category
+
+// 	for rowCategor.Next() {
+// 		var category models.Category
+
+// 		if err := rowCategor.Scan(&category.ID, &category.ParentCategoryID, &category.Image, &category.IsHomeCategory); err != nil {
+// 			c.JSON(http.StatusBadRequest, gin.H{
+// 				"status":  false,
+// 				"message": err.Error(),
+// 			})
+// 			return
+// 		}
+
+// 		rowsTrCategory, err := db.Query("SELECT lang_id,name FROM translation_category WHERE deleted_at IS NULL AND category_id = $1", category.ID)
+// 		if err != nil {
+// 			c.JSON(http.StatusBadRequest, gin.H{
+// 				"status":  false,
+// 				"message": err.Error(),
+// 			})
+// 			return
+// 		}
+// 		defer func() {
+// 			if err := rowsTrCategory.Close(); err != nil {
+// 				c.JSON(http.StatusBadRequest, gin.H{
+// 					"status":  false,
+// 					"message": err.Error(),
+// 				})
+// 				return
+// 			}
+// 		}()
+
+// 		var translations []models.TranslationCategory
+
+// 		for rowsTrCategory.Next() {
+// 			var translation models.TranslationCategory
+// 			if err := rowsTrCategory.Scan(&translation.LangID, &translation.Name); err != nil {
+// 				c.JSON(http.StatusBadRequest, gin.H{
+// 					"status":  false,
+// 					"message": err.Error(),
+// 				})
+// 				return
+// 			}
+// 			translations = append(translations, translation)
+// 		}
+
+// 		category.TranslationCategory = translations
+
+// 		categories = append(categories, category)
+// 	}
+
+// 	c.JSON(http.StatusOK, gin.H{
+// 		"status":     true,
+// 		"categories": categories,
+// 	})
+
+// }
+
 func GetCategories(c *gin.Context) {
 
-	// initialize database connection
-	db, err := config.ConnDB()
+	langID, err := GetLangID("tm")
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -494,83 +590,15 @@ func GetCategories(c *gin.Context) {
 		})
 		return
 	}
-	defer func() {
-		if err := db.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
 
-	// get data from deatabase
-	rowCategor, err := db.Query("SELECT id,parent_category_id,image,is_home_category FROM categories WHERE deleted_at IS NULL")
+	// get all category from category controller
+	categories, err := GetAllCategoryForHeader(langID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
 			"message": err.Error(),
 		})
 		return
-	}
-	defer func() {
-		if err := rowCategor.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
-
-	var categories []models.Category
-
-	for rowCategor.Next() {
-		var category models.Category
-
-		if err := rowCategor.Scan(&category.ID, &category.ParentCategoryID, &category.Image, &category.IsHomeCategory); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-
-		rowsTrCategory, err := db.Query("SELECT lang_id,name FROM translation_category WHERE deleted_at IS NULL AND category_id = $1", category.ID)
-		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-		defer func() {
-			if err := rowsTrCategory.Close(); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
-				return
-			}
-		}()
-
-		var translations []models.TranslationCategory
-
-		for rowsTrCategory.Next() {
-			var translation models.TranslationCategory
-			if err := rowsTrCategory.Scan(&translation.LangID, &translation.Name); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
-				return
-			}
-			translations = append(translations, translation)
-		}
-
-		category.TranslationCategory = translations
-
-		categories = append(categories, category)
 	}
 
 	c.JSON(http.StatusOK, gin.H{
