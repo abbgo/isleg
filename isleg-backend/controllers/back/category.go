@@ -50,6 +50,7 @@ type Product struct {
 	LimitAmount  int                                    `json:"limit_amount,omitempty"`
 	Amount       int                                    `json:"amount,omitempty"`
 	IsNew        bool                                   `json:"is_new,omitempty"`
+	Benefit      null.Float                             `json:"-"`
 	Translations []map[string]models.TranslationProduct `json:"translations"`
 }
 

@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"github/abbgo/isleg/isleg-backend/config"
 	"github/abbgo/isleg/isleg-backend/models"
 	"github/abbgo/isleg/isleg-backend/pkg"
@@ -858,7 +859,7 @@ func GetOneBrendWithProducts(c *gin.Context) {
 		}
 
 		// get all product where brend id equal brendID
-		productRows, err := db.Query("SELECT id,price,old_price,limit_amount,is_new,amount,main_image FROM products WHERE brend_id = $1 AND amount > 0 AND limit_amount > 0 AND deleted_at IS NULL ORDER BY created_at ASC LIMIT $2 OFFSET $3", brendID, limit, offset)
+		productRows, err := db.Query("SELECT id,price,old_price,limit_amount,is_new,amount,main_image,benefit FROM products WHERE brend_id = $1 AND amount > 0 AND limit_amount > 0 AND deleted_at IS NULL ORDER BY created_at ASC LIMIT $2 OFFSET $3", brendID, limit, offset)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
@@ -881,12 +882,18 @@ func GetOneBrendWithProducts(c *gin.Context) {
 		for productRows.Next() {
 			var product Product
 
-			if err := productRows.Scan(&product.ID, &product.Price, &product.OldPrice, &product.LimitAmount, &product.IsNew, &product.Amount, &product.MainImage); err != nil {
+			if err := productRows.Scan(&product.ID, &product.Price, &product.OldPrice, &product.LimitAmount, &product.IsNew, &product.Amount, &product.MainImage, &product.Benefit); err != nil {
 				c.JSON(http.StatusBadRequest, gin.H{
 					"status":  false,
 					"message": err.Error(),
 				})
 				return
+			}
+
+			if product.Benefit.Float64 != 0 {
+				fmt.Println(product.Benefit.Float64)
+				product.Price = product.Price + (product.Price*product.Benefit.Float64)/100
+				product.OldPrice = product.OldPrice + (product.OldPrice*product.Benefit.Float64)/100
 			}
 
 			if product.OldPrice != 0 {

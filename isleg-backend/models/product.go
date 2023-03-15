@@ -15,6 +15,7 @@ type Product struct {
 	Price              float64              `json:"price,omitempty"`
 	OldPrice           float64              `json:"old_price"`
 	Percentage         float64              `json:"percentage"`
+	Benefit            float64              `json:"benefit"`
 	Amount             uint                 `json:"amount,omitempty"`
 	LimitAmount        uint                 `json:"limit_amount,omitempty"`
 	IsNew              bool                 `json:"is_new,omitempty"`
