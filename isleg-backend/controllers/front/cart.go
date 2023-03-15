@@ -9,6 +9,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	"gopkg.in/guregu/null.v4"
 )
 
 // type DataForAddCart struct {
@@ -29,6 +30,7 @@ type ProductOfCart struct {
 	Amount            uint                                   `json:"amount"`
 	LimitAmount       uint                                   `json:"limit_amount"`
 	IsNew             bool                                   `json:"is_new"`
+	Benefit           null.Float                             `json:"-"`
 	QuantityOfProduct int                                    `json:"quantity_of_product"`
 	MainImage         string                                 `json:"main_image"`
 	Translations      []map[string]models.TranslationProduct `json:"translations"`
@@ -270,7 +272,7 @@ func GetCartProducts(customerID string) ([]ProductOfCart, error) {
 	}
 	defer db.Close()
 
-	rowsProduct, err := db.Query("SELECT p.id,p.brend_id,p.price,p.old_price,p.amount,p.limit_amount,p.is_new,c.quantity_of_product,p.main_image FROM products p LEFT JOIN cart c ON c.product_id = p.id WHERE c.customer_id = $1 AND c.deleted_at IS NULL AND p.deleted_at IS NULL", customerID)
+	rowsProduct, err := db.Query("SELECT p.id,p.brend_id,p.price,p.old_price,p.amount,p.limit_amount,p.is_new,c.quantity_of_product,p.main_image,p.benefit FROM products p LEFT JOIN cart c ON c.product_id = p.id WHERE c.customer_id = $1 AND c.deleted_at IS NULL AND p.deleted_at IS NULL", customerID)
 	if err != nil {
 		return []ProductOfCart{}, err
 	}
@@ -281,8 +283,13 @@ func GetCartProducts(customerID string) ([]ProductOfCart, error) {
 	for rowsProduct.Next() {
 		var product ProductOfCart
 
-		if err := rowsProduct.Scan(&product.ID, &product.BrendID, &product.Price, &product.OldPrice, &product.Amount, &product.LimitAmount, &product.IsNew, &product.QuantityOfProduct, &product.MainImage); err != nil {
+		if err := rowsProduct.Scan(&product.ID, &product.BrendID, &product.Price, &product.OldPrice, &product.Amount, &product.LimitAmount, &product.IsNew, &product.QuantityOfProduct, &product.MainImage, &product.Benefit); err != nil {
 			return []ProductOfCart{}, err
+		}
+
+		if product.Benefit.Float64 != 0 {
+			product.Price = product.Price + (product.Price*product.Benefit.Float64)/100
+			product.OldPrice = product.OldPrice + (product.OldPrice*product.Benefit.Float64)/100
 		}
 
 		if product.OldPrice != 0 {
