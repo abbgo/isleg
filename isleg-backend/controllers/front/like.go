@@ -10,6 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/lib/pq"
+	"gopkg.in/guregu/null.v4"
 )
 
 type LikeProduct struct {
@@ -21,6 +22,7 @@ type LikeProduct struct {
 	Amount       uint                                   `json:"amount"`
 	LimitAmount  uint                                   `json:"limit_amount"`
 	IsNew        bool                                   `json:"is_new"`
+	Benefit      null.Float                             `json:"-"`
 	MainImage    string                                 `json:"main_image"`
 	Translations []map[string]models.TranslationProduct `json:"translations"`
 }
@@ -441,7 +443,7 @@ func GetLikes(customerID string) ([]LikeProduct, error) {
 	}
 	defer db.Close()
 
-	rowsProduct, err := db.Query("SELECT p.id,p.brend_id,p.price,p.old_price,p.amount,p.limit_amount,p.is_new,p.main_image FROM products p LEFT JOIN likes l ON l.product_id = p.id WHERE l.customer_id = $1 AND p.amount > 0 AND p.limit_amount > 0 AND l.deleted_at IS NULL AND p.deleted_at IS NULL", customerID)
+	rowsProduct, err := db.Query("SELECT p.id,p.brend_id,p.price,p.old_price,p.amount,p.limit_amount,p.is_new,p.main_image,p.benefit FROM products p LEFT JOIN likes l ON l.product_id = p.id WHERE l.customer_id = $1 AND p.amount > 0 AND p.limit_amount > 0 AND l.deleted_at IS NULL AND p.deleted_at IS NULL", customerID)
 	if err != nil {
 		return []LikeProduct{}, err
 	}
@@ -452,8 +454,13 @@ func GetLikes(customerID string) ([]LikeProduct, error) {
 	for rowsProduct.Next() {
 		var product LikeProduct
 
-		if err := rowsProduct.Scan(&product.ID, &product.BrendID, &product.Price, &product.OldPrice, &product.Amount, &product.LimitAmount, &product.IsNew, &product.MainImage); err != nil {
+		if err := rowsProduct.Scan(&product.ID, &product.BrendID, &product.Price, &product.OldPrice, &product.Amount, &product.LimitAmount, &product.IsNew, &product.MainImage, &product.Benefit); err != nil {
 			return []LikeProduct{}, err
+		}
+
+		if product.Benefit.Float64 != 0 {
+			product.Price = product.Price + (product.Price*product.Benefit.Float64)/100
+			product.OldPrice = product.OldPrice + (product.OldPrice*product.Benefit.Float64)/100
 		}
 
 		if product.OldPrice != 0 {
