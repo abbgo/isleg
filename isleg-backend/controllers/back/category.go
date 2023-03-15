@@ -1569,7 +1569,7 @@ func GetOneCategoryWithProducts(c *gin.Context) {
 		}
 
 		// get all product where category id equal categoryID
-		productRows, err := db.Query("SELECT p.id,p.price,p.old_price,p.limit_amount,p.is_new,p.amount,p.main_image FROM products p LEFT JOIN category_product c ON p.id=c.product_id WHERE c.category_id = $1 AND p.amount > 0 AND p.limit_amount > 0 AND p.deleted_at IS NULL AND c.deleted_at IS NULL ORDER BY p.created_at ASC LIMIT $2 OFFSET $3", categoryID, limit, offset)
+		productRows, err := db.Query("SELECT p.id,p.price,p.old_price,p.limit_amount,p.is_new,p.amount,p.main_image,benefit FROM products p LEFT JOIN category_product c ON p.id=c.product_id WHERE c.category_id = $1 AND p.amount > 0 AND p.limit_amount > 0 AND p.deleted_at IS NULL AND c.deleted_at IS NULL ORDER BY p.created_at ASC LIMIT $2 OFFSET $3", categoryID, limit, offset)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
@@ -1592,12 +1592,17 @@ func GetOneCategoryWithProducts(c *gin.Context) {
 		for productRows.Next() {
 			var product Product
 
-			if err := productRows.Scan(&product.ID, &product.Price, &product.OldPrice, &product.LimitAmount, &product.IsNew, &product.Amount, &product.MainImage); err != nil {
+			if err := productRows.Scan(&product.ID, &product.Price, &product.OldPrice, &product.LimitAmount, &product.IsNew, &product.Amount, &product.MainImage, &product.Benefit); err != nil {
 				c.JSON(http.StatusBadRequest, gin.H{
 					"status":  false,
 					"message": err.Error(),
 				})
 				return
+			}
+
+			if product.Benefit.Float64 != 0 {
+				product.Price = product.Price + (product.Price*product.Benefit.Float64)/100
+				product.OldPrice = product.OldPrice + (product.OldPrice*product.Benefit.Float64)/100
 			}
 
 			if product.OldPrice != 0 {

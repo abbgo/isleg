@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"fmt"
 	"github/abbgo/isleg/isleg-backend/config"
 	"github/abbgo/isleg/isleg-backend/models"
 	"github/abbgo/isleg/isleg-backend/pkg"
@@ -891,7 +890,6 @@ func GetOneBrendWithProducts(c *gin.Context) {
 			}
 
 			if product.Benefit.Float64 != 0 {
-				fmt.Println(product.Benefit.Float64)
 				product.Price = product.Price + (product.Price*product.Benefit.Float64)/100
 				product.OldPrice = product.OldPrice + (product.OldPrice*product.Benefit.Float64)/100
 			}
