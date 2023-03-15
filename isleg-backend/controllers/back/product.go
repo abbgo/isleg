@@ -13,6 +13,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/gosimple/slug"
 	"github.com/lib/pq"
+	"gopkg.in/guregu/null.v4"
 )
 
 type ProductForFront struct {
@@ -25,6 +26,7 @@ type ProductForFront struct {
 	LimitAmount  int                                    `json:"limit_amount,omitempty"`
 	Amount       int                                    `json:"amount,omitempty"`
 	IsNew        bool                                   `json:"is_new,omitempty"`
+	Benefit      null.Float                             `json:"-"`
 	Images       []string                               `json:"images,omitempty"`
 	Translations []map[string]models.TranslationProduct `json:"translations"`
 }
@@ -1267,7 +1269,7 @@ func GetProductByIDForFront(c *gin.Context) {
 	// get id from request parameter
 	ID := c.Param("id")
 
-	rowProduct, err := db.Query("SELECT id,price,old_price,amount,limit_amount,is_new,main_image FROM products WHERE id = $1 AND deleted_at IS NULL", ID)
+	rowProduct, err := db.Query("SELECT id,price,old_price,amount,limit_amount,is_new,main_image,benefit FROM products WHERE id = $1 AND deleted_at IS NULL", ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -1288,13 +1290,18 @@ func GetProductByIDForFront(c *gin.Context) {
 	var product ProductForFront
 
 	for rowProduct.Next() {
-		if err := rowProduct.Scan(&product.ID, &product.Price, &product.OldPrice, &product.Amount, &product.LimitAmount, &product.IsNew, &product.MainImage); err != nil {
+		if err := rowProduct.Scan(&product.ID, &product.Price, &product.OldPrice, &product.Amount, &product.LimitAmount, &product.IsNew, &product.MainImage, &product.Benefit); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
 			})
 			return
 		}
+	}
+
+	if product.Benefit.Float64 != 0 {
+		product.Price = product.Price + (product.Price*product.Benefit.Float64)/100
+		product.OldPrice = product.OldPrice + (product.OldPrice*product.Benefit.Float64)/100
 	}
 
 	if product.OldPrice != 0 {
