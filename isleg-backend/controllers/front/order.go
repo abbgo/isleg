@@ -1393,7 +1393,7 @@ func GetCustomerOrders(c *gin.Context) {
 				return
 			}
 
-			rowProduct, err := db.Query("SELECT brend_id,price,old_price,amount,limit_amount,is_new,main_image FROM products WHERE id = $1 AND deleted_at IS NULL", product.ID)
+			rowProduct, err := db.Query("SELECT brend_id,price,old_price,amount,limit_amount,is_new,main_image,benefit FROM products WHERE id = $1 AND deleted_at IS NULL", product.ID)
 			if err != nil {
 				c.JSON(http.StatusBadRequest, gin.H{
 					"status":  false,
@@ -1412,13 +1412,18 @@ func GetCustomerOrders(c *gin.Context) {
 			}()
 
 			for rowProduct.Next() {
-				if err := rowProduct.Scan(&product.BrendID, &product.Price, &product.OldPrice, &product.Amount, &product.LimitAmount, &product.IsNew, &product.MainImage); err != nil {
+				if err := rowProduct.Scan(&product.BrendID, &product.Price, &product.OldPrice, &product.Amount, &product.LimitAmount, &product.IsNew, &product.MainImage, &product.Benefit); err != nil {
 					c.JSON(http.StatusBadRequest, gin.H{
 						"status":  false,
 						"message": err.Error(),
 					})
 					return
 				}
+			}
+
+			if product.Benefit.Float64 != 0 {
+				product.Price = product.Price + (product.Price*product.Benefit.Float64)/100
+				product.OldPrice = product.OldPrice + (product.OldPrice*product.Benefit.Float64)/100
 			}
 
 			if product.OldPrice != 0 {
