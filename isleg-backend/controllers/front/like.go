@@ -845,7 +845,7 @@ func GetLikedOrOrderedProductsWithoutCustomer(c *gin.Context) {
 	}
 
 	// front - dan gelen id - ler boyunca id - si gelen id den bolan harytlar yzyna ugradylyar
-	rowLikes, err := db.Query("SELECT id,brend_id,price,old_price,amount,limit_amount,is_new,main_image FROM products WHERE id = ANY($1) AND amount > 0 AND limit_amount > 0 AND deleted_at IS NULL", pq.Array(productIds.IDS))
+	rowLikes, err := db.Query("SELECT id,brend_id,price,old_price,amount,limit_amount,is_new,main_image,benefit FROM products WHERE id = ANY($1) AND amount > 0 AND limit_amount > 0 AND deleted_at IS NULL", pq.Array(productIds.IDS))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -868,12 +868,17 @@ func GetLikedOrOrderedProductsWithoutCustomer(c *gin.Context) {
 	for rowLikes.Next() {
 		var product LikeProduct
 
-		if err := rowLikes.Scan(&product.ID, &product.BrendID, &product.Price, &product.OldPrice, &product.Amount, &product.LimitAmount, &product.IsNew, &product.MainImage); err != nil {
+		if err := rowLikes.Scan(&product.ID, &product.BrendID, &product.Price, &product.OldPrice, &product.Amount, &product.LimitAmount, &product.IsNew, &product.MainImage, &product.Benefit); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
 			})
 			return
+		}
+
+		if product.Benefit.Float64 != 0 {
+			product.Price = product.Price + (product.Price*product.Benefit.Float64)/100
+			product.OldPrice = product.OldPrice + (product.OldPrice*product.Benefit.Float64)/100
 		}
 
 		if product.OldPrice != 0 {
