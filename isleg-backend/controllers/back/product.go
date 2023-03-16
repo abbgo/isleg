@@ -61,8 +61,9 @@ func CreateProduct(c *gin.Context) {
 	limitAmountStr := c.PostForm("limit_amount")
 	isNewStr := c.PostForm("is_new")
 	categories, _ := c.GetPostFormArray("category_id")
+	benefitStr := c.PostForm("benefit")
 
-	_, _, price, oldPrice, amount, limitAmount, isNew, err := models.ValidateProductModel("", brendID, shopID, priceStr, oldPriceStr, amountStr, limitAmountStr, isNewStr, categories)
+	benefit, _, _, price, oldPrice, amount, limitAmount, isNew, err := models.ValidateProductModel(benefitStr, "", brendID, shopID, priceStr, oldPriceStr, amountStr, limitAmountStr, isNewStr, categories)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -134,7 +135,7 @@ func CreateProduct(c *gin.Context) {
 	}
 
 	// create product
-	resultProducts, err := db.Query("INSERT INTO products (brend_id,price,old_price,amount,limit_amount,is_new,shop_id,main_image) VALUES ($1,$2,$3,$4,$5,$6,$7,$8) RETURNING id", brend_id, price, oldPrice, amount, limitAmount, isNew, shop_id, mainImage)
+	resultProducts, err := db.Query("INSERT INTO products (brend_id,price,old_price,amount,limit_amount,is_new,shop_id,main_image,benefit) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9) RETURNING id", brend_id, price, oldPrice, amount, limitAmount, isNew, shop_id, mainImage, benefit)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{
 			"status":  false,
@@ -263,9 +264,10 @@ func UpdateProductByID(c *gin.Context) {
 	limitAmountStr := c.PostForm("limit_amount")
 	isNewStr := c.PostForm("is_new")
 	categories, _ := c.GetPostFormArray("category_id")
+	benefitStr := c.PostForm("benefit")
 
 	// validate data
-	images, mainImage, price, oldPrice, amount, limitAmount, isNew, err := models.ValidateProductModel(ID, brendID, shopID, priceStr, oldPriceStr, amountStr, limitAmountStr, isNewStr, categories)
+	benefit, images, mainImage, price, oldPrice, amount, limitAmount, isNew, err := models.ValidateProductModel(benefitStr, ID, brendID, shopID, priceStr, oldPriceStr, amountStr, limitAmountStr, isNewStr, categories)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -399,7 +401,7 @@ func UpdateProductByID(c *gin.Context) {
 		shop_id = nil
 	}
 
-	resultProducts, err := db.Query("UPDATE products SET brend_id = $1 , price = $2 , old_price = $3, amount = $4, limit_amount = $5 , is_new = $6, shop_id = $8 , main_image = $9 WHERE id = $7", brend_id, price, oldPrice, amount, limitAmount, isNew, ID, shop_id, mainSmall)
+	resultProducts, err := db.Query("UPDATE products SET brend_id = $1 , price = $2 , old_price = $3, amount = $4, limit_amount = $5 , is_new = $6, shop_id = $8 , main_image = $9 , benefit = $10 WHERE id = $7", brend_id, price, oldPrice, amount, limitAmount, isNew, ID, shop_id, mainSmall, benefit)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
