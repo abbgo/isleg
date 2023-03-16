@@ -31,6 +31,25 @@ type ProductForFront struct {
 	Translations []map[string]models.TranslationProduct `json:"translations"`
 }
 
+type ProductForAdmin struct {
+	ID                 string                      `json:"id,omitempty"`
+	BrendID            uuid.NullUUID               `json:"brend_id,omitempty"`
+	ShopID             uuid.NullUUID               `json:"shop_id,omitempty"`
+	Price              float64                     `json:"price,omitempty"`
+	OldPrice           float64                     `json:"old_price"`
+	Benefit            null.Float                  `json:"benefit"`
+	Amount             uint                        `json:"amount,omitempty"`
+	LimitAmount        uint                        `json:"limit_amount,omitempty"`
+	IsNew              bool                        `json:"is_new,omitempty"`
+	CreatedAt          string                      `json:"-"`
+	UpdatedAt          string                      `json:"-"`
+	DeletedAt          string                      `json:"-"`
+	MainImage          string                      `json:"main_image,omitempty"`
+	Images             []string                    `json:"images,omitempty"`              // one to many
+	TranslationProduct []models.TranslationProduct `json:"translation_product,omitempty"` // one to many
+	Categories         []string                    `json:"categories,omitempty"`
+}
+
 func CreateProduct(c *gin.Context) {
 
 	// initialize database connection
@@ -530,7 +549,7 @@ func GetProductByID(c *gin.Context) {
 		}
 	}()
 
-	var product models.Product
+	var product ProductForAdmin
 
 	for rowProduct.Next() {
 		if err := rowProduct.Scan(&product.ID, &product.BrendID, &product.Price, &product.OldPrice, &product.Amount, &product.LimitAmount, &product.IsNew, &product.MainImage, &product.Benefit); err != nil {
@@ -542,16 +561,16 @@ func GetProductByID(c *gin.Context) {
 		}
 	}
 
-	if product.Benefit.Float64 != 0 {
-		product.Price = product.Price + (product.Price*product.Benefit.Float64)/100
-		product.OldPrice = product.OldPrice + (product.OldPrice*product.Benefit.Float64)/100
-	}
+	// if product.Benefit.Float64 != 0 {
+	// 	product.Price = product.Price + (product.Price*product.Benefit.Float64)/100
+	// 	product.OldPrice = product.OldPrice + (product.OldPrice*product.Benefit.Float64)/100
+	// }
 
-	if product.OldPrice != 0 {
-		product.Percentage = -math.Round(((product.OldPrice - product.Price) * 100) / product.OldPrice)
-	} else {
-		product.Percentage = 0
-	}
+	// if product.OldPrice != 0 {
+	// 	product.Percentage = -math.Round(((product.OldPrice - product.Price) * 100) / product.OldPrice)
+	// } else {
+	// 	product.Percentage = 0
+	// }
 
 	if product.ID == "" {
 		c.JSON(http.StatusNotFound, gin.H{
