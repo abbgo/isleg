@@ -284,7 +284,7 @@ func GetBrends(c *gin.Context) {
 	}()
 
 	// get data from database
-	rowBrends, err := db.Query("SELECT id,name,image FROM brends WHERE deleted_at IS NULL")
+	rowBrends, err := db.Query("SELECT id,name FROM brends WHERE deleted_at IS NULL")
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -307,7 +307,7 @@ func GetBrends(c *gin.Context) {
 	for rowBrends.Next() {
 		var brend models.Brend
 
-		if err := rowBrends.Scan(&brend.ID, &brend.Name, &brend.Image); err != nil {
+		if err := rowBrends.Scan(&brend.ID, &brend.Name); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
