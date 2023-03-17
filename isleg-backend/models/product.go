@@ -61,7 +61,7 @@ type CategoryProduct struct {
 	DeletedAt  string `json:"-"`
 }
 
-func ValidateProductModel(benefitStr, productID, brendID, shopID, priceStr, oldPriceStr, amountStr, limitAmountStr, isNewStr string, categories []string) (float64, []Images, string, float64, float64, uint64, uint64, bool, error) {
+func ValidateProductModel(currentImages []string, benefitStr, productID, brendID, shopID, priceStr, oldPriceStr, amountStr, limitAmountStr, isNewStr string, categories []string) (float64, []Images, string, float64, float64, uint64, uint64, bool, error) {
 
 	// initialize database connection
 	db, err := config.ConnDB()
@@ -268,7 +268,7 @@ func ValidateProductModel(benefitStr, productID, brendID, shopID, priceStr, oldP
 			return 0, []Images{}, "", 0, 0, 0, 0, false, errors.New("main image of product not found")
 		}
 
-		rowImages, err := db.Query("SELECT image FROM images WHERE deleted_at IS NULL AND product_id = $1", productID)
+		rowImages, err := db.Query("SELECT id,image FROM images WHERE deleted_at IS NULL AND product_id = $1", productID)
 		if err != nil {
 			return 0, []Images{}, "", 0, 0, 0, 0, false, err
 		}
@@ -284,11 +284,24 @@ func ValidateProductModel(benefitStr, productID, brendID, shopID, priceStr, oldP
 		for rowImages.Next() {
 			var image Images
 
-			if err := rowImages.Scan(&image.Image); err != nil {
+			if err := rowImages.Scan(&image.ID, &image.Image); err != nil {
 				return 0, []Images{}, "", 0, 0, 0, 0, false, err
 			}
 
-			images = append(images, image)
+			if len(currentImages) != 0 {
+				var foundImage bool
+				for _, v1 := range currentImages {
+					if image.Image == v1 {
+						foundImage = true
+					}
+				}
+				if !foundImage {
+					images = append(images, image)
+				}
+			} else {
+				images = append(images, image)
+			}
+
 		}
 
 		return benefit, images, mainImage, price, oldPrice, amount, limitAmount, isNew, nil

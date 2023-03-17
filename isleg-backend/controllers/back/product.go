@@ -82,7 +82,7 @@ func CreateProduct(c *gin.Context) {
 	categories, _ := c.GetPostFormArray("category_id")
 	benefitStr := c.PostForm("benefit")
 
-	benefit, _, _, price, oldPrice, amount, limitAmount, isNew, err := models.ValidateProductModel(benefitStr, "", brendID, shopID, priceStr, oldPriceStr, amountStr, limitAmountStr, isNewStr, categories)
+	benefit, _, _, price, oldPrice, amount, limitAmount, isNew, err := models.ValidateProductModel([]string{}, benefitStr, "", brendID, shopID, priceStr, oldPriceStr, amountStr, limitAmountStr, isNewStr, categories)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -284,9 +284,10 @@ func UpdateProductByID(c *gin.Context) {
 	isNewStr := c.PostForm("is_new")
 	categories, _ := c.GetPostFormArray("category_id")
 	benefitStr := c.PostForm("benefit")
+	currentImages, _ := c.GetPostFormArray("images")
 
 	// validate data
-	benefit, images, mainImage, price, oldPrice, amount, limitAmount, isNew, err := models.ValidateProductModel(benefitStr, ID, brendID, shopID, priceStr, oldPriceStr, amountStr, limitAmountStr, isNewStr, categories)
+	benefit, images, mainImage, price, oldPrice, amount, limitAmount, isNew, err := models.ValidateProductModel(currentImages, benefitStr, ID, brendID, shopID, priceStr, oldPriceStr, amountStr, limitAmountStr, isNewStr, categories)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -348,25 +349,25 @@ func UpdateProductByID(c *gin.Context) {
 				})
 				return
 			}
-		}
 
-		resultImages, err := db.Query("DELETE FROM images WHERE product_id = $1", ID)
-		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-		defer func() {
-			if err := resultImages.Close(); err != nil {
+			resultImages, err := db.Query("DELETE FROM images WHERE id = $1", v.ID)
+			if err != nil {
 				c.JSON(http.StatusBadRequest, gin.H{
 					"status":  false,
 					"message": err.Error(),
 				})
 				return
 			}
-		}()
+			defer func() {
+				if err := resultImages.Close(); err != nil {
+					c.JSON(http.StatusBadRequest, gin.H{
+						"status":  false,
+						"message": err.Error(),
+					})
+					return
+				}
+			}()
+		}
 
 		for _, v := range smallFiles {
 			extension := filepath.Ext(v.Filename)
