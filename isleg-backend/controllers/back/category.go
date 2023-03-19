@@ -1166,7 +1166,7 @@ func DeletePermanentlyCategoryByID(c *gin.Context) {
 	}
 
 	// kategoriyanyn produktalarynyn main suratlaryn direktlary bazadan alynyar
-	rowsMainImageProduct, err := db.Query("SELECT p.id,p.main_image FROM products p INNER JOIN category_product c ON c.product_id=p.id c.category_id = $1", ID)
+	rowsMainImageProduct, err := db.Query("SELECT p.id,p.main_image FROM products p INNER JOIN category_product c ON c.product_id=p.id WHERE c.category_id = $1", ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
