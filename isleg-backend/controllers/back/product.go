@@ -285,7 +285,6 @@ func UpdateProductByID(c *gin.Context) {
 	categories, _ := c.GetPostFormArray("category_id")
 	benefitStr := c.PostForm("benefit")
 	currentImages, _ := c.GetPostFormArray("images") // eger front onki suratdan birini yzyna ugratsa , sol alynyar string edip
-
 	// validate data
 	benefit, images, mainImage, price, oldPrice, amount, limitAmount, isNew, err := models.ValidateProductModel(currentImages, benefitStr, ID, brendID, shopID, priceStr, oldPriceStr, amountStr, limitAmountStr, isNewStr, categories)
 	if err != nil {
@@ -380,7 +379,14 @@ func UpdateProductByID(c *gin.Context) {
 				return
 			}
 			fileName := uuid.New().String() + extension
-			c.SaveUploadedFile(v, pkg.ServerPath+"uploads/product/"+fileName)
+			if err := c.SaveUploadedFile(v, pkg.ServerPath+"uploads/product/"+fileName); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+
 			smalls = append(smalls, "uploads/product/"+fileName)
 		}
 
