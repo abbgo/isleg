@@ -284,7 +284,7 @@ func UpdateProductByID(c *gin.Context) {
 	isNewStr := c.PostForm("is_new")
 	categories, _ := c.GetPostFormArray("category_id")
 	benefitStr := c.PostForm("benefit")
-	currentImages, _ := c.GetPostFormArray("images")
+	currentImages, _ := c.GetPostFormArray("images") // eger front onki suratdan birini yzyna ugratsa , sol alynyar string edip
 
 	// validate data
 	benefit, images, mainImage, price, oldPrice, amount, limitAmount, isNew, err := models.ValidateProductModel(currentImages, benefitStr, ID, brendID, shopID, priceStr, oldPriceStr, amountStr, limitAmountStr, isNewStr, categories)
@@ -336,7 +336,7 @@ func UpdateProductByID(c *gin.Context) {
 		return
 	}
 
-	smallFiles := c.Request.MultipartForm.File["image"]
+	smallFiles := c.Request.MultipartForm.File["image"] // taze gosulan suratlar alynyar
 	var smalls []string
 
 	if len(smallFiles) != 0 {
