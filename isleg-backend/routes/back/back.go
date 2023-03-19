@@ -141,6 +141,7 @@ func BackRoutes(back *gin.RouterGroup) {
 		securedAdmin.GET("category/:id", backController.GetCategoryByID)
 		securedAdmin.GET("categories", backController.GetCategories)
 		securedAdmin.GET("all-category", backController.GetAllCategory)
+		securedAdmin.GET("deleted-categories", backController.GetDeletedCategories)
 		securedAdmin.DELETE("category/:id", backController.DeleteCategoryByID)
 		securedAdmin.GET("restore-category/:id", backController.RestoreCategoryByID)
 		securedAdmin.DELETE("delete-category/:id", backController.DeletePermanentlyCategoryByID)
