@@ -74,6 +74,10 @@ func FrontRoutes(front *gin.RouterGroup) {
 		// ahli harytlary bilen pagination edip getiryar
 		frontRoutes.GET("category/:id/:limit/:page", backController.GetOneCategoryWithProducts)
 
+		// GetOneCategoryWithDeletedProducts funksiya dil boyunca dine bir kategoriyany
+		// ahli pozulan harytlary bilen pagination edip getiryar
+		frontRoutes.GET("category-with-deleted-products/:id/:limit/:page", backController.GetOneCategoryWithDeletedProducts)
+
 		// GetOneBrendWithProducts funksiya dil boyunca dine bir brendi
 		// ahli harytlary bilen pagination edip getiryar
 		frontRoutes.GET("brend/:id/:limit/:page", backController.GetOneBrendWithProducts)
