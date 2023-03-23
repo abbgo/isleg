@@ -270,18 +270,71 @@ func GetLanguageByID(c *gin.Context) {
 
 func GetLanguages(c *gin.Context) {
 
-	languages, err := GetAllLanguageForHeader()
+	// initialize database connection
+	db, err := config.ConnDB()
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}
+	defer func() {
+		if err := db.Close(); err != nil {
+			if err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}
+	}()
+
+	var ls []models.Language
+
+	// get name_short,flag of all languages from database
+	rows, err := db.Query("SELECT id,name_short,flag FROM languages WHERE deleted_at IS NULL")
+	if err != nil {
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}
+	defer func() {
+		if err := rows.Close(); err != nil {
+			if err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}
+	}()
+
+	for rows.Next() {
+		var l models.Language
+		if err := rows.Scan(&l.ID, &l.NameShort, &l.Flag); err != nil {
+			if err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}
+		ls = append(ls, l)
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"status":   true,
-		"language": languages,
+		"status":    true,
+		"languages": ls,
 	})
 
 }

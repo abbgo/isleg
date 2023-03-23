@@ -568,17 +568,6 @@ func GetProductByID(c *gin.Context) {
 		}
 	}
 
-	// if product.Benefit.Float64 != 0 {
-	// 	product.Price = product.Price + (product.Price*product.Benefit.Float64)/100
-	// 	product.OldPrice = product.OldPrice + (product.OldPrice*product.Benefit.Float64)/100
-	// }
-
-	// if product.OldPrice != 0 {
-	// 	product.Percentage = -math.Round(((product.OldPrice - product.Price) * 100) / product.OldPrice)
-	// } else {
-	// 	product.Percentage = 0
-	// }
-
 	if product.ID == "" {
 		c.JSON(http.StatusNotFound, gin.H{
 			"status":  false,
