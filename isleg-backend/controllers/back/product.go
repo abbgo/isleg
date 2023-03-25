@@ -50,6 +50,35 @@ type ProductForAdmin struct {
 	Categories         []string                    `json:"categories,omitempty"`
 }
 
+func CreateProductImages(c *gin.Context) {
+	// file upload
+	mainImage, err := pkg.FileUpload("main_image", "product", c)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	// upload small images of product
+	images, err := pkg.MultipartFileUpload("image", "product", c)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":     true,
+		"main_image": mainImage,
+		"images":     images,
+	})
+
+}
+
 func CreateProduct(c *gin.Context) {
 
 	// initialize database connection

@@ -12,6 +12,10 @@ import (
 // mulitpart file upload
 func MultipartFileUpload(nameUploadedFile, path string, context *gin.Context) ([]string, error) {
 
+	if err := context.Request.ParseMultipartForm(2000000); err != nil {
+		return []string{}, err
+	}
+
 	var fileNames []string
 
 	files := context.Request.MultipartForm.File[nameUploadedFile]
