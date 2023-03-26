@@ -50,6 +50,24 @@ type ProductForAdmin struct {
 
 func CreateProductImages(c *gin.Context) {
 
+	db, err := config.ConnDB()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
+
 	fileName := c.Query("type")
 	if fileName != "main_image" && fileName != "image" {
 		c.JSON(http.StatusNotFound, gin.H{
@@ -67,6 +85,24 @@ func CreateProductImages(c *gin.Context) {
 		})
 		return
 	}
+
+	result, err := db.Query("INSERT INTO helper_images (image) VALUES ($1)", image)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer func() {
+		if err := result.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
 	c.JSON(http.StatusOK, gin.H{
 		"status": true,
