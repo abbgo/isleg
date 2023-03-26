@@ -29,26 +29,61 @@ type ProductForFront struct {
 	Translations []map[string]models.TranslationProduct `json:"translations"`
 }
 
+type DeleteImage struct {
+	Image string `json:"image"`
+}
+
 type ProductForAdmin struct {
 	ID                 string                      `json:"id,omitempty"`
 	BrendID            null.String                 `json:"brend_id,omitempty"`
 	ShopID             null.String                 `json:"shop_id,omitempty"`
-	Price              float64                     `json:"price,omitempty"`
+	Price              float64                     `json:"price,omitempty" binding:"required"`
 	OldPrice           float64                     `json:"old_price"`
 	Benefit            null.Float                  `json:"benefit"`
-	Amount             uint                        `json:"amount,omitempty"`
-	LimitAmount        uint                        `json:"limit_amount,omitempty"`
+	Amount             uint                        `json:"amount,omitempty" binding:"required"`
+	LimitAmount        uint                        `json:"limit_amount,omitempty" binding:"required"`
 	IsNew              bool                        `json:"is_new,omitempty"`
-	CreatedAt          string                      `json:"-"`
-	UpdatedAt          string                      `json:"-"`
-	DeletedAt          string                      `json:"-"`
 	MainImage          string                      `json:"main_image,omitempty"`
-	Images             []string                    `json:"images,omitempty"`              // one to many
-	TranslationProduct []models.TranslationProduct `json:"translation_product,omitempty"` // one to many
-	Categories         []string                    `json:"categories,omitempty"`
+	Images             []string                    `json:"images,omitempty"`                                 // one to many
+	TranslationProduct []models.TranslationProduct `json:"translation_product,omitempty" binding:"required"` // one to many
+	Categories         []string                    `json:"categories,omitempty" binding:"required"`
 }
 
-func CreateProductImages(c *gin.Context) {
+func DeleteProductImages(c *gin.Context) {
+
+	var image DeleteImage
+	if err := c.Bind(&image); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	if image.Image == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "path of image is required",
+		})
+		return
+	}
+
+	if err := os.Remove(pkg.ServerPath + image.Image); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":  true,
+		"message": "image successfully deleted",
+	})
+
+}
+
+func CreateProductImage(c *gin.Context) {
 
 	db, err := config.ConnDB()
 	if err != nil {
@@ -67,6 +102,35 @@ func CreateProductImages(c *gin.Context) {
 			return
 		}
 	}()
+
+	oldImage := c.PostForm("old_path")
+	if oldImage != "" {
+		if err := os.Remove(pkg.ServerPath + oldImage); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+
+		resultHelperImage, err := db.Query("DELETE FROM helper_images WHERE image = $1", oldImage)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+		defer func() {
+			if err := resultHelperImage.Close(); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}()
+	}
 
 	fileName := c.Query("type")
 	if fileName != "main_image" && fileName != "image" {
@@ -138,7 +202,15 @@ func CreateProduct(c *gin.Context) {
 		return
 	}
 
-	benefit, _, _, price, oldPrice, amount, limitAmount, isNew, err := models.ValidateProductModel([]string{}, product.Benefit.Float64, "", product.BrendID.String, product.ShopID.String, product.Price, product.OldPrice, product.Amount, product.LimitAmount, product.IsNew, product.Categories)
+	if product.MainImage == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "main_image is required",
+		})
+		return
+	}
+
+	benefit, _, price, oldPrice, amount, limitAmount, isNew, err := models.ValidateProductModel("", product.Benefit.Float64, "", product.Price, product.OldPrice, product.Amount, product.LimitAmount, product.IsNew, product.Categories)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -147,8 +219,20 @@ func CreateProduct(c *gin.Context) {
 		return
 	}
 
+	var shopID, brendID interface{}
+	if product.BrendID.String == "" {
+		brendID = nil
+	} else {
+		brendID = product.BrendID.String
+	}
+	if product.ShopID.String == "" {
+		shopID = nil
+	} else {
+		shopID = product.ShopID.String
+	}
+
 	// create product
-	resultProducts, err := db.Query("INSERT INTO products (brend_id,price,old_price,amount,limit_amount,is_new,shop_id,main_image,benefit) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9) RETURNING id", product.BrendID, price, oldPrice, amount, limitAmount, isNew, product.ShopID, product.MainImage, benefit)
+	resultProducts, err := db.Query("INSERT INTO products (brend_id,price,old_price,amount,limit_amount,is_new,shop_id,main_image,benefit) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9) RETURNING id", brendID, price, oldPrice, amount, limitAmount, isNew, shopID, product.MainImage, benefit)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{
 			"status":  false,
@@ -178,24 +262,44 @@ func CreateProduct(c *gin.Context) {
 		}
 	}
 
-	// create images of product
-	resultImages, err := db.Query("INSERT INTO images (product_id,image) VALUES ($1,unnest($2::varchar[]))", productID, pq.Array(product.Images))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-	defer func() {
-		if err := resultImages.Close(); err != nil {
+	if len(product.Images) != 0 {
+		// create images of product
+		resultImages, err := db.Query("INSERT INTO images (product_id,image) VALUES ($1,unnest($2::varchar[]))", productID, pq.Array(product.Images))
+		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
 			})
 			return
 		}
-	}()
+		defer func() {
+			if err := resultImages.Close(); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}()
+
+		resultHelperImages, err := db.Query("DELETE FROM helper_images WHERE image = ANY($1)", pq.Array(product.Images))
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+		defer func() {
+			if err := resultHelperImages.Close(); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}()
+	}
 
 	for _, v := range product.TranslationProduct {
 		resultTrProducts, err := db.Query("INSERT INTO translation_product (lang_id,product_id,name,description,slug) VALUES ($1,$2,$3,$4,$5)", v.LangID, productID, v.Name, v.Description, slug.MakeLang(v.Name, "en"))
@@ -236,6 +340,24 @@ func CreateProduct(c *gin.Context) {
 		}
 	}()
 
+	resultHelperImage, err := db.Query("DELETE FROM helper_images WHERE image = $1", product.MainImage)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer func() {
+		if err := resultHelperImage.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
+
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
 		"message": "data successfully added",
@@ -243,275 +365,196 @@ func CreateProduct(c *gin.Context) {
 
 }
 
-// func UpdateProductByID(c *gin.Context) {
+func UpdateProductByID(c *gin.Context) {
 
-// 	// initialize database connection
-// 	db, err := config.ConnDB()
-// 	if err != nil {
-// 		c.JSON(http.StatusBadRequest, gin.H{
-// 			"status":  false,
-// 			"message": err.Error(),
-// 		})
-// 		return
-// 	}
-// 	defer func() {
-// 		if err := db.Close(); err != nil {
-// 			c.JSON(http.StatusBadRequest, gin.H{
-// 				"status":  false,
-// 				"message": err.Error(),
-// 			})
-// 			return
-// 		}
-// 	}()
+	// initialize database connection
+	db, err := config.ConnDB()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
-// 	var product ProductForAdmin
-// 	if err := c.BindJSON(&product); err != nil {
-// 		c.JSON(http.StatusBadRequest, err.Error())
-// 		return
-// 	}
+	var product ProductForAdmin
+	if err := c.BindJSON(&product); err != nil {
+		c.JSON(http.StatusBadRequest, err.Error())
+		return
+	}
 
-// 	// get id from request parameter
-// 	ID := c.Param("id")
+	// get id from request parameter
+	ID := c.Param("id")
 
-// 	// get data from request
-// 	// brendID := c.PostForm("brend_id")
-// 	// shopID := c.PostForm("shop_id")
-// 	// priceStr := c.PostForm("price")
-// 	// oldPriceStr := c.PostForm("old_price")
-// 	// amountStr := c.PostForm("amount")
-// 	// limitAmountStr := c.PostForm("limit_amount")
-// 	// isNewStr := c.PostForm("is_new")
-// 	// categories, _ := c.GetPostFormArray("category_id")
-// 	// benefitStr := c.PostForm("benefit")
-// 	currentImages, _ := c.GetPostFormArray("images") // eger front onki suratdan birini yzyna ugratsa , sol alynyar string edip
-// 	// validate data
-// 	benefit, images, mainImage, price, oldPrice, amount, limitAmount, isNew, err := models.ValidateProductModel(currentImages, product.Benefit.Float64, ID, product.BrendID.String, product.ShopID.String, product.Price, product.OldPrice, product.Amount, product.LimitAmount, product.IsNew, product.Categories)
-// 	if err != nil {
-// 		c.JSON(http.StatusBadRequest, gin.H{
-// 			"status":  false,
-// 			"message": err.Error(),
-// 		})
-// 		return
-// 	}
+	// validate data
+	benefit, mainImage, price, oldPrice, amount, limitAmount, isNew, err := models.ValidateProductModel(product.MainImage, product.Benefit.Float64, ID, product.Price, product.OldPrice, product.Amount, product.LimitAmount, product.IsNew, product.Categories)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
 
-// 	// GET ALL LANGUAGE
-// 	languages, err := GetAllLanguageWithIDAndNameShort()
-// 	if err != nil {
-// 		c.JSON(http.StatusBadRequest, gin.H{
-// 			"status":  false,
-// 			"message": err.Error(),
-// 		})
-// 		return
-// 	}
+	var shopID, brendID interface{}
+	if product.BrendID.String == "" {
+		brendID = nil
+	} else {
+		brendID = product.BrendID.String
+	}
+	if product.ShopID.String == "" {
+		shopID = nil
+	} else {
+		shopID = product.ShopID.String
+	}
 
-// 	dataNames := []string{"name", "description"}
+	resultProducts, err := db.Query("UPDATE products SET brend_id = $1 , price = $2 , old_price = $3, amount = $4, limit_amount = $5 , is_new = $6, shop_id = $8 , main_image = $9 , benefit = $10 WHERE id = $7", brendID, price, oldPrice, amount, limitAmount, isNew, ID, shopID, mainImage, benefit)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer func() {
+		if err := resultProducts.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
-// 	// validate name and description of product
-// 	if err := pkg.ValidateTranslations(languages, dataNames, c); err != nil {
-// 		c.JSON(http.StatusBadRequest, gin.H{
-// 			"status":  false,
-// 			"message": err.Error(),
-// 		})
-// 		return
-// 	}
+	// update translation product
+	for _, v := range product.TranslationProduct {
+		resultTrProduct, err := db.Query("UPDATE translation_product SET name = $1, description = $2, slug = $3 WHERE product_id = $4 AND lang_id = $5", v.Name, v.Description, slug.MakeLang(v.Name, "en"), ID, v.LangID)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+		defer func() {
+			if err := resultTrProduct.Close(); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}()
+	}
 
-// 	// file upload
-// 	if err := c.Request.ParseMultipartForm(2000000); err != nil {
-// 		c.JSON(http.StatusBadRequest, gin.H{
-// 			"status":  false,
-// 			"message": err.Error(),
-// 		})
-// 		return
-// 	}
+	resultImages, err := db.Query("DELETE FROM images WHERE product_id = $1", ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer func() {
+		if err := resultImages.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
-// 	// update small main image of product if exists
-// 	mainSmall, err := pkg.FileUploadForUpdate("main_image", "product", mainImage, c)
-// 	if err != nil {
-// 		c.JSON(http.StatusBadRequest, gin.H{
-// 			"status":  false,
-// 			"message": err.Error(),
-// 		})
-// 		return
-// 	}
+	if len(product.Images) != 0 {
+		resultImage, err := db.Query("INSERT INTO images (image,product_id) VALUES (unnest($1::varchar[]),$2)", pq.Array(product.Images), ID)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+		defer func() {
+			if err := resultImage.Close(); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}()
 
-// 	smallFiles := c.Request.MultipartForm.File["image"] // taze gosulan suratlar alynyar
-// 	var smalls []string
+		resultHelperImages, err := db.Query("DELETE FROM helper_images WHERE image = ANY($1)", pq.Array(product.Images))
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+		defer func() {
+			if err := resultHelperImages.Close(); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}()
+	}
 
-// 	if len(smallFiles) != 0 {
+	// update category product
+	resultCategoryProduct, err := db.Query("DELETE FROM category_product WHERE product_id = $1", ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer func() {
+		if err := resultCategoryProduct.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
-// 		for _, v := range images {
-// 			if err := os.Remove(pkg.ServerPath + v.Image); err != nil {
-// 				c.JSON(http.StatusBadRequest, gin.H{
-// 					"status":  false,
-// 					"message": err.Error(),
-// 				})
-// 				return
-// 			}
+	resultCategProduct, err := db.Query("INSERT INTO category_product (category_id,product_id) VALUES (unnest($1::uuid[]),$2)", pq.Array(product.Categories), ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer func() {
+		if err := resultCategProduct.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
-// 			resultImages, err := db.Query("DELETE FROM images WHERE id = $1", v.ID)
-// 			if err != nil {
-// 				c.JSON(http.StatusBadRequest, gin.H{
-// 					"status":  false,
-// 					"message": err.Error(),
-// 				})
-// 				return
-// 			}
-// 			defer func() {
-// 				if err := resultImages.Close(); err != nil {
-// 					c.JSON(http.StatusBadRequest, gin.H{
-// 						"status":  false,
-// 						"message": err.Error(),
-// 					})
-// 					return
-// 				}
-// 			}()
-// 		}
+	c.JSON(http.StatusOK, gin.H{
+		"status":  true,
+		"message": "data successfully updated",
+	})
 
-// 		for _, v := range smallFiles {
-// 			extension := filepath.Ext(v.Filename)
-// 			//validate image
-// 			if extension != ".jpg" && extension != ".JPG" && extension != ".jpeg" && extension != ".JPEG" && extension != ".png" && extension != ".PNG" && extension != ".gif" && extension != ".GIF" && extension != ".svg" && extension != ".SVG" && extension != ".WEBP" && extension != ".webp" {
-// 				c.JSON(http.StatusBadRequest, gin.H{
-// 					"status":  false,
-// 					"message": "the file must be an image.",
-// 				})
-// 				return
-// 			}
-// 			fileName := uuid.New().String() + extension
-// 			if err := c.SaveUploadedFile(v, pkg.ServerPath+"uploads/product/"+fileName); err != nil {
-// 				c.JSON(http.StatusBadRequest, gin.H{
-// 					"status":  false,
-// 					"message": err.Error(),
-// 				})
-// 				return
-// 			}
-
-// 			smalls = append(smalls, "uploads/product/"+fileName)
-// 		}
-
-// 		for i := 0; i < len(smalls); i++ {
-
-// 			resultImages, err := db.Query("INSERT INTO images (product_id,image) VALUES ($1,$2)", ID, smalls[i])
-// 			if err != nil {
-// 				c.JSON(http.StatusBadRequest, gin.H{
-// 					"status":  false,
-// 					"message": err.Error(),
-// 				})
-// 				return
-// 			}
-// 			defer func() {
-// 				if err := resultImages.Close(); err != nil {
-// 					c.JSON(http.StatusBadRequest, gin.H{
-// 						"status":  false,
-// 						"message": err.Error(),
-// 					})
-// 					return
-// 				}
-// 			}()
-
-// 		}
-
-// 	}
-
-// 	var brend_id, shop_id interface{}
-// 	if brendID != "" {
-// 		brend_id = brendID
-// 	} else {
-// 		brend_id = nil
-// 	}
-
-// 	if shopID != "" {
-// 		shop_id = shopID
-// 	} else {
-// 		shop_id = nil
-// 	}
-
-// 	resultProducts, err := db.Query("UPDATE products SET brend_id = $1 , price = $2 , old_price = $3, amount = $4, limit_amount = $5 , is_new = $6, shop_id = $8 , main_image = $9 , benefit = $10 WHERE id = $7", brend_id, price, oldPrice, amount, limitAmount, isNew, ID, shop_id, mainSmall, benefit)
-// 	if err != nil {
-// 		c.JSON(http.StatusBadRequest, gin.H{
-// 			"status":  false,
-// 			"message": err.Error(),
-// 		})
-// 		return
-// 	}
-// 	defer func() {
-// 		if err := resultProducts.Close(); err != nil {
-// 			c.JSON(http.StatusBadRequest, gin.H{
-// 				"status":  false,
-// 				"message": err.Error(),
-// 			})
-// 			return
-// 		}
-// 	}()
-
-// 	// update translation product
-// 	for _, v := range languages {
-// 		resultTrProduct, err := db.Query("UPDATE translation_product SET name = $1, description = $2, slug = $3 WHERE product_id = $4 AND lang_id = $5", c.PostForm("name_"+v.NameShort), c.PostForm("description_"+v.NameShort), slug.MakeLang(c.PostForm("name_"+v.NameShort), "en"), ID, v.ID)
-// 		if err != nil {
-// 			c.JSON(http.StatusBadRequest, gin.H{
-// 				"status":  false,
-// 				"message": err.Error(),
-// 			})
-// 			return
-// 		}
-// 		defer func() {
-// 			if err := resultTrProduct.Close(); err != nil {
-// 				c.JSON(http.StatusBadRequest, gin.H{
-// 					"status":  false,
-// 					"message": err.Error(),
-// 				})
-// 				return
-// 			}
-// 		}()
-// 	}
-
-// 	// get all category id from request
-
-// 	// update category product
-// 	resultCategoryProduct, err := db.Query("DELETE FROM category_product WHERE product_id = $1", ID)
-// 	if err != nil {
-// 		c.JSON(http.StatusBadRequest, gin.H{
-// 			"status":  false,
-// 			"message": err.Error(),
-// 		})
-// 		return
-// 	}
-// 	defer func() {
-// 		if err := resultCategoryProduct.Close(); err != nil {
-// 			c.JSON(http.StatusBadRequest, gin.H{
-// 				"status":  false,
-// 				"message": err.Error(),
-// 			})
-// 			return
-// 		}
-// 	}()
-
-// 	for _, v := range categories {
-// 		resultCategProduct, err := db.Query("INSERT INTO category_product (category_id,product_id) VALUES ($1,$2)", v, ID)
-// 		if err != nil {
-// 			c.JSON(http.StatusBadRequest, gin.H{
-// 				"status":  false,
-// 				"message": err.Error(),
-// 			})
-// 			return
-// 		}
-// 		defer func() {
-// 			if err := resultCategProduct.Close(); err != nil {
-// 				c.JSON(http.StatusBadRequest, gin.H{
-// 					"status":  false,
-// 					"message": err.Error(),
-// 				})
-// 				return
-// 			}
-// 		}()
-// 	}
-
-// 	c.JSON(http.StatusOK, gin.H{
-// 		"status":  true,
-// 		"message": "data successfully updated",
-// 	})
-
-// }
+}
 
 func GetProductByID(c *gin.Context) {
 
