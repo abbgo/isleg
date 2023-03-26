@@ -56,6 +56,12 @@ func FileUpload(fileName, path string, context *gin.Context) (string, error) {
 	}
 
 	newFileName := uuid.New().String() + extensionFile
+	_, err = os.Stat(ServerPath + "uploads/" + path)
+	if err != nil {
+		if err := os.MkdirAll(ServerPath+"uploads/"+path, os.ModePerm); err != nil {
+			return "", err
+		}
+	}
 	if err := context.SaveUploadedFile(file, ServerPath+"uploads/"+path+"/"+newFileName); err != nil {
 		return "", err
 	}

@@ -3,7 +3,6 @@ package models
 import (
 	"errors"
 	"github/abbgo/isleg/isleg-backend/config"
-	"strconv"
 
 	"github.com/google/uuid"
 	"gopkg.in/guregu/null.v4"
@@ -61,7 +60,7 @@ type CategoryProduct struct {
 	DeletedAt  string `json:"-"`
 }
 
-func ValidateProductModel(currentImages []string, benefitStr, productID, brendID, shopID, priceStr, oldPriceStr, amountStr, limitAmountStr, isNewStr string, categories []string) (float64, []Images, string, float64, float64, uint64, uint64, bool, error) {
+func ValidateProductModel(currentImages []string, benefitStr float64, productID, brendID, shopID string, priceStr float64, oldPriceStr float64, amountStr, limitAmountStr uint, isNewStr bool, categories []string) (float64, []Images, string, float64, float64, uint, uint, bool, error) {
 
 	// initialize database connection
 	db, err := config.ConnDB()
@@ -106,144 +105,30 @@ func ValidateProductModel(currentImages []string, benefitStr, productID, brendID
 		}
 	}
 
-	// validate is new
-	isNew, err := strconv.ParseBool(isNewStr)
-	if err != nil {
-		return 0, []Images{}, "", 0, 0, 0, 0, false, err
-	}
-
-	// validate limit amount of product
-	limitAmount, err := strconv.ParseUint(limitAmountStr, 10, 64)
-	if err != nil {
-		return 0, []Images{}, "", 0, 0, 0, 0, false, err
-	}
-
-	// validate amount of product
-	amount, err := strconv.ParseUint(amountStr, 10, 64)
-	if err != nil {
-		return 0, []Images{}, "", 0, 0, 0, 0, false, err
-	}
-
-	if limitAmount > amount {
+	if limitAmountStr > amountStr {
 		return 0, []Images{}, "", 0, 0, 0, 0, false, errors.New("cannot be less than limit_amount amount")
 	}
-
-	// validatr price of product
-	price, err := strconv.ParseFloat(priceStr, 64)
-	if err != nil {
-		return 0, []Images{}, "", 0, 0, 0, 0, false, err
-	}
-	if price < 0 {
+	if priceStr < 0 {
 		return 0, []Images{}, "", 0, 0, 0, 0, false, errors.New("price cannot be less than zero")
 	}
 
-	// validate benefit
-	var benefit float64
-	if benefitStr != "" {
-		benefitt, err := strconv.ParseFloat(benefitStr, 64)
-		if err != nil {
-			return 0, []Images{}, "", 0, 0, 0, 0, false, err
-		}
-		if benefitt < 0 {
-			return 0, []Images{}, "", 0, 0, 0, 0, false, errors.New("benefit cannot be less than zero")
-		}
-		benefit = benefitt
-	} else {
-		benefit = 0
+	if benefitStr < 0 {
+		return 0, []Images{}, "", 0, 0, 0, 0, false, errors.New("benefit cannot be less than zero")
 	}
 
 	// validate old_price
-	var oldPrice float64
-	if oldPriceStr != "" {
-		oldPrice, err = strconv.ParseFloat(oldPriceStr, 64)
-		if err != nil {
-			return 0, []Images{}, "", 0, 0, 0, 0, false, err
+	if oldPriceStr != 0 {
+		if oldPriceStr < 0 {
+			return 0, []Images{}, "", 0, 0, 0, 0, false, errors.New("old price cannot be less than zero")
 		}
 
-		if oldPrice < price {
+		if oldPriceStr < priceStr {
 			return 0, []Images{}, "", 0, 0, 0, 0, false, errors.New("cannot be less than oldPrice Price")
 		}
 
-	} else {
-		oldPrice = 0
-	}
-
-	// validate shop_id
-	if shopID != "" {
-		rowShop, err := db.Query("SELECT id FROM shops WHERE id = $1 AND deleted_at IS NULL", shopID)
-		if err != nil {
-			return 0, []Images{}, "", 0, 0, 0, 0, false, err
-		}
-		defer func() (float64, []Images, string, float64, float64, uint64, uint64, bool, error) {
-			if err := rowShop.Close(); err != nil {
-				return 0, []Images{}, "", 0, 0, 0, 0, false, err
-			}
-			return 0, []Images{}, "", 0, 0, 0, 0, false, nil
-		}()
-
-		var shop_id string
-
-		for rowShop.Next() {
-			if err := rowShop.Scan(&shop_id); err != nil {
-				return 0, []Images{}, "", 0, 0, 0, 0, false, err
-			}
-		}
-
-		if shop_id == "" {
-			return 0, []Images{}, "", 0, 0, 0, 0, false, errors.New("shop not found")
-		}
-	}
-
-	// validate brend_id
-	if brendID != "" {
-		rowBrend, err := db.Query("SELECT id FROM brends WHERE id = $1 AND deleted_at IS NULL", brendID)
-		if err != nil {
-			return 0, []Images{}, "", 0, 0, 0, 0, false, err
-		}
-		defer func() (float64, []Images, string, float64, float64, uint64, uint64, bool, error) {
-			if err := rowBrend.Close(); err != nil {
-				return 0, []Images{}, "", 0, 0, 0, 0, false, err
-			}
-			return 0, []Images{}, "", 0, 0, 0, 0, false, nil
-		}()
-
-		var brend_id string
-
-		for rowBrend.Next() {
-			if err := rowBrend.Scan(&brend_id); err != nil {
-				return 0, []Images{}, "", 0, 0, 0, 0, false, err
-			}
-		}
-
-		if brend_id == "" {
-			return 0, []Images{}, "", 0, 0, 0, 0, false, errors.New("brend not found")
-		}
 	}
 
 	if productID != "" {
-
-		rowProduct, err := db.Query("SELECT id FROM products WHERE id = $1 AND deleted_at IS NULL", productID)
-		if err != nil {
-			return 0, []Images{}, "", 0, 0, 0, 0, false, err
-		}
-		defer func() (float64, []Images, string, float64, float64, uint64, uint64, bool, error) {
-			if err := rowProduct.Close(); err != nil {
-				return 0, []Images{}, "", 0, 0, 0, 0, false, err
-			}
-			return 0, []Images{}, "", 0, 0, 0, 0, false, nil
-		}()
-
-		var id string
-
-		for rowProduct.Next() {
-			if err := rowProduct.Scan(&id); err != nil {
-				return 0, []Images{}, "", 0, 0, 0, 0, false, err
-			}
-		}
-
-		if id == "" {
-			return 0, []Images{}, "", 0, 0, 0, 0, false, errors.New("record not found")
-		}
 
 		rowMainImage, err := db.Query("SELECT main_image FROM products WHERE deleted_at IS NULL AND id = $1", productID)
 		if err != nil {
@@ -304,10 +189,10 @@ func ValidateProductModel(currentImages []string, benefitStr, productID, brendID
 
 		}
 
-		return benefit, images, mainImage, price, oldPrice, amount, limitAmount, isNew, nil
+		return benefitStr, images, mainImage, priceStr, oldPriceStr, amountStr, limitAmountStr, isNewStr, nil
 
 	}
 
-	return benefit, []Images{}, "", price, oldPrice, amount, limitAmount, isNew, nil
+	return benefitStr, []Images{}, "", priceStr, oldPriceStr, amountStr, limitAmountStr, isNewStr, nil
 
 }
