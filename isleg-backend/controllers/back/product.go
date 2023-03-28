@@ -167,7 +167,8 @@ func CreateProductImage(c *gin.Context) {
 		}
 	}()
 
-	// imageType := c.Query("image")
+	var path, file_name string
+	imageType := c.Query("image")
 
 	oldImage := c.PostForm("old_path")
 	if oldImage != "" {
@@ -198,28 +199,30 @@ func CreateProductImage(c *gin.Context) {
 		}()
 	}
 
-	// switch imageType {
-	// case "product":
-	// 	fileName := c.Query("type")
-	// 	if fileName != "main_image" && fileName != "image" {
-	// 		c.JSON(http.StatusNotFound, gin.H{
-	// 			"status":  false,
-	// 			"message": "invalid file name",
-	// 		})
-	// 		return
-	// 	}
-	// }
-
-	fileName := c.Query("type")
-	if fileName != "main_image" && fileName != "image" {
+	switch imageType {
+	case "product":
+		fileName := c.Query("type")
+		if fileName != "main_image" && fileName != "image" {
+			c.JSON(http.StatusNotFound, gin.H{
+				"status":  false,
+				"message": "invalid file name",
+			})
+			return
+		}
+		path = "product/" + fileName
+		file_name = fileName
+	case "category":
+		path = "category"
+		file_name = "image"
+	default:
 		c.JSON(http.StatusNotFound, gin.H{
 			"status":  false,
-			"message": "invalid file name",
+			"message": "invalid image",
 		})
 		return
 	}
 
-	image, err := pkg.FileUpload(fileName, "product/"+fileName, c)
+	image, err := pkg.FileUpload(file_name, path, c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
