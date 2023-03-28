@@ -51,6 +51,24 @@ type ProductForAdmin struct {
 
 func DeleteProductImages(c *gin.Context) {
 
+	db, err := config.ConnDB()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
+
 	var image DeleteImage
 	if err := c.Bind(&image); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -59,13 +77,59 @@ func DeleteProductImages(c *gin.Context) {
 		})
 		return
 	}
-
 	if image.Image == "" {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
 			"message": "path of image is required",
 		})
 		return
+	}
+
+	row, err := db.Query("SELECT id FROM helper_images WHERE image = $1 AND deleted_at IS NULL", image.Image)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer func() {
+		if err := row.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
+	var helperImageID string
+	for row.Next() {
+		if err := row.Scan(&helperImageID); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}
+	if helperImageID != "" {
+		resultHelperImage, err := db.Query("DELETE FROM helper_images WHERE id = $1", helperImageID)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+		defer func() {
+			if err := resultHelperImage.Close(); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}()
 	}
 
 	if err := os.Remove(pkg.ServerPath + image.Image); err != nil {
@@ -103,6 +167,8 @@ func CreateProductImage(c *gin.Context) {
 		}
 	}()
 
+	// imageType := c.Query("image")
+
 	oldImage := c.PostForm("old_path")
 	if oldImage != "" {
 		if err := os.Remove(pkg.ServerPath + oldImage); err != nil {
@@ -131,6 +197,18 @@ func CreateProductImage(c *gin.Context) {
 			}
 		}()
 	}
+
+	// switch imageType {
+	// case "product":
+	// 	fileName := c.Query("type")
+	// 	if fileName != "main_image" && fileName != "image" {
+	// 		c.JSON(http.StatusNotFound, gin.H{
+	// 			"status":  false,
+	// 			"message": "invalid file name",
+	// 		})
+	// 		return
+	// 	}
+	// }
 
 	fileName := c.Query("type")
 	if fileName != "main_image" && fileName != "image" {
