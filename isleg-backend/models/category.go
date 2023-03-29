@@ -29,99 +29,53 @@ type TranslationCategory struct {
 	DeletedAt  string        `json:"-"`
 }
 
-func ValidateCategory(parentCategoryID, fileName string) (string, error) {
+func ValidateCategory(categoryID, parentCategoryID, fileName, metod string) error {
 
 	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
-		return "", err
+		return err
 	}
-	defer func() (string, error) {
+	defer func() error {
 		if err := db.Close(); err != nil {
-			return "", err
+			return err
 		}
-		return "", nil
+		return nil
 	}()
 
-	// validate parentCategoryID
-	if parentCategoryID != "" {
-
-		if fileName != "" {
-			return "", errors.New("child cannot be an image of the category")
-		}
-
-		rowCategory, err := db.Query("SELECT id FROM categories WHERE id = $1 AND deleted_at IS NULL", parentCategoryID)
+	if categoryID != "" { // validate id and get image of category
+		rowCategor, err := db.Query("SELECT id FROM categories WHERE id = $1 AND deleted_at IS NULL", categoryID)
 		if err != nil {
-			return "", err
+			return err
 		}
-		defer func() (string, string, error) {
-			if err := rowCategory.Close(); err != nil {
-				return "", "", err
+		defer func() error {
+			if err := rowCategor.Close(); err != nil {
+				return err
 			}
-			return "", "", nil
+			return nil
 		}()
-		var parentCategory string
-		for rowCategory.Next() {
-			if err := rowCategory.Scan(&parentCategory); err != nil {
-				return "", err
+
+		var category_id string
+
+		for rowCategor.Next() {
+			if err := rowCategor.Scan(&category_id); err != nil {
+				return err
 			}
 		}
 
-		if parentCategory == "" {
-			return "", errors.New("parent category not found")
+		if category_id == "" {
+			return errors.New("category not found")
 		}
-
-		return parentCategory, nil
-	} else {
-		if fileName == "" {
-			return "", errors.New("parent category image is required")
-		}
-	}
-
-	return "", nil
-
-}
-
-func ValidateCategoryForUpdate(categoryID, parentCategoryID string) error {
-
-	// initialize database connection
-	db, err := config.ConnDB()
-	if err != nil {
-		return err
-	}
-	defer func() error {
-		if err := db.Close(); err != nil {
-			return err
-		}
-		return nil
-	}()
-
-	// validate id and get image of category
-	rowCategor, err := db.Query("SELECT id FROM categories WHERE id = $1 AND deleted_at IS NULL", categoryID)
-	if err != nil {
-		return err
-	}
-	defer func() error {
-		if err := rowCategor.Close(); err != nil {
-			return err
-		}
-		return nil
-	}()
-
-	var category_id string
-
-	for rowCategor.Next() {
-		if err := rowCategor.Scan(&category_id); err != nil {
-			return err
-		}
-	}
-
-	if category_id == "" {
-		return errors.New("category not found")
 	}
 
 	// validate parentCategoryID
 	if parentCategoryID != "" {
+
+		if metod == "create" {
+			if fileName != "" {
+				return errors.New("child cannot be an image of the category")
+			}
+		}
 
 		rowCategory, err := db.Query("SELECT id FROM categories WHERE id = $1 AND deleted_at IS NULL", parentCategoryID)
 		if err != nil {
@@ -133,9 +87,7 @@ func ValidateCategoryForUpdate(categoryID, parentCategoryID string) error {
 			}
 			return nil
 		}()
-
 		var parentCategory string
-
 		for rowCategory.Next() {
 			if err := rowCategory.Scan(&parentCategory); err != nil {
 				return err
@@ -147,6 +99,12 @@ func ValidateCategoryForUpdate(categoryID, parentCategoryID string) error {
 		}
 
 		return nil
+	} else {
+		if metod == "create" {
+			if fileName == "" {
+				return errors.New("parent category image is required")
+			}
+		}
 	}
 
 	return nil

@@ -90,8 +90,7 @@ func CreateCategory(c *gin.Context) {
 	var parent_category_id interface{}
 
 	// validate other data of category
-	parentCategoryID, err := models.ValidateCategory(category.ParentCategoryID.String, category.Image)
-	if err != nil {
+	if err := models.ValidateCategory("", category.ParentCategoryID.String, category.Image, "create"); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
 			"message": err.Error(),
@@ -100,8 +99,8 @@ func CreateCategory(c *gin.Context) {
 	}
 
 	// CREATE CATEGORY
-	if parentCategoryID != "" {
-		parent_category_id = parentCategoryID
+	if category.ParentCategoryID.String != "" {
+		parent_category_id = category.ParentCategoryID.String
 	} else {
 		parent_category_id = nil
 	}
@@ -196,7 +195,7 @@ func UpdateCategoryByID(c *gin.Context) {
 	// var fileName string
 	var parent_category_id interface{}
 
-	if err := models.ValidateCategoryForUpdate(ID, category.ParentCategoryID.String); err != nil {
+	if err := models.ValidateCategory(ID, category.ParentCategoryID.String, "", "update"); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
 			"message": err.Error(),
