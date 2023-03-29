@@ -140,6 +140,7 @@ func BackRoutes(back *gin.RouterGroup) {
 		securedAdmin.PUT("category/:id", backController.UpdateCategoryByID)
 		securedAdmin.GET("category/:id", backController.GetCategoryByID)
 		securedAdmin.GET("categories", backController.GetCategories)
+		// GetAllCategory korzina salynan harytlaryn kategoriyalaryny cekmek ucin yazylan funksiya
 		securedAdmin.GET("all-category", backController.GetAllCategory)
 		securedAdmin.GET("deleted-categories", backController.GetDeletedCategories)
 		securedAdmin.DELETE("category/:id", backController.DeleteCategoryByID)
