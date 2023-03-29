@@ -417,7 +417,7 @@ func GetAllCategory(c *gin.Context) {
 	}()
 
 	// get all category where parent category id is null
-	rows, err := db.Query("SELECT categories.id,categories.image,translation_category.name FROM categories LEFT JOIN translation_category ON categories.id=translation_category.category_id WHERE translation_category.lang_id = $1 AND categories.parent_category_id IS NULL", langID)
+	rows, err := db.Query("SELECT c.id,c.image,tc.name FROM categories c LEFT JOIN translation_category tc ON c.id=tc.category_id INNER JOIN category_product cp ON c.id=cp.category_id WHERE tc.lang_id = $1 AND c.parent_category_id IS NULL AND cp.deleted_at IS NOT NULL", langID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -448,7 +448,7 @@ func GetAllCategory(c *gin.Context) {
 		}
 
 		// get all category where parent category id equal category id
-		rowss, err := db.Query("SELECT categories.id,translation_category.name FROM categories LEFT JOIN translation_category ON categories.id=translation_category.category_id WHERE translation_category.lang_id = $1 AND categories.parent_category_id = $2", langID, result.ID)
+		rowss, err := db.Query("SELECT c.id,tc.name FROM categories c LEFT JOIN translation_category tc ON c.id=tc.category_id INNER JOIN category_product cp ON cp.category_id=c.id WHERE tc.lang_id = $1 AND c.parent_category_id = $2 AND cp.deleted_at IS NOT NULL", langID, result.ID)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
