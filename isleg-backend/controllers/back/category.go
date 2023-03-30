@@ -12,6 +12,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	"github.com/gosimple/slug"
 	"gopkg.in/guregu/null.v4"
 )
 
@@ -136,7 +137,7 @@ func CreateCategory(c *gin.Context) {
 
 	// CREATE TRANSLATION CATEGORY
 	for _, v := range category.TranslationCategory {
-		result, err := db.Query("INSERT INTO translation_category (lang_id,category_id,name) VALUES ($1,$2,$3)", v.LangID, categoryID, v.Name)
+		result, err := db.Query("INSERT INTO translation_category (lang_id,category_id,name,slug) VALUES ($1,$2,$3,$4)", v.LangID, categoryID, v.Name, slug.MakeLang(v.Name, "en"))
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
@@ -257,7 +258,7 @@ func UpdateCategoryByID(c *gin.Context) {
 
 	// UPDATE TRANSLATION CATEGORY
 	for _, v := range category.TranslationCategory {
-		resultTRCate, err := db.Query("UPDATE translation_category SET name = $1 WHERE lang_id = $2 AND category_id = $3", v.Name, v.LangID, ID)
+		resultTRCate, err := db.Query("UPDATE translation_category SET name = $1 , slug = $4 WHERE lang_id = $2 AND category_id = $3", v.Name, v.LangID, ID, slug.MakeLang(v.Name, "en"))
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
