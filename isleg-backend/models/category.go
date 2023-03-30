@@ -24,6 +24,7 @@ type TranslationCategory struct {
 	LangID     uuid.NullUUID `json:"lang_id,omitempty" binding:"required"`
 	CategoryID uuid.NullUUID `json:"category_id,omitempty"`
 	Name       string        `json:"name,omitempty" binding:"required"`
+	Slug       string        `json:"slug,omitempty"`
 	CreatedAt  string        `json:"-"`
 	UpdatedAt  string        `json:"-"`
 	DeletedAt  string        `json:"-"`
