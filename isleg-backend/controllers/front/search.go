@@ -125,7 +125,6 @@ func Search(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
 			"message": err.Error(),
-			"yalnys":  "yalnys",
 		})
 		return
 	}

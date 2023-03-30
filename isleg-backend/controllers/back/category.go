@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"database/sql"
+	"fmt"
 	"github/abbgo/isleg/isleg-backend/config"
 	"github/abbgo/isleg/isleg-backend/models"
 	"github/abbgo/isleg/isleg-backend/pkg"
@@ -9,6 +10,7 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -2113,6 +2115,144 @@ func GetOneCategoryWithDeletedProducts(c *gin.Context) {
 		"status":            true,
 		"category":          category,
 		"count_of_products": countOfProducts,
+	})
+
+}
+
+func SearchCategory(c *gin.Context) {
+
+	db, err := config.ConnDB()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
+
+	// GET language id
+	langID, err := GetLangID("tm")
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	incomingsSarch := slug.MakeLang(c.Query("search"), "en")
+	search := strings.ReplaceAll(incomingsSarch, "-", " | ")
+	searchStr := fmt.Sprintf("%%%s%%", search)
+
+	rowsCategory, err := db.Query("SELECT DISTINCT ON (c.created_at) c.id,c.image,tc.name FROM categories c inner join translation_category tc on tc.category_id = c.id WHERE to_tsvector(tc.slug) @@ to_tsquery($1) OR tc.slug LIKE $3 AND tc.lang_id = $2 AND tc.deleted_at IS NULL AND c.deleted_at IS NULL ORDER BY c.created_at ASC", search, langID, searchStr)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+			"yalnys":  "yalnys",
+		})
+		return
+	}
+	defer func() {
+		if err := rowsCategory.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
+
+	var categories []ResultCategory
+
+	for rowsCategory.Next() {
+		var category ResultCategory
+		if err := rowsCategory.Scan(&category.ID, &category.Name, &category.Name); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+
+		rowss, err := db.Query("SELECT c.id,tc.name FROM categories c LEFT JOIN translation_category tc ON c.id=tc.category_id WHERE tc.lang_id = $1 AND c.parent_category_id = $2 AND c.deleted_at IS NULL", langID, category.ID)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+		defer func() {
+			if err := rowss.Close(); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}()
+		var resuls []ResultCategor
+		for rowss.Next() {
+			var resul ResultCategor
+			if err := rowss.Scan(&resul.ID, &resul.Name); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+
+			rowsss, err := db.Query("SELECT c.id,tc.name FROM categories c LEFT JOIN translation_category tc ON c.id=tc.category_id WHERE tc.lang_id = $1 AND c.parent_category_id =$2 AND c.deleted_at IS NOT NULL", langID, resul.ID)
+			if err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+			defer func() {
+				if err := rowsss.Close(); err != nil {
+					c.JSON(http.StatusBadRequest, gin.H{
+						"status":  false,
+						"message": err.Error(),
+					})
+					return
+				}
+			}()
+			var resus []ResultCatego
+			for rowsss.Next() {
+				var resu ResultCatego
+				if err := rowsss.Scan(&resu.ID, &resu.Name); err != nil {
+					c.JSON(http.StatusBadRequest, gin.H{
+						"status":  false,
+						"message": err.Error(),
+					})
+					return
+				}
+
+				resus = append(resus, resu)
+			}
+			resul.ResultCatego = resus
+			resuls = append(resuls, resul)
+		}
+		category.ResultCategor = resuls
+		categories = append(categories, category)
+
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":     true,
+		"categories": categories,
 	})
 
 }
