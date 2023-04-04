@@ -776,7 +776,7 @@ func GetAllCategoryForHeader(langID string) ([]ResultCategory, error) {
 		}
 
 		// get all category where parent category id equal category id
-		rowss, err := db.Query("SELECT categories.id,translation_category.name FROM categories LEFT JOIN translation_category ON categories.id=translation_category.category_id WHERE translation_category.lang_id = $1 AND categories.parent_category_id = $2 AND translation_category.deleted_at IS NULL AND categories.deleted_at IS NULL", langID, result.ID)
+		rowss, err := db.Query("SELECT categories.id,translation_category.name FROM categories LEFT JOIN translation_category ON categories.id=translation_category.category_id WHERE translation_category.lang_id = $1 AND categories.parent_category_id = $2 AND translation_category.deleted_at IS NULL AND categories.deleted_at IS NULL ORDER BY categories.created_at DESC", langID, result.ID)
 		if err != nil {
 			return []ResultCategory{}, err
 		}
@@ -796,7 +796,7 @@ func GetAllCategoryForHeader(langID string) ([]ResultCategory, error) {
 			}
 
 			// get all category where parent category id equal category id
-			rowsss, err := db.Query("SELECT categories.id,translation_category.name FROM categories LEFT JOIN translation_category ON categories.id=translation_category.category_id WHERE translation_category.lang_id = $1 AND categories.parent_category_id =$2 AND translation_category.deleted_at IS NULL AND categories.deleted_at IS NULL", langID, resul.ID)
+			rowsss, err := db.Query("SELECT categories.id,translation_category.name FROM categories LEFT JOIN translation_category ON categories.id=translation_category.category_id WHERE translation_category.lang_id = $1 AND categories.parent_category_id =$2 AND translation_category.deleted_at IS NULL AND categories.deleted_at IS NULL ORDER BY categories.created_at DESC", langID, resul.ID)
 			if err != nil {
 				return []ResultCategory{}, err
 			}
