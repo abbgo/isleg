@@ -280,8 +280,21 @@ func UpdateCategoryByID(c *gin.Context) {
 		}
 	}()
 
+	langID, err := GetLangID("tm")
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	var nameTm string
+
 	// UPDATE TRANSLATION CATEGORY
 	for _, v := range category.TranslationCategory {
+		if langID == v.LangID.UUID.String() {
+			nameTm = v.Name
+		}
 		resultTRCate, err := db.Query("UPDATE translation_category SET name = $1 , slug = $4 WHERE lang_id = $2 AND category_id = $3", v.Name, v.LangID, ID, slug.MakeLang(v.Name, "en"))
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
@@ -299,6 +312,15 @@ func UpdateCategoryByID(c *gin.Context) {
 				return
 			}
 		}()
+	}
+
+	if parent_category_id != "" {
+		c.JSON(http.StatusOK, gin.H{
+			"status": true,
+			"id":     ID,
+			"name":   nameTm,
+		})
+		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{
