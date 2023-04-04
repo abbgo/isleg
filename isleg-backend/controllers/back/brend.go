@@ -89,9 +89,11 @@ func UpdateBrendByID(c *gin.Context) {
 	// get id from reequest parameter
 	ID := c.Param("id")
 
-	// get data from request
-	name := c.PostForm("name")
-	var fileName string
+	var brend models.Brend
+	if err := c.BindJSON(&brend); err != nil {
+		c.JSON(http.StatusBadRequest, err.Error())
+		return
+	}
 
 	// check id and get image of brend
 	rowBrend, err := db.Query("SELECT id,image FROM brends WHERE id = $1 AND deleted_at IS NULL", ID)
@@ -111,9 +113,7 @@ func UpdateBrendByID(c *gin.Context) {
 			return
 		}
 	}()
-
 	var image, brendID string
-
 	for rowBrend.Next() {
 		if err := rowBrend.Scan(&brendID, &image); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
@@ -123,7 +123,6 @@ func UpdateBrendByID(c *gin.Context) {
 			return
 		}
 	}
-
 	if brendID == "" {
 		c.JSON(http.StatusNotFound, gin.H{
 			"status":  false,
@@ -132,26 +131,15 @@ func UpdateBrendByID(c *gin.Context) {
 		return
 	}
 
-	// validate data
-	if name == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": "name of brend is required",
-		})
-		return
-	}
-
-	fileName, err = pkg.FileUploadForUpdate("image", "brend", image, c)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
+	var fileName string
+	if brend.Image == "" {
+		fileName = image
+	} else {
+		fileName = brend.Image
 	}
 
 	// update data
-	resultBrend, err := db.Query("UPDATE brends SET name = $1 , image = $2 WHERE id = $3", name, fileName, ID)
+	resultBrend, err := db.Query("UPDATE brends SET name = $1 , image = $2 WHERE id = $3", brend.Name, fileName, ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
