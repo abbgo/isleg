@@ -137,8 +137,21 @@ func CreateCategory(c *gin.Context) {
 		}
 	}
 
+	langID, err := GetLangID("tm")
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	var nameTm string
+
 	// CREATE TRANSLATION CATEGORY
 	for _, v := range category.TranslationCategory {
+		if langID == v.LangID.UUID.String() {
+			nameTm = v.Name
+		}
 		result, err := db.Query("INSERT INTO translation_category (lang_id,category_id,name,slug) VALUES ($1,$2,$3,$4)", v.LangID, categoryID, v.Name, slug.MakeLang(v.Name, "en"))
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
@@ -156,6 +169,15 @@ func CreateCategory(c *gin.Context) {
 				return
 			}
 		}()
+	}
+
+	if parent_category_id != "" {
+		c.JSON(http.StatusOK, gin.H{
+			"status": true,
+			"id":     categoryID,
+			"name":   nameTm,
+		})
+		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{
