@@ -33,30 +33,14 @@ func CreateBrend(c *gin.Context) {
 		}
 	}()
 
-	// GET DATA FROM REQUEST
-	name := c.PostForm("name")
-
-	// VALIDATE DATA
-	if name == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": "brend name is required",
-		})
-		return
-	}
-
-	// FILE UPLOAD
-	newFileName, err := pkg.FileUpload("image", "brend", c)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+	var brend models.Brend
+	if err := c.BindJSON(&brend); err != nil {
+		c.JSON(http.StatusBadRequest, err.Error())
 		return
 	}
 
 	// CREATE BREND
-	result, err := db.Query("INSERT INTO brends (name,image) VALUES ($1,$2)", name, newFileName)
+	result, err := db.Query("INSERT INTO brends (name,image) VALUES ($1,$2)", brend.Name, brend.Image)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
