@@ -756,7 +756,7 @@ func GetAllCategoryForHeader(langID string) ([]ResultCategory, error) {
 	}()
 
 	// get all category where parent category id is null
-	rows, err := db.Query("SELECT categories.id,categories.image,translation_category.name FROM categories LEFT JOIN translation_category ON categories.id=translation_category.category_id WHERE translation_category.lang_id = $1 AND categories.parent_category_id IS NULL AND translation_category.deleted_at IS NULL AND categories.deleted_at IS NULL", langID)
+	rows, err := db.Query("SELECT categories.id,categories.image,translation_category.name FROM categories LEFT JOIN translation_category ON categories.id=translation_category.category_id WHERE translation_category.lang_id = $1 AND categories.parent_category_id IS NULL AND translation_category.deleted_at IS NULL AND categories.deleted_at IS NULL ORDER BY categories.created_at DESC", langID)
 	if err != nil {
 		return []ResultCategory{}, err
 	}
