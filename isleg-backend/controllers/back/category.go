@@ -2197,7 +2197,7 @@ func SearchCategory(c *gin.Context) {
 	search := strings.ReplaceAll(incomingsSarch, "-", " | ")
 	searchStr := fmt.Sprintf("%%%s%%", search)
 
-	rowsCategory, err := db.Query("SELECT DISTINCT ON (c.created_at) c.id,c.image,tc.name FROM categories c inner join translation_category tc on tc.category_id = c.id WHERE to_tsvector(tc.slug) @@ to_tsquery($1) OR tc.slug LIKE $3 AND tc.lang_id = $2 AND tc.deleted_at IS NULL AND c.deleted_at IS NULL ORDER BY c.created_at ASC", search, langID, searchStr)
+	rowsCategory, err := db.Query("SELECT DISTINCT ON (c.created_at) c.id,c.image,tc.name FROM categories c inner join translation_category tc on tc.category_id = c.id WHERE to_tsvector(tc.slug) @@ to_tsquery($1) OR tc.slug LIKE $3 AND tc.lang_id = $2 AND tc.deleted_at IS NULL AND c.deleted_at IS NULL ORDER BY c.created_at DESC", search, langID, searchStr)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -2228,7 +2228,7 @@ func SearchCategory(c *gin.Context) {
 			return
 		}
 
-		rowss, err := db.Query("SELECT c.id,tc.name FROM categories c LEFT JOIN translation_category tc ON c.id=tc.category_id WHERE tc.lang_id = $1 AND c.parent_category_id = $2 AND c.deleted_at IS NULL", langID, category.ID)
+		rowss, err := db.Query("SELECT c.id,tc.name FROM categories c LEFT JOIN translation_category tc ON c.id=tc.category_id WHERE tc.lang_id = $1 AND c.parent_category_id = $2 AND c.deleted_at IS NULL ORDER BY c.created_at DESC", langID, category.ID)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
@@ -2256,7 +2256,7 @@ func SearchCategory(c *gin.Context) {
 				return
 			}
 
-			rowsss, err := db.Query("SELECT c.id,tc.name FROM categories c LEFT JOIN translation_category tc ON c.id=tc.category_id WHERE tc.lang_id = $1 AND c.parent_category_id =$2 AND c.deleted_at IS NOT NULL", langID, resul.ID)
+			rowsss, err := db.Query("SELECT c.id,tc.name FROM categories c LEFT JOIN translation_category tc ON c.id=tc.category_id WHERE tc.lang_id = $1 AND c.parent_category_id =$2 AND c.deleted_at IS NOT NULL ORDER BY c.created_at DESC", langID, resul.ID)
 			if err != nil {
 				c.JSON(http.StatusBadRequest, gin.H{
 					"status":  false,
