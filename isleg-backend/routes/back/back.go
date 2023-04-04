@@ -147,7 +147,7 @@ func BackRoutes(back *gin.RouterGroup) {
 		securedAdmin.GET("restore-category/:id", backController.RestoreCategoryByID)
 		securedAdmin.DELETE("delete-category/:id", backController.DeletePermanentlyCategoryByID)
 		// SearchCategory funksiya dil boyunca gozlenilen kategoriyalary getirip beryar
-		securedAdmin.GET("search-product", backController.SearchCategory)
+		securedAdmin.GET("search-category", backController.SearchCategory)
 		// Gutaryar --- kategoriya ucin CRUD
 
 		// Baslayar --- brend ucin CRUD
