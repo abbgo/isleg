@@ -256,7 +256,7 @@ func GetBrends(c *gin.Context) {
 	}()
 
 	// get data from database
-	rowBrends, err := db.Query("SELECT id,name FROM brends WHERE deleted_at IS NULL")
+	rowBrends, err := db.Query("SELECT id,name FROM brends WHERE deleted_at IS NULL ORDER BY created_at DESC")
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
