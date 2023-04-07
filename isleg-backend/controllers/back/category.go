@@ -742,7 +742,7 @@ func GetDeletedCategories(c *gin.Context) {
 	}()
 
 	// get all category where parent category id is null
-	rows, err := db.Query("SELECT categories.id,categories.image,translation_category.name FROM categories LEFT JOIN translation_category ON categories.id=translation_category.category_id WHERE translation_category.lang_id = $1 AND categories.parent_category_id IS NULL AND categories.deleted_at IS NOT NULL ORDER BY categories.deleted_at DESC", langID)
+	rows, err := db.Query("SELECT c.id,c.image,tc.name FROM categories c LEFT JOIN translation_category tc ON c.id=tc.category_id WHERE tc.lang_id = $1 AND c.deleted_at IS NOT NULL ORDER BY c.deleted_at DESC", langID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -773,7 +773,7 @@ func GetDeletedCategories(c *gin.Context) {
 		}
 
 		// get all category where parent category id equal category id
-		rowss, err := db.Query("SELECT categories.id,translation_category.name FROM categories LEFT JOIN translation_category ON categories.id=translation_category.category_id WHERE translation_category.lang_id = $1 AND categories.parent_category_id = $2 AND categories.deleted_at IS NOT NULL ORDER BY categories.deleted_at DESC", langID, result.ID)
+		rowss, err := db.Query("SELECT c.id,tc.name FROM categories c LEFT JOIN translation_category tc ON c.id=tc.category_id WHERE tc.lang_id = $1 AND c.parent_category_id = $2 AND c.deleted_at IS NOT NULL ORDER BY c.deleted_at DESC", langID, result.ID)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
@@ -804,7 +804,7 @@ func GetDeletedCategories(c *gin.Context) {
 			}
 
 			// get all category where parent category id equal category id
-			rowsss, err := db.Query("SELECT categories.id,translation_category.name FROM categories LEFT JOIN translation_category ON categories.id=translation_category.category_id WHERE translation_category.lang_id = $1 AND categories.parent_category_id =$2 AND categories.deleted_at IS NOT NULL ORDER BY categories.deleted_at DESC", langID, resul.ID)
+			rowsss, err := db.Query("SELECT c.id,tc.name FROM categories c LEFT JOIN translation_category tc ON c.id=tc.category_id WHERE tc.lang_id = $1 AND c.parent_category_id =$2 AND c.deleted_at IS NOT NULL ORDER BY c.deleted_at DESC", langID, resul.ID)
 			if err != nil {
 				c.JSON(http.StatusBadRequest, gin.H{
 					"status":  false,
