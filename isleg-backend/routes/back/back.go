@@ -139,6 +139,8 @@ func BackRoutes(back *gin.RouterGroup) {
 		securedAdmin.POST("category", backController.CreateCategory)
 		securedAdmin.PUT("category/:id", backController.UpdateCategoryByID)
 		securedAdmin.GET("category/:id", backController.GetCategoryByID)
+		// GetCategoryByIDWithChild funksiya bir kategoriyany cagalary bilen bile almak ucin ulanylyar
+		securedAdmin.GET("category-with-child/:id", backController.GetCategoryByIDWithChild)
 		securedAdmin.GET("categories", backController.GetCategories)
 		// GetAllCategory korzina salynan harytlaryn kategoriyalaryny cekmek ucin yazylan funksiya
 		securedAdmin.GET("all-category", backController.GetAllCategory)

@@ -434,6 +434,144 @@ func GetCategoryByID(c *gin.Context) {
 
 }
 
+func GetCategoryByIDWithChild(c *gin.Context) {
+
+	langID, err := GetLangID("tm")
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	db, err := config.ConnDB()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
+
+	ID := c.Param("id")
+
+	// get all category where parent category id is null
+	rows, err := db.Query("SELECT c.id,c.image,tc.name FROM categories c LEFT JOIN translation_category tc ON c.id=tc.category_id WHERE tc.lang_id = $1 AND c.id = $2 AND c.parent_category_id IS NULL AND c.deleted_at IS NULL AND tc.deleted_at IS NULL ORDER BY c.created_at DESC", langID, ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer func() {
+		if err := rows.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
+	var result ResultCategory
+	for rows.Next() {
+		if err := rows.Scan(&result.ID, &result.Image, &result.Name); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+		fmt.Println(result)
+
+		// get all category where parent category id equal category id
+		rowss, err := db.Query("SELECT c.id,tc.name FROM categories c LEFT JOIN translation_category tc ON c.id=tc.category_id WHERE tc.lang_id = $1 AND c.parent_category_id = $2 AND c.deleted_at IS NULL AND tc.deleted_at IS NULL ORDER BY c.created_at DESC", langID, result.ID)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+		defer func() {
+			if err := rowss.Close(); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}()
+
+		var resuls []ResultCategor
+
+		for rowss.Next() {
+			var resul ResultCategor
+			if err := rowss.Scan(&resul.ID, &resul.Name); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+
+			// get all category where parent category id equal category id
+			rowsss, err := db.Query("SELECT c.id,tc.name FROM categories c LEFT JOIN translation_category tc ON c.id=tc.category_id WHERE tc.lang_id = $1 AND c.parent_category_id =$2 AND c.deleted_at IS NULL AND tc.deleted_at IS NULL ORDER BY c.created_at DESC", langID, resul.ID)
+			if err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+			defer func() {
+				if err := rowsss.Close(); err != nil {
+					c.JSON(http.StatusBadRequest, gin.H{
+						"status":  false,
+						"message": err.Error(),
+					})
+					return
+				}
+			}()
+
+			var resus []ResultCatego
+
+			for rowsss.Next() {
+				var resu ResultCatego
+				if err := rowsss.Scan(&resu.ID, &resu.Name); err != nil {
+					c.JSON(http.StatusBadRequest, gin.H{
+						"status":  false,
+						"message": err.Error(),
+					})
+					return
+				}
+
+				resus = append(resus, resu)
+			}
+			resul.ResultCatego = resus
+
+			resuls = append(resuls, resul)
+		}
+		result.ResultCategor = resuls
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":   true,
+		"category": result,
+	})
+
+}
+
 func GetAllCategory(c *gin.Context) {
 
 	langID, err := GetLangID("tm")
