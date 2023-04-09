@@ -905,7 +905,7 @@ func GetAllCategoryForHeader(langID, search, searchStr string) ([]ResultCategory
 	if search == "" {
 		rows, err = db.Query("SELECT c.id,c.image,tc.name FROM categories c LEFT JOIN translation_category tc ON c.id=tc.category_id WHERE tc.lang_id = $1 AND tc.deleted_at IS NULL AND c.deleted_at IS NULL ORDER BY c.created_at DESC", langID)
 	} else {
-		rows, err = db.Query("SELECT DISTINCT ON (c.id) c.id,c.image,tc.name FROM categories c LEFT JOIN translation_category tc ON c.id=tc.category_id WHERE to_tsvector(tc.slug) @@ to_tsquery($2) OR tc.slug LIKE $3 AND tc.lang_id = $1 AND tc.deleted_at IS NULL AND c.deleted_at IS NULL ORDER BY c.created_at DESC", langID, search, searchStr)
+		rows, err = db.Query("SELECT DISTINCT ON (c.id,c.created_at) c.id,c.image,tc.name FROM categories c LEFT JOIN translation_category tc ON c.id=tc.category_id WHERE to_tsvector(tc.slug) @@ to_tsquery($2) OR tc.slug LIKE $3 AND tc.lang_id = $1 AND tc.deleted_at IS NULL AND c.deleted_at IS NULL ORDER BY c.created_at DESC", langID, search, searchStr)
 	}
 	if err != nil {
 		return []ResultCategory{}, err
