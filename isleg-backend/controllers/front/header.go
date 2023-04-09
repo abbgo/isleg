@@ -62,7 +62,7 @@ func GetHeaderData(c *gin.Context) {
 	}
 
 	// get all category from category controller
-	categories, err := backController.GetAllCategoryForHeader(langID, "", "")
+	categories, _, err := backController.GetAllCategoryForHeader(langID, "", "", 0, 0)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,

@@ -870,8 +870,36 @@ func GetCategories(c *gin.Context) {
 		searchStr = fmt.Sprintf("%%%s%%", search)
 	}
 
+	// get limit from param
+	limitStr := c.Param("limit")
+	var limit uint64
+	if limitStr != "" {
+		limit, err = strconv.ParseUint(limitStr, 10, 64)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}
+
+	// get page from param
+	pageStr := c.Param("page")
+	var page uint64
+	if pageStr != "" {
+		page, err = strconv.ParseUint(pageStr, 10, 64)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}
+
 	// get all category from category controller
-	categories, err := GetAllCategoryForHeader(langID, search, searchStr)
+	categories, countOfCatagories, err := GetAllCategoryForHeader(langID, search, searchStr, uint(limit), uint(page))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -883,58 +911,93 @@ func GetCategories(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"status":     true,
 		"categories": categories,
+		"total":      countOfCatagories,
 	})
 
 }
 
-func GetAllCategoryForHeader(langID, search, searchStr string) ([]ResultCategory, error) {
+func GetAllCategoryForHeader(langID, search, searchStr string, limit, page uint) ([]ResultCategory, uint, error) {
 
 	db, err := config.ConnDB()
 	if err != nil {
-		return []ResultCategory{}, err
+		return []ResultCategory{}, 0, err
 	}
-	defer func() ([]ResultCategory, error) {
+	defer func() ([]ResultCategory, uint, error) {
 		if err := db.Close(); err != nil {
-			return []ResultCategory{}, err
+			return []ResultCategory{}, 0, err
 		}
-		return []ResultCategory{}, nil
+		return []ResultCategory{}, 0, nil
 	}()
 
-	// get all category where parent category id is null
-	var rows *sql.Rows
-	if search == "" {
-		rows, err = db.Query("SELECT c.id,c.image,tc.name FROM categories c LEFT JOIN translation_category tc ON c.id=tc.category_id WHERE tc.lang_id = $1 AND tc.deleted_at IS NULL AND c.deleted_at IS NULL ORDER BY c.created_at DESC", langID)
+	var countOfCategories uint
+	var offset interface{}
+	if limit != 0 && page != 0 {
+		offset = limit * (page - 1)
 	} else {
-		rows, err = db.Query("SELECT DISTINCT ON (c.id,c.created_at) c.id,c.image,tc.name FROM categories c LEFT JOIN translation_category tc ON c.id=tc.category_id WHERE to_tsvector(tc.slug) @@ to_tsquery($2) OR tc.slug LIKE $3 AND tc.lang_id = $1 AND tc.deleted_at IS NULL AND c.deleted_at IS NULL ORDER BY c.created_at DESC", langID, search, searchStr)
+		offset = nil
 	}
-	if err != nil {
-		return []ResultCategory{}, err
-	}
-	defer func() ([]ResultCategory, error) {
-		if err := rows.Close(); err != nil {
-			return []ResultCategory{}, err
+
+	// get all category where parent category id is null
+	var rows, rowsCount *sql.Rows
+	if search == "" {
+		if offset != nil {
+			rowsCount, err = db.Query("SELECT COUNT(*) FROM categories c LEFT JOIN translation_category tc ON c.id=tc.category_id WHERE tc.lang_id = $1 AND c.parent_category_id IS NULL AND tc.deleted_at IS NULL AND c.deleted_at IS NULL", langID)
+			if err != nil {
+				return []ResultCategory{}, 0, err
+			}
 		}
-		return []ResultCategory{}, nil
+
+		rows, err = db.Query("SELECT c.id,c.image,tc.name FROM categories c LEFT JOIN translation_category tc ON c.id=tc.category_id WHERE tc.lang_id = $1 AND c.parent_category_id IS NULL AND tc.deleted_at IS NULL AND c.deleted_at IS NULL ORDER BY c.created_at DESC", langID)
+		if err != nil {
+			return []ResultCategory{}, 0, err
+		}
+	} else {
+		if offset != nil {
+			rowsCount, err = db.Query("SELECT COUNT(DISTINCT(c.id)) FROM categories c LEFT JOIN translation_category tc ON c.id=tc.category_id WHERE to_tsvector(tc.slug) @@ to_tsquery($2) OR tc.slug LIKE $3 AND tc.lang_id = $1 AND c.parent_category_id IS NULL AND tc.deleted_at IS NULL AND c.deleted_at IS NULL", langID, search, searchStr)
+			if err != nil {
+				return []ResultCategory{}, 0, err
+			}
+		}
+
+		rows, err = db.Query("SELECT DISTINCT ON (c.id,c.created_at) c.id,c.image,tc.name FROM categories c LEFT JOIN translation_category tc ON c.id=tc.category_id WHERE to_tsvector(tc.slug) @@ to_tsquery($2) OR tc.slug LIKE $3 AND tc.lang_id = $1 AND c.parent_category_id IS NULL AND tc.deleted_at IS NULL AND c.deleted_at IS NULL ORDER BY c.created_at DESC", langID, search, searchStr)
+		if err != nil {
+			return []ResultCategory{}, 0, err
+		}
+	}
+	defer func() ([]ResultCategory, uint, error) {
+		if err := rows.Close(); err != nil {
+			return []ResultCategory{}, 0, err
+		}
+		return []ResultCategory{}, 0, nil
 	}()
+
+	if offset != nil {
+		defer func() ([]ResultCategory, uint, error) {
+			if err := rowsCount.Close(); err != nil {
+				return []ResultCategory{}, 0, err
+			}
+			return []ResultCategory{}, 0, nil
+		}()
+	}
 
 	var results []ResultCategory
 
 	for rows.Next() {
 		var result ResultCategory
 		if err := rows.Scan(&result.ID, &result.Image, &result.Name); err != nil {
-			return []ResultCategory{}, err
+			return []ResultCategory{}, 0, err
 		}
 
 		// get all category where parent category id equal category id
 		rowss, err := db.Query("SELECT c.id,tc.name FROM categories c LEFT JOIN translation_category tc ON c.id=tc.category_id WHERE tc.lang_id = $1 AND c.parent_category_id = $2 AND tc.deleted_at IS NULL AND c.deleted_at IS NULL ORDER BY c.created_at DESC", langID, result.ID)
 		if err != nil {
-			return []ResultCategory{}, err
+			return []ResultCategory{}, 0, err
 		}
-		defer func() ([]ResultCategory, error) {
+		defer func() ([]ResultCategory, uint, error) {
 			if err := rowss.Close(); err != nil {
-				return []ResultCategory{}, err
+				return []ResultCategory{}, 0, err
 			}
-			return []ResultCategory{}, nil
+			return []ResultCategory{}, 0, nil
 		}()
 
 		var resuls []ResultCategor
@@ -942,19 +1005,19 @@ func GetAllCategoryForHeader(langID, search, searchStr string) ([]ResultCategory
 		for rowss.Next() {
 			var resul ResultCategor
 			if err := rowss.Scan(&resul.ID, &resul.Name); err != nil {
-				return []ResultCategory{}, err
+				return []ResultCategory{}, 0, err
 			}
 
 			// get all category where parent category id equal category id
 			rowsss, err := db.Query("SELECT c.id,tc.name FROM categories c LEFT JOIN translation_category tc ON c.id=tc.category_id WHERE tc.lang_id = $1 AND c.parent_category_id =$2 AND tc.deleted_at IS NULL AND c.deleted_at IS NULL ORDER BY c.created_at DESC", langID, resul.ID)
 			if err != nil {
-				return []ResultCategory{}, err
+				return []ResultCategory{}, 0, err
 			}
-			defer func() ([]ResultCategory, error) {
+			defer func() ([]ResultCategory, uint, error) {
 				if err := rowsss.Close(); err != nil {
-					return []ResultCategory{}, err
+					return []ResultCategory{}, 0, err
 				}
-				return []ResultCategory{}, nil
+				return []ResultCategory{}, 0, nil
 			}()
 
 			var resus []ResultCatego
@@ -962,7 +1025,7 @@ func GetAllCategoryForHeader(langID, search, searchStr string) ([]ResultCategory
 			for rowsss.Next() {
 				var resu ResultCatego
 				if err := rowsss.Scan(&resu.ID, &resu.Name); err != nil {
-					return []ResultCategory{}, err
+					return []ResultCategory{}, 0, err
 				}
 
 				resus = append(resus, resu)
@@ -975,7 +1038,18 @@ func GetAllCategoryForHeader(langID, search, searchStr string) ([]ResultCategory
 
 		results = append(results, result)
 	}
-	return results, nil
+
+	if offset != nil {
+		for rowsCount.Next() {
+			if err := rowsCount.Scan(&countOfCategories); err != nil {
+				if err != nil {
+					return []ResultCategory{}, 0, err
+				}
+			}
+		}
+	}
+
+	return results, countOfCategories, nil
 
 }
 
