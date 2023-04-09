@@ -297,6 +297,69 @@ func GetBrends(c *gin.Context) {
 
 }
 
+func GetDeletedBrends(c *gin.Context) {
+
+	// initialize database connection
+	db, err := config.ConnDB()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
+
+	// get data from database
+	rowBrends, err := db.Query("SELECT id,name FROM brends WHERE deleted_at IS NOT NULL ORDER BY created_at DESC")
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer func() {
+		if err := rowBrends.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
+
+	var brends []models.Brend
+
+	for rowBrends.Next() {
+		var brend models.Brend
+
+		if err := rowBrends.Scan(&brend.ID, &brend.Name); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+
+		brends = append(brends, brend)
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status": true,
+		"brends": brends,
+	})
+
+}
+
 func DeleteBrendByID(c *gin.Context) {
 
 	// initialize database connection
