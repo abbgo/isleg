@@ -214,6 +214,9 @@ func CreateProductImage(c *gin.Context) {
 	case "category":
 		path = "category"
 		file_name = "image"
+	case "brend":
+		path = "brend"
+		file_name = "image"
 	default:
 		c.JSON(http.StatusNotFound, gin.H{
 			"status":  false,
