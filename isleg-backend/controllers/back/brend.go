@@ -255,8 +255,75 @@ func GetBrends(c *gin.Context) {
 		}
 	}()
 
+	// get limit from param
+	limitStr := c.Param("limit")
+	if limitStr == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "limit is required",
+		})
+		return
+	}
+	limit, err := strconv.ParseUint(limitStr, 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	// get page from param
+	pageStr := c.Param("page")
+	if pageStr == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "page is required",
+		})
+		return
+	}
+	page, err := strconv.ParseUint(pageStr, 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	offset := limit * (page - 1)
+	var countOfBrends uint
+
 	// get data from database
-	rowBrends, err := db.Query("SELECT id,name,image FROM brends WHERE deleted_at IS NULL ORDER BY created_at DESC")
+	countBrends, err := db.Query("SELECT COUNT(id) FROM brends WHERE deleted_at IS NULL")
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer func() {
+		if err := countBrends.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
+	for countBrends.Next() {
+		if err := countBrends.Scan(&countOfBrends); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}
+
+	// get data from database
+	rowBrends, err := db.Query("SELECT id,name,image FROM brends WHERE deleted_at IS NULL ORDER BY created_at DESC LIMIT $1 OFFSET $2", limit, offset)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -293,6 +360,7 @@ func GetBrends(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"status": true,
 		"brends": brends,
+		"total":  countOfBrends,
 	})
 
 }
