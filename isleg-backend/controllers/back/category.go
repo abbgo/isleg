@@ -916,6 +916,33 @@ func GetCategories(c *gin.Context) {
 
 }
 
+func GetCategoriesForAdmin(c *gin.Context) {
+
+	langID, err := GetLangID("tm")
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	categories, _, err := GetAllCategoryForHeader(langID, "", "", 0, 0)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":     true,
+		"categories": categories,
+	})
+
+}
+
 func GetAllCategoryForHeader(langID, search, searchStr string, limit, page uint) ([]ResultCategory, uint, error) {
 
 	db, err := config.ConnDB()

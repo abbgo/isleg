@@ -142,6 +142,7 @@ func BackRoutes(back *gin.RouterGroup) {
 		// GetCategoryByIDWithChild funksiya bir kategoriyany cagalary bilen bile almak ucin ulanylyar
 		securedAdmin.GET("category-with-child/:id", backController.GetCategoryByIDWithChild)
 		securedAdmin.GET("categories/:limit/:page", backController.GetCategories)
+		securedAdmin.GET("categories", backController.GetCategoriesForAdmin)
 		// GetAllCategory korzina salynan harytlaryn kategoriyalaryny cekmek ucin yazylan funksiya
 		securedAdmin.GET("all-category", backController.GetAllCategory)
 		securedAdmin.GET("deleted-categories", backController.GetDeletedCategories)
