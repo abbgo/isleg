@@ -54,7 +54,7 @@ func CreateBanner(c *gin.Context) {
 	}
 
 	// FILE UPLOAD
-	newFileName, err := pkg.FileUpload("image", "banner", c)
+	newFileName, err := pkg.FileUpload("image", "banner", "image", c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,

@@ -230,7 +230,7 @@ func CreateProductImage(c *gin.Context) {
 		return
 	}
 
-	image, err := pkg.FileUpload(file_name, path, c)
+	image, err := pkg.FileUpload(file_name, path, "image", c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -475,7 +475,7 @@ func CreateProductsByExcelFile(c *gin.Context) {
 	}()
 
 	// OPEN EXCEL FILE
-	f, err := excelize.OpenFile(pkg.ServerPath + "uploads/products.xlsx")
+	f, err := excelize.OpenFile(pkg.ServerPath + "uploads/product/products.xlsx")
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -1093,6 +1093,22 @@ func CreateProductsByExcelFile(c *gin.Context) {
 		"message": "data successfully added",
 	})
 
+}
+
+func UploadExcelFile(c *gin.Context) {
+	excel, err := pkg.FileUpload("products", "product", "excel", c)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":  true,
+		"message": excel + " file successfully uploaded",
+	})
 }
 
 func UpdateProductByID(c *gin.Context) {

@@ -46,7 +46,7 @@ func CreateLanguage(c *gin.Context) {
 	}
 
 	// upload image of language
-	newFileName, err := pkg.FileUpload("flag", "language", c)
+	newFileName, err := pkg.FileUpload("flag", "language", "image", c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,

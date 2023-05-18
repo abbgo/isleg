@@ -41,7 +41,7 @@ func MultipartFileUpload(nameUploadedFile, path string, context *gin.Context) ([
 }
 
 // File upload
-func FileUpload(fileName, path string, context *gin.Context) (string, error) {
+func FileUpload(fileName, path, fileType string, context *gin.Context) (string, error) {
 
 	file, err := context.FormFile(fileName)
 	if err != nil {
@@ -51,8 +51,16 @@ func FileUpload(fileName, path string, context *gin.Context) (string, error) {
 	extensionFile := filepath.Ext(file.Filename)
 
 	// VALIDATE IMAGE
-	if extensionFile != ".jpg" && extensionFile != ".JPG" && extensionFile != ".jpeg" && extensionFile != ".JPEG" && extensionFile != ".png" && extensionFile != ".PNG" && extensionFile != ".gif" && extensionFile != ".GIF" && extensionFile != ".svg" && extensionFile != ".SVG" && extensionFile != ".WEBP" && extensionFile != ".webp" {
-		return "", errors.New("the file must be an image")
+	if fileType == "image" {
+		if extensionFile != ".jpg" && extensionFile != ".JPG" && extensionFile != ".jpeg" && extensionFile != ".JPEG" && extensionFile != ".png" && extensionFile != ".PNG" && extensionFile != ".gif" && extensionFile != ".GIF" && extensionFile != ".svg" && extensionFile != ".SVG" && extensionFile != ".WEBP" && extensionFile != ".webp" {
+			return "", errors.New("the file must be an image")
+		}
+	} else if fileType == "excel" {
+		if extensionFile != ".xlsx" && extensionFile != ".xlsm" && extensionFile != ".xlsb" && extensionFile != ".xltx" {
+			return "", errors.New("the file must be an excel")
+		}
+	} else {
+		return "", errors.New("invalid file type")
 	}
 
 	newFileName := uuid.New().String() + extensionFile

@@ -46,7 +46,7 @@ func CreateCompanySetting(c *gin.Context) {
 	}
 
 	// upload logo
-	newFileNameLogo, err := pkg.FileUpload("logo", "setting", c)
+	newFileNameLogo, err := pkg.FileUpload("logo", "setting", "image", c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -56,7 +56,7 @@ func CreateCompanySetting(c *gin.Context) {
 	}
 
 	// upload favicon
-	newFileNameFavicon, err := pkg.FileUpload("favicon", "setting", c)
+	newFileNameFavicon, err := pkg.FileUpload("favicon", "setting", "image", c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
