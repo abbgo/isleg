@@ -1111,6 +1111,24 @@ func UploadExcelFile(c *gin.Context) {
 	})
 }
 
+func RemoveExcelFile(c *gin.Context) {
+
+	err := os.Remove(pkg.ServerPath + "uploads/product/products.xlsx") //remove the file
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":  true,
+		"message": "excel file successfully deleted",
+	})
+
+}
+
 func UpdateProductByID(c *gin.Context) {
 
 	// initialize database connection

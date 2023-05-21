@@ -3,7 +3,6 @@ package backApi
 import (
 	backController "github/abbgo/isleg/isleg-backend/controllers/back"
 	frontController "github/abbgo/isleg/isleg-backend/controllers/front"
-
 	"github/abbgo/isleg/isleg-backend/middlewares"
 
 	"github.com/gin-gonic/gin"
@@ -232,6 +231,7 @@ func BackRoutes(back *gin.RouterGroup) {
 		securedAdmin.POST("image", backController.CreateProductImage)
 		securedAdmin.DELETE("image", backController.DeleteProductImages)
 		securedAdmin.POST("excel", backController.UploadExcelFile)
+		securedAdmin.DELETE("excel", backController.RemoveExcelFile)
 
 	}
 
