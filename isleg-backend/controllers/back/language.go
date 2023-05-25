@@ -6,6 +6,7 @@ import (
 	"github/abbgo/isleg/isleg-backend/pkg"
 	"net/http"
 	"os"
+	"strconv"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -243,8 +244,25 @@ func GetLanguages(c *gin.Context) {
 
 	var ls []models.Language
 
+	statusQuery := c.DefaultQuery("status", "false")
+	status, err := strconv.ParseBool(statusQuery)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	var rowsQuery string
+	if !status {
+		rowsQuery = `SELECT id,name_short,flag FROM languages WHERE deleted_at IS NULL`
+	} else {
+		rowsQuery = `SELECT id,name_short,flag FROM languages WHERE deleted_at IS NOT NULL`
+	}
+
 	// get name_short,flag of all languages from database
-	rows, err := db.Query("SELECT id,name_short,flag FROM languages WHERE deleted_at IS NULL")
+	rows, err := db.Query(rowsQuery)
 	if err != nil {
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
