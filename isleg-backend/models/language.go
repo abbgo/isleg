@@ -2,8 +2,8 @@ package models
 
 type Language struct {
 	ID                            string                          `json:"id,omitempty"`
-	NameShort                     string                          `json:"name_short,omitempty"`
-	Flag                          string                          `json:"flag,omitempty"`
+	NameShort                     string                          `json:"name_short,omitempty" binding:"required"`
+	Flag                          string                          `json:"flag,omitempty" binding:"required"`
 	CreatedAt                     string                          `json:"-"`
 	UpdatedAt                     string                          `json:"-"`
 	DeletedAt                     string                          `json:"-"`

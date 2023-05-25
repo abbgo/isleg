@@ -33,30 +33,14 @@ func CreateLanguage(c *gin.Context) {
 		}
 	}()
 
-	// get the short name of the language from request
-	nameShort := c.PostForm("name_short")
-
-	// verify language short name
-	if nameShort == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": "language name_short is required",
-		})
-		return
-	}
-
-	// upload image of language
-	newFileName, err := pkg.FileUpload("flag", "language", "image", c)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+	var language models.Language
+	if err := c.BindJSON(&language); err != nil {
+		c.JSON(http.StatusBadRequest, err.Error())
 		return
 	}
 
 	// add language to database , used after_insert_language trigger
-	resultLang, err := db.Query("INSERT INTO languages (name_short,flag) VALUES ($1,$2)", strings.ToLower(nameShort), newFileName)
+	resultLang, err := db.Query("INSERT INTO languages (name_short,flag) VALUES ($1,$2)", strings.ToLower(language.NameShort), language.Flag)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
