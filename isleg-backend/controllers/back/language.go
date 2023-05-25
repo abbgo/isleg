@@ -39,7 +39,8 @@ func CreateLanguage(c *gin.Context) {
 		return
 	}
 
-	if err := models.ValidateLanguage(language.NameShort); err != nil {
+	_, err = models.ValidateLanguage(language.NameShort, "create", "")
+	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
 			"message": err.Error(),
@@ -97,75 +98,30 @@ func UpdateLanguageByID(c *gin.Context) {
 	// get language id from paramter
 	langID := c.Param("id")
 
-	// get the short name of the language from request
-	nameShort := c.PostForm("name_short")
+	var language models.Language
+	if err := c.BindJSON(&language); err != nil {
+		c.JSON(http.StatusBadRequest, err.Error())
+		return
+	}
+
+	image, err := models.ValidateLanguage(language.NameShort, "update", langID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
 
 	var fileName string
-
-	// Check if there is a language, id equal to langID
-	rowFlag, err := db.Query("SELECT flag,name_short FROM languages WHERE id = $1 AND deleted_at IS NULL", langID)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-	defer func() {
-		if err := rowFlag.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
-
-	var flag, name_short string
-
-	for rowFlag.Next() {
-		if err := rowFlag.Scan(&flag, &name_short); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}
-
-	if flag == "" {
-		c.JSON(http.StatusNotFound, gin.H{
-			"status":  false,
-			"message": "language not found",
-		})
-		return
-	}
-
-	// verify language short name
-	if nameShort == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": "language name_short is required",
-		})
-		return
+	if language.Flag == "" {
+		fileName = image
 	} else {
-		if name_short == "tm" {
-			nameShort = "tm"
-		}
-	}
-
-	// upload image of language
-	fileName, err = pkg.FileUploadForUpdate("flag", "language", flag, c)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
+		fileName = language.Flag
 	}
 
 	// update language in database
-	resultLang, err := db.Query("UPDATE languages SET name_short = $1 , flag = $2  WHERE id = $3", nameShort, fileName, langID)
+	resultLang, err := db.Query("UPDATE languages SET name_short = $1 , flag = $2  WHERE id = $3", strings.ToLower(language.NameShort), fileName, langID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,

@@ -3,12 +3,13 @@ package models
 import (
 	"errors"
 	"github/abbgo/isleg/isleg-backend/config"
+	"strings"
 )
 
 type Language struct {
 	ID                            string                          `json:"id,omitempty"`
 	NameShort                     string                          `json:"name_short,omitempty" binding:"required"`
-	Flag                          string                          `json:"flag,omitempty" binding:"required"`
+	Flag                          string                          `json:"flag,omitempty"`
 	CreatedAt                     string                          `json:"-"`
 	UpdatedAt                     string                          `json:"-"`
 	DeletedAt                     string                          `json:"-"`
@@ -32,39 +33,95 @@ type Language struct {
 	TranslationUpdatePasswordPage []TranslationUpdatePasswordPage `json:"translation_update_password_page,omitempty"` // one to many
 }
 
-func ValidateLanguage(nameShort string) error {
+func ValidateLanguage(nameShort, functionType, langID string) (string, error) {
 
 	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
-		return err
+		return "", err
 	}
-	defer func() error {
+	defer func() (string, error) {
 		if err := db.Close(); err != nil {
-			return err
+			return "", err
 		}
-		return nil
+		return "", nil
 	}()
 
-	rowLanguage, err := db.Query("SELECT name_short FROM languages WHERE name_short = $1 AND deleted_at IS NULL", nameShort)
-	if err != nil {
-		return err
-	}
-	defer func() error {
-		if err := rowLanguage.Close(); err != nil {
-			return err
+	if functionType == "create" {
+		if nameShort == "" {
+			return "", errors.New("short name is required")
 		}
-		return nil
-	}()
-	var oldNameShort string
-	for rowLanguage.Next() {
-		if err := rowLanguage.Scan(&oldNameShort); err != nil {
-			return err
+
+		rowLanguage, err := db.Query("SELECT name_short FROM languages WHERE name_short = $1 AND deleted_at IS NULL", strings.ToLower(nameShort))
+		if err != nil {
+			return "", err
 		}
-	}
-	if oldNameShort != "" {
-		return errors.New("short name already exists")
+		defer func() (string, error) {
+			if err := rowLanguage.Close(); err != nil {
+				return "", err
+			}
+			return "", nil
+		}()
+		var oldNameShort string
+		for rowLanguage.Next() {
+			if err := rowLanguage.Scan(&oldNameShort); err != nil {
+				return "", err
+			}
+		}
+		if oldNameShort != "" {
+			return "", errors.New("short name already exists")
+		}
+	} else if functionType == "update" {
+		// Check if there is a language, id equal to langID
+		rowFlag, err := db.Query("SELECT id,flag FROM languages WHERE id = $1 AND deleted_at IS NULL", langID)
+		if err != nil {
+			return "", err
+		}
+		defer func() (string, error) {
+			if err := rowFlag.Close(); err != nil {
+				return "", err
+			}
+			return "", nil
+		}()
+
+		var id, flag string
+
+		for rowFlag.Next() {
+			if err := rowFlag.Scan(&id, &flag); err != nil {
+				return "", err
+			}
+		}
+
+		if flag == "" {
+			return "", errors.New("language not found")
+		}
+
+		rowNameShort, err := db.Query("SELECT id FROM languages WHERE name_short = $1 AND deleted_at IS NULL", strings.ToLower(nameShort))
+		if err != nil {
+			return "", err
+		}
+		defer func() (string, error) {
+			if err := rowNameShort.Close(); err != nil {
+				return "", err
+			}
+			return "", nil
+		}()
+		var oldID string
+		for rowNameShort.Next() {
+			if err := rowNameShort.Scan(&oldID); err != nil {
+				return "", err
+			}
+		}
+
+		if oldID != "" && id != oldID {
+			return "", errors.New("short name already exists")
+		}
+
+		return flag, nil
+
+	} else {
+		return "", errors.New("invalid function type")
 	}
 
-	return nil
+	return "", nil
 }
