@@ -1,5 +1,10 @@
 package models
 
+import (
+	"errors"
+	"github/abbgo/isleg/isleg-backend/config"
+)
+
 type Language struct {
 	ID                            string                          `json:"id,omitempty"`
 	NameShort                     string                          `json:"name_short,omitempty" binding:"required"`
@@ -25,4 +30,41 @@ type Language struct {
 	TranslationPayment            []TranslationPayment            `json:"translation_payment,omitempty"`              // one to many
 	TranslationSecure             []TranslationSecure             `json:"translation_secure,omitempty"`               // one to many
 	TranslationUpdatePasswordPage []TranslationUpdatePasswordPage `json:"translation_update_password_page,omitempty"` // one to many
+}
+
+func ValidateLanguage(nameShort string) error {
+
+	// initialize database connection
+	db, err := config.ConnDB()
+	if err != nil {
+		return err
+	}
+	defer func() error {
+		if err := db.Close(); err != nil {
+			return err
+		}
+		return nil
+	}()
+
+	rowLanguage, err := db.Query("SELECT name_short FROM languages WHERE name_short = $1 AND deleted_at IS NULL", nameShort)
+	if err != nil {
+		return err
+	}
+	defer func() error {
+		if err := rowLanguage.Close(); err != nil {
+			return err
+		}
+		return nil
+	}()
+	var oldNameShort string
+	for rowLanguage.Next() {
+		if err := rowLanguage.Scan(&oldNameShort); err != nil {
+			return err
+		}
+	}
+	if oldNameShort != "" {
+		return errors.New("short name already exists")
+	}
+
+	return nil
 }

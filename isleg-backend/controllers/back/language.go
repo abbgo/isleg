@@ -39,6 +39,14 @@ func CreateLanguage(c *gin.Context) {
 		return
 	}
 
+	if err := models.ValidateLanguage(language.NameShort); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
 	// add language to database , used after_insert_language trigger
 	resultLang, err := db.Query("INSERT INTO languages (name_short,flag) VALUES ($1,$2)", strings.ToLower(language.NameShort), language.Flag)
 	if err != nil {
