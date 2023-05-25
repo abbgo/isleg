@@ -155,7 +155,6 @@ func BackRoutes(back *gin.RouterGroup) {
 		securedAdmin.PUT("brend/:id", backController.UpdateBrendByID)
 		securedAdmin.GET("brend/:id", backController.GetBrendByID)
 		securedAdmin.GET("brends/:limit/:page", backController.GetBrends)
-		securedAdmin.GET("deleted-brends", backController.GetDeletedBrends)
 		securedAdmin.DELETE("brend/:id", backController.DeleteBrendByID)
 		securedAdmin.GET("restore-brend/:id", backController.RestoreBrendByID)
 		securedAdmin.DELETE("delete-brend/:id", backController.DeletePermanentlyBrendByID)

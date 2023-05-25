@@ -294,8 +294,25 @@ func GetBrends(c *gin.Context) {
 	offset := limit * (page - 1)
 	var countOfBrends uint
 
+	statusQuery := c.DefaultQuery("status", "false")
+	status, err := strconv.ParseBool(statusQuery)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	var countBrendsQuery string
+	if !status {
+		countBrendsQuery = `SELECT COUNT(id) FROM brends WHERE deleted_at IS NULL`
+	} else {
+		countBrendsQuery = `SELECT COUNT(id) FROM brends WHERE deleted_at IS NOT NULL`
+	}
+
 	// get data from database
-	countBrends, err := db.Query("SELECT COUNT(id) FROM brends WHERE deleted_at IS NULL")
+	countBrends, err := db.Query(countBrendsQuery)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -322,8 +339,15 @@ func GetBrends(c *gin.Context) {
 		}
 	}
 
+	var rowBrendsQuery string
+	if !status {
+		rowBrendsQuery = `SELECT id,name,image FROM brends WHERE deleted_at IS NULL ORDER BY created_at DESC LIMIT $1 OFFSET $2`
+	} else {
+		rowBrendsQuery = `SELECT id,name,image FROM brends WHERE deleted_at IS NOT NULL ORDER BY created_at DESC LIMIT $1 OFFSET $2`
+	}
+
 	// get data from database
-	rowBrends, err := db.Query("SELECT id,name,image FROM brends WHERE deleted_at IS NULL ORDER BY created_at DESC LIMIT $1 OFFSET $2", limit, offset)
+	rowBrends, err := db.Query(rowBrendsQuery, limit, offset)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
