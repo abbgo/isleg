@@ -143,7 +143,7 @@ func UpdateBrendByID(c *gin.Context) {
 	}
 
 	// update data
-	resultBrend, err := db.Query("UPDATE brends SET name = $1 , image = $2 WHERE id = $3", brend.Name, fileName, ID)
+	resultBrend, err := db.Query("UPDATE brends SET name = $1 , image = $2 , slug = $4 WHERE id = $3", brend.Name, fileName, ID, slug.MakeLang(brend.Name, "en"))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
