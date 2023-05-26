@@ -294,6 +294,14 @@ func GetBrends(c *gin.Context) {
 	offset := limit * (page - 1)
 	var countOfBrends uint
 
+	// searchQuery := c.Query("search")
+	// var searchStr, search string
+	// if searchQuery != "" {
+	// 	incomingsSarch := slug.MakeLang(searchQuery, "en")
+	// 	search = strings.ReplaceAll(incomingsSarch, "-", " | ")c
+	// 	searchStr = fmt.Sprintf("%%%s%%", search)
+	// }
+
 	statusQuery := c.DefaultQuery("status", "false")
 	status, err := strconv.ParseBool(statusQuery)
 	if err != nil {

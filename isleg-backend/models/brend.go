@@ -8,4 +8,5 @@ type Brend struct {
 	UpdatedAt string    `json:"-"`
 	DeletedAt string    `json:"-"`
 	Products  []Product `json:"products,omitempty"` // one to many
+	Slug      string    `json:"slug,omitempty"`
 }
