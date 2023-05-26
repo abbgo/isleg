@@ -330,7 +330,7 @@ func GetBrends(c *gin.Context) {
 				return
 			}
 		} else {
-			countBrendsQuery = `SELECT COUNT(id) FROM brends WHERE deleted_at IS NULL AND to_tsvector(slug) @@ to_tsquery($1) OR slug LIKE $2`
+			countBrendsQuery = `SELECT COUNT(id) FROM brends WHERE deleted_at IS NULL AND (to_tsvector(slug) @@ to_tsquery($1) OR slug LIKE $2)`
 			countBrends, err = db.Query(countBrendsQuery, search, searchStr)
 			if err != nil {
 				c.JSON(http.StatusBadRequest, gin.H{
@@ -352,7 +352,7 @@ func GetBrends(c *gin.Context) {
 				return
 			}
 		} else {
-			countBrendsQuery = `SELECT COUNT(id) FROM brends WHERE deleted_at IS NOT NULL AND to_tsvector(slug) @@ to_tsquery($1) OR slug LIKE $2`
+			countBrendsQuery = `SELECT COUNT(id) FROM brends WHERE deleted_at IS NOT NULL AND (to_tsvector(slug) @@ to_tsquery($1) OR slug LIKE $2)`
 			countBrends, err = db.Query(countBrendsQuery, search, searchStr)
 			if err != nil {
 				c.JSON(http.StatusBadRequest, gin.H{
@@ -398,7 +398,7 @@ func GetBrends(c *gin.Context) {
 				return
 			}
 		} else {
-			rowBrendsQuery = `SELECT id,name,image FROM brends WHERE deleted_at IS NULL AND to_tsvector(slug) @@ to_tsquery($3) OR slug LIKE $4 ORDER BY created_at DESC LIMIT $1 OFFSET $2`
+			rowBrendsQuery = `SELECT id,name,image FROM brends WHERE deleted_at IS NULL AND (to_tsvector(slug) @@ to_tsquery($3) OR slug LIKE $4) ORDER BY created_at DESC LIMIT $1 OFFSET $2`
 			rowBrends, err = db.Query(rowBrendsQuery, limit, offset, search, searchStr)
 			if err != nil {
 				c.JSON(http.StatusBadRequest, gin.H{
@@ -420,7 +420,7 @@ func GetBrends(c *gin.Context) {
 				return
 			}
 		} else {
-			rowBrendsQuery = `SELECT id,name,image FROM brends WHERE deleted_at IS NOT NULL AND to_tsvector(slug) @@ to_tsquery($3) OR slug LIKE $4 ORDER BY created_at DESC LIMIT $1 OFFSET $2`
+			rowBrendsQuery = `SELECT id,name,image FROM brends WHERE deleted_at IS NOT NULL AND (to_tsvector(slug) @@ to_tsquery($3) OR slug LIKE $4) ORDER BY created_at DESC LIMIT $1 OFFSET $2`
 			rowBrends, err = db.Query(rowBrendsQuery, limit, offset, search, searchStr)
 			if err != nil {
 				c.JSON(http.StatusBadRequest, gin.H{
