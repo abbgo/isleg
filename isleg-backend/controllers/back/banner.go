@@ -33,18 +33,21 @@ func CreateBanner(c *gin.Context) {
 		}
 	}()
 
-	// GET DATA FROM REQUEST
-	bannerUrl := c.PostForm("url")
+	var banner models.Banner
+	if err := c.BindJSON(&banner); err != nil {
+		c.JSON(http.StatusBadRequest, err.Error())
+		return
+	}
 
 	// VALIDATE DATA
-	if bannerUrl == "" {
+	if banner.Url == "" {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
 			"message": "url is required",
 		})
 		return
 	} else {
-		_, err := url.ParseRequestURI(bannerUrl)
+		_, err := url.ParseRequestURI(banner.Url)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
@@ -54,18 +57,8 @@ func CreateBanner(c *gin.Context) {
 		}
 	}
 
-	// FILE UPLOAD
-	newFileName, err := pkg.FileUpload("image", "banner", "image", c)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-
 	// CREATE BREND
-	result, err := db.Query("INSERT INTO banner (image,url) VALUES ($1,$2)", newFileName, bannerUrl)
+	result, err := db.Query("INSERT INTO banner (image,url) VALUES ($1,$2)", banner.Image, banner.Url)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
