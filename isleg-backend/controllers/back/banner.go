@@ -600,7 +600,7 @@ func RestoreBannerByID(c *gin.Context) {
 	ID := c.Param("id")
 
 	// check id and get image of brend
-	rowBanner, err := db.Query("SELECT id FROM banner WHERE id = $1 AND deleted_at IS NULL", ID)
+	rowBanner, err := db.Query("SELECT id FROM banner WHERE id = $1 AND deleted_at IS NOT NULL", ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
