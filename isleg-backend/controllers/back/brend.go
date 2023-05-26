@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"database/sql"
 	"fmt"
 	"github/abbgo/isleg/isleg-backend/config"
 	"github/abbgo/isleg/isleg-backend/models"
@@ -316,29 +317,54 @@ func GetBrends(c *gin.Context) {
 	}
 
 	var countBrendsQuery string
+	var countBrends *sql.Rows
 	if !status {
 		if search == "" {
 			countBrendsQuery = `SELECT COUNT(id) FROM brends WHERE deleted_at IS NULL`
+			countBrends, err = db.Query(countBrendsQuery)
+			if err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
 		} else {
 			countBrendsQuery = `SELECT COUNT(id) FROM brends WHERE deleted_at IS NULL AND to_tsvector(slug) @@ to_tsquery($1) OR slug LIKE $2`
+			countBrends, err = db.Query(countBrendsQuery, search, searchStr)
+			if err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
 		}
 	} else {
 		if search == "" {
 			countBrendsQuery = `SELECT COUNT(id) FROM brends WHERE deleted_at IS NOT NULL`
+			countBrends, err = db.Query(countBrendsQuery)
+			if err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
 		} else {
 			countBrendsQuery = `SELECT COUNT(id) FROM brends WHERE deleted_at IS NOT NULL AND to_tsvector(slug) @@ to_tsquery($1) OR slug LIKE $2`
+			countBrends, err = db.Query(countBrendsQuery, search, searchStr)
+			if err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
 		}
 	}
 
 	// get data from database
-	countBrends, err := db.Query(countBrendsQuery, search, searchStr)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
 	defer func() {
 		if err := countBrends.Close(); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
@@ -359,29 +385,55 @@ func GetBrends(c *gin.Context) {
 	}
 
 	var rowBrendsQuery string
+	var rowBrends *sql.Rows
 	if !status {
 		if search == "" {
 			rowBrendsQuery = `SELECT id,name,image FROM brends WHERE deleted_at IS NULL ORDER BY created_at DESC LIMIT $1 OFFSET $2`
+			rowBrends, err = db.Query(rowBrendsQuery, limit, offset)
+			if err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
 		} else {
 			rowBrendsQuery = `SELECT id,name,image FROM brends WHERE deleted_at IS NULL AND to_tsvector(slug) @@ to_tsquery($3) OR slug LIKE $4 ORDER BY created_at DESC LIMIT $1 OFFSET $2`
+			rowBrends, err = db.Query(rowBrendsQuery, limit, offset, search, searchStr)
+			if err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
 		}
 	} else {
 		if search == "" {
 			rowBrendsQuery = `SELECT id,name,image FROM brends WHERE deleted_at IS NOT NULL ORDER BY created_at DESC LIMIT $1 OFFSET $2`
+			rowBrends, err = db.Query(rowBrendsQuery, limit, offset)
+			if err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
 		} else {
 			rowBrendsQuery = `SELECT id,name,image FROM brends WHERE deleted_at IS NOT NULL AND to_tsvector(slug) @@ to_tsquery($3) OR slug LIKE $4 ORDER BY created_at DESC LIMIT $1 OFFSET $2`
+			rowBrends, err = db.Query(rowBrendsQuery, limit, offset, search, searchStr)
+			if err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
 		}
 	}
 
 	// get data from database
-	rowBrends, err := db.Query(rowBrendsQuery, limit, offset, search, searchStr)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
+
 	defer func() {
 		if err := rowBrends.Close(); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
