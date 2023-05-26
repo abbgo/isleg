@@ -43,7 +43,7 @@ func CreateBrend(c *gin.Context) {
 	}
 
 	// CREATE BREND
-	result, err := db.Query("INSERT INTO brends (name,image) VALUES ($1,$2)", brend.Name, brend.Image)
+	result, err := db.Query("INSERT INTO brends (name,image,slug) VALUES ($1,$2)", brend.Name, brend.Image, slug.MakeLang(brend.Name, "en"))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
