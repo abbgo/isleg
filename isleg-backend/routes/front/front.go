@@ -124,7 +124,7 @@ func FrontRoutes(front *gin.RouterGroup) {
 
 		frontRoutes.GET("product/:id", backController.GetProductByIDForFront)
 
-		frontRoutes.GET("banners", backController.GetBanners)
+		frontRoutes.GET("banners", backController.GetBannersForFront)
 
 		frontRoutes.PUT("update-customer-password", frontController.UpdateCustPassword)
 

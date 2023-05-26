@@ -427,6 +427,69 @@ func GetBanners(c *gin.Context) {
 
 }
 
+func GetBannersForFront(c *gin.Context) {
+
+	// initialize database connection
+	db, err := config.ConnDB()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
+
+	// get data from database
+	rowBanners, err := db.Query("SELECT id,url,image FROM banner WHERE deleted_at IS NULL")
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer func() {
+		if err := rowBanners.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
+
+	var banners []models.Banner
+
+	for rowBanners.Next() {
+		var banner models.Banner
+
+		if err := rowBanners.Scan(&banner.ID, &banner.Url, &banner.Image); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+
+		banners = append(banners, banner)
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":  true,
+		"banners": banners,
+	})
+
+}
+
 func DeleteBannerByID(c *gin.Context) {
 
 	// initialize database connection
