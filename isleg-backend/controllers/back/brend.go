@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"github/abbgo/isleg/isleg-backend/config"
 	"github/abbgo/isleg/isleg-backend/models"
 	"github/abbgo/isleg/isleg-backend/pkg"
@@ -8,8 +9,10 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+	"strings"
 
 	"github.com/gin-gonic/gin"
+	"github.com/gosimple/slug"
 )
 
 func CreateBrend(c *gin.Context) {
@@ -294,13 +297,13 @@ func GetBrends(c *gin.Context) {
 	offset := limit * (page - 1)
 	var countOfBrends uint
 
-	// searchQuery := c.Query("search")
-	// var searchStr, search string
-	// if searchQuery != "" {
-	// 	incomingsSarch := slug.MakeLang(searchQuery, "en")
-	// 	search = strings.ReplaceAll(incomingsSarch, "-", " | ")c
-	// 	searchStr = fmt.Sprintf("%%%s%%", search)
-	// }
+	searchQuery := c.Query("search")
+	var searchStr, search string
+	if searchQuery != "" {
+		incomingsSarch := slug.MakeLang(searchQuery, "en")
+		search = strings.ReplaceAll(incomingsSarch, "-", " | ")
+		searchStr = fmt.Sprintf("%%%s%%", search)
+	}
 
 	statusQuery := c.DefaultQuery("status", "false")
 	status, err := strconv.ParseBool(statusQuery)
@@ -314,13 +317,21 @@ func GetBrends(c *gin.Context) {
 
 	var countBrendsQuery string
 	if !status {
-		countBrendsQuery = `SELECT COUNT(id) FROM brends WHERE deleted_at IS NULL`
+		if search == "" {
+			countBrendsQuery = `SELECT COUNT(id) FROM brends WHERE deleted_at IS NULL`
+		} else {
+			countBrendsQuery = `SELECT COUNT(id) FROM brends WHERE deleted_at IS NULL AND to_tsvector(slug) @@ to_tsquery($1) OR slug LIKE $2`
+		}
 	} else {
-		countBrendsQuery = `SELECT COUNT(id) FROM brends WHERE deleted_at IS NOT NULL`
+		if search == "" {
+			countBrendsQuery = `SELECT COUNT(id) FROM brends WHERE deleted_at IS NOT NULL`
+		} else {
+			countBrendsQuery = `SELECT COUNT(id) FROM brends WHERE deleted_at IS NOT NULL AND to_tsvector(slug) @@ to_tsquery($1) OR slug LIKE $2`
+		}
 	}
 
 	// get data from database
-	countBrends, err := db.Query(countBrendsQuery)
+	countBrends, err := db.Query(countBrendsQuery, search, searchStr)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -349,13 +360,21 @@ func GetBrends(c *gin.Context) {
 
 	var rowBrendsQuery string
 	if !status {
-		rowBrendsQuery = `SELECT id,name,image FROM brends WHERE deleted_at IS NULL ORDER BY created_at DESC LIMIT $1 OFFSET $2`
+		if search == "" {
+			rowBrendsQuery = `SELECT id,name,image FROM brends WHERE deleted_at IS NULL ORDER BY created_at DESC LIMIT $1 OFFSET $2`
+		} else {
+			rowBrendsQuery = `SELECT id,name,image FROM brends WHERE deleted_at IS NULL AND to_tsvector(slug) @@ to_tsquery($3) OR slug LIKE $4 ORDER BY created_at DESC LIMIT $1 OFFSET $2`
+		}
 	} else {
-		rowBrendsQuery = `SELECT id,name,image FROM brends WHERE deleted_at IS NOT NULL ORDER BY created_at DESC LIMIT $1 OFFSET $2`
+		if search == "" {
+			rowBrendsQuery = `SELECT id,name,image FROM brends WHERE deleted_at IS NOT NULL ORDER BY created_at DESC LIMIT $1 OFFSET $2`
+		} else {
+			rowBrendsQuery = `SELECT id,name,image FROM brends WHERE deleted_at IS NOT NULL AND to_tsvector(slug) @@ to_tsquery($3) OR slug LIKE $4 ORDER BY created_at DESC LIMIT $1 OFFSET $2`
+		}
 	}
 
 	// get data from database
-	rowBrends, err := db.Query(rowBrendsQuery, limit, offset)
+	rowBrends, err := db.Query(rowBrendsQuery, limit, offset, search, searchStr)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
