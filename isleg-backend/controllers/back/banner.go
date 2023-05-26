@@ -107,10 +107,11 @@ func UpdateBannerByID(c *gin.Context) {
 	// get id from request parameter
 	ID := c.Param("id")
 
-	// get data from request
-	bannerUrl := c.PostForm("url")
-	var fileName string
-
+	var banner models.Banner
+	if err := c.BindJSON(&banner); err != nil {
+		c.JSON(http.StatusBadRequest, err.Error())
+		return
+	}
 	// check id and get image of banner
 	rowBrend, err := db.Query("SELECT id,image FROM banner WHERE id = $1 AND deleted_at IS NULL", ID)
 	if err != nil {
@@ -129,9 +130,7 @@ func UpdateBannerByID(c *gin.Context) {
 			return
 		}
 	}()
-
 	var image, bannerID string
-
 	for rowBrend.Next() {
 		if err := rowBrend.Scan(&bannerID, &image); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
@@ -151,14 +150,14 @@ func UpdateBannerByID(c *gin.Context) {
 	}
 
 	// VALIDATE DATA
-	if bannerUrl == "" {
+	if banner.Url == "" {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
 			"message": "banner url is required",
 		})
 		return
 	} else {
-		_, err := url.ParseRequestURI(bannerUrl)
+		_, err := url.ParseRequestURI(banner.Url)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
@@ -168,17 +167,15 @@ func UpdateBannerByID(c *gin.Context) {
 		}
 	}
 
-	fileName, err = pkg.FileUploadForUpdate("image", "banner", image, c)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
+	var fileName string
+	if banner.Image == "" {
+		fileName = image
+	} else {
+		fileName = banner.Image
 	}
 
 	// update data
-	resultBrend, err := db.Query("UPDATE banner SET url = $1 , image = $2 WHERE id = $3", bannerUrl, fileName, ID)
+	resultBrend, err := db.Query("UPDATE banner SET url = $1 , image = $2 WHERE id = $3", banner.Url, fileName, ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
