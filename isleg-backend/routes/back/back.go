@@ -62,7 +62,7 @@ func BackRoutes(back *gin.RouterGroup) {
 		securedAdmin.POST("banner", backController.CreateBanner)
 		securedAdmin.PUT("banner/:id", backController.UpdateBannerByID)
 		securedAdmin.GET("banner/:id", backController.GetBannerByID)
-		securedAdmin.GET("banners", backController.GetBanners)
+		securedAdmin.GET("banners/:limit/:page", backController.GetBanners)
 		securedAdmin.DELETE("banner/:id", backController.DeleteBannerByID)
 		securedAdmin.GET("restore-banner/:id", backController.RestoreBannerByID)
 		securedAdmin.DELETE("delete-banner/:id", backController.DeletePermanentlyBannerByID)

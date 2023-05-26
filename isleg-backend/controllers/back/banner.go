@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -300,8 +301,64 @@ func GetBanners(c *gin.Context) {
 		}
 	}()
 
+	// get limit from param
+	limitStr := c.Param("limit")
+	if limitStr == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "limit is required",
+		})
+		return
+	}
+	limit, err := strconv.ParseUint(limitStr, 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	// get page from param
+	pageStr := c.Param("page")
+	if pageStr == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "page is required",
+		})
+		return
+	}
+	page, err := strconv.ParseUint(pageStr, 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	offset := limit * (page - 1)
+	var countOfBanners uint
+
+	statusQuery := c.DefaultQuery("status", "false")
+	status, err := strconv.ParseBool(statusQuery)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	var countBannerssQuery, rowBannersQuery string
+	if !status {
+		countBannerssQuery = `SELECT COUNT(id) FROM banner WHERE deleted_at IS NULL`
+	} else {
+		countBannerssQuery = `SELECT COUNT(id) FROM banner WHERE deleted_at IS NOT NULL`
+	}
+
 	// get data from database
-	rowBrends, err := db.Query("SELECT id,url,image FROM banner WHERE deleted_at IS NULL")
+	countBanners, err := db.Query(countBannerssQuery)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -310,7 +367,41 @@ func GetBanners(c *gin.Context) {
 		return
 	}
 	defer func() {
-		if err := rowBrends.Close(); err != nil {
+		if err := countBanners.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
+	for countBanners.Next() {
+		if err := countBanners.Scan(&countOfBanners); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}
+
+	if !status {
+		rowBannersQuery = `SELECT id,url,image FROM banner WHERE deleted_at IS NULL ORDER BY created_at DESC LIMIT $1 OFFSET $2`
+	} else {
+		rowBannersQuery = `SELECT id,url,image FROM banner WHERE deleted_at IS NOT NULL ORDER BY created_at DESC LIMIT $1 OFFSET $2`
+	}
+
+	// get data from database
+	rowBanners, err := db.Query(rowBannersQuery, limit, offset)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer func() {
+		if err := rowBanners.Close(); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
@@ -321,10 +412,10 @@ func GetBanners(c *gin.Context) {
 
 	var banners []models.Banner
 
-	for rowBrends.Next() {
+	for rowBanners.Next() {
 		var banner models.Banner
 
-		if err := rowBrends.Scan(&banner.ID, &banner.Url, &banner.Image); err != nil {
+		if err := rowBanners.Scan(&banner.ID, &banner.Url, &banner.Image); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
@@ -338,6 +429,7 @@ func GetBanners(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
 		"banners": banners,
+		"total":   countOfBanners,
 	})
 
 }
