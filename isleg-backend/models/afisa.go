@@ -16,9 +16,9 @@ type Afisa struct {
 type TranslationAfisa struct {
 	ID          string        `json:"id,omitempty"`
 	AfisaID     uuid.NullUUID `json:"afisa_id,omitempty"`
-	LangID      uuid.NullUUID `json:"lang_id,omitempty"`
-	Title       string        `json:"title,omitempty"`
-	Description string        `json:"description,omitempty"`
+	LangID      uuid.NullUUID `json:"lang_id,omitempty" binding:"required"`
+	Title       string        `json:"title,omitempty" binding:"required"`
+	Description string        `json:"description,omitempty" binding:"required"`
 	CreatedAt   string        `json:"-"`
 	UpdatedAt   string        `json:"-"`
 	DeletedAt   string        `json:"-"`

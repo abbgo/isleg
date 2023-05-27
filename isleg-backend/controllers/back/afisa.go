@@ -168,8 +168,8 @@ func UpdateAfisaByID(c *gin.Context) {
 		return
 	}
 
-	languages, err := GetAllLanguageWithIDAndNameShort()
-	if err != nil {
+	var afisa models.Afisa
+	if err := c.BindJSON(&afisa); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
 			"message": err.Error(),
@@ -177,24 +177,11 @@ func UpdateAfisaByID(c *gin.Context) {
 		return
 	}
 
-	dataNames := []string{"title", "description"}
-
-	// VALIDATE DATA
-	if err = models.ValidateAfisaData(languages, dataNames, c); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-
-	fileName, err := pkg.FileUploadForUpdate("image", "afisa", image, c)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
+	var fileName string
+	if afisa.Image == "" {
+		fileName = image
+	} else {
+		fileName = afisa.Image
 	}
 
 	resultAfisa, err := db.Query("UPDATE afisa SET image = $1 WHERE id = $2", fileName, ID)
@@ -215,8 +202,8 @@ func UpdateAfisaByID(c *gin.Context) {
 		}
 	}()
 
-	for _, v := range languages {
-		resultTRAfisa, err := db.Query("UPDATE translation_afisa SET title = $1 , description = $2 WHERE afisa_id = $3 AND lang_id = $4", c.PostForm("title_"+v.NameShort), c.PostForm("description_"+v.NameShort), ID, v.ID)
+	for _, v := range afisa.TranslationAfisa {
+		resultTRAfisa, err := db.Query("UPDATE translation_afisa SET title = $1 , description = $2 WHERE afisa_id = $3 AND lang_id = $4", v.Title, v.Description, ID, v.LangID)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
