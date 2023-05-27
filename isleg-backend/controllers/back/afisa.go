@@ -6,10 +6,8 @@ import (
 	"github/abbgo/isleg/isleg-backend/pkg"
 	"net/http"
 	"os"
-	"path/filepath"
 
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 )
 
 type OneAfisa struct {
@@ -39,49 +37,8 @@ func CreateAfisa(c *gin.Context) {
 		}
 	}()
 
-	var fileName string
-
-	// GET ALL LANGUAGE
-	languages, err := GetAllLanguageWithIDAndNameShort()
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
-
-	// FILE UPLOAD
-	file, errFile := c.FormFile("image")
-	if errFile != nil {
-		fileName = ""
-	} else {
-		extension := filepath.Ext(file.Filename)
-		// VALIDATE IMAGE
-		if extension != ".jpg" && extension != ".JPG" && extension != ".jpeg" && extension != ".JPEG" && extension != ".png" && extension != ".PNG" && extension != ".gif" && extension != ".GIF" && extension != ".svg" && extension != ".SVG" && extension != ".WEBP" && extension != ".webp" {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": "the file must be an image.",
-			})
-			return
-		}
-
-		if err = c.SaveUploadedFile(file, pkg.ServerPath+fileName); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-
-		newFileName := uuid.New().String() + extension
-		fileName = "uploads/afisa/" + newFileName
-	}
-
-	dataNames := []string{"title", "description"}
-
-	// VALIDATE DATA
-	if err = models.ValidateAfisaData(languages, dataNames, c); err != nil {
+	var afisa models.Afisa
+	if err := c.BindJSON(&afisa); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
 			"message": err.Error(),
@@ -90,7 +47,7 @@ func CreateAfisa(c *gin.Context) {
 	}
 
 	// create afisa
-	resultAFisa, err := db.Query("INSERT INTO afisa (image) VALUES ($1) RETURNING id", fileName)
+	resultAFisa, err := db.Query("INSERT INTO afisa (image) VALUES ($1) RETURNING id", afisa.Image)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -121,8 +78,8 @@ func CreateAfisa(c *gin.Context) {
 	}
 
 	// create translation afisa
-	for _, v := range languages {
-		resultTRAfisa, err := db.Query("INSERT INTO translation_afisa (afisa_id,lang_id,title,description) VALUES ($1,$2,$3,$4)", afisaID, v.ID, c.PostForm("title_"+v.NameShort), c.PostForm("description"+v.NameShort))
+	for _, v := range afisa.TranslationAfisa {
+		resultTRAfisa, err := db.Query("INSERT INTO translation_afisa (afisa_id,lang_id,title,description) VALUES ($1,$2,$3,$4)", afisaID, v.LangID, v.Title, v.Description)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
