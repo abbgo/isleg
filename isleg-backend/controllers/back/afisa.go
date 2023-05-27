@@ -359,6 +359,15 @@ func GetAfisas(c *gin.Context) {
 		}
 	}()
 
+	langID, err := GetLangID("tm")
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
 	// get limit from param
 	limitStr := c.Param("limit")
 	if limitStr == "" {
@@ -430,8 +439,8 @@ func GetAfisas(c *gin.Context) {
 				return
 			}
 		} else {
-			countAfisasQuery = `SELECT COUNT(af.id) FROM afisa af INNER JOIN translation_afisa ta ON ta.afisa_id=af.id WHERE af.deleted_at IS NULL AND ta.deleted_at IS NULL AND (to_tsvector(ta.slug) @@ to_tsquery($1) OR ta.slug LIKE $2)`
-			countAfisas, err = db.Query(countAfisasQuery, search, searchStr)
+			countAfisasQuery = `SELECT COUNT(af.id) FROM afisa af INNER JOIN translation_afisa ta ON ta.afisa_id=af.id WHERE af.deleted_at IS NULL AND ta.deleted_at IS NULL AND ta.lang_id = $3 AND (to_tsvector(ta.slug) @@ to_tsquery($1) OR ta.slug LIKE $2)`
+			countAfisas, err = db.Query(countAfisasQuery, search, searchStr, langID)
 			if err != nil {
 				c.JSON(http.StatusBadRequest, gin.H{
 					"status":  false,
@@ -452,8 +461,8 @@ func GetAfisas(c *gin.Context) {
 				return
 			}
 		} else {
-			countAfisasQuery = `SELECT COUNT(af.id) FROM afisa af INNER JOIN translation_afisa ta ON ta.afisa_id=af.id WHERE af.deleted_at IS NOT NULL AND ta.deleted_at IS NOT NULL AND (to_tsvector(ta.slug) @@ to_tsquery($1) OR ta.slug LIKE $2)`
-			countAfisas, err = db.Query(countAfisasQuery, search, searchStr)
+			countAfisasQuery = `SELECT COUNT(af.id) FROM afisa af INNER JOIN translation_afisa ta ON ta.afisa_id=af.id WHERE af.deleted_at IS NOT NULL AND ta.deleted_at IS NOT NULL AND ta.lang_id = $3 AND (to_tsvector(ta.slug) @@ to_tsquery($1) OR ta.slug LIKE $2)`
+			countAfisas, err = db.Query(countAfisasQuery, search, searchStr, langID)
 			if err != nil {
 				c.JSON(http.StatusBadRequest, gin.H{
 					"status":  false,
@@ -498,8 +507,8 @@ func GetAfisas(c *gin.Context) {
 				return
 			}
 		} else {
-			rowAfisasQuery = `SELECT af.id,af.image FROM afisa af INNER JOIN translation_afisa ta ON ta.afisa_id=af.id WHERE af.deleted_at IS NULL AND ta.deleted_at IS NULL AND (to_tsvector(ta.slug) @@ to_tsquery($3) OR ta.slug LIKE $4) ORDER BY af.created_at DESC LIMIT $1 OFFSET $2`
-			rowAfisas, err = db.Query(rowAfisasQuery, limit, offset, search, searchStr)
+			rowAfisasQuery = `SELECT af.id,af.image FROM afisa af INNER JOIN translation_afisa ta ON ta.afisa_id=af.id WHERE af.deleted_at IS NULL AND ta.deleted_at IS NULL AND ta.lang_id = $5 AND (to_tsvector(ta.slug) @@ to_tsquery($3) OR ta.slug LIKE $4) ORDER BY af.created_at DESC LIMIT $1 OFFSET $2`
+			rowAfisas, err = db.Query(rowAfisasQuery, limit, offset, search, searchStr, langID)
 			if err != nil {
 				c.JSON(http.StatusBadRequest, gin.H{
 					"status":  false,
@@ -520,8 +529,8 @@ func GetAfisas(c *gin.Context) {
 				return
 			}
 		} else {
-			rowAfisasQuery = `SELECT af.id,af.image FROM afisa af INNER JOIN translation_afisa ta ON ta.afisa_id=af.id WHERE af.deleted_at IS NOT NULL AND ta.deleted_at IS NOT NULL AND (to_tsvector(ta.slug) @@ to_tsquery($3) OR ta.slug LIKE $4) ORDER BY af.created_at DESC LIMIT $1 OFFSET $2`
-			rowAfisas, err = db.Query(rowAfisasQuery, limit, offset, search, searchStr)
+			rowAfisasQuery = `SELECT af.id,af.image FROM afisa af INNER JOIN translation_afisa ta ON ta.afisa_id=af.id WHERE af.deleted_at IS NOT NULL AND ta.deleted_at IS NOT NULL AND ta.lang_id = $5 AND (to_tsvector(ta.slug) @@ to_tsquery($3) OR ta.slug LIKE $4) ORDER BY af.created_at DESC LIMIT $1 OFFSET $2`
+			rowAfisas, err = db.Query(rowAfisasQuery, limit, offset, search, searchStr, langID)
 			if err != nil {
 				c.JSON(http.StatusBadRequest, gin.H{
 					"status":  false,
@@ -554,7 +563,7 @@ func GetAfisas(c *gin.Context) {
 			return
 		}
 
-		rowsTrAfisa, err := db.Query("SELECT lang_id,title,description FROM translation_afisa WHERE deleted_at IS NULL AND afisa_id = $1", afisa.ID)
+		rowsTrAfisa, err := db.Query("SELECT lang_id,title,description FROM translation_afisa WHERE lang_id = $2 AND afisa_id = $1", afisa.ID, langID)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
