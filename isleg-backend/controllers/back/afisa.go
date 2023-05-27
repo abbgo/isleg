@@ -84,7 +84,7 @@ func CreateAfisa(c *gin.Context) {
 
 	// create translation afisa
 	for _, v := range afisa.TranslationAfisa {
-		resultTRAfisa, err := db.Query("INSERT INTO translation_afisa (afisa_id,lang_id,title,description) VALUES ($1,$2,$3,$4)", afisaID, v.LangID, v.Title, v.Description)
+		resultTRAfisa, err := db.Query("INSERT INTO translation_afisa (afisa_id,lang_id,title,description,slug) VALUES ($1,$2,$3,$4,$5)", afisaID, v.LangID, v.Title, v.Description, slug.MakeLang(v.Title, "en"))
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
@@ -208,7 +208,7 @@ func UpdateAfisaByID(c *gin.Context) {
 	}()
 
 	for _, v := range afisa.TranslationAfisa {
-		resultTRAfisa, err := db.Query("UPDATE translation_afisa SET title = $1 , description = $2 WHERE afisa_id = $3 AND lang_id = $4", v.Title, v.Description, ID, v.LangID)
+		resultTRAfisa, err := db.Query("UPDATE translation_afisa SET title = $1 , description = $2 , slug = $5 WHERE afisa_id = $3 AND lang_id = $4", v.Title, v.Description, ID, v.LangID, slug.MakeLang(v.Title, "en"))
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
@@ -595,6 +595,7 @@ func GetAfisas(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"status": true,
 		"afisas": afisas,
+		"total":  countOfAfisas,
 	})
 
 }
