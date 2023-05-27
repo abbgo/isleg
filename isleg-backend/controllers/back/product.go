@@ -228,6 +228,9 @@ func CreateProductImage(c *gin.Context) {
 	case "banner":
 		path = "banner"
 		file_name = "image"
+	case "afisa":
+		path = "afisa"
+		file_name = "image"
 	default:
 		c.JSON(http.StatusNotFound, gin.H{
 			"status":  false,
