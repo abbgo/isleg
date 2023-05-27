@@ -1,13 +1,18 @@
 package controllers
 
 import (
+	"database/sql"
+	"fmt"
 	"github/abbgo/isleg/isleg-backend/config"
 	"github/abbgo/isleg/isleg-backend/models"
 	"github/abbgo/isleg/isleg-backend/pkg"
 	"net/http"
 	"os"
+	"strconv"
+	"strings"
 
 	"github.com/gin-gonic/gin"
+	"github.com/gosimple/slug"
 )
 
 type OneAfisa struct {
@@ -354,7 +359,16 @@ func GetAfisas(c *gin.Context) {
 		}
 	}()
 
-	rowsAfisa, err := db.Query("SELECT id,image FROM afisa WHERE deleted_at IS NULL")
+	// get limit from param
+	limitStr := c.Param("limit")
+	if limitStr == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "limit is required",
+		})
+		return
+	}
+	limit, err := strconv.ParseUint(limitStr, 10, 64)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -362,8 +376,164 @@ func GetAfisas(c *gin.Context) {
 		})
 		return
 	}
+
+	// get page from param
+	pageStr := c.Param("page")
+	if pageStr == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "page is required",
+		})
+		return
+	}
+	page, err := strconv.ParseUint(pageStr, 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	offset := limit * (page - 1)
+	var countOfAfisas uint
+
+	searchQuery := c.Query("search")
+	var searchStr, search string
+	if searchQuery != "" {
+		incomingsSarch := slug.MakeLang(searchQuery, "en")
+		search = strings.ReplaceAll(incomingsSarch, "-", " | ")
+		searchStr = fmt.Sprintf("%%%s%%", search)
+	}
+
+	statusQuery := c.DefaultQuery("status", "false")
+	status, err := strconv.ParseBool(statusQuery)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	var countAfisasQuery string
+	var countAfisas *sql.Rows
+	if !status {
+		if search == "" {
+			countAfisasQuery = `SELECT COUNT(id) FROM afisa WHERE deleted_at IS NULL`
+			countAfisas, err = db.Query(countAfisasQuery)
+			if err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		} else {
+			countAfisasQuery = `SELECT COUNT(af.id) FROM afisa af INNER JOIN translation_afisa ta ON ta.afisa_id=af.id WHERE af.deleted_at IS NULL AND ta.deleted_at IS NULL AND (to_tsvector(ta.slug) @@ to_tsquery($1) OR ta.slug LIKE $2)`
+			countAfisas, err = db.Query(countAfisasQuery, search, searchStr)
+			if err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}
+	} else {
+		if search == "" {
+			countAfisasQuery = `SELECT COUNT(id) FROM brends WHERE deleted_at IS NOT NULL`
+			countAfisas, err = db.Query(countAfisasQuery)
+			if err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		} else {
+			countAfisasQuery = `SELECT COUNT(af.id) FROM afisa af INNER JOIN translation_afisa ta ON ta.afisa_id=af.id WHERE af.deleted_at IS NOT NULL AND ta.deleted_at IS NOT NULL AND (to_tsvector(ta.slug) @@ to_tsquery($1) OR ta.slug LIKE $2)`
+			countAfisas, err = db.Query(countAfisasQuery, search, searchStr)
+			if err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}
+	}
+
+	// get data from database
 	defer func() {
-		if err := rowsAfisa.Close(); err != nil {
+		if err := countAfisas.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
+	for countAfisas.Next() {
+		if err := countAfisas.Scan(&countOfAfisas); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}
+
+	var rowAfisasQuery string
+	var rowAfisas *sql.Rows
+	if !status {
+		if search == "" {
+			rowAfisasQuery = `SELECT id,image FROM afisa WHERE deleted_at IS NULL ORDER BY created_at DESC LIMIT $1 OFFSET $2`
+			rowAfisas, err = db.Query(rowAfisasQuery, limit, offset)
+			if err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		} else {
+			rowAfisasQuery = `SELECT af.id,af.image FROM afisa af INNER JOIN translation_afisa ta ON ta.afisa_id=af.id WHERE af.deleted_at IS NULL AND ta.deleted_at IS NULL AND (to_tsvector(ta.slug) @@ to_tsquery($3) OR ta.slug LIKE $4) ORDER BY af.created_at DESC LIMIT $1 OFFSET $2`
+			rowAfisas, err = db.Query(rowAfisasQuery, limit, offset, search, searchStr)
+			if err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}
+	} else {
+		if search == "" {
+			rowAfisasQuery = `SELECT id,image FROM afisa WHERE deleted_at IS NOT NULL ORDER BY created_at DESC LIMIT $1 OFFSET $2`
+			rowAfisas, err = db.Query(rowAfisasQuery, limit, offset)
+			if err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		} else {
+			rowAfisasQuery = `SELECT af.id,af.image FROM afisa af INNER JOIN translation_afisa ta ON ta.afisa_id=af.id WHERE af.deleted_at IS NOT NULL AND ta.deleted_at IS NOT NULL AND (to_tsvector(ta.slug) @@ to_tsquery($3) OR ta.slug LIKE $4) ORDER BY af.created_at DESC LIMIT $1 OFFSET $2`
+			rowAfisas, err = db.Query(rowAfisasQuery, limit, offset, search, searchStr)
+			if err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}
+	}
+
+	defer func() {
+		if err := rowAfisas.Close(); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
@@ -374,9 +544,9 @@ func GetAfisas(c *gin.Context) {
 
 	var afisas []OneAfisa
 
-	for rowsAfisa.Next() {
+	for rowAfisas.Next() {
 		var afisa OneAfisa
-		if err := rowsAfisa.Scan(&afisa.ID, &afisa.Image); err != nil {
+		if err := rowAfisas.Scan(&afisa.ID, &afisa.Image); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),

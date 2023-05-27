@@ -198,7 +198,7 @@ func BackRoutes(back *gin.RouterGroup) {
 		securedAdmin.POST("afisa", backController.CreateAfisa)
 		securedAdmin.PUT("afisa/:id", backController.UpdateAfisaByID)
 		securedAdmin.GET("afisa/:id", backController.GetAfisaByID)
-		securedAdmin.GET("afisas", backController.GetAfisas)
+		securedAdmin.GET("afisas/:limit/:page", backController.GetAfisas)
 		securedAdmin.DELETE("afisa/:id", backController.DeleteAfisaByID)
 		securedAdmin.GET("restore-afisa/:id", backController.RestoreAfisaByID)
 		securedAdmin.DELETE("delete-afisa/:id", backController.DeletePermanentlyAfisaByID)

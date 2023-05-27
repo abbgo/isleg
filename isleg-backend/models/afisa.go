@@ -22,4 +22,5 @@ type TranslationAfisa struct {
 	CreatedAt   string        `json:"-"`
 	UpdatedAt   string        `json:"-"`
 	DeletedAt   string        `json:"-"`
+	Slug        string        `json:"slug,omitempty"`
 }
