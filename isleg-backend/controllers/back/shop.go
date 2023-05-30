@@ -1,11 +1,14 @@
 package controllers
 
 import (
+	"database/sql"
+	"fmt"
 	"github/abbgo/isleg/isleg-backend/config"
 	"github/abbgo/isleg/isleg-backend/models"
 	"github/abbgo/isleg/isleg-backend/pkg"
 	"net/http"
 	"os"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -292,64 +295,15 @@ func GetShops(c *gin.Context) {
 	}()
 
 	// get limit from param
-	// limitStr := c.Param("limit")
-	// if limitStr == "" {
-	// 	c.JSON(http.StatusBadRequest, gin.H{
-	// 		"status":  false,
-	// 		"message": "limit is required",
-	// 	})
-	// 	return
-	// }
-	// limit, err := strconv.ParseUint(limitStr, 10, 64)
-	// if err != nil {
-	// 	c.JSON(http.StatusBadRequest, gin.H{
-	// 		"status":  false,
-	// 		"message": err.Error(),
-	// 	})
-	// 	return
-	// }
-
-	// // get page from param
-	// pageStr := c.Param("page")
-	// if pageStr == "" {
-	// 	c.JSON(http.StatusBadRequest, gin.H{
-	// 		"status":  false,
-	// 		"message": "page is required",
-	// 	})
-	// 	return
-	// }
-	// page, err := strconv.ParseUint(pageStr, 10, 64)
-	// if err != nil {
-	// 	c.JSON(http.StatusBadRequest, gin.H{
-	// 		"status":  false,
-	// 		"message": err.Error(),
-	// 	})
-	// 	return
-	// }
-
-	// offset := limit * (page - 1)
-	// var countOfShops uint
-
-	// searchQuery := c.Query("search")
-	// var searchStr, search string
-	// if searchQuery != "" {
-	// 	incomingsSarch := slug.MakeLang(searchQuery, "en")
-	// 	search = strings.ReplaceAll(incomingsSarch, "-", " | ")
-	// 	searchStr = fmt.Sprintf("%%%s%%", search)
-	// }
-
-	// statusQuery := c.DefaultQuery("status", "false")
-	// status, err := strconv.ParseBool(statusQuery)
-	// if err != nil {
-	// 	c.JSON(http.StatusBadRequest, gin.H{
-	// 		"status":  false,
-	// 		"message": err.Error(),
-	// 	})
-	// 	return
-	// }
-
-	// get data from database
-	rowsShop, err := db.Query("SELECT id,owner_name,address,phone_number,running_time FROM shops WHERE deleted_at IS NULL")
+	limitStr := c.Param("limit")
+	if limitStr == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "limit is required",
+		})
+		return
+	}
+	limit, err := strconv.ParseUint(limitStr, 10, 64)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -357,6 +311,144 @@ func GetShops(c *gin.Context) {
 		})
 		return
 	}
+
+	// get page from param
+	pageStr := c.Param("page")
+	if pageStr == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": "page is required",
+		})
+		return
+	}
+	page, err := strconv.ParseUint(pageStr, 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	offset := limit * (page - 1)
+	var countOfShops uint
+
+	searchQuery := c.Query("search")
+	search := fmt.Sprintf("%%%s%%", searchQuery)
+
+	statusQuery := c.DefaultQuery("status", "false")
+	status, err := strconv.ParseBool(statusQuery)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	var countShops, rowsShop *sql.Rows
+	if !status {
+		if searchQuery == "" {
+			countShops, err = db.Query("SELECT COUNT(id) FROM shops WHERE deleted_at IS NULL")
+			if err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		} else {
+			countShops, err = db.Query("SELECT COUNT(id) FROM shops WHERE deleted_at IS NULL AND phone_number LIKE $1", search)
+			if err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}
+	} else {
+		if searchQuery == "" {
+			countShops, err = db.Query("SELECT COUNT(id) FROM shops WHERE deleted_at IS NOT NULL")
+			if err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		} else {
+			countShops, err = db.Query("SELECT COUNT(id) FROM shops WHERE deleted_at IS NOT NULL AND phone_number LIKE $1", search)
+			if err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}
+	}
+	defer func() {
+		if err := countShops.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
+	for countShops.Next() {
+		if err := countShops.Scan(&countOfShops); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}
+
+	if !status {
+		if searchQuery == "" {
+			rowsShop, err = db.Query("SELECT id,owner_name,address,phone_number,running_time FROM shops WHERE deleted_at IS NULL ORDER BY created_at DESC LIMIT $1 OFFSET $2", limit, offset)
+			if err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		} else {
+			rowsShop, err = db.Query("SELECT id,owner_name,address,phone_number,running_time FROM shops WHERE deleted_at IS NULL AND phone_number LIKE $3 ORDER BY created_at DESC LIMIT $1 OFFSET $2", limit, offset, search)
+			if err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}
+	} else {
+		if searchQuery == "" {
+			rowsShop, err = db.Query("SELECT id,owner_name,address,phone_number,running_time FROM shops WHERE deleted_at IS NOT NULL ORDER BY created_at DESC LIMIT $1 OFFSET $2", limit, offset)
+			if err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		} else {
+			rowsShop, err = db.Query("SELECT id,owner_name,address,phone_number,running_time FROM shops WHERE deleted_at IS NOT NULL AND phone_number LIKE $3 ORDER BY created_at DESC LIMIT $1 OFFSET $2", limit, offset, search)
+			if err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}
+	}
+
 	defer func() {
 		if err := rowsShop.Close(); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
@@ -385,6 +477,7 @@ func GetShops(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"status": true,
 		"shops":  shops,
+		"total":  countOfShops,
 	})
 
 }
