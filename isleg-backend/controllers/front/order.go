@@ -825,21 +825,52 @@ func GetOrders(c *gin.Context) {
 		return
 	}
 
-	var countAllCustomerQuery, rowsCustomerIDQuery, rowsOrderQuery string
+	searchQuery := c.Query("search")
+	search := fmt.Sprintf("%%%s%%", searchQuery)
+	var countAllCustomer, rowsCustomerID *sql.Rows
+	var rowsOrderQuery string
 	if status {
-		countAllCustomerQuery = `SELECT customer_id FROM orders WHERE deleted_at IS NOT NULL`
+		if searchQuery == "" {
+			countAllCustomer, err = db.Query("SELECT customer_id FROM orders WHERE deleted_at IS NOT NULL")
+			if err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		} else {
+			countAllCustomer, err = db.Query("SELECT c.id FROM orders o INNER JOIN customers c ON o.customer_id=c.id WHERE c.deleted_at IS NOT NULL AND o.deleted_at IS NOT NULL AND c.phone_number LIKE $1", search)
+			if err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}
 	} else {
-		countAllCustomerQuery = `SELECT customer_id FROM orders WHERE deleted_at IS NULL`
+		if searchQuery == "" {
+			countAllCustomer, err = db.Query("SELECT customer_id FROM orders WHERE deleted_at IS NULL")
+			if err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		} else {
+			countAllCustomer, err = db.Query("SELECT c.id FROM orders o INNER JOIN customers c ON o.customer_id=c.id WHERE c.deleted_at IS NULL AND o.deleted_at IS NULL AND c.phone_number LIKE $1", search)
+			if err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}
 	}
 
-	countAllCustomer, err := db.Query(countAllCustomerQuery)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
 	defer func() {
 		if err := countAllCustomer.Close(); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
@@ -855,19 +886,47 @@ func GetOrders(c *gin.Context) {
 	}
 
 	if status {
-		rowsCustomerIDQuery = `SELECT customer_id FROM orders WHERE deleted_at IS NOT NULL GROUP BY customer_id`
+		if searchQuery == "" {
+			rowsCustomerID, err = db.Query("SELECT customer_id FROM orders WHERE deleted_at IS NOT NULL GROUP BY customer_id")
+			if err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		} else {
+			rowsCustomerID, err = db.Query("SELECT c.id FROM orders o INNER JOIN customers c ON c.id=o.customer_id WHERE c.deleted_at IS NOT NULL AND o.deleted_at IS NOT NULL AND c.phone_number LIKE $1 GROUP BY c.id", search)
+			if err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}
 	} else {
-		rowsCustomerIDQuery = `SELECT customer_id FROM orders WHERE deleted_at IS NULL GROUP BY customer_id`
+		if searchQuery == "" {
+			rowsCustomerID, err = db.Query("SELECT customer_id FROM orders WHERE deleted_at IS NULL GROUP BY customer_id")
+			if err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		} else {
+			rowsCustomerID, err = db.Query("SELECT c.id FROM orders o INNER JOIN customers c ON c.id=o.customer_id WHERE c.deleted_at IS NULL AND o.deleted_at IS NULL AND c.phone_number LIKE $1 GROUP BY c.id", search)
+			if err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}
 	}
 
-	rowsCustomerID, err := db.Query(rowsCustomerIDQuery)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
-		return
-	}
 	defer func() {
 		if err := rowsCustomerID.Close(); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
