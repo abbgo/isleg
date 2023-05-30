@@ -219,7 +219,7 @@ func BackRoutes(back *gin.RouterGroup) {
 
 		// Baslayar --- haryt alynjak magazynlar ucin CRUD
 		securedAdmin.POST("shop", backController.CreateShop)
-		securedAdmin.PUT("shop", backController.UpdateShopByID)
+		securedAdmin.PUT("shop/:id", backController.UpdateShopByID)
 		securedAdmin.GET("shop/:id", backController.GetShopByID)
 		securedAdmin.GET("shops/:limit/:page", backController.GetShops)
 		securedAdmin.DELETE("shop/:id", backController.DeleteShopByID)

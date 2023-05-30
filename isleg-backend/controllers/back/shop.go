@@ -139,8 +139,10 @@ func UpdateShopByID(c *gin.Context) {
 		return
 	}
 
+	shop_id := c.Param("id")
+
 	// check id
-	rowShop, err := db.Query("SELECT id FROM shops WHERE id = $1 AND deleted_at IS NULL", shop.ID)
+	rowShop, err := db.Query("SELECT id FROM shops WHERE id = $1 AND deleted_at IS NULL", shop_id)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
@@ -178,7 +180,7 @@ func UpdateShopByID(c *gin.Context) {
 		return
 	}
 
-	resultShop, err := db.Query("UPDATE shops SET owner_name = $1 , address = $2 , phone_number = $3 , running_time = $4 WHERE id = $5", shop.OwnerName, shop.Address, shop.PhoneNumber, shop.RunningTime, shop.ID)
+	resultShop, err := db.Query("UPDATE shops SET owner_name = $1 , address = $2 , phone_number = $3 , running_time = $4 WHERE id = $5", shop.OwnerName, shop.Address, shop.PhoneNumber, shop.RunningTime, shop_id)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  false,
