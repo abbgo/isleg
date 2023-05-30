@@ -825,27 +825,20 @@ func GetOrders(c *gin.Context) {
 		return
 	}
 
-	var countAllCustomer, rowsCustomerID, rowsOrder *sql.Rows
+	var countAllCustomerQuery, rowsCustomerIDQuery, rowsOrderQuery string
 	if status {
-		rows, err := db.Query("SELECT customer_id FROM orders WHERE deleted_at IS NOT NULL")
-		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-		countAllCustomer = rows
+		countAllCustomerQuery = `SELECT customer_id FROM orders WHERE deleted_at IS NOT NULL`
 	} else {
-		rows, err := db.Query("SELECT customer_id FROM orders WHERE deleted_at IS NULL")
-		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-		countAllCustomer = rows
+		countAllCustomerQuery = `SELECT customer_id FROM orders WHERE deleted_at IS NULL`
+	}
+
+	countAllCustomer, err := db.Query(countAllCustomerQuery)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
 	}
 	defer func() {
 		if err := countAllCustomer.Close(); err != nil {
@@ -862,25 +855,18 @@ func GetOrders(c *gin.Context) {
 	}
 
 	if status {
-		rows, err := db.Query("SELECT customer_id FROM orders WHERE deleted_at IS NOT NULL GROUP BY customer_id")
-		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-		rowsCustomerID = rows
+		rowsCustomerIDQuery = `SELECT customer_id FROM orders WHERE deleted_at IS NOT NULL GROUP BY customer_id`
 	} else {
-		rows, err := db.Query("SELECT customer_id FROM orders WHERE deleted_at IS NULL GROUP BY customer_id")
-		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-		rowsCustomerID = rows
+		rowsCustomerIDQuery = `SELECT customer_id FROM orders WHERE deleted_at IS NULL GROUP BY customer_id`
+	}
+
+	rowsCustomerID, err := db.Query(rowsCustomerIDQuery)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
 	}
 	defer func() {
 		if err := rowsCustomerID.Close(); err != nil {
@@ -911,25 +897,18 @@ func GetOrders(c *gin.Context) {
 	var orders []OrderForAdmin
 
 	if status {
-		rows, err := db.Query("SELECT customer_id,id,customer_mark,order_time,payment_type,total_price,shipping_price,excel,address,TO_CHAR(created_at, 'DD.MM.YYYY') FROM orders WHERE customer_id = ANY($1) AND deleted_at IS NOT NULL LIMIT $2 OFFSET $3", pq.Array(customerIDs), limit, offset)
-		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-		rowsOrder = rows
+		rowsOrderQuery = `SELECT customer_id,id,customer_mark,order_time,payment_type,total_price,shipping_price,excel,address,TO_CHAR(created_at, 'DD.MM.YYYY') FROM orders WHERE customer_id = ANY($1) AND deleted_at IS NOT NULL LIMIT $2 OFFSET $3`
 	} else {
-		rows, err := db.Query("SELECT customer_id,id,customer_mark,order_time,payment_type,total_price,shipping_price,excel,address,TO_CHAR(created_at, 'DD.MM.YYYY') FROM orders WHERE customer_id = ANY($1) AND deleted_at IS NULL LIMIT $2 OFFSET $3", pq.Array(customerIDs), limit, offset)
-		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-		rowsOrder = rows
+		rowsOrderQuery = `SELECT customer_id,id,customer_mark,order_time,payment_type,total_price,shipping_price,excel,address,TO_CHAR(created_at, 'DD.MM.YYYY') FROM orders WHERE customer_id = ANY($1) AND deleted_at IS NULL LIMIT $2 OFFSET $3`
+	}
+
+	rowsOrder, err := db.Query(rowsOrderQuery, pq.Array(customerIDs), limit, offset)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
 	}
 	defer func() {
 		if err := rowsOrder.Close(); err != nil {
@@ -1080,13 +1059,11 @@ func GetOrders(c *gin.Context) {
 			}
 
 			product.Translations = trProduct
-
 			products = append(products, product)
 
 		}
 
 		order.Products = products
-
 		orders = append(orders, order)
 
 	}
