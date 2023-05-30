@@ -291,6 +291,63 @@ func GetShops(c *gin.Context) {
 		}
 	}()
 
+	// get limit from param
+	// limitStr := c.Param("limit")
+	// if limitStr == "" {
+	// 	c.JSON(http.StatusBadRequest, gin.H{
+	// 		"status":  false,
+	// 		"message": "limit is required",
+	// 	})
+	// 	return
+	// }
+	// limit, err := strconv.ParseUint(limitStr, 10, 64)
+	// if err != nil {
+	// 	c.JSON(http.StatusBadRequest, gin.H{
+	// 		"status":  false,
+	// 		"message": err.Error(),
+	// 	})
+	// 	return
+	// }
+
+	// // get page from param
+	// pageStr := c.Param("page")
+	// if pageStr == "" {
+	// 	c.JSON(http.StatusBadRequest, gin.H{
+	// 		"status":  false,
+	// 		"message": "page is required",
+	// 	})
+	// 	return
+	// }
+	// page, err := strconv.ParseUint(pageStr, 10, 64)
+	// if err != nil {
+	// 	c.JSON(http.StatusBadRequest, gin.H{
+	// 		"status":  false,
+	// 		"message": err.Error(),
+	// 	})
+	// 	return
+	// }
+
+	// offset := limit * (page - 1)
+	// var countOfShops uint
+
+	// searchQuery := c.Query("search")
+	// var searchStr, search string
+	// if searchQuery != "" {
+	// 	incomingsSarch := slug.MakeLang(searchQuery, "en")
+	// 	search = strings.ReplaceAll(incomingsSarch, "-", " | ")
+	// 	searchStr = fmt.Sprintf("%%%s%%", search)
+	// }
+
+	// statusQuery := c.DefaultQuery("status", "false")
+	// status, err := strconv.ParseBool(statusQuery)
+	// if err != nil {
+	// 	c.JSON(http.StatusBadRequest, gin.H{
+	// 		"status":  false,
+	// 		"message": err.Error(),
+	// 	})
+	// 	return
+	// }
+
 	// get data from database
 	rowsShop, err := db.Query("SELECT id,owner_name,address,phone_number,running_time FROM shops WHERE deleted_at IS NULL")
 	if err != nil {

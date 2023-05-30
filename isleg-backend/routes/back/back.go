@@ -221,7 +221,7 @@ func BackRoutes(back *gin.RouterGroup) {
 		securedAdmin.POST("shop", backController.CreateShop)
 		securedAdmin.PUT("shop", backController.UpdateShopByID)
 		securedAdmin.GET("shop/:id", backController.GetShopByID)
-		securedAdmin.GET("shops", backController.GetShops)
+		securedAdmin.GET("shops/:limit/:page", backController.GetShops)
 		securedAdmin.DELETE("shop/:id", backController.DeleteShopByID)
 		securedAdmin.GET("restore-shop/:id", backController.RestoreShopByID)
 		securedAdmin.DELETE("delete-shop/:id", backController.DeletePermanentlyShopByID)

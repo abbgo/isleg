@@ -316,12 +316,10 @@ func GetBrends(c *gin.Context) {
 		return
 	}
 
-	var countBrendsQuery string
 	var countBrends *sql.Rows
 	if !status {
 		if search == "" {
-			countBrendsQuery = `SELECT COUNT(id) FROM brends WHERE deleted_at IS NULL`
-			countBrends, err = db.Query(countBrendsQuery)
+			countBrends, err = db.Query("SELECT COUNT(id) FROM brends WHERE deleted_at IS NULL")
 			if err != nil {
 				c.JSON(http.StatusBadRequest, gin.H{
 					"status":  false,
@@ -330,8 +328,7 @@ func GetBrends(c *gin.Context) {
 				return
 			}
 		} else {
-			countBrendsQuery = `SELECT COUNT(id) FROM brends WHERE deleted_at IS NULL AND (to_tsvector(slug) @@ to_tsquery($1) OR slug LIKE $2)`
-			countBrends, err = db.Query(countBrendsQuery, search, searchStr)
+			countBrends, err = db.Query("SELECT COUNT(id) FROM brends WHERE deleted_at IS NULL AND (to_tsvector(slug) @@ to_tsquery($1) OR slug LIKE $2)", search, searchStr)
 			if err != nil {
 				c.JSON(http.StatusBadRequest, gin.H{
 					"status":  false,
@@ -342,8 +339,7 @@ func GetBrends(c *gin.Context) {
 		}
 	} else {
 		if search == "" {
-			countBrendsQuery = `SELECT COUNT(id) FROM brends WHERE deleted_at IS NOT NULL`
-			countBrends, err = db.Query(countBrendsQuery)
+			countBrends, err = db.Query("SELECT COUNT(id) FROM brends WHERE deleted_at IS NOT NULL")
 			if err != nil {
 				c.JSON(http.StatusBadRequest, gin.H{
 					"status":  false,
@@ -352,8 +348,7 @@ func GetBrends(c *gin.Context) {
 				return
 			}
 		} else {
-			countBrendsQuery = `SELECT COUNT(id) FROM brends WHERE deleted_at IS NOT NULL AND (to_tsvector(slug) @@ to_tsquery($1) OR slug LIKE $2)`
-			countBrends, err = db.Query(countBrendsQuery, search, searchStr)
+			countBrends, err = db.Query("SELECT COUNT(id) FROM brends WHERE deleted_at IS NOT NULL AND (to_tsvector(slug) @@ to_tsquery($1) OR slug LIKE $2)", search, searchStr)
 			if err != nil {
 				c.JSON(http.StatusBadRequest, gin.H{
 					"status":  false,
@@ -384,12 +379,10 @@ func GetBrends(c *gin.Context) {
 		}
 	}
 
-	var rowBrendsQuery string
 	var rowBrends *sql.Rows
 	if !status {
 		if search == "" {
-			rowBrendsQuery = `SELECT id,name,image FROM brends WHERE deleted_at IS NULL ORDER BY created_at DESC LIMIT $1 OFFSET $2`
-			rowBrends, err = db.Query(rowBrendsQuery, limit, offset)
+			rowBrends, err = db.Query("SELECT id,name,image FROM brends WHERE deleted_at IS NULL ORDER BY created_at DESC LIMIT $1 OFFSET $2", limit, offset)
 			if err != nil {
 				c.JSON(http.StatusBadRequest, gin.H{
 					"status":  false,
@@ -398,8 +391,7 @@ func GetBrends(c *gin.Context) {
 				return
 			}
 		} else {
-			rowBrendsQuery = `SELECT id,name,image FROM brends WHERE deleted_at IS NULL AND (to_tsvector(slug) @@ to_tsquery($3) OR slug LIKE $4) ORDER BY created_at DESC LIMIT $1 OFFSET $2`
-			rowBrends, err = db.Query(rowBrendsQuery, limit, offset, search, searchStr)
+			rowBrends, err = db.Query("SELECT id,name,image FROM brends WHERE deleted_at IS NULL AND (to_tsvector(slug) @@ to_tsquery($3) OR slug LIKE $4) ORDER BY created_at DESC LIMIT $1 OFFSET $2", limit, offset, search, searchStr)
 			if err != nil {
 				c.JSON(http.StatusBadRequest, gin.H{
 					"status":  false,
@@ -410,8 +402,7 @@ func GetBrends(c *gin.Context) {
 		}
 	} else {
 		if search == "" {
-			rowBrendsQuery = `SELECT id,name,image FROM brends WHERE deleted_at IS NOT NULL ORDER BY created_at DESC LIMIT $1 OFFSET $2`
-			rowBrends, err = db.Query(rowBrendsQuery, limit, offset)
+			rowBrends, err = db.Query("SELECT id,name,image FROM brends WHERE deleted_at IS NOT NULL ORDER BY created_at DESC LIMIT $1 OFFSET $2", limit, offset)
 			if err != nil {
 				c.JSON(http.StatusBadRequest, gin.H{
 					"status":  false,
@@ -420,8 +411,7 @@ func GetBrends(c *gin.Context) {
 				return
 			}
 		} else {
-			rowBrendsQuery = `SELECT id,name,image FROM brends WHERE deleted_at IS NOT NULL AND (to_tsvector(slug) @@ to_tsquery($3) OR slug LIKE $4) ORDER BY created_at DESC LIMIT $1 OFFSET $2`
-			rowBrends, err = db.Query(rowBrendsQuery, limit, offset, search, searchStr)
+			rowBrends, err = db.Query("SELECT id,name,image FROM brends WHERE deleted_at IS NOT NULL AND (to_tsvector(slug) @@ to_tsquery($3) OR slug LIKE $4) ORDER BY created_at DESC LIMIT $1 OFFSET $2", limit, offset, search, searchStr)
 			if err != nil {
 				c.JSON(http.StatusBadRequest, gin.H{
 					"status":  false,
