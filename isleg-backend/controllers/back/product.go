@@ -4,14 +4,19 @@ import (
 	"github/abbgo/isleg/isleg-backend/config"
 	"github/abbgo/isleg/isleg-backend/models"
 	"github/abbgo/isleg/isleg-backend/pkg"
+	"io"
+	"strconv"
+	"strings"
 
 	"math"
 	"net/http"
 	"os"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"github.com/gosimple/slug"
 	"github.com/lib/pq"
+	"github.com/xuri/excelize/v2"
 	"gopkg.in/guregu/null.v4"
 )
 
@@ -459,803 +464,762 @@ func CreateProduct(c *gin.Context) {
 
 }
 
-// func CreateProductsByExcelFile(c *gin.Context) {
+func CreateProductsByExcelFile(c *gin.Context) {
 
-// 	db, err := config.ConnDB()
-// 	if err != nil {
-// 		c.JSON(http.StatusBadRequest, gin.H{
-// 			"status":  false,
-// 			"message": err.Error(),
-// 		})
-// 		return
-// 	}
-// 	defer func() {
-// 		if err := db.Close(); err != nil {
-// 			c.JSON(http.StatusBadRequest, gin.H{
-// 				"status":  false,
-// 				"message": err.Error(),
-// 			})
-// 			return
-// 		}
-// 	}()
+	db, err := config.ConnDB()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer func() {
+		if err := db.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
-// 	// OPEN EXCEL FILE
-// 	f, err := excelize.OpenFile(pkg.ServerPath + "uploads/product/products.xlsx")
-// 	if err != nil {
-// 		c.JSON(http.StatusBadRequest, gin.H{
-// 			"status":  false,
-// 			"message": err.Error(),
-// 		})
-// 		return
-// 	}
-// 	defer func() {
-// 		if err := f.Close(); err != nil {
-// 			c.JSON(http.StatusBadRequest, gin.H{
-// 				"status":  false,
-// 				"message": err.Error(),
-// 			})
-// 			return
-// 		}
-// 	}()
+	// OPEN EXCEL FILE
+	f, err := excelize.OpenFile(pkg.ServerPath + "uploads/product/products.xlsx")
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	defer func() {
+		if err := f.Close(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}()
 
-// 	// CHECK IS EXISTS "uploads/product/main_image DIRECT" , IF DIRECT NOT FOUND CREATE THIS DIRECT
-// 	_, err = os.Stat(pkg.ServerPath + "uploads/product/main_image")
-// 	if err != nil {
-// 		if err := os.MkdirAll(pkg.ServerPath+"uploads/product/main_image", os.ModePerm); err != nil {
-// 			c.JSON(http.StatusBadRequest, gin.H{
-// 				"status":  false,
-// 				"message": err.Error(),
-// 			})
-// 			return
-// 		}
-// 	}
+	// CHECK IS EXISTS "uploads/product/main_image DIRECT" , IF DIRECT NOT FOUND CREATE THIS DIRECT
+	_, err = os.Stat(pkg.ServerPath + "uploads/product/main_image")
+	if err != nil {
+		if err := os.MkdirAll(pkg.ServerPath+"uploads/product/main_image", os.ModePerm); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}
 
-// 	// CHECK IS EXISTS "uploads/product/image" DIRECT , IF DIRECT NOT FOUND CREATE THIS DIRECT
-// 	_, err = os.Stat(pkg.ServerPath + "uploads/product/image")
-// 	if err != nil {
-// 		if err := os.MkdirAll(pkg.ServerPath+"uploads/product/image", os.ModePerm); err != nil {
-// 			c.JSON(http.StatusBadRequest, gin.H{
-// 				"status":  false,
-// 				"message": err.Error(),
-// 			})
-// 			return
-// 		}
-// 	}
+	// CHECK IS EXISTS "uploads/product/image" DIRECT , IF DIRECT NOT FOUND CREATE THIS DIRECT
+	_, err = os.Stat(pkg.ServerPath + "uploads/product/image")
+	if err != nil {
+		if err := os.MkdirAll(pkg.ServerPath+"uploads/product/image", os.ModePerm); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+	}
 
-// 	//////////////////////  GET COUNT OF ROWS FROM EXCEL FILE ----------------------------------------
-// 	countOfRows := 0
-// 	for {
-// 		value, err := f.GetCellValue("Sheet1", "b"+strconv.Itoa(countOfRows+3))
-// 		if err != nil {
-// 			c.JSON(http.StatusBadRequest, gin.H{
-// 				"status":  false,
-// 				"message": err.Error(),
-// 			})
-// 			return
-// 		}
-// 		if value != "" {
-// 			countOfRows++
-// 		} else {
-// 			break
-// 		}
-// 	}
+	//////////////////////  GET COUNT OF ROWS FROM EXCEL FILE ----------------------------------------
+	countOfRows := 0
+	for {
+		value, err := f.GetCellValue("Sheet1", "c"+strconv.Itoa(countOfRows+3))
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+		if value != "" {
+			countOfRows++
+		} else {
+			break
+		}
+	}
 
-// 	//////////////////////      GET PICTURE FROM EXCEL FILE ----------------------------------------
-// 	rows := []int{}
-// 	for i := 3; i < countOfRows+3; i++ {
-// 		rows = append(rows, i)
-// 	}
+	//////////////////////      GET PICTURE FROM EXCEL FILE ----------------------------------------
+	rows := []int{}
+	for i := 3; i < countOfRows+3; i++ {
+		rows = append(rows, i)
+	}
 
-// 	columns := []string{"c", "d", "e", "f", "g"}
-// 	for _, vRow := range rows {
-// 		var product ProductForAdmin
+	columns := []string{"c", "d", "e", "f", "g"}
+	for _, vRow := range rows {
+		var product ProductForAdmin
 
-// 		mainImageFileID, err := f.GetCellValue("Sheet1", columns[0]+strconv.Itoa(vRow))
-// 		if err != nil {
-// 			c.JSON(http.StatusBadRequest, gin.H{
-// 				"status":  false,
-// 				"message": err.Error(),
-// 			})
-// 			return
-// 		}
-// 		if mainImageFileID == "" {
-// 			c.JSON(http.StatusBadRequest, gin.H{
-// 				"status":  false,
-// 				"message": "main image is required",
-// 			})
-// 			return
-// 		}
+		mainImageFileID, err := f.GetCellValue("Sheet1", columns[0]+strconv.Itoa(vRow))
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+		if mainImageFileID == "" {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": "main image is required",
+			})
+			return
+		}
 
-// 		newFileName, err := pkg.FileUploadFromGoogleDrive(mainImageFileID, pkg.ServerPath+"uploads/product/main_image/")
-// 		if err != nil {
-// 			c.JSON(http.StatusBadRequest, gin.H{
-// 				"status":  false,
-// 				"message": err.Error(),
-// 			})
-// 			return
-// 		}
+		sourceFile := pkg.ServerPath + "uploads/images/" + mainImageFileID
+		newFileName := uuid.New().String() + strings.Split(mainImageFileID, ".")[1]
+		destinationFile := pkg.ServerPath + "uploads/product/main_image/" + newFileName
 
-// 		// picsA, err := f.GetPictures("Sheet1", columns[0]+strconv.Itoa(vRow))
-// 		// if err != nil {
-// 		// 	c.JSON(http.StatusBadRequest, gin.H{
-// 		// 		"status":  false,
-// 		// 		"message": err.Error(),
-// 		// 	})
-// 		// 	return
-// 		// }
+		// Open the source file for reading
+		source, err := os.Open(sourceFile)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+		defer source.Close()
 
-// 		// VALIDATE IMAGE
-// 		// extensionFile := picsA[0].Extension
-// 		// if extensionFile == "" {
-// 		// 	c.JSON(http.StatusBadRequest, gin.H{
-// 		// 		"status":  false,
-// 		// 		"message": "main image is required",
-// 		// 	})
-// 		// 	return
-// 		// }
-// 		// if extensionFile != ".jpg" && extensionFile != ".JPG" && extensionFile != ".jpeg" && extensionFile != ".JPEG" && extensionFile != ".png" && extensionFile != ".PNG" && extensionFile != ".gif" && extensionFile != ".GIF" && extensionFile != ".svg" && extensionFile != ".SVG" && extensionFile != ".WEBP" && extensionFile != ".webp" {
-// 		// 	c.JSON(http.StatusBadRequest, gin.H{
-// 		// 		"status":  false,
-// 		// 		"message": "the file must be an image",
-// 		// 	})
-// 		// 	return
-// 		// }
+		// Create the destination file
+		destination, err := os.Create(destinationFile)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+		defer destination.Close()
 
-// 		// newFileName := uuid.New().String() + extensionFile
-// 		// if err := os.WriteFile(pkg.ServerPath+"uploads/product/main_image/"+newFileName, picsA[0].File, os.ModePerm); err != nil {
-// 		// 	c.JSON(http.StatusBadRequest, gin.H{
-// 		// 		"status":  false,
-// 		// 		"message": err.Error(),
-// 		// 	})
-// 		// 	return
-// 		// }
+		// Copy the contents from source to destination
+		_, err = io.Copy(destination, source)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
 
-// 		result, err := db.Query("INSERT INTO helper_images (image) VALUES ($1)", "uploads/product/main_image/"+newFileName)
-// 		if err != nil {
-// 			c.JSON(http.StatusNotFound, gin.H{
-// 				"status":  false,
-// 				"message": err.Error(),
-// 			})
-// 			return
-// 		}
-// 		defer func() {
-// 			if err := result.Close(); err != nil {
-// 				c.JSON(http.StatusBadRequest, gin.H{
-// 					"status":  false,
-// 					"message": err.Error(),
-// 				})
-// 				return
-// 			}
-// 		}()
+		err = os.Remove(pkg.ServerPath + "uploads/images/" + mainImageFileID)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
 
-// 		product.MainImage = "uploads/product/main_image/" + newFileName
+		result, err := db.Query("INSERT INTO helper_images (image) VALUES ($1)", "uploads/product/main_image/"+newFileName)
+		if err != nil {
+			c.JSON(http.StatusNotFound, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+		defer func() {
+			if err := result.Close(); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}()
 
-// 		// var pictures []string
-// 		for _, vColumn := range columns[1:] {
-// 			imageFileID, err := f.GetCellValue("Sheet1", vColumn+strconv.Itoa(vRow))
-// 			if err != nil {
-// 				c.JSON(http.StatusBadRequest, gin.H{
-// 					"status":  false,
-// 					"message": err.Error(),
-// 				})
-// 				return
-// 			}
-// 			// pictures = append(pictures, picsB)
+		product.MainImage = "uploads/product/main_image/" + newFileName
 
-// 			if imageFileID != "" {
-// 				newFileName, err := pkg.FileUploadFromGoogleDrive(imageFileID, pkg.ServerPath+"uploads/product/image/")
-// 				if err != nil {
-// 					c.JSON(http.StatusBadRequest, gin.H{
-// 						"status":  false,
-// 						"message": err.Error(),
-// 					})
-// 					return
-// 				}
+		// var pictures []string
+		for _, vColumn := range columns[1:] {
+			imageFileID, err := f.GetCellValue("Sheet1", vColumn+strconv.Itoa(vRow))
+			if err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+			// pictures = append(pictures, picsB)
 
-// 				result, err := db.Query("INSERT INTO helper_images (image) VALUES ($1)", "uploads/product/image/"+newFileName)
-// 				if err != nil {
-// 					c.JSON(http.StatusNotFound, gin.H{
-// 						"status":  false,
-// 						"message": err.Error(),
-// 					})
-// 					return
-// 				}
-// 				defer func() {
-// 					if err := result.Close(); err != nil {
-// 						c.JSON(http.StatusBadRequest, gin.H{
-// 							"status":  false,
-// 							"message": err.Error(),
-// 						})
-// 						return
-// 					}
-// 				}()
+			if imageFileID != "" {
+				sourceFile = pkg.ServerPath + "uploads/images/" + imageFileID
+				newFileName = uuid.New().String() + strings.Split(imageFileID, ".")[1]
+				destinationFile = pkg.ServerPath + "uploads/product/image/" + newFileName
 
-// 				product.Images = append(product.Images, "uploads/product/image/"+newFileName)
-// 			}
-// 		}
+				// Open the source file for reading
+				source, err := os.Open(sourceFile)
+				if err != nil {
+					c.JSON(http.StatusBadRequest, gin.H{
+						"status":  false,
+						"message": err.Error(),
+					})
+					return
+				}
+				defer source.Close()
 
-// 		// for _, pic := range pictures {
-// 		// 	// VALIDATE IMAGE
-// 		// 	// extensionFile := pic.Extension
-// 		// 	// if extensionFile != ".jpg" && extensionFile != ".JPG" && extensionFile != ".jpeg" && extensionFile != ".JPEG" && extensionFile != ".png" && extensionFile != ".PNG" && extensionFile != ".gif" && extensionFile != ".GIF" && extensionFile != ".svg" && extensionFile != ".SVG" && extensionFile != ".WEBP" && extensionFile != ".webp" {
-// 		// 	// 	c.JSON(http.StatusBadRequest, gin.H{
-// 		// 	// 		"status":  false,
-// 		// 	// 		"message": "the file must be an image",
-// 		// 	// 	})
-// 		// 	// 	return
-// 		// 	// }
+				// Create the destination file
+				destination, err := os.Create(destinationFile)
+				if err != nil {
+					c.JSON(http.StatusBadRequest, gin.H{
+						"status":  false,
+						"message": err.Error(),
+					})
+					return
+				}
+				defer destination.Close()
 
-// 		// 	// newFileName := uuid.New().String() + extensionFile
-// 		// 	// if err := os.WriteFile(pkg.ServerPath+"uploads/product/image/"+newFileName, picsA[0].File, os.ModePerm); err != nil {
-// 		// 	// 	c.JSON(http.StatusBadRequest, gin.H{
-// 		// 	// 		"status":  false,
-// 		// 	// 		"message": err.Error(),
-// 		// 	// 	})
-// 		// 	// 	return
-// 		// 	// }
+				// Copy the contents from source to destination
+				_, err = io.Copy(destination, source)
+				if err != nil {
+					c.JSON(http.StatusBadRequest, gin.H{
+						"status":  false,
+						"message": err.Error(),
+					})
+					return
+				}
 
-// 		// 	result, err := db.Query("INSERT INTO helper_images (image) VALUES ($1)", "uploads/product/image/"+newFileName)
-// 		// 	if err != nil {
-// 		// 		c.JSON(http.StatusNotFound, gin.H{
-// 		// 			"status":  false,
-// 		// 			"message": err.Error(),
-// 		// 		})
-// 		// 		return
-// 		// 	}
-// 		// 	defer func() {
-// 		// 		if err := result.Close(); err != nil {
-// 		// 			c.JSON(http.StatusBadRequest, gin.H{
-// 		// 				"status":  false,
-// 		// 				"message": err.Error(),
-// 		// 			})
-// 		// 			return
-// 		// 		}
-// 		// 	}()
+				err = os.Remove(pkg.ServerPath + "uploads/images/" + imageFileID)
+				if err != nil {
+					c.JSON(http.StatusBadRequest, gin.H{
+						"status":  false,
+						"message": err.Error(),
+					})
+					return
+				}
 
-// 		// 	product.Images = append(product.Images, "uploads/product/image/"+newFileName)
-// 		// }
+				// newFileName, err := pkg.FileUploadFromGoogleDrive(imageFileID, pkg.ServerPath+"uploads/product/image/")
+				// if err != nil {
+				// 	c.JSON(http.StatusBadRequest, gin.H{
+				// 		"status":  false,
+				// 		"message": err.Error(),
+				// 	})
+				// 	return
+				// }
 
-// 		// //////////////////////      GET CATEGORIES FROM EXCEL FILE ----------------------------------------
-// 		namesOfCategories, err := f.GetCellValue("Sheet1", "h"+strconv.Itoa(vRow))
-// 		if err != nil {
-// 			c.JSON(http.StatusBadRequest, gin.H{
-// 				"status":  false,
-// 				"message": err.Error(),
-// 			})
-// 			return
-// 		}
-// 		if namesOfCategories == "" {
-// 			c.JSON(http.StatusBadRequest, gin.H{
-// 				"status":  false,
-// 				"message": "product category is required",
-// 			})
-// 			return
-// 		}
+				result, err := db.Query("INSERT INTO helper_images (image) VALUES ($1)", "uploads/product/image/"+newFileName)
+				if err != nil {
+					c.JSON(http.StatusNotFound, gin.H{
+						"status":  false,
+						"message": err.Error(),
+					})
+					return
+				}
+				defer func() {
+					if err := result.Close(); err != nil {
+						c.JSON(http.StatusBadRequest, gin.H{
+							"status":  false,
+							"message": err.Error(),
+						})
+						return
+					}
+				}()
 
-// 		names_of_categories := strings.Split(namesOfCategories, " | ")
-// 		for _, v := range names_of_categories {
-// 			rowCategory, err := db.Query("SELECT c.id FROM categories c INNER JOIN translation_category tc ON tc.category_id=c.id INNER JOIN languages l ON l.id=tc.lang_id WHERE l.name_short = $1 AND tc.name = $2 AND c.deleted_at IS NULL AND l.deleted_at IS NULL AND tc.deleted_at IS NULL", "tm", v)
-// 			if err != nil {
-// 				c.JSON(http.StatusBadRequest, gin.H{
-// 					"status":  false,
-// 					"message": err.Error(),
-// 				})
-// 				return
-// 			}
-// 			defer func() {
-// 				if err := rowCategory.Close(); err != nil {
-// 					c.JSON(http.StatusBadRequest, gin.H{
-// 						"status":  false,
-// 						"message": err.Error(),
-// 					})
-// 					return
-// 				}
-// 			}()
-// 			var categoryID string
-// 			for rowCategory.Next() {
-// 				if err := rowCategory.Scan(&categoryID); err != nil {
-// 					c.JSON(http.StatusBadRequest, gin.H{
-// 						"status":  false,
-// 						"message": err.Error(),
-// 					})
-// 					return
-// 				}
-// 			}
+				product.Images = append(product.Images, "uploads/product/image/"+newFileName)
+			}
+		}
 
-// 			product.Categories = append(product.Categories, categoryID)
-// 		}
+		// //////////////////////      GET CATEGORIES FROM EXCEL FILE ----------------------------------------
+		namesOfCategories, err := f.GetCellValue("Sheet1", "h"+strconv.Itoa(vRow))
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+		if namesOfCategories == "" {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": "product category is required",
+			})
+			return
+		}
 
-// 		// //////////////////////      GET BREND FROM EXCEL FILE ----------------------------------------
-// 		nameOfBrend, err := f.GetCellValue("Sheet1", "n"+strconv.Itoa(vRow))
-// 		if err != nil {
-// 			c.JSON(http.StatusBadRequest, gin.H{
-// 				"status":  false,
-// 				"message": err.Error(),
-// 			})
-// 			return
-// 		}
+		names_of_categories := strings.Split(namesOfCategories, " | ")
+		for _, v := range names_of_categories {
+			rowCategory, err := db.Query("SELECT c.id FROM categories c INNER JOIN translation_category tc ON tc.category_id=c.id INNER JOIN languages l ON l.id=tc.lang_id WHERE l.name_short = $1 AND tc.name = $2 AND c.deleted_at IS NULL AND l.deleted_at IS NULL AND tc.deleted_at IS NULL", "tm", v)
+			if err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+			defer func() {
+				if err := rowCategory.Close(); err != nil {
+					c.JSON(http.StatusBadRequest, gin.H{
+						"status":  false,
+						"message": err.Error(),
+					})
+					return
+				}
+			}()
+			var categoryID string
+			for rowCategory.Next() {
+				if err := rowCategory.Scan(&categoryID); err != nil {
+					c.JSON(http.StatusBadRequest, gin.H{
+						"status":  false,
+						"message": err.Error(),
+					})
+					return
+				}
+			}
 
-// 		var shopID, brendID interface{}
-// 		rowBrend, err := db.Query("SELECT id FROM brends WHERE name = $1 AND deleted_at IS NULL", nameOfBrend)
-// 		if err != nil {
-// 			c.JSON(http.StatusBadRequest, gin.H{
-// 				"status":  false,
-// 				"message": err.Error(),
-// 			})
-// 			return
-// 		}
-// 		defer func() {
-// 			if err := rowBrend.Close(); err != nil {
-// 				c.JSON(http.StatusBadRequest, gin.H{
-// 					"status":  false,
-// 					"message": err.Error(),
-// 				})
-// 				return
-// 			}
-// 		}()
-// 		for rowBrend.Next() {
-// 			if err := rowBrend.Scan(&product.BrendID); err != nil {
-// 				c.JSON(http.StatusBadRequest, gin.H{
-// 					"status":  false,
-// 					"message": err.Error(),
-// 				})
-// 				return
-// 			}
-// 		}
-// 		if product.BrendID.String == "" {
-// 			brendID = nil
-// 		} else {
-// 			brendID = product.BrendID.String
-// 		}
+			product.Categories = append(product.Categories, categoryID)
+		}
 
-// 		// //////////////////////      GET SHOP FROM EXCEL FILE ----------------------------------------
-// 		shopID = nil // default value
-// 		// shopPhoneNumber, err := f.GetCellValue("Sheet1", "g"+strconv.Itoa(vRow))
-// 		// if err != nil {
-// 		// 	c.JSON(http.StatusBadRequest, gin.H{
-// 		// 		"status":  false,
-// 		// 		"message": err.Error(),
-// 		// 	})
-// 		// 	return
-// 		// }
+		// //////////////////////      GET BREND FROM EXCEL FILE ----------------------------------------
+		nameOfBrend, err := f.GetCellValue("Sheet1", "n"+strconv.Itoa(vRow))
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
 
-// 		// rowShop, err := db.Query("SELECT id FROM shops WHERE phone_number = $1 AND deleted_at IS NULL", shopPhoneNumber)
-// 		// if err != nil {
-// 		// 	c.JSON(http.StatusBadRequest, gin.H{
-// 		// 		"status":  false,
-// 		// 		"message": err.Error(),
-// 		// 	})
-// 		// 	return
-// 		// }
-// 		// defer func() {
-// 		// 	if err := rowShop.Close(); err != nil {
-// 		// 		c.JSON(http.StatusBadRequest, gin.H{
-// 		// 			"status":  false,
-// 		// 			"message": err.Error(),
-// 		// 		})
-// 		// 		return
-// 		// 	}
-// 		// }()
-// 		// for rowShop.Next() {
-// 		// 	if err := rowShop.Scan(&product.ShopID); err != nil {
-// 		// 		c.JSON(http.StatusBadRequest, gin.H{
-// 		// 			"status":  false,
-// 		// 			"message": err.Error(),
-// 		// 		})
-// 		// 		return
-// 		// 	}
-// 		// }
-// 		// if product.ShopID.String == "" {
-// 		// 	shopID = nil
-// 		// } else {
-// 		// 	shopID = product.ShopID.String
-// 		// }
+		var shopID, brendID interface{}
+		rowBrend, err := db.Query("SELECT id FROM brends WHERE name = $1 AND deleted_at IS NULL", nameOfBrend)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+		defer func() {
+			if err := rowBrend.Close(); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}()
+		for rowBrend.Next() {
+			if err := rowBrend.Scan(&product.BrendID); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}
+		if product.BrendID.String == "" {
+			brendID = nil
+		} else {
+			brendID = product.BrendID.String
+		}
 
-// 		// //////////////////////      GET PRICE FROM EXCEL FILE ----------------------------------------
-// 		priceStr, err := f.GetCellValue("Sheet1", "i"+strconv.Itoa(vRow))
-// 		if err != nil {
-// 			c.JSON(http.StatusBadRequest, gin.H{
-// 				"status":  false,
-// 				"message": err.Error(),
-// 			})
-// 			return
-// 		}
-// 		product.Price, err = strconv.ParseFloat(priceStr, 64)
-// 		if err != nil {
-// 			c.JSON(http.StatusBadRequest, gin.H{
-// 				"status":  false,
-// 				"message": err.Error(),
-// 			})
-// 			return
-// 		}
+		// //////////////////////      GET SHOP FROM EXCEL FILE ----------------------------------------
+		shopID = nil // default value
+		// shopPhoneNumber, err := f.GetCellValue("Sheet1", "g"+strconv.Itoa(vRow))
+		// if err != nil {
+		// 	c.JSON(http.StatusBadRequest, gin.H{
+		// 		"status":  false,
+		// 		"message": err.Error(),
+		// 	})
+		// 	return
+		// }
 
-// 		// //////////////////////      GET OLD PRICE FROM EXCEL FILE ----------------------------------------
-// 		product.OldPrice = 0 // default value
-// 		// oldPriceStr, err := f.GetCellValue("Sheet1", "i"+strconv.Itoa(vRow))
-// 		// if err != nil {
-// 		// 	c.JSON(http.StatusBadRequest, gin.H{
-// 		// 		"status":  false,
-// 		// 		"message": err.Error(),
-// 		// 	})
-// 		// 	return
-// 		// }
-// 		// product.OldPrice, err = strconv.ParseFloat(oldPriceStr, 64)
-// 		// if err != nil {
-// 		// 	c.JSON(http.StatusBadRequest, gin.H{
-// 		// 		"status":  false,
-// 		// 		"message": err.Error(),
-// 		// 	})
-// 		// 	return
-// 		// }
+		// rowShop, err := db.Query("SELECT id FROM shops WHERE phone_number = $1 AND deleted_at IS NULL", shopPhoneNumber)
+		// if err != nil {
+		// 	c.JSON(http.StatusBadRequest, gin.H{
+		// 		"status":  false,
+		// 		"message": err.Error(),
+		// 	})
+		// 	return
+		// }
+		// defer func() {
+		// 	if err := rowShop.Close(); err != nil {
+		// 		c.JSON(http.StatusBadRequest, gin.H{
+		// 			"status":  false,
+		// 			"message": err.Error(),
+		// 		})
+		// 		return
+		// 	}
+		// }()
+		// for rowShop.Next() {
+		// 	if err := rowShop.Scan(&product.ShopID); err != nil {
+		// 		c.JSON(http.StatusBadRequest, gin.H{
+		// 			"status":  false,
+		// 			"message": err.Error(),
+		// 		})
+		// 		return
+		// 	}
+		// }
+		// if product.ShopID.String == "" {
+		// 	shopID = nil
+		// } else {
+		// 	shopID = product.ShopID.String
+		// }
 
-// 		// //////////////////////      GET BENEFIT FROM EXCEL FILE ----------------------------------------
-// 		benefitStr, err := f.GetCellValue("Sheet1", "j"+strconv.Itoa(vRow))
-// 		if err != nil {
-// 			c.JSON(http.StatusBadRequest, gin.H{
-// 				"status":  false,
-// 				"message": err.Error(),
-// 			})
-// 			return
-// 		}
-// 		product.Benefit.Float64, err = strconv.ParseFloat(benefitStr, 64)
-// 		if err != nil {
-// 			c.JSON(http.StatusBadRequest, gin.H{
-// 				"status":  false,
-// 				"message": err.Error(),
-// 			})
-// 			return
-// 		}
+		// //////////////////////      GET PRICE FROM EXCEL FILE ----------------------------------------
+		priceStr, err := f.GetCellValue("Sheet1", "i"+strconv.Itoa(vRow))
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+		product.Price, err = strconv.ParseFloat(priceStr, 64)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
 
-// 		// //////////////////////      GET AMOUNT FROM EXCEL FILE ----------------------------------------
-// 		amountStr, err := f.GetCellValue("Sheet1", "l"+strconv.Itoa(vRow))
-// 		if err != nil {
-// 			c.JSON(http.StatusBadRequest, gin.H{
-// 				"status":  false,
-// 				"message": err.Error(),
-// 			})
-// 			return
-// 		}
-// 		amount64, err := strconv.ParseUint(amountStr, 10, 32)
-// 		if err != nil {
-// 			c.JSON(http.StatusBadRequest, gin.H{
-// 				"status":  false,
-// 				"message": err.Error(),
-// 			})
-// 			return
-// 		}
-// 		product.Amount = uint(amount64)
+		// //////////////////////      GET OLD PRICE FROM EXCEL FILE ----------------------------------------
+		product.OldPrice = 0 // default value
+		// oldPriceStr, err := f.GetCellValue("Sheet1", "i"+strconv.Itoa(vRow))
+		// if err != nil {
+		// 	c.JSON(http.StatusBadRequest, gin.H{
+		// 		"status":  false,
+		// 		"message": err.Error(),
+		// 	})
+		// 	return
+		// }
+		// product.OldPrice, err = strconv.ParseFloat(oldPriceStr, 64)
+		// if err != nil {
+		// 	c.JSON(http.StatusBadRequest, gin.H{
+		// 		"status":  false,
+		// 		"message": err.Error(),
+		// 	})
+		// 	return
+		// }
 
-// 		// //////////////////////      GET LIMIT AMOUNT FROM EXCEL FILE ----------------------------------------
-// 		limitAmountStr, err := f.GetCellValue("Sheet1", "m"+strconv.Itoa(vRow))
-// 		if err != nil {
-// 			c.JSON(http.StatusBadRequest, gin.H{
-// 				"status":  false,
-// 				"message": err.Error(),
-// 			})
-// 			return
-// 		}
-// 		limitAmount64, err := strconv.ParseUint(limitAmountStr, 10, 32)
-// 		if err != nil {
-// 			c.JSON(http.StatusBadRequest, gin.H{
-// 				"status":  false,
-// 				"message": err.Error(),
-// 			})
-// 			return
-// 		}
-// 		product.LimitAmount = uint(limitAmount64)
+		// //////////////////////      GET BENEFIT FROM EXCEL FILE ----------------------------------------
+		benefitStr, err := f.GetCellValue("Sheet1", "j"+strconv.Itoa(vRow))
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+		product.Benefit.Float64, err = strconv.ParseFloat(benefitStr, 64)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
 
-// 		// //////////////////////      GET IS NEW FROM EXCEL FILE ----------------------------------------
-// 		isNewStr, err := f.GetCellValue("Sheet1", "o"+strconv.Itoa(vRow))
-// 		if err != nil {
-// 			c.JSON(http.StatusBadRequest, gin.H{
-// 				"status":  false,
-// 				"message": err.Error(),
-// 			})
-// 			return
-// 		}
-// 		product.IsNew, err = strconv.ParseBool(isNewStr)
-// 		if err != nil {
-// 			c.JSON(http.StatusBadRequest, gin.H{
-// 				"status":  false,
-// 				"message": err.Error(),
-// 			})
-// 			return
-// 		}
+		// //////////////////////      GET AMOUNT FROM EXCEL FILE ----------------------------------------
+		amountStr, err := f.GetCellValue("Sheet1", "l"+strconv.Itoa(vRow))
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+		amount64, err := strconv.ParseUint(amountStr, 10, 32)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+		product.Amount = uint(amount64)
 
-// 		benefit, _, price, oldPrice, amount, limitAmount, isNew, err := models.ValidateProductModel("", product.Benefit.Float64, "", product.Price, product.OldPrice, product.Amount, product.LimitAmount, product.IsNew, product.Categories)
-// 		if err != nil {
-// 			c.JSON(http.StatusBadRequest, gin.H{
-// 				"status":  false,
-// 				"message": err.Error(),
-// 			})
-// 			return
-// 		}
+		// //////////////////////      GET LIMIT AMOUNT FROM EXCEL FILE ----------------------------------------
+		limitAmountStr, err := f.GetCellValue("Sheet1", "m"+strconv.Itoa(vRow))
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+		limitAmount64, err := strconv.ParseUint(limitAmountStr, 10, 32)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+		product.LimitAmount = uint(limitAmount64)
 
-// 		// //////////////////////      GET TRANSLATIONS OF PRODUCT FROM EXCEL FILE ----------------------------------------
-// 		trTitleTM, err := f.GetCellValue("Sheet1", "p"+strconv.Itoa(vRow))
-// 		if err != nil {
-// 			c.JSON(http.StatusBadRequest, gin.H{
-// 				"status":  false,
-// 				"message": err.Error(),
-// 			})
-// 			return
-// 		}
+		// //////////////////////      GET IS NEW FROM EXCEL FILE ----------------------------------------
+		isNewStr, err := f.GetCellValue("Sheet1", "o"+strconv.Itoa(vRow))
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+		product.IsNew, err = strconv.ParseBool(isNewStr)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
 
-// 		trDescTM, err := f.GetCellValue("Sheet1", "q"+strconv.Itoa(vRow))
-// 		if err != nil {
-// 			c.JSON(http.StatusBadRequest, gin.H{
-// 				"status":  false,
-// 				"message": err.Error(),
-// 			})
-// 			return
-// 		}
+		benefit, _, price, oldPrice, amount, limitAmount, isNew, err := models.ValidateProductModel("", product.Benefit.Float64, "", product.Price, product.OldPrice, product.Amount, product.LimitAmount, product.IsNew, product.Categories)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
 
-// 		var tr models.TranslationProduct
-// 		tr.Name = trTitleTM
-// 		tr.Description = trDescTM
+		// //////////////////////      GET TRANSLATIONS OF PRODUCT FROM EXCEL FILE ----------------------------------------
+		trTitleTM, err := f.GetCellValue("Sheet1", "p"+strconv.Itoa(vRow))
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
 
-// 		rowLang, err := db.Query("SELECT id FROM languages WHERE name_short = $1 AND deleted_at IS NULL", "tm")
-// 		if err != nil {
-// 			c.JSON(http.StatusBadRequest, gin.H{
-// 				"status":  false,
-// 				"message": err.Error(),
-// 			})
-// 			return
-// 		}
-// 		defer func() {
-// 			if err := rowLang.Close(); err != nil {
-// 				c.JSON(http.StatusBadRequest, gin.H{
-// 					"status":  false,
-// 					"message": err.Error(),
-// 				})
-// 				return
-// 			}
-// 		}()
-// 		for rowLang.Next() {
-// 			if err := rowLang.Scan(&tr.LangID); err != nil {
-// 				c.JSON(http.StatusBadRequest, gin.H{
-// 					"status":  false,
-// 					"message": err.Error(),
-// 				})
-// 				return
-// 			}
-// 		}
+		trDescTM, err := f.GetCellValue("Sheet1", "q"+strconv.Itoa(vRow))
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
 
-// 		product.TranslationProduct = append(product.TranslationProduct, tr)
+		var tr models.TranslationProduct
+		tr.Name = trTitleTM
+		tr.Description = trDescTM
 
-// 		trTitleRU, err := f.GetCellValue("Sheet1", "r"+strconv.Itoa(vRow))
-// 		if err != nil {
-// 			c.JSON(http.StatusBadRequest, gin.H{
-// 				"status":  false,
-// 				"message": err.Error(),
-// 			})
-// 			return
-// 		}
+		rowLang, err := db.Query("SELECT id FROM languages WHERE name_short = $1 AND deleted_at IS NULL", "tm")
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+		defer func() {
+			if err := rowLang.Close(); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}()
+		for rowLang.Next() {
+			if err := rowLang.Scan(&tr.LangID); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}
 
-// 		trDescRU, err := f.GetCellValue("Sheet1", "s"+strconv.Itoa(vRow))
-// 		if err != nil {
-// 			c.JSON(http.StatusBadRequest, gin.H{
-// 				"status":  false,
-// 				"message": err.Error(),
-// 			})
-// 			return
-// 		}
+		product.TranslationProduct = append(product.TranslationProduct, tr)
 
-// 		tr.Name = trTitleRU
-// 		tr.Description = trDescRU
-// 		rowLang, err = db.Query("SELECT id FROM languages WHERE name_short = $1 AND deleted_at IS NULL", "ru")
-// 		if err != nil {
-// 			c.JSON(http.StatusBadRequest, gin.H{
-// 				"status":  false,
-// 				"message": err.Error(),
-// 			})
-// 			return
-// 		}
-// 		defer func() {
-// 			if err := rowLang.Close(); err != nil {
-// 				c.JSON(http.StatusBadRequest, gin.H{
-// 					"status":  false,
-// 					"message": err.Error(),
-// 				})
-// 				return
-// 			}
-// 		}()
-// 		for rowLang.Next() {
-// 			if err := rowLang.Scan(&tr.LangID); err != nil {
-// 				c.JSON(http.StatusBadRequest, gin.H{
-// 					"status":  false,
-// 					"message": err.Error(),
-// 				})
-// 				return
-// 			}
-// 		}
-// 		product.TranslationProduct = append(product.TranslationProduct, tr)
+		trTitleRU, err := f.GetCellValue("Sheet1", "r"+strconv.Itoa(vRow))
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
 
-// 		// trColumns := []string{"n", "o", "p"}
-// 		// for _, v := range trColumns {
-// 		// 	trProduct, err := f.GetCellValue("Sheet1", v+strconv.Itoa(vRow))
-// 		// 	if err != nil {
-// 		// 		c.JSON(http.StatusBadRequest, gin.H{
-// 		// 			"status":  false,
-// 		// 			"message": err.Error(),
-// 		// 		})
-// 		// 		return
-// 		// 	}
+		trDescRU, err := f.GetCellValue("Sheet1", "s"+strconv.Itoa(vRow))
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
 
-// 		// 	if trProduct != "" {
-// 		// 		var tr models.TranslationProduct
+		tr.Name = trTitleRU
+		tr.Description = trDescRU
+		rowLang, err = db.Query("SELECT id FROM languages WHERE name_short = $1 AND deleted_at IS NULL", "ru")
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+		defer func() {
+			if err := rowLang.Close(); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}()
+		for rowLang.Next() {
+			if err := rowLang.Scan(&tr.LangID); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}
+		product.TranslationProduct = append(product.TranslationProduct, tr)
 
-// 		// 		tr.Name = strings.Split(trProduct, " | ")[1]
-// 		// 		tr.Description = strings.Split(trProduct, " | ")[2]
+		// create product
+		resultProducts, err := db.Query("INSERT INTO products (brend_id,price,old_price,amount,limit_amount,is_new,shop_id,main_image,benefit) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9) RETURNING id", brendID, price, oldPrice, amount, limitAmount, isNew, shopID, product.MainImage, benefit)
+		if err != nil {
+			c.JSON(http.StatusNotFound, gin.H{
+				"status":  false,
+				"message": err.Error(),
+				"error":   "error 1",
+			})
+			return
+		}
+		defer func() {
+			if err := resultProducts.Close(); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}()
 
-// 		// 		rowLang, err := db.Query("SELECT id FROM languages WHERE name_short = $1 AND deleted_at IS NULL", strings.Split(trProduct, " | ")[0])
-// 		// 		if err != nil {
-// 		// 			c.JSON(http.StatusBadRequest, gin.H{
-// 		// 				"status":  false,
-// 		// 				"message": err.Error(),
-// 		// 			})
-// 		// 			return
-// 		// 		}
-// 		// 		defer func() {
-// 		// 			if err := rowLang.Close(); err != nil {
-// 		// 				c.JSON(http.StatusBadRequest, gin.H{
-// 		// 					"status":  false,
-// 		// 					"message": err.Error(),
-// 		// 				})
-// 		// 				return
-// 		// 			}
-// 		// 		}()
-// 		// 		for rowLang.Next() {
-// 		// 			if err := rowLang.Scan(&tr.LangID); err != nil {
-// 		// 				c.JSON(http.StatusBadRequest, gin.H{
-// 		// 					"status":  false,
-// 		// 					"message": err.Error(),
-// 		// 				})
-// 		// 				return
-// 		// 			}
-// 		// 		}
+		var productID string
 
-// 		// 		product.TranslationProduct = append(product.TranslationProduct, tr)
+		for resultProducts.Next() {
+			if err := resultProducts.Scan(&productID); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}
 
-// 		// 	}
+		if len(product.Images) != 0 {
+			// create images of product
+			resultImages, err := db.Query("INSERT INTO images (product_id,image) VALUES ($1,unnest($2::varchar[]))", productID, pq.Array(product.Images))
+			if err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+					"error":   "error 2",
+				})
+				return
+			}
+			defer func() {
+				if err := resultImages.Close(); err != nil {
+					c.JSON(http.StatusBadRequest, gin.H{
+						"status":  false,
+						"message": err.Error(),
+					})
+					return
+				}
+			}()
 
-// 		// }
+			resultHelperImages, err := db.Query("DELETE FROM helper_images WHERE image = ANY($1)", pq.Array(product.Images))
+			if err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+			defer func() {
+				if err := resultHelperImages.Close(); err != nil {
+					c.JSON(http.StatusBadRequest, gin.H{
+						"status":  false,
+						"message": err.Error(),
+					})
+					return
+				}
+			}()
+		}
 
-// 		// create product
-// 		resultProducts, err := db.Query("INSERT INTO products (brend_id,price,old_price,amount,limit_amount,is_new,shop_id,main_image,benefit) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9) RETURNING id", brendID, price, oldPrice, amount, limitAmount, isNew, shopID, product.MainImage, benefit)
-// 		if err != nil {
-// 			c.JSON(http.StatusNotFound, gin.H{
-// 				"status":  false,
-// 				"message": err.Error(),
-// 			})
-// 			return
-// 		}
-// 		defer func() {
-// 			if err := resultProducts.Close(); err != nil {
-// 				c.JSON(http.StatusBadRequest, gin.H{
-// 					"status":  false,
-// 					"message": err.Error(),
-// 				})
-// 				return
-// 			}
-// 		}()
+		for _, v := range product.TranslationProduct {
+			resultTrProducts, err := db.Query("INSERT INTO translation_product (lang_id,product_id,name,description,slug) VALUES ($1,$2,$3,$4,$5)", v.LangID, productID, v.Name, v.Description, slug.MakeLang(v.Name, "en"))
+			if err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+					"error":   "error 3",
+				})
+				return
+			}
+			defer func() {
+				if err := resultTrProducts.Close(); err != nil {
+					c.JSON(http.StatusBadRequest, gin.H{
+						"status":  false,
+						"message": err.Error(),
+					})
+					return
+				}
+			}()
+		}
 
-// 		var productID string
+		// create category product
+		resultCategoryProduct, err := db.Query("INSERT INTO category_product (category_id,product_id) VALUES (unnest($1::uuid[]),$2)", pq.Array(product.Categories), productID)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+				"error":   "error 4",
+			})
+			return
+		}
+		defer func() {
+			if err := resultCategoryProduct.Close(); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}()
 
-// 		for resultProducts.Next() {
-// 			if err := resultProducts.Scan(&productID); err != nil {
-// 				c.JSON(http.StatusBadRequest, gin.H{
-// 					"status":  false,
-// 					"message": err.Error(),
-// 				})
-// 				return
-// 			}
-// 		}
+		resultHelperImage, err := db.Query("DELETE FROM helper_images WHERE image = $1", product.MainImage)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": err.Error(),
+			})
+			return
+		}
+		defer func() {
+			if err := resultHelperImage.Close(); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+				})
+				return
+			}
+		}()
 
-// 		if len(product.Images) != 0 {
-// 			// create images of product
-// 			resultImages, err := db.Query("INSERT INTO images (product_id,image) VALUES ($1,unnest($2::varchar[]))", productID, pq.Array(product.Images))
-// 			if err != nil {
-// 				c.JSON(http.StatusBadRequest, gin.H{
-// 					"status":  false,
-// 					"message": err.Error(),
-// 				})
-// 				return
-// 			}
-// 			defer func() {
-// 				if err := resultImages.Close(); err != nil {
-// 					c.JSON(http.StatusBadRequest, gin.H{
-// 						"status":  false,
-// 						"message": err.Error(),
-// 					})
-// 					return
-// 				}
-// 			}()
+	}
 
-// 			resultHelperImages, err := db.Query("DELETE FROM helper_images WHERE image = ANY($1)", pq.Array(product.Images))
-// 			if err != nil {
-// 				c.JSON(http.StatusBadRequest, gin.H{
-// 					"status":  false,
-// 					"message": err.Error(),
-// 				})
-// 				return
-// 			}
-// 			defer func() {
-// 				if err := resultHelperImages.Close(); err != nil {
-// 					c.JSON(http.StatusBadRequest, gin.H{
-// 						"status":  false,
-// 						"message": err.Error(),
-// 					})
-// 					return
-// 				}
-// 			}()
-// 		}
+	c.JSON(http.StatusOK, gin.H{
+		"status":  true,
+		"message": "data successfully added",
+	})
 
-// 		for _, v := range product.TranslationProduct {
-// 			resultTrProducts, err := db.Query("INSERT INTO translation_product (lang_id,product_id,name,description,slug) VALUES ($1,$2,$3,$4,$5)", v.LangID, productID, v.Name, v.Description, slug.MakeLang(v.Name, "en"))
-// 			if err != nil {
-// 				c.JSON(http.StatusBadRequest, gin.H{
-// 					"status":  false,
-// 					"message": err.Error(),
-// 				})
-// 				return
-// 			}
-// 			defer func() {
-// 				if err := resultTrProducts.Close(); err != nil {
-// 					c.JSON(http.StatusBadRequest, gin.H{
-// 						"status":  false,
-// 						"message": err.Error(),
-// 					})
-// 					return
-// 				}
-// 			}()
-// 		}
-
-// 		// create category product
-// 		resultCategoryProduct, err := db.Query("INSERT INTO category_product (category_id,product_id) VALUES (unnest($1::uuid[]),$2)", pq.Array(product.Categories), productID)
-// 		if err != nil {
-// 			c.JSON(http.StatusBadRequest, gin.H{
-// 				"status":  false,
-// 				"message": err.Error(),
-// 			})
-// 			return
-// 		}
-// 		defer func() {
-// 			if err := resultCategoryProduct.Close(); err != nil {
-// 				c.JSON(http.StatusBadRequest, gin.H{
-// 					"status":  false,
-// 					"message": err.Error(),
-// 				})
-// 				return
-// 			}
-// 		}()
-
-// 		resultHelperImage, err := db.Query("DELETE FROM helper_images WHERE image = $1", product.MainImage)
-// 		if err != nil {
-// 			c.JSON(http.StatusBadRequest, gin.H{
-// 				"status":  false,
-// 				"message": err.Error(),
-// 			})
-// 			return
-// 		}
-// 		defer func() {
-// 			if err := resultHelperImage.Close(); err != nil {
-// 				c.JSON(http.StatusBadRequest, gin.H{
-// 					"status":  false,
-// 					"message": err.Error(),
-// 				})
-// 				return
-// 			}
-// 		}()
-
-// 	}
-
-// 	c.JSON(http.StatusOK, gin.H{
-// 		"status":  true,
-// 		"message": "data successfully added",
-// 	})
-
-// }
+}
 
 func UploadExcelFile(c *gin.Context) {
 	excel, err := pkg.FileUpload("products", "product", "excel", c)

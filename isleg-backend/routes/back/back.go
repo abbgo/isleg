@@ -163,7 +163,7 @@ func BackRoutes(back *gin.RouterGroup) {
 		// Baslayar --- haryt ucin CRUD
 
 		securedAdmin.POST("product", backController.CreateProduct)
-		// securedAdmin.POST("product-in-excel", backController.CreateProductsByExcelFile)
+		securedAdmin.POST("product-in-excel", backController.CreateProductsByExcelFile)
 		securedAdmin.PUT("product/:id", backController.UpdateProductByID)
 		securedAdmin.GET("product/:id", backController.GetProductByID)
 		securedAdmin.GET("products", backController.GetProducts)
