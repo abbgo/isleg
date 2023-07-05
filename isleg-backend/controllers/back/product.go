@@ -4,7 +4,6 @@ import (
 	"github/abbgo/isleg/isleg-backend/config"
 	"github/abbgo/isleg/isleg-backend/models"
 	"github/abbgo/isleg/isleg-backend/pkg"
-	"io"
 	"strconv"
 	"strings"
 
@@ -13,7 +12,6 @@ import (
 	"os"
 
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 	"github.com/gosimple/slug"
 	"github.com/lib/pq"
 	"github.com/xuri/excelize/v2"
@@ -571,45 +569,9 @@ func CreateProductsByExcelFile(c *gin.Context) {
 			return
 		}
 
-		sourceFile := pkg.ServerPath + "uploads/images/" + mainImageFileID
-		newFileName := uuid.New().String() + strings.Split(mainImageFileID, ".")[1]
-		destinationFile := pkg.ServerPath + "uploads/product/main_image/" + newFileName
-
-		// Open the source file for reading
-		source, err := os.Open(sourceFile)
+		newFileName, err := pkg.CopyFile("uploads/images/", "uploads/product/main_image/", mainImageFileID)
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-		defer source.Close()
-
-		// Create the destination file
-		destination, err := os.Create(destinationFile)
-		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-		defer destination.Close()
-
-		// Copy the contents from source to destination
-		_, err = io.Copy(destination, source)
-		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-
-		err = os.Remove(pkg.ServerPath + "uploads/images/" + mainImageFileID)
-		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
+			c.JSON(http.StatusNotFound, gin.H{
 				"status":  false,
 				"message": err.Error(),
 			})
@@ -649,59 +611,15 @@ func CreateProductsByExcelFile(c *gin.Context) {
 			// pictures = append(pictures, picsB)
 
 			if imageFileID != "" {
-				sourceFile = pkg.ServerPath + "uploads/images/" + imageFileID
-				newFileName = uuid.New().String() + strings.Split(imageFileID, ".")[1]
-				destinationFile = pkg.ServerPath + "uploads/product/image/" + newFileName
 
-				// Open the source file for reading
-				source, err := os.Open(sourceFile)
+				newFileName, err := pkg.CopyFile("uploads/images/", "uploads/product/image/", imageFileID)
 				if err != nil {
-					c.JSON(http.StatusBadRequest, gin.H{
+					c.JSON(http.StatusNotFound, gin.H{
 						"status":  false,
 						"message": err.Error(),
 					})
 					return
 				}
-				defer source.Close()
-
-				// Create the destination file
-				destination, err := os.Create(destinationFile)
-				if err != nil {
-					c.JSON(http.StatusBadRequest, gin.H{
-						"status":  false,
-						"message": err.Error(),
-					})
-					return
-				}
-				defer destination.Close()
-
-				// Copy the contents from source to destination
-				_, err = io.Copy(destination, source)
-				if err != nil {
-					c.JSON(http.StatusBadRequest, gin.H{
-						"status":  false,
-						"message": err.Error(),
-					})
-					return
-				}
-
-				err = os.Remove(pkg.ServerPath + "uploads/images/" + imageFileID)
-				if err != nil {
-					c.JSON(http.StatusBadRequest, gin.H{
-						"status":  false,
-						"message": err.Error(),
-					})
-					return
-				}
-
-				// newFileName, err := pkg.FileUploadFromGoogleDrive(imageFileID, pkg.ServerPath+"uploads/product/image/")
-				// if err != nil {
-				// 	c.JSON(http.StatusBadRequest, gin.H{
-				// 		"status":  false,
-				// 		"message": err.Error(),
-				// 	})
-				// 	return
-				// }
 
 				result, err := db.Query("INSERT INTO helper_images (image) VALUES ($1)", "uploads/product/image/"+newFileName)
 				if err != nil {
