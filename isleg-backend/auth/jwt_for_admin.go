@@ -2,7 +2,6 @@ package auth
 
 import (
 	"errors"
-	"fmt"
 	"net/http"
 	"os"
 	"strconv"
@@ -66,8 +65,6 @@ func GenerateAccessTokenForAdmin(phoneNumber, adminID, adminType string) (string
 }
 
 func RefreshTokenForAdmin(c *gin.Context) {
-
-	fmt.Println("basladi")
 
 	tokenStr := c.GetHeader("RefreshToken")
 	tokenString := strings.Split(tokenStr, " ")[1]
