@@ -492,7 +492,6 @@ func GetCategoryByIDWithChild(c *gin.Context) {
 			})
 			return
 		}
-		fmt.Println(result)
 
 		// get all category where parent category id equal category id
 		rowss, err := db.Query("SELECT c.id,tc.name FROM categories c LEFT JOIN translation_category tc ON c.id=tc.category_id WHERE tc.lang_id = $1 AND c.parent_category_id = $2 AND c.deleted_at IS NULL AND tc.deleted_at IS NULL ORDER BY c.created_at DESC", langID, result.ID)
