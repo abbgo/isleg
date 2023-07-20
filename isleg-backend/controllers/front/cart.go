@@ -64,6 +64,7 @@ func AddCart(c *gin.Context) {
 	customerID, ok := custID.(string)
 	if !ok {
 		c.JSON(http.StatusBadRequest, "customer_id must be string")
+		return
 	}
 
 	// frontdan maglumaty bind etyar
@@ -357,6 +358,7 @@ func GetCustomerCartProducts(c *gin.Context) {
 	customerID, ok := custID.(string)
 	if !ok {
 		c.JSON(http.StatusBadRequest, "customer_id must be string")
+		return
 	}
 
 	products, err := GetCartProducts(customerID)
@@ -385,6 +387,7 @@ func RemoveCart(c *gin.Context) {
 	customerID, ok := custID.(string)
 	if !ok {
 		c.JSON(http.StatusBadRequest, "customer_id must be string")
+		return
 	}
 
 	// productID := c.PostForm("product_id")

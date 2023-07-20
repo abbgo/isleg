@@ -350,6 +350,7 @@ func GetCustomerInformation(c *gin.Context) {
 	customerID, ok := custID.(string)
 	if !ok {
 		c.JSON(http.StatusBadRequest, "customer_id must be string")
+		return
 	}
 
 	// bazadan musderinin maglumatlary alynyar
@@ -463,6 +464,7 @@ func UpdateCustomerInformation(c *gin.Context) {
 	customerID, ok := custID.(string)
 	if !ok {
 		c.JSON(http.StatusBadRequest, "customer_id must be string")
+		return
 	}
 
 	var customer models.Customer
@@ -526,6 +528,7 @@ func UpdateCustomerPassword(c *gin.Context) {
 	customerID, ok := custID.(string)
 	if !ok {
 		c.JSON(http.StatusBadRequest, "customer_id must be string")
+		return
 	}
 
 	password := c.PostForm("password")

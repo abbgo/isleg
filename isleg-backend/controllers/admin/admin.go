@@ -200,6 +200,7 @@ func GetAdmin(c *gin.Context) {
 	admin_id, ok := adminID.(string)
 	if !ok {
 		c.JSON(http.StatusBadRequest, "EnterpriseID must be uint")
+		return
 	}
 
 	adm, err := GetAdminByID(admin_id)

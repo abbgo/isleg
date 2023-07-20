@@ -41,6 +41,7 @@ func GetCustomerAddresses(c *gin.Context) {
 	customerID, ok := custID.(string)
 	if !ok {
 		c.JSON(http.StatusBadRequest, "customer_id must be string")
+		return
 	}
 
 	// musderinin salgylaryny alyas bazadan
@@ -117,6 +118,7 @@ func UpdateCustomerAddressStatus(c *gin.Context) {
 	customerID, ok := custID.(string)
 	if !ok {
 		c.JSON(http.StatusBadRequest, "customer_id must be string")
+		return
 	}
 
 	// musderide frontdan gelen id - li salgy barmy ya-da yokmy sony barlayas
@@ -232,6 +234,7 @@ func AddAddressToCustomer(c *gin.Context) {
 	customerID, ok := custID.(string)
 	if !ok {
 		c.JSON(http.StatusBadRequest, "customer_id must be string")
+		return
 	}
 
 	address := c.PostForm("address")
@@ -368,6 +371,7 @@ func DeleteCustomerAddress(c *gin.Context) {
 	customerID, ok := custID.(string)
 	if !ok {
 		c.JSON(http.StatusBadRequest, "customer_id must be string")
+		return
 	}
 
 	addressID := c.Param("id")

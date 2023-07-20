@@ -1295,6 +1295,7 @@ func GetCustomerOrders(c *gin.Context) {
 	customerID, ok := custID.(string)
 	if !ok {
 		c.JSON(http.StatusBadRequest, "customer_id must be string")
+		return
 	}
 
 	// get limit from param

@@ -73,6 +73,7 @@ func AddOrRemoveLike(c *gin.Context) {
 	customerID, ok := custID.(string)
 	if !ok {
 		c.JSON(http.StatusBadRequest, "customer_id must be string")
+		return
 	}
 
 	// front - dan gelen maglumatlar bind edilyar
@@ -528,6 +529,7 @@ func GetCustomerLikes(c *gin.Context) {
 	customerID, ok := custID.(string)
 	if !ok {
 		c.JSON(http.StatusBadRequest, "customer_id must be string")
+		return
 	}
 
 	products, err := GetLikes(customerID)
