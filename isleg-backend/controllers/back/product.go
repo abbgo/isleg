@@ -662,6 +662,15 @@ func CreateProductsByExcelFile(c *gin.Context) {
 
 		names_of_categories := strings.Split(namesOfCategories, " | ")
 		for _, v := range names_of_categories {
+			if strings.Contains(v, " ") {
+				strs := strings.Split(v, " ")
+				for _, str := range strs {
+					if str != "" {
+						v = str
+					}
+				}
+			}
+
 			rowCategory, err := db.Query("SELECT c.id FROM categories c INNER JOIN translation_category tc ON tc.category_id=c.id INNER JOIN languages l ON l.id=tc.lang_id WHERE l.name_short = $1 AND tc.name = $2 AND c.deleted_at IS NULL AND l.deleted_at IS NULL AND tc.deleted_at IS NULL", "tm", v)
 			if err != nil {
 				c.JSON(http.StatusBadRequest, gin.H{
@@ -704,32 +713,36 @@ func CreateProductsByExcelFile(c *gin.Context) {
 		}
 
 		var shopID, brendID interface{}
-		rowBrend, err := db.Query("SELECT id FROM brends WHERE name = $1 AND deleted_at IS NULL", nameOfBrend)
-		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-		defer func() {
-			if err := rowBrend.Close(); err != nil {
+
+		if nameOfBrend != "" {
+			rowBrend, err := db.Query("SELECT id FROM brends WHERE name = $1 AND deleted_at IS NULL", nameOfBrend)
+			if err != nil {
 				c.JSON(http.StatusBadRequest, gin.H{
 					"status":  false,
 					"message": err.Error(),
 				})
 				return
 			}
-		}()
-		for rowBrend.Next() {
-			if err := rowBrend.Scan(&product.BrendID); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
-				return
+			defer func() {
+				if err := rowBrend.Close(); err != nil {
+					c.JSON(http.StatusBadRequest, gin.H{
+						"status":  false,
+						"message": err.Error(),
+					})
+					return
+				}
+			}()
+			for rowBrend.Next() {
+				if err := rowBrend.Scan(&product.BrendID); err != nil {
+					c.JSON(http.StatusBadRequest, gin.H{
+						"status":  false,
+						"message": err.Error(),
+					})
+					return
+				}
 			}
 		}
+
 		if product.BrendID.String == "" {
 			brendID = nil
 		} else {
@@ -1005,7 +1018,6 @@ func CreateProductsByExcelFile(c *gin.Context) {
 			c.JSON(http.StatusNotFound, gin.H{
 				"status":  false,
 				"message": err.Error(),
-				"error":   "error 1",
 			})
 			return
 		}
@@ -1038,7 +1050,6 @@ func CreateProductsByExcelFile(c *gin.Context) {
 				c.JSON(http.StatusBadRequest, gin.H{
 					"status":  false,
 					"message": err.Error(),
-					"error":   "error 2",
 				})
 				return
 			}
@@ -1077,7 +1088,6 @@ func CreateProductsByExcelFile(c *gin.Context) {
 				c.JSON(http.StatusBadRequest, gin.H{
 					"status":  false,
 					"message": err.Error(),
-					"error":   "error 3",
 				})
 				return
 			}
@@ -1098,7 +1108,6 @@ func CreateProductsByExcelFile(c *gin.Context) {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": err.Error(),
-				"error":   "error 4",
 			})
 			return
 		}
