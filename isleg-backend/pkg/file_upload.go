@@ -37,7 +37,7 @@ func MultipartFileUpload(nameUploadedFile, path string, context *gin.Context) ([
 		}
 		// fileName := uuid.New().String() + extension
 		if strings.Contains(imageName, " ") {
-			imageName = strings.ReplaceAll(imageName, " ", "_")
+			imageName = strings.ReplaceAll(imageName, " ", "")
 		}
 		fileName := imageName
 
