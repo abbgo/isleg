@@ -4,6 +4,7 @@ import (
 	"errors"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -28,13 +29,17 @@ func MultipartFileUpload(nameUploadedFile, path string, context *gin.Context) ([
 
 	for _, v := range files {
 
-		extension := filepath.Ext(v.Filename)
+		imageName := v.Filename
+		extension := filepath.Ext(imageName)
 		//validate image
 		if extension != ".jpg" && extension != ".JPG" && extension != ".jpeg" && extension != ".JPEG" && extension != ".png" && extension != ".PNG" && extension != ".gif" && extension != ".GIF" && extension != ".svg" && extension != ".SVG" && extension != ".WEBP" && extension != ".webp" {
 			return []string{}, errors.New("the file must be an image")
 		}
 		// fileName := uuid.New().String() + extension
-		fileName := v.Filename
+		if strings.Contains(imageName, " ") {
+			imageName = strings.ReplaceAll(imageName, " ", "_")
+		}
+		fileName := imageName
 
 		if err := context.SaveUploadedFile(v, ServerPath+"uploads/"+path+"/"+fileName); err != nil {
 			return []string{}, err
