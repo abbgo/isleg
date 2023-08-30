@@ -1,0 +1,5173 @@
+{
+	"info": {
+		"_postman_id": "f26f6362-d57c-4407-a705-b08b1dea2ca4",
+		"name": "IM KONE",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Front",
+			"item": [
+				{
+					"name": "CustomerAddress",
+					"item": [
+						{
+							"name": "GetCustomerAddresses",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NTYiLCJjdXN0b21lcl9pZCI6IjFhZTEyMzkwLTAzYWUtNDlhYy1hOWFkLWQ3YmE1Yzk1YjUxYSIsImV4cCI6MTY2NzQ1NTY2NH0.BLTauBZxWMmqvgtV8-ZWaukzJzFbZ_-rTwcte8ME2pA",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "api/tm/addresses",
+									"host": [
+										"api"
+									],
+									"path": [
+										"tm",
+										"addresses"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "UpdateCustomerAddressStatus",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NTYiLCJjdXN0b21lcl9pZCI6IjFhZTEyMzkwLTAzYWUtNDlhYy1hOWFkLWQ3YmE1Yzk1YjUxYSIsImV4cCI6MTY2NzQ1NTY2NH0.BLTauBZxWMmqvgtV8-ZWaukzJzFbZ_-rTwcte8ME2pA",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"url": {
+									"raw": "tm/address?address_id=3c4e1c4f-fd51-4dd5-befe-7051b79312a6",
+									"host": [
+										"tm"
+									],
+									"path": [
+										"address"
+									],
+									"query": [
+										{
+											"key": "address_id",
+											"value": "3c4e1c4f-fd51-4dd5-befe-7051b79312a6"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "AddAddressToCustomer",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIrOTkzNjM3NDcxNTUiLCJjdXN0b21lcl9pZCI6IjFhZTEyMzkwLTAzYWUtNDlhYy1hOWFkLWQ3YmE1Yzk1YjUxYSIsImV4cCI6MTY3NDc3MTgxNn0.FzZf5jprm1mRCSept0qKT8o0u9ZWKWVajjLgcGqgVtY",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "address",
+											"value": "Mir 6/3 jay 56",
+											"type": "default"
+										}
+									]
+								},
+								"url": {
+									"raw": "tm/address",
+									"host": [
+										"tm"
+									],
+									"path": [
+										"address"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "DeleteCustomerAddress",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIrOTkzNjM3NDcxNTUiLCJjdXN0b21lcl9pZCI6IjFhZTEyMzkwLTAzYWUtNDlhYy1hOWFkLWQ3YmE1Yzk1YjUxYSIsImV4cCI6MTY3NDc2NzI1OH0.nz8b9JK6HF-lRWULfLD1gfB-kkWKYgMYdv_8sqeCYqA",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "tm/address/d16fe7ec-9024-4745-8dab-0e79b13cc343",
+									"host": [
+										"tm"
+									],
+									"path": [
+										"address",
+										"d16fe7ec-9024-4745-8dab-0e79b13cc343"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Order",
+					"item": [
+						{
+							"name": "ToOrder",
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"full_name\":\"Muhammetmyrat\",\n    \"phone_number\":\"+99363747155\",\n    \"address\":\"Mir 2/2 jay 7 oy 36\",\n    \"customer_mark\":\"isleg market bet cykypdyr\",\n    \"order_time\":\"Ertir: 12:00 - 16:00\",\n    \"payment_type\":\"nagt\",\n    \"total_price\":934.8,\n    \"shipping_price\":10,\n    \"products\":[\n        {\n            \"product_id\":\"018d2cd2-a5e0-4ac9-b864-bdfe8e51e906\",\n            \"quantity_of_product\":2\n        },\n        {\n            \"product_id\":\"510456e6-ab21-4e07-970c-0428e6ca9098\",\n            \"quantity_of_product\":2\n        },\n         {\n            \"product_id\":\"1e1d8a93-ebd0-4cc3-9bb0-52b1a933d7a3\",\n            \"quantity_of_product\":2\n        },\n        {\n            \"product_id\":\"e10efe41-0fd4-4b9f-a497-b5e765feb516\",\n            \"quantity_of_product\":2\n        },\n         {\n            \"product_id\":\"21b35909-a2c0-4609-9842-6744ffc14e71\",\n            \"quantity_of_product\":2\n        },\n        {\n            \"product_id\":\"510456e6-ab21-4e07-970c-0428e6ca9098\",\n            \"quantity_of_product\":2\n        },\n         {\n            \"product_id\":\"1e1d8a93-ebd0-4cc3-9bb0-52b1a933d7a3\",\n            \"quantity_of_product\":2\n        },\n        {\n            \"product_id\":\"e10efe41-0fd4-4b9f-a497-b5e765feb516\",\n            \"quantity_of_product\":2\n        },\n         {\n            \"product_id\":\"21b35909-a2c0-4609-9842-6744ffc14e71\",\n            \"quantity_of_product\":2\n        }\n    ]\n\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "tm/to-order",
+									"host": [
+										"tm"
+									],
+									"path": [
+										"to-order"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GetCustomerOrders",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NTYiLCJjdXN0b21lcl9pZCI6IjFhZTEyMzkwLTAzYWUtNDlhYy1hOWFkLWQ3YmE1Yzk1YjUxYSIsImV4cCI6MTY2NzQ1NTY2NH0.BLTauBZxWMmqvgtV8-ZWaukzJzFbZ_-rTwcte8ME2pA",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "tm/orders/3/2",
+									"host": [
+										"tm"
+									],
+									"path": [
+										"orders",
+										"3",
+										"2"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GetOrderedProductsWithoutCustomer",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"product_ids\":[\n        \"ccb43083-1c9e-4e84-bffd-ecb28474165e\",\n        \"ee1d67ed-5862-4dfc-8424-52531a240a6c\"\n    ]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "likes-or-orders-without-customer",
+									"host": [
+										"likes-or-orders-without-customer"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Cart",
+					"item": [
+						{
+							"name": "AddCart",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NTYiLCJjdXN0b21lcl9pZCI6IjFhZTEyMzkwLTAzYWUtNDlhYy1hOWFkLWQ3YmE1Yzk1YjUxYSIsImV4cCI6MTY2NzUwNDUyMX0.6Mom5Z11JTytUUjmQLbl0et3-swUCRHmB0xcqfSJH5Y",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "    [\n        {\n            \"product_id\":\"03050bc6-6223-49f3-b729-397fd3b6b285\",\n            \"quantity_of_product\":10\n        },\n        {\n            \"product_id\":\"214befd8-68bd-484a-a8d5-8e2d0b73931c\",\n            \"quantity_of_product\":4\n        }\n    ]\n\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "tm/add-cart",
+									"host": [
+										"tm"
+									],
+									"path": [
+										"add-cart"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GetCartProducts",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NTYiLCJjdXN0b21lcl9pZCI6IjFhZTEyMzkwLTAzYWUtNDlhYy1hOWFkLWQ3YmE1Yzk1YjUxYSIsImV4cCI6MTY2NzQ1NTY2NH0.BLTauBZxWMmqvgtV8-ZWaukzJzFbZ_-rTwcte8ME2pA",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "tm/get-cart",
+									"host": [
+										"tm"
+									],
+									"path": [
+										"get-cart"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "RemoveCart",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NTYiLCJjdXN0b21lcl9pZCI6IjFhZTEyMzkwLTAzYWUtNDlhYy1hOWFkLWQ3YmE1Yzk1YjUxYSIsImV4cCI6MTY2NzQ1NTY2NH0.BLTauBZxWMmqvgtV8-ZWaukzJzFbZ_-rTwcte8ME2pA",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "tm/remove-cart?customer_id=7e872c52-0d23-4086-8c45-43000b57332e&product_id=",
+									"host": [
+										"tm"
+									],
+									"path": [
+										"remove-cart"
+									],
+									"query": [
+										{
+											"key": "customer_id",
+											"value": "7e872c52-0d23-4086-8c45-43000b57332e"
+										},
+										{
+											"key": "product_id",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Like",
+					"item": [
+						{
+							"name": "AddOrRemoveLike",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIrOTkzNjI0MjAzNzciLCJjdXN0b21lcl9pZCI6IjE5Y2RjZjFhLWYxMTAtNDUxMC1hNTJiLTA2MzMyOWQ5ODYwNyIsImV4cCI6MTY3NDI4OTkzNX0.QRJLSF9D3hJtfM2Nvw-5u9pMvfv6I9C9qHsg_e5L2BQ",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"product_ids\":[\n        \"d6dfc8f9-27d9-45f9-811d-2a93fa0f7d35\"\n    ]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "tm/like?status=true",
+									"host": [
+										"tm"
+									],
+									"path": [
+										"like"
+									],
+									"query": [
+										{
+											"key": "status",
+											"value": "true"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GetLikes",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NTYiLCJjdXN0b21lcl9pZCI6IjFhZTEyMzkwLTAzYWUtNDlhYy1hOWFkLWQ3YmE1Yzk1YjUxYSIsImV4cCI6MTY2NzQ1NTY2NH0.BLTauBZxWMmqvgtV8-ZWaukzJzFbZ_-rTwcte8ME2pA",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "tm/likes/7e872c52-0d23-4086-8c45-43000b57332e",
+									"host": [
+										"tm"
+									],
+									"path": [
+										"likes",
+										"7e872c52-0d23-4086-8c45-43000b57332e"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Customer",
+					"item": [
+						{
+							"name": "RegisterCustomer",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"full_name\":\"Allanur Bayramgeldiyew\",\n    \"phone_number\":\"+99362420377\",\n    \"password\":\"123456\",\n    \"email\":\"abb@gmail.com\",\n    \"birthday\":null\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "auth/register",
+									"host": [
+										"auth"
+									],
+									"path": [
+										"register"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "LoginCustomer",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"phone_number\":\"+99362420377\",\n    \"password\":\"123456\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "auth/login",
+									"host": [
+										"auth"
+									],
+									"path": [
+										"login"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Refresh",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIrOTkzNjI0MjAzNzciLCJjdXN0b21lcl9pZCI6IjE5Y2RjZjFhLWYxMTAtNDUxMC1hNTJiLTA2MzMyOWQ5ODYwNyIsImV4cCI6MTY3NjEwMDU2Nn0.ETETqbBa-A2x88mFarAR7ssFNpUWpmHyx5Hpw-Y4PMc",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "RefershToken",
+										"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiI2NTQ1MzI5NCIsImV4cCI6MTY1Nzc4MDU4Nn0.KaW-2DLaC_WmMY1u6AOiB8UGTrRHhUmcYWV5P1fhtJU"
+									}
+								],
+								"url": {
+									"raw": "auth/refresh",
+									"host": [
+										"auth"
+									],
+									"path": [
+										"refresh"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GetCustomerInformation",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIrOTkzNjM3NDcxNTUiLCJjdXN0b21lcl9pZCI6IjFhZTEyMzkwLTAzYWUtNDlhYy1hOWFkLWQ3YmE1Yzk1YjUxYSIsImV4cCI6MTY3NDc2OTAzNX0.gAPvhmsJg4gNveL2Z7hb15Q8fFMgAE1LTliyQ2lUdyo",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "tm/my-information",
+									"host": [
+										"tm"
+									],
+									"path": [
+										"my-information"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "UpdateCustomerPassword",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NTYiLCJjdXN0b21lcl9pZCI6IjFhZTEyMzkwLTAzYWUtNDlhYy1hOWFkLWQ3YmE1Yzk1YjUxYSIsImV4cCI6MTY2OTYwNjU3NH0.S5c1wKJpbVmGaS0PYXMHr-vVeXaiZGrLIpxpMp8XS6g",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "password",
+											"value": "123456",
+											"type": "default"
+										}
+									]
+								},
+								"url": {
+									"raw": "tm/customer-password",
+									"host": [
+										"tm"
+									],
+									"path": [
+										"customer-password"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "UpdateCustomerInformation",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NTYiLCJjdXN0b21lcl9pZCI6IjFhZTEyMzkwLTAzYWUtNDlhYy1hOWFkLWQ3YmE1Yzk1YjUxYSIsImV4cCI6MTY2OTYwODU3M30.utYS232-4vP80pb-bSb8n9sPLzewlHFXEgEi_WeacyY",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"full_name\":\"Muhammetmyrat Bayramov\",\n    \"phone_number\":\"+99363747155\",\n    \"birthday\":\"1997-03-11T00:00:00Z\",\n    \"gender\":\"male\",\n    \"email\":\"muhammetmyrat@gmail.com\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "tm/my-information",
+									"host": [
+										"tm"
+									],
+									"path": [
+										"my-information"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "GetHeaderData",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "tm/header",
+							"host": [
+								"tm"
+							],
+							"path": [
+								"header"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetFooterData",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "tm/footer",
+							"host": [
+								"tm"
+							],
+							"path": [
+								"footer"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetBrends",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "tm/brends",
+							"host": [
+								"tm"
+							],
+							"path": [
+								"brends"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetHomePageCategories",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "tm/homepage-categories",
+							"host": [
+								"tm"
+							],
+							"path": [
+								"homepage-categories"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetOneCategoryWithProducts",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "tm/category/75dd289a-f72b-42fa-975e-ee10cd796135/10/1",
+							"host": [
+								"tm"
+							],
+							"path": [
+								"category",
+								"75dd289a-f72b-42fa-975e-ee10cd796135",
+								"10",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetCompanyPhones",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "tm/company-phones",
+							"host": [
+								"tm"
+							],
+							"path": [
+								"company-phones"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetCompanyAddress",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "tm/company-address",
+							"host": [
+								"tm"
+							],
+							"path": [
+								"company-address"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "tm/search/100/1?search=firm",
+							"host": [
+								"tm"
+							],
+							"path": [
+								"search",
+								"100",
+								"1"
+							],
+							"query": [
+								{
+									"key": "search",
+									"value": "firm"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetOrderTime",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "tm/order-time",
+							"host": [
+								"tm"
+							],
+							"path": [
+								"order-time"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetPaymentTypesByLangID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "tm/payment-types",
+							"host": [
+								"tm"
+							],
+							"path": [
+								"payment-types"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "SendMail",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"full_name\":\"Alan Valker\",\n    \"email\":\"kemal@gmail.com\",\n    \"phone_number\":\"+99362420377\",\n    \"letter\":\"siz bilen maslahatlasyp bilernmi\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "tm/send-mail",
+							"host": [
+								"tm"
+							],
+							"path": [
+								"send-mail"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetTranslationMyOrderPageByLangID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "tm/translation-my-order-page",
+							"host": [
+								"tm"
+							],
+							"path": [
+								"translation-my-order-page"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetTranslationOrderPageByLangID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "tm/translation-order-page",
+							"host": [
+								"tm"
+							],
+							"path": [
+								"translation-order-page"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetTranslationBasketPageByLangID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "tm/translation-basket-page",
+							"host": [
+								"tm"
+							],
+							"path": [
+								"translation-basket-page"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetLikedOrOrderedProductsWithoutCustomer",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"product_ids\":[\n        \"45a9f186-2521-4eef-a4e0-b5c253c70878\",\n        \"ee1d67ed-5862-4dfc-8424-52531a240a6c\"\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "tm/likes-or-orders-without-customer",
+							"host": [
+								"tm"
+							],
+							"path": [
+								"likes-or-orders-without-customer"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetTranslationUpdatePasswordPageByLangID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "tm/translation-update-password-page",
+							"host": [
+								"tm"
+							],
+							"path": [
+								"translation-update-password-page"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetTranslationMyInformationPageByLangID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NTYiLCJjdXN0b21lcl9pZCI6IjFhZTEyMzkwLTAzYWUtNDlhYy1hOWFkLWQ3YmE1Yzk1YjUxYSIsImV4cCI6MTY2NzQyMTQ0OH0._d7mh9mJVExs_VKyu7V8BDnLvik9CbM-BjvhF-hGJ-4"
+							}
+						],
+						"url": {
+							"raw": "tm/translation-my-information-page",
+							"host": [
+								"tm"
+							],
+							"path": [
+								"translation-my-information-page"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetTranslationContactByLangID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "tm/translation-contact",
+							"host": [
+								"tm"
+							],
+							"path": [
+								"translation-contact"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetTranslationAboutByLangID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "ru/translation-about",
+							"host": [
+								"ru"
+							],
+							"path": [
+								"translation-about"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetTranslationPaymentByLangID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "tm/translation-payment",
+							"host": [
+								"tm"
+							],
+							"path": [
+								"translation-payment"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetTranslationSecureByLangID",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "tm/translation-secure",
+							"host": [
+								"tm"
+							],
+							"path": [
+								"translation-secure"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetNotificationByLangID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "tm/notifications",
+							"host": [
+								"tm"
+							],
+							"path": [
+								"notifications"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetOneBrendWithProducts",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "tm/brend/9b838628-fd75-4232-862d-998635f24f52/10/1",
+							"host": [
+								"tm"
+							],
+							"path": [
+								"brend",
+								"9b838628-fd75-4232-862d-998635f24f52",
+								"10",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetProductByIDForFront",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "tm/product/14d95413-2c8a-472f-8f89-9458dc1bde33",
+							"host": [
+								"tm"
+							],
+							"path": [
+								"product",
+								"14d95413-2c8a-472f-8f89-9458dc1bde33"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "FilterAndSort",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "tm/category/75dd289a-f72b-42fa-975e-ee10cd796135/filter-and-sort/2/1?price_sort=DESC&min_price=1&max_price=1000&is_discount=false&brend_ids=9b838628-fd75-4232-862d-998635f24f52&brend_ids=30723733-79c0-4f1b-9365-a0943a11557c",
+							"host": [
+								"tm"
+							],
+							"path": [
+								"category",
+								"75dd289a-f72b-42fa-975e-ee10cd796135",
+								"filter-and-sort",
+								"2",
+								"1"
+							],
+							"query": [
+								{
+									"key": "price_sort",
+									"value": "DESC"
+								},
+								{
+									"key": "min_price",
+									"value": "1"
+								},
+								{
+									"key": "max_price",
+									"value": "1000"
+								},
+								{
+									"key": "is_discount",
+									"value": "false"
+								},
+								{
+									"key": "brend_ids",
+									"value": "9b838628-fd75-4232-862d-998635f24f52"
+								},
+								{
+									"key": "brend_ids",
+									"value": "30723733-79c0-4f1b-9365-a0943a11557c"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetBanners",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "tm/banners",
+							"host": [
+								"tm"
+							],
+							"path": [
+								"banners"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Back",
+			"item": [
+				{
+					"name": "Admin",
+					"item": [
+						{
+							"name": "RegisterAdmin",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIrOTkzNjM3NDcxNTUiLCJhZG1pbl9pZCI6ImM5N2JmYzZhLWZkODUtNGFhOC04MmRiLWU3ODhmNmIwZDcwYSIsInR5cGUiOiJzdXBlcl9hZG1pbiIsImV4cCI6MTY2NzQ5NzM5Mn0.lI_ahAoWDZeiN3XlFs_V9BLk0nDkTXCUWyXQuUQwcnI"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"full_name\":\"Maya Kerimova\",\n    \"phone_number\":\"+99363333333\",\n    \"password\":\"123456\",\n    \"type\":\"super_admin\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "admin/auth/register",
+									"host": [
+										"admin"
+									],
+									"path": [
+										"auth",
+										"register"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "LoginAdmin",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"phone_number\":\"+99363747155\",\n    \"password\":\"1122\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "admin/auth/login",
+									"host": [
+										"admin"
+									],
+									"path": [
+										"auth",
+										"login"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GetAdmins",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIrOTkzNjM3NDcxNTUiLCJhZG1pbl9pZCI6ImM5N2JmYzZhLWZkODUtNGFhOC04MmRiLWU3ODhmNmIwZDcwYSIsInR5cGUiOiJzdXBlcl9hZG1pbiIsImV4cCI6MTY2Nzg4NjMwOH0.tRVWHUku32MBtT2jTHuzbYGi3tIPlgvjndSz6PQwurg",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "admin/auth/admins/1/2",
+									"host": [
+										"admin"
+									],
+									"path": [
+										"auth",
+										"admins",
+										"1",
+										"2"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "RefreshTokenForAdmin",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": " Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIrOTkzNjM3NDcxNTUiLCJhZG1pbl9pZCI6ImM5N2JmYzZhLWZkODUtNGFhOC04MmRiLWU3ODhmNmIwZDcwYSIsInR5cGUiOiJzdXBlcl9hZG1pbiIsImV4cCI6MTY3NjEwMDc2Nn0.sAw1bTjORF7o1gvTFH6FyFl02Q6kIULfZENrMSFfDF4",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "admin/auth/refresh",
+									"host": [
+										"admin"
+									],
+									"path": [
+										"auth",
+										"refresh"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GetAdmin",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIrOTkzNjM3NDcxNTUiLCJhZG1pbl9pZCI6ImM5N2JmYzZhLWZkODUtNGFhOC04MmRiLWU3ODhmNmIwZDcwYSIsInR5cGUiOiJzdXBlcl9hZG1pbiIsImV4cCI6MTY3NjEwMzYxNn0.GRKt40Vb6xldBha3sD0iFGWpj7N8e9qM6ouddsMl8FU",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "admin/auth/admin",
+									"host": [
+										"admin"
+									],
+									"path": [
+										"auth",
+										"admin"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "OrderDate",
+					"item": [
+						{
+							"name": "CreateOrderDate",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIrOTkzNjM3NDcxNTUiLCJhZG1pbl9pZCI6ImM5N2JmYzZhLWZkODUtNGFhOC04MmRiLWU3ODhmNmIwZDcwYSIsInR5cGUiOiJzdXBlcl9hZG1pbiIsImV4cCI6MTY3NzUwNjcxOX0.RZ9hve1jTSpBsklCLWtYvGGR7-Yk8iORISyh3OC-U4w",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"date\":\"today\",\n    \"translation_order_dates\":[\n        {\n            \"lang_id\":\"aea98b93-7bdf-455b-9ad4-a259d69dc76e\",\n            \"date\":\"Сегодня\"\n        },\n        {\n            \"lang_id\":\"8723c1c7-aa6d-429f-b8af-ee9ace61f0d7\",\n            \"date\":\"Şu gün\"\n        }        \n    ]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "admin/order-date",
+									"host": [
+										"admin"
+									],
+									"path": [
+										"order-date"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "UpdateOrderTimeByID",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIrOTkzNjM3NDcxNTUiLCJhZG1pbl9pZCI6ImM5N2JmYzZhLWZkODUtNGFhOC04MmRiLWU3ODhmNmIwZDcwYSIsInR5cGUiOiJzdXBlcl9hZG1pbiIsImV4cCI6MTY3NzQ5NzIyMX0.wv3Bn9JbwKAEXRoyZ8nisv_tr9_x_Db-G1XLkWrFDhw",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"id\":\"c1f2beca-a6b6-4971-a6a7-ed50079c6912\",\n    \"date\":\"tomorrow\",\n    \"order_times\":[\n        {\n            \"time\":\"09:00 - 12:00\"\n        },\n        {\n            \"time\":\"12:00 - 15:00\"\n        },\n        {\n            \"time\":\"15:00 - 18:00\"\n        },\n        {\n            \"time\":\"18:00 - 21:00\"\n        }\n    ],\n    \"translation_order_dates\":[\n        {\n            \"lang_id\":\"aea98b93-7bdf-455b-9ad4-a259d69dc76e\",\n            \"date\":\"Завтра\"\n        },\n        {\n            \"lang_id\":\"8723c1c7-aa6d-429f-b8af-ee9ace61f0d7\",\n            \"date\":\"Ertir\"\n        }        \n    ]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "admin/order-time",
+									"host": [
+										"admin"
+									],
+									"path": [
+										"order-time"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GetOrderTimeByID",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "admin/order-time/32646376-c93f-412b-9e75-b3a5fa70df9e",
+									"host": [
+										"admin"
+									],
+									"path": [
+										"order-time",
+										"32646376-c93f-412b-9e75-b3a5fa70df9e"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GetOrderTimes",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "admin/order-times",
+									"host": [
+										"admin"
+									],
+									"path": [
+										"order-times"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "DeleteOrderTimeByID",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "admin/order-time/32646376-c93f-412b-9e75-b3a5fa70df9e",
+									"host": [
+										"admin"
+									],
+									"path": [
+										"order-time",
+										"32646376-c93f-412b-9e75-b3a5fa70df9e"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "RestoreOrderTimeByID",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "admin/restore-order-time/32646376-c93f-412b-9e75-b3a5fa70df9e",
+									"host": [
+										"admin"
+									],
+									"path": [
+										"restore-order-time",
+										"32646376-c93f-412b-9e75-b3a5fa70df9e"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "DeletePermanentlyOrderTimeByID",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "admin/delete-order-time/32646376-c93f-412b-9e75-b3a5fa70df9e",
+									"host": [
+										"admin"
+									],
+									"path": [
+										"delete-order-time",
+										"32646376-c93f-412b-9e75-b3a5fa70df9e"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "PaymentTypes",
+					"item": [
+						{
+							"name": "CreatePaymentType",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NTYiLCJjdXN0b21lcl9pZCI6IjFhZTEyMzkwLTAzYWUtNDlhYy1hOWFkLWQ3YmE1Yzk1YjUxYSIsImV4cCI6MTY2NzQ1NTY2NH0.BLTauBZxWMmqvgtV8-ZWaukzJzFbZ_-rTwcte8ME2pA",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "[\n        {\n            \"lang_id\":\"aea98b93-7bdf-455b-9ad4-a259d69dc76e\",\n            \"type\":\"платежный терминал\"\n        },\n        {\n            \"lang_id\":\"8723c1c7-aa6d-429f-b8af-ee9ace61f0d7\",\n            \"type\":\"töleg terminaly\"\n        }\n    ]\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "admin/payment-type",
+									"host": [
+										"admin"
+									],
+									"path": [
+										"payment-type"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "UpdatePaymentTypeByID",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NTYiLCJjdXN0b21lcl9pZCI6IjFhZTEyMzkwLTAzYWUtNDlhYy1hOWFkLWQ3YmE1Yzk1YjUxYSIsImV4cCI6MTY2NzQ1NTY2NH0.BLTauBZxWMmqvgtV8-ZWaukzJzFbZ_-rTwcte8ME2pA",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"id\":\"7a6a313d-8fcd-4c56-9fa5-aefb12552b82\",\n    \"lang_id\":\"8723c1c7-aa6d-429f-b8af-ee9ace61f0d7\",\n    \"type\":\"töleg terminaly\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "admin/payment-type",
+									"host": [
+										"admin"
+									],
+									"path": [
+										"payment-type"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GetPaymentTypeByID",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NTYiLCJjdXN0b21lcl9pZCI6IjFhZTEyMzkwLTAzYWUtNDlhYy1hOWFkLWQ3YmE1Yzk1YjUxYSIsImV4cCI6MTY2NzQ1NTY2NH0.BLTauBZxWMmqvgtV8-ZWaukzJzFbZ_-rTwcte8ME2pA",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "admin/payment-type/38696743-82e5-4644-9c86-4a99ae45f912",
+									"host": [
+										"admin"
+									],
+									"path": [
+										"payment-type",
+										"38696743-82e5-4644-9c86-4a99ae45f912"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GetPaymentTypes",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NTYiLCJjdXN0b21lcl9pZCI6IjFhZTEyMzkwLTAzYWUtNDlhYy1hOWFkLWQ3YmE1Yzk1YjUxYSIsImV4cCI6MTY2NzQ1NTY2NH0.BLTauBZxWMmqvgtV8-ZWaukzJzFbZ_-rTwcte8ME2pA",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "admin/payment-types",
+									"host": [
+										"admin"
+									],
+									"path": [
+										"payment-types"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "TranslationMyOrderPage",
+					"item": [
+						{
+							"name": "CreateTranslationMyOrderPage",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NTYiLCJjdXN0b21lcl9pZCI6IjFhZTEyMzkwLTAzYWUtNDlhYy1hOWFkLWQ3YmE1Yzk1YjUxYSIsImV4cCI6MTY2NzQ1NTY2NH0.BLTauBZxWMmqvgtV8-ZWaukzJzFbZ_-rTwcte8ME2pA",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "[\n        {\n            \"lang_id\":\"aea98b93-7bdf-455b-9ad4-a259d69dc76e\",\n            \"orders\":\"orders_ru\",\n            \"date\":\"date_ru\",\n            \"price\":\"price_ru\",\n            \"image\":\"image_ru\",\n            \"name\":\"name_ru\",\n            \"brend\":\"brend_ru\",\n            \"code\":\"code_ru\",\n            \"amount\":\"amount_ru\",\n            \"total_price\":\"total_price_ru\"\n        },\n        {\n            \"lang_id\":\"8723c1c7-aa6d-429f-b8af-ee9ace61f0d7\",\n            \"orders\":\"orders_tm\",\n            \"date\":\"date_tm\",\n            \"price\":\"price_tm\",\n            \"image\":\"image_tm\",\n            \"name\":\"name_tm\",\n            \"brend\":\"brend_tm\",\n            \"code\":\"code_tm\",\n            \"amount\":\"amount_tm\",\n            \"total_price\":\"total_price_tm\"\n        }\n    ]\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "admin/translation-my-order-page",
+									"host": [
+										"admin"
+									],
+									"path": [
+										"translation-my-order-page"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "UpdateTranslationMyOrderPageByID",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIrOTkzNjM3NDcxNTUiLCJhZG1pbl9pZCI6ImM5N2JmYzZhLWZkODUtNGFhOC04MmRiLWU3ODhmNmIwZDcwYSIsInR5cGUiOiJzdXBlcl9hZG1pbiIsImV4cCI6MTY3NDc2NzgwNX0.L6hzyWYNKC8zICh_6Z-h0MooaKSR9m76BoDaEJZS0tA",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"id\":\"6f30b588-94d8-49f5-a558-a90c2ec9150e\",\n    \"lang_id\":\"aea98b93-7bdf-455b-9ad4-a259d69dc76e\",\n    \"orders\":\"Заказы\",\n    \"date\":\"Дата\",\n    \"price\":\"Цена\",\n    \"image\":\"Рисунок\",\n    \"name\":\"Имя\",\n    \"brend\":\"Бренди\",\n    \"product_price\":\"Цена\",\n    \"amount\":\"Количество\",\n    \"total_price\":\"Общая цена\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "admin/translation-my-order-page",
+									"host": [
+										"admin"
+									],
+									"path": [
+										"translation-my-order-page"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GetTranslationMyOrderPageByID",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIrOTkzNjM3NDcxNTUiLCJhZG1pbl9pZCI6ImM5N2JmYzZhLWZkODUtNGFhOC04MmRiLWU3ODhmNmIwZDcwYSIsInR5cGUiOiJzdXBlcl9hZG1pbiIsImV4cCI6MTY3NDc3MTEwNH0.bzs5ay1cbaR93krd_twHjDLLFqXc-NKO_9W1U5Zb02w",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "admin/translation-my-order-page/ff43b90d-e22d-4364-b358-6fd56bb3a305",
+									"host": [
+										"admin"
+									],
+									"path": [
+										"translation-my-order-page",
+										"ff43b90d-e22d-4364-b358-6fd56bb3a305"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "TranslationOrderPage",
+					"item": [
+						{
+							"name": "CreateTranslationOrderPage",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NTYiLCJjdXN0b21lcl9pZCI6IjFhZTEyMzkwLTAzYWUtNDlhYy1hOWFkLWQ3YmE1Yzk1YjUxYSIsImV4cCI6MTY2NzQ1NTY2NH0.BLTauBZxWMmqvgtV8-ZWaukzJzFbZ_-rTwcte8ME2pA",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "[\n        {\n            \"lang_id\":\"aea98b93-7bdf-455b-9ad4-a259d69dc76e\",\n            \"content\":\"content_ru\",\n            \"type_of_payment\":\"type_of_payment_ru\",\n            \"choose_a_delivery_time\":\"choose_a_delivery_time_ru\",\n            \"your_address\":\"your_address_ru\",\n            \"mark\":\"mark_ru\",\n            \"to_order\":\"to_order_ru\"\n        },\n        {\n            \"lang_id\":\"8723c1c7-aa6d-429f-b8af-ee9ace61f0d7\",\n            \"content\":\"content_tm\",\n            \"type_of_payment\":\"type_of_payment_tm\",\n            \"choose_a_delivery_time\":\"choose_a_delivery_time_tm\",\n            \"your_address\":\"your_address_tm\",\n            \"mark\":\"mark_tm\",\n            \"to_order\":\"to_order_tm\"\n        }\n    ]\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "admin/translation-order-page",
+									"host": [
+										"admin"
+									],
+									"path": [
+										"translation-order-page"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "UpdateTranslationOrderPageByID",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIrOTkzNjM3NDcxNTUiLCJhZG1pbl9pZCI6ImM5N2JmYzZhLWZkODUtNGFhOC04MmRiLWU3ODhmNmIwZDcwYSIsInR5cGUiOiJzdXBlcl9hZG1pbiIsImV4cCI6MTY3NDcyNDk1NX0.98xT3H9TPrxaWQeEPrMwlGQ15y4SQFvtPyHv8gs4NSw",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"id\":\"474a15e9-1a05-49aa-9a61-c92837d9c9a8\",\n    \"lang_id\":\"aea98b93-7bdf-455b-9ad4-a259d69dc76e\",\n    \"content\":\"Помимо Ашхабада, услуга доставки доступна в Бузмеин и Анью. Услуга предоставляется бесплатно. После того, как вы сделаете заказ с сайта, вам позвонит оператор для подтверждения заказа (если вы постоянный клиент, ваш заказ при желании будет подтвержден автоматически). Оплата производится после подтверждения заказа. Платежный документ, который дает вам поставщик, является суммой, которую вы должны заплатить. Оплата производится в манатах в наличной и безналичной форме. Ваша покупка после принятия и оплаты не подлежит возврату\",\n    \"type_of_payment\":\"Форма оплаты\",\n    \"choose_a_delivery_time\":\"Выберите время доставки\",\n    \"your_address\":\"Ваш адресс\",\n    \"mark\":\"Примечание\",\n    \"to_order\":\"Разместить заказ\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "admin/translation-order-page",
+									"host": [
+										"admin"
+									],
+									"path": [
+										"translation-order-page"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GetTranslationOrderPageByID",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NTYiLCJjdXN0b21lcl9pZCI6IjFhZTEyMzkwLTAzYWUtNDlhYy1hOWFkLWQ3YmE1Yzk1YjUxYSIsImV4cCI6MTY2NzQ1NTY2NH0.BLTauBZxWMmqvgtV8-ZWaukzJzFbZ_-rTwcte8ME2pA",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "admin/translation-order-page/75810722-07fd-400e-94b4-cd230de08cbf",
+									"host": [
+										"admin"
+									],
+									"path": [
+										"translation-order-page",
+										"75810722-07fd-400e-94b4-cd230de08cbf"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "TranslationBasketPage",
+					"item": [
+						{
+							"name": "CreateTranslationBasketPage",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NTYiLCJjdXN0b21lcl9pZCI6IjFhZTEyMzkwLTAzYWUtNDlhYy1hOWFkLWQ3YmE1Yzk1YjUxYSIsImV4cCI6MTY2NzQ1NTY2NH0.BLTauBZxWMmqvgtV8-ZWaukzJzFbZ_-rTwcte8ME2pA",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "[\n        {\n            \"lang_id\":\"aea98b93-7bdf-455b-9ad4-a259d69dc76e\",\n            \"quantity_of_goods\":\"quantity_of_goods_ru\",\n            \"total_price\":\"total_price_ru\",\n            \"discount\":\"discount_ru\",\n            \"delivery\":\"delivery_ru\",\n            \"total\":\"total_ru\",\n            \"to_order\":\"to_order_ru\",\n            \"your_basket\":\"your_basket_ru\",\n            \"empty_the_basket\":\"empty_the_basket_ru\",\n            \"empty_the_like_page\":\"empty_the_like_page_ru\"\n        },\n    {\n            \"lang_id\":\"8723c1c7-aa6d-429f-b8af-ee9ace61f0d7\",\n            \"quantity_of_goods\":\"quantity_of_goods_tm\",\n            \"total_price\":\"total_price_tm\",\n            \"discount\":\"discount_tm\",\n            \"delivery\":\"delivery_tm\",\n            \"total\":\"total_tm\",\n            \"to_order\":\"to_order_tm\",\n            \"your_basket\":\"your_basket_tm\",\n            \"empty_the_basket\":\"empty_the_basket_tm\",\n            \"empty_the_like_page\":\"empty_the_like_page_tm\"\n        }\n    ]\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "admin/translation-basket-page",
+									"host": [
+										"admin"
+									],
+									"path": [
+										"translation-basket-page"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "UpdateTranslationBasketPageByID",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIrOTkzNjM3NDcxNTUiLCJhZG1pbl9pZCI6ImM5N2JmYzZhLWZkODUtNGFhOC04MmRiLWU3ODhmNmIwZDcwYSIsInR5cGUiOiJzdXBlcl9hZG1pbiIsImV4cCI6MTY3NDgwOTcxNn0.5HGqkqwArPMc7uEPzyj2DeWH9HDY7UYnDSprQPLlkzQ",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"id\":\"456dcb5a-fabb-47f8-b216-0cddd3077124\",\n    \"lang_id\":\"aea98b93-7bdf-455b-9ad4-a259d69dc76e\",\n    \"quantity_of_goods\":\"Количество товара\",\n    \"total_price\":\"Полная стоимость\",\n    \"discount\":\"Скидка\",\n    \"delivery\":\"Доставкa\",\n    \"total\":\"Общее\",\n    \"to_order\":\"Заказ\",\n    \"your_basket\":\"Корзина\",\n    \"empty_the_basket\":\"Ваша корзина пуста\",\n    \"empty_the_like_page\":\"empty_the_like_page_ru\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "admin/translation-basket-page",
+									"host": [
+										"admin"
+									],
+									"path": [
+										"translation-basket-page"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GetTranslationBasketPageByID",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIrOTkzNjM3NDcxNTUiLCJhZG1pbl9pZCI6ImM5N2JmYzZhLWZkODUtNGFhOC04MmRiLWU3ODhmNmIwZDcwYSIsInR5cGUiOiJzdXBlcl9hZG1pbiIsImV4cCI6MTY3NDc3MTEwNH0.bzs5ay1cbaR93krd_twHjDLLFqXc-NKO_9W1U5Zb02w",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "admin/translation-basket-page/51b3699e-1c7b-442a-be7b-6b2ad1f111b4",
+									"host": [
+										"admin"
+									],
+									"path": [
+										"translation-basket-page",
+										"51b3699e-1c7b-442a-be7b-6b2ad1f111b4"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Shop",
+					"item": [
+						{
+							"name": "CreateShop",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIrOTkzNjM3NDcxNTUiLCJhZG1pbl9pZCI6ImM5N2JmYzZhLWZkODUtNGFhOC04MmRiLWU3ODhmNmIwZDcwYSIsInR5cGUiOiJzdXBlcl9hZG1pbiIsImV4cCI6MTY2ODQ4MjU3MX0.iVWIhlVUpjvszAcXoqtJkqiQcAoHnTemjW_aGdYM4Es",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"owner_name\":\"Seyidow Arslan\",\n    \"address\":\"Asgabat Bagyr Alyyew koce 34-nji jay\",\n    \"phone_number\":\"+99363987654\",\n    \"running_time\":\"7:00-21:00\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "admin/shop",
+									"host": [
+										"admin"
+									],
+									"path": [
+										"shop"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "UpdateShopByID",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIrOTkzNjM3NDcxNTUiLCJhZG1pbl9pZCI6ImM5N2JmYzZhLWZkODUtNGFhOC04MmRiLWU3ODhmNmIwZDcwYSIsInR5cGUiOiJzdXBlcl9hZG1pbiIsImV4cCI6MTY2Nzk4NTgwNX0.9kVIqUR1KNVAow_ibYorrsGHRrd5WgGX751pYdybPPM",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"id\":\"a283d9a4-f38e-43ee-a228-6584b7406cc4\",\n    \"owner_name\":\"Arslan Kerimow\",\n    \"address\":\"Asgabat saher Mir 2/2 jay 2 magazyn 23\",\n    \"phone_number\":\"+99362420387\",\n    \"running_time\":\"8:00-22:00\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "admin/shop",
+									"host": [
+										"admin"
+									],
+									"path": [
+										"shop"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GetShopByID",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIrOTkzNjM3NDcxNTUiLCJhZG1pbl9pZCI6ImM5N2JmYzZhLWZkODUtNGFhOC04MmRiLWU3ODhmNmIwZDcwYSIsInR5cGUiOiJzdXBlcl9hZG1pbiIsImV4cCI6MTY2Nzk4NTgwNX0.9kVIqUR1KNVAow_ibYorrsGHRrd5WgGX751pYdybPPM",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "admin/shop/a283d9a4-f38e-43ee-a228-6584b7406cc4",
+									"host": [
+										"admin"
+									],
+									"path": [
+										"shop",
+										"a283d9a4-f38e-43ee-a228-6584b7406cc4"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GetShops",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIrOTkzNjM3NDcxNTUiLCJhZG1pbl9pZCI6ImM5N2JmYzZhLWZkODUtNGFhOC04MmRiLWU3ODhmNmIwZDcwYSIsInR5cGUiOiJzdXBlcl9hZG1pbiIsImV4cCI6MTY2Nzk4NTgwNX0.9kVIqUR1KNVAow_ibYorrsGHRrd5WgGX751pYdybPPM",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "admin/shops",
+									"host": [
+										"admin"
+									],
+									"path": [
+										"shops"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "DeleteShopByID",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIrOTkzNjM3NDcxNTUiLCJhZG1pbl9pZCI6ImM5N2JmYzZhLWZkODUtNGFhOC04MmRiLWU3ODhmNmIwZDcwYSIsInR5cGUiOiJzdXBlcl9hZG1pbiIsImV4cCI6MTY3NDEyNTgwMX0.onrgnMmAbFRwLRsqqYO0o6dZKnSdKiRg5JKKnyaPqM8",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "admin/shop/a283d9a4-f38e-43ee-a228-6584b7406cc4",
+									"host": [
+										"admin"
+									],
+									"path": [
+										"shop",
+										"a283d9a4-f38e-43ee-a228-6584b7406cc4"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "RestoreShopByID",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIrOTkzNjM3NDcxNTUiLCJhZG1pbl9pZCI6ImM5N2JmYzZhLWZkODUtNGFhOC04MmRiLWU3ODhmNmIwZDcwYSIsInR5cGUiOiJzdXBlcl9hZG1pbiIsImV4cCI6MTY2ODQ4Mjk3N30.TJdqjkDp2QwI0GM_YEc1QtzujCBt8_J42C1yjnnNq3c",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "admin/restore-shop/74b239d4-be05-4c4e-ab6c-6aba02490089",
+									"host": [
+										"admin"
+									],
+									"path": [
+										"restore-shop",
+										"74b239d4-be05-4c4e-ab6c-6aba02490089"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "DeletePermanentlyShopByID",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIrOTkzNjM3NDcxNTUiLCJhZG1pbl9pZCI6ImM5N2JmYzZhLWZkODUtNGFhOC04MmRiLWU3ODhmNmIwZDcwYSIsInR5cGUiOiJzdXBlcl9hZG1pbiIsImV4cCI6MTY3NDEyNTgwMX0.onrgnMmAbFRwLRsqqYO0o6dZKnSdKiRg5JKKnyaPqM8",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "admin/delete-shop/a283d9a4-f38e-43ee-a228-6584b7406cc4",
+									"host": [
+										"admin"
+									],
+									"path": [
+										"delete-shop",
+										"a283d9a4-f38e-43ee-a228-6584b7406cc4"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "TranslationUpdatePasswordPage",
+					"item": [
+						{
+							"name": "CreateTranslationUpdatePasswordPage",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NTYiLCJjdXN0b21lcl9pZCI6IjFhZTEyMzkwLTAzYWUtNDlhYy1hOWFkLWQ3YmE1Yzk1YjUxYSIsImV4cCI6MTY2NzQ1NTY2NH0.BLTauBZxWMmqvgtV8-ZWaukzJzFbZ_-rTwcte8ME2pA",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "[\n        {\n            \"lang_id\":\"aea98b93-7bdf-455b-9ad4-a259d69dc76e\",\n            \"title\":\"изменить пароль\",\n            \"password\":\"ключевое слово\",\n            \"verify_password\":\"Подтвердить Пароль\",\n            \"explanation\":\"ключевое слово должно быть буквой или цифрой длиной от 5 до 20\",\n            \"save\":\"запомнить\"\n        },\n        {\n            \"lang_id\":\"8723c1c7-aa6d-429f-b8af-ee9ace61f0d7\",\n            \"title\":\"açar sözi üýtgetmek\",\n            \"password\":\"açar sözi\",\n            \"verify_password\":\"açar sözi tassykla\",\n            \"explanation\":\"siziň açar sözüňiz 5-20 uzynlygynda harp ýa-da sandan ybarat bolmalydyr\",\n            \"save\":\"ýatda sakla\"\n        }\n    ]\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "admin/translation-update-password-page",
+									"host": [
+										"admin"
+									],
+									"path": [
+										"translation-update-password-page"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "UpdateTranslationUpdatePasswordPageByID",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NTYiLCJjdXN0b21lcl9pZCI6IjFhZTEyMzkwLTAzYWUtNDlhYy1hOWFkLWQ3YmE1Yzk1YjUxYSIsImV4cCI6MTY2NzQ1NTY2NH0.BLTauBZxWMmqvgtV8-ZWaukzJzFbZ_-rTwcte8ME2pA",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"id\":\"de12082b-baab-4b83-ac07-119df09d1230\",\n    \"lang_id\":\"8723c1c7-aa6d-429f-b8af-ee9ace61f0d7\",\n    \"title\":\"açar sözi üýtgetmek\",\n    \"password\":\"açar sözi\",\n    \"verify_password\":\"açar sözi tassykla\",\n    \"explanation\":\"siziň açar sözüňiz 5-20 uzynlygynda harp ýa-da sandan ybarat bolmalydyr\",\n    \"save\":\"ýatda sakla\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "admin/translation-update-password-page",
+									"host": [
+										"admin"
+									],
+									"path": [
+										"translation-update-password-page"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GetTranslationUpdatePasswordPageByID",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NTYiLCJjdXN0b21lcl9pZCI6IjFhZTEyMzkwLTAzYWUtNDlhYy1hOWFkLWQ3YmE1Yzk1YjUxYSIsImV4cCI6MTY2NzQ1NTY2NH0.BLTauBZxWMmqvgtV8-ZWaukzJzFbZ_-rTwcte8ME2pA",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "admin/translation-update-password-page/de12082b-baab-4b83-ac07-119df09d1230",
+									"host": [
+										"admin"
+									],
+									"path": [
+										"translation-update-password-page",
+										"de12082b-baab-4b83-ac07-119df09d1230"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "TranslationMyInformationPage",
+					"item": [
+						{
+							"name": "CreateTranslationMyInformationPage",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NTYiLCJjdXN0b21lcl9pZCI6IjFhZTEyMzkwLTAzYWUtNDlhYy1hOWFkLWQ3YmE1Yzk1YjUxYSIsImV4cCI6MTY2NzQ1NTY2NH0.BLTauBZxWMmqvgtV8-ZWaukzJzFbZ_-rTwcte8ME2pA",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "[\n        {\n            \"lang_id\": \"aea98b93-7bdf-455b-9ad4-a259d69dc76e\",\n            \"birthday\": \"дата рождения\",\n            \"address\": \"ваш адрес\",\n            \"update_password\": \"update_password_ru\",\n            \"save\": \"save_ru\",\n            \"gender\": \"gender_ru\",\n            \"male\": \"male_ru\",\n            \"female\": \"female_ru\"\n        },\n        {\n            \"lang_id\": \"8723c1c7-aa6d-429f-b8af-ee9ace61f0d7\",\n            \"birthday\": \"doglan senäň\",\n            \"address\": \"salgyňyz\",\n            \"update_password\": \"update_password_tm\",\n            \"save\": \"save_tm\",\n            \"gender\": \"gender_tm\",\n            \"male\": \"male_tm\",\n            \"female\": \"female_tm\"\n        }\n    ]\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "admin/translation-my-information-page",
+									"host": [
+										"admin"
+									],
+									"path": [
+										"translation-my-information-page"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "UpdateTranslationMyInformationPageByID",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIrOTkzNjM3NDcxNTUiLCJhZG1pbl9pZCI6ImM5N2JmYzZhLWZkODUtNGFhOC04MmRiLWU3ODhmNmIwZDcwYSIsInR5cGUiOiJzdXBlcl9hZG1pbiIsImV4cCI6MTY3NDc0NjI0Nn0.RPQXN0xzqB9bbNN3BRwaypf_Tubt9eYdjg0HsBndvEo",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"id\":\"d294138e-b808-41ae-9ac5-1826751fda3d\",\n    \"lang_id\":\"aea98b93-7bdf-455b-9ad4-a259d69dc76e\",\n    \"birthday\":\"Дата рождения\",\n    \"address\":\"Ваш адрес\",\n    \"update_password\":\"Изменить пароль\",\n    \"save\":\"Запомнить\",\n    \"gender\": \"Пол\",\n    \"male\": \"Мужчина\",\n    \"female\": \"Женщина\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "admin/translation-my-information-page",
+									"host": [
+										"admin"
+									],
+									"path": [
+										"translation-my-information-page"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GetTranslationMyInformationPageByID",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIrOTkzNjM3NDcxNTUiLCJhZG1pbl9pZCI6ImM5N2JmYzZhLWZkODUtNGFhOC04MmRiLWU3ODhmNmIwZDcwYSIsInR5cGUiOiJzdXBlcl9hZG1pbiIsImV4cCI6MTY3NDc0NDc2Mn0.-X_Lh5RlNfaUs-txXKs85r3sQ-ryCSV_gkzd6QrvxCQ",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "admin/translation-my-information-page/11074158-69f2-473a-b4fe-94304ff0d8a7",
+									"host": [
+										"admin"
+									],
+									"path": [
+										"translation-my-information-page",
+										"11074158-69f2-473a-b4fe-94304ff0d8a7"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "TranslationContact",
+					"item": [
+						{
+							"name": "CreateTranslationContact",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NTYiLCJjdXN0b21lcl9pZCI6IjFhZTEyMzkwLTAzYWUtNDlhYy1hOWFkLWQ3YmE1Yzk1YjUxYSIsImV4cCI6MTY2NzQ1NTY2NH0.BLTauBZxWMmqvgtV8-ZWaukzJzFbZ_-rTwcte8ME2pA",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "[\n        {\n            \"lang_id\":\"aea98b93-7bdf-455b-9ad4-a259d69dc76e\",\n            \"full_name\":\"full_name_ru\",\n            \"email\":\"email_ru\",\n            \"phone\":\"phone_ru\",\n            \"letter\":\"letter_ru\",\n            \"company_phone\":\"company_phone_ru\",\n            \"imo\":\"imo_ru\",\n            \"company_email\":\"company_email_ru\",\n            \"instagram\":\"instagram_ru\",\n            \"button_text\":\"button_text_ru\"\n        },\n        {\n            \"lang_id\":\"8723c1c7-aa6d-429f-b8af-ee9ace61f0d7\",\n            \"full_name\":\"full_name_tm\",\n            \"email\":\"email_tm\",\n            \"phone\":\"phone_tm\",\n            \"letter\":\"letter_tm\",\n            \"company_phone\":\"company_phone_tm\",\n            \"imo\":\"imo_tm\",\n            \"company_email\":\"company_email_tm\",\n            \"instagram\":\"instagram_tm\",\n            \"button_text\":\"button_texttmu\"\n        }\n    ]\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "admin/translation-contact",
+									"host": [
+										"admin"
+									],
+									"path": [
+										"translation-contact"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "UpdateTranslationContactByID",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIrOTkzNjM3NDcxNTUiLCJhZG1pbl9pZCI6ImM5N2JmYzZhLWZkODUtNGFhOC04MmRiLWU3ODhmNmIwZDcwYSIsInR5cGUiOiJzdXBlcl9hZG1pbiIsImV4cCI6MTY3NDc2NzgwNX0.L6hzyWYNKC8zICh_6Z-h0MooaKSR9m76BoDaEJZS0tA",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"id\":\"f1693167-0c68-4a54-9831-56f124d629a3\",\n    \"lang_id\":\"aea98b93-7bdf-455b-9ad4-a259d69dc76e\",\n    \"full_name\":\"Ваше полное имя\",\n    \"email\":\"Эл. адрес\",\n    \"phone\":\"Телефон\",\n    \"letter\":\"Твое письмо\",\n    \"company_phone\":\"Наш номер телефона\",\n    \"imo\":\"Имо\",\n    \"company_email\":\"Эл. адрес\",\n    \"instagram\":\"Инстаграм\",\n    \"button_text\":\"Отправить\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "admin/translation-contact",
+									"host": [
+										"admin"
+									],
+									"path": [
+										"translation-contact"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GetTranslationContactByID",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NTYiLCJjdXN0b21lcl9pZCI6IjFhZTEyMzkwLTAzYWUtNDlhYy1hOWFkLWQ3YmE1Yzk1YjUxYSIsImV4cCI6MTY2NzQ1NTY2NH0.BLTauBZxWMmqvgtV8-ZWaukzJzFbZ_-rTwcte8ME2pA",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "admin/translation-contact/73253999-7355-42b4-8700-94de76f0058a",
+									"host": [
+										"admin"
+									],
+									"path": [
+										"translation-contact",
+										"73253999-7355-42b4-8700-94de76f0058a"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "TranslationAbout",
+					"item": [
+						{
+							"name": "CreateTranslationAbout",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NTYiLCJjdXN0b21lcl9pZCI6IjFhZTEyMzkwLTAzYWUtNDlhYy1hOWFkLWQ3YmE1Yzk1YjUxYSIsImV4cCI6MTY2NzQ1NTY2NH0.BLTauBZxWMmqvgtV8-ZWaukzJzFbZ_-rTwcte8ME2pA",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "[\n        {\n            \"lang_id\":\"aea98b93-7bdf-455b-9ad4-a259d69dc76e\",\n            \"title\":\"Рады приветствовать Вас в интернет-маркете Isleg!\",\n            \"content\":\"Мы начали работу в июле 2019 года и на сегодняшний день мы предлагаем Вам тысячи видов товаров, которые принадлежат сотням брендам. Каждый день мы работаем над увеличением ассортимента, привлечением новых компаний к сотрудничеству. Целью нашей работы является создание выгодных условий для наших клиентов-экономия времени на походы в магазины, оплата наличными или картой, доставка в удобное время, и конечно же качественная продукция по лучшим ценам Мы открыты для сотрудничества и пожеланий\"\n        },\n        {\n            \"lang_id\":\"8723c1c7-aa6d-429f-b8af-ee9ace61f0d7\",\n            \"title\":\"Sizi Isleg onlaýn marketimizde hoş gördük!\",\n            \"content\":\"Onlaýn marketimiz 2019-njy ýylyň iýul aýyndan bäri hyzmat berýär. Häzirki wagtda Size ýüzlerçe brendlere degişli bolan müňlerçe haryt görnüşlerini hödürleýäris! Haryt görnüşlerimizi sizden gelýän isleg we teklipleriň esasynda köpeltmäge dowam edýäris. Biziň maksadymyz müşderilerimize ýokary hilli hyzmat bermek bolup durýar. Indi Siz öýüňizden çykmazdan özüňizi gerekli zatlar bilen üpjün edip bilersiňiz! Munuň bilen bir hatarda Siz wagtyňyzy we transport çykdajylaryny hem tygşytlaýarsyňyz. Tölegi harytlar size gowuşandan soňra nagt ýa-da bank kartlarynyň üsti bilen amala aşyryp bilersiňiz Biziň gapymyz hyzmatdaşlyklara we tekliplere hemişe açyk!\"\n        }\n    ]\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "admin/translation-about",
+									"host": [
+										"admin"
+									],
+									"path": [
+										"translation-about"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "UpdateTranslationAboutByID",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NTYiLCJjdXN0b21lcl9pZCI6IjFhZTEyMzkwLTAzYWUtNDlhYy1hOWFkLWQ3YmE1Yzk1YjUxYSIsImV4cCI6MTY2NzQ1NTY2NH0.BLTauBZxWMmqvgtV8-ZWaukzJzFbZ_-rTwcte8ME2pA",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"id\":\"7abeb5cf-2fbb-43b9-94ca-251dd5f40d5a\",\n    \"lang_id\":\"8723c1c7-aa6d-429f-b8af-ee9ace61f0d7\",\n    \"title\":\"Sizi Isleg onlaýn marketimizde hoş gördük!\",\n    \"content\":\"Onlaýn marketimiz 2019-njy ýylyň iýul aýyndan bäri hyzmat berýär. Häzirki wagtda Size ýüzlerçe brendlere degişli bolan müňlerçe haryt görnüşlerini hödürleýäris! Haryt görnüşlerimizi sizden gelýän isleg we teklipleriň esasynda köpeltmäge dowam edýäris. Biziň maksadymyz müşderilerimize ýokary hilli hyzmat bermek bolup durýar. Indi Siz öýüňizden çykmazdan özüňizi gerekli zatlar bilen üpjün edip bilersiňiz! Munuň bilen bir hatarda Siz wagtyňyzy we transport çykdajylaryny hem tygşytlaýarsyňyz. Tölegi harytlar size gowuşandan soňra nagt ýa-da bank kartlarynyň üsti bilen amala aşyryp bilersiňiz Biziň gapymyz hyzmatdaşlyklara we tekliplere hemişe açyk!\"\n    }",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "admin/translation-about",
+									"host": [
+										"admin"
+									],
+									"path": [
+										"translation-about"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GetTranslationAboutByID",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NTYiLCJjdXN0b21lcl9pZCI6IjFhZTEyMzkwLTAzYWUtNDlhYy1hOWFkLWQ3YmE1Yzk1YjUxYSIsImV4cCI6MTY2NzQ1NTY2NH0.BLTauBZxWMmqvgtV8-ZWaukzJzFbZ_-rTwcte8ME2pA",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "admin/translation-about/7abeb5cf-2fbb-43b9-94ca-251dd5f40d5a",
+									"host": [
+										"admin"
+									],
+									"path": [
+										"translation-about",
+										"7abeb5cf-2fbb-43b9-94ca-251dd5f40d5a"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "TranslationPayment",
+					"item": [
+						{
+							"name": "CreateTranslationPayment",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NTYiLCJjdXN0b21lcl9pZCI6IjFhZTEyMzkwLTAzYWUtNDlhYy1hOWFkLWQ3YmE1Yzk1YjUxYSIsImV4cCI6MTY2NzQ1NTY2NH0.BLTauBZxWMmqvgtV8-ZWaukzJzFbZ_-rTwcte8ME2pA",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "[\n        {\n            \"lang_id\":\"aea98b93-7bdf-455b-9ad4-a259d69dc76e\",\n            \"title\":\"Порядок доставки и оплаты\",\n            \"content\":\"В настоящее время услуга по доставке осуществляется по городу Ашхабад, Бюзмеин и Анау Услуга предоставляется бесплатно Минимальный заказ должен составлять не менее 150 манат После Вашего заказа по сайту, оператор позвонит Вам для подтверждения заказа (постоянным клиентам по их желанию подтверждение осуществляется автоматизированно) Услуга доставки выполняется по указанному Вами адресу и номеру телефона Если заказ не подтвержден то данный заказ не регистрируется и не выполняется. Для подтверждения заказа, удостоверьтесь, что можете принять звонок по указанному Вами номеру телефона. Также проверьте правильность указанного Вами адреса Оплата выполняется после того, как Вы проверите и примите заказ. На платежном документе курьера указана сумма Вашей оплаты. Оплата выполняется наличными и через карту в национальной валюте. Принятый и оплаченный товар возврату не подлежит Если не удается найти владельца заказа в течение 24 часов после подтверждения заказа, то данный заказ аннулируется\"\n        },\n        {\n            \"lang_id\":\"8723c1c7-aa6d-429f-b8af-ee9ace61f0d7\",\n            \"title\":\"Eltip bermek we töleg tertibi\",\n            \"content\":\"Eltip bermek hyzmaty Aşgabat şäheriniň çägi bilen bir hatarda Büzmeýine we Änew şäherine hem elýeterlidir. Hyzmat mugt amala aşyrylýar Her bir sargydyň jemi bahasy azyndan 150 manat bolmalydyr Saýtdan sargyt edeniňizden soňra operator size jaň edip sargydy tassyklar (eger hemişelik müşderi bolsaňyz sargytlaryňyz islegiňize görä awtomatik usulda hem tassyklanýar) Girizen salgyňyz we telefon belgiňiz esasynda hyzmat amala aşyrylýar Sargyt tassyklanmadyk ýagdaýynda ol hasaba alynmaýar we ýerine ýetirilmeýär. Sargydyň tassyklanmagy üçin girizen telefon belgiňizden jaň kabul edip bilýändigiňize göz ýetiriň. Şeýle hem girizen salgyňyzyň dogrulygyny barlaň Sargydy barlap alanyňyzdan soňra töleg amala aşyrylýar. Eltip berijiniň size gowşurýan töleg resminamasynda siziň tölemeli puluňyz bellenendir. Töleg nagt we nagt däl görnüşde milli manatda amala aşyrylýar. Kabul edip tölegini geçiren harydyňyz yzyna alynmaýar Sargyt tassyklanandan soňra 24 sagadyň dowamynda eýesi tapylmasa ol güýjüni ýitirýär;\"\n        }\n    ]\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "admin/translation-payment",
+									"host": [
+										"admin"
+									],
+									"path": [
+										"translation-payment"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "UpdateTranslationPaymentByID",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NTYiLCJjdXN0b21lcl9pZCI6IjFhZTEyMzkwLTAzYWUtNDlhYy1hOWFkLWQ3YmE1Yzk1YjUxYSIsImV4cCI6MTY2NzQ1NTY2NH0.BLTauBZxWMmqvgtV8-ZWaukzJzFbZ_-rTwcte8ME2pA",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"id\":\"5748ec03-5278-425c-babf-f7f2bf8d2efa\",\n    \"lang_id\":\"8723c1c7-aa6d-429f-b8af-ee9ace61f0d7\",\n    \"title\":\"Eltip bermek we töleg tertibi\",\n    \"content\":\"Eltip bermek hyzmaty Aşgabat şäheriniň çägi bilen bir hatarda Büzmeýine we Änew şäherine hem elýeterlidir. Hyzmat mugt amala aşyrylýar Her bir sargydyň jemi bahasy azyndan 150 manat bolmalydyr Saýtdan sargyt edeniňizden soňra operator size jaň edip sargydy tassyklar (eger hemişelik müşderi bolsaňyz sargytlaryňyz islegiňize görä awtomatik usulda hem tassyklanýar) Girizen salgyňyz we telefon belgiňiz esasynda hyzmat amala aşyrylýar Sargyt tassyklanmadyk ýagdaýynda ol hasaba alynmaýar we ýerine ýetirilmeýär. Sargydyň tassyklanmagy üçin girizen telefon belgiňizden jaň kabul edip bilýändigiňize göz ýetiriň. Şeýle hem girizen salgyňyzyň dogrulygyny barlaň Sargydy barlap alanyňyzdan soňra töleg amala aşyrylýar. Eltip berijiniň size gowşurýan töleg resminamasynda siziň tölemeli puluňyz bellenendir. Töleg nagt we nagt däl görnüşde milli manatda amala aşyrylýar. Kabul edip tölegini geçiren harydyňyz yzyna alynmaýar Sargyt tassyklanandan soňra 24 sagadyň dowamynda eýesi tapylmasa ol güýjüni ýitirýär;\"\n    }",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "admin/translation-payment",
+									"host": [
+										"admin"
+									],
+									"path": [
+										"translation-payment"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GetTranslationPaymentByID",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NTYiLCJjdXN0b21lcl9pZCI6IjFhZTEyMzkwLTAzYWUtNDlhYy1hOWFkLWQ3YmE1Yzk1YjUxYSIsImV4cCI6MTY2NzQ1NTY2NH0.BLTauBZxWMmqvgtV8-ZWaukzJzFbZ_-rTwcte8ME2pA",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "admin/translation-payment/5748ec03-5278-425c-babf-f7f2bf8d2efa",
+									"host": [
+										"admin"
+									],
+									"path": [
+										"translation-payment",
+										"5748ec03-5278-425c-babf-f7f2bf8d2efa"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "TranslationSecure",
+					"item": [
+						{
+							"name": "CreateTranslationSecure",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NTYiLCJjdXN0b21lcl9pZCI6IjFhZTEyMzkwLTAzYWUtNDlhYy1hOWFkLWQ3YmE1Yzk1YjUxYSIsImV4cCI6MTY2NzQ1NTY2NH0.BLTauBZxWMmqvgtV8-ZWaukzJzFbZ_-rTwcte8ME2pA",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "[\n        {\n            \"lang_id\":\"aea98b93-7bdf-455b-9ad4-a259d69dc76e\",\n            \"title\":\"Пользовательское соглашение\",\n            \"content\":\"Между Ынамдар – Интернет Маркетом (далее – “Ынамдар”) и интернет сайтом www.ynamdar.com (далее – “Сайт”), а также его клиентом (далее - “Клиент”) достигнуто соглашение по нижеследующим условиям.\"\n        },\n        {\n            \"lang_id\":\"8723c1c7-aa6d-429f-b8af-ee9ace61f0d7\",\n            \"title\":\"ÖZARA YLALAŞYGY\",\n            \"content\":\"Ynamdar - Internet Marketi (Mundan beýläk – “Ynamdar”) we www.ynamdar.com internet saýty (Mundan beýläk – “Saýt”) bilen, onuň agzasynyň (“Agza”) arasynda aşakdaky şertleri ýerine ýetirmek barada ylalaşyga gelindi.\"\n        }\n    ]\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "admin/translation-secure",
+									"host": [
+										"admin"
+									],
+									"path": [
+										"translation-secure"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "UpdateTranslationSecureByID",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NTYiLCJjdXN0b21lcl9pZCI6IjFhZTEyMzkwLTAzYWUtNDlhYy1hOWFkLWQ3YmE1Yzk1YjUxYSIsImV4cCI6MTY2NzQ1NTY2NH0.BLTauBZxWMmqvgtV8-ZWaukzJzFbZ_-rTwcte8ME2pA",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": " {\n    \"id\":\"5988b64a-82ad-4ed0-bd1b-bdd0b3b05912\",\n    \"lang_id\":\"8723c1c7-aa6d-429f-b8af-ee9ace61f0d7\",\n    \"title\":\"ÖZARA YLALAŞYGY\",\n    \"content\":\"Ynamdar - Internet Marketi (Mundan beýläk – “Ynamdar”) we www.ynamdar.com internet saýty (Mundan beýläk – “Saýt”) bilen, onuň agzasynyň (“Agza”) arasynda aşakdaky şertleri ýerine ýetirmek barada ylalaşyga gelindi.\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "admin/translation-secure",
+									"host": [
+										"admin"
+									],
+									"path": [
+										"translation-secure"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GetTranslationSecureByID",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NTYiLCJjdXN0b21lcl9pZCI6IjFhZTEyMzkwLTAzYWUtNDlhYy1hOWFkLWQ3YmE1Yzk1YjUxYSIsImV4cCI6MTY2NzQ1NTY2NH0.BLTauBZxWMmqvgtV8-ZWaukzJzFbZ_-rTwcte8ME2pA",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "admin/translation-secure/5988b64a-82ad-4ed0-bd1b-bdd0b3b05912",
+									"host": [
+										"admin"
+									],
+									"path": [
+										"translation-secure",
+										"5988b64a-82ad-4ed0-bd1b-bdd0b3b05912"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "District",
+					"item": [
+						{
+							"name": "CreateDistrict",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NTYiLCJjdXN0b21lcl9pZCI6IjFhZTEyMzkwLTAzYWUtNDlhYy1hOWFkLWQ3YmE1Yzk1YjUxYSIsImV4cCI6MTY2NzQ1NTY2NH0.BLTauBZxWMmqvgtV8-ZWaukzJzFbZ_-rTwcte8ME2pA",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "price",
+											"value": "15",
+											"type": "default"
+										},
+										{
+											"key": "name_tm",
+											"value": "Parahat 2",
+											"type": "default"
+										},
+										{
+											"key": "name_ru",
+											"value": "Mir 2",
+											"type": "default"
+										}
+									]
+								},
+								"url": {
+									"raw": "admin/district",
+									"host": [
+										"admin"
+									],
+									"path": [
+										"district"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "TranslationHeader",
+					"item": [
+						{
+							"name": "CreateTranslationHeader",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NTYiLCJjdXN0b21lcl9pZCI6IjFhZTEyMzkwLTAzYWUtNDlhYy1hOWFkLWQ3YmE1Yzk1YjUxYSIsImV4cCI6MTY2NzQ1NTY2NH0.BLTauBZxWMmqvgtV8-ZWaukzJzFbZ_-rTwcte8ME2pA",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "[\n        {\n            \"lang_id\":\"aea98b93-7bdf-455b-9ad4-a259d69dc76e\",\n            \"research\":\"поиск\",\n            \"phone\":\"tелефон\",\n            \"password\":\"пароль\",\n            \"forgot_password\":\"забыл пароль\",\n            \"sign_in\":\"войти\",\n            \"sign_up\":\"зарегистрироваться\",\n            \"name\":\"имя\",\n            \"password_verification\":\"Подтвердить Пароль\",\n            \"verify_secure\":\"Я прочитал и принимаю Условия Обслуживания и Политика Конфиденциальности\",\n            \"my_information\":\"моя информация\",\n            \"my_favorites\":\"мои любимые\",\n            \"my_orders\":\"мои заказы\",\n            \"log_out\":\"выйти\",\n            \"basket\":\"корзина\",\n            \"email\":\"uytget\",\n            \"add_to_basket\":\"uytget\"\n        },\n        {\n            \"lang_id\":\"8723c1c7-aa6d-429f-b8af-ee9ace61f0d7\",\n            \"research\":\"gözleg\",\n            \"phone\":\"telefon\",\n            \"password\":\"parol\",\n            \"forgot_password\":\"Acar sozumi unutdym\",\n            \"sign_in\":\"ulgama girmek\",\n            \"sign_up\":\"agza bolmak\",\n            \"name\":\"Ady\",\n            \"password_verification\":\"Acar sozi tassyklamak\",\n            \"verify_secure\":\"Ulanyş Düzgünlerini we Gizlinlik Şertnamasyny okadym we kabul edýärin\",\n            \"my_information\":\"maglumatym\",\n            \"my_favorites\":\"halanlarym\",\n            \"my_orders\":\"sargytlarym\",\n            \"log_out\":\"cykmak\",\n            \"basket\":\"sebet\",\n            \"email\":\"uytget\",\n            \"add_to_basket\":\"uytget\"\n        }\n    ]",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "admin/translation-header",
+									"host": [
+										"admin"
+									],
+									"path": [
+										"translation-header"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "UpdateTranslationHeaderByID",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIrOTkzNjM3NDcxNTUiLCJhZG1pbl9pZCI6ImM5N2JmYzZhLWZkODUtNGFhOC04MmRiLWU3ODhmNmIwZDcwYSIsInR5cGUiOiJzdXBlcl9hZG1pbiIsImV4cCI6MTY3NDcyODg2Mn0.TyPu2DMIv0zGElTOZfEiDGPf87CI_MaI3maYTZwQwEA",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"id\":\"9154e800-2a92-47de-b4ff-1e63b213e5f7\",\n    \"lang_id\":\"aea98b93-7bdf-455b-9ad4-a259d69dc76e\",\n    \"research\":\"Поиск\",\n    \"phone\":\"Телефон\",\n    \"password\":\"Пароль\",\n    \"forgot_password\":\"Забыл пароль\",\n    \"sign_in\":\"Войти\",\n    \"sign_up\":\"Зарегистрироваться\",\n    \"name\":\"Имя\",\n    \"password_verification\":\"Подтвердить Пароль\",\n    \"verify_secure\":\"Я прочитал и принимаю Условия Обслуживания и Политика Конфиденциальности\",\n    \"my_information\":\"Моя информация\",\n    \"my_favorites\":\"Мои любимые\",\n    \"my_orders\":\"Мои заказы\",\n    \"log_out\":\"Выйти\",\n    \"basket\":\"Корзина\",\n    \"email\":\"Почта\",\n    \"add_to_basket\":\"Добавить в корзину\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "admin/translation-header",
+									"host": [
+										"admin"
+									],
+									"path": [
+										"translation-header"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GetTranslationHeaderByID",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NTYiLCJjdXN0b21lcl9pZCI6IjFhZTEyMzkwLTAzYWUtNDlhYy1hOWFkLWQ3YmE1Yzk1YjUxYSIsImV4cCI6MTY2NzQ1NTY2NH0.BLTauBZxWMmqvgtV8-ZWaukzJzFbZ_-rTwcte8ME2pA",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "admin/translation-header/eaf206e6-d515-4bdb-9323-a047cd0edae5",
+									"host": [
+										"admin"
+									],
+									"path": [
+										"translation-header",
+										"eaf206e6-d515-4bdb-9323-a047cd0edae5"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "TranslationFooter",
+					"item": [
+						{
+							"name": "CreateTranslationFooter",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NTYiLCJjdXN0b21lcl9pZCI6IjFhZTEyMzkwLTAzYWUtNDlhYy1hOWFkLWQ3YmE1Yzk1YjUxYSIsImV4cCI6MTY2NzQ1NTY2NH0.BLTauBZxWMmqvgtV8-ZWaukzJzFbZ_-rTwcte8ME2pA",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "[\n        {\n            \"lang_id\":\"aea98b93-7bdf-455b-9ad4-a259d69dc76e\",\n            \"about\":\"О нас\",\n            \"payment\":\"Порядок доставки и оплаты\",\n            \"contact\":\"Коммуникация\",\n            \"secure\":\"Обслуживания и Политика Конфиденциальности\",\n            \"word\":\"Все права защищены\"\n        },\n        {\n            \"lang_id\":\"8723c1c7-aa6d-429f-b8af-ee9ace61f0d7\",\n            \"about\":\"Biz Barada\",\n            \"payment\":\"Eltip bermek we töleg tertibi\",\n            \"contact\":\"Aragatnaşyk\",\n            \"secure\":\"Ulanyş düzgünleri we gizlinlik şertnamasy\",\n            \"word\":\"Ähli hukuklary goraglydyr\"\n        }\n    ]\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "admin/translation-footer",
+									"host": [
+										"admin"
+									],
+									"path": [
+										"translation-footer"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "UpdateTranslationFooterByID",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NTYiLCJjdXN0b21lcl9pZCI6IjFhZTEyMzkwLTAzYWUtNDlhYy1hOWFkLWQ3YmE1Yzk1YjUxYSIsImV4cCI6MTY2NzQ1NTY2NH0.BLTauBZxWMmqvgtV8-ZWaukzJzFbZ_-rTwcte8ME2pA",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"id\":\"12dc4c16-5712-4bff-a957-8e16d450b4fb\",\n    \"lang_id\":\"8723c1c7-aa6d-429f-b8af-ee9ace61f0d7\",\n    \"about\":\"Biz Barada\",\n    \"payment\":\"Eltip bermek we töleg tertibi\",\n    \"contact\":\"Aragatnaşyk\",\n    \"secure\":\"Ulanyş düzgünleri we gizlinlik şertnamasy\",\n    \"word\":\"Ähli hukuklary goraglydyr\"\n    }",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "admin/translation-footer",
+									"host": [
+										"admin"
+									],
+									"path": [
+										"translation-footer"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GetTranslationFooterByID",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NTYiLCJjdXN0b21lcl9pZCI6IjFhZTEyMzkwLTAzYWUtNDlhYy1hOWFkLWQ3YmE1Yzk1YjUxYSIsImV4cCI6MTY2NzQ1NTY2NH0.BLTauBZxWMmqvgtV8-ZWaukzJzFbZ_-rTwcte8ME2pA",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "admin/translation-footer/12dc4c16-5712-4bff-a957-8e16d450b4fb",
+									"host": [
+										"admin"
+									],
+									"path": [
+										"translation-footer",
+										"12dc4c16-5712-4bff-a957-8e16d450b4fb"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "CompanyAddress",
+					"item": [
+						{
+							"name": "CreateCompanyAddress",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NTYiLCJjdXN0b21lcl9pZCI6IjFhZTEyMzkwLTAzYWUtNDlhYy1hOWFkLWQ3YmE1Yzk1YjUxYSIsImV4cCI6MTY2NzQ1NTY2NH0.BLTauBZxWMmqvgtV8-ZWaukzJzFbZ_-rTwcte8ME2pA",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "[\n        {\n            \"lang_id\":\"aea98b93-7bdf-455b-9ad4-a259d69dc76e\",\n            \"address\":\"Улица Азади 23, Ашхабад\"\n        },\n        {\n            \"lang_id\":\"8723c1c7-aa6d-429f-b8af-ee9ace61f0d7\",\n            \"address\":\"Aşgabat şäheri Azady köçesiniň 23-nji jaýy\"\n        }\n    ]\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "admin/company-address",
+									"host": [
+										"admin"
+									],
+									"path": [
+										"company-address"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "UpdateCompanyAddressByID",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NTYiLCJjdXN0b21lcl9pZCI6IjFhZTEyMzkwLTAzYWUtNDlhYy1hOWFkLWQ3YmE1Yzk1YjUxYSIsImV4cCI6MTY2NzQ1NTY2NH0.BLTauBZxWMmqvgtV8-ZWaukzJzFbZ_-rTwcte8ME2pA",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"id\":\"d2c66808-e5fe-435f-ba01-cb717f80d9e0\",\n    \"lang_id\":\"8723c1c7-aa6d-429f-b8af-ee9ace61f0d7\",\n    \"address\":\"Aşgabat şäheri Azady köçesiniň 23-nji jaýy\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "admin/company-address",
+									"host": [
+										"admin"
+									],
+									"path": [
+										"company-address"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GetCompanyAddressByID",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NTYiLCJjdXN0b21lcl9pZCI6IjFhZTEyMzkwLTAzYWUtNDlhYy1hOWFkLWQ3YmE1Yzk1YjUxYSIsImV4cCI6MTY2NzQ1NTY2NH0.BLTauBZxWMmqvgtV8-ZWaukzJzFbZ_-rTwcte8ME2pA",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "admin/company-address/d2c66808-e5fe-435f-ba01-cb717f80d9e0",
+									"host": [
+										"admin"
+									],
+									"path": [
+										"company-address",
+										"d2c66808-e5fe-435f-ba01-cb717f80d9e0"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Banner",
+					"item": [
+						{
+							"name": "CreateBanner",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIrOTkzNjM3NDcxNTUiLCJhZG1pbl9pZCI6ImM5N2JmYzZhLWZkODUtNGFhOC04MmRiLWU3ODhmNmIwZDcwYSIsInR5cGUiOiJzdXBlcl9hZG1pbiIsImV4cCI6MTY3NTQxMzcyMH0.5gG9FT4tT5tanw9f6TEakblwqgK0GaGggZ9t-3bzJR4",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "url",
+											"value": "/category/44d2783f-133e-4bb7-b4c2-9e03dc04e2dd",
+											"type": "default"
+										},
+										{
+											"key": "image",
+											"type": "file",
+											"src": "/Users/allanurbayramgeldiyev/Downloads/Сгруппировать 30.png"
+										}
+									]
+								},
+								"url": {
+									"raw": "admin/banner",
+									"host": [
+										"admin"
+									],
+									"path": [
+										"banner"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "UpdateBannerByID",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"url": {
+									"raw": "admin/banner",
+									"host": [
+										"admin"
+									],
+									"path": [
+										"banner"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "CompanyPhone",
+					"item": [
+						{
+							"name": "CreateCompanyPhone",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NTYiLCJjdXN0b21lcl9pZCI6IjFhZTEyMzkwLTAzYWUtNDlhYy1hOWFkLWQ3YmE1Yzk1YjUxYSIsImV4cCI6MTY2NzQ1NTY2NH0.BLTauBZxWMmqvgtV8-ZWaukzJzFbZ_-rTwcte8ME2pA",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"company_phone\":\"236587\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "admin/company-phone",
+									"host": [
+										"admin"
+									],
+									"path": [
+										"company-phone"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "UpdateCompanyPhoneByID",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NTYiLCJjdXN0b21lcl9pZCI6IjFhZTEyMzkwLTAzYWUtNDlhYy1hOWFkLWQ3YmE1Yzk1YjUxYSIsImV4cCI6MTY2NzQ1NTY2NH0.BLTauBZxWMmqvgtV8-ZWaukzJzFbZ_-rTwcte8ME2pA",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"id\":\"96c30e15-274c-49a0-bcc5-e2f8deac248f\",\n    \"company_phone\":\"236587\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "admin/company-phone",
+									"host": [
+										"admin"
+									],
+									"path": [
+										"company-phone"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GetCompanyPhoneByID",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NTYiLCJjdXN0b21lcl9pZCI6IjFhZTEyMzkwLTAzYWUtNDlhYy1hOWFkLWQ3YmE1Yzk1YjUxYSIsImV4cCI6MTY2NzQ1NTY2NH0.BLTauBZxWMmqvgtV8-ZWaukzJzFbZ_-rTwcte8ME2pA",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "admin/company-phone/3060bc25-2a55-4ee0-894d-f87f887e1fc4",
+									"host": [
+										"admin"
+									],
+									"path": [
+										"company-phone",
+										"3060bc25-2a55-4ee0-894d-f87f887e1fc4"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "DeleteCompanyPhoneByID",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NTYiLCJjdXN0b21lcl9pZCI6IjFhZTEyMzkwLTAzYWUtNDlhYy1hOWFkLWQ3YmE1Yzk1YjUxYSIsImV4cCI6MTY2NzQ1NTY2NH0.BLTauBZxWMmqvgtV8-ZWaukzJzFbZ_-rTwcte8ME2pA",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "admin/company-phone/3060bc25-2a55-4ee0-894d-f87f887e1fc4",
+									"host": [
+										"admin"
+									],
+									"path": [
+										"company-phone",
+										"3060bc25-2a55-4ee0-894d-f87f887e1fc4"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "RestoreCompanyPhoneByID",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NTYiLCJjdXN0b21lcl9pZCI6IjFhZTEyMzkwLTAzYWUtNDlhYy1hOWFkLWQ3YmE1Yzk1YjUxYSIsImV4cCI6MTY2NzQ1NTY2NH0.BLTauBZxWMmqvgtV8-ZWaukzJzFbZ_-rTwcte8ME2pA",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "admin/restore-company-phone/3060bc25-2a55-4ee0-894d-f87f887e1fc4",
+									"host": [
+										"admin"
+									],
+									"path": [
+										"restore-company-phone",
+										"3060bc25-2a55-4ee0-894d-f87f887e1fc4"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "DeletePermanentlyCompanyPhoneByID",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NTYiLCJjdXN0b21lcl9pZCI6IjFhZTEyMzkwLTAzYWUtNDlhYy1hOWFkLWQ3YmE1Yzk1YjUxYSIsImV4cCI6MTY2NzQ1NTY2NH0.BLTauBZxWMmqvgtV8-ZWaukzJzFbZ_-rTwcte8ME2pA",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "admin/delete-company-phone/3060bc25-2a55-4ee0-894d-f87f887e1fc4",
+									"host": [
+										"admin"
+									],
+									"path": [
+										"delete-company-phone",
+										"3060bc25-2a55-4ee0-894d-f87f887e1fc4"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Afisa",
+					"item": [
+						{
+							"name": "CreateAfisa",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NTYiLCJjdXN0b21lcl9pZCI6IjFhZTEyMzkwLTAzYWUtNDlhYy1hOWFkLWQ3YmE1Yzk1YjUxYSIsImV4cCI6MTY2NzQ1NTY2NH0.BLTauBZxWMmqvgtV8-ZWaukzJzFbZ_-rTwcte8ME2pA",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "title_tm",
+											"value": "Aksiya",
+											"type": "default"
+										},
+										{
+											"key": "title_ru",
+											"value": "Действие",
+											"type": "default"
+										},
+										{
+											"key": "description_tm",
+											"value": "Aksiya barada maglumat",
+											"type": "default"
+										},
+										{
+											"key": "description_ru",
+											"value": "Информация о действии",
+											"type": "default"
+										}
+									]
+								},
+								"url": {
+									"raw": "admin/afisa",
+									"host": [
+										"admin"
+									],
+									"path": [
+										"afisa"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "UpdateAfisaByID",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NTYiLCJjdXN0b21lcl9pZCI6IjFhZTEyMzkwLTAzYWUtNDlhYy1hOWFkLWQ3YmE1Yzk1YjUxYSIsImV4cCI6MTY2NzQ1NTY2NH0.BLTauBZxWMmqvgtV8-ZWaukzJzFbZ_-rTwcte8ME2pA",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "title_tm",
+											"value": "title_tm",
+											"type": "default"
+										},
+										{
+											"key": "title_ru",
+											"value": "title_ru",
+											"type": "default"
+										},
+										{
+											"key": "description_tm",
+											"value": "description_tm",
+											"type": "default"
+										},
+										{
+											"key": "description_ru",
+											"value": "description_ru",
+											"type": "default"
+										},
+										{
+											"key": "image",
+											"type": "file",
+											"src": "/home/abb/Pictures/download (3).jpeg"
+										}
+									]
+								},
+								"url": {
+									"raw": "admin/afisa/cb670531-8ca3-4d74-8ea4-f7853aae4132",
+									"host": [
+										"admin"
+									],
+									"path": [
+										"afisa",
+										"cb670531-8ca3-4d74-8ea4-f7853aae4132"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GetsAfisaByID",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NTYiLCJjdXN0b21lcl9pZCI6IjFhZTEyMzkwLTAzYWUtNDlhYy1hOWFkLWQ3YmE1Yzk1YjUxYSIsImV4cCI6MTY2NzQ1NTY2NH0.BLTauBZxWMmqvgtV8-ZWaukzJzFbZ_-rTwcte8ME2pA",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "admin/afisa/cb670531-8ca3-4d74-8ea4-f7853aae4132",
+									"host": [
+										"admin"
+									],
+									"path": [
+										"afisa",
+										"cb670531-8ca3-4d74-8ea4-f7853aae4132"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GetAfisas",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NTYiLCJjdXN0b21lcl9pZCI6IjFhZTEyMzkwLTAzYWUtNDlhYy1hOWFkLWQ3YmE1Yzk1YjUxYSIsImV4cCI6MTY2NzQ1NTY2NH0.BLTauBZxWMmqvgtV8-ZWaukzJzFbZ_-rTwcte8ME2pA",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "admin/afisas",
+									"host": [
+										"admin"
+									],
+									"path": [
+										"afisas"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "DeleteAfisaByID",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NTYiLCJjdXN0b21lcl9pZCI6IjFhZTEyMzkwLTAzYWUtNDlhYy1hOWFkLWQ3YmE1Yzk1YjUxYSIsImV4cCI6MTY2NzQ1NTY2NH0.BLTauBZxWMmqvgtV8-ZWaukzJzFbZ_-rTwcte8ME2pA",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "admin/afisa/cb670531-8ca3-4d74-8ea4-f7853aae4132",
+									"host": [
+										"admin"
+									],
+									"path": [
+										"afisa",
+										"cb670531-8ca3-4d74-8ea4-f7853aae4132"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "RestoreAfisaByID",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NTYiLCJjdXN0b21lcl9pZCI6IjFhZTEyMzkwLTAzYWUtNDlhYy1hOWFkLWQ3YmE1Yzk1YjUxYSIsImV4cCI6MTY2NzQ1NTY2NH0.BLTauBZxWMmqvgtV8-ZWaukzJzFbZ_-rTwcte8ME2pA",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "admin/restore-afisa/cb670531-8ca3-4d74-8ea4-f7853aae4132",
+									"host": [
+										"admin"
+									],
+									"path": [
+										"restore-afisa",
+										"cb670531-8ca3-4d74-8ea4-f7853aae4132"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "DeletePermanentlyAfisaByID",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NTYiLCJjdXN0b21lcl9pZCI6IjFhZTEyMzkwLTAzYWUtNDlhYy1hOWFkLWQ3YmE1Yzk1YjUxYSIsImV4cCI6MTY2NzQ1NTY2NH0.BLTauBZxWMmqvgtV8-ZWaukzJzFbZ_-rTwcte8ME2pA",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "admin/delete-afisa/cb670531-8ca3-4d74-8ea4-f7853aae4132",
+									"host": [
+										"admin"
+									],
+									"path": [
+										"delete-afisa",
+										"cb670531-8ca3-4d74-8ea4-f7853aae4132"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Product",
+					"item": [
+						{
+							"name": "CreateProduct",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIrOTkzNjM3NDcxNTUiLCJhZG1pbl9pZCI6ImM5N2JmYzZhLWZkODUtNGFhOC04MmRiLWU3ODhmNmIwZDcwYSIsInR5cGUiOiJzdXBlcl9hZG1pbiIsImV4cCI6MTY3NzIxOTA4N30.NWGx99YdzlxaHufkA1-bp99oYEJkC24M05KhDYm5vm8",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "brend_id",
+											"value": "",
+											"type": "default"
+										},
+										{
+											"key": "price",
+											"value": "8.5",
+											"type": "default"
+										},
+										{
+											"key": "old_price",
+											"value": "",
+											"type": "default"
+										},
+										{
+											"key": "amount",
+											"value": "100",
+											"type": "default"
+										},
+										{
+											"key": "name_tm",
+											"value": "Sprite 0.250 lt (banocnyy)",
+											"type": "default"
+										},
+										{
+											"key": "description_tm",
+											"value": "",
+											"type": "default"
+										},
+										{
+											"key": "name_ru",
+											"value": "Спрайт 0,250 л (банка)",
+											"type": "default"
+										},
+										{
+											"key": "description_ru",
+											"value": "",
+											"type": "default"
+										},
+										{
+											"key": "category_id",
+											"value": "d7862d17-0742-4bd5-8fc8-478fd7e868c4",
+											"type": "default"
+										},
+										{
+											"key": "category_id",
+											"value": "f47ad001-2fbf-49bd-948d-e5c7fa373712",
+											"type": "default"
+										},
+										{
+											"key": "category_id",
+											"value": "",
+											"type": "default",
+											"disabled": true
+										},
+										{
+											"key": "category_id",
+											"value": "",
+											"type": "default",
+											"disabled": true
+										},
+										{
+											"key": "is_new",
+											"value": "true",
+											"type": "default"
+										},
+										{
+											"key": "limit_amount",
+											"value": "15",
+											"type": "default"
+										},
+										{
+											"key": "shop_id",
+											"value": "",
+											"type": "default"
+										},
+										{
+											"key": "main_image",
+											"type": "file",
+											"src": "/Users/allanurbayramgeldiyev/Downloads/suw/7.jpg"
+										}
+									]
+								},
+								"url": {
+									"raw": "admin/product",
+									"host": [
+										"admin"
+									],
+									"path": [
+										"product"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "UpdateProductByID",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIrOTkzNjM3NDcxNTUiLCJhZG1pbl9pZCI6ImM5N2JmYzZhLWZkODUtNGFhOC04MmRiLWU3ODhmNmIwZDcwYSIsInR5cGUiOiJzdXBlcl9hZG1pbiIsImV4cCI6MTY3NDQ2ODk4NX0.kuLv_t9hhhB5A2BBO_aQHwZwA5m4FXvDYqIdLMm49IE",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "brend_id",
+											"value": "",
+											"type": "default"
+										},
+										{
+											"key": "price",
+											"value": "46",
+											"type": "default"
+										},
+										{
+											"key": "old_price",
+											"value": "46.5",
+											"type": "default"
+										},
+										{
+											"key": "amount",
+											"value": "998",
+											"type": "default"
+										},
+										{
+											"key": "name_tm",
+											"value": "name_tm",
+											"type": "default"
+										},
+										{
+											"key": "name_ru",
+											"value": "name_ru",
+											"type": "default"
+										},
+										{
+											"key": "description_tm",
+											"value": "description_tm",
+											"type": "default"
+										},
+										{
+											"key": "description_ru",
+											"value": "description_ru",
+											"type": "default"
+										},
+										{
+											"key": "category_id",
+											"value": "75dd289a-f72b-42fa-975e-ee10cd796135",
+											"type": "default"
+										},
+										{
+											"key": "category_id",
+											"value": "d5e7a59e-b272-4a77-9a95-5efebee00eb0",
+											"type": "default"
+										},
+										{
+											"key": "limit_amount",
+											"value": "990",
+											"type": "default"
+										},
+										{
+											"key": "is_new",
+											"value": "true",
+											"type": "default"
+										},
+										{
+											"key": "shop_id",
+											"value": "",
+											"type": "default"
+										},
+										{
+											"key": "main_image",
+											"type": "file",
+											"src": "/Users/allanurbayramgeldiyev/Downloads/Bianyo/500x500 (1).JPG"
+										},
+										{
+											"key": "image",
+											"type": "file",
+											"src": "/Users/allanurbayramgeldiyev/Downloads/Bianyo/500x500 (2).jpg"
+										},
+										{
+											"key": "image",
+											"type": "file",
+											"src": "/Users/allanurbayramgeldiyev/Downloads/Bianyo/500x500 (3).jpg"
+										},
+										{
+											"key": "image",
+											"type": "file",
+											"src": "/Users/allanurbayramgeldiyev/Downloads/Bianyo/500x500 (3).jpg"
+										}
+									]
+								},
+								"url": {
+									"raw": "admin/product/4bb10ed2-0c9d-4e88-9dd6-c92c5e504066",
+									"host": [
+										"admin"
+									],
+									"path": [
+										"product",
+										"4bb10ed2-0c9d-4e88-9dd6-c92c5e504066"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GetProductByID",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIrOTkzNjM3NDcxNTUiLCJhZG1pbl9pZCI6ImM5N2JmYzZhLWZkODUtNGFhOC04MmRiLWU3ODhmNmIwZDcwYSIsInR5cGUiOiJzdXBlcl9hZG1pbiIsImV4cCI6MTY3NDEyMTg5Nn0.0IlhxS0xCzKOPY7wEmLH6eaGps8eg8TLa2aAGCW4Wt0",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "admin/product/8b481e58-cd39-4761-a052-75e30124689a",
+									"host": [
+										"admin"
+									],
+									"path": [
+										"product",
+										"8b481e58-cd39-4761-a052-75e30124689a"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GetProducts",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIrOTkzNjM3NDcxNTUiLCJhZG1pbl9pZCI6ImM5N2JmYzZhLWZkODUtNGFhOC04MmRiLWU3ODhmNmIwZDcwYSIsInR5cGUiOiJzdXBlcl9hZG1pbiIsImV4cCI6MTY3NDYzNjk2M30.lnHJYYSOdvtEUPEhGzXl8LUrui7WCW82Prhb61zM1Xw",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "admin/products",
+									"host": [
+										"admin"
+									],
+									"path": [
+										"products"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "DeleteProductByID",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIrOTkzNjM3NDcxNTUiLCJhZG1pbl9pZCI6ImM5N2JmYzZhLWZkODUtNGFhOC04MmRiLWU3ODhmNmIwZDcwYSIsInR5cGUiOiJzdXBlcl9hZG1pbiIsImV4cCI6MTY3NTQxMzcyMH0.5gG9FT4tT5tanw9f6TEakblwqgK0GaGggZ9t-3bzJR4",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "admin/product/14d95413-2c8a-472f-8f89-9458dc1bde33",
+									"host": [
+										"admin"
+									],
+									"path": [
+										"product",
+										"14d95413-2c8a-472f-8f89-9458dc1bde33"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "RestoreProductByID",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIrOTkzNjM3NDcxNTUiLCJhZG1pbl9pZCI6ImM5N2JmYzZhLWZkODUtNGFhOC04MmRiLWU3ODhmNmIwZDcwYSIsInR5cGUiOiJzdXBlcl9hZG1pbiIsImV4cCI6MTY3NDQ2ODk4NX0.kuLv_t9hhhB5A2BBO_aQHwZwA5m4FXvDYqIdLMm49IE",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "admin/restore-product/4bb10ed2-0c9d-4e88-9dd6-c92c5e504066",
+									"host": [
+										"admin"
+									],
+									"path": [
+										"restore-product",
+										"4bb10ed2-0c9d-4e88-9dd6-c92c5e504066"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "DeletePermanentlyProductByID",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIrOTkzNjM3NDcxNTUiLCJhZG1pbl9pZCI6ImM5N2JmYzZhLWZkODUtNGFhOC04MmRiLWU3ODhmNmIwZDcwYSIsInR5cGUiOiJzdXBlcl9hZG1pbiIsImV4cCI6MTY3NTQxMzcyMH0.5gG9FT4tT5tanw9f6TEakblwqgK0GaGggZ9t-3bzJR4",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "admin/delete-product/14d95413-2c8a-472f-8f89-9458dc1bde33",
+									"host": [
+										"admin"
+									],
+									"path": [
+										"delete-product",
+										"14d95413-2c8a-472f-8f89-9458dc1bde33"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Brend",
+					"item": [
+						{
+							"name": "CreateBrend",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIrOTkzNjM3NDcxNTUiLCJhZG1pbl9pZCI6ImM5N2JmYzZhLWZkODUtNGFhOC04MmRiLWU3ODhmNmIwZDcwYSIsInR5cGUiOiJzdXBlcl9hZG1pbiIsImV4cCI6MTY3Mzk0MTc2OX0.deCJ3C4D_vK9s5rhDt8jrXTkNlcAohP-9rgU3fu7G7s",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "name",
+											"value": "Old Spice",
+											"type": "default"
+										},
+										{
+											"key": "image",
+											"type": "file",
+											"src": "/Users/allanurbayramgeldiyev/Downloads/Brend surat (190,667x150)/Сгруппировать 878.png"
+										}
+									]
+								},
+								"url": {
+									"raw": "admin/brend",
+									"host": [
+										"admin"
+									],
+									"path": [
+										"brend"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "UpdateBrendByID",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NTYiLCJjdXN0b21lcl9pZCI6IjFhZTEyMzkwLTAzYWUtNDlhYy1hOWFkLWQ3YmE1Yzk1YjUxYSIsImV4cCI6MTY2NzQ1NTY2NH0.BLTauBZxWMmqvgtV8-ZWaukzJzFbZ_-rTwcte8ME2pA",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "name",
+											"value": "Golden Eagle",
+											"type": "default"
+										},
+										{
+											"key": "image",
+											"type": "file",
+											"src": "/home/abb/go/src/github.com/abbgo/isleg/isleg-data/Saydyn suratynyn razmeri/Kagyz kley/4-3.jpg"
+										}
+									]
+								},
+								"url": {
+									"raw": "admin/brend/c4bcda34-7332-4ae5-8129-d7538d63fee4",
+									"host": [
+										"admin"
+									],
+									"path": [
+										"brend",
+										"c4bcda34-7332-4ae5-8129-d7538d63fee4"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GetBrendByID",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NTYiLCJjdXN0b21lcl9pZCI6IjFhZTEyMzkwLTAzYWUtNDlhYy1hOWFkLWQ3YmE1Yzk1YjUxYSIsImV4cCI6MTY2NzQ1NTY2NH0.BLTauBZxWMmqvgtV8-ZWaukzJzFbZ_-rTwcte8ME2pA",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "admin/brend/c4bcda34-7332-4ae5-8129-d7538d63fee4",
+									"host": [
+										"admin"
+									],
+									"path": [
+										"brend",
+										"c4bcda34-7332-4ae5-8129-d7538d63fee4"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GetBrends",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NTYiLCJjdXN0b21lcl9pZCI6IjFhZTEyMzkwLTAzYWUtNDlhYy1hOWFkLWQ3YmE1Yzk1YjUxYSIsImV4cCI6MTY2NzQ1NTY2NH0.BLTauBZxWMmqvgtV8-ZWaukzJzFbZ_-rTwcte8ME2pA",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "admin/brends",
+									"host": [
+										"admin"
+									],
+									"path": [
+										"brends"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "DeleteBrendByID",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIrOTkzNjM3NDcxNTUiLCJhZG1pbl9pZCI6ImM5N2JmYzZhLWZkODUtNGFhOC04MmRiLWU3ODhmNmIwZDcwYSIsInR5cGUiOiJzdXBlcl9hZG1pbiIsImV4cCI6MTY3NDEyNTgwMX0.onrgnMmAbFRwLRsqqYO0o6dZKnSdKiRg5JKKnyaPqM8",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "admin/brend/214be879-65c3-4710-86b4-3fc3bce2e974",
+									"host": [
+										"admin"
+									],
+									"path": [
+										"brend",
+										"214be879-65c3-4710-86b4-3fc3bce2e974"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "RestoreBrendByID",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NTYiLCJjdXN0b21lcl9pZCI6IjFhZTEyMzkwLTAzYWUtNDlhYy1hOWFkLWQ3YmE1Yzk1YjUxYSIsImV4cCI6MTY2NzQ1NTY2NH0.BLTauBZxWMmqvgtV8-ZWaukzJzFbZ_-rTwcte8ME2pA",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "admin/restore-brend/c4bcda34-7332-4ae5-8129-d7538d63fee4",
+									"host": [
+										"admin"
+									],
+									"path": [
+										"restore-brend",
+										"c4bcda34-7332-4ae5-8129-d7538d63fee4"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "DeletePermanentlyBrendByID",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIrOTkzNjM3NDcxNTUiLCJhZG1pbl9pZCI6ImM5N2JmYzZhLWZkODUtNGFhOC04MmRiLWU3ODhmNmIwZDcwYSIsInR5cGUiOiJzdXBlcl9hZG1pbiIsImV4cCI6MTY3NDEyNTgwMX0.onrgnMmAbFRwLRsqqYO0o6dZKnSdKiRg5JKKnyaPqM8",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "admin/delete-brend/214be879-65c3-4710-86b4-3fc3bce2e974",
+									"host": [
+										"admin"
+									],
+									"path": [
+										"delete-brend",
+										"214be879-65c3-4710-86b4-3fc3bce2e974"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "CompanySetting",
+					"item": [
+						{
+							"name": "CreateCompanySetting",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NTYiLCJjdXN0b21lcl9pZCI6IjFhZTEyMzkwLTAzYWUtNDlhYy1hOWFkLWQ3YmE1Yzk1YjUxYSIsImV4cCI6MTY2NzQ1NTY2NH0.BLTauBZxWMmqvgtV8-ZWaukzJzFbZ_-rTwcte8ME2pA",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "email",
+											"value": "isleg@gmail.com",
+											"type": "default"
+										},
+										{
+											"key": "instagram",
+											"value": "@isleginstagram",
+											"type": "default"
+										},
+										{
+											"key": "imo",
+											"value": "+99361986754",
+											"type": "default"
+										},
+										{
+											"key": "logo",
+											"type": "file",
+											"src": "/home/abb/Downloads/logo.jpg"
+										},
+										{
+											"key": "favicon",
+											"type": "file",
+											"src": "/home/abb/Downloads/logo.jpg"
+										}
+									]
+								},
+								"url": {
+									"raw": "admin/company-setting",
+									"host": [
+										"admin"
+									],
+									"path": [
+										"company-setting"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "UpdateCompanySetting",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIrOTkzNjM3NDcxNTUiLCJhZG1pbl9pZCI6ImM5N2JmYzZhLWZkODUtNGFhOC04MmRiLWU3ODhmNmIwZDcwYSIsInR5cGUiOiJzdXBlcl9hZG1pbiIsImV4cCI6MTY3MTAxNDQ4NH0.oq7SX5FDaJ7soSqSgAXMzC_G1o397ms56CZu9B-Xqyo",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "email",
+											"value": "isleg-bazar@gmail.com",
+											"type": "default"
+										},
+										{
+											"key": "instagram",
+											"value": "@islegbazarinstagram",
+											"type": "default"
+										},
+										{
+											"key": "imo",
+											"value": "+99362946805",
+											"type": "default"
+										}
+									]
+								},
+								"url": {
+									"raw": "admin/company-setting",
+									"host": [
+										"admin"
+									],
+									"path": [
+										"company-setting"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GetOneCompanySetting",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIrOTkzNjM3NDcxNTUiLCJhZG1pbl9pZCI6ImM5N2JmYzZhLWZkODUtNGFhOC04MmRiLWU3ODhmNmIwZDcwYSIsInR5cGUiOiJzdXBlcl9hZG1pbiIsImV4cCI6MTY3MTAxNDQ4NH0.oq7SX5FDaJ7soSqSgAXMzC_G1o397ms56CZu9B-Xqyo",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "admin/company-setting",
+									"host": [
+										"admin"
+									],
+									"path": [
+										"company-setting"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Category",
+					"item": [
+						{
+							"name": "CreateCategory",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIrOTkzNjM3NDcxNTUiLCJhZG1pbl9pZCI6ImM5N2JmYzZhLWZkODUtNGFhOC04MmRiLWU3ODhmNmIwZDcwYSIsInR5cGUiOiJzdXBlcl9hZG1pbiIsImV4cCI6MTY3NTQxMzcyMH0.5gG9FT4tT5tanw9f6TEakblwqgK0GaGggZ9t-3bzJR4",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "name_tm",
+											"value": "Suw",
+											"type": "default"
+										},
+										{
+											"key": "name_ru",
+											"value": "Вода",
+											"type": "default"
+										},
+										{
+											"key": "parent_category_id",
+											"value": "44d2783f-133e-4bb7-b4c2-9e03dc04e2dd",
+											"type": "default"
+										},
+										{
+											"key": "is_home_category",
+											"value": "false",
+											"type": "default"
+										}
+									]
+								},
+								"url": {
+									"raw": "admin/category",
+									"host": [
+										"admin"
+									],
+									"path": [
+										"category"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "UpdateCategoryByID",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NTYiLCJjdXN0b21lcl9pZCI6IjFhZTEyMzkwLTAzYWUtNDlhYy1hOWFkLWQ3YmE1Yzk1YjUxYSIsImV4cCI6MTY2NzQ1NTY2NH0.BLTauBZxWMmqvgtV8-ZWaukzJzFbZ_-rTwcte8ME2pA",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "name_tm",
+											"value": "name_tm",
+											"type": "default"
+										},
+										{
+											"key": "name_ru",
+											"value": "name_ru",
+											"type": "default"
+										},
+										{
+											"key": "parent_category_id",
+											"value": "7605172f-7a12-4781-a892-6e3b5cf11490",
+											"type": "default"
+										},
+										{
+											"key": "is_home_category",
+											"value": "false",
+											"type": "default"
+										},
+										{
+											"key": "name_fr",
+											"value": "name_fr",
+											"type": "default"
+										},
+										{
+											"key": "name_tr",
+											"value": "name_tr",
+											"type": "default"
+										},
+										{
+											"key": "name_pl",
+											"value": "name_pl",
+											"type": "default"
+										}
+									]
+								},
+								"url": {
+									"raw": "admin/category/849a1c59-45fb-429b-8fe3-a6e34a6dafaa",
+									"host": [
+										"admin"
+									],
+									"path": [
+										"category",
+										"849a1c59-45fb-429b-8fe3-a6e34a6dafaa"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GetAllCategory",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIrOTkzNjM3NDcxNTUiLCJhZG1pbl9pZCI6ImM5N2JmYzZhLWZkODUtNGFhOC04MmRiLWU3ODhmNmIwZDcwYSIsInR5cGUiOiJzdXBlcl9hZG1pbiIsImV4cCI6MTY3NzIxOTA4N30.NWGx99YdzlxaHufkA1-bp99oYEJkC24M05KhDYm5vm8",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "admin/categories",
+									"host": [
+										"admin"
+									],
+									"path": [
+										"categories"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GetCategoryByID",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NTYiLCJjdXN0b21lcl9pZCI6IjFhZTEyMzkwLTAzYWUtNDlhYy1hOWFkLWQ3YmE1Yzk1YjUxYSIsImV4cCI6MTY2NzQ1NTY2NH0.BLTauBZxWMmqvgtV8-ZWaukzJzFbZ_-rTwcte8ME2pA",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "admin/category/7f453dd0-7b2e-480d-a8be-fcfa23bd863e",
+									"host": [
+										"admin"
+									],
+									"path": [
+										"category",
+										"7f453dd0-7b2e-480d-a8be-fcfa23bd863e"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "DeleteCategoryByID",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIrOTkzNjM3NDcxNTUiLCJhZG1pbl9pZCI6ImM5N2JmYzZhLWZkODUtNGFhOC04MmRiLWU3ODhmNmIwZDcwYSIsInR5cGUiOiJzdXBlcl9hZG1pbiIsImV4cCI6MTY3NDEyNTgwMX0.onrgnMmAbFRwLRsqqYO0o6dZKnSdKiRg5JKKnyaPqM8",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "admin/category/57d072c8-4952-44c5-845e-d2d706677e16",
+									"host": [
+										"admin"
+									],
+									"path": [
+										"category",
+										"57d072c8-4952-44c5-845e-d2d706677e16"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "DeletePermanentlyCategoryByID",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIrOTkzNjM3NDcxNTUiLCJhZG1pbl9pZCI6ImM5N2JmYzZhLWZkODUtNGFhOC04MmRiLWU3ODhmNmIwZDcwYSIsInR5cGUiOiJzdXBlcl9hZG1pbiIsImV4cCI6MTY3NDEyNTgwMX0.onrgnMmAbFRwLRsqqYO0o6dZKnSdKiRg5JKKnyaPqM8",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "admin/delete-category/57d072c8-4952-44c5-845e-d2d706677e16",
+									"host": [
+										"admin"
+									],
+									"path": [
+										"delete-category",
+										"57d072c8-4952-44c5-845e-d2d706677e16"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "RestoreCategoryByID",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NTYiLCJjdXN0b21lcl9pZCI6IjFhZTEyMzkwLTAzYWUtNDlhYy1hOWFkLWQ3YmE1Yzk1YjUxYSIsImV4cCI6MTY2NzQ1NTY2NH0.BLTauBZxWMmqvgtV8-ZWaukzJzFbZ_-rTwcte8ME2pA",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "admin/restore-category/29ed85bb-11eb-4458-bbf3-5a5644d167d6",
+									"host": [
+										"admin"
+									],
+									"path": [
+										"restore-category",
+										"29ed85bb-11eb-4458-bbf3-5a5644d167d6"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Language",
+					"item": [
+						{
+							"name": "CreateLanguage",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NTYiLCJjdXN0b21lcl9pZCI6IjFhZTEyMzkwLTAzYWUtNDlhYy1hOWFkLWQ3YmE1Yzk1YjUxYSIsImV4cCI6MTY2NzQ1NTY2NH0.BLTauBZxWMmqvgtV8-ZWaukzJzFbZ_-rTwcte8ME2pA",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "name_short",
+											"value": "tr",
+											"type": "default"
+										},
+										{
+											"key": "flag",
+											"type": "file",
+											"src": "/home/abb/go/src/github.com/abbgo/isleg/isleg-data/Saydyn suratynyn razmeri/Kagyz kley/medium.jpg"
+										}
+									]
+								},
+								"url": {
+									"raw": "admin/language",
+									"host": [
+										"admin"
+									],
+									"path": [
+										"language"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "UpdateLanguageByID",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NTYiLCJjdXN0b21lcl9pZCI6IjFhZTEyMzkwLTAzYWUtNDlhYy1hOWFkLWQ3YmE1Yzk1YjUxYSIsImV4cCI6MTY2NzQ1NTY2NH0.BLTauBZxWMmqvgtV8-ZWaukzJzFbZ_-rTwcte8ME2pA",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "name_short",
+											"value": "tr",
+											"type": "default"
+										},
+										{
+											"key": "flag",
+											"type": "file",
+											"src": "/home/abb/go/src/github.com/abbgo/isleg/isleg-data/Saydyn suratynyn razmeri/Kagyz kley/large.jpg"
+										}
+									]
+								},
+								"url": {
+									"raw": "admin/language/198695b5-579a-4f80-ac10-8380e17e5d98",
+									"host": [
+										"admin"
+									],
+									"path": [
+										"language",
+										"198695b5-579a-4f80-ac10-8380e17e5d98"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GetLanguages",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NTYiLCJjdXN0b21lcl9pZCI6IjFhZTEyMzkwLTAzYWUtNDlhYy1hOWFkLWQ3YmE1Yzk1YjUxYSIsImV4cCI6MTY2NzQ1NTY2NH0.BLTauBZxWMmqvgtV8-ZWaukzJzFbZ_-rTwcte8ME2pA",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "admin/languages",
+									"host": [
+										"admin"
+									],
+									"path": [
+										"languages"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GetLanguageByID",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NTYiLCJjdXN0b21lcl9pZCI6IjFhZTEyMzkwLTAzYWUtNDlhYy1hOWFkLWQ3YmE1Yzk1YjUxYSIsImV4cCI6MTY2NzQ1NTY2NH0.BLTauBZxWMmqvgtV8-ZWaukzJzFbZ_-rTwcte8ME2pA",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "admin/language/198695b5-579a-4f80-ac10-8380e17e5d98",
+									"host": [
+										"admin"
+									],
+									"path": [
+										"language",
+										"198695b5-579a-4f80-ac10-8380e17e5d98"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "DeleteLanguageByID",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NTYiLCJjdXN0b21lcl9pZCI6IjFhZTEyMzkwLTAzYWUtNDlhYy1hOWFkLWQ3YmE1Yzk1YjUxYSIsImV4cCI6MTY2NzQ1NTY2NH0.BLTauBZxWMmqvgtV8-ZWaukzJzFbZ_-rTwcte8ME2pA",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "admin/language/198695b5-579a-4f80-ac10-8380e17e5d98",
+									"host": [
+										"admin"
+									],
+									"path": [
+										"language",
+										"198695b5-579a-4f80-ac10-8380e17e5d98"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "DeletePermanentlyLanguageByID",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NTYiLCJjdXN0b21lcl9pZCI6IjFhZTEyMzkwLTAzYWUtNDlhYy1hOWFkLWQ3YmE1Yzk1YjUxYSIsImV4cCI6MTY2NzQ1NTY2NH0.BLTauBZxWMmqvgtV8-ZWaukzJzFbZ_-rTwcte8ME2pA",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "admin/delete-language/6472642a-3589-4631-a218-94dd87729d4b",
+									"host": [
+										"admin"
+									],
+									"path": [
+										"delete-language",
+										"6472642a-3589-4631-a218-94dd87729d4b"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "RestoreLanguageByID",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIxMjM0NTYiLCJjdXN0b21lcl9pZCI6IjFhZTEyMzkwLTAzYWUtNDlhYy1hOWFkLWQ3YmE1Yzk1YjUxYSIsImV4cCI6MTY2NzQ1NTY2NH0.BLTauBZxWMmqvgtV8-ZWaukzJzFbZ_-rTwcte8ME2pA",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "admin/restore-language/198695b5-579a-4f80-ac10-8380e17e5d98",
+									"host": [
+										"admin"
+									],
+									"path": [
+										"restore-language",
+										"198695b5-579a-4f80-ac10-8380e17e5d98"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Notification",
+					"item": [
+						{
+							"name": "CreateNotification",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIrOTkzNjM3NDcxNTUiLCJhZG1pbl9pZCI6ImM5N2JmYzZhLWZkODUtNGFhOC04MmRiLWU3ODhmNmIwZDcwYSIsInR5cGUiOiJzdXBlcl9hZG1pbiIsImV4cCI6MTY2NzkzMjY5OX0.p-wwvyX6cWBYV86VeRLPWZJtVfI79hftketDdtucYzk",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\":\"sargyt_ucin\",\n    \"translations\":[\n        {\n            \"lang_id\":\"aea98b93-7bdf-455b-9ad4-a259d69dc76e\",\n            \"translation\":\"Ваш заказ успешно получен\"\n        },\n         {\n            \"lang_id\":\"8723c1c7-aa6d-429f-b8af-ee9ace61f0d7\",\n            \"translation\":\"siziň sargydyňyz üstünlikli kabul edildi\"\n        }\n    ]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "admin/notification",
+									"host": [
+										"admin"
+									],
+									"path": [
+										"notification"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "UpdateNotificationByID",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIrOTkzNjM3NDcxNTUiLCJhZG1pbl9pZCI6ImM5N2JmYzZhLWZkODUtNGFhOC04MmRiLWU3ODhmNmIwZDcwYSIsInR5cGUiOiJzdXBlcl9hZG1pbiIsImV4cCI6MTY2Nzg3ODU3N30.-U4094YTShxzRb_F6_T9IVLxBDuy9vYYswjojsfy1X8",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"id\":\"8e7cd6ae-3113-4c1d-8c23-30d608af6843\",\n    \"name\":\"sargyt_ucin_uytgedilen\",\n    \"translations\":[\n        {\n            \"lang_id\":\"aea98b93-7bdf-455b-9ad4-a259d69dc76e\",\n            \"translation\":\"Ваш заказ успешно получен_ru\"\n        }\n    ]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "admin/notification",
+									"host": [
+										"admin"
+									],
+									"path": [
+										"notification"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GetNotificationByID",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIrOTkzNjM3NDcxNTUiLCJhZG1pbl9pZCI6ImM5N2JmYzZhLWZkODUtNGFhOC04MmRiLWU3ODhmNmIwZDcwYSIsInR5cGUiOiJzdXBlcl9hZG1pbiIsImV4cCI6MTY2Nzg3ODU3N30.-U4094YTShxzRb_F6_T9IVLxBDuy9vYYswjojsfy1X8",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "admin/notification/8e7cd6ae-3113-4c1d-8c23-30d608af6843",
+									"host": [
+										"admin"
+									],
+									"path": [
+										"notification",
+										"8e7cd6ae-3113-4c1d-8c23-30d608af6843"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GetNotifications",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIrOTkzNjM3NDcxNTUiLCJhZG1pbl9pZCI6ImM5N2JmYzZhLWZkODUtNGFhOC04MmRiLWU3ODhmNmIwZDcwYSIsInR5cGUiOiJzdXBlcl9hZG1pbiIsImV4cCI6MTY2Nzg4MDk3NX0.z0AG2BIZpoSmbRGsQuD_2cus3xx1j3zo8EwP5lImZN8",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "admin/notifications",
+									"host": [
+										"admin"
+									],
+									"path": [
+										"notifications"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "DeleteNotificationByID",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIrOTkzNjM3NDcxNTUiLCJhZG1pbl9pZCI6ImM5N2JmYzZhLWZkODUtNGFhOC04MmRiLWU3ODhmNmIwZDcwYSIsInR5cGUiOiJzdXBlcl9hZG1pbiIsImV4cCI6MTY2Nzg4Mjk3M30.bNoSPa8tuS1Ojb2mmASPd101OBXmB-Z7uIHWCNqEWUQ",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "admin/notification/8e7cd6ae-3113-4c1d-8c23-30d608af6843",
+									"host": [
+										"admin"
+									],
+									"path": [
+										"notification",
+										"8e7cd6ae-3113-4c1d-8c23-30d608af6843"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "RestoreNotificationByID",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIrOTkzNjM3NDcxNTUiLCJhZG1pbl9pZCI6ImM5N2JmYzZhLWZkODUtNGFhOC04MmRiLWU3ODhmNmIwZDcwYSIsInR5cGUiOiJzdXBlcl9hZG1pbiIsImV4cCI6MTY2Nzg4MjY2NX0.bF42rg7Z_x8TS6O6tC8WUAIiG6nT6yri4iZDIqAZM0Q",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "admin/restore-notification/8e7cd6ae-3113-4c1d-8c23-30d608af6843",
+									"host": [
+										"admin"
+									],
+									"path": [
+										"restore-notification",
+										"8e7cd6ae-3113-4c1d-8c23-30d608af6843"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "DeletePermanentlyNotificationByID",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIrOTkzNjM3NDcxNTUiLCJhZG1pbl9pZCI6ImM5N2JmYzZhLWZkODUtNGFhOC04MmRiLWU3ODhmNmIwZDcwYSIsInR5cGUiOiJzdXBlcl9hZG1pbiIsImV4cCI6MTY2Nzg4Mjk3M30.bNoSPa8tuS1Ojb2mmASPd101OBXmB-Z7uIHWCNqEWUQ",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "admin/delete-notification/8e7cd6ae-3113-4c1d-8c23-30d608af6843",
+									"host": [
+										"admin"
+									],
+									"path": [
+										"delete-notification",
+										"8e7cd6ae-3113-4c1d-8c23-30d608af6843"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "OrderTime",
+					"item": [
+						{
+							"name": "CreateOrderTime",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIrOTkzNjM3NDcxNTUiLCJhZG1pbl9pZCI6ImM5N2JmYzZhLWZkODUtNGFhOC04MmRiLWU3ODhmNmIwZDcwYSIsInR5cGUiOiJzdXBlcl9hZG1pbiIsImV4cCI6MTY3NzUwNjcxOX0.RZ9hve1jTSpBsklCLWtYvGGR7-Yk8iORISyh3OC-U4w",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"time\":\"18:00 - 21:00\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "admin/order-time",
+									"host": [
+										"admin"
+									],
+									"path": [
+										"order-time"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "DateHour",
+					"item": [
+						{
+							"name": "CreateOrderDateHour",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIrOTkzNjM3NDcxNTUiLCJhZG1pbl9pZCI6ImM5N2JmYzZhLWZkODUtNGFhOC04MmRiLWU3ODhmNmIwZDcwYSIsInR5cGUiOiJzdXBlcl9hZG1pbiIsImV4cCI6MTY3NzU4NjQ3MX0.07VloLe-hBYbhh4Ce5G7mdwHMx6NlX4gS1DzFwMas7Y",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "[\n    {\n      \"hour\":18,\n      \"date_id\":\"78ef19f2-9200-4b42-bbad-1ec38d38f541\",\n      \"times\":[\n        \"1d720b4c-3217-4edf-b875-08f69ffc1c76\"\n      ]\n   },\n   {\n      \"hour\":18,\n      \"date_id\":\"fa5ffeff-057c-4a6f-abfc-32c151c4780e\",\n      \"times\":[\n        \"8cdd19df-17a4-4aa9-a71b-d5d12c20f95b\",\n        \"23ea1040-da4f-4064-b635-89c47ffdc7e8\"\n      ]\n   }\n]",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "admin/order-date-hour",
+									"host": [
+										"admin"
+									],
+									"path": [
+										"order-date-hour"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "GetOrders",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZV9udW1iZXIiOiIrOTkzNjM3NDcxNTUiLCJhZG1pbl9pZCI6ImM5N2JmYzZhLWZkODUtNGFhOC04MmRiLWU3ODhmNmIwZDcwYSIsInR5cGUiOiJzdXBlcl9hZG1pbiIsImV4cCI6MTY4NTQyMDI5NX0.bgulBVNpNeKNdPxCB2CuXyS_ib3CWDApHb-YvGW8M6M",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{im}}/admin/orders/1/1?status=false&search=65",
+							"host": [
+								"{{im}}"
+							],
+							"path": [
+								"admin",
+								"orders",
+								"1",
+								"1"
+							],
+							"query": [
+								{
+									"key": "status",
+									"value": "false"
+								},
+								{
+									"key": "search",
+									"value": "65"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
