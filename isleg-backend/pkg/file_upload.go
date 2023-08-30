@@ -36,8 +36,10 @@ func MultipartFileUpload(nameUploadedFile, path string, context *gin.Context) ([
 			return []string{}, errors.New("the file must be an image")
 		}
 		// fileName := uuid.New().String() + extension
-		if strings.Contains(imageName, " ") {
+		if strings.Contains(imageName, " ") || strings.Contains(imageName, "_") || strings.Contains(imageName, "-") {
 			imageName = strings.ReplaceAll(imageName, " ", "")
+			imageName = strings.ReplaceAll(imageName, "_", "")
+			imageName = strings.ReplaceAll(imageName, "-", "")
 		}
 		fileName := imageName
 
