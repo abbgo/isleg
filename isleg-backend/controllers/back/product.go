@@ -569,8 +569,10 @@ func CreateProductsByExcelFile(c *gin.Context) {
 			return
 		}
 
-		if strings.Contains(mainImageFileID, " ") {
+		if strings.Contains(mainImageFileID, " ") || strings.Contains(mainImageFileID, "_") || strings.Contains(mainImageFileID, "-") {
 			mainImageFileID = strings.ReplaceAll(mainImageFileID, " ", "")
+			mainImageFileID = strings.ReplaceAll(mainImageFileID, "_", "")
+			mainImageFileID = strings.ReplaceAll(mainImageFileID, "-", "")
 		}
 
 		newFileName, err := pkg.CopyFile("uploads/images/", "uploads/product/main_image/", mainImageFileID)
@@ -616,8 +618,10 @@ func CreateProductsByExcelFile(c *gin.Context) {
 
 			if imageFileID != "" {
 
-				if strings.Contains(imageFileID, " ") {
+				if strings.Contains(imageFileID, " ") || strings.Contains(imageFileID, "_") || strings.Contains(imageFileID, "-") {
 					imageFileID = strings.ReplaceAll(imageFileID, " ", "")
+					imageFileID = strings.ReplaceAll(imageFileID, "_", "")
+					imageFileID = strings.ReplaceAll(imageFileID, "-", "")
 				}
 
 				newFileName, err := pkg.CopyFile("uploads/images/", "uploads/product/image/", imageFileID)
