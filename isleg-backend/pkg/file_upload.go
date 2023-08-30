@@ -8,6 +8,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	"github.com/gosimple/slug"
 )
 
 // mulitpart file upload
@@ -40,6 +41,7 @@ func MultipartFileUpload(nameUploadedFile, path string, context *gin.Context) ([
 			imageName = strings.ReplaceAll(imageName, " ", "")
 			imageName = strings.ReplaceAll(imageName, "_", "")
 			imageName = strings.ReplaceAll(imageName, "-", "")
+			imageName = slug.MakeLang(strings.Trim(imageName, extension), "en") + extension
 		}
 		fileName := imageName
 

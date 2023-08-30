@@ -4,6 +4,7 @@ import (
 	"github/abbgo/isleg/isleg-backend/config"
 	"github/abbgo/isleg/isleg-backend/models"
 	"github/abbgo/isleg/isleg-backend/pkg"
+	"path/filepath"
 	"strconv"
 	"strings"
 
@@ -574,6 +575,7 @@ func CreateProductsByExcelFile(c *gin.Context) {
 			mainImageFileID = strings.ReplaceAll(mainImageFileID, "_", "")
 			mainImageFileID = strings.ReplaceAll(mainImageFileID, "-", "")
 		}
+		mainImageFileID = slug.MakeLang(strings.Trim(mainImageFileID, filepath.Ext(mainImageFileID)), "en") + filepath.Ext(mainImageFileID)
 
 		newFileName, err := pkg.CopyFile("uploads/images/", "uploads/product/main_image/", mainImageFileID)
 		if err != nil {
@@ -623,6 +625,7 @@ func CreateProductsByExcelFile(c *gin.Context) {
 					imageFileID = strings.ReplaceAll(imageFileID, "_", "")
 					imageFileID = strings.ReplaceAll(imageFileID, "-", "")
 				}
+				imageFileID = slug.MakeLang(strings.Trim(imageFileID, filepath.Ext(imageFileID)), "en") + filepath.Ext(imageFileID)
 
 				newFileName, err := pkg.CopyFile("uploads/images/", "uploads/product/image/", imageFileID)
 				if err != nil {
