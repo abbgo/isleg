@@ -569,6 +569,10 @@ func CreateProductsByExcelFile(c *gin.Context) {
 			return
 		}
 
+		if strings.Contains(mainImageFileID, " ") {
+			mainImageFileID = strings.ReplaceAll(mainImageFileID, " ", "_")
+		}
+
 		newFileName, err := pkg.CopyFile("uploads/images/", "uploads/product/main_image/", mainImageFileID)
 		if err != nil {
 			c.JSON(http.StatusNotFound, gin.H{
@@ -611,6 +615,10 @@ func CreateProductsByExcelFile(c *gin.Context) {
 			// pictures = append(pictures, picsB)
 
 			if imageFileID != "" {
+
+				if strings.Contains(imageFileID, " ") {
+					imageFileID = strings.ReplaceAll(imageFileID, " ", "_")
+				}
 
 				newFileName, err := pkg.CopyFile("uploads/images/", "uploads/product/image/", imageFileID)
 				if err != nil {
