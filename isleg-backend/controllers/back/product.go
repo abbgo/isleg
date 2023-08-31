@@ -853,6 +853,10 @@ func CreateProductsByExcelFile(c *gin.Context) {
 			})
 			return
 		}
+		if strings.Contains(benefitStr, "%") {
+			benefitStr = strings.Trim(benefitStr, "%")
+		}
+
 		product.Benefit.Float64, err = strconv.ParseFloat(benefitStr, 64)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
