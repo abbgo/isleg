@@ -1,2 +1,4 @@
 isleg-backend/.env
 isleg-backend/uploads
+isleg-data/*
+
