@@ -1,7 +1,9 @@
 package controllers
 
 import (
+	"context"
 	"github/abbgo/isleg/isleg-backend/config"
+	"github/abbgo/isleg/isleg-backend/helpers"
 	"github/abbgo/isleg/isleg-backend/models"
 	"github/abbgo/isleg/isleg-backend/pkg"
 	"path/filepath"
@@ -58,90 +60,44 @@ func DeleteProductImages(c *gin.Context) {
 
 	db, err := config.ConnDB()
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
-	defer func() {
-		if err := db.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
+	defer db.Close()
 
 	var image DeleteImage
 	if err := c.Bind(&image); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
 	if image.Image == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": "path of image is required",
-		})
+		helpers.HandleError(c, 400, "path of image is required")
 		return
 	}
 
-	row, err := db.Query("SELECT id FROM helper_images WHERE image = $1 AND deleted_at IS NULL", image.Image)
+	row, err := db.Query(context.Background(), "SELECT id FROM helper_images WHERE image = $1 AND deleted_at IS NULL", image.Image)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
-	defer func() {
-		if err := row.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
+
 	var helperImageID string
 	for row.Next() {
 		if err := row.Scan(&helperImageID); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
 	}
 	if helperImageID != "" {
-		resultHelperImage, err := db.Query("DELETE FROM helper_images WHERE id = $1", helperImageID)
+		_, err := db.Exec(context.Background(), "DELETE FROM helper_images WHERE id = $1", helperImageID)
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
-		defer func() {
-			if err := resultHelperImage.Close(); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
-				return
-			}
-		}()
 	}
 
 	if err := os.Remove(pkg.ServerPath + image.Image); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
 
@@ -156,21 +112,10 @@ func CreateProductImage(c *gin.Context) {
 
 	db, err := config.ConnDB()
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
-	defer func() {
-		if err := db.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
+	defer db.Close()
 
 	var path, file_name string
 	imageType := c.Query("image")
@@ -178,40 +123,22 @@ func CreateProductImage(c *gin.Context) {
 	oldImage := c.PostForm("old_path")
 	if oldImage != "" {
 		if err := os.Remove(pkg.ServerPath + oldImage); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
 
-		resultHelperImage, err := db.Query("DELETE FROM helper_images WHERE image = $1", oldImage)
+		_, err := db.Exec(context.Background(), "DELETE FROM helper_images WHERE image = $1", oldImage)
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
-		defer func() {
-			if err := resultHelperImage.Close(); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
-				return
-			}
-		}()
 	}
 
 	switch imageType {
 	case "product":
 		fileName := c.Query("type")
 		if fileName != "main_image" && fileName != "image" {
-			c.JSON(http.StatusNotFound, gin.H{
-				"status":  false,
-				"message": "invalid file name",
-			})
+			helpers.HandleError(c, 400, "invalid file name")
 			return
 		}
 		path = "product/" + fileName
@@ -232,39 +159,21 @@ func CreateProductImage(c *gin.Context) {
 		path = "afisa"
 		file_name = "image"
 	default:
-		c.JSON(http.StatusNotFound, gin.H{
-			"status":  false,
-			"message": "invalid image",
-		})
+		helpers.HandleError(c, 400, "invalid image")
 		return
 	}
 
 	image, err := pkg.FileUpload(file_name, path, "image", c)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
 
-	result, err := db.Query("INSERT INTO helper_images (image) VALUES ($1)", image)
+	_, err = db.Exec(context.Background(), "INSERT INTO helper_images (image) VALUES ($1)", image)
 	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
-	defer func() {
-		if err := result.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
 
 	c.JSON(http.StatusOK, gin.H{
 		"status": true,
@@ -278,42 +187,25 @@ func CreateProduct(c *gin.Context) {
 	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
-	defer func() {
-		if err := db.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
+	defer db.Close()
 
 	var product ProductForAdmin
 	if err := c.BindJSON(&product); err != nil {
-		c.JSON(http.StatusBadRequest, err.Error())
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
 
 	if product.MainImage == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": "main_image is required",
-		})
+		helpers.HandleError(c, 400, "main_image is required")
 		return
 	}
 
 	benefit, _, price, oldPrice, amount, limitAmount, isNew, err := models.ValidateProductModel("", product.Benefit.Float64, "", product.Price, product.OldPrice, product.Amount, product.LimitAmount, product.IsNew, product.Categories)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
 
@@ -330,131 +222,55 @@ func CreateProduct(c *gin.Context) {
 	}
 
 	// create product
-	resultProducts, err := db.Query("INSERT INTO products (brend_id,price,old_price,amount,limit_amount,is_new,shop_id,main_image,benefit) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9) RETURNING id", brendID, price, oldPrice, amount, limitAmount, isNew, shopID, product.MainImage, benefit)
+	resultProducts, err := db.Query(context.Background(), "INSERT INTO products (brend_id,price,old_price,amount,limit_amount,is_new,shop_id,main_image,benefit) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9) RETURNING id", brendID, price, oldPrice, amount, limitAmount, isNew, shopID, product.MainImage, benefit)
 	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
-	defer func() {
-		if err := resultProducts.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
 
 	var productID string
-
 	for resultProducts.Next() {
 		if err := resultProducts.Scan(&productID); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
 	}
 
 	if len(product.Images) != 0 {
 		// create images of product
-		resultImages, err := db.Query("INSERT INTO images (product_id,image) VALUES ($1,unnest($2::varchar[]))", productID, pq.Array(product.Images))
+		_, err := db.Exec(context.Background(), "INSERT INTO images (product_id,image) VALUES ($1,unnest($2::varchar[]))", productID, pq.Array(product.Images))
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
-		defer func() {
-			if err := resultImages.Close(); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
-				return
-			}
-		}()
 
-		resultHelperImages, err := db.Query("DELETE FROM helper_images WHERE image = ANY($1)", pq.Array(product.Images))
+		_, err = db.Exec(context.Background(), "DELETE FROM helper_images WHERE image = ANY($1)", pq.Array(product.Images))
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
-		defer func() {
-			if err := resultHelperImages.Close(); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
-				return
-			}
-		}()
 	}
 
 	for _, v := range product.TranslationProduct {
-		resultTrProducts, err := db.Query("INSERT INTO translation_product (lang_id,product_id,name,description,slug) VALUES ($1,$2,$3,$4,$5)", v.LangID, productID, v.Name, v.Description, slug.MakeLang(v.Name, "en"))
+		_, err := db.Exec(context.Background(), "INSERT INTO translation_product (lang_id,product_id,name,description,slug) VALUES ($1,$2,$3,$4,$5)", v.LangID, productID, v.Name, v.Description, slug.MakeLang(v.Name, "en"))
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
-		defer func() {
-			if err := resultTrProducts.Close(); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
-				return
-			}
-		}()
 	}
 
 	// create category product
-	resultCategoryProduct, err := db.Query("INSERT INTO category_product (category_id,product_id) VALUES (unnest($1::uuid[]),$2)", pq.Array(product.Categories), productID)
+	_, err = db.Exec(context.Background(), "INSERT INTO category_product (category_id,product_id) VALUES (unnest($1::uuid[]),$2)", pq.Array(product.Categories), productID)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
-	defer func() {
-		if err := resultCategoryProduct.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
 
-	resultHelperImage, err := db.Query("DELETE FROM helper_images WHERE image = $1", product.MainImage)
+	_, err = db.Exec(context.Background(), "DELETE FROM helper_images WHERE image = $1", product.MainImage)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
-	defer func() {
-		if err := resultHelperImage.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
@@ -467,37 +283,20 @@ func CreateProductsByExcelFile(c *gin.Context) {
 
 	db, err := config.ConnDB()
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
-	defer func() {
-		if err := db.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
+	defer db.Close()
 
 	// OPEN EXCEL FILE
 	f, err := excelize.OpenFile(pkg.ServerPath + "uploads/product/products.xlsx")
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
 	defer func() {
 		if err := f.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
 	}()
@@ -506,10 +305,7 @@ func CreateProductsByExcelFile(c *gin.Context) {
 	_, err = os.Stat(pkg.ServerPath + "uploads/product/main_image")
 	if err != nil {
 		if err := os.MkdirAll(pkg.ServerPath+"uploads/product/main_image", os.ModePerm); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
 	}
@@ -518,10 +314,7 @@ func CreateProductsByExcelFile(c *gin.Context) {
 	_, err = os.Stat(pkg.ServerPath + "uploads/product/image")
 	if err != nil {
 		if err := os.MkdirAll(pkg.ServerPath+"uploads/product/image", os.ModePerm); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
 	}
@@ -531,10 +324,7 @@ func CreateProductsByExcelFile(c *gin.Context) {
 	for {
 		value, err := f.GetCellValue("Sheet1", "c"+strconv.Itoa(countOfRows+3))
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
 		if value != "" {
@@ -556,17 +346,11 @@ func CreateProductsByExcelFile(c *gin.Context) {
 
 		mainImageFileID, err := f.GetCellValue("Sheet1", columns[0]+strconv.Itoa(vRow))
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
 		if mainImageFileID == "" {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": "main image is required",
-			})
+			helpers.HandleError(c, 400, "main image is required")
 			return
 		}
 
@@ -579,30 +363,15 @@ func CreateProductsByExcelFile(c *gin.Context) {
 
 		newFileName, err := pkg.CopyFile("uploads/images/", "uploads/product/main_image/", mainImageFileID)
 		if err != nil {
-			c.JSON(http.StatusNotFound, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
 
-		result, err := db.Query("INSERT INTO helper_images (image) VALUES ($1)", "uploads/product/main_image/"+newFileName)
+		_, err = db.Exec(context.Background(), "INSERT INTO helper_images (image) VALUES ($1)", "uploads/product/main_image/"+newFileName)
 		if err != nil {
-			c.JSON(http.StatusNotFound, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
-		defer func() {
-			if err := result.Close(); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
-				return
-			}
-		}()
 
 		product.MainImage = "uploads/product/main_image/" + newFileName
 
@@ -610,10 +379,7 @@ func CreateProductsByExcelFile(c *gin.Context) {
 		for _, vColumn := range columns[1:] {
 			imageFileID, err := f.GetCellValue("Sheet1", vColumn+strconv.Itoa(vRow))
 			if err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
+				helpers.HandleError(c, 400, err.Error())
 				return
 			}
 			// pictures = append(pictures, picsB)
@@ -629,30 +395,15 @@ func CreateProductsByExcelFile(c *gin.Context) {
 
 				newFileName, err := pkg.CopyFile("uploads/images/", "uploads/product/image/", imageFileID)
 				if err != nil {
-					c.JSON(http.StatusNotFound, gin.H{
-						"status":  false,
-						"message": err.Error(),
-					})
+					helpers.HandleError(c, 400, err.Error())
 					return
 				}
 
-				result, err := db.Query("INSERT INTO helper_images (image) VALUES ($1)", "uploads/product/image/"+newFileName)
+				_, err = db.Exec(context.Background(), "INSERT INTO helper_images (image) VALUES ($1)", "uploads/product/image/"+newFileName)
 				if err != nil {
-					c.JSON(http.StatusNotFound, gin.H{
-						"status":  false,
-						"message": err.Error(),
-					})
+					helpers.HandleError(c, 400, err.Error())
 					return
 				}
-				defer func() {
-					if err := result.Close(); err != nil {
-						c.JSON(http.StatusBadRequest, gin.H{
-							"status":  false,
-							"message": err.Error(),
-						})
-						return
-					}
-				}()
 
 				product.Images = append(product.Images, "uploads/product/image/"+newFileName)
 			}
@@ -661,17 +412,11 @@ func CreateProductsByExcelFile(c *gin.Context) {
 		// //////////////////////      GET CATEGORIES FROM EXCEL FILE ----------------------------------------
 		namesOfCategories, err := f.GetCellValue("Sheet1", "h"+strconv.Itoa(vRow))
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
 		if namesOfCategories == "" {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": "product category is required",
-			})
+			helpers.HandleError(c, 400, "product category is required")
 			return
 		}
 
@@ -686,30 +431,16 @@ func CreateProductsByExcelFile(c *gin.Context) {
 				}
 			}
 
-			rowCategory, err := db.Query("SELECT c.id FROM categories c INNER JOIN translation_category tc ON tc.category_id=c.id INNER JOIN languages l ON l.id=tc.lang_id WHERE l.name_short = $1 AND tc.name = $2 AND c.deleted_at IS NULL AND l.deleted_at IS NULL AND tc.deleted_at IS NULL", "tm", v)
+			rowCategory, err := db.Query(context.Background(), "SELECT c.id FROM categories c INNER JOIN translation_category tc ON tc.category_id=c.id INNER JOIN languages l ON l.id=tc.lang_id WHERE l.name_short = $1 AND tc.name = $2 AND c.deleted_at IS NULL AND l.deleted_at IS NULL AND tc.deleted_at IS NULL", "tm", v)
 			if err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
+				helpers.HandleError(c, 400, err.Error())
 				return
 			}
-			defer func() {
-				if err := rowCategory.Close(); err != nil {
-					c.JSON(http.StatusBadRequest, gin.H{
-						"status":  false,
-						"message": err.Error(),
-					})
-					return
-				}
-			}()
+
 			var categoryID string
 			for rowCategory.Next() {
 				if err := rowCategory.Scan(&categoryID); err != nil {
-					c.JSON(http.StatusBadRequest, gin.H{
-						"status":  false,
-						"message": err.Error(),
-					})
+					helpers.HandleError(c, 400, err.Error())
 					return
 				}
 			}
@@ -720,39 +451,22 @@ func CreateProductsByExcelFile(c *gin.Context) {
 		// //////////////////////      GET BREND FROM EXCEL FILE ----------------------------------------
 		nameOfBrend, err := f.GetCellValue("Sheet1", "n"+strconv.Itoa(vRow))
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
 
 		var shopID, brendID interface{}
 
 		if nameOfBrend != "" {
-			rowBrend, err := db.Query("SELECT id FROM brends WHERE name = $1 AND deleted_at IS NULL", nameOfBrend)
+			rowBrend, err := db.Query(context.Background(), "SELECT id FROM brends WHERE name = $1 AND deleted_at IS NULL", nameOfBrend)
 			if err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
+				helpers.HandleError(c, 400, err.Error())
 				return
 			}
-			defer func() {
-				if err := rowBrend.Close(); err != nil {
-					c.JSON(http.StatusBadRequest, gin.H{
-						"status":  false,
-						"message": err.Error(),
-					})
-					return
-				}
-			}()
+
 			for rowBrend.Next() {
 				if err := rowBrend.Scan(&product.BrendID); err != nil {
-					c.JSON(http.StatusBadRequest, gin.H{
-						"status":  false,
-						"message": err.Error(),
-					})
+					helpers.HandleError(c, 400, err.Error())
 					return
 				}
 			}
@@ -775,7 +489,7 @@ func CreateProductsByExcelFile(c *gin.Context) {
 		// 	return
 		// }
 
-		// rowShop, err := db.Query("SELECT id FROM shops WHERE phone_number = $1 AND deleted_at IS NULL", shopPhoneNumber)
+		// rowShop, err := db.Query(context.Background(),"SELECT id FROM shops WHERE phone_number = $1 AND deleted_at IS NULL", shopPhoneNumber)
 		// if err != nil {
 		// 	c.JSON(http.StatusBadRequest, gin.H{
 		// 		"status":  false,
@@ -810,18 +524,12 @@ func CreateProductsByExcelFile(c *gin.Context) {
 		// //////////////////////      GET PRICE FROM EXCEL FILE ----------------------------------------
 		priceStr, err := f.GetCellValue("Sheet1", "i"+strconv.Itoa(vRow))
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
 		product.Price, err = strconv.ParseFloat(priceStr, 64)
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
 
@@ -847,10 +555,7 @@ func CreateProductsByExcelFile(c *gin.Context) {
 		// //////////////////////      GET BENEFIT FROM EXCEL FILE ----------------------------------------
 		benefitStr, err := f.GetCellValue("Sheet1", "j"+strconv.Itoa(vRow))
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
 		if strings.Contains(benefitStr, "%") {
@@ -859,28 +564,19 @@ func CreateProductsByExcelFile(c *gin.Context) {
 
 		product.Benefit.Float64, err = strconv.ParseFloat(benefitStr, 64)
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
 
 		// //////////////////////      GET AMOUNT FROM EXCEL FILE ----------------------------------------
 		amountStr, err := f.GetCellValue("Sheet1", "l"+strconv.Itoa(vRow))
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
 		amount64, err := strconv.ParseUint(amountStr, 10, 32)
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
 		product.Amount = uint(amount64)
@@ -888,18 +584,12 @@ func CreateProductsByExcelFile(c *gin.Context) {
 		// //////////////////////      GET LIMIT AMOUNT FROM EXCEL FILE ----------------------------------------
 		limitAmountStr, err := f.GetCellValue("Sheet1", "m"+strconv.Itoa(vRow))
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
 		limitAmount64, err := strconv.ParseUint(limitAmountStr, 10, 32)
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
 		product.LimitAmount = uint(limitAmount64)
@@ -907,46 +597,31 @@ func CreateProductsByExcelFile(c *gin.Context) {
 		// //////////////////////      GET IS NEW FROM EXCEL FILE ----------------------------------------
 		isNewStr, err := f.GetCellValue("Sheet1", "o"+strconv.Itoa(vRow))
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
 		product.IsNew, err = strconv.ParseBool(isNewStr)
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
 
 		benefit, _, price, oldPrice, amount, limitAmount, isNew, err := models.ValidateProductModel("", product.Benefit.Float64, "", product.Price, product.OldPrice, product.Amount, product.LimitAmount, product.IsNew, product.Categories)
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
 
 		// //////////////////////      GET TRANSLATIONS OF PRODUCT FROM EXCEL FILE ----------------------------------------
 		trTitleTM, err := f.GetCellValue("Sheet1", "p"+strconv.Itoa(vRow))
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
 
 		trDescTM, err := f.GetCellValue("Sheet1", "q"+strconv.Itoa(vRow))
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
 
@@ -954,29 +629,15 @@ func CreateProductsByExcelFile(c *gin.Context) {
 		tr.Name = trTitleTM
 		tr.Description = trDescTM
 
-		rowLang, err := db.Query("SELECT id FROM languages WHERE name_short = $1 AND deleted_at IS NULL", "tm")
+		rowLang, err := db.Query(context.Background(), "SELECT id FROM languages WHERE name_short = $1 AND deleted_at IS NULL", "tm")
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
-		defer func() {
-			if err := rowLang.Close(); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
-				return
-			}
-		}()
+
 		for rowLang.Next() {
 			if err := rowLang.Scan(&tr.LangID); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
+				helpers.HandleError(c, 400, err.Error())
 				return
 			}
 		}
@@ -985,178 +646,82 @@ func CreateProductsByExcelFile(c *gin.Context) {
 
 		trTitleRU, err := f.GetCellValue("Sheet1", "r"+strconv.Itoa(vRow))
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
 
 		trDescRU, err := f.GetCellValue("Sheet1", "s"+strconv.Itoa(vRow))
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
 
 		tr.Name = trTitleRU
 		tr.Description = trDescRU
-		rowLang, err = db.Query("SELECT id FROM languages WHERE name_short = $1 AND deleted_at IS NULL", "ru")
+		rowLang, err = db.Query(context.Background(), "SELECT id FROM languages WHERE name_short = $1 AND deleted_at IS NULL", "ru")
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
-		defer func() {
-			if err := rowLang.Close(); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
-				return
-			}
-		}()
+
 		for rowLang.Next() {
 			if err := rowLang.Scan(&tr.LangID); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
+				helpers.HandleError(c, 400, err.Error())
 				return
 			}
 		}
 		product.TranslationProduct = append(product.TranslationProduct, tr)
 
 		// create product
-		resultProducts, err := db.Query("INSERT INTO products (brend_id,price,old_price,amount,limit_amount,is_new,shop_id,main_image,benefit) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9) RETURNING id", brendID, price, oldPrice, amount, limitAmount, isNew, shopID, product.MainImage, benefit)
+		resultProducts, err := db.Query(context.Background(), "INSERT INTO products (brend_id,price,old_price,amount,limit_amount,is_new,shop_id,main_image,benefit) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9) RETURNING id", brendID, price, oldPrice, amount, limitAmount, isNew, shopID, product.MainImage, benefit)
 		if err != nil {
-			c.JSON(http.StatusNotFound, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
-		defer func() {
-			if err := resultProducts.Close(); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
-				return
-			}
-		}()
 
 		var productID string
-
 		for resultProducts.Next() {
 			if err := resultProducts.Scan(&productID); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
+				helpers.HandleError(c, 400, err.Error())
 				return
 			}
 		}
 
 		if len(product.Images) != 0 {
 			// create images of product
-			resultImages, err := db.Query("INSERT INTO images (product_id,image) VALUES ($1,unnest($2::varchar[]))", productID, pq.Array(product.Images))
+			_, err := db.Exec(context.Background(), "INSERT INTO images (product_id,image) VALUES ($1,unnest($2::varchar[]))", productID, pq.Array(product.Images))
 			if err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
+				helpers.HandleError(c, 400, err.Error())
 				return
 			}
-			defer func() {
-				if err := resultImages.Close(); err != nil {
-					c.JSON(http.StatusBadRequest, gin.H{
-						"status":  false,
-						"message": err.Error(),
-					})
-					return
-				}
-			}()
 
-			resultHelperImages, err := db.Query("DELETE FROM helper_images WHERE image = ANY($1)", pq.Array(product.Images))
+			_, err = db.Exec(context.Background(), "DELETE FROM helper_images WHERE image = ANY($1)", pq.Array(product.Images))
 			if err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
+				helpers.HandleError(c, 400, err.Error())
 				return
 			}
-			defer func() {
-				if err := resultHelperImages.Close(); err != nil {
-					c.JSON(http.StatusBadRequest, gin.H{
-						"status":  false,
-						"message": err.Error(),
-					})
-					return
-				}
-			}()
 		}
 
 		for _, v := range product.TranslationProduct {
-			resultTrProducts, err := db.Query("INSERT INTO translation_product (lang_id,product_id,name,description,slug) VALUES ($1,$2,$3,$4,$5)", v.LangID, productID, v.Name, v.Description, slug.MakeLang(v.Name, "en"))
+			_, err := db.Exec(context.Background(), "INSERT INTO translation_product (lang_id,product_id,name,description,slug) VALUES ($1,$2,$3,$4,$5)", v.LangID, productID, v.Name, v.Description, slug.MakeLang(v.Name, "en"))
 			if err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
+				helpers.HandleError(c, 400, err.Error())
 				return
 			}
-			defer func() {
-				if err := resultTrProducts.Close(); err != nil {
-					c.JSON(http.StatusBadRequest, gin.H{
-						"status":  false,
-						"message": err.Error(),
-					})
-					return
-				}
-			}()
 		}
 
 		// create category product
-		resultCategoryProduct, err := db.Query("INSERT INTO category_product (category_id,product_id) VALUES (unnest($1::uuid[]),$2)", pq.Array(product.Categories), productID)
+		_, err = db.Exec(context.Background(), "INSERT INTO category_product (category_id,product_id) VALUES (unnest($1::uuid[]),$2)", pq.Array(product.Categories), productID)
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
-		defer func() {
-			if err := resultCategoryProduct.Close(); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
-				return
-			}
-		}()
 
-		resultHelperImage, err := db.Query("DELETE FROM helper_images WHERE image = $1", product.MainImage)
+		_, err = db.Exec(context.Background(), "DELETE FROM helper_images WHERE image = $1", product.MainImage)
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
-		defer func() {
-			if err := resultHelperImage.Close(); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
-				return
-			}
-		}()
 
 	}
 
@@ -1170,19 +735,13 @@ func CreateProductsByExcelFile(c *gin.Context) {
 func UploadExcelFile(c *gin.Context) {
 	excel, err := pkg.FileUpload("products", "product", "excel", c)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
 
 	_, err = pkg.MultipartFileUpload("images", "images", c)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
 
@@ -1196,10 +755,7 @@ func RemoveExcelFile(c *gin.Context) {
 
 	err := os.Remove(pkg.ServerPath + "uploads/product/products.xlsx") //remove the file
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
 
@@ -1215,25 +771,14 @@ func UpdateProductByID(c *gin.Context) {
 	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
-	defer func() {
-		if err := db.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
+	defer db.Close()
 
 	var product ProductForAdmin
 	if err := c.BindJSON(&product); err != nil {
-		c.JSON(http.StatusBadRequest, err.Error())
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
 
@@ -1243,10 +788,7 @@ func UpdateProductByID(c *gin.Context) {
 	// validate data
 	benefit, mainImage, price, oldPrice, amount, limitAmount, isNew, err := models.ValidateProductModel(product.MainImage, product.Benefit.Float64, ID, product.Price, product.OldPrice, product.Amount, product.LimitAmount, product.IsNew, product.Categories)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
 
@@ -1262,137 +804,53 @@ func UpdateProductByID(c *gin.Context) {
 		shopID = product.ShopID.String
 	}
 
-	resultProducts, err := db.Query("UPDATE products SET brend_id = $1 , price = $2 , old_price = $3, amount = $4, limit_amount = $5 , is_new = $6, shop_id = $8 , main_image = $9 , benefit = $10 WHERE id = $7", brendID, price, oldPrice, amount, limitAmount, isNew, ID, shopID, mainImage, benefit)
+	_, err = db.Exec(context.Background(), "UPDATE products SET brend_id = $1 , price = $2 , old_price = $3, amount = $4, limit_amount = $5 , is_new = $6, shop_id = $8 , main_image = $9 , benefit = $10 WHERE id = $7", brendID, price, oldPrice, amount, limitAmount, isNew, ID, shopID, mainImage, benefit)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
-	defer func() {
-		if err := resultProducts.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
 
 	// update translation product
 	for _, v := range product.TranslationProduct {
-		resultTrProduct, err := db.Query("UPDATE translation_product SET name = $1, description = $2, slug = $3 WHERE product_id = $4 AND lang_id = $5", v.Name, v.Description, slug.MakeLang(v.Name, "en"), ID, v.LangID)
+		_, err := db.Exec(context.Background(), "UPDATE translation_product SET name = $1, description = $2, slug = $3 WHERE product_id = $4 AND lang_id = $5", v.Name, v.Description, slug.MakeLang(v.Name, "en"), ID, v.LangID)
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
-		defer func() {
-			if err := resultTrProduct.Close(); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
-				return
-			}
-		}()
 	}
 
-	resultImages, err := db.Query("DELETE FROM images WHERE product_id = $1", ID)
+	_, err = db.Exec(context.Background(), "DELETE FROM images WHERE product_id = $1", ID)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
-	defer func() {
-		if err := resultImages.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
 
 	if len(product.Images) != 0 {
-		resultImage, err := db.Query("INSERT INTO images (image,product_id) VALUES (unnest($1::varchar[]),$2)", pq.Array(product.Images), ID)
+		_, err := db.Exec(context.Background(), "INSERT INTO images (image,product_id) VALUES (unnest($1::varchar[]),$2)", pq.Array(product.Images), ID)
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
-		defer func() {
-			if err := resultImage.Close(); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
-				return
-			}
-		}()
 
-		resultHelperImages, err := db.Query("DELETE FROM helper_images WHERE image = ANY($1)", pq.Array(product.Images))
+		_, err = db.Exec(context.Background(), "DELETE FROM helper_images WHERE image = ANY($1)", pq.Array(product.Images))
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
-		defer func() {
-			if err := resultHelperImages.Close(); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
-				return
-			}
-		}()
 	}
 
 	// update category product
-	resultCategoryProduct, err := db.Query("DELETE FROM category_product WHERE product_id = $1", ID)
+	_, err = db.Exec(context.Background(), "DELETE FROM category_product WHERE product_id = $1", ID)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
-	defer func() {
-		if err := resultCategoryProduct.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
 
-	resultCategProduct, err := db.Query("INSERT INTO category_product (category_id,product_id) VALUES (unnest($1::uuid[]),$2)", pq.Array(product.Categories), ID)
+	_, err = db.Exec(context.Background(), "INSERT INTO category_product (category_id,product_id) VALUES (unnest($1::uuid[]),$2)", pq.Array(product.Categories), ID)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
-	defer func() {
-		if err := resultCategProduct.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
@@ -1406,91 +864,45 @@ func GetProductByID(c *gin.Context) {
 	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
-	defer func() {
-		if err := db.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
+	defer db.Close()
 
 	// get id from request parameter
 	ID := c.Param("id")
 
-	rowProduct, err := db.Query("SELECT id,brend_id,price,old_price,amount,limit_amount,is_new,main_image,benefit FROM products WHERE id = $1 AND deleted_at IS NULL", ID)
+	rowProduct, err := db.Query(context.Background(), "SELECT id,brend_id,price,old_price,amount,limit_amount,is_new,main_image,benefit FROM products WHERE id = $1 AND deleted_at IS NULL", ID)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
-	defer func() {
-		if err := rowProduct.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
 
 	var product ProductForAdmin
-
 	for rowProduct.Next() {
 		if err := rowProduct.Scan(&product.ID, &product.BrendID, &product.Price, &product.OldPrice, &product.Amount, &product.LimitAmount, &product.IsNew, &product.MainImage, &product.Benefit); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
 	}
 
 	if product.ID == "" {
-		c.JSON(http.StatusNotFound, gin.H{
-			"status":  false,
-			"message": "record not found",
-		})
+		helpers.HandleError(c, 404, "record not found")
 		return
 	}
 
-	rowsImages, err := db.Query("SELECT image FROM images WHERE deleted_at IS NULL AND product_id = $1", ID)
+	rowsImages, err := db.Query(context.Background(), "SELECT image FROM images WHERE deleted_at IS NULL AND product_id = $1", ID)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
-	defer func() {
-		if err := rowsImages.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
 
 	var images []string
-
 	for rowsImages.Next() {
 		var image string
 
 		if err := rowsImages.Scan(&image); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
 
@@ -1499,34 +911,18 @@ func GetProductByID(c *gin.Context) {
 
 	product.Images = images
 
-	rowsCategoryProduct, err := db.Query("SELECT category_id FROM category_product WHERE product_id = $1 AND deleted_at IS NULL", ID)
+	rowsCategoryProduct, err := db.Query(context.Background(), "SELECT category_id FROM category_product WHERE product_id = $1 AND deleted_at IS NULL", ID)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
-	defer func() {
-		if err := rowsCategoryProduct.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
 
 	var categories []string
-
 	for rowsCategoryProduct.Next() {
 		var category string
 
 		if err := rowsCategoryProduct.Scan(&category); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
 
@@ -1534,49 +930,27 @@ func GetProductByID(c *gin.Context) {
 	}
 
 	if len(categories) == 0 {
-		c.JSON(http.StatusNotFound, gin.H{
-			"status":  false,
-			"message": "record not found",
-		})
+		helpers.HandleError(c, 404, "record not found")
 		return
 	}
 
 	product.Categories = categories
 
-	rowTranslationProduct, err := db.Query("SELECT lang_id,name,description FROM translation_product WHERE product_id = $1 AND deleted_at IS NULL", ID)
+	rowTranslationProduct, err := db.Query(context.Background(), "SELECT lang_id,name,description FROM translation_product WHERE product_id = $1 AND deleted_at IS NULL", ID)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
-	defer func() {
-		if err := rowTranslationProduct.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
 
 	var translations []models.TranslationProduct
-
 	for rowTranslationProduct.Next() {
 		var translation models.TranslationProduct
 		if err := rowTranslationProduct.Scan(&translation.LangID, &translation.Name, &translation.Description); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
 		if translation.Name == "" {
-			c.JSON(http.StatusNotFound, gin.H{
-				"status":  false,
-				"message": "record not found",
-			})
+			helpers.HandleError(c, 404, "record not found")
 			return
 		}
 		translations = append(translations, translation)
@@ -1596,51 +970,24 @@ func GetProducts(c *gin.Context) {
 	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
-	defer func() {
-		if err := db.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
+	defer db.Close()
 
-	rowsProduct, err := db.Query("SELECT id,brend_id,price,old_price,amount,limit_amount,is_new,main_image,benefit FROM products WHERE deleted_at IS NULL")
+	rowsProduct, err := db.Query(context.Background(), "SELECT id,brend_id,price,old_price,amount,limit_amount,is_new,main_image,benefit FROM products WHERE deleted_at IS NULL")
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
-	defer func() {
-		if err := rowsProduct.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
 
 	var products []models.Product
 	// var ids []string
-
 	for rowsProduct.Next() {
 		var product models.Product
 
 		if err := rowsProduct.Scan(&product.ID, &product.BrendID, &product.Price, &product.OldPrice, &product.Amount, &product.LimitAmount, &product.IsNew, &product.MainImage, &product.Benefit); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
 
@@ -1655,34 +1002,18 @@ func GetProducts(c *gin.Context) {
 			product.Percentage = 0
 		}
 
-		rowsImages, err := db.Query("SELECT image FROM images WHERE deleted_at IS NULL AND product_id = $1", product.ID)
+		rowsImages, err := db.Query(context.Background(), "SELECT image FROM images WHERE deleted_at IS NULL AND product_id = $1", product.ID)
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
-		defer func() {
-			if err := rowsImages.Close(); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
-				return
-			}
-		}()
 
 		var images []string
-
 		for rowsImages.Next() {
 			var image string
 
 			if err := rowsImages.Scan(&image); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
+				helpers.HandleError(c, 400, err.Error())
 				return
 			}
 
@@ -1691,33 +1022,17 @@ func GetProducts(c *gin.Context) {
 
 		product.Images = images
 
-		rowsCategoryProduct, err := db.Query("SELECT category_id FROM category_product WHERE product_id = $1 AND deleted_at IS NULL", product.ID)
+		rowsCategoryProduct, err := db.Query(context.Background(), "SELECT category_id FROM category_product WHERE product_id = $1 AND deleted_at IS NULL", product.ID)
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
-		defer func() {
-			if err := rowsCategoryProduct.Close(); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
-				return
-			}
-		}()
 
 		var categories []string
-
 		for rowsCategoryProduct.Next() {
 			var category string
 			if err := rowsCategoryProduct.Scan(&category); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
+				helpers.HandleError(c, 400, err.Error())
 				return
 			}
 
@@ -1726,33 +1041,17 @@ func GetProducts(c *gin.Context) {
 
 		product.Categories = categories
 
-		rowTranslationProduct, err := db.Query("SELECT lang_id,name,description FROM translation_product WHERE product_id = $1 AND deleted_at IS NULL", product.ID)
+		rowTranslationProduct, err := db.Query(context.Background(), "SELECT lang_id,name,description FROM translation_product WHERE product_id = $1 AND deleted_at IS NULL", product.ID)
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
-		defer func() {
-			if err := rowTranslationProduct.Close(); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
-				return
-			}
-		}()
 
 		var translations []models.TranslationProduct
-
 		for rowTranslationProduct.Next() {
 			var translation models.TranslationProduct
 			if err := rowTranslationProduct.Scan(&translation.LangID, &translation.Name, &translation.Description); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
+				helpers.HandleError(c, 400, err.Error())
 				return
 			}
 			translations = append(translations, translation)
@@ -1775,81 +1074,39 @@ func DeleteProductByID(c *gin.Context) {
 	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
-	defer func() {
-		if err := db.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
+	defer db.Close()
 
 	// get id from request parameter
 	ID := c.Param("id")
 
 	// check id
-	rowProduct, err := db.Query("SELECT id FROM products WHERE id = $1 AND deleted_at IS NULL", ID)
+	rowProduct, err := db.Query(context.Background(), "SELECT id FROM products WHERE id = $1 AND deleted_at IS NULL", ID)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
-	defer func() {
-		if err := rowProduct.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
 
 	var productID string
-
 	for rowProduct.Next() {
 		if err := rowProduct.Scan(&productID); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
 	}
 
 	if productID == "" {
-		c.JSON(http.StatusNotFound, gin.H{
-			"status":  false,
-			"message": "record not found",
-		})
+		helpers.HandleError(c, 404, "record not found")
 		return
 	}
 
-	resultProc, err := db.Query("CALL delete_product($1)", ID)
+	_, err = db.Exec(context.Background(), "CALL delete_product($1)", ID)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
-	defer func() {
-		if err := resultProc.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
@@ -1863,81 +1120,39 @@ func RestoreProductByID(c *gin.Context) {
 	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
-	defer func() {
-		if err := db.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
+	defer db.Close()
 
 	// get id from request parameter
 	ID := c.Param("id")
 
 	// check id
-	rowProduct, err := db.Query("SELECT id FROM products WHERE id = $1 AND deleted_at IS NOT NULL", ID)
+	rowProduct, err := db.Query(context.Background(), "SELECT id FROM products WHERE id = $1 AND deleted_at IS NOT NULL", ID)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
-	defer func() {
-		if err := rowProduct.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
 
 	var productID string
-
 	for rowProduct.Next() {
 		if err := rowProduct.Scan(&productID); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
 	}
 
 	if productID == "" {
-		c.JSON(http.StatusNotFound, gin.H{
-			"status":  false,
-			"message": "record not found",
-		})
+		helpers.HandleError(c, 404, "record not found")
 		return
 	}
 
-	resultProc, err := db.Query("CALL restore_product($1)", ID)
+	_, err = db.Exec(context.Background(), "CALL restore_product($1)", ID)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
-	defer func() {
-		if err := resultProc.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
@@ -1951,102 +1166,53 @@ func DeletePermanentlyProductByID(c *gin.Context) {
 	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
-	defer func() {
-		if err := db.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
+	defer db.Close()
 
 	// get id from request parameter
 	ID := c.Param("id")
 
 	// check id
-	rowProduct, err := db.Query("SELECT id,main_image FROM products WHERE id = $1 AND deleted_at IS NOT NULL", ID)
+	rowProduct, err := db.Query(context.Background(), "SELECT id,main_image FROM products WHERE id = $1 AND deleted_at IS NOT NULL", ID)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
-	defer func() {
-		if err := rowProduct.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
 
 	var productID, mainImage string
-
 	for rowProduct.Next() {
 		if err := rowProduct.Scan(&productID, &mainImage); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
 	}
 
 	if productID == "" {
-		c.JSON(http.StatusNotFound, gin.H{
-			"status":  false,
-			"message": "product not found",
-		})
+		helpers.HandleError(c, 404, "product not found")
 		return
 	}
 
 	// remove main image of product
 	if err := os.Remove(pkg.ServerPath + mainImage); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
 
 	// get images of product
-	rowsImages, err := db.Query("SELECT image FROM images WHERE product_id = $1", productID)
+	rowsImages, err := db.Query(context.Background(), "SELECT image FROM images WHERE product_id = $1", productID)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
-	defer func() {
-		if err := rowsImages.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
 
 	var images []models.Images
-
 	for rowsImages.Next() {
 		var image models.Images
 
 		if err := rowsImages.Scan(&image.Image); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
 
@@ -2055,92 +1221,37 @@ func DeletePermanentlyProductByID(c *gin.Context) {
 
 	// remove images of product
 	if len(images) != 0 {
-
 		for _, v := range images {
-
 			if err := os.Remove(pkg.ServerPath + v.Image); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
+				helpers.HandleError(c, 400, err.Error())
 				return
 			}
-
 		}
-
 	}
 
-	resultCart, err := db.Query("DELETE FROM cart WHERE product_id = $1", ID)
+	_, err = db.Exec(context.Background(), "DELETE FROM cart WHERE product_id = $1", ID)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
-	defer func() {
-		if err := resultCart.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
 
-	resultLike, err := db.Query("DELETE FROM likes WHERE product_id = $1", ID)
+	_, err = db.Exec(context.Background(), "DELETE FROM likes WHERE product_id = $1", ID)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
-	defer func() {
-		if err := resultLike.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
 
-	resultOrderedProc, err := db.Query("DELETE FROM ordered_products WHERE product_id = $1", ID)
+	_, err = db.Exec(context.Background(), "DELETE FROM ordered_products WHERE product_id = $1", ID)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
-	defer func() {
-		if err := resultOrderedProc.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
 
-	resultProduct, err := db.Query("DELETE FROM products WHERE id = $1", ID)
+	_, err = db.Exec(context.Background(), "DELETE FROM products WHERE id = $1", ID)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
-	defer func() {
-		if err := resultProduct.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
@@ -2154,51 +1265,24 @@ func GetProductByIDForFront(c *gin.Context) {
 	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
-	defer func() {
-		if err := db.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
+	defer db.Close()
 
 	// get id from request parameter
 	ID := c.Param("id")
 
-	rowProduct, err := db.Query("SELECT id,price,old_price,amount,limit_amount,is_new,main_image,benefit FROM products WHERE id = $1 AND deleted_at IS NULL", ID)
+	rowProduct, err := db.Query(context.Background(), "SELECT id,price,old_price,amount,limit_amount,is_new,main_image,benefit FROM products WHERE id = $1 AND deleted_at IS NULL", ID)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
-	defer func() {
-		if err := rowProduct.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
 
 	var product ProductForFront
-
 	for rowProduct.Next() {
 		if err := rowProduct.Scan(&product.ID, &product.Price, &product.OldPrice, &product.Amount, &product.LimitAmount, &product.IsNew, &product.MainImage, &product.Benefit); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
 	}
@@ -2215,41 +1299,22 @@ func GetProductByIDForFront(c *gin.Context) {
 	}
 
 	if product.ID == "" {
-		c.JSON(http.StatusNotFound, gin.H{
-			"status":  false,
-			"message": "record not found",
-		})
+		helpers.HandleError(c, 404, "record not found")
 		return
 	}
 
-	rowsImages, err := db.Query("SELECT image FROM images WHERE deleted_at IS NULL AND product_id = $1", ID)
+	rowsImages, err := db.Query(context.Background(), "SELECT image FROM images WHERE deleted_at IS NULL AND product_id = $1", ID)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
-	defer func() {
-		if err := rowsImages.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
 
 	var images []string
-
 	for rowsImages.Next() {
 		var image string
 
 		if err := rowsImages.Scan(&image); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
 
@@ -2258,34 +1323,18 @@ func GetProductByIDForFront(c *gin.Context) {
 
 	product.Images = images
 
-	rowsLang, err := db.Query("SELECT id,name_short FROM languages WHERE deleted_at IS NULL")
+	rowsLang, err := db.Query(context.Background(), "SELECT id,name_short FROM languages WHERE deleted_at IS NULL")
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
-	defer func() {
-		if err := rowsLang.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
 
 	var languages []models.Language
-
 	for rowsLang.Next() {
 		var language models.Language
 
 		if err := rowsLang.Scan(&language.ID, &language.NameShort); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
 
@@ -2294,34 +1343,17 @@ func GetProductByIDForFront(c *gin.Context) {
 
 	for _, v := range languages {
 
-		rowTrProduct, err := db.Query("SELECT name,description FROM translation_product WHERE lang_id = $1 AND product_id = $2 AND deleted_at IS NULL", v.ID, product.ID)
+		rowTrProduct, err := db.Query(context.Background(), "SELECT name,description FROM translation_product WHERE lang_id = $1 AND product_id = $2 AND deleted_at IS NULL", v.ID, product.ID)
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
-		defer func() {
-			if err := rowTrProduct.Close(); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
-				return
-			}
-		}()
 
 		var trProduct models.TranslationProduct
-
 		translation := make(map[string]models.TranslationProduct)
-
 		for rowTrProduct.Next() {
 			if err := rowTrProduct.Scan(&trProduct.Name, &trProduct.Description); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
+				helpers.HandleError(c, 400, err.Error())
 				return
 			}
 		}
@@ -2333,32 +1365,16 @@ func GetProductByIDForFront(c *gin.Context) {
 	}
 
 	// get brend where id equal brend_id of product
-	brendRows, err := db.Query("SELECT b.id,b.name FROM products p LEFT JOIN brends b ON p.brend_id=b.id WHERE p.id = $1 AND p.deleted_at IS NULL AND b.deleted_at IS NULL", product.ID)
+	brendRows, err := db.Query(context.Background(), "SELECT b.id,b.name FROM products p LEFT JOIN brends b ON p.brend_id=b.id WHERE p.id = $1 AND p.deleted_at IS NULL AND b.deleted_at IS NULL", product.ID)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
-	defer func() {
-		if err := brendRows.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
 
 	var brend Brend
-
 	for brendRows.Next() {
 		if err := brendRows.Scan(&brend.ID, &brend.Name); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
 	}

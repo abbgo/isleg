@@ -1,10 +1,11 @@
 package controllers
 
 import (
-	"database/sql"
+	"context"
 	"fmt"
 	"github/abbgo/isleg/isleg-backend/config"
 	backController "github/abbgo/isleg/isleg-backend/controllers/back"
+	"github/abbgo/isleg/isleg-backend/helpers"
 	"github/abbgo/isleg/isleg-backend/models"
 	"github/abbgo/isleg/isleg-backend/pkg"
 	"math"
@@ -17,6 +18,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5"
 	"github.com/lib/pq"
 	"github.com/xuri/excelize/v2"
 	"gopkg.in/guregu/null.v4"
@@ -82,21 +84,10 @@ func ToOrder(c *gin.Context) {
 
 	db, err := config.ConnDB()
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
-	defer func() {
-		if err := db.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
+	defer db.Close()
 
 	// GET DATA FROM ROUTE PARAMETER
 	langShortName := c.Param("lang")
@@ -104,49 +95,30 @@ func ToOrder(c *gin.Context) {
 	// GET language id
 	langID, err := backController.GetLangID(langShortName)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
 
 	var order Order
 
 	if err := c.BindJSON(&order); err != nil {
-		c.JSON(http.StatusBadRequest, err.Error())
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
 
 	// haryt sargyt etyan musderi on bazada barmy ya-da yokmy sony bilmek ucin order.PhoneNumber telefon belgi boyunca sol musderini
 	// bazadan gozletyas
-	rowCustomer, err := db.Query("SELECT id,phone_number FROM customers WHERE phone_number = $1 AND deleted_at IS NULL", order.PhoneNumber)
+	rowCustomer, err := db.Query(context.Background(), "SELECT id,phone_number FROM customers WHERE phone_number = $1 AND deleted_at IS NULL", order.PhoneNumber)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
-	defer func() {
-		if err := rowCustomer.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
 
 	var customerPhoneNumber string
 	var customerID string
-
 	for rowCustomer.Next() {
 		if err := rowCustomer.Scan(&customerID, &customerPhoneNumber); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
 	}
@@ -154,109 +126,51 @@ func ToOrder(c *gin.Context) {
 	if customerPhoneNumber != "" { // eger musderi on bazada bar bolsa onda , yene-de frontdan gelen order.Address musderinin
 		// adresi on bazada barmy ya-da yokmy sony barlayas
 
-		rowsCustomerAddress, err := db.Query("SELECT address FROM customer_address WHERE customer_id = $1 AND address = $2 AND deleted_at IS NULL", customerID, order.Address)
+		rowsCustomerAddress, err := db.Query(context.Background(), "SELECT address FROM customer_address WHERE customer_id = $1 AND address = $2 AND deleted_at IS NULL", customerID, order.Address)
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
-		defer func() {
-			if err := rowsCustomerAddress.Close(); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
-				return
-			}
-		}()
 
 		var customerAddress string
-
 		for rowsCustomerAddress.Next() {
 			if err := rowsCustomerAddress.Scan(&customerAddress); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
+				helpers.HandleError(c, 400, err.Error())
 				return
 			}
 		}
 
 		if customerAddress == "" { // eger musderinin adresi bazada yok bolsa onda gelen order.Address adresi sol musdera
 			// taze adres hokmunde baza yazdyryas
-
-			resultCustomerAddres, err := db.Query("INSERT INTO customer_address (customer_id,address,is_active) VALUES ($1,$2,$3)", customerID, order.Address, false)
+			_, err := db.Exec(context.Background(), "INSERT INTO customer_address (customer_id,address,is_active) VALUES ($1,$2,$3)", customerID, order.Address, false)
 			if err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
+				helpers.HandleError(c, 400, err.Error())
 				return
 			}
-			defer func() {
-				if err := resultCustomerAddres.Close(); err != nil {
-					c.JSON(http.StatusBadRequest, gin.H{
-						"status":  false,
-						"message": err.Error(),
-					})
-					return
-				}
-			}()
-
 		}
 
 	} else { // bu yerde bolsa eger musderi bazada yok bolsa , onda musderini baza gosyas
 
-		resultCustomer, err := db.Query("INSERT INTO customers (full_name,phone_number,is_register) VALUES ($1,$2,$3) RETURNING id", order.FullName, order.PhoneNumber, false)
+		resultCustomer, err := db.Query(context.Background(), "INSERT INTO customers (full_name,phone_number,is_register) VALUES ($1,$2,$3) RETURNING id", order.FullName, order.PhoneNumber, false)
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
-		defer func() {
-			if err := resultCustomer.Close(); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
-				return
-			}
-		}()
 
 		var customer_id string
-
 		for resultCustomer.Next() {
 			if err := resultCustomer.Scan(&customer_id); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
+				helpers.HandleError(c, 400, err.Error())
 				return
 			}
 		}
 
 		// musderi baza gosulandan son bolsa sol musderinin adresini baza gosyas
-		resultCustomerAddress, err := db.Query("INSERT INTO customer_address (customer_id,address,is_active) VALUES ($1,$2,$3)", customer_id, order.Address, false)
+		_, err = db.Exec(context.Background(), "INSERT INTO customer_address (customer_id,address,is_active) VALUES ($1,$2,$3)", customer_id, order.Address, false)
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
-		defer func() {
-			if err := resultCustomerAddress.Close(); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
-				return
-			}
-		}()
 
 		customerID = customer_id
 
@@ -264,33 +178,17 @@ func ToOrder(c *gin.Context) {
 
 	// musderinin baza bilen barlag isleri gutarandan son musderinin sargydyny baza gosyas we
 	// gosulan sargydyn id - sini alyarys, ordered_prodcuts tablisa ucin
-	resultOrders, err := db.Query("INSERT INTO orders (customer_id,customer_mark,order_time,payment_type,total_price,shipping_price,address) VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING id,TO_CHAR(created_at,'DD.MM.YYYY HH24:MI'),order_number", customerID, order.CustomerMark, order.OrderTime, order.PaymentType, order.TotalPrice, order.ShippingPrice, order.Address)
+	resultOrders, err := db.Query(context.Background(), "INSERT INTO orders (customer_id,customer_mark,order_time,payment_type,total_price,shipping_price,address) VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING id,TO_CHAR(created_at,'DD.MM.YYYY HH24:MI'),order_number", customerID, order.CustomerMark, order.OrderTime, order.PaymentType, order.TotalPrice, order.ShippingPrice, order.Address)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
-	defer func() {
-		if err := resultOrders.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
 
 	var order_id, createdAt string
 	var orderNumber uint
-
 	for resultOrders.Next() {
 		if err := resultOrders.Scan(&order_id, &createdAt, &orderNumber); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
 	}
@@ -301,131 +199,60 @@ func ToOrder(c *gin.Context) {
 		// eger gelyan harydyn mukdary 1 - den kici bolsa
 		// ondan yzyna error ugratyas. Sebabi 0 mukdarda haryt sargyt edip bolmayar
 		if v.QuantityOfProduct < 1 {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": "quantity of product cannot be less than 1",
-			})
+			helpers.HandleError(c, 400, "quantity of product cannot be less than 1")
 			return
 		}
 
 		// harydyn barlaglary gutarandan son bolsa sargyt edilen harytlary ordered_products tablisa gosyas
-		resultOrderedProduct, err := db.Query("INSERT INTO ordered_products (product_id,quantity_of_product,order_id) VALUES ($1,$2,$3)", v.ProductID, v.QuantityOfProduct, order_id)
+		_, err := db.Exec(context.Background(), "INSERT INTO ordered_products (product_id,quantity_of_product,order_id) VALUES ($1,$2,$3)", v.ProductID, v.QuantityOfProduct, order_id)
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
-		defer func() {
-			if err := resultOrderedProduct.Close(); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
-				return
-			}
-		}()
 
 		// haryt ordered_products tablisa gosulandan son products tablisadan sargyt edilen
 		// harytlaryn mukdaryny azaltyas
-		resultProduct, err := db.Query("UPDATE products SET amount = amount - $1 WHERE id = $2", v.QuantityOfProduct, v.ProductID)
+		_, err = db.Exec(context.Background(), "UPDATE products SET amount = amount - $1 WHERE id = $2", v.QuantityOfProduct, v.ProductID)
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
-		defer func() {
-			if err := resultProduct.Close(); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
-				return
-			}
-		}()
 
 	}
 
 	// harytlar sargyt edilenden son sargyt eden musderinin sebedindaki harytlary ayyryas
-	resultCart, err := db.Query("DELETE FROM cart WHERE customer_id = $1", customerID)
+	_, err = db.Exec(context.Background(), "DELETE FROM cart WHERE customer_id = $1", customerID)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
-	defer func() {
-		if err := resultCart.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
 
 	// excel fayly doldurmak ucin bazadan firmanyn telefon belgisini almaly
-	rowCompanyPhone, err := db.Query("SELECT phone FROM company_phone ORDER BY created_at DESC LIMIT 1")
+	rowCompanyPhone, err := db.Query(context.Background(), "SELECT phone FROM company_phone ORDER BY created_at DESC LIMIT 1")
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
-	defer func() {
-		if err := rowCompanyPhone.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
 
 	var companyPhone string
-
 	for rowCompanyPhone.Next() {
 		if err := rowCompanyPhone.Scan(&companyPhone); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
 	}
 
 	// excel fayly doldurmak ucin firmanyn email adresini we instagram sahypasyny bazadan almaly
-	rowCompanySetting, err := db.Query("SELECT email,instagram FROM company_setting ORDER BY created_at DESC LIMIT 1")
+	rowCompanySetting, err := db.Query(context.Background(), "SELECT email,instagram FROM company_setting ORDER BY created_at DESC LIMIT 1")
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
-	defer func() {
-		if err := rowCompanySetting.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
 
 	var email, instagram string
-
 	for rowCompanySetting.Next() {
 		if err := rowCompanySetting.Scan(&email, &instagram); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
 	}
@@ -438,58 +265,28 @@ func ToOrder(c *gin.Context) {
 
 		product.Amount = v.QuantityOfProduct
 
-		row, err := db.Query("SELECT price FROM products WHERE id= $1 AND deleted_at IS NULL", v.ProductID)
+		row, err := db.Query(context.Background(), "SELECT price FROM products WHERE id= $1 AND deleted_at IS NULL", v.ProductID)
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
-		defer func() {
-			if err := row.Close(); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
-				return
-			}
-		}()
 
 		for row.Next() {
 			if err := row.Scan(&product.Price); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
+				helpers.HandleError(c, 400, err.Error())
 				return
 			}
 		}
 
-		rowTr, err := db.Query("SELECT name FROM translation_product WHERE product_id = $1 AND lang_id = $2 AND deleted_at IS NULL", v.ProductID, langID)
+		rowTr, err := db.Query(context.Background(), "SELECT name FROM translation_product WHERE product_id = $1 AND lang_id = $2 AND deleted_at IS NULL", v.ProductID, langID)
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
-		defer func() {
-			if err := rowTr.Close(); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
-				return
-			}
-		}()
 
 		for rowTr.Next() {
 			if err := rowTr.Scan(&product.Name); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
+				helpers.HandleError(c, 400, err.Error())
 				return
 			}
 		}
@@ -500,18 +297,12 @@ func ToOrder(c *gin.Context) {
 	// dolduryljak excel fayly acmaly
 	f, err := excelize.OpenFile(pkg.ServerPath + "uploads/orders/order.xlsx")
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
 	defer func() {
 		if err := f.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
 	}()
@@ -551,10 +342,7 @@ func ToOrder(c *gin.Context) {
 		},
 	})
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
 
@@ -577,10 +365,7 @@ func ToOrder(c *gin.Context) {
 		},
 	})
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
 
@@ -716,28 +501,16 @@ func ToOrder(c *gin.Context) {
 
 	// tayyar bolan excel fayl uploads papka yazdyrylyar
 	if err := f.SaveAs(pkg.ServerPath + "uploads/orders/" + strconv.Itoa(int(orderNumber)) + ".xlsx"); err != nil {
-		c.JSON(http.StatusBadRequest, err.Error())
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
 
 	// excel fayl tayyar bolanson sargydyn fayly hokmunde baza yazdyrylyar
-	resultOrderUpdate, err := db.Query("UPDATE orders SET excel = $1 WHERE id = $2", "uploads/orders/"+strconv.Itoa(int(orderNumber))+".xlsx", order_id)
+	_, err = db.Exec(context.Background(), "UPDATE orders SET excel = $1 WHERE id = $2", "uploads/orders/"+strconv.Itoa(int(orderNumber))+".xlsx", order_id)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
-	defer func() {
-		if err := resultOrderUpdate.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
@@ -750,65 +523,39 @@ func GetOrders(c *gin.Context) {
 
 	db, err := config.ConnDB()
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
-	defer func() {
-		if err := db.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
+	defer db.Close()
 
 	// GET language id
 	langID, err := backController.GetLangID("tm")
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
 
 	// get limit from param
 	limitStr := c.Param("limit")
 	if limitStr == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": "limit is required",
-		})
+		helpers.HandleError(c, 400, "limit is required")
 		return
 	}
 	limit, err := strconv.ParseUint(limitStr, 10, 64)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
 
 	// get page from param
 	pageStr := c.Param("page")
 	if pageStr == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": "page is required",
-		})
+		helpers.HandleError(c, 400, "page is required")
 		return
 	}
 	page, err := strconv.ParseUint(pageStr, 10, 64)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
 
@@ -818,68 +565,43 @@ func GetOrders(c *gin.Context) {
 	statusStr := c.Query("status")
 	status, err := strconv.ParseBool(statusStr)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
 
 	searchQuery := c.Query("search")
 	search := fmt.Sprintf("%%%s%%", searchQuery)
-	var countAllCustomer, rowsCustomerID *sql.Rows
+	var countAllCustomer, rowsCustomerID pgx.Rows
 	var rowsOrderQuery string
 	if status {
 		if searchQuery == "" {
-			countAllCustomer, err = db.Query("SELECT customer_id FROM orders WHERE deleted_at IS NOT NULL")
+			countAllCustomer, err = db.Query(context.Background(), "SELECT customer_id FROM orders WHERE deleted_at IS NOT NULL")
 			if err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
+				helpers.HandleError(c, 400, err.Error())
 				return
 			}
 		} else {
-			countAllCustomer, err = db.Query("SELECT c.id FROM orders o INNER JOIN customers c ON o.customer_id=c.id WHERE c.deleted_at IS NOT NULL AND o.deleted_at IS NOT NULL AND c.phone_number LIKE $1", search)
+			countAllCustomer, err = db.Query(context.Background(), "SELECT c.id FROM orders o INNER JOIN customers c ON o.customer_id=c.id WHERE c.deleted_at IS NOT NULL AND o.deleted_at IS NOT NULL AND c.phone_number LIKE $1", search)
 			if err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
+				helpers.HandleError(c, 400, err.Error())
 				return
 			}
 		}
 	} else {
 		if searchQuery == "" {
-			countAllCustomer, err = db.Query("SELECT customer_id FROM orders WHERE deleted_at IS NULL")
+			countAllCustomer, err = db.Query(context.Background(), "SELECT customer_id FROM orders WHERE deleted_at IS NULL")
 			if err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
+				helpers.HandleError(c, 400, err.Error())
 				return
 			}
 		} else {
-			countAllCustomer, err = db.Query("SELECT c.id FROM orders o INNER JOIN customers c ON o.customer_id=c.id WHERE c.deleted_at IS NULL AND o.deleted_at IS NULL AND c.phone_number LIKE $1", search)
+			countAllCustomer, err = db.Query(context.Background(), "SELECT c.id FROM orders o INNER JOIN customers c ON o.customer_id=c.id WHERE c.deleted_at IS NULL AND o.deleted_at IS NULL AND c.phone_number LIKE $1", search)
 			if err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
+				helpers.HandleError(c, 400, err.Error())
 				return
 			}
 		}
 	}
-
-	defer func() {
-		if err := countAllCustomer.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
 
 	for countAllCustomer.Next() {
 		countOfOrders++
@@ -887,66 +609,40 @@ func GetOrders(c *gin.Context) {
 
 	if status {
 		if searchQuery == "" {
-			rowsCustomerID, err = db.Query("SELECT customer_id FROM orders WHERE deleted_at IS NOT NULL GROUP BY customer_id")
+			rowsCustomerID, err = db.Query(context.Background(), "SELECT customer_id FROM orders WHERE deleted_at IS NOT NULL GROUP BY customer_id")
 			if err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
+				helpers.HandleError(c, 400, err.Error())
 				return
 			}
 		} else {
-			rowsCustomerID, err = db.Query("SELECT c.id FROM orders o INNER JOIN customers c ON c.id=o.customer_id WHERE c.deleted_at IS NOT NULL AND o.deleted_at IS NOT NULL AND c.phone_number LIKE $1 GROUP BY c.id", search)
+			rowsCustomerID, err = db.Query(context.Background(), "SELECT c.id FROM orders o INNER JOIN customers c ON c.id=o.customer_id WHERE c.deleted_at IS NOT NULL AND o.deleted_at IS NOT NULL AND c.phone_number LIKE $1 GROUP BY c.id", search)
 			if err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
+				helpers.HandleError(c, 400, err.Error())
 				return
 			}
 		}
 	} else {
 		if searchQuery == "" {
-			rowsCustomerID, err = db.Query("SELECT customer_id FROM orders WHERE deleted_at IS NULL GROUP BY customer_id")
+			rowsCustomerID, err = db.Query(context.Background(), "SELECT customer_id FROM orders WHERE deleted_at IS NULL GROUP BY customer_id")
 			if err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
+				helpers.HandleError(c, 400, err.Error())
 				return
 			}
 		} else {
-			rowsCustomerID, err = db.Query("SELECT c.id FROM orders o INNER JOIN customers c ON c.id=o.customer_id WHERE c.deleted_at IS NULL AND o.deleted_at IS NULL AND c.phone_number LIKE $1 GROUP BY c.id", search)
+			rowsCustomerID, err = db.Query(context.Background(), "SELECT c.id FROM orders o INNER JOIN customers c ON c.id=o.customer_id WHERE c.deleted_at IS NULL AND o.deleted_at IS NULL AND c.phone_number LIKE $1 GROUP BY c.id", search)
 			if err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
+				helpers.HandleError(c, 400, err.Error())
 				return
 			}
 		}
 	}
 
-	defer func() {
-		if err := rowsCustomerID.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
-
 	var customerIDs []string
-
 	for rowsCustomerID.Next() {
 		var customerID string
 
 		if err := rowsCustomerID.Scan(&customerID); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
 
@@ -961,117 +657,56 @@ func GetOrders(c *gin.Context) {
 		rowsOrderQuery = `SELECT customer_id,id,customer_mark,order_time,payment_type,total_price,shipping_price,excel,address,TO_CHAR(created_at, 'DD.MM.YYYY') FROM orders WHERE customer_id = ANY($1) AND deleted_at IS NULL LIMIT $2 OFFSET $3`
 	}
 
-	rowsOrder, err := db.Query(rowsOrderQuery, pq.Array(customerIDs), limit, offset)
+	rowsOrder, err := db.Query(context.Background(), rowsOrderQuery, pq.Array(customerIDs), limit, offset)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
-	defer func() {
-		if err := rowsOrder.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
 
 	for rowsOrder.Next() {
 		var order OrderForAdmin
 		if err := rowsOrder.Scan(&order.CustomerID, &order.ID, &order.CustomerMark, &order.OrderTime, &order.PaymentType, &order.TotalPrice, &order.ShippingPrice, &order.Excel, &order.Address, &order.CreatedAt); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
 
-		rowCustomer, err := db.Query("SELECT full_name,phone_number FROM customers WHERE deleted_at IS NULL AND id = $1", order.CustomerID)
+		rowCustomer, err := db.Query(context.Background(), "SELECT full_name,phone_number FROM customers WHERE deleted_at IS NULL AND id = $1", order.CustomerID)
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
-		defer func() {
-			if err := rowCustomer.Close(); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
-				return
-			}
-		}()
 
 		for rowCustomer.Next() {
 			if err := rowCustomer.Scan(&order.FullName, &order.PhoneNumber); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
+				helpers.HandleError(c, 400, err.Error())
 				return
 			}
 		}
 
-		rowsOrderedProducts, err := db.Query("SELECT product_id,quantity_of_product FROM ordered_products WHERE order_id = $1 AND deleted_at IS NULL", order.ID)
+		rowsOrderedProducts, err := db.Query(context.Background(), "SELECT product_id,quantity_of_product FROM ordered_products WHERE order_id = $1 AND deleted_at IS NULL", order.ID)
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
-		defer func() {
-			if err := rowsOrderedProducts.Close(); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
-				return
-			}
-		}()
 
 		var products []ProductForAdmin
-
 		for rowsOrderedProducts.Next() {
 			var product ProductForAdmin
 
 			if err := rowsOrderedProducts.Scan(&product.ID, &product.QuantityOfProduct); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
+				helpers.HandleError(c, 400, err.Error())
 				return
 			}
 
-			rowProduct, err := db.Query("SELECT brend_id,price,old_price,amount,limit_amount,is_new,main_image,benefit FROM products WHERE id = $1 AND deleted_at IS NULL", product.ID)
+			rowProduct, err := db.Query(context.Background(), "SELECT brend_id,price,old_price,amount,limit_amount,is_new,main_image,benefit FROM products WHERE id = $1 AND deleted_at IS NULL", product.ID)
 			if err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
+				helpers.HandleError(c, 400, err.Error())
 				return
 			}
-			defer func() {
-				if err := rowProduct.Close(); err != nil {
-					c.JSON(http.StatusBadRequest, gin.H{
-						"status":  false,
-						"message": err.Error(),
-					})
-					return
-				}
-			}()
 
 			for rowProduct.Next() {
 				if err := rowProduct.Scan(&product.BrendID, &product.Price, &product.OldPrice, &product.Amount, &product.LimitAmount, &product.IsNew, &product.MainImage, &product.Benefit); err != nil {
-					c.JSON(http.StatusBadRequest, gin.H{
-						"status":  false,
-						"message": err.Error(),
-					})
+					helpers.HandleError(c, 400, err.Error())
 					return
 				}
 			}
@@ -1087,32 +722,16 @@ func GetOrders(c *gin.Context) {
 				product.Percentage = 0
 			}
 
-			rowTrProduct, err := db.Query("SELECT name,description FROM translation_product WHERE product_id = $1 AND lang_id = $2 AND deleted_at IS NULL", product.ID, langID)
+			rowTrProduct, err := db.Query(context.Background(), "SELECT name,description FROM translation_product WHERE product_id = $1 AND lang_id = $2 AND deleted_at IS NULL", product.ID, langID)
 			if err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
+				helpers.HandleError(c, 400, err.Error())
 				return
 			}
-			defer func() {
-				if err := rowTrProduct.Close(); err != nil {
-					c.JSON(http.StatusBadRequest, gin.H{
-						"status":  false,
-						"message": err.Error(),
-					})
-					return
-				}
-			}()
 
 			var trProduct models.TranslationProduct
-
 			for rowTrProduct.Next() {
 				if err := rowTrProduct.Scan(&trProduct.Name, &trProduct.Description); err != nil {
-					c.JSON(http.StatusBadRequest, gin.H{
-						"status":  false,
-						"message": err.Error(),
-					})
+					helpers.HandleError(c, 400, err.Error())
 					return
 				}
 			}
@@ -1139,21 +758,10 @@ func OrderConfirmation(c *gin.Context) {
 
 	db, err := config.ConnDB()
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
-	defer func() {
-		if err := db.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
+	defer db.Close()
 
 	// get id of language from request parameter
 	orderID := c.Param("id")
@@ -1161,96 +769,54 @@ func OrderConfirmation(c *gin.Context) {
 	statusStr := c.Query("status")
 	status, err := strconv.ParseBool(statusStr)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
 
-	var rowOrder, resultOrder *sql.Rows
+	var rowOrder pgx.Rows
 	// check orderID
 	if status {
-		row, err := db.Query("SELECT id FROM orders WHERE id = $1 AND deleted_at IS NOT NULL", orderID)
+		row, err := db.Query(context.Background(), "SELECT id FROM orders WHERE id = $1 AND deleted_at IS NOT NULL", orderID)
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
 		rowOrder = row
 	} else {
-		row, err := db.Query("SELECT id FROM orders WHERE id = $1 AND deleted_at IS NULL", orderID)
+		row, err := db.Query(context.Background(), "SELECT id FROM orders WHERE id = $1 AND deleted_at IS NULL", orderID)
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
 		rowOrder = row
 	}
-	defer func() {
-		if err := rowOrder.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
 
 	var order_id string
-
 	for rowOrder.Next() {
 		if err := rowOrder.Scan(&order_id); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
 	}
 
 	if order_id == "" {
-		c.JSON(http.StatusNotFound, gin.H{
-			"status":  false,
-			"message": "order not found",
-		})
+		helpers.HandleError(c, 404, "order not found")
 		return
 	}
 
 	if status {
-		result, err := db.Query("UPDATE orders SET deleted_at = NULL WHERE id = $1", orderID)
+		_, err := db.Query(context.Background(), "UPDATE orders SET deleted_at = NULL WHERE id = $1", orderID)
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
-		resultOrder = result
 	} else {
-		result, err := db.Query("UPDATE orders SET deleted_at = now() WHERE id = $1", orderID)
+		_, err := db.Query(context.Background(), "UPDATE orders SET deleted_at = now() WHERE id = $1", orderID)
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
-		resultOrder = result
 	}
-	defer func() {
-		if err := resultOrder.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
 
 	if status {
 		c.JSON(http.StatusOK, gin.H{
@@ -1271,66 +837,43 @@ func GetCustomerOrders(c *gin.Context) {
 
 	db, err := config.ConnDB()
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
-	defer func() {
-		if err := db.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
+	defer db.Close()
 
 	custID, hasCustomer := c.Get("customer_id")
 	if !hasCustomer {
-		c.JSON(http.StatusBadRequest, "customer_id is required")
+		helpers.HandleError(c, 400, "customer_id is required")
 		return
 	}
 	customerID, ok := custID.(string)
 	if !ok {
-		c.JSON(http.StatusBadRequest, "customer_id must be string")
+		helpers.HandleError(c, http.StatusBadRequest, "customer_id must be string")
 		return
 	}
 
 	// get limit from param
 	limitStr := c.Param("limit")
 	if limitStr == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": "limit is required",
-		})
+		helpers.HandleError(c, 400, "limit is required")
 		return
 	}
 	limit, err := strconv.ParseUint(limitStr, 10, 64)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
 
 	// get page from param
 	pageStr := c.Param("page")
 	if pageStr == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": "page is required",
-		})
+		helpers.HandleError(c, 400, "page is required")
 		return
 	}
 	page, err := strconv.ParseUint(pageStr, 10, 64)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
 
@@ -1339,121 +882,59 @@ func GetCustomerOrders(c *gin.Context) {
 	var countOfOrders uint
 
 	// programmany ulanyp otyran musderinin sargytlarynyn sanyny alyas frontda pagination ucin
-	countOrders, err := db.Query("SELECT COUNT(id) FROM orders WHERE customer_id = $1", customerID)
+	countOrders, err := db.Query(context.Background(), "SELECT COUNT(id) FROM orders WHERE customer_id = $1", customerID)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
-	defer func() {
-		if err := countOrders.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
 
 	for countOrders.Next() {
 		if err := countOrders.Scan(&countOfOrders); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
 	}
 
 	// musderinin sargytlaryny alyas bazadan
-	rowsOrders, err := db.Query("SELECT id,TO_CHAR(created_at, 'DD.MM.YYYY'),total_price FROM orders WHERE customer_id = $1 ORDER BY created_at ASC LIMIT $2 OFFSET $3", customerID, limit, offset)
+	rowsOrders, err := db.Query(context.Background(), "SELECT id,TO_CHAR(created_at, 'DD.MM.YYYY'),total_price FROM orders WHERE customer_id = $1 ORDER BY created_at ASC LIMIT $2 OFFSET $3", customerID, limit, offset)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
-	defer func() {
-		if err := rowsOrders.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
 
 	var orders []GetOrder
-
 	for rowsOrders.Next() {
 		var order GetOrder
 
 		if err := rowsOrders.Scan(&order.ID, &order.Date, &order.TotalPrice); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
 
-		rowsOrderedProducts, err := db.Query("SELECT product_id,quantity_of_product FROM ordered_products WHERE order_id = $1 AND deleted_at IS NULL", order.ID)
+		rowsOrderedProducts, err := db.Query(context.Background(), "SELECT product_id,quantity_of_product FROM ordered_products WHERE order_id = $1 AND deleted_at IS NULL", order.ID)
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
-		defer func() {
-			if err := rowsOrderedProducts.Close(); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
-				return
-			}
-		}()
 
 		var products []ProductOfCart
-
 		for rowsOrderedProducts.Next() {
 			var product ProductOfCart
 
 			if err := rowsOrderedProducts.Scan(&product.ID, &product.QuantityOfProduct); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
+				helpers.HandleError(c, 400, err.Error())
 				return
 			}
 
-			rowProduct, err := db.Query("SELECT brend_id,price,old_price,amount,limit_amount,is_new,main_image,benefit FROM products WHERE id = $1 AND deleted_at IS NULL", product.ID)
+			rowProduct, err := db.Query(context.Background(), "SELECT brend_id,price,old_price,amount,limit_amount,is_new,main_image,benefit FROM products WHERE id = $1 AND deleted_at IS NULL", product.ID)
 			if err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
+				helpers.HandleError(c, 400, err.Error())
 				return
 			}
-			defer func() {
-				if err := rowProduct.Close(); err != nil {
-					c.JSON(http.StatusBadRequest, gin.H{
-						"status":  false,
-						"message": err.Error(),
-					})
-					return
-				}
-			}()
 
 			for rowProduct.Next() {
 				if err := rowProduct.Scan(&product.BrendID, &product.Price, &product.OldPrice, &product.Amount, &product.LimitAmount, &product.IsNew, &product.MainImage, &product.Benefit); err != nil {
-					c.JSON(http.StatusBadRequest, gin.H{
-						"status":  false,
-						"message": err.Error(),
-					})
+					helpers.HandleError(c, 400, err.Error())
 					return
 				}
 			}
@@ -1469,34 +950,18 @@ func GetCustomerOrders(c *gin.Context) {
 				product.Percentage = 0
 			}
 
-			rowsLang, err := db.Query("SELECT id,name_short FROM languages WHERE deleted_at IS NULL")
+			rowsLang, err := db.Query(context.Background(), "SELECT id,name_short FROM languages WHERE deleted_at IS NULL")
 			if err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
+				helpers.HandleError(c, 400, err.Error())
 				return
 			}
-			defer func() {
-				if err := rowsLang.Close(); err != nil {
-					c.JSON(http.StatusBadRequest, gin.H{
-						"status":  false,
-						"message": err.Error(),
-					})
-					return
-				}
-			}()
 
 			var languages []models.Language
-
 			for rowsLang.Next() {
 				var language models.Language
 
 				if err := rowsLang.Scan(&language.ID, &language.NameShort); err != nil {
-					c.JSON(http.StatusBadRequest, gin.H{
-						"status":  false,
-						"message": err.Error(),
-					})
+					helpers.HandleError(c, 400, err.Error())
 					return
 				}
 
@@ -1505,34 +970,17 @@ func GetCustomerOrders(c *gin.Context) {
 
 			for _, v := range languages {
 
-				rowTrProduct, err := db.Query("SELECT name,description FROM translation_product WHERE product_id = $1 AND lang_id = $2 AND deleted_at IS NULL", product.ID, v.ID)
+				rowTrProduct, err := db.Query(context.Background(), "SELECT name,description FROM translation_product WHERE product_id = $1 AND lang_id = $2 AND deleted_at IS NULL", product.ID, v.ID)
 				if err != nil {
-					c.JSON(http.StatusBadRequest, gin.H{
-						"status":  false,
-						"message": err.Error(),
-					})
+					helpers.HandleError(c, 400, err.Error())
 					return
 				}
-				defer func() {
-					if err := rowTrProduct.Close(); err != nil {
-						c.JSON(http.StatusBadRequest, gin.H{
-							"status":  false,
-							"message": err.Error(),
-						})
-						return
-					}
-				}()
 
 				var trProduct models.TranslationProduct
-
 				translation := make(map[string]models.TranslationProduct)
-
 				for rowTrProduct.Next() {
 					if err := rowTrProduct.Scan(&trProduct.Name, &trProduct.Description); err != nil {
-						c.JSON(http.StatusBadRequest, gin.H{
-							"status":  false,
-							"message": err.Error(),
-						})
+						helpers.HandleError(c, 400, err.Error())
 						return
 					}
 				}
@@ -1593,7 +1041,7 @@ func GetCustomerOrders(c *gin.Context) {
 // 	// front - dan gelen id - li harytlar bazada barmy ya-da yokmy sol barlanyar
 // 	for _, v := range productIds.IDS {
 
-// 		rowProduct, err := db.Query("SELECT id FROM products WHERE id = $1 AND deleted_at IS NULL", v)
+// 		rowProduct, err := db.Query(context.Background(),"SELECT id FROM products WHERE id = $1 AND deleted_at IS NULL", v)
 // 		if err != nil {
 // 			c.JSON(http.StatusBadRequest, gin.H{
 // 				"status":  false,
@@ -1635,7 +1083,7 @@ func GetCustomerOrders(c *gin.Context) {
 // 	}
 
 // 	// front - dan gelen id - lere id - si den bolan harytlar yzyna ugradylyar
-// 	rowOrders, err := db.Query("SELECT id,brend_id,price,old_price,amount,limit_amount,is_new FROM products WHERE id = ANY($1) AND deleted_at IS NULL", pq.Array(productIds.IDS))
+// 	rowOrders, err := db.Query(context.Background(),"SELECT id,brend_id,price,old_price,amount,limit_amount,is_new FROM products WHERE id = ANY($1) AND deleted_at IS NULL", pq.Array(productIds.IDS))
 // 	if err != nil {
 // 		c.JSON(http.StatusBadRequest, gin.H{
 // 			"status":  false,
@@ -1672,7 +1120,7 @@ func GetCustomerOrders(c *gin.Context) {
 // 			product.Percentage = 0
 // 		}
 
-// 		rowMainImage, err := db.Query("SELECT small,medium,large FROM main_image WHERE product_id = $1 AND deleted_at IS NULL", product.ID)
+// 		rowMainImage, err := db.Query(context.Background(),"SELECT small,medium,large FROM main_image WHERE product_id = $1 AND deleted_at IS NULL", product.ID)
 // 		if err != nil {
 // 			c.JSON(http.StatusBadRequest, gin.H{
 // 				"status":  false,
@@ -1704,7 +1152,7 @@ func GetCustomerOrders(c *gin.Context) {
 
 // 		product.MainImage = mainImage
 
-// 		rowsImages, err := db.Query("SELECT small,large FROM images WHERE product_id = $1 AND deleted_at IS NULL", product.ID)
+// 		rowsImages, err := db.Query(context.Background(),"SELECT small,large FROM images WHERE product_id = $1 AND deleted_at IS NULL", product.ID)
 // 		if err != nil {
 // 			c.JSON(http.StatusBadRequest, gin.H{
 // 				"status":  false,
@@ -1740,7 +1188,7 @@ func GetCustomerOrders(c *gin.Context) {
 
 // 		product.Images = images
 
-// 		rowsLang, err := db.Query("SELECT id,name_short FROM languages WHERE deleted_at IS NULL")
+// 		rowsLang, err := db.Query(context.Background(),"SELECT id,name_short FROM languages WHERE deleted_at IS NULL")
 // 		if err != nil {
 // 			c.JSON(http.StatusBadRequest, gin.H{
 // 				"status":  false,
@@ -1776,7 +1224,7 @@ func GetCustomerOrders(c *gin.Context) {
 
 // 		for _, v := range languages {
 
-// 			rowTrProduct, err := db.Query("SELECT name,description FROM translation_product WHERE product_id = $1 AND lang_id = $2 AND deleted_at IS NULL", product.ID, v.ID)
+// 			rowTrProduct, err := db.Query(context.Background(),"SELECT name,description FROM translation_product WHERE product_id = $1 AND lang_id = $2 AND deleted_at IS NULL", product.ID, v.ID)
 // 			if err != nil {
 // 				c.JSON(http.StatusBadRequest, gin.H{
 // 					"status":  false,
@@ -1828,98 +1276,48 @@ func ReturnOrder(c *gin.Context) {
 
 	db, err := config.ConnDB()
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
-	defer func() {
-		if err := db.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
+	defer db.Close()
 
 	orderID := c.Param("id")
 
-	rowOrder, err := db.Query("SELECT id,excel FROM orders WHERE id = $1", orderID)
+	rowOrder, err := db.Query(context.Background(), "SELECT id,excel FROM orders WHERE id = $1", orderID)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
-	defer func() {
-		if err := rowOrder.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
 
 	var order_id, excel string
-
 	for rowOrder.Next() {
 		if err := rowOrder.Scan(&order_id, &excel); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
 	}
 
 	if order_id == "" {
-		c.JSON(http.StatusNotFound, gin.H{
-			"status":  false,
-			"message": "order not found",
-		})
+		helpers.HandleError(c, 404, "order not found")
 		return
 	}
 
 	if err := os.Remove(pkg.ServerPath + excel); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
 
-	rowsOrderedProduct, err := db.Query("SELECT product_id,quantity_of_product FROM ordered_products WHERE order_id = $1", order_id)
+	rowsOrderedProduct, err := db.Query(context.Background(), "SELECT product_id,quantity_of_product FROM ordered_products WHERE order_id = $1", order_id)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
-	defer func() {
-		if err := rowsOrderedProduct.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
 
 	var orderedProducts []models.OrderedProducts
-
 	for rowsOrderedProduct.Next() {
 		var orderedProduct models.OrderedProducts
-
 		if err := rowsOrderedProduct.Scan(&orderedProduct.ProductID, &orderedProduct.QuantityOfProduct); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
 
@@ -1927,44 +1325,18 @@ func ReturnOrder(c *gin.Context) {
 	}
 
 	for _, v := range orderedProducts {
-
-		resultProduct, err := db.Query("UPDATE products SET amount = amount + $1 WHERE id = $2", v.QuantityOfProduct, v.ProductID)
+		_, err := db.Exec(context.Background(), "UPDATE products SET amount = amount + $1 WHERE id = $2", v.QuantityOfProduct, v.ProductID)
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
-		defer func() {
-			if err := resultProduct.Close(); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
-				return
-			}
-		}()
-
 	}
 
-	resultOrder, err := db.Query("DELETE FROM orders WHERE id = $1", order_id)
+	_, err = db.Exec(context.Background(), "DELETE FROM orders WHERE id = $1", order_id)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
-	defer func() {
-		if err := resultOrder.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,

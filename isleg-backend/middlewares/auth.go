@@ -7,6 +7,8 @@ import (
 	"strings"
 	"time"
 
+	ctx "context"
+
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 )
@@ -58,24 +60,13 @@ func Auth() gin.HandlerFunc {
 			context.AbortWithStatusJSON(400, gin.H{"message": err.Error()})
 			return
 		}
-		defer func() {
-			if err := db.Close(); err != nil {
-				context.AbortWithStatusJSON(400, gin.H{"message": err.Error()})
-				return
-			}
-		}()
+		defer db.Close()
 
-		rowCustomer, err := db.Query("SELECT id FROM customers WHERE id = $1 AND deleted_at IS NULL", claims.CustomerID)
+		rowCustomer, err := db.Query(ctx.Background(), "SELECT id FROM customers WHERE id = $1 AND deleted_at IS NULL", claims.CustomerID)
 		if err != nil {
 			context.AbortWithStatusJSON(400, gin.H{"message": err.Error()})
 			return
 		}
-		defer func() {
-			if err := rowCustomer.Close(); err != nil {
-				context.AbortWithStatusJSON(400, gin.H{"message": err.Error()})
-				return
-			}
-		}()
 
 		var customer_id string
 
@@ -199,25 +190,13 @@ func CheckAdmin() gin.HandlerFunc {
 			context.AbortWithStatusJSON(400, gin.H{"message": err.Error()})
 			return
 		}
-		defer func() {
-			if err := db.Close(); err != nil {
-				context.AbortWithStatusJSON(400, gin.H{"message": err.Error()})
-				return
-			}
-		}()
+		defer db.Close()
 
-		rowAdmin, err := db.Query("SELECT id FROM admins WHERE id = $1 AND deleted_at IS NULL", claims.AdminID)
+		rowAdmin, err := db.Query(ctx.Background(), "SELECT id FROM admins WHERE id = $1 AND deleted_at IS NULL", claims.AdminID)
 		if err != nil {
 			context.AbortWithStatusJSON(400, gin.H{"message": err.Error()})
 			return
 		}
-		defer func() {
-			if err := rowAdmin.Close(); err != nil {
-				context.AbortWithStatusJSON(400, gin.H{"message": err.Error()})
-				return
-			}
-		}()
-
 		var admin_id string
 
 		for rowAdmin.Next() {

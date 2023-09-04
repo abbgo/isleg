@@ -1,9 +1,10 @@
 package controllers
 
 import (
-	"database/sql"
+	"context"
 	"fmt"
 	"github/abbgo/isleg/isleg-backend/config"
+	"github/abbgo/isleg/isleg-backend/helpers"
 	"github/abbgo/isleg/isleg-backend/models"
 	"github/abbgo/isleg/isleg-backend/pkg"
 	"math"
@@ -15,6 +16,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/gosimple/slug"
+	"github.com/jackc/pgx/v5"
 	"gopkg.in/guregu/null.v4"
 )
 
@@ -67,25 +69,14 @@ func CreateCategory(c *gin.Context) {
 	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
-	defer func() {
-		if err := db.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
+	defer db.Close()
 
 	var category models.Category
 	if err := c.BindJSON(&category); err != nil {
-		c.JSON(http.StatusBadRequest, err.Error())
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
 
@@ -94,10 +85,7 @@ func CreateCategory(c *gin.Context) {
 
 	// validate other data of category
 	if err := models.ValidateCategory("", category.ParentCategoryID.String, category.Image, "create"); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
 
@@ -109,40 +97,22 @@ func CreateCategory(c *gin.Context) {
 	}
 
 	// add data to categories table
-	resultCateor, err := db.Query("INSERT INTO categories (parent_category_id,image,is_home_category) VALUES ($1,$2,$3) RETURNING id", parent_category_id, category.Image, category.IsHomeCategory)
+	resultCateor, err := db.Query(context.Background(), "INSERT INTO categories (parent_category_id,image,is_home_category) VALUES ($1,$2,$3) RETURNING id", parent_category_id, category.Image, category.IsHomeCategory)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
-	defer func() {
-		if err := resultCateor.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
 
 	for resultCateor.Next() {
 		if err := resultCateor.Scan(&categoryID); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
 	}
 
 	langID, err := GetLangID("tm")
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
 	var nameTm string
@@ -152,23 +122,11 @@ func CreateCategory(c *gin.Context) {
 		if langID == v.LangID.UUID.String() {
 			nameTm = v.Name
 		}
-		result, err := db.Query("INSERT INTO translation_category (lang_id,category_id,name,slug) VALUES ($1,$2,$3,$4)", v.LangID, categoryID, v.Name, slug.MakeLang(v.Name, "en"))
+		_, err := db.Exec(context.Background(), "INSERT INTO translation_category (lang_id,category_id,name,slug) VALUES ($1,$2,$3,$4)", v.LangID, categoryID, v.Name, slug.MakeLang(v.Name, "en"))
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
-		defer func() {
-			if err := result.Close(); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
-				return
-			}
-		}()
 	}
 
 	if parent_category_id != "" {
@@ -192,28 +150,17 @@ func UpdateCategoryByID(c *gin.Context) {
 	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
-	defer func() {
-		if err := db.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
+	defer db.Close()
 
 	// get id from request parameter
 	ID := c.Param("id")
 
 	var category models.Category
 	if err := c.BindJSON(&category); err != nil {
-		c.JSON(http.StatusBadRequest, err.Error())
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
 
@@ -221,19 +168,13 @@ func UpdateCategoryByID(c *gin.Context) {
 	var parent_category_id interface{}
 
 	if err := models.ValidateCategory(ID, category.ParentCategoryID.String, "", "update"); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
 
 	if category.ParentCategoryID.String != "" && category.Image != "" {
 		if err := os.Remove(pkg.ServerPath + category.Image); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
 	}
@@ -245,47 +186,23 @@ func UpdateCategoryByID(c *gin.Context) {
 		parent_category_id = nil
 	}
 
-	var resultCategory *sql.Rows
 	if category.Image != "" {
-		result, err := db.Query("UPDATE categories SET parent_category_id = $1, image = $2, is_home_category = $3 WHERE id = $4", parent_category_id, category.Image, category.IsHomeCategory, ID)
+		_, err := db.Exec(context.Background(), "UPDATE categories SET parent_category_id = $1, image = $2, is_home_category = $3 WHERE id = $4", parent_category_id, category.Image, category.IsHomeCategory, ID)
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
-		resultCategory = result
 	} else {
-		result, err := db.Query("UPDATE categories SET parent_category_id = $1, is_home_category = $2 WHERE id = $3", parent_category_id, category.IsHomeCategory, ID)
+		_, err := db.Exec(context.Background(), "UPDATE categories SET parent_category_id = $1, is_home_category = $2 WHERE id = $3", parent_category_id, category.IsHomeCategory, ID)
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
-		resultCategory = result
 	}
-
-	// update data
-
-	defer func() {
-		if err := resultCategory.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
 
 	langID, err := GetLangID("tm")
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
 	var nameTm string
@@ -295,23 +212,11 @@ func UpdateCategoryByID(c *gin.Context) {
 		if langID == v.LangID.UUID.String() {
 			nameTm = v.Name
 		}
-		resultTRCate, err := db.Query("UPDATE translation_category SET name = $1 , slug = $4 WHERE lang_id = $2 AND category_id = $3", v.Name, v.LangID, ID, slug.MakeLang(v.Name, "en"))
+		_, err := db.Exec(context.Background(), "UPDATE translation_category SET name = $1 , slug = $4 WHERE lang_id = $2 AND category_id = $3", v.Name, v.LangID, ID, slug.MakeLang(v.Name, "en"))
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
-		defer func() {
-			if err := resultTRCate.Close(); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
-				return
-			}
-		}()
 	}
 
 	if parent_category_id != "" {
@@ -335,91 +240,45 @@ func GetCategoryByID(c *gin.Context) {
 	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
-	defer func() {
-		if err := db.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
+	defer db.Close()
 
 	// get id from request parameter
 	ID := c.Param("id")
 
 	// check id and get data from daabase
-	rowCategor, err := db.Query("SELECT id,parent_category_id,image,is_home_category FROM categories WHERE id = $1 AND deleted_at IS NULL", ID)
+	rowCategor, err := db.Query(context.Background(), "SELECT id,parent_category_id,image,is_home_category FROM categories WHERE id = $1 AND deleted_at IS NULL", ID)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
-	defer func() {
-		if err := rowCategor.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
 
 	var category models.Category
-
 	for rowCategor.Next() {
 		if err := rowCategor.Scan(&category.ID, &category.ParentCategoryID, &category.Image, &category.IsHomeCategory); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
 	}
 
 	if category.ID == "" {
-		c.JSON(http.StatusNotFound, gin.H{
-			"status":  false,
-			"message": "category not found",
-		})
+		helpers.HandleError(c, 404, "category not found")
 		return
 	}
 
-	rowsTrCategory, err := db.Query("SELECT lang_id,name FROM translation_category WHERE category_id = $1 AND deleted_at IS NULL", ID)
+	rowsTrCategory, err := db.Query(context.Background(), "SELECT lang_id,name FROM translation_category WHERE category_id = $1 AND deleted_at IS NULL", ID)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
-	defer func() {
-		if err := rowsTrCategory.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
 
 	var translations []models.TranslationCategory
-
 	for rowsTrCategory.Next() {
 		var translation models.TranslationCategory
 		if err := rowsTrCategory.Scan(&translation.LangID, &translation.Name); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
 		translations = append(translations, translation)
@@ -438,120 +297,60 @@ func GetCategoryByIDWithChild(c *gin.Context) {
 
 	langID, err := GetLangID("tm")
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
 
 	db, err := config.ConnDB()
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
-	defer func() {
-		if err := db.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
+	defer db.Close()
 
 	ID := c.Param("id")
 
 	// get all category where parent category id is null
-	rows, err := db.Query("SELECT c.id,c.image,tc.name FROM categories c LEFT JOIN translation_category tc ON c.id=tc.category_id WHERE tc.lang_id = $1 AND c.id = $2 AND c.parent_category_id IS NULL AND c.deleted_at IS NULL AND tc.deleted_at IS NULL ORDER BY c.created_at DESC", langID, ID)
+	rows, err := db.Query(context.Background(), "SELECT c.id,c.image,tc.name FROM categories c LEFT JOIN translation_category tc ON c.id=tc.category_id WHERE tc.lang_id = $1 AND c.id = $2 AND c.parent_category_id IS NULL AND c.deleted_at IS NULL AND tc.deleted_at IS NULL ORDER BY c.created_at DESC", langID, ID)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
-	defer func() {
-		if err := rows.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
+
 	var result ResultCategory
 	for rows.Next() {
 		if err := rows.Scan(&result.ID, &result.Image, &result.Name); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
 
 		// get all category where parent category id equal category id
-		rowss, err := db.Query("SELECT c.id,tc.name FROM categories c LEFT JOIN translation_category tc ON c.id=tc.category_id WHERE tc.lang_id = $1 AND c.parent_category_id = $2 AND c.deleted_at IS NULL AND tc.deleted_at IS NULL ORDER BY c.created_at DESC", langID, result.ID)
+		rowss, err := db.Query(context.Background(), "SELECT c.id,tc.name FROM categories c LEFT JOIN translation_category tc ON c.id=tc.category_id WHERE tc.lang_id = $1 AND c.parent_category_id = $2 AND c.deleted_at IS NULL AND tc.deleted_at IS NULL ORDER BY c.created_at DESC", langID, result.ID)
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
-		defer func() {
-			if err := rowss.Close(); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
-				return
-			}
-		}()
 
 		var resuls []ResultCategor
-
 		for rowss.Next() {
 			var resul ResultCategor
 			if err := rowss.Scan(&resul.ID, &resul.Name); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
+				helpers.HandleError(c, 400, err.Error())
 				return
 			}
 
 			// get all category where parent category id equal category id
-			rowsss, err := db.Query("SELECT c.id,tc.name FROM categories c LEFT JOIN translation_category tc ON c.id=tc.category_id WHERE tc.lang_id = $1 AND c.parent_category_id =$2 AND c.deleted_at IS NULL AND tc.deleted_at IS NULL ORDER BY c.created_at DESC", langID, resul.ID)
+			rowsss, err := db.Query(context.Background(), "SELECT c.id,tc.name FROM categories c LEFT JOIN translation_category tc ON c.id=tc.category_id WHERE tc.lang_id = $1 AND c.parent_category_id =$2 AND c.deleted_at IS NULL AND tc.deleted_at IS NULL ORDER BY c.created_at DESC", langID, resul.ID)
 			if err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
+				helpers.HandleError(c, 400, err.Error())
 				return
 			}
-			defer func() {
-				if err := rowsss.Close(); err != nil {
-					c.JSON(http.StatusBadRequest, gin.H{
-						"status":  false,
-						"message": err.Error(),
-					})
-					return
-				}
-			}()
 
 			var resus []ResultCatego
-
 			for rowsss.Next() {
 				var resu ResultCatego
 				if err := rowsss.Scan(&resu.ID, &resu.Name); err != nil {
-					c.JSON(http.StatusBadRequest, gin.H{
-						"status":  false,
-						"message": err.Error(),
-					})
+					helpers.HandleError(c, 400, err.Error())
 					return
 				}
 
@@ -575,121 +374,59 @@ func GetAllCategory(c *gin.Context) {
 
 	langID, err := GetLangID("tm")
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
 
 	db, err := config.ConnDB()
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
-	defer func() {
-		if err := db.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
+	defer db.Close()
 
 	// get all category where parent category id is null
-	rows, err := db.Query("SELECT c.id,c.image,tc.name FROM categories c LEFT JOIN translation_category tc ON c.id=tc.category_id INNER JOIN category_product cp ON c.id=cp.category_id WHERE tc.lang_id = $1 AND c.parent_category_id IS NULL AND cp.deleted_at IS NOT NULL ORDER BY c.created_at DESC", langID)
+	rows, err := db.Query(context.Background(), "SELECT c.id,c.image,tc.name FROM categories c LEFT JOIN translation_category tc ON c.id=tc.category_id INNER JOIN category_product cp ON c.id=cp.category_id WHERE tc.lang_id = $1 AND c.parent_category_id IS NULL AND cp.deleted_at IS NOT NULL ORDER BY c.created_at DESC", langID)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
-	defer func() {
-		if err := rows.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
 
 	var results []ResultCategory
-
 	for rows.Next() {
 		var result ResultCategory
 		if err := rows.Scan(&result.ID, &result.Image, &result.Name); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
 
 		// get all category where parent category id equal category id
-		rowss, err := db.Query("SELECT c.id,tc.name FROM categories c LEFT JOIN translation_category tc ON c.id=tc.category_id INNER JOIN category_product cp ON cp.category_id=c.id WHERE tc.lang_id = $1 AND c.parent_category_id = $2 AND cp.deleted_at IS NOT NULL ORDER BY c.created_at DESC", langID, result.ID)
+		rowss, err := db.Query(context.Background(), "SELECT c.id,tc.name FROM categories c LEFT JOIN translation_category tc ON c.id=tc.category_id INNER JOIN category_product cp ON cp.category_id=c.id WHERE tc.lang_id = $1 AND c.parent_category_id = $2 AND cp.deleted_at IS NOT NULL ORDER BY c.created_at DESC", langID, result.ID)
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
-		defer func() {
-			if err := rowss.Close(); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
-				return
-			}
-		}()
 
 		var resuls []ResultCategor
-
 		for rowss.Next() {
 			var resul ResultCategor
 			if err := rowss.Scan(&resul.ID, &resul.Name); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
+				helpers.HandleError(c, 400, err.Error())
 				return
 			}
 
 			// get all category where parent category id equal category id
-			rowsss, err := db.Query("SELECT categories.id,translation_category.name FROM categories LEFT JOIN translation_category ON categories.id=translation_category.category_id WHERE translation_category.lang_id = $1 AND categories.parent_category_id =$2 ORDER BY categories.created_at DESC", langID, resul.ID)
+			rowsss, err := db.Query(context.Background(), "SELECT categories.id,translation_category.name FROM categories LEFT JOIN translation_category ON categories.id=translation_category.category_id WHERE translation_category.lang_id = $1 AND categories.parent_category_id =$2 ORDER BY categories.created_at DESC", langID, resul.ID)
 			if err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
+				helpers.HandleError(c, 400, err.Error())
 				return
 			}
-			defer func() {
-				if err := rowsss.Close(); err != nil {
-					c.JSON(http.StatusBadRequest, gin.H{
-						"status":  false,
-						"message": err.Error(),
-					})
-					return
-				}
-			}()
 
 			var resus []ResultCatego
-
 			for rowsss.Next() {
 				var resu ResultCatego
 				if err := rowsss.Scan(&resu.ID, &resu.Name); err != nil {
-					c.JSON(http.StatusBadRequest, gin.H{
-						"status":  false,
-						"message": err.Error(),
-					})
+					helpers.HandleError(c, 400, err.Error())
 					return
 				}
 
@@ -715,121 +452,59 @@ func GetDeletedCategories(c *gin.Context) {
 
 	langID, err := GetLangID("tm")
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
 
 	db, err := config.ConnDB()
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
-	defer func() {
-		if err := db.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
+	defer db.Close()
 
 	// get all category where parent category id is null
-	rows, err := db.Query("SELECT c.id,c.image,tc.name FROM categories c LEFT JOIN translation_category tc ON c.id=tc.category_id WHERE tc.lang_id = $1 AND c.deleted_at IS NOT NULL ORDER BY c.deleted_at DESC", langID)
+	rows, err := db.Query(context.Background(), "SELECT c.id,c.image,tc.name FROM categories c LEFT JOIN translation_category tc ON c.id=tc.category_id WHERE tc.lang_id = $1 AND c.deleted_at IS NOT NULL ORDER BY c.deleted_at DESC", langID)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
-	defer func() {
-		if err := rows.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
 
 	var results []ResultCategory
-
 	for rows.Next() {
 		var result ResultCategory
 		if err := rows.Scan(&result.ID, &result.Image, &result.Name); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
 
 		// get all category where parent category id equal category id
-		rowss, err := db.Query("SELECT c.id,tc.name FROM categories c LEFT JOIN translation_category tc ON c.id=tc.category_id WHERE tc.lang_id = $1 AND c.parent_category_id = $2 AND c.deleted_at IS NOT NULL ORDER BY c.deleted_at DESC", langID, result.ID)
+		rowss, err := db.Query(context.Background(), "SELECT c.id,tc.name FROM categories c LEFT JOIN translation_category tc ON c.id=tc.category_id WHERE tc.lang_id = $1 AND c.parent_category_id = $2 AND c.deleted_at IS NOT NULL ORDER BY c.deleted_at DESC", langID, result.ID)
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
-		defer func() {
-			if err := rowss.Close(); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
-				return
-			}
-		}()
 
 		var resuls []ResultCategor
-
 		for rowss.Next() {
 			var resul ResultCategor
 			if err := rowss.Scan(&resul.ID, &resul.Name); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
+				helpers.HandleError(c, 400, err.Error())
 				return
 			}
 
 			// get all category where parent category id equal category id
-			rowsss, err := db.Query("SELECT c.id,tc.name FROM categories c LEFT JOIN translation_category tc ON c.id=tc.category_id WHERE tc.lang_id = $1 AND c.parent_category_id =$2 AND c.deleted_at IS NOT NULL ORDER BY c.deleted_at DESC", langID, resul.ID)
+			rowsss, err := db.Query(context.Background(), "SELECT c.id,tc.name FROM categories c LEFT JOIN translation_category tc ON c.id=tc.category_id WHERE tc.lang_id = $1 AND c.parent_category_id =$2 AND c.deleted_at IS NOT NULL ORDER BY c.deleted_at DESC", langID, resul.ID)
 			if err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
+				helpers.HandleError(c, 400, err.Error())
 				return
 			}
-			defer func() {
-				if err := rowsss.Close(); err != nil {
-					c.JSON(http.StatusBadRequest, gin.H{
-						"status":  false,
-						"message": err.Error(),
-					})
-					return
-				}
-			}()
 
 			var resus []ResultCatego
-
 			for rowsss.Next() {
 				var resu ResultCatego
 				if err := rowsss.Scan(&resu.ID, &resu.Name); err != nil {
-					c.JSON(http.StatusBadRequest, gin.H{
-						"status":  false,
-						"message": err.Error(),
-					})
+					helpers.HandleError(c, 400, err.Error())
 					return
 				}
 
@@ -855,10 +530,7 @@ func GetCategories(c *gin.Context) {
 
 	langID, err := GetLangID("tm")
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
 	searchQuery := c.Query("search")
@@ -875,10 +547,7 @@ func GetCategories(c *gin.Context) {
 	if limitStr != "" {
 		limit, err = strconv.ParseUint(limitStr, 10, 64)
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
 	}
@@ -889,10 +558,7 @@ func GetCategories(c *gin.Context) {
 	if pageStr != "" {
 		page, err = strconv.ParseUint(pageStr, 10, 64)
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
 	}
@@ -900,10 +566,7 @@ func GetCategories(c *gin.Context) {
 	// get all category from category controller
 	categories, countOfCatagories, err := GetAllCategoryForHeader(langID, search, searchStr, uint(limit), uint(page))
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
 
@@ -919,19 +582,13 @@ func GetCategoriesForAdmin(c *gin.Context) {
 
 	langID, err := GetLangID("tm")
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
 
 	categories, _, err := GetAllCategoryForHeader(langID, "", "", 0, 0)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
 
@@ -948,12 +605,7 @@ func GetAllCategoryForHeader(langID, search, searchStr string, limit, page uint)
 	if err != nil {
 		return []ResultCategory{}, 0, err
 	}
-	defer func() ([]ResultCategory, uint, error) {
-		if err := db.Close(); err != nil {
-			return []ResultCategory{}, 0, err
-		}
-		return []ResultCategory{}, 0, nil
-	}()
+	defer db.Close()
 
 	var countOfCategories uint
 	var offset interface{}
@@ -964,56 +616,41 @@ func GetAllCategoryForHeader(langID, search, searchStr string, limit, page uint)
 	}
 
 	// get all category where parent category id is null
-	var rows, rowsCount *sql.Rows
+	var rows, rowsCount pgx.Rows
 	if search == "" {
 		if offset != nil {
-			rowsCount, err = db.Query("SELECT COUNT(*) FROM categories c LEFT JOIN translation_category tc ON c.id=tc.category_id WHERE tc.lang_id = $1 AND c.parent_category_id IS NULL AND tc.deleted_at IS NULL AND c.deleted_at IS NULL", langID)
+			rowsCount, err = db.Query(context.Background(), "SELECT COUNT(*) FROM categories c LEFT JOIN translation_category tc ON c.id=tc.category_id WHERE tc.lang_id = $1 AND c.parent_category_id IS NULL AND tc.deleted_at IS NULL AND c.deleted_at IS NULL", langID)
 			if err != nil {
 				return []ResultCategory{}, 0, err
 			}
 
-			rows, err = db.Query("SELECT c.id,c.image,tc.name FROM categories c LEFT JOIN translation_category tc ON c.id=tc.category_id WHERE tc.lang_id = $1 AND c.parent_category_id IS NULL AND tc.deleted_at IS NULL AND c.deleted_at IS NULL ORDER BY c.created_at DESC LIMIT $2 OFFSET $3", langID, limit, offset)
+			rows, err = db.Query(context.Background(), "SELECT c.id,c.image,tc.name FROM categories c LEFT JOIN translation_category tc ON c.id=tc.category_id WHERE tc.lang_id = $1 AND c.parent_category_id IS NULL AND tc.deleted_at IS NULL AND c.deleted_at IS NULL ORDER BY c.created_at DESC LIMIT $2 OFFSET $3", langID, limit, offset)
 			if err != nil {
 				return []ResultCategory{}, 0, err
 			}
 		} else {
-			rows, err = db.Query("SELECT c.id,c.image,tc.name FROM categories c LEFT JOIN translation_category tc ON c.id=tc.category_id WHERE tc.lang_id = $1 AND c.parent_category_id IS NULL AND tc.deleted_at IS NULL AND c.deleted_at IS NULL ORDER BY c.created_at DESC", langID)
+			rows, err = db.Query(context.Background(), "SELECT c.id,c.image,tc.name FROM categories c LEFT JOIN translation_category tc ON c.id=tc.category_id WHERE tc.lang_id = $1 AND c.parent_category_id IS NULL AND tc.deleted_at IS NULL AND c.deleted_at IS NULL ORDER BY c.created_at DESC", langID)
 			if err != nil {
 				return []ResultCategory{}, 0, err
 			}
 		}
 	} else {
 		if offset != nil {
-			rowsCount, err = db.Query("SELECT COUNT(DISTINCT(c.id)) FROM categories c LEFT JOIN translation_category tc ON c.id=tc.category_id WHERE to_tsvector(tc.slug) @@ to_tsquery($2) OR tc.slug LIKE $3 AND tc.lang_id = $1 AND c.parent_category_id IS NULL AND tc.deleted_at IS NULL AND c.deleted_at IS NULL", langID, search, searchStr)
+			rowsCount, err = db.Query(context.Background(), "SELECT COUNT(DISTINCT(c.id)) FROM categories c LEFT JOIN translation_category tc ON c.id=tc.category_id WHERE to_tsvector(tc.slug) @@ to_tsquery($2) OR tc.slug LIKE $3 AND tc.lang_id = $1 AND c.parent_category_id IS NULL AND tc.deleted_at IS NULL AND c.deleted_at IS NULL", langID, search, searchStr)
 			if err != nil {
 				return []ResultCategory{}, 0, err
 			}
 
-			rows, err = db.Query("SELECT DISTINCT ON (c.id,c.created_at) c.id,c.image,tc.name FROM categories c LEFT JOIN translation_category tc ON c.id=tc.category_id WHERE to_tsvector(tc.slug) @@ to_tsquery($2) OR tc.slug LIKE $3 AND tc.lang_id = $1 AND c.parent_category_id IS NULL AND tc.deleted_at IS NULL AND c.deleted_at IS NULL ORDER BY c.created_at DESC LIMIT $4 OFFSET $5", langID, search, searchStr, limit, offset)
+			rows, err = db.Query(context.Background(), "SELECT DISTINCT ON (c.id,c.created_at) c.id,c.image,tc.name FROM categories c LEFT JOIN translation_category tc ON c.id=tc.category_id WHERE to_tsvector(tc.slug) @@ to_tsquery($2) OR tc.slug LIKE $3 AND tc.lang_id = $1 AND c.parent_category_id IS NULL AND tc.deleted_at IS NULL AND c.deleted_at IS NULL ORDER BY c.created_at DESC LIMIT $4 OFFSET $5", langID, search, searchStr, limit, offset)
 			if err != nil {
 				return []ResultCategory{}, 0, err
 			}
 		} else {
-			rows, err = db.Query("SELECT DISTINCT ON (c.id,c.created_at) c.id,c.image,tc.name FROM categories c LEFT JOIN translation_category tc ON c.id=tc.category_id WHERE to_tsvector(tc.slug) @@ to_tsquery($2) OR tc.slug LIKE $3 AND tc.lang_id = $1 AND c.parent_category_id IS NULL AND tc.deleted_at IS NULL AND c.deleted_at IS NULL ORDER BY c.created_at DESC", langID, search, searchStr)
+			rows, err = db.Query(context.Background(), "SELECT DISTINCT ON (c.id,c.created_at) c.id,c.image,tc.name FROM categories c LEFT JOIN translation_category tc ON c.id=tc.category_id WHERE to_tsvector(tc.slug) @@ to_tsquery($2) OR tc.slug LIKE $3 AND tc.lang_id = $1 AND c.parent_category_id IS NULL AND tc.deleted_at IS NULL AND c.deleted_at IS NULL ORDER BY c.created_at DESC", langID, search, searchStr)
 			if err != nil {
 				return []ResultCategory{}, 0, err
 			}
 		}
-	}
-	defer func() ([]ResultCategory, uint, error) {
-		if err := rows.Close(); err != nil {
-			return []ResultCategory{}, 0, err
-		}
-		return []ResultCategory{}, 0, nil
-	}()
-
-	if offset != nil {
-		defer func() ([]ResultCategory, uint, error) {
-			if err := rowsCount.Close(); err != nil {
-				return []ResultCategory{}, 0, err
-			}
-			return []ResultCategory{}, 0, nil
-		}()
 	}
 
 	var results []ResultCategory
@@ -1025,19 +662,12 @@ func GetAllCategoryForHeader(langID, search, searchStr string, limit, page uint)
 		}
 
 		// get all category where parent category id equal category id
-		rowss, err := db.Query("SELECT c.id,tc.name FROM categories c LEFT JOIN translation_category tc ON c.id=tc.category_id WHERE tc.lang_id = $1 AND c.parent_category_id = $2 AND tc.deleted_at IS NULL AND c.deleted_at IS NULL ORDER BY c.created_at DESC", langID, result.ID)
+		rowss, err := db.Query(context.Background(), "SELECT c.id,tc.name FROM categories c LEFT JOIN translation_category tc ON c.id=tc.category_id WHERE tc.lang_id = $1 AND c.parent_category_id = $2 AND tc.deleted_at IS NULL AND c.deleted_at IS NULL ORDER BY c.created_at DESC", langID, result.ID)
 		if err != nil {
 			return []ResultCategory{}, 0, err
 		}
-		defer func() ([]ResultCategory, uint, error) {
-			if err := rowss.Close(); err != nil {
-				return []ResultCategory{}, 0, err
-			}
-			return []ResultCategory{}, 0, nil
-		}()
 
 		var resuls []ResultCategor
-
 		for rowss.Next() {
 			var resul ResultCategor
 			if err := rowss.Scan(&resul.ID, &resul.Name); err != nil {
@@ -1045,19 +675,12 @@ func GetAllCategoryForHeader(langID, search, searchStr string, limit, page uint)
 			}
 
 			// get all category where parent category id equal category id
-			rowsss, err := db.Query("SELECT c.id,tc.name FROM categories c LEFT JOIN translation_category tc ON c.id=tc.category_id WHERE tc.lang_id = $1 AND c.parent_category_id =$2 AND tc.deleted_at IS NULL AND c.deleted_at IS NULL ORDER BY c.created_at DESC", langID, resul.ID)
+			rowsss, err := db.Query(context.Background(), "SELECT c.id,tc.name FROM categories c LEFT JOIN translation_category tc ON c.id=tc.category_id WHERE tc.lang_id = $1 AND c.parent_category_id =$2 AND tc.deleted_at IS NULL AND c.deleted_at IS NULL ORDER BY c.created_at DESC", langID, resul.ID)
 			if err != nil {
 				return []ResultCategory{}, 0, err
 			}
-			defer func() ([]ResultCategory, uint, error) {
-				if err := rowsss.Close(); err != nil {
-					return []ResultCategory{}, 0, err
-				}
-				return []ResultCategory{}, 0, nil
-			}()
 
 			var resus []ResultCatego
-
 			for rowsss.Next() {
 				var resu ResultCatego
 				if err := rowsss.Scan(&resu.ID, &resu.Name); err != nil {
@@ -1094,99 +717,45 @@ func DeleteCategoryByID(c *gin.Context) {
 	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
-	defer func() {
-		if err := db.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
+	defer db.Close()
 
 	// get id from request parameter
 	ID := c.Param("id")
 
 	// check id
-	rowCategor, err := db.Query("SELECT id FROM categories WHERE id = $1 AND deleted_at IS NULL", ID)
+	rowCategor, err := db.Query(context.Background(), "SELECT id FROM categories WHERE id = $1 AND deleted_at IS NULL", ID)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
-	defer func() {
-		if err := rowCategor.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
 
 	var category_id string
-
 	for rowCategor.Next() {
 		if err := rowCategor.Scan(&category_id); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
 	}
 
 	if category_id == "" {
-		c.JSON(http.StatusNotFound, gin.H{
-			"status":  false,
-			"message": "category not found",
-		})
+		helpers.HandleError(c, 404, "category not found")
 		return
 	}
 
-	resultProc, err := db.Query("CALL delete_category($1)", ID)
+	_, err = db.Exec(context.Background(), "CALL delete_category($1)", ID)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
-	defer func() {
-		if err := resultProc.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
 
-	resultPROC, err := db.Query("CALL after_delete_category($1)", ID)
+	_, err = db.Exec(context.Background(), "CALL after_delete_category($1)", ID)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
-	defer func() {
-		if err := resultPROC.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
@@ -1200,99 +769,45 @@ func RestoreCategoryByID(c *gin.Context) {
 	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
-	defer func() {
-		if err := db.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
+	defer db.Close()
 
 	// get id from request parameter
 	ID := c.Param("id")
 
 	// check ids
-	rowCategor, err := db.Query("SELECT id FROM categories WHERE id = $1 AND deleted_at IS NOT NULL", ID)
+	rowCategor, err := db.Query(context.Background(), "SELECT id FROM categories WHERE id = $1 AND deleted_at IS NOT NULL", ID)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
-	defer func() {
-		if err := rowCategor.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
 
 	var category_id string
-
 	for rowCategor.Next() {
 		if err := rowCategor.Scan(&category_id); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
 	}
 
 	if category_id == "" {
-		c.JSON(http.StatusNotFound, gin.H{
-			"status":  false,
-			"message": "category not found",
-		})
+		helpers.HandleError(c, 404, "category not found")
 		return
 	}
 
-	resultProc, err := db.Query("CALL restore_category($1)", ID)
+	_, err = db.Exec(context.Background(), "CALL restore_category($1)", ID)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
-	defer func() {
-		if err := resultProc.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
 
-	resultPROC, err := db.Query("CALL after_restore_category($1)", ID)
+	_, err = db.Exec(context.Background(), "CALL after_restore_category($1)", ID)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
-	defer func() {
-		if err := resultPROC.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
@@ -1306,93 +821,48 @@ func DeletePermanentlyCategoryByID(c *gin.Context) {
 	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
-	defer func() {
-		if err := db.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
+	defer db.Close()
 
 	// get id from request parameter
 	ID := c.Param("id")
 
 	// check id and get image of categories
-	rowCategor, err := db.Query("SELECT id,image FROM categories WHERE id = $1 AND deleted_at IS NOT NULL", ID)
+	rowCategor, err := db.Query(context.Background(), "SELECT id,image FROM categories WHERE id = $1 AND deleted_at IS NOT NULL", ID)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
-	defer func() {
-		if err := rowCategor.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
 
 	var category_id, image string
-
 	for rowCategor.Next() {
 		if err := rowCategor.Scan(&category_id, &image); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
 	}
 
 	if category_id == "" {
-		c.JSON(http.StatusNotFound, gin.H{
-			"status":  false,
-			"message": "category not found",
-		})
+		helpers.HandleError(c, 404, "category not found")
 		return
 	}
 
 	// kategoriyanyn suraty uploads papkadan pozulyar
 	if image != "" {
 		if err := os.Remove(pkg.ServerPath + image); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
 	}
 
 	// kategoriyanyn produktalarynyn main suratlaryn direktlary bazadan alynyar
-	rowsMainImageProduct, err := db.Query("SELECT p.id,p.main_image FROM products p INNER JOIN category_product c ON c.product_id=p.id WHERE c.category_id = $1", ID)
+	rowsMainImageProduct, err := db.Query(context.Background(), "SELECT p.id,p.main_image FROM products p INNER JOIN category_product c ON c.product_id=p.id WHERE c.category_id = $1", ID)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
-	defer func() {
-		if err := rowsMainImageProduct.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
 
 	var mainImages []models.Product
 
@@ -1400,10 +870,7 @@ func DeletePermanentlyCategoryByID(c *gin.Context) {
 		var mainImage models.Product
 
 		if err := rowsMainImageProduct.Scan(&mainImage.ID, &mainImage.MainImage); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
 
@@ -1413,43 +880,24 @@ func DeletePermanentlyCategoryByID(c *gin.Context) {
 	// kategoriyanyn produktalarynyn main suratlary uploads papkadan pozulyar
 	for _, v := range mainImages {
 		if err := os.Remove(pkg.ServerPath + v.MainImage); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
 	}
 
 	// kategoriyanyn produktalarynyn suratlarynyn direktlary bazadan alynyar
-	rowsImagesProduct, err := db.Query("SELECT i.image FROM products p INNER JOIN category_product c ON c.product_id=p.id INNER JOIN images i ON i.product_id = p.id WHERE c.category_id = $1", ID)
+	rowsImagesProduct, err := db.Query(context.Background(), "SELECT i.image FROM products p INNER JOIN category_product c ON c.product_id=p.id INNER JOIN images i ON i.product_id = p.id WHERE c.category_id = $1", ID)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
-	defer func() {
-		if err := rowsImagesProduct.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
 
 	var images []models.Images
-
 	for rowsImagesProduct.Next() {
 		var image models.Images
 
 		if err := rowsImagesProduct.Scan(&image.Image); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
 
@@ -1459,143 +907,64 @@ func DeletePermanentlyCategoryByID(c *gin.Context) {
 	// kategoriyanyn produktalarynyn suratlaryny uploads papkadan pozyaryn
 	for _, v := range images {
 		if err := os.Remove(pkg.ServerPath + v.Image); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
 	}
 
 	// kategoriya degisli harytlar bazadan pozulyar
-	resultProduct, err := db.Query("DELETE FROM products USING category_product WHERE category_product.product_id = products.id AND category_product.category_id = $1", category_id)
+	_, err = db.Exec(context.Background(), "DELETE FROM products USING category_product WHERE category_product.product_id = products.id AND category_product.category_id = $1", category_id)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
-	defer func() {
-		if err := resultProduct.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
 
 	// haryt pozulanda sol haryda degisli likelar hem pozulmaly
 	for _, v := range mainImages {
-		resultLike, err := db.Query("DELETE FROM likes WHERE product_id = $1", v.ID)
+		_, err := db.Exec(context.Background(), "DELETE FROM likes WHERE product_id = $1", v.ID)
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
-		defer func() {
-			if err := resultLike.Close(); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
-				return
-			}
-		}()
 	}
 
 	// haryt pozulanda sol haryda degisli sebetdaki harytlar hem pozulmaly
 	for _, v := range mainImages {
-		resultCart, err := db.Query("DELETE FROM cart WHERE product_id = $1", v.ID)
+		_, err := db.Exec(context.Background(), "DELETE FROM cart WHERE product_id = $1", v.ID)
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
-		defer func() {
-			if err := resultCart.Close(); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
-				return
-			}
-		}()
 	}
 
 	// haryt pozulanda sol haryda degisli sargyt edilen harytlar hem pozulmaly
 	for _, v := range mainImages {
-		resultOrderedProduct, err := db.Query("DELETE FROM ordered_products WHERE product_id = $1", v.ID)
+		_, err := db.Exec(context.Background(), "DELETE FROM ordered_products WHERE product_id = $1", v.ID)
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
-		defer func() {
-			if err := resultOrderedProduct.Close(); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
-				return
-			}
-		}()
 	}
 
 	// kategoriya pozulanda category_product tablisadaky maglumatlar hem pozulmaly
-	resultCatProc, err := db.Query("DELETE FROM category_product WHERE category_id = $1", category_id)
+	_, err = db.Exec(context.Background(), "DELETE FROM category_product WHERE category_id = $1", category_id)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
-	defer func() {
-		if err := resultCatProc.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
 
 	// kategoriyanyn child kategoriyalarynyn id - leri alynyar database - den
-	rowChildCategory, err := db.Query("SELECT id FROM categories WHERE parent_category_id = $1", ID)
+	rowChildCategory, err := db.Query(context.Background(), "SELECT id FROM categories WHERE parent_category_id = $1", ID)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
-	defer func() {
-		if err := rowChildCategory.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
 
 	var childCategoryIDS []string
-
 	for rowChildCategory.Next() {
 		var childCategoryID string
 		if err := rowChildCategory.Scan(&childCategoryID); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
 
@@ -1604,34 +973,18 @@ func DeletePermanentlyCategoryByID(c *gin.Context) {
 
 	// child kategoriya degisli harytlaryn suratlarynyn direktleri bazadan alynyar we uploads papkadam pozulyar
 	for _, v := range childCategoryIDS {
-		rowPrdcs, err := db.Query("SELECT p.id,p.main_image FROM products p INNER JOIN category_product c ON c.product_id=p.id WHERE c.category_id = $1", v)
+		rowPrdcs, err := db.Query(context.Background(), "SELECT p.id,p.main_image FROM products p INNER JOIN category_product c ON c.product_id=p.id WHERE c.category_id = $1", v)
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
-		defer func() {
-			if err := rowPrdcs.Close(); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
-				return
-			}
-		}()
 
 		var childMainImages []models.Product
-
-		for rowsMainImageProduct.Next() {
+		for rowPrdcs.Next() {
 			var childMainImage models.Product
 
-			if err := rowsMainImageProduct.Scan(&childMainImage.ID, &childMainImage.MainImage); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
+			if err := rowPrdcs.Scan(&childMainImage.ID, &childMainImage.MainImage); err != nil {
+				helpers.HandleError(c, 400, err.Error())
 				return
 			}
 
@@ -1640,42 +993,23 @@ func DeletePermanentlyCategoryByID(c *gin.Context) {
 
 		for _, v := range childMainImages {
 			if err := os.Remove(pkg.ServerPath + v.MainImage); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
+				helpers.HandleError(c, 400, err.Error())
 				return
 			}
 		}
 
-		rowsChildImagesProduct, err := db.Query("SELECT i.image FROM products p INNER JOIN category_product c ON c.product_id=p.id INNER JOIN images i ON i.product_id = p.id WHERE c.category_id = $1", v)
+		rowsChildImagesProduct, err := db.Query(context.Background(), "SELECT i.image FROM products p INNER JOIN category_product c ON c.product_id=p.id INNER JOIN images i ON i.product_id = p.id WHERE c.category_id = $1", v)
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
-		defer func() {
-			if err := rowsChildImagesProduct.Close(); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
-				return
-			}
-		}()
 
 		var childImages []models.Images
-
 		for rowsChildImagesProduct.Next() {
 			var childImage models.Images
 
 			if err := rowsChildImagesProduct.Scan(&childImage.Image); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
+				helpers.HandleError(c, 400, err.Error())
 				return
 			}
 
@@ -1684,135 +1018,60 @@ func DeletePermanentlyCategoryByID(c *gin.Context) {
 
 		for _, v := range childImages {
 			if err := os.Remove(pkg.ServerPath + v.Image); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
+				helpers.HandleError(c, 400, err.Error())
 				return
 			}
 		}
 
 		// child kategoriya degisli harytlar bazadan pozulyar
-		childresultProduct, err := db.Query("DELETE FROM products USING category_product WHERE category_product.product_id = products.id AND category_product.category_id = $1", v)
+		_, err = db.Exec(context.Background(), "DELETE FROM products USING category_product WHERE category_product.product_id = products.id AND category_product.category_id = $1", v)
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
-		defer func() {
-			if err := childresultProduct.Close(); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
-				return
-			}
-		}()
 
 		// haryt pozulanda sol haryda degisli likelar hem pozulmaly
 		for _, v := range childMainImages {
-			resultLike, err := db.Query("DELETE FROM likes WHERE product_id = $1", v.ID)
+			_, err := db.Exec(context.Background(), "DELETE FROM likes WHERE product_id = $1", v.ID)
 			if err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
+				helpers.HandleError(c, 400, err.Error())
 				return
 			}
-			defer func() {
-				if err := resultLike.Close(); err != nil {
-					c.JSON(http.StatusBadRequest, gin.H{
-						"status":  false,
-						"message": err.Error(),
-					})
-					return
-				}
-			}()
 		}
 
 		// haryt pozulanda sol haryda degisli sebetdaki harytlar hem pozulmaly
 		for _, v := range childMainImages {
-			resultCart, err := db.Query("DELETE FROM cart WHERE product_id = $1", v.ID)
+			_, err := db.Exec(context.Background(), "DELETE FROM cart WHERE product_id = $1", v.ID)
 			if err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
+				helpers.HandleError(c, 400, err.Error())
 				return
 			}
-			defer func() {
-				if err := resultCart.Close(); err != nil {
-					c.JSON(http.StatusBadRequest, gin.H{
-						"status":  false,
-						"message": err.Error(),
-					})
-					return
-				}
-			}()
 		}
 
 		// haryt pozulanda sol haryda degisli sargyt edilen harytlar hem pozulmaly
 		for _, v := range childMainImages {
-			resultOrderedProduct, err := db.Query("DELETE FROM ordered_products WHERE product_id = $1", v.ID)
+			_, err := db.Exec(context.Background(), "DELETE FROM ordered_products WHERE product_id = $1", v.ID)
 			if err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
+				helpers.HandleError(c, 400, err.Error())
 				return
 			}
-			defer func() {
-				if err := resultOrderedProduct.Close(); err != nil {
-					c.JSON(http.StatusBadRequest, gin.H{
-						"status":  false,
-						"message": err.Error(),
-					})
-					return
-				}
-			}()
 		}
 
 		// kategoriya pozulanda category_product tablisadaky maglumatlar hem pozulmaly
-		resultCatProc, err := db.Query("DELETE FROM category_product WHERE category_id = $1", v)
+		_, err = db.Exec(context.Background(), "DELETE FROM category_product WHERE category_id = $1", v)
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
-		defer func() {
-			if err := resultCatProc.Close(); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
-				return
-			}
-		}()
 
 	}
 
 	// in sonunda kategpriyanyn ozi pozulyar
-	resutCateg, err := db.Query("DELETE FROM categories WHERE id = $1", ID)
+	_, err = db.Exec(context.Background(), "DELETE FROM categories WHERE id = $1", ID)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
-	defer func() {
-		if err := resutCateg.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
@@ -1825,66 +1084,40 @@ func GetOneCategoryWithProducts(c *gin.Context) {
 
 	db, err := config.ConnDB()
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
-	defer func() {
-		if err := db.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
+	defer db.Close()
 
 	var countOfProducts uint64
 
 	langID, err := CheckLanguage(c)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
 
 	// get limit from param
 	limitStr := c.Param("limit")
 	if limitStr == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": "limit is required",
-		})
+		helpers.HandleError(c, 400, "limit is required")
 		return
 	}
 	limit, err := strconv.ParseUint(limitStr, 10, 64)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
 
 	// get page from param
 	pageStr := c.Param("page")
 	if pageStr == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": "page is required",
-		})
+		helpers.HandleError(c, 400, "page is required")
 		return
 	}
 	page, err := strconv.ParseUint(pageStr, 10, 64)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
 
@@ -1893,103 +1126,53 @@ func GetOneCategoryWithProducts(c *gin.Context) {
 	categoryID := c.Param("id")
 
 	// get category where id equal categiryID
-	categoryRow, err := db.Query("SELECT c.id,c.image,t.name FROM categories c LEFT JOIN translation_category t ON c.id=t.category_id WHERE t.lang_id = $1 AND c.id = $2 AND c.deleted_at IS NULL AND t.deleted_at IS NULL", langID, categoryID)
+	categoryRow, err := db.Query(context.Background(), "SELECT c.id,c.image,t.name FROM categories c LEFT JOIN translation_category t ON c.id=t.category_id WHERE t.lang_id = $1 AND c.id = $2 AND c.deleted_at IS NULL AND t.deleted_at IS NULL", langID, categoryID)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
-	defer func() {
-		if err := categoryRow.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
 
 	var category Category
-
 	for categoryRow.Next() {
 		if err := categoryRow.Scan(&category.ID, &category.Image, &category.Name); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
 
 		if category.ID == "" {
-			c.JSON(http.StatusNotFound, gin.H{
-				"status":  false,
-				"message": "category not found",
-			})
+			helpers.HandleError(c, 404, "category not found")
 			return
 		}
 
 		// get count product where product_id equal categoryID
-		productCount, err := db.Query("SELECT COUNT(DISTINCT p.id) FROM products p LEFT JOIN category_product c ON p.id=c.product_id WHERE c.category_id = $1 AND p.amount > 0 AND p.limit_amount > 0 AND p.deleted_at IS NULL AND c.deleted_at IS NULL", categoryID)
+		productCount, err := db.Query(context.Background(), "SELECT COUNT(DISTINCT p.id) FROM products p LEFT JOIN category_product c ON p.id=c.product_id WHERE c.category_id = $1 AND p.amount > 0 AND p.limit_amount > 0 AND p.deleted_at IS NULL AND c.deleted_at IS NULL", categoryID)
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
-		defer func() {
-			if err := productCount.Close(); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
-				return
-			}
-		}()
 
 		for productCount.Next() {
 			if err := productCount.Scan(&countOfProducts); err != nil {
 				if err != nil {
-					c.JSON(http.StatusBadRequest, gin.H{
-						"status":  false,
-						"message": err.Error(),
-					})
+					helpers.HandleError(c, 400, err.Error())
 					return
 				}
 			}
 		}
 
 		// get all product where category id equal categoryID
-		productRows, err := db.Query("SELECT DISTINCT ON (p.created_at) p.id,p.price,p.old_price,p.limit_amount,p.is_new,p.amount,p.main_image,benefit FROM products p LEFT JOIN category_product c ON p.id=c.product_id WHERE c.category_id = $1 AND p.amount > 0 AND p.limit_amount > 0 AND p.deleted_at IS NULL AND c.deleted_at IS NULL ORDER BY p.created_at ASC LIMIT $2 OFFSET $3", categoryID, limit, offset)
+		productRows, err := db.Query(context.Background(), "SELECT DISTINCT ON (p.created_at) p.id,p.price,p.old_price,p.limit_amount,p.is_new,p.amount,p.main_image,benefit FROM products p LEFT JOIN category_product c ON p.id=c.product_id WHERE c.category_id = $1 AND p.amount > 0 AND p.limit_amount > 0 AND p.deleted_at IS NULL AND c.deleted_at IS NULL ORDER BY p.created_at ASC LIMIT $2 OFFSET $3", categoryID, limit, offset)
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
-		defer func() {
-			if err := productRows.Close(); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
-				return
-			}
-		}()
 
 		var products []Product
-
 		for productRows.Next() {
 			var product Product
 
 			if err := productRows.Scan(&product.ID, &product.Price, &product.OldPrice, &product.LimitAmount, &product.IsNew, &product.Amount, &product.MainImage, &product.Benefit); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
+				helpers.HandleError(c, 400, err.Error())
 				return
 			}
 
@@ -2004,34 +1187,18 @@ func GetOneCategoryWithProducts(c *gin.Context) {
 				product.Percentage = 0
 			}
 
-			rowsLang, err := db.Query("SELECT id,name_short FROM languages WHERE deleted_at IS NULL")
+			rowsLang, err := db.Query(context.Background(), "SELECT id,name_short FROM languages WHERE deleted_at IS NULL")
 			if err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
+				helpers.HandleError(c, 400, err.Error())
 				return
 			}
-			defer func() {
-				if err := rowsLang.Close(); err != nil {
-					c.JSON(http.StatusBadRequest, gin.H{
-						"status":  false,
-						"message": err.Error(),
-					})
-					return
-				}
-			}()
 
 			var languages []models.Language
-
 			for rowsLang.Next() {
 				var language models.Language
 
 				if err := rowsLang.Scan(&language.ID, &language.NameShort); err != nil {
-					c.JSON(http.StatusBadRequest, gin.H{
-						"status":  false,
-						"message": err.Error(),
-					})
+					helpers.HandleError(c, 400, err.Error())
 					return
 				}
 
@@ -2040,34 +1207,18 @@ func GetOneCategoryWithProducts(c *gin.Context) {
 
 			for _, v := range languages {
 
-				rowTrProduct, err := db.Query("SELECT name,description FROM translation_product WHERE lang_id = $1 AND product_id = $2 AND deleted_at IS NULL", v.ID, product.ID)
+				rowTrProduct, err := db.Query(context.Background(), "SELECT name,description FROM translation_product WHERE lang_id = $1 AND product_id = $2 AND deleted_at IS NULL", v.ID, product.ID)
 				if err != nil {
-					c.JSON(http.StatusBadRequest, gin.H{
-						"status":  false,
-						"message": err.Error(),
-					})
+					helpers.HandleError(c, 400, err.Error())
 					return
 				}
-				defer func() {
-					if err := rowTrProduct.Close(); err != nil {
-						c.JSON(http.StatusBadRequest, gin.H{
-							"status":  false,
-							"message": err.Error(),
-						})
-						return
-					}
-				}()
 
 				var trProduct models.TranslationProduct
-
 				translation := make(map[string]models.TranslationProduct)
 
 				for rowTrProduct.Next() {
 					if err := rowTrProduct.Scan(&trProduct.Name, &trProduct.Description); err != nil {
-						c.JSON(http.StatusBadRequest, gin.H{
-							"status":  false,
-							"message": err.Error(),
-						})
+						helpers.HandleError(c, 400, err.Error())
 						return
 					}
 				}
@@ -2079,32 +1230,16 @@ func GetOneCategoryWithProducts(c *gin.Context) {
 			}
 
 			// get brend where id equal brend_id of product
-			brendRows, err := db.Query("SELECT b.id,b.name FROM products p LEFT JOIN brends b ON p.brend_id=b.id WHERE p.id = $1 AND p.deleted_at IS NULL AND b.deleted_at IS NULL", product.ID)
+			brendRows, err := db.Query(context.Background(), "SELECT b.id,b.name FROM products p LEFT JOIN brends b ON p.brend_id=b.id WHERE p.id = $1 AND p.deleted_at IS NULL AND b.deleted_at IS NULL", product.ID)
 			if err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
+				helpers.HandleError(c, 400, err.Error())
 				return
 			}
-			defer func() {
-				if err := brendRows.Close(); err != nil {
-					c.JSON(http.StatusBadRequest, gin.H{
-						"status":  false,
-						"message": err.Error(),
-					})
-					return
-				}
-			}()
 
 			var brend Brend
-
 			for brendRows.Next() {
 				if err := brendRows.Scan(&brend.ID, &brend.Name); err != nil {
-					c.JSON(http.StatusBadRequest, gin.H{
-						"status":  false,
-						"message": err.Error(),
-					})
+					helpers.HandleError(c, 400, err.Error())
 					return
 				}
 			}
@@ -2126,66 +1261,41 @@ func GetOneCategoryWithDeletedProducts(c *gin.Context) {
 
 	db, err := config.ConnDB()
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
-	defer func() {
-		if err := db.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
+	defer db.Close()
 
 	var countOfProducts uint64
 
 	langID, err := CheckLanguage(c)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
 
 	// get limit from param
 	limitStr := c.Param("limit")
 	if limitStr == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": "limit is required",
-		})
+		helpers.HandleError(c, 400, "limit is required")
+
 		return
 	}
 	limit, err := strconv.ParseUint(limitStr, 10, 64)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
 
 	// get page from param
 	pageStr := c.Param("page")
 	if pageStr == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": "page is required",
-		})
+		helpers.HandleError(c, 400, "page is required")
 		return
 	}
 	page, err := strconv.ParseUint(pageStr, 10, 64)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
 
@@ -2194,103 +1304,53 @@ func GetOneCategoryWithDeletedProducts(c *gin.Context) {
 	categoryID := c.Param("id")
 
 	// get category where id equal categiryID
-	categoryRow, err := db.Query("SELECT c.id,c.image,t.name FROM categories c LEFT JOIN translation_category t ON c.id=t.category_id WHERE t.lang_id = $1 AND c.id = $2 AND c.deleted_at IS NULL AND t.deleted_at IS NULL", langID, categoryID)
+	categoryRow, err := db.Query(context.Background(), "SELECT c.id,c.image,t.name FROM categories c LEFT JOIN translation_category t ON c.id=t.category_id WHERE t.lang_id = $1 AND c.id = $2 AND c.deleted_at IS NULL AND t.deleted_at IS NULL", langID, categoryID)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
-	defer func() {
-		if err := categoryRow.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
 
 	var category Category
-
 	for categoryRow.Next() {
 		if err := categoryRow.Scan(&category.ID, &category.Image, &category.Name); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
 
 		if category.ID == "" {
-			c.JSON(http.StatusNotFound, gin.H{
-				"status":  false,
-				"message": "category not found",
-			})
+			helpers.HandleError(c, 404, "category not found")
 			return
 		}
 
 		// get count product where product_id equal categoryID
-		productCount, err := db.Query("SELECT COUNT(DISTINCT p.id) FROM products p LEFT JOIN category_product c ON p.id=c.product_id WHERE c.category_id = $1 AND p.amount > 0 AND p.limit_amount > 0 AND p.deleted_at IS NOT NULL", categoryID)
+		productCount, err := db.Query(context.Background(), "SELECT COUNT(DISTINCT p.id) FROM products p LEFT JOIN category_product c ON p.id=c.product_id WHERE c.category_id = $1 AND p.amount > 0 AND p.limit_amount > 0 AND p.deleted_at IS NOT NULL", categoryID)
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
-		defer func() {
-			if err := productCount.Close(); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
-				return
-			}
-		}()
 
 		for productCount.Next() {
 			if err := productCount.Scan(&countOfProducts); err != nil {
 				if err != nil {
-					c.JSON(http.StatusBadRequest, gin.H{
-						"status":  false,
-						"message": err.Error(),
-					})
+					helpers.HandleError(c, 400, err.Error())
 					return
 				}
 			}
 		}
 
 		// get all product where category id equal categoryID
-		productRows, err := db.Query("SELECT DISTINCT ON (p.created_at) p.id,p.price,p.old_price,p.limit_amount,p.is_new,p.amount,p.main_image,benefit FROM products p LEFT JOIN category_product c ON p.id=c.product_id WHERE c.category_id = $1 AND p.amount > 0 AND p.limit_amount > 0 AND p.deleted_at IS NOT NULL ORDER BY p.created_at ASC LIMIT $2 OFFSET $3", categoryID, limit, offset)
+		productRows, err := db.Query(context.Background(), "SELECT DISTINCT ON (p.created_at) p.id,p.price,p.old_price,p.limit_amount,p.is_new,p.amount,p.main_image,benefit FROM products p LEFT JOIN category_product c ON p.id=c.product_id WHERE c.category_id = $1 AND p.amount > 0 AND p.limit_amount > 0 AND p.deleted_at IS NOT NULL ORDER BY p.created_at ASC LIMIT $2 OFFSET $3", categoryID, limit, offset)
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
-		defer func() {
-			if err := productRows.Close(); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
-				return
-			}
-		}()
 
 		var products []Product
-
 		for productRows.Next() {
 			var product Product
 
 			if err := productRows.Scan(&product.ID, &product.Price, &product.OldPrice, &product.LimitAmount, &product.IsNew, &product.Amount, &product.MainImage, &product.Benefit); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
+				helpers.HandleError(c, 400, err.Error())
 				return
 			}
 
@@ -2305,34 +1365,18 @@ func GetOneCategoryWithDeletedProducts(c *gin.Context) {
 				product.Percentage = 0
 			}
 
-			rowsLang, err := db.Query("SELECT id,name_short FROM languages WHERE deleted_at IS NULL")
+			rowsLang, err := db.Query(context.Background(), "SELECT id,name_short FROM languages WHERE deleted_at IS NULL")
 			if err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
+				helpers.HandleError(c, 400, err.Error())
 				return
 			}
-			defer func() {
-				if err := rowsLang.Close(); err != nil {
-					c.JSON(http.StatusBadRequest, gin.H{
-						"status":  false,
-						"message": err.Error(),
-					})
-					return
-				}
-			}()
 
 			var languages []models.Language
-
 			for rowsLang.Next() {
 				var language models.Language
 
 				if err := rowsLang.Scan(&language.ID, &language.NameShort); err != nil {
-					c.JSON(http.StatusBadRequest, gin.H{
-						"status":  false,
-						"message": err.Error(),
-					})
+					helpers.HandleError(c, 400, err.Error())
 					return
 				}
 
@@ -2341,34 +1385,18 @@ func GetOneCategoryWithDeletedProducts(c *gin.Context) {
 
 			for _, v := range languages {
 
-				rowTrProduct, err := db.Query("SELECT name,description FROM translation_product WHERE lang_id = $1 AND product_id = $2 AND deleted_at IS NULL", v.ID, product.ID)
+				rowTrProduct, err := db.Query(context.Background(), "SELECT name,description FROM translation_product WHERE lang_id = $1 AND product_id = $2 AND deleted_at IS NULL", v.ID, product.ID)
 				if err != nil {
-					c.JSON(http.StatusBadRequest, gin.H{
-						"status":  false,
-						"message": err.Error(),
-					})
+					helpers.HandleError(c, 400, err.Error())
 					return
 				}
-				defer func() {
-					if err := rowTrProduct.Close(); err != nil {
-						c.JSON(http.StatusBadRequest, gin.H{
-							"status":  false,
-							"message": err.Error(),
-						})
-						return
-					}
-				}()
 
 				var trProduct models.TranslationProduct
-
 				translation := make(map[string]models.TranslationProduct)
 
 				for rowTrProduct.Next() {
 					if err := rowTrProduct.Scan(&trProduct.Name, &trProduct.Description); err != nil {
-						c.JSON(http.StatusBadRequest, gin.H{
-							"status":  false,
-							"message": err.Error(),
-						})
+						helpers.HandleError(c, 400, err.Error())
 						return
 					}
 				}
@@ -2380,32 +1408,16 @@ func GetOneCategoryWithDeletedProducts(c *gin.Context) {
 			}
 
 			// get brend where id equal brend_id of product
-			brendRows, err := db.Query("SELECT b.id,b.name FROM products p LEFT JOIN brends b ON p.brend_id=b.id WHERE p.id = $1 AND p.deleted_at IS NULL AND b.deleted_at IS NULL", product.ID)
+			brendRows, err := db.Query(context.Background(), "SELECT b.id,b.name FROM products p LEFT JOIN brends b ON p.brend_id=b.id WHERE p.id = $1 AND p.deleted_at IS NULL AND b.deleted_at IS NULL", product.ID)
 			if err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
+				helpers.HandleError(c, 400, err.Error())
 				return
 			}
-			defer func() {
-				if err := brendRows.Close(); err != nil {
-					c.JSON(http.StatusBadRequest, gin.H{
-						"status":  false,
-						"message": err.Error(),
-					})
-					return
-				}
-			}()
 
 			var brend Brend
-
 			for brendRows.Next() {
 				if err := brendRows.Scan(&brend.ID, &brend.Name); err != nil {
-					c.JSON(http.StatusBadRequest, gin.H{
-						"status":  false,
-						"message": err.Error(),
-					})
+					helpers.HandleError(c, 400, err.Error())
 					return
 				}
 			}
@@ -2427,29 +1439,15 @@ func SearchCategory(c *gin.Context) {
 
 	db, err := config.ConnDB()
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
-	defer func() {
-		if err := db.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
+	defer db.Close()
 
 	// GET language id
 	langID, err := GetLangID("tm")
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
 
@@ -2457,90 +1455,45 @@ func SearchCategory(c *gin.Context) {
 	search := strings.ReplaceAll(incomingsSarch, "-", " | ")
 	searchStr := fmt.Sprintf("%%%s%%", search)
 
-	rowsCategory, err := db.Query("SELECT DISTINCT ON (c.created_at) c.id,c.image,tc.name FROM categories c inner join translation_category tc on tc.category_id = c.id WHERE to_tsvector(tc.slug) @@ to_tsquery($1) OR tc.slug LIKE $3 AND tc.lang_id = $2 AND tc.deleted_at IS NULL AND c.deleted_at IS NULL ORDER BY c.created_at DESC", search, langID, searchStr)
+	rowsCategory, err := db.Query(context.Background(), "SELECT DISTINCT ON (c.created_at) c.id,c.image,tc.name FROM categories c inner join translation_category tc on tc.category_id = c.id WHERE to_tsvector(tc.slug) @@ to_tsquery($1) OR tc.slug LIKE $3 AND tc.lang_id = $2 AND tc.deleted_at IS NULL AND c.deleted_at IS NULL ORDER BY c.created_at DESC", search, langID, searchStr)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-			"yalnys":  "yalnys",
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
-	defer func() {
-		if err := rowsCategory.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
 
 	var categories []ResultCategory
-
 	for rowsCategory.Next() {
 		var category ResultCategory
 		if err := rowsCategory.Scan(&category.ID, &category.Name, &category.Name); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
 
-		rowss, err := db.Query("SELECT c.id,tc.name FROM categories c LEFT JOIN translation_category tc ON c.id=tc.category_id WHERE tc.lang_id = $1 AND c.parent_category_id = $2 AND c.deleted_at IS NULL ORDER BY c.created_at DESC", langID, category.ID)
+		rowss, err := db.Query(context.Background(), "SELECT c.id,tc.name FROM categories c LEFT JOIN translation_category tc ON c.id=tc.category_id WHERE tc.lang_id = $1 AND c.parent_category_id = $2 AND c.deleted_at IS NULL ORDER BY c.created_at DESC", langID, category.ID)
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
-		defer func() {
-			if err := rowss.Close(); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
-				return
-			}
-		}()
+
 		var resuls []ResultCategor
 		for rowss.Next() {
 			var resul ResultCategor
 			if err := rowss.Scan(&resul.ID, &resul.Name); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
+				helpers.HandleError(c, 400, err.Error())
 				return
 			}
 
-			rowsss, err := db.Query("SELECT c.id,tc.name FROM categories c LEFT JOIN translation_category tc ON c.id=tc.category_id WHERE tc.lang_id = $1 AND c.parent_category_id =$2 AND c.deleted_at IS NOT NULL ORDER BY c.created_at DESC", langID, resul.ID)
+			rowsss, err := db.Query(context.Background(), "SELECT c.id,tc.name FROM categories c LEFT JOIN translation_category tc ON c.id=tc.category_id WHERE tc.lang_id = $1 AND c.parent_category_id =$2 AND c.deleted_at IS NOT NULL ORDER BY c.created_at DESC", langID, resul.ID)
 			if err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
+				helpers.HandleError(c, 400, err.Error())
 				return
 			}
-			defer func() {
-				if err := rowsss.Close(); err != nil {
-					c.JSON(http.StatusBadRequest, gin.H{
-						"status":  false,
-						"message": err.Error(),
-					})
-					return
-				}
-			}()
+
 			var resus []ResultCatego
 			for rowsss.Next() {
 				var resu ResultCatego
 				if err := rowsss.Scan(&resu.ID, &resu.Name); err != nil {
-					c.JSON(http.StatusBadRequest, gin.H{
-						"status":  false,
-						"message": err.Error(),
-					})
+					helpers.HandleError(c, 400, err.Error())
 					return
 				}
 

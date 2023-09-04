@@ -1,6 +1,7 @@
 package models
 
 import (
+	"context"
 	"errors"
 	"github/abbgo/isleg/isleg-backend/config"
 )
@@ -23,30 +24,18 @@ func ValidateRegisterAdmin(phoneNumber, adminType string) error {
 	if err != nil {
 		return err
 	}
-	defer func() error {
-		if err := db.Close(); err != nil {
-			return err
-		}
-		return nil
-	}()
+	defer db.Close()
 
 	if adminType != "admin" && adminType != "super_admin" {
 		return errors.New("admin type must be admin or super_admin")
 	}
 
-	rowAdmin, err := db.Query("SELECT phone_number FROM admins WHERE phone_number = $1 AND deleted_at IS NULL", phoneNumber)
+	rowAdmin, err := db.Query(context.Background(), "SELECT phone_number FROM admins WHERE phone_number = $1 AND deleted_at IS NULL", phoneNumber)
 	if err != nil {
 		return err
 	}
-	defer func() error {
-		if err := rowAdmin.Close(); err != nil {
-			return err
-		}
-		return nil
-	}()
 
 	var phone_number string
-
 	for rowAdmin.Next() {
 		if err := rowAdmin.Scan(&phone_number); err != nil {
 			return err

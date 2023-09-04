@@ -1,7 +1,9 @@
 package controllers
 
 import (
+	"context"
 	"github/abbgo/isleg/isleg-backend/config"
+	"github/abbgo/isleg/isleg-backend/helpers"
 	"github/abbgo/isleg/isleg-backend/models"
 	"github/abbgo/isleg/isleg-backend/pkg"
 	"net/http"
@@ -18,55 +20,29 @@ func CreateLanguage(c *gin.Context) {
 	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
-	defer func() {
-		if err := db.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
+	defer db.Close()
 
 	var language models.Language
 	if err := c.BindJSON(&language); err != nil {
-		c.JSON(http.StatusBadRequest, err.Error())
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
 
 	_, err = models.ValidateLanguage(language.NameShort, "create", "")
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
 
 	// add language to database , used after_insert_language trigger
-	resultLang, err := db.Query("INSERT INTO languages (name_short,flag) VALUES ($1,$2)", strings.ToLower(language.NameShort), language.Flag)
+	_, err = db.Exec(context.Background(), "INSERT INTO languages (name_short,flag) VALUES ($1,$2)", strings.ToLower(language.NameShort), language.Flag)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
-	defer func() {
-		if err := resultLang.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
@@ -80,37 +56,23 @@ func UpdateLanguageByID(c *gin.Context) {
 	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
-	defer func() {
-		if err := db.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
+	defer db.Close()
 
 	// get language id from paramter
 	langID := c.Param("id")
 
 	var language models.Language
 	if err := c.BindJSON(&language); err != nil {
-		c.JSON(http.StatusBadRequest, err.Error())
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
 
 	image, err := models.ValidateLanguage(language.NameShort, "update", langID)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
 
@@ -122,23 +84,11 @@ func UpdateLanguageByID(c *gin.Context) {
 	}
 
 	// update language in database
-	resultLang, err := db.Query("UPDATE languages SET name_short = $1 , flag = $2  WHERE id = $3", strings.ToLower(language.NameShort), fileName, langID)
+	_, err = db.Exec(context.Background(), "UPDATE languages SET name_short = $1 , flag = $2  WHERE id = $3", strings.ToLower(language.NameShort), fileName, langID)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
-	defer func() {
-		if err := resultLang.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
@@ -152,61 +102,31 @@ func GetLanguageByID(c *gin.Context) {
 	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
-	defer func() {
-		if err := db.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
+	defer db.Close()
 
 	// get id of language from parameter
 	langID := c.Param("id")
 
 	// get  name_short and flag of language from database
-	rowLanguage, err := db.Query("SELECT id,name_short,flag FROM languages WHERE id = $1 AND deleted_at IS NULL", langID)
+	rowLanguage, err := db.Query(context.Background(), "SELECT id,name_short,flag FROM languages WHERE id = $1 AND deleted_at IS NULL", langID)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
-	defer func() {
-		if err := rowLanguage.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
 
 	var lang models.Language
-
 	for rowLanguage.Next() {
 		if err := rowLanguage.Scan(&lang.ID, &lang.NameShort, &lang.Flag); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
 	}
 
 	if lang.ID == "" {
-		c.JSON(http.StatusNotFound, gin.H{
-			"status":  false,
-			"message": "language not found",
-		})
+		helpers.HandleError(c, 404, "language not found")
 		return
 	}
 
@@ -223,34 +143,18 @@ func GetLanguages(c *gin.Context) {
 	db, err := config.ConnDB()
 	if err != nil {
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
 	}
-	defer func() {
-		if err := db.Close(); err != nil {
-			if err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
-				return
-			}
-		}
-	}()
+	defer db.Close()
 
 	var ls []models.Language
 
 	statusQuery := c.DefaultQuery("status", "false")
 	status, err := strconv.ParseBool(statusQuery)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
 
@@ -262,36 +166,19 @@ func GetLanguages(c *gin.Context) {
 	}
 
 	// get name_short,flag of all languages from database
-	rows, err := db.Query(rowsQuery)
+	rows, err := db.Query(context.Background(), rowsQuery)
 	if err != nil {
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
 	}
-	defer func() {
-		if err := rows.Close(); err != nil {
-			if err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
-				return
-			}
-		}
-	}()
 
 	for rows.Next() {
 		var l models.Language
 		if err := rows.Scan(&l.ID, &l.NameShort, &l.Flag); err != nil {
 			if err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
+				helpers.HandleError(c, 400, err.Error())
 				return
 			}
 		}
@@ -310,90 +197,45 @@ func DeleteLanguageByID(c *gin.Context) {
 	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
-	defer func() {
-		if err := db.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
+	defer db.Close()
 
 	// get id of language from request parameter
 	langID := c.Param("id")
 
 	// Check if there is a language, id equal to langID
-	rowFlag, err := db.Query("SELECT id,name_short FROM languages WHERE id = $1 AND deleted_at IS NULL", langID)
+	rowFlag, err := db.Query(context.Background(), "SELECT id,name_short FROM languages WHERE id = $1 AND deleted_at IS NULL", langID)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
-	defer func() {
-		if err := rowFlag.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
 
 	var id, name_short string
-
 	for rowFlag.Next() {
 		if err := rowFlag.Scan(&id, &name_short); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
 	}
 
 	if id == "" {
-		c.JSON(http.StatusNotFound, gin.H{
-			"status":  false,
-			"message": "language not found",
-		})
+		helpers.HandleError(c, 404, "language not found")
 		return
 	}
 
 	if name_short == "tm" {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": "You cannot delete it, as it is default language",
-		})
+		helpers.HandleError(c, 400, "You cannot delete it, as it is default language")
 		return
 	}
 
 	// set current time to deleted_at row of language, used delete_language procedure
-	resultPROC, err := db.Query("CALL delete_language($1)", langID)
+	_, err = db.Exec(context.Background(), "CALL delete_language($1)", langID)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
-	defer func() {
-		if err := resultPROC.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
@@ -407,82 +249,40 @@ func RestoreLanguageByID(c *gin.Context) {
 	//initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
-	defer func() {
-		if err := db.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
+	defer db.Close()
 
 	// get id of language from request parameter
 	langID := c.Param("id")
 
 	// Check if there is a language, id equal to langID
-	rowFlag, err := db.Query("SELECT id FROM languages WHERE id = $1 AND deleted_at IS NOT NULL", langID)
+	rowFlag, err := db.Query(context.Background(), "SELECT id FROM languages WHERE id = $1 AND deleted_at IS NOT NULL", langID)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
-	defer func() {
-		if err := rowFlag.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
 
 	var id string
-
 	for rowFlag.Next() {
 		if err := rowFlag.Scan(&id); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
 	}
 
 	if id == "" {
-		c.JSON(http.StatusNotFound, gin.H{
-			"status":  false,
-			"message": "language not found",
-		})
+		helpers.HandleError(c, 404, "language not found")
 		return
 	}
 
 	// set null to deleted_at row of language, used restore_language procedure
-	resultPROC, err := db.Query("CALL restore_language($1)", langID)
+	_, err = db.Exec(context.Background(), "CALL restore_language($1)", langID)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
-	defer func() {
-		if err := resultPROC.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
@@ -496,98 +296,50 @@ func DeletePermanentlyLanguageByID(c *gin.Context) {
 	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
-	defer func() {
-		if err := db.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
+	defer db.Close()
 
 	// get id of language from request parameter
 	langID := c.Param("id")
 
 	// Check if there is a language, id equal to langID and get image of language from database
-	rowFlag, err := db.Query("SELECT flag,name_short FROM languages WHERE id = $1 AND deleted_at IS NOT NULL", langID)
+	rowFlag, err := db.Query(context.Background(), "SELECT flag,name_short FROM languages WHERE id = $1 AND deleted_at IS NOT NULL", langID)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
-	defer func() {
-		if err := rowFlag.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
 
 	var flag, name_short string
-
 	for rowFlag.Next() {
 		if err := rowFlag.Scan(&flag, &name_short); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
 	}
 
 	if flag == "" {
-		c.JSON(http.StatusNotFound, gin.H{
-			"status":  false,
-			"message": "language not found",
-		})
+		helpers.HandleError(c, 404, "language not found")
 		return
 	}
 
 	if name_short == "tm" {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": "You cannot delete it, as it is default language",
-		})
+		helpers.HandleError(c, 400, "You cannot delete it, as it is default language")
 		return
 	}
 
 	// remove image of language
 	if err := os.Remove(pkg.ServerPath + flag); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
 
-	resultLang, err := db.Query("DELETE FROM languages WHERE id = $1", langID)
+	_, err = db.Exec(context.Background(), "DELETE FROM languages WHERE id = $1", langID)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
-	defer func() {
-		if err := resultLang.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
@@ -603,26 +355,15 @@ func GetAllLanguageForHeader() ([]models.Language, error) {
 	if err != nil {
 		return nil, nil
 	}
-	defer func() ([]models.Language, error) {
-		if err := db.Close(); err != nil {
-			return nil, err
-		}
-		return nil, err
-	}()
+	defer db.Close()
 
 	var ls []models.Language
 
 	// get name_short,flag of all languages from database
-	rows, err := db.Query("SELECT name_short,flag FROM languages WHERE deleted_at IS NULL")
+	rows, err := db.Query(context.Background(), "SELECT name_short,flag FROM languages WHERE deleted_at IS NULL")
 	if err != nil {
 		return nil, err
 	}
-	defer func() ([]models.Language, error) {
-		if err := rows.Close(); err != nil {
-			return nil, err
-		}
-		return nil, err
-	}()
 
 	for rows.Next() {
 		var l models.Language
@@ -642,23 +383,12 @@ func GetAllLanguageWithIDAndNameShort() ([]models.Language, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer func() ([]models.Language, error) {
-		if err := db.Close(); err != nil {
-			return nil, err
-		}
-		return nil, err
-	}()
+	defer db.Close()
 
-	languageRows, err := db.Query("SELECT id,name_short FROM languages WHERE deleted_at IS NULL ORDER BY created_at ASC")
+	languageRows, err := db.Query(context.Background(), "SELECT id,name_short FROM languages WHERE deleted_at IS NULL ORDER BY created_at ASC")
 	if err != nil {
 		return []models.Language{}, err
 	}
-	defer func() ([]models.Language, error) {
-		if err := languageRows.Close(); err != nil {
-			return nil, err
-		}
-		return nil, err
-	}()
 
 	var languages []models.Language
 
@@ -682,25 +412,14 @@ func GetLangID(langShortName string) (string, error) {
 	if err != nil {
 		return "", nil
 	}
-	defer func() (string, error) {
-		if err := db.Close(); err != nil {
-			return "", err
-		}
-		return "", nil
-	}()
+	defer db.Close()
 
 	var langID string
 
-	row, err := db.Query("SELECT id FROM languages WHERE name_short = $1 AND deleted_at IS NULL", langShortName)
+	row, err := db.Query(context.Background(), "SELECT id FROM languages WHERE name_short = $1 AND deleted_at IS NULL", langShortName)
 	if err != nil {
 		return "", err
 	}
-	defer func() (string, error) {
-		if err := row.Close(); err != nil {
-			return "", err
-		}
-		return "", nil
-	}()
 
 	for row.Next() {
 		if err := row.Scan(&langID); err != nil {

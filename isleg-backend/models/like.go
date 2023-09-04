@@ -1,6 +1,7 @@
 package models
 
 import (
+	"context"
 	"errors"
 	"github/abbgo/isleg/isleg-backend/config"
 
@@ -28,7 +29,7 @@ func ValidateCustomerLike(customerID string, productIDs []string) error {
 		return errors.New("customer_id is required")
 	}
 
-	rowCustomer, err := db.Query("SELECT id FROM customers WHERE id = $1 AND deleted_at IS NULL", customerID)
+	rowCustomer, err := db.Query(context.Background(), "SELECT id FROM customers WHERE id = $1 AND deleted_at IS NULL", customerID)
 	if err != nil {
 		return err
 	}
@@ -49,7 +50,7 @@ func ValidateCustomerLike(customerID string, productIDs []string) error {
 	}
 
 	for _, productID := range productIDs {
-		rowProduct, err := db.Query("SELECT id FROM products WHERE id = $1 AND deleted_at IS NULL", productID)
+		rowProduct, err := db.Query(context.Background(), "SELECT id FROM products WHERE id = $1 AND deleted_at IS NULL", productID)
 		if err != nil {
 			return err
 		}
@@ -64,7 +65,7 @@ func ValidateCustomerLike(customerID string, productIDs []string) error {
 		if product_id == "" {
 			return errors.New("product does not exist")
 		}
-		rows, err := db.Query("SELECT product_id FROM likes WHERE customer_id = $1 AND deleted_at IS NULL", customerID)
+		rows, err := db.Query(context.Background(), "SELECT product_id FROM likes WHERE customer_id = $1 AND deleted_at IS NULL", customerID)
 		if err != nil {
 			return err
 		}

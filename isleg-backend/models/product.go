@@ -1,6 +1,7 @@
 package models
 
 import (
+	"context"
 	"errors"
 	"github/abbgo/isleg/isleg-backend/config"
 
@@ -67,12 +68,7 @@ func ValidateProductModel(mainPhoto string, benefit float64, productID string, p
 	if err != nil {
 		return 0, "", 0, 0, 0, 0, false, err
 	}
-	defer func() (float64, string, float64, float64, uint64, uint64, bool, error) {
-		if err := db.Close(); err != nil {
-			return 0, "", 0, 0, 0, 0, false, err
-		}
-		return 0, "", 0, 0, 0, 0, false, nil
-	}()
+	defer db.Close()
 
 	// validate categies
 	if len(categories) == 0 {
@@ -81,16 +77,11 @@ func ValidateProductModel(mainPhoto string, benefit float64, productID string, p
 
 	// check catrgory id
 	for _, v := range categories {
-		rawCategory, err := db.Query("SELECT id FROM categories WHERE id = $1 AND deleted_at IS NULL", v)
+		rawCategory, err := db.Query(context.Background(), "SELECT id FROM categories WHERE id = $1 AND deleted_at IS NULL", v)
 		if err != nil {
 			return 0, "", 0, 0, 0, 0, false, err
 		}
-		defer func() (float64, string, float64, float64, uint64, uint64, bool, error) {
-			if err := rawCategory.Close(); err != nil {
-				return 0, "", 0, 0, 0, 0, false, err
-			}
-			return 0, "", 0, 0, 0, 0, false, nil
-		}()
+
 		var categoryID string
 		for rawCategory.Next() {
 			if err := rawCategory.Scan(&categoryID); err != nil {
@@ -124,16 +115,11 @@ func ValidateProductModel(mainPhoto string, benefit float64, productID string, p
 	}
 
 	if productID != "" {
-		rowMainImage, err := db.Query("SELECT main_image FROM products WHERE deleted_at IS NULL AND id = $1", productID)
+		rowMainImage, err := db.Query(context.Background(), "SELECT main_image FROM products WHERE deleted_at IS NULL AND id = $1", productID)
 		if err != nil {
 			return 0, "", 0, 0, 0, 0, false, err
 		}
-		defer func() (float64, string, float64, float64, uint64, uint64, bool, error) {
-			if err := rowMainImage.Close(); err != nil {
-				return 0, "", 0, 0, 0, 0, false, err
-			}
-			return 0, "", 0, 0, 0, 0, false, nil
-		}()
+
 		var mainImage string
 		for rowMainImage.Next() {
 			if err := rowMainImage.Scan(&mainImage); err != nil {
@@ -147,16 +133,10 @@ func ValidateProductModel(mainPhoto string, benefit float64, productID string, p
 		if mainPhoto != "" {
 			mainImage = mainPhoto
 
-			resultHelperImage, err := db.Query("DELETE FROM helper_images WHERE image = $1", mainImage)
+			_, err := db.Exec(context.Background(), "DELETE FROM helper_images WHERE image = $1", mainImage)
 			if err != nil {
 				return 0, "", 0, 0, 0, 0, false, err
 			}
-			defer func() (float64, string, float64, float64, uint64, uint64, bool, error) {
-				if err := resultHelperImage.Close(); err != nil {
-					return 0, "", 0, 0, 0, 0, false, err
-				}
-				return 0, "", 0, 0, 0, 0, false, nil
-			}()
 		}
 		return benefit, mainImage, price, oldprice, amount, limitamount, isNew, nil
 	}

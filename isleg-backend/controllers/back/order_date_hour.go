@@ -1,7 +1,9 @@
 package controllers
 
 import (
+	"context"
 	"github/abbgo/isleg/isleg-backend/config"
+	"github/abbgo/isleg/isleg-backend/helpers"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -19,89 +21,44 @@ func CreateOrderDateHour(c *gin.Context) {
 	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
-	defer func() {
-		if err := db.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
+	defer db.Close()
 
 	var dateHours []DateHour
 
 	if err := c.BindJSON(&dateHours); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
 
 	// validate data
 	for _, v := range dateHours {
 		if v.Hour > 23 {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": "hour cannot be older than 23",
-			})
+			helpers.HandleError(c, 400, "hour cannot be older than 23")
 			return
 		}
 
-		resultDateHour, err := db.Query("INSERT INTO date_hours (hour,date_id) VALUES ($1,$2) RETURNING id", v.Hour, v.DateID)
+		resultDateHour, err := db.Query(context.Background(), "INSERT INTO date_hours (hour,date_id) VALUES ($1,$2) RETURNING id", v.Hour, v.DateID)
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
-		defer func() {
-			if err := resultDateHour.Close(); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
-				return
-			}
-		}()
 
 		var dateHourID string
-
 		for resultDateHour.Next() {
 			if err := resultDateHour.Scan(&dateHourID); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
+				helpers.HandleError(c, 400, err.Error())
 				return
 			}
 		}
 
-		resultDateHourTime, err := db.Query("INSERT INTO date_hour_times (date_hour_id,time_id) VALUES ($1,unnest($2::uuid[])) RETURNING id", dateHourID, pq.Array(v.Times))
+		_, err = db.Exec(context.Background(), "INSERT INTO date_hour_times (date_hour_id,time_id) VALUES ($1,unnest($2::uuid[])) RETURNING id", dateHourID, pq.Array(v.Times))
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
-		defer func() {
-			if err := resultDateHourTime.Close(); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
-				return
-			}
-		}()
 	}
 
 	c.JSON(http.StatusOK, gin.H{

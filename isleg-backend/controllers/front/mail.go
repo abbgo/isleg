@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"bytes"
+	"github/abbgo/isleg/isleg-backend/helpers"
 	"html/template"
 	"net/http"
 	"net/smtp"
@@ -23,7 +24,7 @@ func SendMail(c *gin.Context) {
 
 	var mail ForMail
 	if err := c.BindJSON(&mail); err != nil {
-		c.JSON(http.StatusBadRequest, err.Error())
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
 
@@ -51,11 +52,11 @@ func SendMail(c *gin.Context) {
 	if err := r.ParseTemplate(serverPath+"templates/template.html", templateData); err == nil {
 		_, err := r.SendEmail()
 		if err != nil {
-			c.JSON(400, gin.H{"message": err.Error()})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
 	} else {
-		c.JSON(400, gin.H{"message": err.Error()})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
 

@@ -1,10 +1,12 @@
 package controllers
 
 import (
+	"context"
 	"net/http"
 
 	"github/abbgo/isleg/isleg-backend/config"
 	backController "github/abbgo/isleg/isleg-backend/controllers/back"
+	"github/abbgo/isleg/isleg-backend/helpers"
 	"github/abbgo/isleg/isleg-backend/models"
 
 	"github.com/gin-gonic/gin"
@@ -42,10 +44,7 @@ func GetBrends(c *gin.Context) {
 	// get all brend from brend controller
 	brends, err := backController.GetAllBrendForHomePage()
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
 
@@ -60,121 +59,58 @@ func GetHomePageCategories(c *gin.Context) {
 
 	db, err := config.ConnDB()
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
-	defer func() {
-		if err := db.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
+	defer db.Close()
 
 	langID, err := backController.CheckLanguage(c)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
 
 	// get all homepage category where translation category id equal langID
-	categoryRows, err := db.Query("SELECT c.id,t.name FROM categories c LEFT JOIN translation_category t ON c.id=t.category_id WHERE t.lang_id = $1 AND c.is_home_category = true AND t.deleted_at IS NULL AND c.deleted_at IS NULL", langID)
+	categoryRows, err := db.Query(context.Background(), "SELECT c.id,t.name FROM categories c LEFT JOIN translation_category t ON c.id=t.category_id WHERE t.lang_id = $1 AND c.is_home_category = true AND t.deleted_at IS NULL AND c.deleted_at IS NULL", langID)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
-	defer func() {
-		if err := categoryRows.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
 
 	var homePageCategories []HomePageCategory
-
 	for categoryRows.Next() {
 		var homePageCategory HomePageCategory
 		if err := categoryRows.Scan(&homePageCategory.ID, &homePageCategory.Name); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
 
 		// get all product where category id equal homePageCategory.ID and lang_id equal langID
-		productRows, err := db.Query("SELECT p.id,p.price,p.old_price,p.limit_amount,p.is_new,p.amount,p.main_image FROM products p LEFT JOIN category_product c ON p.id=c.product_id WHERE c.category_id = $1 AND p.deleted_at IS NULL AND c.deleted_at IS NULL AND p.amount > 0 AND p.limit_amount > 0 ORDER BY p.created_at DESC LIMIT 4", homePageCategory.ID)
+		productRows, err := db.Query(context.Background(), "SELECT p.id,p.price,p.old_price,p.limit_amount,p.is_new,p.amount,p.main_image FROM products p LEFT JOIN category_product c ON p.id=c.product_id WHERE c.category_id = $1 AND p.deleted_at IS NULL AND c.deleted_at IS NULL AND p.amount > 0 AND p.limit_amount > 0 ORDER BY p.created_at DESC LIMIT 4", homePageCategory.ID)
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
-		defer func() {
-			if err := productRows.Close(); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
-				return
-			}
-		}()
 
 		var products []Product
-
 		for productRows.Next() {
 			var product Product
 			if err := productRows.Scan(&product.ID, &product.Price, &product.OldPrice, &product.LimitAmount, &product.IsNew, &product.Amount, &product.MainImage); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
+				helpers.HandleError(c, 400, err.Error())
 				return
 			}
-
-			rowsLang, err := db.Query("SELECT id,name_short FROM languages WHERE deleted_at IS NULL")
+			rowsLang, err := db.Query(context.Background(), "SELECT id,name_short FROM languages WHERE deleted_at IS NULL")
 			if err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
+				helpers.HandleError(c, 400, err.Error())
 				return
 			}
-			defer func() {
-				if err := rowsLang.Close(); err != nil {
-					c.JSON(http.StatusBadRequest, gin.H{
-						"status":  false,
-						"message": err.Error(),
-					})
-					return
-				}
-			}()
 
 			var languages []models.Language
-
 			for rowsLang.Next() {
 				var language models.Language
 
 				if err := rowsLang.Scan(&language.ID, &language.NameShort); err != nil {
-					c.JSON(http.StatusBadRequest, gin.H{
-						"status":  false,
-						"message": err.Error(),
-					})
+					helpers.HandleError(c, 400, err.Error())
 					return
 				}
 
@@ -183,35 +119,18 @@ func GetHomePageCategories(c *gin.Context) {
 
 			for _, v := range languages {
 
-				rowTrProduct, err := db.Query("SELECT name,description FROM translation_product WHERE lang_id = $1 AND product_id = $2 AND deleted_at IS NULL", v.ID, product.ID)
+				rowTrProduct, err := db.Query(context.Background(), "SELECT name,description FROM translation_product WHERE lang_id = $1 AND product_id = $2 AND deleted_at IS NULL", v.ID, product.ID)
 				if err != nil {
-					c.JSON(http.StatusBadRequest, gin.H{
-						"status":  false,
-						"message": err.Error(),
-					})
+					helpers.HandleError(c, 400, err.Error())
 					return
 				}
-				defer func() {
-					if err := rowTrProduct.Close(); err != nil {
-						c.JSON(http.StatusBadRequest, gin.H{
-							"status":  false,
-							"message": err.Error(),
-						})
-						return
-					}
-				}()
 
 				var trProduct models.TranslationProduct
-
 				translation := make(map[string]models.TranslationProduct)
-
 				for rowTrProduct.Next() {
 
 					if err := rowTrProduct.Scan(&trProduct.Name, &trProduct.Description); err != nil {
-						c.JSON(http.StatusBadRequest, gin.H{
-							"status":  false,
-							"message": err.Error(),
-						})
+						helpers.HandleError(c, 400, err.Error())
 						return
 					}
 
@@ -224,31 +143,16 @@ func GetHomePageCategories(c *gin.Context) {
 			}
 
 			// get brend where id of product brend_id
-			brendRows, err := db.Query("SELECT b.id,b.name FROM products p LEFT JOIN brends b ON p.brend_id=b.id WHERE p.id = $1 AND p.deleted_at IS NULL AND b.deleted_at IS NULL", product.ID)
+			brendRows, err := db.Query(context.Background(), "SELECT b.id,b.name FROM products p LEFT JOIN brends b ON p.brend_id=b.id WHERE p.id = $1 AND p.deleted_at IS NULL AND b.deleted_at IS NULL", product.ID)
 			if err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
+				helpers.HandleError(c, 400, err.Error())
 				return
 			}
-			defer func() {
-				if err := brendRows.Close(); err != nil {
-					c.JSON(http.StatusBadRequest, gin.H{
-						"status":  false,
-						"message": err.Error(),
-					})
-					return
-				}
-			}()
 
 			var brend Brend
 			for brendRows.Next() {
 				if err := brendRows.Scan(&brend.ID, &brend.Name); err != nil {
-					c.JSON(http.StatusBadRequest, gin.H{
-						"status":  false,
-						"message": err.Error(),
-					})
+					helpers.HandleError(c, 400, err.Error())
 					return
 				}
 			}

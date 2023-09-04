@@ -1,6 +1,7 @@
 package models
 
 import (
+	"context"
 	"errors"
 	"github/abbgo/isleg/isleg-backend/config"
 
@@ -37,27 +38,15 @@ func ValidateCategory(categoryID, parentCategoryID, fileName, metod string) erro
 	if err != nil {
 		return err
 	}
-	defer func() error {
-		if err := db.Close(); err != nil {
-			return err
-		}
-		return nil
-	}()
+	defer db.Close()
 
 	if categoryID != "" { // validate id and get image of category
-		rowCategor, err := db.Query("SELECT id FROM categories WHERE id = $1 AND deleted_at IS NULL", categoryID)
+		rowCategor, err := db.Query(context.Background(), "SELECT id FROM categories WHERE id = $1 AND deleted_at IS NULL", categoryID)
 		if err != nil {
 			return err
 		}
-		defer func() error {
-			if err := rowCategor.Close(); err != nil {
-				return err
-			}
-			return nil
-		}()
 
 		var category_id string
-
 		for rowCategor.Next() {
 			if err := rowCategor.Scan(&category_id); err != nil {
 				return err
@@ -78,16 +67,11 @@ func ValidateCategory(categoryID, parentCategoryID, fileName, metod string) erro
 			}
 		}
 
-		rowCategory, err := db.Query("SELECT id FROM categories WHERE id = $1 AND deleted_at IS NULL", parentCategoryID)
+		rowCategory, err := db.Query(context.Background(), "SELECT id FROM categories WHERE id = $1 AND deleted_at IS NULL", parentCategoryID)
 		if err != nil {
 			return err
 		}
-		defer func() error {
-			if err := rowCategory.Close(); err != nil {
-				return err
-			}
-			return nil
-		}()
+
 		var parentCategory string
 		for rowCategory.Next() {
 			if err := rowCategory.Scan(&parentCategory); err != nil {

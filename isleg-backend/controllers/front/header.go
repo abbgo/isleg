@@ -2,6 +2,7 @@ package controllers
 
 import (
 	backController "github/abbgo/isleg/isleg-backend/controllers/back"
+	"github/abbgo/isleg/isleg-backend/helpers"
 	"github/abbgo/isleg/isleg-backend/models"
 	"net/http"
 
@@ -24,50 +25,35 @@ func GetHeaderData(c *gin.Context) {
 
 	langID, err := backController.CheckLanguage(c)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
 
 	// get logo and favicon from company setting controller
 	logoFavicon, err := backController.GetCompanySettingForHeader()
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
 
 	// get translation header from translation header controller
 	translationHeader, err := backController.GetTranslationHeaderForHeader(langID)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
 
 	// get all language from language controller
 	languages, err := backController.GetAllLanguageForHeader()
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
 
 	// get all category from category controller
 	categories, _, err := backController.GetAllCategoryForHeader(langID, "", "", 0, 0)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
 

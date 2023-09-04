@@ -1,8 +1,10 @@
 package controllers
 
 import (
+	"context"
 	"errors"
 	"github/abbgo/isleg/isleg-backend/config"
+	"github/abbgo/isleg/isleg-backend/helpers"
 	"github/abbgo/isleg/isleg-backend/models"
 	"math"
 	"net/http"
@@ -40,37 +42,26 @@ func AddCart(c *gin.Context) {
 
 	db, err := config.ConnDB()
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
-	defer func() {
-		if err := db.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
+	defer db.Close()
 
 	custID, hasCustomer := c.Get("customer_id")
 	if !hasCustomer {
-		c.JSON(http.StatusBadRequest, "customer_id is required")
+		helpers.HandleError(c, 400, "customer_id is required")
 		return
 	}
 	customerID, ok := custID.(string)
 	if !ok {
-		c.JSON(http.StatusBadRequest, "customer_id must be string")
+		helpers.HandleError(c, 400, "customer_id must be string")
 		return
 	}
 
 	// frontdan maglumaty bind etyar
 	var cart []CartProduct
 	if err := c.BindJSON(&cart); err != nil {
-		c.JSON(http.StatusBadRequest, err.Error())
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
 
@@ -84,10 +75,7 @@ func AddCart(c *gin.Context) {
 			// sonun ucin eger musderi harydyn sanyny nol etse ony sebetdebn ayyryas
 			if v.QuantityOfProduct < 1 {
 				if err := DeleteCart(customerID, v.ProductID); err != nil {
-					c.JSON(http.StatusBadRequest, gin.H{
-						"status":  false,
-						"message": err.Error(),
-					})
+					helpers.HandleError(c, 400, err.Error())
 					return
 				}
 				break
@@ -97,41 +85,22 @@ func AddCart(c *gin.Context) {
 			// sony barlayas. Eger 1 haryt 2 gezek gelen bolsa yzyna osibka yazyp ugartyas
 			for _, x := range cart[(k + 1):] {
 				if v.ProductID == x.ProductID {
-					c.JSON(http.StatusBadRequest, gin.H{
-						"status":  false,
-						"message": "the same product cannot be repeated twice",
-					})
+					helpers.HandleError(c, 400, "the same product cannot be repeated twice")
 					return
 				}
 			}
 
 			// bu yerde frontdan gelen haryt bazada barmy ya-da yokmy sol barlanyar
-			rowProduct, err := db.Query("SELECT id FROM products WHERE id = $1 AND deleted_at IS NULL", v.ProductID)
+			rowProduct, err := db.Query(context.Background(), "SELECT id FROM products WHERE id = $1 AND deleted_at IS NULL", v.ProductID)
 			if err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
+				helpers.HandleError(c, 400, err.Error())
 				return
 			}
-			defer func() {
-				if err := rowProduct.Close(); err != nil {
-					c.JSON(http.StatusBadRequest, gin.H{
-						"status":  false,
-						"message": err.Error(),
-					})
-					return
-				}
-			}()
 
 			var product_id string
-
 			for rowProduct.Next() {
 				if err := rowProduct.Scan(&product_id); err != nil {
-					c.JSON(http.StatusBadRequest, gin.H{
-						"status":  false,
-						"message": err.Error(),
-					})
+					helpers.HandleError(c, 400, err.Error())
 					return
 				}
 			}
@@ -140,32 +109,16 @@ func AddCart(c *gin.Context) {
 
 				// eger haryt bazada bar bolsa onda sol haryt programmany ulanyp otyran musderinin sebedinde barmy ya-da yok
 				// sony barlayas
-				rowCart, err := db.Query("SELECT product_id FROM cart WHERE customer_id = $1 AND product_id = $2 AND deleted_at IS NULL", customerID, v.ProductID)
+				rowCart, err := db.Query(context.Background(), "SELECT product_id FROM cart WHERE customer_id = $1 AND product_id = $2 AND deleted_at IS NULL", customerID, v.ProductID)
 				if err != nil {
-					c.JSON(http.StatusBadRequest, gin.H{
-						"status":  false,
-						"message": err.Error(),
-					})
+					helpers.HandleError(c, 400, err.Error())
 					return
 				}
-				defer func() {
-					if err := rowCart.Close(); err != nil {
-						c.JSON(http.StatusBadRequest, gin.H{
-							"status":  false,
-							"message": err.Error(),
-						})
-						return
-					}
-				}()
 
 				var productId string
-
 				for rowCart.Next() {
 					if err := rowCart.Scan(&productId); err != nil {
-						c.JSON(http.StatusBadRequest, gin.H{
-							"status":  false,
-							"message": err.Error(),
-						})
+						helpers.HandleError(c, 400, err.Error())
 						return
 					}
 				}
@@ -174,45 +127,21 @@ func AddCart(c *gin.Context) {
 
 					// eger sol haryt programmany ulanyp otyran musderinin sebedinde yok bolsa
 					// sol harydy sol musderinin sebedine gosyas
-					resultCartInsert, err := db.Query("INSERT INTO cart (customer_id,product_id,quantity_of_product) VALUES ($1,$2,$3)", customerID, v.ProductID, v.QuantityOfProduct)
+					_, err := db.Exec(context.Background(), "INSERT INTO cart (customer_id,product_id,quantity_of_product) VALUES ($1,$2,$3)", customerID, v.ProductID, v.QuantityOfProduct)
 					if err != nil {
-						c.JSON(http.StatusBadRequest, gin.H{
-							"status":  false,
-							"message": err.Error(),
-						})
+						helpers.HandleError(c, 400, err.Error())
 						return
 					}
-					defer func() {
-						if err := resultCartInsert.Close(); err != nil {
-							c.JSON(http.StatusBadRequest, gin.H{
-								"status":  false,
-								"message": err.Error(),
-							})
-							return
-						}
-					}()
 
 				} else {
 
 					// eger sol haryt programmany ulanyp otyran musderinin sebedinde bar bolsa
 					// onda sol harydyn mukdaryny update etyas
-					reultCartUpdate, err := db.Query("UPDATE cart SET quantity_of_product = $1 WHERE customer_id = $2 AND product_id = $3 AND deleted_at IS NULL", v.QuantityOfProduct, customerID, v.ProductID)
+					_, err := db.Exec(context.Background(), "UPDATE cart SET quantity_of_product = $1 WHERE customer_id = $2 AND product_id = $3 AND deleted_at IS NULL", v.QuantityOfProduct, customerID, v.ProductID)
 					if err != nil {
-						c.JSON(http.StatusBadRequest, gin.H{
-							"status":  false,
-							"message": err.Error(),
-						})
+						helpers.HandleError(c, 400, err.Error())
 						return
 					}
-					defer func() {
-						if err := reultCartUpdate.Close(); err != nil {
-							c.JSON(http.StatusBadRequest, gin.H{
-								"status":  false,
-								"message": err.Error(),
-							})
-							return
-						}
-					}()
 
 				}
 
@@ -224,10 +153,7 @@ func AddCart(c *gin.Context) {
 		// harytlary yzyna gaytaryp beryas
 		products, err := GetCartProducts(customerID)
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
 
@@ -241,10 +167,7 @@ func AddCart(c *gin.Context) {
 		// sebedindaki harytlary yzyna ugratyas
 		products, err := GetCartProducts(customerID)
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
 
@@ -273,7 +196,7 @@ func GetCartProducts(customerID string) ([]ProductOfCart, error) {
 	}
 	defer db.Close()
 
-	rowsProduct, err := db.Query("SELECT p.id,p.brend_id,p.price,p.old_price,p.amount,p.limit_amount,p.is_new,c.quantity_of_product,p.main_image,p.benefit FROM products p LEFT JOIN cart c ON c.product_id = p.id WHERE c.customer_id = $1 AND c.deleted_at IS NULL AND p.deleted_at IS NULL", customerID)
+	rowsProduct, err := db.Query(context.Background(), "SELECT p.id,p.brend_id,p.price,p.old_price,p.amount,p.limit_amount,p.is_new,c.quantity_of_product,p.main_image,p.benefit FROM products p LEFT JOIN cart c ON c.product_id = p.id WHERE c.customer_id = $1 AND c.deleted_at IS NULL AND p.deleted_at IS NULL", customerID)
 	if err != nil {
 		return []ProductOfCart{}, err
 	}
@@ -299,7 +222,7 @@ func GetCartProducts(customerID string) ([]ProductOfCart, error) {
 			product.Percentage = 0
 		}
 
-		rowsLang, err := db.Query("SELECT id,name_short FROM languages WHERE deleted_at IS NULL")
+		rowsLang, err := db.Query(context.Background(), "SELECT id,name_short FROM languages WHERE deleted_at IS NULL")
 		if err != nil {
 			return []ProductOfCart{}, err
 		}
@@ -319,7 +242,7 @@ func GetCartProducts(customerID string) ([]ProductOfCart, error) {
 
 		for _, v := range languages {
 
-			rowTrProduct, err := db.Query("SELECT name,description FROM translation_product WHERE lang_id = $1 AND product_id = $2 AND deleted_at IS NULL", v.ID, product.ID)
+			rowTrProduct, err := db.Query(context.Background(), "SELECT name,description FROM translation_product WHERE lang_id = $1 AND product_id = $2 AND deleted_at IS NULL", v.ID, product.ID)
 			if err != nil {
 				return []ProductOfCart{}, err
 			}
@@ -352,21 +275,18 @@ func GetCustomerCartProducts(c *gin.Context) {
 
 	custID, hasCustomer := c.Get("customer_id")
 	if !hasCustomer {
-		c.JSON(http.StatusBadRequest, "customer_id is required")
+		helpers.HandleError(c, 400, "customer_id is required")
 		return
 	}
 	customerID, ok := custID.(string)
 	if !ok {
-		c.JSON(http.StatusBadRequest, "customer_id must be string")
+		helpers.HandleError(c, 400, "customer_id must be string")
 		return
 	}
 
 	products, err := GetCartProducts(customerID)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
 
@@ -381,22 +301,19 @@ func RemoveCart(c *gin.Context) {
 
 	custID, hasCustomer := c.Get("customer_id")
 	if !hasCustomer {
-		c.JSON(http.StatusBadRequest, "customer_id is required")
+		helpers.HandleError(c, 400, "customer_id is required")
 		return
 	}
 	customerID, ok := custID.(string)
 	if !ok {
-		c.JSON(http.StatusBadRequest, "customer_id must be string")
+		helpers.HandleError(c, 400, "customer_id must be string")
 		return
 	}
 
 	// productID := c.PostForm("product_id")
 
 	if err := DeleteCart(customerID, ""); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
 
@@ -414,28 +331,16 @@ func DeleteCart(customerID, productID string) error {
 	if err != nil {
 		return err
 	}
-	defer func() error {
-		if err := db.Close(); err != nil {
-			return err
-		}
-		return nil
-	}()
+	defer db.Close()
 
 	if productID != "" {
 
-		rowCart, err := db.Query("SELECT product_id FROM cart WHERE customer_id = $1 AND product_id = $2 AND deleted_at IS NULL", customerID, productID)
+		rowCart, err := db.Query(context.Background(), "SELECT product_id FROM cart WHERE customer_id = $1 AND product_id = $2 AND deleted_at IS NULL", customerID, productID)
 		if err != nil {
 			return err
 		}
-		defer func() error {
-			if err := rowCart.Close(); err != nil {
-				return err
-			}
-			return nil
-		}()
 
 		var product_id string
-
 		for rowCart.Next() {
 			if err := rowCart.Scan(&product_id); err != nil {
 				return err
@@ -446,29 +351,17 @@ func DeleteCart(customerID, productID string) error {
 			return errors.New("this product not found in this customer")
 		}
 
-		resultCart, err := db.Query("DELETE FROM cart WHERE customer_id = $1 AND product_id = $2 AND deleted_at IS NULL", customerID, productID)
+		_, err = db.Exec(context.Background(), "DELETE FROM cart WHERE customer_id = $1 AND product_id = $2 AND deleted_at IS NULL", customerID, productID)
 		if err != nil {
 			return err
 		}
-		defer func() error {
-			if err := resultCart.Close(); err != nil {
-				return err
-			}
-			return nil
-		}()
 
 	} else {
 
-		resultCart, err := db.Query("DELETE FROM cart WHERE customer_id = $1 AND deleted_at IS NULL", customerID)
+		_, err := db.Exec(context.Background(), "DELETE FROM cart WHERE customer_id = $1 AND deleted_at IS NULL", customerID)
 		if err != nil {
 			return err
 		}
-		defer func() error {
-			if err := resultCart.Close(); err != nil {
-				return err
-			}
-			return nil
-		}()
 
 	}
 	return nil

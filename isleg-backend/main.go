@@ -5,38 +5,22 @@ import (
 	"github/abbgo/isleg/isleg-backend/routes"
 	"log"
 	"os"
+
+	"github.com/joho/godotenv"
 )
 
-// func init() {
-// 	// initialize database connection
-// 	db, err := config.ConnDB()
-// 	if err != nil {
-// 		db.Close()
-// 		log.Fatal(err)
-// 	}
-
-// 	if err := godotenv.Load(); err != nil {
-// 		log.Fatal(err)
-// 	}
-// }
-
 func main() {
-	// initialize database connection
-	db, err := config.ConnDB()
-	if err != nil {
-		db.Close()
+
+	if err := godotenv.Load(); err != nil {
 		log.Fatal(err)
 	}
 
-	// if err := godotenv.Load(); err != nil {
-	// 	log.Fatal(err)
-	// }
-
-	defer func() {
-		if err := db.Close(); err != nil {
-			log.Fatal(err)
-		}
-	}()
+	// Database instance
+	db, err := config.ConnDB()
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer db.Close()
 
 	r := routes.Routes()
 

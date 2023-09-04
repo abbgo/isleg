@@ -1,6 +1,7 @@
 package models
 
 import (
+	"context"
 	"errors"
 	"github/abbgo/isleg/isleg-backend/config"
 	"strconv"
@@ -47,12 +48,7 @@ func ValidateCustomerRegister(phoneNumber, email string) error {
 	if err != nil {
 		return err
 	}
-	defer func() error {
-		if err := db.Close(); err != nil {
-			return err
-		}
-		return nil
-	}()
+	defer db.Close()
 
 	if phoneNumber != "" {
 		if !strings.HasPrefix(phoneNumber, "+993") {
@@ -68,13 +64,12 @@ func ValidateCustomerRegister(phoneNumber, email string) error {
 			return errors.New("phone number must be 12 in length")
 		}
 
-		row, err := db.Query("SELECT phone_number FROM customers WHERE phone_number = $1 AND is_register = true AND deleted_at IS NULL", phoneNumber)
+		row, err := db.Query(context.Background(), "SELECT phone_number FROM customers WHERE phone_number = $1 AND is_register = true AND deleted_at IS NULL", phoneNumber)
 		if err != nil {
 			return err
 		}
 
 		var phone_number string
-
 		for row.Next() {
 			if err := row.Scan(&phone_number); err != nil {
 				return err
@@ -87,13 +82,12 @@ func ValidateCustomerRegister(phoneNumber, email string) error {
 	}
 
 	if email != "" {
-		rowEmail, err := db.Query("SELECT email FROM customers WHERE email = $1 AND is_register = true AND deleted_at IS NULL", email)
+		rowEmail, err := db.Query(context.Background(), "SELECT email FROM customers WHERE email = $1 AND is_register = true AND deleted_at IS NULL", email)
 		if err != nil {
 			return err
 		}
 
 		var email_address string
-
 		for rowEmail.Next() {
 			if err := rowEmail.Scan(&email_address); err != nil {
 				return err

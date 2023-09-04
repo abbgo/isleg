@@ -1,6 +1,7 @@
 package models
 
 import (
+	"context"
 	"errors"
 	"github/abbgo/isleg/isleg-backend/config"
 	"strings"
@@ -40,28 +41,18 @@ func ValidateLanguage(nameShort, functionType, langID string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	defer func() (string, error) {
-		if err := db.Close(); err != nil {
-			return "", err
-		}
-		return "", nil
-	}()
+	defer db.Close()
 
 	if functionType == "create" {
 		if nameShort == "" {
 			return "", errors.New("short name is required")
 		}
 
-		rowLanguage, err := db.Query("SELECT name_short FROM languages WHERE name_short = $1 AND deleted_at IS NULL", strings.ToLower(nameShort))
+		rowLanguage, err := db.Query(context.Background(), "SELECT name_short FROM languages WHERE name_short = $1 AND deleted_at IS NULL", strings.ToLower(nameShort))
 		if err != nil {
 			return "", err
 		}
-		defer func() (string, error) {
-			if err := rowLanguage.Close(); err != nil {
-				return "", err
-			}
-			return "", nil
-		}()
+
 		var oldNameShort string
 		for rowLanguage.Next() {
 			if err := rowLanguage.Scan(&oldNameShort); err != nil {
@@ -73,19 +64,12 @@ func ValidateLanguage(nameShort, functionType, langID string) (string, error) {
 		}
 	} else if functionType == "update" {
 		// Check if there is a language, id equal to langID
-		rowFlag, err := db.Query("SELECT id,flag FROM languages WHERE id = $1 AND deleted_at IS NULL", langID)
+		rowFlag, err := db.Query(context.Background(), "SELECT id,flag FROM languages WHERE id = $1 AND deleted_at IS NULL", langID)
 		if err != nil {
 			return "", err
 		}
-		defer func() (string, error) {
-			if err := rowFlag.Close(); err != nil {
-				return "", err
-			}
-			return "", nil
-		}()
 
 		var id, flag string
-
 		for rowFlag.Next() {
 			if err := rowFlag.Scan(&id, &flag); err != nil {
 				return "", err
@@ -96,16 +80,11 @@ func ValidateLanguage(nameShort, functionType, langID string) (string, error) {
 			return "", errors.New("language not found")
 		}
 
-		rowNameShort, err := db.Query("SELECT id FROM languages WHERE name_short = $1 AND deleted_at IS NULL", strings.ToLower(nameShort))
+		rowNameShort, err := db.Query(context.Background(), "SELECT id FROM languages WHERE name_short = $1 AND deleted_at IS NULL", strings.ToLower(nameShort))
 		if err != nil {
 			return "", err
 		}
-		defer func() (string, error) {
-			if err := rowNameShort.Close(); err != nil {
-				return "", err
-			}
-			return "", nil
-		}()
+
 		var oldID string
 		for rowNameShort.Next() {
 			if err := rowNameShort.Scan(&oldID); err != nil {

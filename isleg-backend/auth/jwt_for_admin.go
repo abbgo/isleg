@@ -1,7 +1,7 @@
 package auth
 
 import (
-	"errors"
+	"github/abbgo/isleg/isleg-backend/helpers"
 	"net/http"
 	"os"
 	"strconv"
@@ -70,10 +70,7 @@ func RefreshTokenForAdmin(c *gin.Context) {
 	tokenString := strings.Split(tokenStr, " ")[1]
 
 	if tokenString == "" {
-		c.JSON(401, gin.H{
-			"message": "request does not contain an refresh token",
-		})
-		// c.Abort()
+		helpers.HandleError(c, 401, "request does not contain an refresh token")
 		return
 	}
 
@@ -86,30 +83,25 @@ func RefreshTokenForAdmin(c *gin.Context) {
 	)
 
 	if err != nil {
-		c.JSON(403, gin.H{
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 403, err.Error())
 		return
 	}
 
 	claims, ok := token.Claims.(*JWTClaimForAdmin)
 
 	if !ok {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"message": errors.New("couldn't parse claims")})
+		helpers.HandleError(c, 400, "couldn't parse claims")
 		return
 	}
 
 	if claims.ExpiresAt < time.Now().Local().Unix() {
-		c.JSON(403, gin.H{
-			"message": errors.New("token expired"),
-		})
+		helpers.HandleError(c, 403, "token expired")
 		return
 	}
 
 	accessTokenString, refreshTokenString, err := GenerateAccessTokenForAdmin(claims.PhoneNumber, claims.AdminID, claims.Type)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
+		helpers.HandleError(c, 500, err.Error())
 		return
 	}
 

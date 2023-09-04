@@ -1,7 +1,9 @@
 package controllers
 
 import (
+	"context"
 	"github/abbgo/isleg/isleg-backend/config"
+	"github/abbgo/isleg/isleg-backend/helpers"
 	"github/abbgo/isleg/isleg-backend/models"
 	"net/http"
 	"strconv"
@@ -42,110 +44,59 @@ func CreateOrderDate(c *gin.Context) {
 	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
-	defer func() {
-		if err := db.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
+	defer db.Close()
 
 	var orderDate models.OrderDates
 
 	if err := c.BindJSON(&orderDate); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
 
 	// validate data
 	if err := models.ValidateOrderDate(orderDate.Date); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
 
 	for _, v := range orderDate.TranslationOrderDates {
 
-		rowLang, err := db.Query("SELECT id FROM languages WHERE id = $1 AND deleted_at IS NULL", v.LangID)
+		rowLang, err := db.Query(context.Background(), "SELECT id FROM languages WHERE id = $1 AND deleted_at IS NULL", v.LangID)
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
-		defer func() {
-			if err := rowLang.Close(); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
-				return
-			}
-		}()
 
 		var langID string
-
 		for rowLang.Next() {
 			if err := rowLang.Scan(&langID); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
+				helpers.HandleError(c, 400, err.Error())
+
 				return
 			}
 		}
 
 		if langID == "" {
-			c.JSON(http.StatusNotFound, gin.H{
-				"status":  false,
-				"message": "language not found",
-			})
+			helpers.HandleError(c, 404, "language not found")
 			return
 		}
 
 	}
 
 	// add data to order_dates table and return last id
-	resultOrderDates, err := db.Query("INSERT INTO order_dates (date) VALUES ($1) RETURNING id", orderDate.Date)
+	resultOrderDates, err := db.Query(context.Background(), "INSERT INTO order_dates (date) VALUES ($1) RETURNING id", orderDate.Date)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
-	defer func() {
-		if err := resultOrderDates.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
 
 	var orderDateID string
-
 	for resultOrderDates.Next() {
 		if err := resultOrderDates.Scan(&orderDateID); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
 	}
@@ -153,23 +104,11 @@ func CreateOrderDate(c *gin.Context) {
 	// add translation order date to database
 	for _, v := range orderDate.TranslationOrderDates {
 
-		resultTrOrderDates, err := db.Query("INSERT INTO translation_order_dates (lang_id,order_date_id,date) VALUES ($1,$2,$3)", v.LangID, orderDateID, v.Date)
+		_, err := db.Exec(context.Background(), "INSERT INTO translation_order_dates (lang_id,order_date_id,date) VALUES ($1,$2,$3)", v.LangID, orderDateID, v.Date)
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
-		defer func() {
-			if err := resultTrOrderDates.Close(); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status":  false,
-					"message": err.Error(),
-				})
-				return
-			}
-		}()
 
 	}
 
@@ -211,7 +150,7 @@ func CreateOrderDate(c *gin.Context) {
 // 		return
 // 	}
 
-// 	rowOrderDate, err := db.Query("SELECT id FROM order_dates WHERE id = $1 AND deleted_at IS NULL", orderDate.ID)
+// 	rowOrderDate, err := db.Query(context.Background(),"SELECT id FROM order_dates WHERE id = $1 AND deleted_at IS NULL", orderDate.ID)
 // 	if err != nil {
 // 		c.JSON(http.StatusBadRequest, gin.H{
 // 			"status":  false,
@@ -249,7 +188,7 @@ func CreateOrderDate(c *gin.Context) {
 // 		return
 // 	}
 
-// 	resultOrderDate, err := db.Query("UPDATE order_dates SET date = $1 WHERE id = $2", orderDate.Date, orderDate.ID)
+// 	resultOrderDate, err := db.Query(context.Background(),"UPDATE order_dates SET date = $1 WHERE id = $2", orderDate.Date, orderDate.ID)
 // 	if err != nil {
 // 		c.JSON(http.StatusBadRequest, gin.H{
 // 			"status":  false,
@@ -267,7 +206,7 @@ func CreateOrderDate(c *gin.Context) {
 // 		}
 // 	}()
 
-// 	resultDeleteOrderTime, err := db.Query("DELETE FROM order_times WHERE order_date_id = $1", orderDate.ID)
+// 	resultDeleteOrderTime, err := db.Query(context.Background(),"DELETE FROM order_times WHERE order_date_id = $1", orderDate.ID)
 // 	if err != nil {
 // 		c.JSON(http.StatusBadRequest, gin.H{
 // 			"status":  false,
@@ -287,7 +226,7 @@ func CreateOrderDate(c *gin.Context) {
 
 // 	for _, v := range orderDate.OrderTimes {
 
-// 		resultInsertOrderTime, err := db.Query("INSERT INTO order_times (order_date_id,time) VALUES ($1,$2)", orderDate.ID, v.Time)
+// 		resultInsertOrderTime, err := db.Query(context.Background(),"INSERT INTO order_times (order_date_id,time) VALUES ($1,$2)", orderDate.ID, v.Time)
 // 		if err != nil {
 // 			c.JSON(http.StatusBadRequest, gin.H{
 // 				"status":  false,
@@ -309,7 +248,7 @@ func CreateOrderDate(c *gin.Context) {
 
 // 	for _, v := range orderDate.TranslationOrderDates {
 
-// 		restultTrOrderDate, err := db.Query("UPDATE translation_order_dates SET date = $1 WHERE lang_id = $2 AND order_date_id = $3", v.Date, v.LangID, orderDate.ID)
+// 		restultTrOrderDate, err := db.Query(context.Background(),"UPDATE translation_order_dates SET date = $1 WHERE lang_id = $2 AND order_date_id = $3", v.Date, v.LangID, orderDate.ID)
 // 		if err != nil {
 // 			c.JSON(http.StatusBadRequest, gin.H{
 // 				"status":  false,
@@ -359,7 +298,7 @@ func CreateOrderDate(c *gin.Context) {
 
 // 	ID := c.Param("id")
 
-// 	rowOrderDate, err := db.Query("SELECT id,date FROM order_dates WHERE id = $1 AND deleted_at IS NULL", ID)
+// 	rowOrderDate, err := db.Query(context.Background(),"SELECT id,date FROM order_dates WHERE id = $1 AND deleted_at IS NULL", ID)
 // 	if err != nil {
 // 		c.JSON(http.StatusBadRequest, gin.H{
 // 			"status":  false,
@@ -396,7 +335,7 @@ func CreateOrderDate(c *gin.Context) {
 // 			return
 // 		}
 
-// 		rowsOrderTimes, err := db.Query("SELECT time FROM order_times WHERE order_date_id = $1", orderDate.ID)
+// 		rowsOrderTimes, err := db.Query(context.Background(),"SELECT time FROM order_times WHERE order_date_id = $1", orderDate.ID)
 // 		if err != nil {
 // 			c.JSON(http.StatusBadRequest, gin.H{
 // 				"status":  false,
@@ -432,7 +371,7 @@ func CreateOrderDate(c *gin.Context) {
 
 // 		orderDate.OrderTimes = orderTimes
 
-// 		rowsTrOrderDate, err := db.Query("SELECT date FROM translation_order_dates WHERE order_date_id = $1", orderDate.ID)
+// 		rowsTrOrderDate, err := db.Query(context.Background(),"SELECT date FROM translation_order_dates WHERE order_date_id = $1", orderDate.ID)
 // 		if err != nil {
 // 			c.JSON(http.StatusBadRequest, gin.H{
 // 				"status":  false,
@@ -498,7 +437,7 @@ func CreateOrderDate(c *gin.Context) {
 // 		}
 // 	}()
 
-// 	rowsOrderDate, err := db.Query("SELECT id,date FROM order_dates WHERE deleted_at IS NULL")
+// 	rowsOrderDate, err := db.Query(context.Background(),"SELECT id,date FROM order_dates WHERE deleted_at IS NULL")
 // 	if err != nil {
 // 		c.JSON(http.StatusBadRequest, gin.H{
 // 			"status":  false,
@@ -529,7 +468,7 @@ func CreateOrderDate(c *gin.Context) {
 // 			return
 // 		}
 
-// 		rowsOrderTimes, err := db.Query("SELECT time FROM order_times WHERE order_date_id = $1", orderDate.ID)
+// 		rowsOrderTimes, err := db.Query(context.Background(),"SELECT time FROM order_times WHERE order_date_id = $1", orderDate.ID)
 // 		if err != nil {
 // 			c.JSON(http.StatusBadRequest, gin.H{
 // 				"status":  false,
@@ -565,7 +504,7 @@ func CreateOrderDate(c *gin.Context) {
 
 // 		orderDate.OrderTimes = orderTimes
 
-// 		rowsTrOrderDate, err := db.Query("SELECT date FROM translation_order_dates WHERE order_date_id = $1", orderDate.ID)
+// 		rowsTrOrderDate, err := db.Query(context.Background(),"SELECT date FROM translation_order_dates WHERE order_date_id = $1", orderDate.ID)
 // 		if err != nil {
 // 			c.JSON(http.StatusBadRequest, gin.H{
 // 				"status":  false,
@@ -635,7 +574,7 @@ func CreateOrderDate(c *gin.Context) {
 
 // 	ID := c.Param("id")
 
-// 	rowOrderDate, err := db.Query("SELECT id FROM order_dates WHERE id = $1 AND deleted_at IS NULL", ID)
+// 	rowOrderDate, err := db.Query(context.Background(),"SELECT id FROM order_dates WHERE id = $1 AND deleted_at IS NULL", ID)
 // 	if err != nil {
 // 		c.JSON(http.StatusBadRequest, gin.H{
 // 			"status":  false,
@@ -673,7 +612,7 @@ func CreateOrderDate(c *gin.Context) {
 // 		return
 // 	}
 
-// 	resultProc, err := db.Query("CALL delete_order_date($1)", ID)
+// 	resultProc, err := db.Query(context.Background(),"CALL delete_order_date($1)", ID)
 // 	if err != nil {
 // 		c.JSON(http.StatusBadRequest, gin.H{
 // 			"status":  false,
@@ -721,7 +660,7 @@ func CreateOrderDate(c *gin.Context) {
 
 // 	ID := c.Param("id")
 
-// 	rowOrderDate, err := db.Query("SELECT id FROM order_dates WHERE id = $1 AND deleted_at IS NOT NULL", ID)
+// 	rowOrderDate, err := db.Query(context.Background(),"SELECT id FROM order_dates WHERE id = $1 AND deleted_at IS NOT NULL", ID)
 // 	if err != nil {
 // 		c.JSON(http.StatusBadRequest, gin.H{
 // 			"status":  false,
@@ -759,7 +698,7 @@ func CreateOrderDate(c *gin.Context) {
 // 		return
 // 	}
 
-// 	resultPROC, err := db.Query("CALL restore_order_date($1)", ID)
+// 	resultPROC, err := db.Query(context.Background(),"CALL restore_order_date($1)", ID)
 // 	if err != nil {
 // 		c.JSON(http.StatusBadRequest, gin.H{
 // 			"status":  false,
@@ -807,7 +746,7 @@ func CreateOrderDate(c *gin.Context) {
 
 // 	ID := c.Param("id")
 
-// 	rowOrderDate, err := db.Query("SELECT id FROM order_dates WHERE id = $1 AND deleted_at IS NOT NULL", ID)
+// 	rowOrderDate, err := db.Query(context.Background(),"SELECT id FROM order_dates WHERE id = $1 AND deleted_at IS NOT NULL", ID)
 // 	if err != nil {
 // 		c.JSON(http.StatusBadRequest, gin.H{
 // 			"status":  false,
@@ -845,7 +784,7 @@ func CreateOrderDate(c *gin.Context) {
 // 		return
 // 	}
 
-// 	resultOrderDate, err := db.Query("DELETE FROM order_dates WHERE id = $1", ID)
+// 	resultOrderDate, err := db.Query(context.Background(),"DELETE FROM order_dates WHERE id = $1", ID)
 // 	if err != nil {
 // 		c.JSON(http.StatusBadRequest, gin.H{
 // 			"status":  false,
@@ -874,61 +813,31 @@ func GetOrderTime(c *gin.Context) {
 
 	db, err := config.ConnDB()
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
-	defer func() {
-		if err := db.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
+	defer db.Close()
 
 	langID, err := CheckLanguage(c)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
 
 	currentHour := time.Now().Hour()
 
-	rowsOrderDate, err := db.Query("select distinct on (ot.time) od.date, tod.date , ot.time from order_dates od inner join translation_order_dates tod on tod.order_date_id = od.id inner join date_hours dh on dh.date_id = od.id inner join date_hour_times dht on dht.date_hour_id = dh.id inner join order_times ot on ot.id = dht.time_id where ot.deleted_at is null and dht.deleted_at is null and dh.deleted_at is null and tod.lang_id = $1 and od.deleted_at is null and tod.deleted_at is null and dh.hour = $2", langID, currentHour)
+	rowsOrderDate, err := db.Query(context.Background(), "select distinct on (ot.time) od.date, tod.date , ot.time from order_dates od inner join translation_order_dates tod on tod.order_date_id = od.id inner join date_hours dh on dh.date_id = od.id inner join date_hour_times dht on dht.date_hour_id = dh.id inner join order_times ot on ot.id = dht.time_id where ot.deleted_at is null and dht.deleted_at is null and dh.deleted_at is null and tod.lang_id = $1 and od.deleted_at is null and tod.deleted_at is null and dh.hour = $2", langID, currentHour)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  false,
-			"message": err.Error(),
-		})
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
-	defer func() {
-		if err := rowsOrderDate.Close(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
-			return
-		}
-	}()
 
 	var orderDates []OrderDateAndTime
-
 	for rowsOrderDate.Next() {
 		var orderDate OrderDateAndTime
 
 		if err := rowsOrderDate.Scan(&orderDate.Date, &orderDate.Translation, &orderDate.Time); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status":  false,
-				"message": err.Error(),
-			})
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
 		orderDates = append(orderDates, orderDate)
