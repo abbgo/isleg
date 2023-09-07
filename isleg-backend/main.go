@@ -32,5 +32,4 @@ func main() {
 	if err := r.Run(":2406"); err != nil {
 		log.Fatal(err)
 	}
-
 }

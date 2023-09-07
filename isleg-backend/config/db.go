@@ -2,7 +2,6 @@ package config
 
 import (
 	"context"
-	"fmt"
 	"os"
 
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -12,8 +11,6 @@ import (
 var DB *pgxpool.Pool
 
 func ConnDB() (*pgxpool.Pool, error) {
-
-	fmt.Println(os.Getenv("DATABASE_URL"))
 
 	dbpool, err := pgxpool.New(context.Background(), os.Getenv("DATABASE_URL"))
 	if err != nil {
