@@ -322,7 +322,7 @@ func CreateProductsByExcelFile(c *gin.Context) {
 	//////////////////////  GET COUNT OF ROWS FROM EXCEL FILE ----------------------------------------
 	countOfRows := 0
 	for {
-		value, err := f.GetCellValue("Sheet1", "c"+strconv.Itoa(countOfRows+3))
+		value, err := f.GetCellValue(f.GetSheetName(f.GetActiveSheetIndex()), "c"+strconv.Itoa(countOfRows+3))
 		if err != nil {
 			helpers.HandleError(c, 400, err.Error())
 			return
@@ -344,7 +344,7 @@ func CreateProductsByExcelFile(c *gin.Context) {
 	for _, vRow := range rows {
 		var product ProductForAdmin
 
-		mainImageFileID, err := f.GetCellValue("Sheet1", columns[0]+strconv.Itoa(vRow))
+		mainImageFileID, err := f.GetCellValue(f.GetSheetName(f.GetActiveSheetIndex()), columns[0]+strconv.Itoa(vRow))
 		if err != nil {
 			helpers.HandleError(c, 400, err.Error())
 			return
@@ -377,7 +377,7 @@ func CreateProductsByExcelFile(c *gin.Context) {
 
 		// var pictures []string
 		for _, vColumn := range columns[1:] {
-			imageFileID, err := f.GetCellValue("Sheet1", vColumn+strconv.Itoa(vRow))
+			imageFileID, err := f.GetCellValue(f.GetSheetName(f.GetActiveSheetIndex()), vColumn+strconv.Itoa(vRow))
 			if err != nil {
 				helpers.HandleError(c, 400, err.Error())
 				return
@@ -410,7 +410,7 @@ func CreateProductsByExcelFile(c *gin.Context) {
 		}
 
 		// //////////////////////      GET CATEGORIES FROM EXCEL FILE ----------------------------------------
-		namesOfCategories, err := f.GetCellValue("Sheet1", "h"+strconv.Itoa(vRow))
+		namesOfCategories, err := f.GetCellValue(f.GetSheetName(f.GetActiveSheetIndex()), "h"+strconv.Itoa(vRow))
 		if err != nil {
 			helpers.HandleError(c, 400, err.Error())
 			return
@@ -449,7 +449,7 @@ func CreateProductsByExcelFile(c *gin.Context) {
 		}
 
 		// //////////////////////      GET BREND FROM EXCEL FILE ----------------------------------------
-		nameOfBrend, err := f.GetCellValue("Sheet1", "n"+strconv.Itoa(vRow))
+		nameOfBrend, err := f.GetCellValue(f.GetSheetName(f.GetActiveSheetIndex()), "n"+strconv.Itoa(vRow))
 		if err != nil {
 			helpers.HandleError(c, 400, err.Error())
 			return
@@ -480,7 +480,7 @@ func CreateProductsByExcelFile(c *gin.Context) {
 
 		// //////////////////////      GET SHOP FROM EXCEL FILE ----------------------------------------
 		shopID = nil // default value
-		// shopPhoneNumber, err := f.GetCellValue("Sheet1", "g"+strconv.Itoa(vRow))
+		// shopPhoneNumber, err := f.GetCellValue(f.GetSheetName(f.GetActiveSheetIndex()), "g"+strconv.Itoa(vRow))
 		// if err != nil {
 		// 	c.JSON(http.StatusBadRequest, gin.H{
 		// 		"status":  false,
@@ -522,7 +522,7 @@ func CreateProductsByExcelFile(c *gin.Context) {
 		// }
 
 		// //////////////////////      GET PRICE FROM EXCEL FILE ----------------------------------------
-		priceStr, err := f.GetCellValue("Sheet1", "i"+strconv.Itoa(vRow))
+		priceStr, err := f.GetCellValue(f.GetSheetName(f.GetActiveSheetIndex()), "i"+strconv.Itoa(vRow))
 		if err != nil {
 			helpers.HandleError(c, 400, err.Error())
 			return
@@ -535,7 +535,7 @@ func CreateProductsByExcelFile(c *gin.Context) {
 
 		// //////////////////////      GET OLD PRICE FROM EXCEL FILE ----------------------------------------
 		product.OldPrice = 0 // default value
-		// oldPriceStr, err := f.GetCellValue("Sheet1", "i"+strconv.Itoa(vRow))
+		// oldPriceStr, err := f.GetCellValue(f.GetSheetName(f.GetActiveSheetIndex()), "i"+strconv.Itoa(vRow))
 		// if err != nil {
 		// 	c.JSON(http.StatusBadRequest, gin.H{
 		// 		"status":  false,
@@ -553,7 +553,7 @@ func CreateProductsByExcelFile(c *gin.Context) {
 		// }
 
 		// //////////////////////      GET BENEFIT FROM EXCEL FILE ----------------------------------------
-		benefitStr, err := f.GetCellValue("Sheet1", "j"+strconv.Itoa(vRow))
+		benefitStr, err := f.GetCellValue(f.GetSheetName(f.GetActiveSheetIndex()), "j"+strconv.Itoa(vRow))
 		if err != nil {
 			helpers.HandleError(c, 400, err.Error())
 			return
@@ -569,7 +569,7 @@ func CreateProductsByExcelFile(c *gin.Context) {
 		}
 
 		// //////////////////////      GET AMOUNT FROM EXCEL FILE ----------------------------------------
-		amountStr, err := f.GetCellValue("Sheet1", "l"+strconv.Itoa(vRow))
+		amountStr, err := f.GetCellValue(f.GetSheetName(f.GetActiveSheetIndex()), "l"+strconv.Itoa(vRow))
 		if err != nil {
 			helpers.HandleError(c, 400, err.Error())
 			return
@@ -582,7 +582,7 @@ func CreateProductsByExcelFile(c *gin.Context) {
 		product.Amount = uint(amount64)
 
 		// //////////////////////      GET LIMIT AMOUNT FROM EXCEL FILE ----------------------------------------
-		limitAmountStr, err := f.GetCellValue("Sheet1", "m"+strconv.Itoa(vRow))
+		limitAmountStr, err := f.GetCellValue(f.GetSheetName(f.GetActiveSheetIndex()), "m"+strconv.Itoa(vRow))
 		if err != nil {
 			helpers.HandleError(c, 400, err.Error())
 			return
@@ -595,7 +595,7 @@ func CreateProductsByExcelFile(c *gin.Context) {
 		product.LimitAmount = uint(limitAmount64)
 
 		// //////////////////////      GET IS NEW FROM EXCEL FILE ----------------------------------------
-		isNewStr, err := f.GetCellValue("Sheet1", "o"+strconv.Itoa(vRow))
+		isNewStr, err := f.GetCellValue(f.GetSheetName(f.GetActiveSheetIndex()), "o"+strconv.Itoa(vRow))
 		if err != nil {
 			helpers.HandleError(c, 400, err.Error())
 			return
@@ -613,13 +613,13 @@ func CreateProductsByExcelFile(c *gin.Context) {
 		}
 
 		// //////////////////////      GET TRANSLATIONS OF PRODUCT FROM EXCEL FILE ----------------------------------------
-		trTitleTM, err := f.GetCellValue("Sheet1", "p"+strconv.Itoa(vRow))
+		trTitleTM, err := f.GetCellValue(f.GetSheetName(f.GetActiveSheetIndex()), "p"+strconv.Itoa(vRow))
 		if err != nil {
 			helpers.HandleError(c, 400, err.Error())
 			return
 		}
 
-		trDescTM, err := f.GetCellValue("Sheet1", "q"+strconv.Itoa(vRow))
+		trDescTM, err := f.GetCellValue(f.GetSheetName(f.GetActiveSheetIndex()), "q"+strconv.Itoa(vRow))
 		if err != nil {
 			helpers.HandleError(c, 400, err.Error())
 			return
@@ -644,13 +644,13 @@ func CreateProductsByExcelFile(c *gin.Context) {
 
 		product.TranslationProduct = append(product.TranslationProduct, tr)
 
-		trTitleRU, err := f.GetCellValue("Sheet1", "r"+strconv.Itoa(vRow))
+		trTitleRU, err := f.GetCellValue(f.GetSheetName(f.GetActiveSheetIndex()), "r"+strconv.Itoa(vRow))
 		if err != nil {
 			helpers.HandleError(c, 400, err.Error())
 			return
 		}
 
-		trDescRU, err := f.GetCellValue("Sheet1", "s"+strconv.Itoa(vRow))
+		trDescRU, err := f.GetCellValue(f.GetSheetName(f.GetActiveSheetIndex()), "s"+strconv.Itoa(vRow))
 		if err != nil {
 			helpers.HandleError(c, 400, err.Error())
 			return
