@@ -294,12 +294,9 @@ func CreateProductsByExcelFile(c *gin.Context) {
 		helpers.HandleError(c, 400, err.Error())
 		return
 	}
-	defer func() {
-		if err := f.Close(); err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
-		}
-	}()
+	defer f.Close()
+
+	sheetName := f.GetSheetName(f.GetActiveSheetIndex())
 
 	// CHECK IS EXISTS "uploads/product/main_image DIRECT" , IF DIRECT NOT FOUND CREATE THIS DIRECT
 	_, err = os.Stat(pkg.ServerPath + "uploads/product/main_image")
@@ -322,7 +319,7 @@ func CreateProductsByExcelFile(c *gin.Context) {
 	//////////////////////  GET COUNT OF ROWS FROM EXCEL FILE ----------------------------------------
 	countOfRows := 0
 	for {
-		value, err := f.GetCellValue(f.GetSheetName(f.GetActiveSheetIndex()), "c"+strconv.Itoa(countOfRows+3))
+		value, err := f.GetCellValue(sheetName, "c"+strconv.Itoa(countOfRows+3))
 		if err != nil {
 			helpers.HandleError(c, 400, err.Error())
 			return
@@ -334,24 +331,20 @@ func CreateProductsByExcelFile(c *gin.Context) {
 		}
 	}
 
-	//////////////////////      GET PICTURE FROM EXCEL FILE ----------------------------------------
-	rows := []int{}
-	for i := 3; i < countOfRows+3; i++ {
-		rows = append(rows, i)
-	}
-
 	columns := []string{"c", "d", "e", "f", "g"}
-	for _, vRow := range rows {
+	for i := 3; i < countOfRows+3; i++ {
+		countOfErr := 0
+		errString := ""
 		var product ProductForAdmin
 
-		mainImageFileID, err := f.GetCellValue(f.GetSheetName(f.GetActiveSheetIndex()), columns[0]+strconv.Itoa(vRow))
+		mainImageFileID, err := f.GetCellValue(sheetName, columns[0]+strconv.Itoa(i))
 		if err != nil {
 			helpers.HandleError(c, 400, err.Error())
 			return
 		}
 		if mainImageFileID == "" {
-			helpers.HandleError(c, 400, "main image is required")
-			return
+			countOfErr++
+			errString = errString + "| esasy surat hokman gerekli | "
 		}
 
 		if strings.Contains(mainImageFileID, " ") || strings.Contains(mainImageFileID, "_") || strings.Contains(mainImageFileID, "-") {
@@ -363,8 +356,8 @@ func CreateProductsByExcelFile(c *gin.Context) {
 
 		newFileName, err := pkg.CopyFile("uploads/images/", "uploads/product/main_image/", mainImageFileID)
 		if err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
+			countOfErr++
+			errString = errString + err.Error() + " | "
 		}
 
 		_, err = db.Exec(context.Background(), "INSERT INTO helper_images (image) VALUES ($1)", "uploads/product/main_image/"+newFileName)
@@ -375,14 +368,12 @@ func CreateProductsByExcelFile(c *gin.Context) {
 
 		product.MainImage = "uploads/product/main_image/" + newFileName
 
-		// var pictures []string
 		for _, vColumn := range columns[1:] {
-			imageFileID, err := f.GetCellValue(f.GetSheetName(f.GetActiveSheetIndex()), vColumn+strconv.Itoa(vRow))
+			imageFileID, err := f.GetCellValue(sheetName, vColumn+strconv.Itoa(i))
 			if err != nil {
 				helpers.HandleError(c, 400, err.Error())
 				return
 			}
-			// pictures = append(pictures, picsB)
 
 			if imageFileID != "" {
 
@@ -395,8 +386,9 @@ func CreateProductsByExcelFile(c *gin.Context) {
 
 				newFileName, err := pkg.CopyFile("uploads/images/", "uploads/product/image/", imageFileID)
 				if err != nil {
-					helpers.HandleError(c, 400, err.Error())
-					return
+					countOfErr++
+					errString = errString + err.Error() + " | "
+
 				}
 
 				_, err = db.Exec(context.Background(), "INSERT INTO helper_images (image) VALUES ($1)", "uploads/product/image/"+newFileName)
@@ -410,14 +402,15 @@ func CreateProductsByExcelFile(c *gin.Context) {
 		}
 
 		// //////////////////////      GET CATEGORIES FROM EXCEL FILE ----------------------------------------
-		namesOfCategories, err := f.GetCellValue(f.GetSheetName(f.GetActiveSheetIndex()), "h"+strconv.Itoa(vRow))
+		namesOfCategories, err := f.GetCellValue(sheetName, "h"+strconv.Itoa(i))
 		if err != nil {
 			helpers.HandleError(c, 400, err.Error())
 			return
 		}
 		if namesOfCategories == "" {
-			helpers.HandleError(c, 400, "product category is required")
-			return
+			countOfErr++
+			errString = errString + "harydyn kategoriyalary hokman gerek | "
+
 		}
 
 		names_of_categories := strings.Split(namesOfCategories, " | ")
@@ -449,7 +442,7 @@ func CreateProductsByExcelFile(c *gin.Context) {
 		}
 
 		// //////////////////////      GET BREND FROM EXCEL FILE ----------------------------------------
-		nameOfBrend, err := f.GetCellValue(f.GetSheetName(f.GetActiveSheetIndex()), "n"+strconv.Itoa(vRow))
+		nameOfBrend, err := f.GetCellValue(sheetName, "n"+strconv.Itoa(i))
 		if err != nil {
 			helpers.HandleError(c, 400, err.Error())
 			return
@@ -470,6 +463,12 @@ func CreateProductsByExcelFile(c *gin.Context) {
 					return
 				}
 			}
+
+			if product.BrendID.String == "" {
+				countOfErr++
+				errString = errString + nameOfBrend + " atly brend yok | "
+
+			}
 		}
 
 		if product.BrendID.String == "" {
@@ -480,7 +479,7 @@ func CreateProductsByExcelFile(c *gin.Context) {
 
 		// //////////////////////      GET SHOP FROM EXCEL FILE ----------------------------------------
 		shopID = nil // default value
-		// shopPhoneNumber, err := f.GetCellValue(f.GetSheetName(f.GetActiveSheetIndex()), "g"+strconv.Itoa(vRow))
+		// shopPhoneNumber, err := f.GetCellValue(sheetName, "g"+strconv.Itoa(vRow))
 		// if err != nil {
 		// 	c.JSON(http.StatusBadRequest, gin.H{
 		// 		"status":  false,
@@ -522,20 +521,21 @@ func CreateProductsByExcelFile(c *gin.Context) {
 		// }
 
 		// //////////////////////      GET PRICE FROM EXCEL FILE ----------------------------------------
-		priceStr, err := f.GetCellValue(f.GetSheetName(f.GetActiveSheetIndex()), "i"+strconv.Itoa(vRow))
+		priceStr, err := f.GetCellValue(sheetName, "i"+strconv.Itoa(i))
 		if err != nil {
 			helpers.HandleError(c, 400, err.Error())
 			return
 		}
 		product.Price, err = strconv.ParseFloat(priceStr, 64)
 		if err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
+			countOfErr++
+			errString = errString + "harydyn alynan bahasy hokman gerek ya-da ol onluk san , bitin bolmaly | "
+
 		}
 
 		// //////////////////////      GET OLD PRICE FROM EXCEL FILE ----------------------------------------
 		product.OldPrice = 0 // default value
-		// oldPriceStr, err := f.GetCellValue(f.GetSheetName(f.GetActiveSheetIndex()), "i"+strconv.Itoa(vRow))
+		// oldPriceStr, err := f.GetCellValue(sheetName, "i"+strconv.Itoa(vRow))
 		// if err != nil {
 		// 	c.JSON(http.StatusBadRequest, gin.H{
 		// 		"status":  false,
@@ -553,7 +553,7 @@ func CreateProductsByExcelFile(c *gin.Context) {
 		// }
 
 		// //////////////////////      GET BENEFIT FROM EXCEL FILE ----------------------------------------
-		benefitStr, err := f.GetCellValue(f.GetSheetName(f.GetActiveSheetIndex()), "j"+strconv.Itoa(vRow))
+		benefitStr, err := f.GetCellValue(sheetName, "j"+strconv.Itoa(i))
 		if err != nil {
 			helpers.HandleError(c, 400, err.Error())
 			return
@@ -564,62 +564,73 @@ func CreateProductsByExcelFile(c *gin.Context) {
 
 		product.Benefit.Float64, err = strconv.ParseFloat(benefitStr, 64)
 		if err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
+			countOfErr++
+			errString = errString + "haryda goyulyan goterim hokman gerek ya-da ol onluk san , bitin bolmaly | "
+
 		}
 
 		// //////////////////////      GET AMOUNT FROM EXCEL FILE ----------------------------------------
-		amountStr, err := f.GetCellValue(f.GetSheetName(f.GetActiveSheetIndex()), "l"+strconv.Itoa(vRow))
+		amountStr, err := f.GetCellValue(sheetName, "l"+strconv.Itoa(i))
 		if err != nil {
 			helpers.HandleError(c, 400, err.Error())
 			return
 		}
 		amount64, err := strconv.ParseUint(amountStr, 10, 32)
 		if err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
+			countOfErr++
+			errString = errString + "harydyn ammardaky mukdary hokman gerek ya-da ol onluk san , bitin bolmaly | "
+
 		}
 		product.Amount = uint(amount64)
 
 		// //////////////////////      GET LIMIT AMOUNT FROM EXCEL FILE ----------------------------------------
-		limitAmountStr, err := f.GetCellValue(f.GetSheetName(f.GetActiveSheetIndex()), "m"+strconv.Itoa(vRow))
+		limitAmountStr, err := f.GetCellValue(sheetName, "m"+strconv.Itoa(i))
 		if err != nil {
 			helpers.HandleError(c, 400, err.Error())
 			return
 		}
 		limitAmount64, err := strconv.ParseUint(limitAmountStr, 10, 32)
 		if err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
+			countOfErr++
+			errString = errString + "haryda goyulyan limit hokman gerek ya-da ol onluk san , bitin bolmaly | "
+
 		}
 		product.LimitAmount = uint(limitAmount64)
 
 		// //////////////////////      GET IS NEW FROM EXCEL FILE ----------------------------------------
-		isNewStr, err := f.GetCellValue(f.GetSheetName(f.GetActiveSheetIndex()), "o"+strconv.Itoa(vRow))
+		isNewStr, err := f.GetCellValue(sheetName, "o"+strconv.Itoa(i))
 		if err != nil {
 			helpers.HandleError(c, 400, err.Error())
 			return
 		}
 		product.IsNew, err = strconv.ParseBool(isNewStr)
 		if err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
+			countOfErr++
+			errString = errString + "harydyn tazeligine hokman true ya-da false yazylan bolmaly | "
+
 		}
 
 		benefit, _, price, oldPrice, amount, limitAmount, isNew, err := models.ValidateProductModel("", product.Benefit.Float64, "", product.Price, product.OldPrice, product.Amount, product.LimitAmount, product.IsNew, product.Categories)
 		if err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
+			countOfErr++
+			errString = errString + err.Error() + " | "
+
 		}
 
 		// //////////////////////      GET TRANSLATIONS OF PRODUCT FROM EXCEL FILE ----------------------------------------
-		trTitleTM, err := f.GetCellValue(f.GetSheetName(f.GetActiveSheetIndex()), "p"+strconv.Itoa(vRow))
+		trTitleTM, err := f.GetCellValue(sheetName, "p"+strconv.Itoa(i))
 		if err != nil {
 			helpers.HandleError(c, 400, err.Error())
 			return
 		}
 
-		trDescTM, err := f.GetCellValue(f.GetSheetName(f.GetActiveSheetIndex()), "q"+strconv.Itoa(vRow))
+		if trTitleTM == "" {
+			countOfErr++
+			errString = errString + "harydyn turkmence ady hokman gerek | "
+
+		}
+
+		trDescTM, err := f.GetCellValue(sheetName, "q"+strconv.Itoa(i))
 		if err != nil {
 			helpers.HandleError(c, 400, err.Error())
 			return
@@ -644,13 +655,19 @@ func CreateProductsByExcelFile(c *gin.Context) {
 
 		product.TranslationProduct = append(product.TranslationProduct, tr)
 
-		trTitleRU, err := f.GetCellValue(f.GetSheetName(f.GetActiveSheetIndex()), "r"+strconv.Itoa(vRow))
+		trTitleRU, err := f.GetCellValue(sheetName, "r"+strconv.Itoa(i))
 		if err != nil {
 			helpers.HandleError(c, 400, err.Error())
 			return
 		}
 
-		trDescRU, err := f.GetCellValue(f.GetSheetName(f.GetActiveSheetIndex()), "s"+strconv.Itoa(vRow))
+		if trTitleRU == "" {
+			countOfErr++
+			errString = errString + "harydyn osrca ady hokman gerek | "
+
+		}
+
+		trDescRU, err := f.GetCellValue(sheetName, "s"+strconv.Itoa(i))
 		if err != nil {
 			helpers.HandleError(c, 400, err.Error())
 			return
@@ -672,57 +689,76 @@ func CreateProductsByExcelFile(c *gin.Context) {
 		}
 		product.TranslationProduct = append(product.TranslationProduct, tr)
 
-		// create product
-		resultProducts, err := db.Query(context.Background(), "INSERT INTO products (brend_id,price,old_price,amount,limit_amount,is_new,shop_id,main_image,benefit) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9) RETURNING id", brendID, price, oldPrice, amount, limitAmount, isNew, shopID, product.MainImage, benefit)
-		if err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
-		}
-
-		var productID string
-		for resultProducts.Next() {
-			if err := resultProducts.Scan(&productID); err != nil {
-				helpers.HandleError(c, 400, err.Error())
-				return
-			}
-		}
-
-		if len(product.Images) != 0 {
-			// create images of product
-			_, err := db.Exec(context.Background(), "INSERT INTO images (product_id,image) VALUES ($1,unnest($2::varchar[]))", productID, pq.Array(product.Images))
+		if countOfErr == 0 {
+			// create product
+			resultProducts, err := db.Query(context.Background(), "INSERT INTO products (brend_id,price,old_price,amount,limit_amount,is_new,shop_id,main_image,benefit) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9) RETURNING id", brendID, price, oldPrice, amount, limitAmount, isNew, shopID, product.MainImage, benefit)
 			if err != nil {
 				helpers.HandleError(c, 400, err.Error())
 				return
 			}
 
-			_, err = db.Exec(context.Background(), "DELETE FROM helper_images WHERE image = ANY($1)", pq.Array(product.Images))
+			var productID string
+			for resultProducts.Next() {
+				if err := resultProducts.Scan(&productID); err != nil {
+					helpers.HandleError(c, 400, err.Error())
+					return
+				}
+			}
+
+			if len(product.Images) != 0 {
+				// create images of product
+				_, err := db.Exec(context.Background(), "INSERT INTO images (product_id,image) VALUES ($1,unnest($2::varchar[]))", productID, pq.Array(product.Images))
+				if err != nil {
+					helpers.HandleError(c, 400, err.Error())
+					return
+				}
+
+				_, err = db.Exec(context.Background(), "DELETE FROM helper_images WHERE image = ANY($1)", pq.Array(product.Images))
+				if err != nil {
+					helpers.HandleError(c, 400, err.Error())
+					return
+				}
+			}
+
+			for _, v := range product.TranslationProduct {
+				_, err := db.Exec(context.Background(), "INSERT INTO translation_product (lang_id,product_id,name,description,slug) VALUES ($1,$2,$3,$4,$5)", v.LangID, productID, v.Name, v.Description, slug.MakeLang(v.Name, "en"))
+				if err != nil {
+					helpers.HandleError(c, 400, err.Error())
+					return
+				}
+			}
+
+			// create category product
+			_, err = db.Exec(context.Background(), "INSERT INTO category_product (category_id,product_id) VALUES (unnest($1::uuid[]),$2)", pq.Array(product.Categories), productID)
 			if err != nil {
+				helpers.HandleError(c, 400, err.Error())
+				return
+			}
+
+			_, err = db.Exec(context.Background(), "DELETE FROM helper_images WHERE image = $1", product.MainImage)
+			if err != nil {
+				helpers.HandleError(c, 400, err.Error())
+				return
+			}
+
+			if err := f.RemoveRow(sheetName, i); err != nil {
+				helpers.HandleError(c, 400, err.Error())
+				return
+			}
+			countOfRows--
+			i--
+		} else {
+			if err := f.SetCellStr(sheetName, "t"+strconv.Itoa(i), errString); err != nil {
 				helpers.HandleError(c, 400, err.Error())
 				return
 			}
 		}
 
-		for _, v := range product.TranslationProduct {
-			_, err := db.Exec(context.Background(), "INSERT INTO translation_product (lang_id,product_id,name,description,slug) VALUES ($1,$2,$3,$4,$5)", v.LangID, productID, v.Name, v.Description, slug.MakeLang(v.Name, "en"))
-			if err != nil {
-				helpers.HandleError(c, 400, err.Error())
-				return
-			}
-		}
+	}
 
-		// create category product
-		_, err = db.Exec(context.Background(), "INSERT INTO category_product (category_id,product_id) VALUES (unnest($1::uuid[]),$2)", pq.Array(product.Categories), productID)
-		if err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
-		}
-
-		_, err = db.Exec(context.Background(), "DELETE FROM helper_images WHERE image = $1", product.MainImage)
-		if err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
-		}
-
+	if err := f.Save(); err != nil {
+		helpers.HandleError(c, 400, err.Error())
+		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{

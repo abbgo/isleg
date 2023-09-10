@@ -4,7 +4,7 @@ import (
 	"io"
 	"math"
 	"os"
-	"strings"
+	"path/filepath"
 
 	"github.com/google/uuid"
 )
@@ -18,7 +18,8 @@ var ServerPath = os.Getenv("SERVER_PATH")
 
 func CopyFile(sourceFilePath, destinationFilePath, fileName string) (string, error) {
 
-	newFileName := uuid.New().String() + strings.Split(fileName, ".")[1]
+	// newFileName := uuid.New().String() + strings.Split(fileName, ".")[1]
+	newFileName := uuid.New().String() + filepath.Ext(fileName)
 
 	// Open the source file for reading
 	source, err := os.Open(ServerPath + sourceFilePath + fileName)
