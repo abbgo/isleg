@@ -281,6 +281,12 @@ func CreateProduct(c *gin.Context) {
 
 func CreateProductsByExcelFile(c *gin.Context) {
 
+	countOfRows := 0
+	count_of_err := 0
+
+	columns := []string{"c", "d", "e", "f", "g"}
+	var sheetName string
+
 	db, err := config.ConnDB()
 	if err != nil {
 		helpers.HandleError(c, 400, err.Error())
@@ -296,7 +302,7 @@ func CreateProductsByExcelFile(c *gin.Context) {
 	}
 	defer f.Close()
 
-	sheetName := f.GetSheetName(f.GetActiveSheetIndex())
+	sheetName = f.GetSheetName(f.GetActiveSheetIndex())
 
 	// CHECK IS EXISTS "uploads/product/main_image DIRECT" , IF DIRECT NOT FOUND CREATE THIS DIRECT
 	_, err = os.Stat(pkg.ServerPath + "uploads/product/main_image")
@@ -317,7 +323,6 @@ func CreateProductsByExcelFile(c *gin.Context) {
 	}
 
 	//////////////////////  GET COUNT OF ROWS FROM EXCEL FILE ----------------------------------------
-	countOfRows := 0
 	for {
 		value, err := f.GetCellValue(sheetName, "c"+strconv.Itoa(countOfRows+3))
 		if err != nil {
@@ -331,7 +336,6 @@ func CreateProductsByExcelFile(c *gin.Context) {
 		}
 	}
 
-	columns := []string{"c", "d", "e", "f", "g"}
 	for i := 3; i < countOfRows+3; i++ {
 		countOfErr := 0
 		errString := ""
@@ -566,7 +570,6 @@ func CreateProductsByExcelFile(c *gin.Context) {
 		if err != nil {
 			countOfErr++
 			errString = errString + "haryda goyulyan goterim hokman gerek ya-da ol onluk san , bitin bolmaly | "
-
 		}
 
 		// //////////////////////      GET AMOUNT FROM EXCEL FILE ----------------------------------------
@@ -748,6 +751,7 @@ func CreateProductsByExcelFile(c *gin.Context) {
 			countOfRows--
 			i--
 		} else {
+			count_of_err++
 			if err := f.SetCellStr(sheetName, "t"+strconv.Itoa(i), errString); err != nil {
 				helpers.HandleError(c, 400, err.Error())
 				return
@@ -761,9 +765,17 @@ func CreateProductsByExcelFile(c *gin.Context) {
 		return
 	}
 
+	if count_of_err == 0 {
+		c.JSON(http.StatusOK, gin.H{
+			"status":  true,
+			"message": "data successfully added",
+		})
+		return
+	}
+
 	c.JSON(http.StatusOK, gin.H{
-		"status":  true,
-		"message": "data successfully added",
+		"status":  false,
+		"message": "There are " + strconv.Itoa(count_of_err) + " errors in excel file",
 	})
 
 }
