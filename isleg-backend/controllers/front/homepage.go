@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"context"
+	"math"
 	"net/http"
 
 	"github/abbgo/isleg/isleg-backend/config"
@@ -31,6 +32,8 @@ type Product struct {
 	Amount      int     `json:"amount,omitempty"`
 	// Translation models.TranslationProduct `json:"translation,omitempty"`
 	Translations []map[string]models.TranslationProduct `json:"translations,omitempty"`
+	Benefit      null.Float                             `json:"-"`
+	Percentage   float64                                `json:"percentage,omitempty"`
 }
 
 type Brend struct {
@@ -86,7 +89,7 @@ func GetHomePageCategories(c *gin.Context) {
 		}
 
 		// get all product where category id equal homePageCategory.ID and lang_id equal langID
-		productRows, err := db.Query(context.Background(), "SELECT p.id,p.price,p.old_price,p.limit_amount,p.is_new,p.amount,p.main_image FROM products p LEFT JOIN category_product c ON p.id=c.product_id WHERE c.category_id = $1 AND p.deleted_at IS NULL AND c.deleted_at IS NULL AND p.amount > 0 AND p.limit_amount > 0 ORDER BY p.created_at DESC LIMIT 4", homePageCategory.ID)
+		productRows, err := db.Query(context.Background(), "SELECT p.id,p.price,p.old_price,p.limit_amount,p.is_new,p.amount,p.main_image,p.benefit FROM products p LEFT JOIN category_product c ON p.id=c.product_id WHERE c.category_id = $1 AND p.deleted_at IS NULL AND c.deleted_at IS NULL AND p.amount > 0 AND p.limit_amount > 0 ORDER BY p.created_at DESC LIMIT 4", homePageCategory.ID)
 		if err != nil {
 			helpers.HandleError(c, 400, err.Error())
 			return
@@ -95,10 +98,22 @@ func GetHomePageCategories(c *gin.Context) {
 		var products []Product
 		for productRows.Next() {
 			var product Product
-			if err := productRows.Scan(&product.ID, &product.Price, &product.OldPrice, &product.LimitAmount, &product.IsNew, &product.Amount, &product.MainImage); err != nil {
+			if err := productRows.Scan(&product.ID, &product.Price, &product.OldPrice, &product.LimitAmount, &product.IsNew, &product.Amount, &product.MainImage, &product.Benefit); err != nil {
 				helpers.HandleError(c, 400, err.Error())
 				return
 			}
+
+			if product.Benefit.Float64 != 0 {
+				product.Price = product.Price + (product.Price*product.Benefit.Float64)/100
+				product.OldPrice = product.OldPrice + (product.OldPrice*product.Benefit.Float64)/100
+			}
+
+			if product.OldPrice != 0 {
+				product.Percentage = -math.Round(((product.OldPrice - product.Price) * 100) / product.OldPrice)
+			} else {
+				product.Percentage = 0
+			}
+
 			rowsLang, err := db.Query(context.Background(), "SELECT id,name_short FROM languages WHERE deleted_at IS NULL")
 			if err != nil {
 				helpers.HandleError(c, 400, err.Error())
