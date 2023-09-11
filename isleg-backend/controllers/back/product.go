@@ -273,8 +273,9 @@ func CreateProduct(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"status":  true,
-		"message": "data successfully added",
+		"status":     true,
+		"message":    "data successfully added",
+		"product_id": productID,
 	})
 
 }
@@ -908,8 +909,9 @@ func UpdateProductByID(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"status":  true,
-		"message": "data successfully updated",
+		"status":     true,
+		"message":    "data successfully updated",
+		"product_id": ID,
 	})
 
 }
