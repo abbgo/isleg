@@ -35,7 +35,7 @@ func CreateBrend(c *gin.Context) {
 	}
 
 	// CREATE BREND
-	_, err = db.Exec(context.Background(), "INSERT INTO brends (name,image,slug) VALUES ($1,$2)", brend.Name, brend.Image, slug.MakeLang(brend.Name, "en"))
+	_, err = db.Exec(context.Background(), "INSERT INTO brends (name,image,slug) VALUES ($1,$2,$3)", brend.Name, brend.Image, slug.MakeLang(brend.Name, "en"))
 	if err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
