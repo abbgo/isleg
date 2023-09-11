@@ -532,14 +532,14 @@ func GetAllBrendForHomePage() ([]models.Brend, error) {
 	var brends []models.Brend
 
 	// get all brends
-	rows, err := db.Query(context.Background(), "SELECT id,image FROM brends WHERE deleted_at IS NULL")
+	rows, err := db.Query(context.Background(), "SELECT id,name,image FROM brends WHERE deleted_at IS NULL")
 	if err != nil {
 		return []models.Brend{}, err
 	}
 
 	for rows.Next() {
 		var brend models.Brend
-		if err := rows.Scan(&brend.ID, &brend.Image); err != nil {
+		if err := rows.Scan(&brend.ID, &brend.Name, &brend.Image); err != nil {
 			return []models.Brend{}, err
 		}
 
