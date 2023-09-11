@@ -773,7 +773,7 @@ func CreateProductsByExcelFile(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
+	c.JSON(201, gin.H{
 		"status":  false,
 		"message": "There are " + strconv.Itoa(count_of_err) + " errors in excel file",
 	})
@@ -812,6 +812,13 @@ func RemoveExcelFile(c *gin.Context) {
 		"message": "excel file successfully deleted",
 	})
 
+}
+
+func DownloadErrExcelFile(c *gin.Context) {
+	c.JSON(http.StatusOK, gin.H{
+		"status":  true,
+		"message": "uploads/product/products.xlsx",
+	})
 }
 
 func UpdateProductByID(c *gin.Context) {

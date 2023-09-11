@@ -230,6 +230,7 @@ func BackRoutes(back *gin.RouterGroup) {
 		securedAdmin.POST("image", backController.CreateProductImage)
 		securedAdmin.DELETE("image", backController.DeleteProductImages)
 		securedAdmin.POST("excel", backController.UploadExcelFile)
+		securedAdmin.GET("error-excel", backController.DownloadErrExcelFile)
 		securedAdmin.DELETE("excel", backController.RemoveExcelFile)
 
 	}
