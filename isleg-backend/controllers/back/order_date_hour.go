@@ -17,7 +17,6 @@ type DateHour struct {
 }
 
 func CreateOrderDateHour(c *gin.Context) {
-
 	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
@@ -27,7 +26,6 @@ func CreateOrderDateHour(c *gin.Context) {
 	defer db.Close()
 
 	var dateHours []DateHour
-
 	if err := c.BindJSON(&dateHours); err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
@@ -40,18 +38,10 @@ func CreateOrderDateHour(c *gin.Context) {
 			return
 		}
 
-		resultDateHour, err := db.Query(context.Background(), "INSERT INTO date_hours (hour,date_id) VALUES ($1,$2) RETURNING id", v.Hour, v.DateID)
-		if err != nil {
+		var dateHourID string
+		if err := db.QueryRow(context.Background(), "INSERT INTO date_hours (hour,date_id) VALUES ($1,$2) RETURNING id", v.Hour, v.DateID).Scan(&dateHourID); err != nil {
 			helpers.HandleError(c, 400, err.Error())
 			return
-		}
-
-		var dateHourID string
-		for resultDateHour.Next() {
-			if err := resultDateHour.Scan(&dateHourID); err != nil {
-				helpers.HandleError(c, 400, err.Error())
-				return
-			}
 		}
 
 		_, err = db.Exec(context.Background(), "INSERT INTO date_hour_times (date_hour_id,time_id) VALUES ($1,unnest($2::uuid[])) RETURNING id", dateHourID, pq.Array(v.Times))
@@ -65,5 +55,4 @@ func CreateOrderDateHour(c *gin.Context) {
 		"status":  true,
 		"message": "data successfully added",
 	})
-
 }
