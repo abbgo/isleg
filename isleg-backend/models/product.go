@@ -62,7 +62,6 @@ type CategoryProduct struct {
 }
 
 func ValidateProductModel(mainPhoto string, benefit float64, productID string, price float64, oldprice float64, amount, limitamount uint, isNew bool, categories []string) (float64, string, float64, float64, uint, uint, bool, error) {
-
 	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
@@ -77,17 +76,11 @@ func ValidateProductModel(mainPhoto string, benefit float64, productID string, p
 
 	// check catrgory id
 	for _, v := range categories {
-		rawCategory, err := db.Query(context.Background(), "SELECT id FROM categories WHERE id = $1 AND deleted_at IS NULL", v)
-		if err != nil {
+		var categoryID string
+		if err := db.QueryRow(context.Background(), "SELECT id FROM categories WHERE id = $1 AND deleted_at IS NULL", v).Scan(&categoryID); err != nil {
 			return 0, "", 0, 0, 0, 0, false, err
 		}
 
-		var categoryID string
-		for rawCategory.Next() {
-			if err := rawCategory.Scan(&categoryID); err != nil {
-				return 0, "", 0, 0, 0, 0, false, err
-			}
-		}
 		if categoryID == "" {
 			return 0, "", 0, 0, 0, 0, false, errors.New("category not found")
 		}
@@ -115,24 +108,17 @@ func ValidateProductModel(mainPhoto string, benefit float64, productID string, p
 	}
 
 	if productID != "" {
-		rowMainImage, err := db.Query(context.Background(), "SELECT main_image FROM products WHERE deleted_at IS NULL AND id = $1", productID)
-		if err != nil {
+		var mainImage string
+		if err := db.QueryRow(context.Background(), "SELECT main_image FROM products WHERE deleted_at IS NULL AND id = $1", productID).Scan(&mainImage); err != nil {
 			return 0, "", 0, 0, 0, 0, false, err
 		}
 
-		var mainImage string
-		for rowMainImage.Next() {
-			if err := rowMainImage.Scan(&mainImage); err != nil {
-				return 0, "", 0, 0, 0, 0, false, err
-			}
-		}
 		if mainImage == "" {
 			return 0, "", 0, 0, 0, 0, false, errors.New("main image of product not found")
 		}
 
 		if mainPhoto != "" {
 			mainImage = mainPhoto
-
 			_, err := db.Exec(context.Background(), "DELETE FROM helper_images WHERE image = $1", mainImage)
 			if err != nil {
 				return 0, "", 0, 0, 0, 0, false, err
