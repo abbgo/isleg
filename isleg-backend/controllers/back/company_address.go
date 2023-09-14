@@ -11,7 +11,6 @@ import (
 )
 
 func CreateCompanyAddress(c *gin.Context) {
-
 	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
@@ -29,26 +28,16 @@ func CreateCompanyAddress(c *gin.Context) {
 
 	// check lans_id
 	for _, v := range companyAddresses {
-
-		rowLang, err := db.Query(context.Background(), "SELECT id FROM languages WHERE id = $1 AND deleted_at IS NULL", v.LangID)
-		if err != nil {
+		var langID string
+		if err := db.QueryRow(context.Background(), "SELECT id FROM languages WHERE id = $1 AND deleted_at IS NULL", v.LangID).Scan(&langID); err != nil {
 			helpers.HandleError(c, 400, err.Error())
 			return
-		}
-
-		var langID string
-		for rowLang.Next() {
-			if err := rowLang.Scan(&langID); err != nil {
-				helpers.HandleError(c, 400, err.Error())
-				return
-			}
 		}
 
 		if langID == "" {
 			helpers.HandleError(c, 404, "language not found")
 			return
 		}
-
 	}
 
 	// create company address
@@ -64,11 +53,9 @@ func CreateCompanyAddress(c *gin.Context) {
 		"status":  true,
 		"message": "data successfully added",
 	})
-
 }
 
 func UpdateCompanyAddressByID(c *gin.Context) {
-
 	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
@@ -81,18 +68,10 @@ func UpdateCompanyAddressByID(c *gin.Context) {
 	var companyAddress models.CompanyAddress
 
 	//check id
-	rowComAddress, err := db.Query(context.Background(), "SELECT id FROM company_address WHERE id = $1 AND deleted_at IS NULL", companyAddress.ID)
-	if err != nil {
+	var id string
+	if err := db.QueryRow(context.Background(), "SELECT id FROM company_address WHERE id = $1 AND deleted_at IS NULL", companyAddress.ID).Scan(&id); err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
-	}
-
-	var id string
-	for rowComAddress.Next() {
-		if err := rowComAddress.Scan(&id); err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
-		}
 	}
 
 	if id == "" {
@@ -110,11 +89,9 @@ func UpdateCompanyAddressByID(c *gin.Context) {
 		"status":  true,
 		"message": "data successfully updated",
 	})
-
 }
 
 func GetCompanyAddressByID(c *gin.Context) {
-
 	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
@@ -127,18 +104,10 @@ func GetCompanyAddressByID(c *gin.Context) {
 	ID := c.Param("id")
 
 	// check id and get data from database
-	rowComAddress, err := db.Query(context.Background(), "SELECT address FROM company_address WHERE id = $1 AND deleted_at IS NULL", ID)
-	if err != nil {
+	var adress string
+	if err := db.QueryRow(context.Background(), "SELECT address FROM company_address WHERE id = $1 AND deleted_at IS NULL", ID).Scan(&adress); err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
-	}
-
-	var adress string
-	for rowComAddress.Next() {
-		if err := rowComAddress.Scan(&adress); err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
-		}
 	}
 
 	if adress == "" {
@@ -150,12 +119,10 @@ func GetCompanyAddressByID(c *gin.Context) {
 		"status":          true,
 		"company_address": adress,
 	})
-
 }
 
 // GetCompanyAddress funksiya dil boyunca firmanyn salgysyny getirip beryar
 func GetCompanyAddress(c *gin.Context) {
-
 	db, err := config.ConnDB()
 	if err != nil {
 		helpers.HandleError(c, 400, err.Error())
@@ -170,18 +137,10 @@ func GetCompanyAddress(c *gin.Context) {
 	}
 
 	// get company address where lang_id equal langID
-	addressRow, err := db.Query(context.Background(), "SELECT address FROM company_address WHERE lang_id = $1 AND deleted_at IS NULL", langID)
-	if err != nil {
+	var address string
+	if err := db.QueryRow(context.Background(), "SELECT address FROM company_address WHERE lang_id = $1 AND deleted_at IS NULL", langID).Scan(&address); err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
-	}
-
-	var address string
-	for addressRow.Next() {
-		if err := addressRow.Scan(&address); err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
-		}
 	}
 
 	c.JSON(http.StatusOK, gin.H{
