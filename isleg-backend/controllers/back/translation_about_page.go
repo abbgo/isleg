@@ -11,7 +11,6 @@ import (
 )
 
 func CreateTranslationAbout(c *gin.Context) {
-
 	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
@@ -22,7 +21,6 @@ func CreateTranslationAbout(c *gin.Context) {
 
 	// get data from request
 	var trAbouts []models.TranslationAbout
-
 	if err := c.BindJSON(&trAbouts); err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
@@ -30,48 +28,34 @@ func CreateTranslationAbout(c *gin.Context) {
 
 	// check lang_id
 	for _, v := range trAbouts {
-
-		rowLang, err := db.Query(context.Background(), "SELECT id FROM languages WHERE id = $1 AND deleted_at IS NULL", v.LangID)
-		if err != nil {
+		var langID string
+		if err := db.QueryRow(context.Background(), "SELECT id FROM languages WHERE id = $1 AND deleted_at IS NULL", v.LangID).Scan(&langID); err != nil {
 			helpers.HandleError(c, 400, err.Error())
 			return
-		}
-
-		var langID string
-		for rowLang.Next() {
-			if err := rowLang.Scan(&langID); err != nil {
-				helpers.HandleError(c, 400, err.Error())
-				return
-			}
 		}
 
 		if langID == "" {
 			helpers.HandleError(c, 404, "language not found")
 			return
 		}
-
 	}
 
 	// create translation about
 	for _, v := range trAbouts {
-
 		_, err := db.Exec(context.Background(), "INSERT INTO translation_about (lang_id,title,content) VALUES ($1,$2,$3)", v.LangID, v.Title, v.Content)
 		if err != nil {
 			helpers.HandleError(c, 400, err.Error())
 			return
 		}
-
 	}
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
 		"message": "data successfully added",
 	})
-
 }
 
 func UpdateTranslationAboutByID(c *gin.Context) {
-
 	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
@@ -82,7 +66,6 @@ func UpdateTranslationAboutByID(c *gin.Context) {
 
 	// get id of translation about from request parameter
 	var trAbout models.TranslationAbout
-
 	//get data from request
 	if err := c.BindJSON(&trAbout); err != nil {
 		helpers.HandleError(c, 400, err.Error())
@@ -90,18 +73,10 @@ func UpdateTranslationAboutByID(c *gin.Context) {
 	}
 
 	// check id
-	rowFlag, err := db.Query(context.Background(), "SELECT id FROM translation_about WHERE id = $1 AND deleted_at IS NULL", trAbout.ID)
-	if err != nil {
+	var id string
+	if err := db.QueryRow(context.Background(), "SELECT id FROM translation_about WHERE id = $1 AND deleted_at IS NULL", trAbout.ID).Scan(&id); err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
-	}
-
-	var id string
-	for rowFlag.Next() {
-		if err := rowFlag.Scan(&id); err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
-		}
 	}
 
 	if id == "" {
@@ -120,11 +95,9 @@ func UpdateTranslationAboutByID(c *gin.Context) {
 		"status":  true,
 		"message": "data successfully updated",
 	})
-
 }
 
 func GetTranslationAboutByID(c *gin.Context) {
-
 	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
@@ -137,18 +110,10 @@ func GetTranslationAboutByID(c *gin.Context) {
 	ID := c.Param("id")
 
 	// check id and get data from database
-	rowFlag, err := db.Query(context.Background(), "SELECT id,title,content FROM translation_about WHERE id = $1 AND deleted_at IS NULL", ID)
-	if err != nil {
+	var t models.TranslationAbout
+	if err := db.QueryRow(context.Background(), "SELECT id,title,content FROM translation_about WHERE id = $1 AND deleted_at IS NULL", ID).Scan(&t.ID, &t.Title, &t.Content); err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
-	}
-
-	var t models.TranslationAbout
-	for rowFlag.Next() {
-		if err := rowFlag.Scan(&t.ID, &t.Title, &t.Content); err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
-		}
 	}
 
 	if t.ID == "" {
@@ -160,11 +125,9 @@ func GetTranslationAboutByID(c *gin.Context) {
 		"status":            true,
 		"translation_about": t,
 	})
-
 }
 
 func GetTranslationAboutByLangID(c *gin.Context) {
-
 	db, err := config.ConnDB()
 	if err != nil {
 		helpers.HandleError(c, 400, err.Error())
@@ -179,18 +142,10 @@ func GetTranslationAboutByLangID(c *gin.Context) {
 	}
 
 	// get translation about where lang_id equal langID
-	aboutRow, err := db.Query(context.Background(), "SELECT title,content FROM translation_about WHERE lang_id = $1 AND deleted_at IS NULL", langID)
-	if err != nil {
+	var translationAbout models.TranslationAbout
+	if err := db.QueryRow(context.Background(), "SELECT title,content FROM translation_about WHERE lang_id = $1 AND deleted_at IS NULL", langID).Scan(&translationAbout.Title, &translationAbout.Content); err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
-	}
-
-	var translationAbout models.TranslationAbout
-	for aboutRow.Next() {
-		if err := aboutRow.Scan(&translationAbout.Title, &translationAbout.Content); err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
-		}
 	}
 
 	if translationAbout.Title == "" {
@@ -202,5 +157,4 @@ func GetTranslationAboutByLangID(c *gin.Context) {
 		"status":            true,
 		"translation_about": translationAbout,
 	})
-
 }
