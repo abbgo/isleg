@@ -11,7 +11,6 @@ import (
 )
 
 func CreateCompanyPhone(c *gin.Context) {
-
 	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
@@ -38,11 +37,9 @@ func CreateCompanyPhone(c *gin.Context) {
 		"status":  true,
 		"message": "data successfully added",
 	})
-
 }
 
 func UpdateCompanyPhoneByID(c *gin.Context) {
-
 	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
@@ -59,18 +56,10 @@ func UpdateCompanyPhoneByID(c *gin.Context) {
 	}
 
 	// check id
-	rowCompanyPhone, err := db.Query(context.Background(), "SELECT id FROM company_phone WHERE id = $1 AND deleted_at IS NULL", companyPhone.ID)
-	if err != nil {
+	var comPhoneID string
+	if err := db.QueryRow(context.Background(), "SELECT id FROM company_phone WHERE id = $1 AND deleted_at IS NULL", companyPhone.ID).Scan(&comPhoneID); err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
-	}
-
-	var comPhoneID string
-	for rowCompanyPhone.Next() {
-		if err := rowCompanyPhone.Scan(&comPhoneID); err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
-		}
 	}
 
 	if comPhoneID == "" {
@@ -91,11 +80,9 @@ func UpdateCompanyPhoneByID(c *gin.Context) {
 		"status":  true,
 		"message": "data successfully updated",
 	})
-
 }
 
 func GetCompanyPhoneByID(c *gin.Context) {
-
 	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
@@ -108,18 +95,10 @@ func GetCompanyPhoneByID(c *gin.Context) {
 	ID := c.Param("id")
 
 	// check id and get data from database
-	rowComPhone, err := db.Query(context.Background(), "SELECT phone FROM company_phone WHERE id = $1 AND deleted_at IS NULL", ID)
-	if err != nil {
+	var phoneNumber string
+	if err := db.QueryRow(context.Background(), "SELECT phone FROM company_phone WHERE id = $1 AND deleted_at IS NULL", ID).Scan(&phoneNumber); err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
-	}
-
-	var phoneNumber string
-	for rowComPhone.Next() {
-		if err := rowComPhone.Scan(&phoneNumber); err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
-		}
 	}
 
 	if phoneNumber == "" {
@@ -131,12 +110,10 @@ func GetCompanyPhoneByID(c *gin.Context) {
 		"status":        true,
 		"company_phone": phoneNumber,
 	})
-
 }
 
 // GetCompanyPhones funksiya firmanyn ahli telefon belgilerini alyar
 func GetCompanyPhones(c *gin.Context) {
-
 	db, err := config.ConnDB()
 	if err != nil {
 		helpers.HandleError(c, 400, err.Error())
@@ -181,11 +158,9 @@ func GetCompanyPhones(c *gin.Context) {
 		"company_phones":  companyPhones,
 		"company_setting": companySetting,
 	})
-
 }
 
 func DeleteCompanyPhoneByID(c *gin.Context) {
-
 	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
@@ -198,18 +173,10 @@ func DeleteCompanyPhoneByID(c *gin.Context) {
 	ID := c.Param("id")
 
 	// check id
-	rowComPhone, err := db.Query(context.Background(), "SELECT id FROM company_phone WHERE id = $1 AND deleted_at IS NULL", ID)
-	if err != nil {
+	var comPhoneID string
+	if err := db.QueryRow(context.Background(), "SELECT id FROM company_phone WHERE id = $1 AND deleted_at IS NULL", ID).Scan(&comPhoneID); err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
-	}
-
-	var comPhoneID string
-	for rowComPhone.Next() {
-		if err := rowComPhone.Scan(&comPhoneID); err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
-		}
 	}
 
 	if comPhoneID == "" {
@@ -227,11 +194,9 @@ func DeleteCompanyPhoneByID(c *gin.Context) {
 		"status":  true,
 		"message": "data successfully deleted",
 	})
-
 }
 
 func RestoreCompanyPhoneByID(c *gin.Context) {
-
 	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
@@ -244,18 +209,10 @@ func RestoreCompanyPhoneByID(c *gin.Context) {
 	ID := c.Param("id")
 
 	// check id
-	rowComPhone, err := db.Query(context.Background(), "SELECT id FROM company_phone WHERE id = $1 AND deleted_at IS NOT NULL", ID)
-	if err != nil {
+	var comPhoneID string
+	if err := db.QueryRow(context.Background(), "SELECT id FROM company_phone WHERE id = $1 AND deleted_at IS NOT NULL", ID).Scan(&comPhoneID); err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
-	}
-
-	var comPhoneID string
-	for rowComPhone.Next() {
-		if err := rowComPhone.Scan(&comPhoneID); err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
-		}
 	}
 
 	if comPhoneID == "" {
@@ -273,11 +230,9 @@ func RestoreCompanyPhoneByID(c *gin.Context) {
 		"status":  true,
 		"message": "data successfully restored",
 	})
-
 }
 
 func DeletePermanentlyCompanyPhoneByID(c *gin.Context) {
-
 	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
@@ -290,18 +245,10 @@ func DeletePermanentlyCompanyPhoneByID(c *gin.Context) {
 	ID := c.Param("id")
 
 	//check id
-	rowCompanyPhone, err := db.Query(context.Background(), "SELECT id FROM company_phone WHERE id = $1 AND deleted_at IS NOT NULL", ID)
-	if err != nil {
+	var comPhoneID string
+	if err := db.QueryRow(context.Background(), "SELECT id FROM company_phone WHERE id = $1 AND deleted_at IS NOT NULL", ID).Scan(&comPhoneID); err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
-	}
-
-	var comPhoneID string
-	for rowCompanyPhone.Next() {
-		if err := rowCompanyPhone.Scan(&comPhoneID); err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
-		}
 	}
 
 	if comPhoneID == "" {
@@ -320,5 +267,4 @@ func DeletePermanentlyCompanyPhoneByID(c *gin.Context) {
 		"status":  true,
 		"message": "data successfully deleted",
 	})
-
 }
