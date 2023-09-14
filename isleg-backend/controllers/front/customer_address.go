@@ -16,7 +16,6 @@ type CustomerAddress struct {
 }
 
 func GetCustomerAddresses(c *gin.Context) {
-
 	db, err := config.ConnDB()
 	if err != nil {
 		helpers.HandleError(c, 400, err.Error())
@@ -44,27 +43,21 @@ func GetCustomerAddresses(c *gin.Context) {
 
 	var addresses []CustomerAddress
 	for rowsAddress.Next() {
-
 		var address CustomerAddress
-
 		if err := rowsAddress.Scan(&address.ID, &address.Address, &address.IsActive); err != nil {
 			helpers.HandleError(c, 400, err.Error())
 			return
 		}
-
 		addresses = append(addresses, address)
-
 	}
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":             true,
 		"customer_addresses": addresses,
 	})
-
 }
 
 func UpdateCustomerAddressStatus(c *gin.Context) {
-
 	db, err := config.ConnDB()
 	if err != nil {
 		helpers.HandleError(c, 400, err.Error())
@@ -86,18 +79,10 @@ func UpdateCustomerAddressStatus(c *gin.Context) {
 	}
 
 	// musderide frontdan gelen id - li salgy barmy ya-da yokmy sony barlayas
-	rowCusomerAddress, err := db.Query(context.Background(), "SELECT id FROM customer_address WHERE id = $1 AND deleted_at IS NULL", addressID)
-	if err != nil {
+	var address_id string
+	if err := db.QueryRow(context.Background(), "SELECT id FROM customer_address WHERE id = $1 AND deleted_at IS NULL", addressID).Scan(&address_id); err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
-	}
-
-	var address_id string
-	for rowCusomerAddress.Next() {
-		if err := rowCusomerAddress.Scan(&address_id); err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
-		}
 	}
 
 	// eger salgy yok bolsa yzyna yalnyslyk goyberyas
@@ -124,11 +109,9 @@ func UpdateCustomerAddressStatus(c *gin.Context) {
 		"status":  true,
 		"message": "address status successfuly updated",
 	})
-
 }
 
 func AddAddressToCustomer(c *gin.Context) {
-
 	db, err := config.ConnDB()
 	if err != nil {
 		helpers.HandleError(c, 400, err.Error())
@@ -154,18 +137,10 @@ func AddAddressToCustomer(c *gin.Context) {
 	}
 
 	// gosuljak bolyan salgy sol musderide on barmy ya-da yokmy sony barlayas
-	rowCusomerAddress, err := db.Query(context.Background(), "SELECT id FROM customer_address WHERE address = $1 AND customer_id = $2 AND deleted_at IS NULL", address, customerID)
-	if err != nil {
+	var address_id string
+	if err := db.QueryRow(context.Background(), "SELECT id FROM customer_address WHERE address = $1 AND customer_id = $2 AND deleted_at IS NULL", address, customerID).Scan(&address_id); err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
-	}
-
-	var address_id string
-	for rowCusomerAddress.Next() {
-		if err := rowCusomerAddress.Scan(&address_id); err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
-		}
 	}
 
 	// eger salgy on bar bolsa onda yzyna musdera duydurys goyberyas
@@ -175,18 +150,10 @@ func AddAddressToCustomer(c *gin.Context) {
 	}
 
 	// eger salgy on sol musderide yok bolsa , onda sol musderinin salgylarynyn arasyna gosyas
-	resultCustomerAddress, err := db.Query(context.Background(), "INSERT INTO customer_address (customer_id,address,is_active) VALUES ($1,$2,true) RETURNING id", customerID, address)
-	if err != nil {
+	var addresID string
+	if err := db.QueryRow(context.Background(), "INSERT INTO customer_address (customer_id,address,is_active) VALUES ($1,$2,true) RETURNING id", customerID, address).Scan(&addresID); err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
-	}
-
-	var addresID string
-	for resultCustomerAddress.Next() {
-		if err := resultCustomerAddress.Scan(&addresID); err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
-		}
 	}
 
 	// gosulan salgyny aktiwe edip musdera degisli beyleki ahli salgylaryn statusynyn false etyas
@@ -201,11 +168,9 @@ func AddAddressToCustomer(c *gin.Context) {
 		"message": "customer address successfully created",
 		"id":      addresID,
 	})
-
 }
 
 func DeleteCustomerAddress(c *gin.Context) {
-
 	db, err := config.ConnDB()
 	if err != nil {
 		helpers.HandleError(c, 400, err.Error())
@@ -226,18 +191,10 @@ func DeleteCustomerAddress(c *gin.Context) {
 
 	addressID := c.Param("id")
 
-	rowCusomerAddress, err := db.Query(context.Background(), "SELECT id FROM customer_address WHERE id = $1 AND customer_id = $2 AND deleted_at IS NULL", addressID, customerID)
-	if err != nil {
+	var address_id string
+	if err := db.QueryRow(context.Background(), "SELECT id FROM customer_address WHERE id = $1 AND customer_id = $2 AND deleted_at IS NULL", addressID, customerID).Scan(&address_id); err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
-	}
-
-	var address_id string
-	for rowCusomerAddress.Next() {
-		if err := rowCusomerAddress.Scan(&address_id); err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
-		}
 	}
 
 	if address_id == "" {
@@ -255,5 +212,4 @@ func DeleteCustomerAddress(c *gin.Context) {
 		"status":  true,
 		"message": "customer address successfully deleted",
 	})
-
 }
