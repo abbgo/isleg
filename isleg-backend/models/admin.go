@@ -30,16 +30,9 @@ func ValidateRegisterAdmin(phoneNumber, adminType string) error {
 		return errors.New("admin type must be admin or super_admin")
 	}
 
-	rowAdmin, err := db.Query(context.Background(), "SELECT phone_number FROM admins WHERE phone_number = $1 AND deleted_at IS NULL", phoneNumber)
-	if err != nil {
-		return err
-	}
-
 	var phone_number string
-	for rowAdmin.Next() {
-		if err := rowAdmin.Scan(&phone_number); err != nil {
-			return err
-		}
+	if err := db.QueryRow(context.Background(), "SELECT phone_number FROM admins WHERE phone_number = $1 AND deleted_at IS NULL", phoneNumber).Scan(&phone_number); err != nil {
+		return err
 	}
 
 	if phone_number != "" {
