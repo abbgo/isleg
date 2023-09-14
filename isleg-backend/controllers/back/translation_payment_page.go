@@ -11,7 +11,6 @@ import (
 )
 
 func CreateTranslationPayment(c *gin.Context) {
-
 	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
@@ -20,9 +19,8 @@ func CreateTranslationPayment(c *gin.Context) {
 	}
 	defer db.Close()
 
-	var trPaymentPages []models.TranslationPayment
-
 	// get data from request
+	var trPaymentPages []models.TranslationPayment
 	if err := c.BindJSON(&trPaymentPages); err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
@@ -30,26 +28,16 @@ func CreateTranslationPayment(c *gin.Context) {
 
 	// check lang_id
 	for _, v := range trPaymentPages {
-
-		rowLang, err := db.Query(context.Background(), "SELECT id FROM languages WHERE id = $1 AND deleted_at IS NULL", v.LangID)
-		if err != nil {
+		var langID string
+		if err := db.QueryRow(context.Background(), "SELECT id FROM languages WHERE id = $1 AND deleted_at IS NULL", v.LangID).Scan(&langID); err != nil {
 			helpers.HandleError(c, 400, err.Error())
 			return
-		}
-
-		var langID string
-		for rowLang.Next() {
-			if err := rowLang.Scan(&langID); err != nil {
-				helpers.HandleError(c, 400, err.Error())
-				return
-			}
 		}
 
 		if langID == "" {
 			helpers.HandleError(c, 404, "language not found")
 			return
 		}
-
 	}
 
 	// create translation payment
@@ -65,11 +53,9 @@ func CreateTranslationPayment(c *gin.Context) {
 		"status":  true,
 		"message": "data successfully added",
 	})
-
 }
 
 func UpdateTranslationPaymentByID(c *gin.Context) {
-
 	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
@@ -80,25 +66,16 @@ func UpdateTranslationPaymentByID(c *gin.Context) {
 
 	// get id of translation payment from request parameter
 	var trPaymentPage models.TranslationPayment
-
 	if err := c.BindJSON(&trPaymentPage); err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
 	}
 
 	// check id
-	rowFlag, err := db.Query(context.Background(), "SELECT id FROM translation_payment WHERE id = $1 AND deleted_at IS NULL", trPaymentPage.ID)
-	if err != nil {
+	var id string
+	if err := db.QueryRow(context.Background(), "SELECT id FROM translation_payment WHERE id = $1 AND deleted_at IS NULL", trPaymentPage.ID).Scan(&id); err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
-	}
-
-	var id string
-	for rowFlag.Next() {
-		if err := rowFlag.Scan(&id); err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
-		}
 	}
 
 	if id == "" {
@@ -117,11 +94,9 @@ func UpdateTranslationPaymentByID(c *gin.Context) {
 		"status":  true,
 		"message": "data successfully updated",
 	})
-
 }
 
 func GetTranslationPaymentByID(c *gin.Context) {
-
 	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
@@ -134,18 +109,10 @@ func GetTranslationPaymentByID(c *gin.Context) {
 	ID := c.Param("id")
 
 	// check id and get data from database
-	rowFlag, err := db.Query(context.Background(), "SELECT id,title,content FROM translation_payment WHERE id = $1 AND deleted_at IS NULL", ID)
-	if err != nil {
+	var t models.TranslationPayment
+	if err := db.QueryRow(context.Background(), "SELECT id,title,content FROM translation_payment WHERE id = $1 AND deleted_at IS NULL", ID).Scan(&t.ID, &t.Title, &t.Content); err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
-	}
-
-	var t models.TranslationPayment
-	for rowFlag.Next() {
-		if err := rowFlag.Scan(&t.ID, &t.Title, &t.Content); err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
-		}
 	}
 
 	if t.ID == "" {
@@ -157,11 +124,9 @@ func GetTranslationPaymentByID(c *gin.Context) {
 		"status":              true,
 		"translation_payment": t,
 	})
-
 }
 
 func GetTranslationPaymentByLangID(c *gin.Context) {
-
 	db, err := config.ConnDB()
 	if err != nil {
 		helpers.HandleError(c, 400, err.Error())
@@ -176,18 +141,10 @@ func GetTranslationPaymentByLangID(c *gin.Context) {
 	}
 
 	// get translation payment where lang_id equal langID
-	paymentRow, err := db.Query(context.Background(), "SELECT title,content FROM translation_payment WHERE lang_id = $1 AND deleted_at IS NULL", langID)
-	if err != nil {
+	var translationPayment models.TranslationPayment
+	if err := db.QueryRow(context.Background(), "SELECT title,content FROM translation_payment WHERE lang_id = $1 AND deleted_at IS NULL", langID).Scan(&translationPayment.Title, &translationPayment.Content); err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
-	}
-
-	var translationPayment models.TranslationPayment
-	for paymentRow.Next() {
-		if err := paymentRow.Scan(&translationPayment.Title, &translationPayment.Content); err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
-		}
 	}
 
 	if translationPayment.Title == "" {
@@ -199,5 +156,4 @@ func GetTranslationPaymentByLangID(c *gin.Context) {
 		"status":              true,
 		"translation_payment": translationPayment,
 	})
-
 }
