@@ -12,7 +12,6 @@ import (
 )
 
 func CreateCompanySetting(c *gin.Context) {
-
 	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
@@ -58,11 +57,9 @@ func CreateCompanySetting(c *gin.Context) {
 		"status":  true,
 		"message": "company setting successfully added",
 	})
-
 }
 
 func UpdateCompanySetting(c *gin.Context) {
-
 	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
@@ -79,18 +76,10 @@ func UpdateCompanySetting(c *gin.Context) {
 	var logoName, faviconName string
 
 	// Check if there is a company_setting and get logo and favicon
-	rowComSet, err := db.Query(context.Background(), "SELECT logo,favicon FROM company_setting WHERE deleted_at IS NULL ORDER BY created_at ASC LIMIT 1")
-	if err != nil {
+	var logo, favicon string
+	if err := db.QueryRow(context.Background(), "SELECT logo,favicon FROM company_setting WHERE deleted_at IS NULL ORDER BY created_at ASC LIMIT 1").Scan(&logo, &favicon); err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
-	}
-
-	var logo, favicon string
-	for rowComSet.Next() {
-		if err := rowComSet.Scan(&logo, &favicon); err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
-		}
 	}
 
 	if logo == "" || favicon == "" {
@@ -133,11 +122,9 @@ func UpdateCompanySetting(c *gin.Context) {
 		"status":  true,
 		"message": "company setting successfully updated",
 	})
-
 }
 
 func GetCompanySetting(c *gin.Context) {
-
 	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
@@ -147,18 +134,10 @@ func GetCompanySetting(c *gin.Context) {
 	defer db.Close()
 
 	// get data from database
-	rowComSet, err := db.Query(context.Background(), "SELECT id,logo,favicon,email,instagram,imo FROM company_setting WHERE deleted_at IS NULL ORDER BY created_at ASC LIMIT 1")
-	if err != nil {
+	var comSet models.CompanySetting
+	if err := db.QueryRow(context.Background(), "SELECT id,logo,favicon,email,instagram,imo FROM company_setting WHERE deleted_at IS NULL ORDER BY created_at ASC LIMIT 1").Scan(&comSet.ID, &comSet.Logo, &comSet.Favicon, &comSet.Email, &comSet.Instagram, &comSet.Imo); err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
-	}
-
-	var comSet models.CompanySetting
-	for rowComSet.Next() {
-		if err := rowComSet.Scan(&comSet.ID, &comSet.Logo, &comSet.Favicon, &comSet.Email, &comSet.Instagram, &comSet.Imo); err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
-		}
 	}
 
 	if comSet.ID == "" {
@@ -170,11 +149,9 @@ func GetCompanySetting(c *gin.Context) {
 		"status":          true,
 		"company_setting": comSet,
 	})
-
 }
 
 func GetCompanySettingForHeader() (models.CompanySetting, error) {
-
 	db, err := config.ConnDB()
 	if err != nil {
 		return models.CompanySetting{}, nil
@@ -184,17 +161,9 @@ func GetCompanySettingForHeader() (models.CompanySetting, error) {
 	var logoFavicon models.CompanySetting
 
 	// GET LOGO AND FAVICON
-	row, err := db.Query(context.Background(), "SELECT logo,favicon FROM company_setting WHERE deleted_at IS NULL ORDER BY created_at ASC LIMIT 1")
-	if err != nil {
+	if err := db.QueryRow(context.Background(), "SELECT logo,favicon FROM company_setting WHERE deleted_at IS NULL ORDER BY created_at ASC LIMIT 1").Scan(&logoFavicon.Logo, &logoFavicon.Favicon); err != nil {
 		return models.CompanySetting{}, err
 	}
 
-	for row.Next() {
-		if err := row.Scan(&logoFavicon.Logo, &logoFavicon.Favicon); err != nil {
-			return models.CompanySetting{}, err
-		}
-	}
-
 	return logoFavicon, nil
-
 }
