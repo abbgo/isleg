@@ -16,7 +16,6 @@ import (
 
 // create new language
 func CreateLanguage(c *gin.Context) {
-
 	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
@@ -48,11 +47,9 @@ func CreateLanguage(c *gin.Context) {
 		"status":  true,
 		"message": "Language added successfully",
 	})
-
 }
 
 func UpdateLanguageByID(c *gin.Context) {
-
 	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
@@ -94,11 +91,9 @@ func UpdateLanguageByID(c *gin.Context) {
 		"status":  true,
 		"message": "language successfully updated",
 	})
-
 }
 
 func GetLanguageByID(c *gin.Context) {
-
 	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
@@ -111,18 +106,10 @@ func GetLanguageByID(c *gin.Context) {
 	langID := c.Param("id")
 
 	// get  name_short and flag of language from database
-	rowLanguage, err := db.Query(context.Background(), "SELECT id,name_short,flag FROM languages WHERE id = $1 AND deleted_at IS NULL", langID)
-	if err != nil {
+	var lang models.Language
+	if err := db.QueryRow(context.Background(), "SELECT id,name_short,flag FROM languages WHERE id = $1 AND deleted_at IS NULL", langID).Scan(&lang.ID, &lang.NameShort, &lang.Flag); err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
-	}
-
-	var lang models.Language
-	for rowLanguage.Next() {
-		if err := rowLanguage.Scan(&lang.ID, &lang.NameShort, &lang.Flag); err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
-		}
 	}
 
 	if lang.ID == "" {
@@ -134,11 +121,9 @@ func GetLanguageByID(c *gin.Context) {
 		"status":   true,
 		"language": lang,
 	})
-
 }
 
 func GetLanguages(c *gin.Context) {
-
 	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
@@ -150,7 +135,6 @@ func GetLanguages(c *gin.Context) {
 	defer db.Close()
 
 	var ls []models.Language
-
 	statusQuery := c.DefaultQuery("status", "false")
 	status, err := strconv.ParseBool(statusQuery)
 	if err != nil {
@@ -189,11 +173,9 @@ func GetLanguages(c *gin.Context) {
 		"status":    true,
 		"languages": ls,
 	})
-
 }
 
 func DeleteLanguageByID(c *gin.Context) {
-
 	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
@@ -206,18 +188,10 @@ func DeleteLanguageByID(c *gin.Context) {
 	langID := c.Param("id")
 
 	// Check if there is a language, id equal to langID
-	rowFlag, err := db.Query(context.Background(), "SELECT id,name_short FROM languages WHERE id = $1 AND deleted_at IS NULL", langID)
-	if err != nil {
+	var id, name_short string
+	if err := db.QueryRow(context.Background(), "SELECT id,name_short FROM languages WHERE id = $1 AND deleted_at IS NULL", langID).Scan(&id, &name_short); err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
-	}
-
-	var id, name_short string
-	for rowFlag.Next() {
-		if err := rowFlag.Scan(&id, &name_short); err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
-		}
 	}
 
 	if id == "" {
@@ -241,11 +215,9 @@ func DeleteLanguageByID(c *gin.Context) {
 		"status":  true,
 		"message": "language successfully deleted",
 	})
-
 }
 
 func RestoreLanguageByID(c *gin.Context) {
-
 	//initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
@@ -258,18 +230,10 @@ func RestoreLanguageByID(c *gin.Context) {
 	langID := c.Param("id")
 
 	// Check if there is a language, id equal to langID
-	rowFlag, err := db.Query(context.Background(), "SELECT id FROM languages WHERE id = $1 AND deleted_at IS NOT NULL", langID)
-	if err != nil {
+	var id string
+	if err := db.QueryRow(context.Background(), "SELECT id FROM languages WHERE id = $1 AND deleted_at IS NOT NULL", langID).Scan(&id); err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
-	}
-
-	var id string
-	for rowFlag.Next() {
-		if err := rowFlag.Scan(&id); err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
-		}
 	}
 
 	if id == "" {
@@ -288,11 +252,9 @@ func RestoreLanguageByID(c *gin.Context) {
 		"status":  true,
 		"message": "language successfully restored",
 	})
-
 }
 
 func DeletePermanentlyLanguageByID(c *gin.Context) {
-
 	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
@@ -305,18 +267,10 @@ func DeletePermanentlyLanguageByID(c *gin.Context) {
 	langID := c.Param("id")
 
 	// Check if there is a language, id equal to langID and get image of language from database
-	rowFlag, err := db.Query(context.Background(), "SELECT flag,name_short FROM languages WHERE id = $1 AND deleted_at IS NOT NULL", langID)
-	if err != nil {
+	var flag, name_short string
+	if err := db.QueryRow(context.Background(), "SELECT flag,name_short FROM languages WHERE id = $1 AND deleted_at IS NOT NULL", langID).Scan(&flag, &name_short); err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
-	}
-
-	var flag, name_short string
-	for rowFlag.Next() {
-		if err := rowFlag.Scan(&flag, &name_short); err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
-		}
 	}
 
 	if flag == "" {
@@ -345,7 +299,6 @@ func DeletePermanentlyLanguageByID(c *gin.Context) {
 		"status":  true,
 		"message": "language successfully deleted",
 	})
-
 }
 
 func GetAllLanguageForHeader() ([]models.Language, error) {
@@ -358,7 +311,6 @@ func GetAllLanguageForHeader() ([]models.Language, error) {
 	defer db.Close()
 
 	var ls []models.Language
-
 	// get name_short,flag of all languages from database
 	rows, err := db.Query(context.Background(), "SELECT name_short,flag FROM languages WHERE deleted_at IS NULL")
 	if err != nil {
@@ -374,11 +326,9 @@ func GetAllLanguageForHeader() ([]models.Language, error) {
 	}
 
 	return ls, nil
-
 }
 
 func GetAllLanguageWithIDAndNameShort() ([]models.Language, error) {
-
 	db, err := config.ConnDB()
 	if err != nil {
 		return nil, err
@@ -391,7 +341,6 @@ func GetAllLanguageWithIDAndNameShort() ([]models.Language, error) {
 	}
 
 	var languages []models.Language
-
 	for languageRows.Next() {
 		var language models.Language
 		if err := languageRows.Scan(&language.ID, &language.NameShort); err != nil {
@@ -401,13 +350,11 @@ func GetAllLanguageWithIDAndNameShort() ([]models.Language, error) {
 	}
 
 	return languages, nil
-
 }
 
 // GetLangID funksiya berilen langShortName parameter boyunca dilin id - sini getirip beryar
 // bu yerde langShortName - dilin gysga ady
 func GetLangID(langShortName string) (string, error) {
-
 	db, err := config.ConnDB()
 	if err != nil {
 		return "", nil
@@ -415,25 +362,15 @@ func GetLangID(langShortName string) (string, error) {
 	defer db.Close()
 
 	var langID string
-
-	row, err := db.Query(context.Background(), "SELECT id FROM languages WHERE name_short = $1 AND deleted_at IS NULL", langShortName)
-	if err != nil {
+	if err := db.QueryRow(context.Background(), "SELECT id FROM languages WHERE name_short = $1 AND deleted_at IS NULL", langShortName).Scan(&langID); err != nil {
 		return "", err
 	}
 
-	for row.Next() {
-		if err := row.Scan(&langID); err != nil {
-			return "", err
-		}
-	}
-
 	return langID, nil
-
 }
 
 // router - daki lang parameter boyunca dilin id - sini getirip beryar
 func CheckLanguage(c *gin.Context) (string, error) {
-
 	// GET DATA FROM ROUTE PARAMETER
 	langShortName := c.Param("lang")
 
@@ -444,5 +381,4 @@ func CheckLanguage(c *gin.Context) (string, error) {
 	}
 
 	return langID, nil
-
 }
