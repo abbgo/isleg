@@ -11,7 +11,6 @@ import (
 )
 
 func CreateTranslationMyOrderPage(c *gin.Context) {
-
 	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
@@ -30,26 +29,16 @@ func CreateTranslationMyOrderPage(c *gin.Context) {
 
 	// check lang_id
 	for _, v := range trMyOrderPages {
-
-		rowLang, err := db.Query(context.Background(), "SELECT id FROM languages WHERE id = $1 AND deleted_at IS NULL", v.LangID)
-		if err != nil {
+		var langID string
+		if err := db.QueryRow(context.Background(), "SELECT id FROM languages WHERE id = $1 AND deleted_at IS NULL", v.LangID).Scan(&langID); err != nil {
 			helpers.HandleError(c, 400, err.Error())
 			return
-		}
-
-		var langID string
-		for rowLang.Next() {
-			if err := rowLang.Scan(&langID); err != nil {
-				helpers.HandleError(c, 400, err.Error())
-				return
-			}
 		}
 
 		if langID == "" {
 			helpers.HandleError(c, 404, "language not found")
 			return
 		}
-
 	}
 
 	// create translation_my_order_page
@@ -65,11 +54,9 @@ func CreateTranslationMyOrderPage(c *gin.Context) {
 		"status":  true,
 		"message": "data successfully added",
 	})
-
 }
 
 func UpdateTranslationMyOrderPageByID(c *gin.Context) {
-
 	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
@@ -80,25 +67,16 @@ func UpdateTranslationMyOrderPageByID(c *gin.Context) {
 
 	// get id from request parameter
 	var trMyOrderPage models.TranslationMyOrderPage
-
 	if err := c.BindJSON(&trMyOrderPage); err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
 	}
 
 	// check id
-	rowTrMyOrderPage, err := db.Query(context.Background(), "SELECT id FROM translation_my_order_page WHERE id = $1 AND deleted_at IS NULL", trMyOrderPage.ID)
-	if err != nil {
+	var id string
+	if err := db.QueryRow(context.Background(), "SELECT id FROM translation_my_order_page WHERE id = $1 AND deleted_at IS NULL", trMyOrderPage.ID).Scan(&id); err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
-	}
-
-	var id string
-	for rowTrMyOrderPage.Next() {
-		if err := rowTrMyOrderPage.Scan(&id); err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
-		}
 	}
 
 	if id == "" {
@@ -117,11 +95,9 @@ func UpdateTranslationMyOrderPageByID(c *gin.Context) {
 		"status":  true,
 		"message": "data successfully updated",
 	})
-
 }
 
 func GetTranslationMyOrderPageByID(c *gin.Context) {
-
 	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
@@ -134,18 +110,10 @@ func GetTranslationMyOrderPageByID(c *gin.Context) {
 	ID := c.Param("id")
 
 	// check id and get data from database
-	rowTrMyOrderPage, err := db.Query(context.Background(), "SELECT id,orders,date,price,image,name,brend,product_price,amount,total_price FROM translation_my_order_page WHERE id = $1 AND deleted_at IS NULL", ID)
-	if err != nil {
+	var t models.TranslationMyOrderPage
+	if err := db.QueryRow(context.Background(), "SELECT id,orders,date,price,image,name,brend,product_price,amount,total_price FROM translation_my_order_page WHERE id = $1 AND deleted_at IS NULL", ID).Scan(&t.ID, &t.Orders, &t.Date, &t.Price, &t.Image, &t.Name, &t.Brend, &t.ProcuctPrice, &t.Amount, &t.TotalPrice); err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
-	}
-
-	var t models.TranslationMyOrderPage
-	for rowTrMyOrderPage.Next() {
-		if err := rowTrMyOrderPage.Scan(&t.ID, &t.Orders, &t.Date, &t.Price, &t.Image, &t.Name, &t.Brend, &t.ProcuctPrice, &t.Amount, &t.TotalPrice); err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
-		}
 	}
 
 	if t.ID == "" {
@@ -157,11 +125,9 @@ func GetTranslationMyOrderPageByID(c *gin.Context) {
 		"status":                    true,
 		"translation_my_order_page": t,
 	})
-
 }
 
 func GetTranslationMyOrderPageByLangID(c *gin.Context) {
-
 	db, err := config.ConnDB()
 	if err != nil {
 		helpers.HandleError(c, 400, err.Error())
@@ -180,18 +146,10 @@ func GetTranslationMyOrderPageByLangID(c *gin.Context) {
 	}
 
 	// get translation-basket-page where lang_id equal langID
-	rowTrMyOrderPage, err := db.Query(context.Background(), "SELECT orders,date,price,image,name,brend,product_price,amount,total_price FROM translation_my_order_page WHERE lang_id = $1 AND deleted_at IS NULL", langID)
-	if err != nil {
+	var t models.TranslationMyOrderPage
+	if err := db.QueryRow(context.Background(), "SELECT orders,date,price,image,name,brend,product_price,amount,total_price FROM translation_my_order_page WHERE lang_id = $1 AND deleted_at IS NULL", langID).Scan(&t.Orders, &t.Date, &t.Price, &t.Image, &t.Name, &t.Brend, &t.ProcuctPrice, &t.Amount, &t.TotalPrice); err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
-	}
-
-	var t models.TranslationMyOrderPage
-	for rowTrMyOrderPage.Next() {
-		if err := rowTrMyOrderPage.Scan(&t.Orders, &t.Date, &t.Price, &t.Image, &t.Name, &t.Brend, &t.ProcuctPrice, &t.Amount, &t.TotalPrice); err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
-		}
 	}
 
 	if t.Orders == "" {
@@ -203,5 +161,4 @@ func GetTranslationMyOrderPageByLangID(c *gin.Context) {
 		"status":                    true,
 		"translation_my_order_page": t,
 	})
-
 }
