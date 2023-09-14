@@ -11,7 +11,6 @@ import (
 )
 
 func CreateTranslationBasketPage(c *gin.Context) {
-
 	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
@@ -22,7 +21,6 @@ func CreateTranslationBasketPage(c *gin.Context) {
 
 	// get data from request
 	var trBasketPages []models.TranslationBasketPage
-
 	if err := c.BindJSON(&trBasketPages); err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
@@ -30,48 +28,34 @@ func CreateTranslationBasketPage(c *gin.Context) {
 
 	//check lsng_id
 	for _, v := range trBasketPages {
-
-		rowLang, err := db.Query(context.Background(), "SELECT id FROM languages WHERE id = $1 AND deleted_at IS NULL", v.LangID)
-		if err != nil {
+		var langID string
+		if err := db.QueryRow(context.Background(), "SELECT id FROM languages WHERE id = $1 AND deleted_at IS NULL", v.LangID).Scan(&langID); err != nil {
 			helpers.HandleError(c, 400, err.Error())
 			return
-		}
-
-		var langID string
-		for rowLang.Next() {
-			if err := rowLang.Scan(&langID); err != nil {
-				helpers.HandleError(c, 400, err.Error())
-				return
-			}
 		}
 
 		if langID == "" {
 			helpers.HandleError(c, 404, "language not found")
 			return
 		}
-
 	}
 
 	// create translation_basket_page
 	for _, v := range trBasketPages {
-
 		_, err := db.Exec(context.Background(), "INSERT INTO translation_basket_page (lang_id,quantity_of_goods,total_price,discount,delivery,total,to_order,your_basket,empty_the_basket,empty_the_like_page) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)", v.LangID, v.QuantityOfGoods, v.TotalPrice, v.Discount, v.Delivery, v.Total, v.ToOrder, v.YourBasket, v.EmptyTheBasket, v.EmptyTheLikePage)
 		if err != nil {
 			helpers.HandleError(c, 400, err.Error())
 			return
 		}
-
 	}
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
 		"message": "data successfully added",
 	})
-
 }
 
 func UpdateTranslationBasketPageByID(c *gin.Context) {
-
 	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
@@ -82,25 +66,16 @@ func UpdateTranslationBasketPageByID(c *gin.Context) {
 
 	// get id from request parameter
 	var trBasketPage models.TranslationBasketPage
-
 	if err := c.BindJSON(&trBasketPage); err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
 	}
 
 	// check id
-	rowTRBasketPage, err := db.Query(context.Background(), "SELECT id FROM translation_basket_page WHERE id = $1 AND deleted_at IS NULL", trBasketPage.ID)
-	if err != nil {
+	var id string
+	if err := db.QueryRow(context.Background(), "SELECT id FROM translation_basket_page WHERE id = $1 AND deleted_at IS NULL", trBasketPage.ID).Scan(&id); err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
-	}
-
-	var id string
-	for rowTRBasketPage.Next() {
-		if err := rowTRBasketPage.Scan(&id); err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
-		}
 	}
 
 	if id == "" {
@@ -118,11 +93,9 @@ func UpdateTranslationBasketPageByID(c *gin.Context) {
 		"status":  true,
 		"message": "data successfully updated",
 	})
-
 }
 
 func GetTranslationBasketPageByID(c *gin.Context) {
-
 	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
@@ -135,18 +108,10 @@ func GetTranslationBasketPageByID(c *gin.Context) {
 	ID := c.Param("id")
 
 	// check id and get data from database
-	rowTRBasketPage, err := db.Query(context.Background(), "SELECT id,quantity_of_goods,total_price,discount,delivery,total,to_order,your_basket,empty_the_basket,empty_the_like_page FROM translation_basket_page WHERE id = $1 AND deleted_at IS NULL", ID)
-	if err != nil {
+	var t models.TranslationBasketPage
+	if err := db.QueryRow(context.Background(), "SELECT id,quantity_of_goods,total_price,discount,delivery,total,to_order,your_basket,empty_the_basket,empty_the_like_page FROM translation_basket_page WHERE id = $1 AND deleted_at IS NULL", ID).Scan(&t.ID, &t.QuantityOfGoods, &t.TotalPrice, &t.Discount, &t.Delivery, &t.Total, &t.ToOrder, &t.YourBasket, &t.EmptyTheBasket, &t.EmptyTheLikePage); err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
-	}
-
-	var t models.TranslationBasketPage
-	for rowTRBasketPage.Next() {
-		if err := rowTRBasketPage.Scan(&t.ID, &t.QuantityOfGoods, &t.TotalPrice, &t.Discount, &t.Delivery, &t.Total, &t.ToOrder, &t.YourBasket, &t.EmptyTheBasket, &t.EmptyTheLikePage); err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
-		}
 	}
 
 	if t.ID == "" {
@@ -158,11 +123,9 @@ func GetTranslationBasketPageByID(c *gin.Context) {
 		"status":                  true,
 		"translation_basket_page": t,
 	})
-
 }
 
 func GetTranslationBasketPageByLangID(c *gin.Context) {
-
 	db, err := config.ConnDB()
 	if err != nil {
 		helpers.HandleError(c, 400, err.Error())
@@ -181,18 +144,10 @@ func GetTranslationBasketPageByLangID(c *gin.Context) {
 	}
 
 	// get translation-basket-page where lang_id equal langID
-	rowTRBasketPage, err := db.Query(context.Background(), "SELECT quantity_of_goods,total_price,discount,delivery,total,to_order,your_basket,empty_the_basket,empty_the_like_page FROM translation_basket_page WHERE lang_id = $1 AND deleted_at IS NULL", langID)
-	if err != nil {
+	var t models.TranslationBasketPage
+	if err := db.QueryRow(context.Background(), "SELECT quantity_of_goods,total_price,discount,delivery,total,to_order,your_basket,empty_the_basket,empty_the_like_page FROM translation_basket_page WHERE lang_id = $1 AND deleted_at IS NULL", langID).Scan(&t.QuantityOfGoods, &t.TotalPrice, &t.Discount, &t.Delivery, &t.Total, &t.ToOrder, &t.YourBasket, &t.EmptyTheBasket, &t.EmptyTheLikePage); err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
-	}
-
-	var t models.TranslationBasketPage
-	for rowTRBasketPage.Next() {
-		if err := rowTRBasketPage.Scan(&t.QuantityOfGoods, &t.TotalPrice, &t.Discount, &t.Delivery, &t.Total, &t.ToOrder, &t.YourBasket, &t.EmptyTheBasket, &t.EmptyTheLikePage); err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
-		}
 	}
 
 	if t.QuantityOfGoods == "" {
@@ -204,5 +159,4 @@ func GetTranslationBasketPageByLangID(c *gin.Context) {
 		"status":                  true,
 		"translation_basket_page": t,
 	})
-
 }
