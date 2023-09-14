@@ -15,7 +15,6 @@ import (
 )
 
 func CreateBanner(c *gin.Context) {
-
 	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
@@ -53,11 +52,9 @@ func CreateBanner(c *gin.Context) {
 		"status":  true,
 		"message": "data successfully added",
 	})
-
 }
 
 func UpdateBannerByID(c *gin.Context) {
-
 	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
@@ -75,18 +72,10 @@ func UpdateBannerByID(c *gin.Context) {
 		return
 	}
 	// check id and get image of banner
-	rowBrend, err := db.Query(context.Background(), "SELECT id,image FROM banner WHERE id = $1 AND deleted_at IS NULL", ID)
-	if err != nil {
+	var image, bannerID string
+	if err := db.QueryRow(context.Background(), "SELECT id,image FROM banner WHERE id = $1 AND deleted_at IS NULL", ID).Scan(&bannerID, &image); err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
-	}
-
-	var image, bannerID string
-	for rowBrend.Next() {
-		if err := rowBrend.Scan(&bannerID, &image); err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
-		}
 	}
 
 	if bannerID == "" {
@@ -124,11 +113,9 @@ func UpdateBannerByID(c *gin.Context) {
 		"status":  true,
 		"message": "data successfully updated",
 	})
-
 }
 
 func GetBannerByID(c *gin.Context) {
-
 	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
@@ -141,18 +128,10 @@ func GetBannerByID(c *gin.Context) {
 	ID := c.Param("id")
 
 	// check id and get data from database
-	rowBanner, err := db.Query(context.Background(), "SELECT id,url,image FROM banner WHERE id = $1 AND deleted_at IS NULL", ID)
-	if err != nil {
+	var banner models.Banner
+	if err := db.QueryRow(context.Background(), "SELECT id,url,image FROM banner WHERE id = $1 AND deleted_at IS NULL", ID).Scan(&banner.ID, &banner.Url, &banner.Image); err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
-	}
-
-	var banner models.Banner
-	for rowBanner.Next() {
-		if err := rowBanner.Scan(&banner.ID, &banner.Url, &banner.Image); err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
-		}
 	}
 
 	if banner.ID == "" {
@@ -164,11 +143,9 @@ func GetBannerByID(c *gin.Context) {
 		"status": true,
 		"banner": banner,
 	})
-
 }
 
 func GetBanners(c *gin.Context) {
-
 	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
@@ -219,17 +196,9 @@ func GetBanners(c *gin.Context) {
 	}
 
 	// get data from database
-	countBanners, err := db.Query(context.Background(), countBannerssQuery)
-	if err != nil {
+	if err := db.QueryRow(context.Background(), countBannerssQuery).Scan(&countOfBanners); err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
-	}
-
-	for countBanners.Next() {
-		if err := countBanners.Scan(&countOfBanners); err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
-		}
 	}
 
 	if !status {
@@ -248,12 +217,10 @@ func GetBanners(c *gin.Context) {
 	var banners []models.Banner
 	for rowBanners.Next() {
 		var banner models.Banner
-
 		if err := rowBanners.Scan(&banner.ID, &banner.Url, &banner.Image); err != nil {
 			helpers.HandleError(c, 400, err.Error())
 			return
 		}
-
 		banners = append(banners, banner)
 	}
 
@@ -262,11 +229,9 @@ func GetBanners(c *gin.Context) {
 		"banners": banners,
 		"total":   countOfBanners,
 	})
-
 }
 
 func GetBannersForFront(c *gin.Context) {
-
 	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
@@ -285,12 +250,10 @@ func GetBannersForFront(c *gin.Context) {
 	var banners []models.Banner
 	for rowBanners.Next() {
 		var banner models.Banner
-
 		if err := rowBanners.Scan(&banner.ID, &banner.Url, &banner.Image); err != nil {
 			helpers.HandleError(c, 400, err.Error())
 			return
 		}
-
 		banners = append(banners, banner)
 	}
 
@@ -298,11 +261,9 @@ func GetBannersForFront(c *gin.Context) {
 		"status":  true,
 		"banners": banners,
 	})
-
 }
 
 func DeleteBannerByID(c *gin.Context) {
-
 	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
@@ -315,18 +276,10 @@ func DeleteBannerByID(c *gin.Context) {
 	ID := c.Param("id")
 
 	// check id and get image of brend
-	rowBanner, err := db.Query(context.Background(), "SELECT id FROM banner WHERE id = $1 AND deleted_at IS NULL", ID)
-	if err != nil {
+	var id string
+	if err := db.QueryRow(context.Background(), "SELECT id FROM banner WHERE id = $1 AND deleted_at IS NULL", ID).Scan(&id); err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
-	}
-
-	var id string
-	for rowBanner.Next() {
-		if err := rowBanner.Scan(&id); err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
-		}
 	}
 
 	if id == "" {
@@ -344,11 +297,9 @@ func DeleteBannerByID(c *gin.Context) {
 		"status":  true,
 		"message": "data successfully deleted",
 	})
-
 }
 
 func RestoreBannerByID(c *gin.Context) {
-
 	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
@@ -361,18 +312,10 @@ func RestoreBannerByID(c *gin.Context) {
 	ID := c.Param("id")
 
 	// check id and get image of brend
-	rowBanner, err := db.Query(context.Background(), "SELECT id FROM banner WHERE id = $1 AND deleted_at IS NOT NULL", ID)
-	if err != nil {
+	var id string
+	if err := db.QueryRow(context.Background(), "SELECT id FROM banner WHERE id = $1 AND deleted_at IS NOT NULL", ID).Scan(&id); err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
-	}
-
-	var id string
-	for rowBanner.Next() {
-		if err := rowBanner.Scan(&id); err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
-		}
 	}
 
 	if id == "" {
@@ -390,11 +333,9 @@ func RestoreBannerByID(c *gin.Context) {
 		"status":  true,
 		"message": "data successfully restored",
 	})
-
 }
 
 func DeletePermanentlyBannerByID(c *gin.Context) {
-
 	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
@@ -407,18 +348,10 @@ func DeletePermanentlyBannerByID(c *gin.Context) {
 	ID := c.Param("id")
 
 	// check id and get image of brend
-	rowBrend, err := db.Query(context.Background(), "SELECT image FROM banner WHERE id = $1 AND deleted_at IS NOT NULL", ID)
-	if err != nil {
+	var image string
+	if err := db.QueryRow(context.Background(), "SELECT image FROM banner WHERE id = $1 AND deleted_at IS NOT NULL", ID).Scan(&image); err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
-	}
-
-	var image string
-	for rowBrend.Next() {
-		if err := rowBrend.Scan(&image); err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
-		}
 	}
 
 	if image == "" {
@@ -441,5 +374,4 @@ func DeletePermanentlyBannerByID(c *gin.Context) {
 		"status":  true,
 		"message": "data successfully deleted",
 	})
-
 }
