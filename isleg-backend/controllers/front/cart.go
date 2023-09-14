@@ -39,7 +39,6 @@ type ProductOfCart struct {
 }
 
 func AddCart(c *gin.Context) {
-
 	db, err := config.ConnDB()
 	if err != nil {
 		helpers.HandleError(c, 400, err.Error())
@@ -67,9 +66,7 @@ func AddCart(c *gin.Context) {
 
 	// frontdan maglumat gelipdirmi gelmandirmi sony barlayas
 	if len(cart) != 0 { // eger frontdan maglumatdan gelyan bolsa gelen harytlary sebede gosyas
-
 		for k, v := range cart {
-
 			// eger frontdan gelen harydyn mukdary 1 - den kici bolsa
 			// sol musderinin sol harydyny sebetden ayyryas , yagny mukdary nol bolan haryt sebetde durup bilmez
 			// sonun ucin eger musderi harydyn sanyny nol etse ony sebetdebn ayyryas
@@ -91,40 +88,22 @@ func AddCart(c *gin.Context) {
 			}
 
 			// bu yerde frontdan gelen haryt bazada barmy ya-da yokmy sol barlanyar
-			rowProduct, err := db.Query(context.Background(), "SELECT id FROM products WHERE id = $1 AND deleted_at IS NULL", v.ProductID)
-			if err != nil {
+			var product_id string
+			if err := db.QueryRow(context.Background(), "SELECT id FROM products WHERE id = $1 AND deleted_at IS NULL", v.ProductID).Scan(&product_id); err != nil {
 				helpers.HandleError(c, 400, err.Error())
 				return
 			}
 
-			var product_id string
-			for rowProduct.Next() {
-				if err := rowProduct.Scan(&product_id); err != nil {
-					helpers.HandleError(c, 400, err.Error())
-					return
-				}
-			}
-
 			if product_id != "" {
-
 				// eger haryt bazada bar bolsa onda sol haryt programmany ulanyp otyran musderinin sebedinde barmy ya-da yok
 				// sony barlayas
-				rowCart, err := db.Query(context.Background(), "SELECT product_id FROM cart WHERE customer_id = $1 AND product_id = $2 AND deleted_at IS NULL", customerID, v.ProductID)
-				if err != nil {
+				var productId string
+				if err := db.QueryRow(context.Background(), "SELECT product_id FROM cart WHERE customer_id = $1 AND product_id = $2 AND deleted_at IS NULL", customerID, v.ProductID).Scan(&productId); err != nil {
 					helpers.HandleError(c, 400, err.Error())
 					return
-				}
-
-				var productId string
-				for rowCart.Next() {
-					if err := rowCart.Scan(&productId); err != nil {
-						helpers.HandleError(c, 400, err.Error())
-						return
-					}
 				}
 
 				if productId == "" {
-
 					// eger sol haryt programmany ulanyp otyran musderinin sebedinde yok bolsa
 					// sol harydy sol musderinin sebedine gosyas
 					_, err := db.Exec(context.Background(), "INSERT INTO cart (customer_id,product_id,quantity_of_product) VALUES ($1,$2,$3)", customerID, v.ProductID, v.QuantityOfProduct)
@@ -132,9 +111,7 @@ func AddCart(c *gin.Context) {
 						helpers.HandleError(c, 400, err.Error())
 						return
 					}
-
 				} else {
-
 					// eger sol haryt programmany ulanyp otyran musderinin sebedinde bar bolsa
 					// onda sol harydyn mukdaryny update etyas
 					_, err := db.Exec(context.Background(), "UPDATE cart SET quantity_of_product = $1 WHERE customer_id = $2 AND product_id = $3 AND deleted_at IS NULL", v.QuantityOfProduct, customerID, v.ProductID)
@@ -142,11 +119,8 @@ func AddCart(c *gin.Context) {
 						helpers.HandleError(c, 400, err.Error())
 						return
 					}
-
 				}
-
 			}
-
 		}
 
 		// haryt sebede gosulandan sonra programmany ulanyp otyran musdera degisli
@@ -161,7 +135,6 @@ func AddCart(c *gin.Context) {
 			"status":   true,
 			"products": products,
 		})
-
 	} else {
 		// eger frontdan maglumat gelmese programmany ulanyp otyran musderinin
 		// sebedindaki harytlary yzyna ugratyas
@@ -182,14 +155,11 @@ func AddCart(c *gin.Context) {
 				"message": "cart empty",
 			})
 		}
-
 	}
-
 }
 
 // GetCartProducts funksiya bazadan belli bir musdera degisli sebetdaki harytlary alyp beryar
 func GetCartProducts(customerID string) ([]ProductOfCart, error) {
-
 	db, err := config.ConnDB()
 	if err != nil {
 		return []ProductOfCart{}, err
@@ -203,10 +173,8 @@ func GetCartProducts(customerID string) ([]ProductOfCart, error) {
 	defer rowsProduct.Close()
 
 	var products []ProductOfCart
-
 	for rowsProduct.Next() {
 		var product ProductOfCart
-
 		if err := rowsProduct.Scan(&product.ID, &product.BrendID, &product.Price, &product.OldPrice, &product.Amount, &product.LimitAmount, &product.IsNew, &product.QuantityOfProduct, &product.MainImage, &product.Benefit); err != nil {
 			return []ProductOfCart{}, err
 		}
@@ -229,50 +197,34 @@ func GetCartProducts(customerID string) ([]ProductOfCart, error) {
 		defer rowsLang.Close()
 
 		var languages []models.Language
-
 		for rowsLang.Next() {
 			var language models.Language
-
 			if err := rowsLang.Scan(&language.ID, &language.NameShort); err != nil {
 				return []ProductOfCart{}, err
 			}
-
 			languages = append(languages, language)
 		}
 
 		for _, v := range languages {
-
-			rowTrProduct, err := db.Query(context.Background(), "SELECT name,description FROM translation_product WHERE lang_id = $1 AND product_id = $2 AND deleted_at IS NULL", v.ID, product.ID)
+			var trProduct models.TranslationProduct
+			translation := make(map[string]models.TranslationProduct)
+			if err := db.QueryRow(context.Background(), "SELECT name,description FROM translation_product WHERE lang_id = $1 AND product_id = $2 AND deleted_at IS NULL", v.ID, product.ID).Scan(&trProduct.Name, &trProduct.Description); err != nil {
+				return []ProductOfCart{}, err
+			}
 			if err != nil {
 				return []ProductOfCart{}, err
 			}
-			defer rowTrProduct.Close()
-
-			var trProduct models.TranslationProduct
-
-			translation := make(map[string]models.TranslationProduct)
-
-			for rowTrProduct.Next() {
-				if err := rowTrProduct.Scan(&trProduct.Name, &trProduct.Description); err != nil {
-					return []ProductOfCart{}, err
-				}
-			}
 
 			translation[v.NameShort] = trProduct
-
 			product.Translations = append(product.Translations, translation)
-
 		}
-
 		products = append(products, product)
 	}
 
 	return products, nil
-
 }
 
 func GetCustomerCartProducts(c *gin.Context) {
-
 	custID, hasCustomer := c.Get("customer_id")
 	if !hasCustomer {
 		helpers.HandleError(c, 400, "customer_id is required")
@@ -294,11 +246,9 @@ func GetCustomerCartProducts(c *gin.Context) {
 		"status":   true,
 		"products": products,
 	})
-
 }
 
 func RemoveCart(c *gin.Context) {
-
 	custID, hasCustomer := c.Get("customer_id")
 	if !hasCustomer {
 		helpers.HandleError(c, 400, "customer_id is required")
@@ -321,12 +271,10 @@ func RemoveCart(c *gin.Context) {
 		"status":  true,
 		"message": "product successfull deleted from cart",
 	})
-
 }
 
 // DeleteCart funksiya muderinin sebedinden haryt pozmak ucin ulanylyar
 func DeleteCart(customerID, productID string) error {
-
 	db, err := config.ConnDB()
 	if err != nil {
 		return err
@@ -334,17 +282,9 @@ func DeleteCart(customerID, productID string) error {
 	defer db.Close()
 
 	if productID != "" {
-
-		rowCart, err := db.Query(context.Background(), "SELECT product_id FROM cart WHERE customer_id = $1 AND product_id = $2 AND deleted_at IS NULL", customerID, productID)
-		if err != nil {
-			return err
-		}
-
 		var product_id string
-		for rowCart.Next() {
-			if err := rowCart.Scan(&product_id); err != nil {
-				return err
-			}
+		if err := db.QueryRow(context.Background(), "SELECT product_id FROM cart WHERE customer_id = $1 AND product_id = $2 AND deleted_at IS NULL", customerID, productID).Scan(&product_id); err != nil {
+			return err
 		}
 
 		if product_id == "" {
@@ -355,15 +295,11 @@ func DeleteCart(customerID, productID string) error {
 		if err != nil {
 			return err
 		}
-
 	} else {
-
 		_, err := db.Exec(context.Background(), "DELETE FROM cart WHERE customer_id = $1 AND deleted_at IS NULL", customerID)
 		if err != nil {
 			return err
 		}
-
 	}
 	return nil
-
 }
