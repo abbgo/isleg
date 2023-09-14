@@ -11,7 +11,6 @@ import (
 )
 
 func CreateTranslationUpdatePasswordPage(c *gin.Context) {
-
 	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
@@ -22,7 +21,6 @@ func CreateTranslationUpdatePasswordPage(c *gin.Context) {
 
 	// get data from request
 	var trUpdPassPages []models.TranslationUpdatePasswordPage
-
 	if err := c.BindJSON(&trUpdPassPages); err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
@@ -30,26 +28,16 @@ func CreateTranslationUpdatePasswordPage(c *gin.Context) {
 
 	// check lang_id
 	for _, v := range trUpdPassPages {
-
-		rowLang, err := db.Query(context.Background(), "SELECT id FROM languages WHERE id = $1 AND deleted_at IS NULL", v.LangID)
-		if err != nil {
+		var langID string
+		if err := db.QueryRow(context.Background(), "SELECT id FROM languages WHERE id = $1 AND deleted_at IS NULL", v.LangID).Scan(&langID); err != nil {
 			helpers.HandleError(c, 400, err.Error())
 			return
-		}
-
-		var langID string
-		for rowLang.Next() {
-			if err := rowLang.Scan(&langID); err != nil {
-				helpers.HandleError(c, 400, err.Error())
-				return
-			}
 		}
 
 		if langID == "" {
 			helpers.HandleError(c, 404, "language not found")
 			return
 		}
-
 	}
 
 	// add data in database
@@ -65,11 +53,9 @@ func CreateTranslationUpdatePasswordPage(c *gin.Context) {
 		"status":  true,
 		"message": "data successfully added",
 	})
-
 }
 
 func UpdateTranslationUpdatePasswordPageByID(c *gin.Context) {
-
 	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
@@ -80,25 +66,16 @@ func UpdateTranslationUpdatePasswordPageByID(c *gin.Context) {
 
 	// get id of translation update password page from request data
 	var trUpdPassPage models.TranslationUpdatePasswordPage
-
 	if err := c.BindJSON(&trUpdPassPage); err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
 	}
 
 	// check id
-	rowFlag, err := db.Query(context.Background(), "SELECT id FROM translation_update_password_page WHERE id = $1 AND deleted_at IS NULL", trUpdPassPage.ID)
-	if err != nil {
+	var id string
+	if err := db.QueryRow(context.Background(), "SELECT id FROM translation_update_password_page WHERE id = $1 AND deleted_at IS NULL", trUpdPassPage.ID).Scan(&id); err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
-	}
-
-	var id string
-	for rowFlag.Next() {
-		if err := rowFlag.Scan(&id); err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
-		}
 	}
 
 	if id == "" {
@@ -116,11 +93,9 @@ func UpdateTranslationUpdatePasswordPageByID(c *gin.Context) {
 		"status":  true,
 		"message": "data successfully updated",
 	})
-
 }
 
 func GetTranslationUpdatePasswordPageByID(c *gin.Context) {
-
 	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
@@ -133,18 +108,10 @@ func GetTranslationUpdatePasswordPageByID(c *gin.Context) {
 	ID := c.Param("id")
 
 	// check id and get data
-	rowFlag, err := db.Query(context.Background(), "SELECT id,title,verify_password,explanation,save,password FROM translation_update_password_page WHERE id = $1 AND deleted_at IS NULL", ID)
-	if err != nil {
+	var t models.TranslationUpdatePasswordPage
+	if err := db.QueryRow(context.Background(), "SELECT id,title,verify_password,explanation,save,password FROM translation_update_password_page WHERE id = $1 AND deleted_at IS NULL", ID).Scan(&t.ID, &t.Title, &t.VerifyPassword, &t.Explanation, &t.Save, &t.Password); err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
-	}
-
-	var t models.TranslationUpdatePasswordPage
-	for rowFlag.Next() {
-		if err := rowFlag.Scan(&t.ID, &t.Title, &t.VerifyPassword, &t.Explanation, &t.Save, &t.Password); err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
-		}
 	}
 
 	if t.ID == "" {
@@ -156,11 +123,9 @@ func GetTranslationUpdatePasswordPageByID(c *gin.Context) {
 		"status":                           true,
 		"translation_update_password_page": t,
 	})
-
 }
 
 func GetTranslationUpdatePasswordPageByLangID(c *gin.Context) {
-
 	db, err := config.ConnDB()
 	if err != nil {
 		helpers.HandleError(c, 400, err.Error())
@@ -175,18 +140,10 @@ func GetTranslationUpdatePasswordPageByLangID(c *gin.Context) {
 	}
 
 	// get translation-update-password-page where lang_id equal langID
-	aboutRow, err := db.Query(context.Background(), "SELECT title,password,verify_password,explanation,save FROM translation_update_password_page WHERE lang_id = $1 AND deleted_at IS NULL", langID)
-	if err != nil {
+	var trUpdatePasswordPage models.TranslationUpdatePasswordPage
+	if err := db.QueryRow(context.Background(), "SELECT title,password,verify_password,explanation,save FROM translation_update_password_page WHERE lang_id = $1 AND deleted_at IS NULL", langID).Scan(&trUpdatePasswordPage.Title, &trUpdatePasswordPage.Password, &trUpdatePasswordPage.VerifyPassword, &trUpdatePasswordPage.Explanation, &trUpdatePasswordPage.Save); err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
-	}
-
-	var trUpdatePasswordPage models.TranslationUpdatePasswordPage
-	for aboutRow.Next() {
-		if err := aboutRow.Scan(&trUpdatePasswordPage.Title, &trUpdatePasswordPage.Password, &trUpdatePasswordPage.VerifyPassword, &trUpdatePasswordPage.Explanation, &trUpdatePasswordPage.Save); err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
-		}
 	}
 
 	if trUpdatePasswordPage.Title == "" {
@@ -198,5 +155,4 @@ func GetTranslationUpdatePasswordPageByLangID(c *gin.Context) {
 		"status":                           true,
 		"translation_update_password_page": trUpdatePasswordPage,
 	})
-
 }
