@@ -57,7 +57,6 @@ type ProductForAdmin struct {
 }
 
 func DeleteProductImages(c *gin.Context) {
-
 	db, err := config.ConnDB()
 	if err != nil {
 		helpers.HandleError(c, 400, err.Error())
@@ -75,18 +74,10 @@ func DeleteProductImages(c *gin.Context) {
 		return
 	}
 
-	row, err := db.Query(context.Background(), "SELECT id FROM helper_images WHERE image = $1 AND deleted_at IS NULL", image.Image)
-	if err != nil {
+	var helperImageID string
+	if err := db.QueryRow(context.Background(), "SELECT id FROM helper_images WHERE image = $1 AND deleted_at IS NULL", image.Image).Scan(&helperImageID); err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
-	}
-
-	var helperImageID string
-	for row.Next() {
-		if err := row.Scan(&helperImageID); err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
-		}
 	}
 	if helperImageID != "" {
 		_, err := db.Exec(context.Background(), "DELETE FROM helper_images WHERE id = $1", helperImageID)
@@ -105,11 +96,9 @@ func DeleteProductImages(c *gin.Context) {
 		"status":  true,
 		"message": "image successfully deleted",
 	})
-
 }
 
 func CreateProductImage(c *gin.Context) {
-
 	db, err := config.ConnDB()
 	if err != nil {
 		helpers.HandleError(c, 400, err.Error())
@@ -179,11 +168,9 @@ func CreateProductImage(c *gin.Context) {
 		"status": true,
 		"image":  image,
 	})
-
 }
 
 func CreateProduct(c *gin.Context) {
-
 	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
@@ -222,18 +209,10 @@ func CreateProduct(c *gin.Context) {
 	}
 
 	// create product
-	resultProducts, err := db.Query(context.Background(), "INSERT INTO products (brend_id,price,old_price,amount,limit_amount,is_new,shop_id,main_image,benefit) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9) RETURNING id", brendID, price, oldPrice, amount, limitAmount, isNew, shopID, product.MainImage, benefit)
-	if err != nil {
+	var productID string
+	if err := db.QueryRow(context.Background(), "INSERT INTO products (brend_id,price,old_price,amount,limit_amount,is_new,shop_id,main_image,benefit) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9) RETURNING id", brendID, price, oldPrice, amount, limitAmount, isNew, shopID, product.MainImage, benefit).Scan(&productID); err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
-	}
-
-	var productID string
-	for resultProducts.Next() {
-		if err := resultProducts.Scan(&productID); err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
-		}
 	}
 
 	if len(product.Images) != 0 {
@@ -277,11 +256,9 @@ func CreateProduct(c *gin.Context) {
 		"message":    "data successfully added",
 		"product_id": productID,
 	})
-
 }
 
 func CreateProductsByExcelFile(c *gin.Context) {
-
 	countOfRows := 0
 	count_of_err := 0
 
@@ -381,7 +358,6 @@ func CreateProductsByExcelFile(c *gin.Context) {
 			}
 
 			if imageFileID != "" {
-
 				if strings.Contains(imageFileID, " ") || strings.Contains(imageFileID, "_") || strings.Contains(imageFileID, "-") {
 					imageFileID = strings.ReplaceAll(imageFileID, " ", "")
 					imageFileID = strings.ReplaceAll(imageFileID, "_", "")
@@ -401,7 +377,6 @@ func CreateProductsByExcelFile(c *gin.Context) {
 					helpers.HandleError(c, 400, err.Error())
 					return
 				}
-
 				product.Images = append(product.Images, "uploads/product/image/"+newFileName)
 			}
 		}
@@ -415,7 +390,6 @@ func CreateProductsByExcelFile(c *gin.Context) {
 		if namesOfCategories == "" {
 			countOfErr++
 			errString = errString + "harydyn kategoriyalary hokman gerek | "
-
 		}
 
 		names_of_categories := strings.Split(namesOfCategories, " | ")
@@ -429,20 +403,11 @@ func CreateProductsByExcelFile(c *gin.Context) {
 				}
 			}
 
-			rowCategory, err := db.Query(context.Background(), "SELECT c.id FROM categories c INNER JOIN translation_category tc ON tc.category_id=c.id INNER JOIN languages l ON l.id=tc.lang_id WHERE l.name_short = $1 AND tc.name = $2 AND c.deleted_at IS NULL AND l.deleted_at IS NULL AND tc.deleted_at IS NULL", "tm", v)
-			if err != nil {
+			var categoryID string
+			if err := db.QueryRow(context.Background(), "SELECT c.id FROM categories c INNER JOIN translation_category tc ON tc.category_id=c.id INNER JOIN languages l ON l.id=tc.lang_id WHERE l.name_short = $1 AND tc.name = $2 AND c.deleted_at IS NULL AND l.deleted_at IS NULL AND tc.deleted_at IS NULL", "tm", v).Scan(&categoryID); err != nil {
 				helpers.HandleError(c, 400, err.Error())
 				return
 			}
-
-			var categoryID string
-			for rowCategory.Next() {
-				if err := rowCategory.Scan(&categoryID); err != nil {
-					helpers.HandleError(c, 400, err.Error())
-					return
-				}
-			}
-
 			product.Categories = append(product.Categories, categoryID)
 		}
 
@@ -454,19 +419,10 @@ func CreateProductsByExcelFile(c *gin.Context) {
 		}
 
 		var shopID, brendID interface{}
-
 		if nameOfBrend != "" {
-			rowBrend, err := db.Query(context.Background(), "SELECT id FROM brends WHERE name = $1 AND deleted_at IS NULL", nameOfBrend)
-			if err != nil {
+			if err := db.QueryRow(context.Background(), "SELECT id FROM brends WHERE name = $1 AND deleted_at IS NULL", nameOfBrend).Scan(&product.BrendID); err != nil {
 				helpers.HandleError(c, 400, err.Error())
 				return
-			}
-
-			for rowBrend.Next() {
-				if err := rowBrend.Scan(&product.BrendID); err != nil {
-					helpers.HandleError(c, 400, err.Error())
-					return
-				}
 			}
 
 			if product.BrendID.String == "" {
@@ -618,7 +574,6 @@ func CreateProductsByExcelFile(c *gin.Context) {
 		if err != nil {
 			countOfErr++
 			errString = errString + err.Error() + " | "
-
 		}
 
 		// //////////////////////      GET TRANSLATIONS OF PRODUCT FROM EXCEL FILE ----------------------------------------
@@ -631,7 +586,6 @@ func CreateProductsByExcelFile(c *gin.Context) {
 		if trTitleTM == "" {
 			countOfErr++
 			errString = errString + "harydyn turkmence ady hokman gerek | "
-
 		}
 
 		trDescTM, err := f.GetCellValue(sheetName, "q"+strconv.Itoa(i))
@@ -668,7 +622,6 @@ func CreateProductsByExcelFile(c *gin.Context) {
 		if trTitleRU == "" {
 			countOfErr++
 			errString = errString + "harydyn osrca ady hokman gerek | "
-
 		}
 
 		trDescRU, err := f.GetCellValue(sheetName, "s"+strconv.Itoa(i))
@@ -778,7 +731,6 @@ func CreateProductsByExcelFile(c *gin.Context) {
 		"status":  false,
 		"message": "There are " + strconv.Itoa(count_of_err) + " errors in excel file",
 	})
-
 }
 
 func UploadExcelFile(c *gin.Context) {
@@ -801,7 +753,6 @@ func UploadExcelFile(c *gin.Context) {
 }
 
 func RemoveExcelFile(c *gin.Context) {
-
 	err := os.Remove(pkg.ServerPath + "uploads/product/products.xlsx") //remove the file
 	if err != nil {
 		helpers.HandleError(c, 400, err.Error())
@@ -812,7 +763,6 @@ func RemoveExcelFile(c *gin.Context) {
 		"status":  true,
 		"message": "excel file successfully deleted",
 	})
-
 }
 
 func DownloadErrExcelFile(c *gin.Context) {
@@ -823,7 +773,6 @@ func DownloadErrExcelFile(c *gin.Context) {
 }
 
 func UpdateProductByID(c *gin.Context) {
-
 	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
@@ -913,11 +862,9 @@ func UpdateProductByID(c *gin.Context) {
 		"message":    "data successfully updated",
 		"product_id": ID,
 	})
-
 }
 
 func GetProductByID(c *gin.Context) {
-
 	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
@@ -929,18 +876,10 @@ func GetProductByID(c *gin.Context) {
 	// get id from request parameter
 	ID := c.Param("id")
 
-	rowProduct, err := db.Query(context.Background(), "SELECT id,brend_id,price,old_price,amount,limit_amount,is_new,main_image,benefit FROM products WHERE id = $1 AND deleted_at IS NULL", ID)
-	if err != nil {
+	var product ProductForAdmin
+	if err := db.QueryRow(context.Background(), "SELECT id,brend_id,price,old_price,amount,limit_amount,is_new,main_image,benefit FROM products WHERE id = $1 AND deleted_at IS NULL", ID).Scan(&product.ID, &product.BrendID, &product.Price, &product.OldPrice, &product.Amount, &product.LimitAmount, &product.IsNew, &product.MainImage, &product.Benefit); err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
-	}
-
-	var product ProductForAdmin
-	for rowProduct.Next() {
-		if err := rowProduct.Scan(&product.ID, &product.BrendID, &product.Price, &product.OldPrice, &product.Amount, &product.LimitAmount, &product.IsNew, &product.MainImage, &product.Benefit); err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
-		}
 	}
 
 	if product.ID == "" {
@@ -957,17 +896,14 @@ func GetProductByID(c *gin.Context) {
 	var images []string
 	for rowsImages.Next() {
 		var image string
-
 		if err := rowsImages.Scan(&image); err != nil {
 			helpers.HandleError(c, 400, err.Error())
 			return
 		}
-
 		images = append(images, image)
 	}
 
 	product.Images = images
-
 	rowsCategoryProduct, err := db.Query(context.Background(), "SELECT category_id FROM category_product WHERE product_id = $1 AND deleted_at IS NULL", ID)
 	if err != nil {
 		helpers.HandleError(c, 400, err.Error())
@@ -977,12 +913,10 @@ func GetProductByID(c *gin.Context) {
 	var categories []string
 	for rowsCategoryProduct.Next() {
 		var category string
-
 		if err := rowsCategoryProduct.Scan(&category); err != nil {
 			helpers.HandleError(c, 400, err.Error())
 			return
 		}
-
 		categories = append(categories, category)
 	}
 
@@ -1019,11 +953,9 @@ func GetProductByID(c *gin.Context) {
 		"status":  true,
 		"product": product,
 	})
-
 }
 
 func GetProducts(c *gin.Context) {
-
 	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
@@ -1042,7 +974,6 @@ func GetProducts(c *gin.Context) {
 	// var ids []string
 	for rowsProduct.Next() {
 		var product models.Product
-
 		if err := rowsProduct.Scan(&product.ID, &product.BrendID, &product.Price, &product.OldPrice, &product.Amount, &product.LimitAmount, &product.IsNew, &product.MainImage, &product.Benefit); err != nil {
 			helpers.HandleError(c, 400, err.Error())
 			return
@@ -1068,12 +999,10 @@ func GetProducts(c *gin.Context) {
 		var images []string
 		for rowsImages.Next() {
 			var image string
-
 			if err := rowsImages.Scan(&image); err != nil {
 				helpers.HandleError(c, 400, err.Error())
 				return
 			}
-
 			images = append(images, image)
 		}
 
@@ -1092,7 +1021,6 @@ func GetProducts(c *gin.Context) {
 				helpers.HandleError(c, 400, err.Error())
 				return
 			}
-
 			categories = append(categories, category)
 		}
 
@@ -1115,7 +1043,6 @@ func GetProducts(c *gin.Context) {
 		}
 
 		product.TranslationProduct = translations
-
 		products = append(products, product)
 	}
 
@@ -1123,11 +1050,9 @@ func GetProducts(c *gin.Context) {
 		"status":   true,
 		"products": products,
 	})
-
 }
 
 func DeleteProductByID(c *gin.Context) {
-
 	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
@@ -1140,18 +1065,10 @@ func DeleteProductByID(c *gin.Context) {
 	ID := c.Param("id")
 
 	// check id
-	rowProduct, err := db.Query(context.Background(), "SELECT id FROM products WHERE id = $1 AND deleted_at IS NULL", ID)
-	if err != nil {
+	var productID string
+	if err := db.QueryRow(context.Background(), "SELECT id FROM products WHERE id = $1 AND deleted_at IS NULL", ID).Scan(&productID); err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
-	}
-
-	var productID string
-	for rowProduct.Next() {
-		if err := rowProduct.Scan(&productID); err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
-		}
 	}
 
 	if productID == "" {
@@ -1169,11 +1086,9 @@ func DeleteProductByID(c *gin.Context) {
 		"status":  true,
 		"message": "data successfully deleted",
 	})
-
 }
 
 func RestoreProductByID(c *gin.Context) {
-
 	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
@@ -1186,18 +1101,10 @@ func RestoreProductByID(c *gin.Context) {
 	ID := c.Param("id")
 
 	// check id
-	rowProduct, err := db.Query(context.Background(), "SELECT id FROM products WHERE id = $1 AND deleted_at IS NOT NULL", ID)
-	if err != nil {
+	var productID string
+	if err := db.QueryRow(context.Background(), "SELECT id FROM products WHERE id = $1 AND deleted_at IS NOT NULL", ID).Scan(&productID); err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
-	}
-
-	var productID string
-	for rowProduct.Next() {
-		if err := rowProduct.Scan(&productID); err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
-		}
 	}
 
 	if productID == "" {
@@ -1215,11 +1122,9 @@ func RestoreProductByID(c *gin.Context) {
 		"status":  true,
 		"message": "data successfully restored",
 	})
-
 }
 
 func DeletePermanentlyProductByID(c *gin.Context) {
-
 	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
@@ -1232,18 +1137,10 @@ func DeletePermanentlyProductByID(c *gin.Context) {
 	ID := c.Param("id")
 
 	// check id
-	rowProduct, err := db.Query(context.Background(), "SELECT id,main_image FROM products WHERE id = $1 AND deleted_at IS NOT NULL", ID)
-	if err != nil {
+	var productID, mainImage string
+	if err := db.QueryRow(context.Background(), "SELECT id,main_image FROM products WHERE id = $1 AND deleted_at IS NOT NULL", ID).Scan(&productID, &mainImage); err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
-	}
-
-	var productID, mainImage string
-	for rowProduct.Next() {
-		if err := rowProduct.Scan(&productID, &mainImage); err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
-		}
 	}
 
 	if productID == "" {
@@ -1267,12 +1164,10 @@ func DeletePermanentlyProductByID(c *gin.Context) {
 	var images []models.Images
 	for rowsImages.Next() {
 		var image models.Images
-
 		if err := rowsImages.Scan(&image.Image); err != nil {
 			helpers.HandleError(c, 400, err.Error())
 			return
 		}
-
 		images = append(images, image)
 	}
 
@@ -1314,11 +1209,9 @@ func DeletePermanentlyProductByID(c *gin.Context) {
 		"status":  true,
 		"message": "data successfully deleted",
 	})
-
 }
 
 func GetProductByIDForFront(c *gin.Context) {
-
 	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
@@ -1330,18 +1223,10 @@ func GetProductByIDForFront(c *gin.Context) {
 	// get id from request parameter
 	ID := c.Param("id")
 
-	rowProduct, err := db.Query(context.Background(), "SELECT id,price,old_price,amount,limit_amount,is_new,main_image,benefit FROM products WHERE id = $1 AND deleted_at IS NULL", ID)
-	if err != nil {
+	var product ProductForFront
+	if err := db.QueryRow(context.Background(), "SELECT id,price,old_price,amount,limit_amount,is_new,main_image,benefit FROM products WHERE id = $1 AND deleted_at IS NULL", ID).Scan(&product.ID, &product.Price, &product.OldPrice, &product.Amount, &product.LimitAmount, &product.IsNew, &product.MainImage, &product.Benefit); err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
-	}
-
-	var product ProductForFront
-	for rowProduct.Next() {
-		if err := rowProduct.Scan(&product.ID, &product.Price, &product.OldPrice, &product.Amount, &product.LimitAmount, &product.IsNew, &product.MainImage, &product.Benefit); err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
-		}
 	}
 
 	if product.Benefit.Float64 != 0 {
@@ -1369,12 +1254,10 @@ func GetProductByIDForFront(c *gin.Context) {
 	var images []string
 	for rowsImages.Next() {
 		var image string
-
 		if err := rowsImages.Scan(&image); err != nil {
 			helpers.HandleError(c, 400, err.Error())
 			return
 		}
-
 		images = append(images, image)
 	}
 
@@ -1389,17 +1272,14 @@ func GetProductByIDForFront(c *gin.Context) {
 	var languages []models.Language
 	for rowsLang.Next() {
 		var language models.Language
-
 		if err := rowsLang.Scan(&language.ID, &language.NameShort); err != nil {
 			helpers.HandleError(c, 400, err.Error())
 			return
 		}
-
 		languages = append(languages, language)
 	}
 
 	for _, v := range languages {
-
 		rowTrProduct, err := db.Query(context.Background(), "SELECT name,description FROM translation_product WHERE lang_id = $1 AND product_id = $2 AND deleted_at IS NULL", v.ID, product.ID)
 		if err != nil {
 			helpers.HandleError(c, 400, err.Error())
@@ -1416,24 +1296,14 @@ func GetProductByIDForFront(c *gin.Context) {
 		}
 
 		translation[v.NameShort] = trProduct
-
 		product.Translations = append(product.Translations, translation)
-
 	}
 
 	// get brend where id equal brend_id of product
-	brendRows, err := db.Query(context.Background(), "SELECT b.id,b.name FROM products p LEFT JOIN brends b ON p.brend_id=b.id WHERE p.id = $1 AND p.deleted_at IS NULL AND b.deleted_at IS NULL", product.ID)
-	if err != nil {
+	var brend Brend
+	if err := db.QueryRow(context.Background(), "SELECT b.id,b.name FROM products p LEFT JOIN brends b ON p.brend_id=b.id WHERE p.id = $1 AND p.deleted_at IS NULL AND b.deleted_at IS NULL", product.ID).Scan(&brend.ID, &brend.Name); err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
-	}
-
-	var brend Brend
-	for brendRows.Next() {
-		if err := brendRows.Scan(&brend.ID, &brend.Name); err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
-		}
 	}
 	product.Brend = brend
 
@@ -1441,5 +1311,4 @@ func GetProductByIDForFront(c *gin.Context) {
 		"status":  true,
 		"product": product,
 	})
-
 }
