@@ -16,7 +16,6 @@ import (
 )
 
 func CreateShop(c *gin.Context) {
-
 	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
@@ -27,24 +26,15 @@ func CreateShop(c *gin.Context) {
 
 	// get data from request
 	var shop models.Shop
-
 	if err := c.BindJSON(&shop); err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
 	}
 
-	rowShop, err := db.Query(context.Background(), "SELECT id FROM shops WHERE phone_number = $1 AND deleted_at IS NULL", shop.PhoneNumber)
-	if err != nil {
+	var phoneNumber string
+	if err := db.QueryRow(context.Background(), "SELECT id FROM shops WHERE phone_number = $1 AND deleted_at IS NULL", shop.PhoneNumber).Scan(&phoneNumber); err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
-	}
-
-	var phoneNumber string
-	for rowShop.Next() {
-		if err := rowShop.Scan(&phoneNumber); err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
-		}
 	}
 
 	if phoneNumber != "" {
@@ -62,11 +52,9 @@ func CreateShop(c *gin.Context) {
 		"status":  true,
 		"message": "data successfully added",
 	})
-
 }
 
 func UpdateShopByID(c *gin.Context) {
-
 	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
@@ -85,18 +73,10 @@ func UpdateShopByID(c *gin.Context) {
 	shop_id := c.Param("id")
 
 	// check id
-	rowShop, err := db.Query(context.Background(), "SELECT id FROM shops WHERE id = $1 AND deleted_at IS NULL", shop_id)
-	if err != nil {
+	var shopID string
+	if err := db.QueryRow(context.Background(), "SELECT id FROM shops WHERE id = $1 AND deleted_at IS NULL", shop_id).Scan(&shopID); err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
-	}
-
-	var shopID string
-	for rowShop.Next() {
-		if err := rowShop.Scan(&shopID); err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
-		}
 	}
 
 	if shopID == "" {
@@ -114,11 +94,9 @@ func UpdateShopByID(c *gin.Context) {
 		"status":  true,
 		"message": "data successfully updated",
 	})
-
 }
 
 func GetShopByID(c *gin.Context) {
-
 	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
@@ -131,18 +109,10 @@ func GetShopByID(c *gin.Context) {
 	ID := c.Param("id")
 
 	// check id and get data from database
-	rowShop, err := db.Query(context.Background(), "SELECT id,owner_name,address,phone_number,running_time FROM shops WHERE id = $1 AND deleted_at IS NULL", ID)
-	if err != nil {
+	var shop models.Shop
+	if err := db.QueryRow(context.Background(), "SELECT id,owner_name,address,phone_number,running_time FROM shops WHERE id = $1 AND deleted_at IS NULL", ID).Scan(&shop.ID, &shop.OwnerName, &shop.Address, &shop.PhoneNumber, &shop.RunningTime); err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
-	}
-
-	var shop models.Shop
-	for rowShop.Next() {
-		if err := rowShop.Scan(&shop.ID, &shop.OwnerName, &shop.Address, &shop.PhoneNumber, &shop.RunningTime); err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
-		}
 	}
 
 	if shop.ID == "" {
@@ -154,11 +124,9 @@ func GetShopByID(c *gin.Context) {
 		"status": true,
 		"shop":   shop,
 	})
-
 }
 
 func GetShops(c *gin.Context) {
-
 	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
@@ -204,41 +172,30 @@ func GetShops(c *gin.Context) {
 		return
 	}
 
-	var countShops, rowsShop pgx.Rows
+	var rowsShop pgx.Rows
 	if !status {
 		if searchQuery == "" {
-			countShops, err = db.Query(context.Background(), "SELECT COUNT(id) FROM shops WHERE deleted_at IS NULL")
-			if err != nil {
+			if err = db.QueryRow(context.Background(), "SELECT COUNT(id) FROM shops WHERE deleted_at IS NULL").Scan(&countOfShops); err != nil {
 				helpers.HandleError(c, 400, err.Error())
 				return
 			}
 		} else {
-			countShops, err = db.Query(context.Background(), "SELECT COUNT(id) FROM shops WHERE deleted_at IS NULL AND phone_number LIKE $1", search)
-			if err != nil {
+			if err = db.QueryRow(context.Background(), "SELECT COUNT(id) FROM shops WHERE deleted_at IS NULL AND phone_number LIKE $1", search).Scan(&countOfShops); err != nil {
 				helpers.HandleError(c, 400, err.Error())
 				return
 			}
 		}
 	} else {
 		if searchQuery == "" {
-			countShops, err = db.Query(context.Background(), "SELECT COUNT(id) FROM shops WHERE deleted_at IS NOT NULL")
-			if err != nil {
+			if err = db.QueryRow(context.Background(), "SELECT COUNT(id) FROM shops WHERE deleted_at IS NOT NULL").Scan(&countOfShops); err != nil {
 				helpers.HandleError(c, 400, err.Error())
 				return
 			}
 		} else {
-			countShops, err = db.Query(context.Background(), "SELECT COUNT(id) FROM shops WHERE deleted_at IS NOT NULL AND phone_number LIKE $1", search)
-			if err != nil {
+			if err = db.QueryRow(context.Background(), "SELECT COUNT(id) FROM shops WHERE deleted_at IS NOT NULL AND phone_number LIKE $1", search).Scan(&countOfShops); err != nil {
 				helpers.HandleError(c, 400, err.Error())
 				return
 			}
-		}
-	}
-
-	for countShops.Next() {
-		if err := countShops.Scan(&countOfShops); err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
 		}
 	}
 
@@ -279,7 +236,6 @@ func GetShops(c *gin.Context) {
 			helpers.HandleError(c, 400, err.Error())
 			return
 		}
-
 		shops = append(shops, shop)
 	}
 
@@ -288,11 +244,9 @@ func GetShops(c *gin.Context) {
 		"shops":  shops,
 		"total":  countOfShops,
 	})
-
 }
 
 func DeleteShopByID(c *gin.Context) {
-
 	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
@@ -305,18 +259,10 @@ func DeleteShopByID(c *gin.Context) {
 	ID := c.Param("id")
 
 	// check id
-	rowShop, err := db.Query(context.Background(), "SELECT id FROM shops WHERE id = $1 AND deleted_at IS NULL", ID)
-	if err != nil {
+	var shopID string
+	if err := db.QueryRow(context.Background(), "SELECT id FROM shops WHERE id = $1 AND deleted_at IS NULL", ID).Scan(&shopID); err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
-	}
-
-	var shopID string
-	for rowShop.Next() {
-		if err := rowShop.Scan(&shopID); err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
-		}
 	}
 
 	if shopID == "" {
@@ -334,11 +280,9 @@ func DeleteShopByID(c *gin.Context) {
 		"status":  true,
 		"message": "data successfully deleted",
 	})
-
 }
 
 func RestoreShopByID(c *gin.Context) {
-
 	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
@@ -351,18 +295,10 @@ func RestoreShopByID(c *gin.Context) {
 	ID := c.Param("id")
 
 	// check id
-	rowShop, err := db.Query(context.Background(), "SELECT id FROM shops WHERE id = $1 AND deleted_at IS NOT NULL", ID)
-	if err != nil {
+	var shopID string
+	if err := db.QueryRow(context.Background(), "SELECT id FROM shops WHERE id = $1 AND deleted_at IS NOT NULL", ID).Scan(&shopID); err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
-	}
-
-	var shopID string
-	for rowShop.Next() {
-		if err := rowShop.Scan(&shopID); err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
-		}
 	}
 
 	if shopID == "" {
@@ -380,11 +316,9 @@ func RestoreShopByID(c *gin.Context) {
 		"status":  true,
 		"message": "data successfully restored",
 	})
-
 }
 
 func DeletePermanentlyShopByID(c *gin.Context) {
-
 	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
@@ -397,18 +331,10 @@ func DeletePermanentlyShopByID(c *gin.Context) {
 	ID := c.Param("id")
 
 	// check id
-	rowShop, err := db.Query(context.Background(), "SELECT id FROM shops WHERE id = $1 AND deleted_at IS NOT NULL", ID)
-	if err != nil {
+	var shopID string
+	if err := db.QueryRow(context.Background(), "SELECT id FROM shops WHERE id = $1 AND deleted_at IS NOT NULL", ID).Scan(&shopID); err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
-	}
-
-	var shopID string
-	for rowShop.Next() {
-		if err := rowShop.Scan(&shopID); err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
-		}
 	}
 
 	if shopID == "" {
@@ -425,12 +351,10 @@ func DeletePermanentlyShopByID(c *gin.Context) {
 	var mainImages []string
 	for rowsMainImage.Next() {
 		var mainImage string
-
 		if err := rowsMainImage.Scan(&mainImage); err != nil {
 			helpers.HandleError(c, 400, err.Error())
 			return
 		}
-
 		mainImages = append(mainImages, mainImage)
 	}
 
@@ -450,12 +374,10 @@ func DeletePermanentlyShopByID(c *gin.Context) {
 	var images []models.Images
 	for rowsImages.Next() {
 		var image models.Images
-
 		if err := rowsImages.Scan(&image.Image); err != nil {
 			helpers.HandleError(c, 400, err.Error())
 			return
 		}
-
 		images = append(images, image)
 	}
 
@@ -476,5 +398,4 @@ func DeletePermanentlyShopByID(c *gin.Context) {
 		"status":  true,
 		"message": "data successfully deleted",
 	})
-
 }
