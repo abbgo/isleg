@@ -11,7 +11,6 @@ import (
 )
 
 func CreateOrderTime(c *gin.Context) {
-
 	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
@@ -21,7 +20,6 @@ func CreateOrderTime(c *gin.Context) {
 	defer db.Close()
 
 	var orderTime models.OrderTimes
-
 	if err := c.BindJSON(&orderTime); err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
@@ -43,5 +41,4 @@ func CreateOrderTime(c *gin.Context) {
 		"status":  true,
 		"message": "data successfully added",
 	})
-
 }
