@@ -43,7 +43,6 @@ type Brend struct {
 
 // ahli brendlerin suratlaryny we id - lerini getiryar
 func GetBrends(c *gin.Context) {
-
 	// get all brend from brend controller
 	brends, err := backController.GetAllBrendForHomePage()
 	if err != nil {
@@ -55,11 +54,9 @@ func GetBrends(c *gin.Context) {
 		"status": true,
 		"brends": brends,
 	})
-
 }
 
 func GetHomePageCategories(c *gin.Context) {
-
 	db, err := config.ConnDB()
 	if err != nil {
 		helpers.HandleError(c, 400, err.Error())
@@ -123,64 +120,38 @@ func GetHomePageCategories(c *gin.Context) {
 			var languages []models.Language
 			for rowsLang.Next() {
 				var language models.Language
-
 				if err := rowsLang.Scan(&language.ID, &language.NameShort); err != nil {
 					helpers.HandleError(c, 400, err.Error())
 					return
 				}
-
 				languages = append(languages, language)
 			}
 
 			for _, v := range languages {
-
-				rowTrProduct, err := db.Query(context.Background(), "SELECT name,description FROM translation_product WHERE lang_id = $1 AND product_id = $2 AND deleted_at IS NULL", v.ID, product.ID)
-				if err != nil {
+				var trProduct models.TranslationProduct
+				translation := make(map[string]models.TranslationProduct)
+				if err := db.QueryRow(context.Background(), "SELECT name,description FROM translation_product WHERE lang_id = $1 AND product_id = $2 AND deleted_at IS NULL", v.ID, product.ID).Scan(&trProduct.Name, &trProduct.Description); err != nil {
 					helpers.HandleError(c, 400, err.Error())
 					return
 				}
-
-				var trProduct models.TranslationProduct
-				translation := make(map[string]models.TranslationProduct)
-				for rowTrProduct.Next() {
-
-					if err := rowTrProduct.Scan(&trProduct.Name, &trProduct.Description); err != nil {
-						helpers.HandleError(c, 400, err.Error())
-						return
-					}
-
-				}
-
 				translation[v.NameShort] = trProduct
-
 				product.Translations = append(product.Translations, translation)
-
 			}
 
 			// get brend where id of product brend_id
-			brendRows, err := db.Query(context.Background(), "SELECT b.id,b.name FROM products p LEFT JOIN brends b ON p.brend_id=b.id WHERE p.id = $1 AND p.deleted_at IS NULL AND b.deleted_at IS NULL", product.ID)
-			if err != nil {
+			var brend Brend
+			if err := db.QueryRow(context.Background(), "SELECT b.id,b.name FROM products p LEFT JOIN brends b ON p.brend_id=b.id WHERE p.id = $1 AND p.deleted_at IS NULL AND b.deleted_at IS NULL", product.ID).Scan(&brend.ID, &brend.Name); err != nil {
 				helpers.HandleError(c, 400, err.Error())
 				return
 			}
-
-			var brend Brend
-			for brendRows.Next() {
-				if err := brendRows.Scan(&brend.ID, &brend.Name); err != nil {
-					helpers.HandleError(c, 400, err.Error())
-					return
-				}
-			}
 			product.Brend = brend
 			products = append(products, product)
-
 		}
 		homePageCategory.Products = products
 		homePageCategories = append(homePageCategories, homePageCategory)
 	}
 
 	var home_page_categories []HomePageCategory
-
 	for _, v := range homePageCategories {
 		if len(v.Products) != 0 {
 			home_page_categories = append(home_page_categories, v)
@@ -191,5 +162,4 @@ func GetHomePageCategories(c *gin.Context) {
 		"status":              true,
 		"homepage_categories": home_page_categories,
 	})
-
 }
