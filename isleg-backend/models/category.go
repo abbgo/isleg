@@ -41,16 +41,9 @@ func ValidateCategory(categoryID, parentCategoryID, fileName, metod string) erro
 	defer db.Close()
 
 	if categoryID != "" { // validate id and get image of category
-		rowCategor, err := db.Query(context.Background(), "SELECT id FROM categories WHERE id = $1 AND deleted_at IS NULL", categoryID)
-		if err != nil {
-			return err
-		}
-
 		var category_id string
-		for rowCategor.Next() {
-			if err := rowCategor.Scan(&category_id); err != nil {
-				return err
-			}
+		if err := db.QueryRow(context.Background(), "SELECT id FROM categories WHERE id = $1 AND deleted_at IS NULL", categoryID).Scan(&category_id); err != nil {
+			return err
 		}
 
 		if category_id == "" {
@@ -67,16 +60,9 @@ func ValidateCategory(categoryID, parentCategoryID, fileName, metod string) erro
 			}
 		}
 
-		rowCategory, err := db.Query(context.Background(), "SELECT id FROM categories WHERE id = $1 AND deleted_at IS NULL", parentCategoryID)
-		if err != nil {
-			return err
-		}
-
 		var parentCategory string
-		for rowCategory.Next() {
-			if err := rowCategory.Scan(&parentCategory); err != nil {
-				return err
-			}
+		if err := db.QueryRow(context.Background(), "SELECT id FROM categories WHERE id = $1 AND deleted_at IS NULL", parentCategoryID).Scan(&parentCategory); err != nil {
+			return err
 		}
 
 		if parentCategory == "" {
@@ -93,5 +79,4 @@ func ValidateCategory(categoryID, parentCategoryID, fileName, metod string) erro
 	}
 
 	return nil
-
 }
