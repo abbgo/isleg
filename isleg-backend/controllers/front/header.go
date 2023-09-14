@@ -22,7 +22,6 @@ type HeaderData struct {
 // dillerin gysga ady we suraty
 // kategoriyalar
 func GetHeaderData(c *gin.Context) {
-
 	langID, err := backController.CheckLanguage(c)
 	if err != nil {
 		helpers.HandleError(c, 400, err.Error())
@@ -68,5 +67,4 @@ func GetHeaderData(c *gin.Context) {
 		"status":      true,
 		"header_data": headerData,
 	})
-
 }
