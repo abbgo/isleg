@@ -65,7 +65,6 @@ type Brend struct {
 }
 
 func CreateCategory(c *gin.Context) {
-
 	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
@@ -97,17 +96,9 @@ func CreateCategory(c *gin.Context) {
 	}
 
 	// add data to categories table
-	resultCateor, err := db.Query(context.Background(), "INSERT INTO categories (parent_category_id,image,is_home_category) VALUES ($1,$2,$3) RETURNING id", parent_category_id, category.Image, category.IsHomeCategory)
-	if err != nil {
+	if err := db.QueryRow(context.Background(), "INSERT INTO categories (parent_category_id,image,is_home_category) VALUES ($1,$2,$3) RETURNING id", parent_category_id, category.Image, category.IsHomeCategory).Scan(&categoryID); err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
-	}
-
-	for resultCateor.Next() {
-		if err := resultCateor.Scan(&categoryID); err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
-		}
 	}
 
 	langID, err := GetLangID("tm")
@@ -142,11 +133,9 @@ func CreateCategory(c *gin.Context) {
 		"status":  true,
 		"message": "data successfully added",
 	})
-
 }
 
 func UpdateCategoryByID(c *gin.Context) {
-
 	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
@@ -166,7 +155,6 @@ func UpdateCategoryByID(c *gin.Context) {
 
 	// var fileName string
 	var parent_category_id interface{}
-
 	if err := models.ValidateCategory(ID, category.ParentCategoryID.String, "", "update"); err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
@@ -232,11 +220,9 @@ func UpdateCategoryByID(c *gin.Context) {
 		"status":  true,
 		"message": "data successfully updated",
 	})
-
 }
 
 func GetCategoryByID(c *gin.Context) {
-
 	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
@@ -249,18 +235,10 @@ func GetCategoryByID(c *gin.Context) {
 	ID := c.Param("id")
 
 	// check id and get data from daabase
-	rowCategor, err := db.Query(context.Background(), "SELECT id,parent_category_id,image,is_home_category FROM categories WHERE id = $1 AND deleted_at IS NULL", ID)
-	if err != nil {
+	var category models.Category
+	if err := db.QueryRow(context.Background(), "SELECT id,parent_category_id,image,is_home_category FROM categories WHERE id = $1 AND deleted_at IS NULL", ID).Scan(&category.ID, &category.ParentCategoryID, &category.Image, &category.IsHomeCategory); err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
-	}
-
-	var category models.Category
-	for rowCategor.Next() {
-		if err := rowCategor.Scan(&category.ID, &category.ParentCategoryID, &category.Image, &category.IsHomeCategory); err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
-		}
 	}
 
 	if category.ID == "" {
@@ -290,11 +268,9 @@ func GetCategoryByID(c *gin.Context) {
 		"status":   true,
 		"category": category,
 	})
-
 }
 
 func GetCategoryByIDWithChild(c *gin.Context) {
-
 	langID, err := GetLangID("tm")
 	if err != nil {
 		helpers.HandleError(c, 400, err.Error())
@@ -311,13 +287,13 @@ func GetCategoryByIDWithChild(c *gin.Context) {
 	ID := c.Param("id")
 
 	// get all category where parent category id is null
+	var result ResultCategory
 	rows, err := db.Query(context.Background(), "SELECT c.id,c.image,tc.name FROM categories c LEFT JOIN translation_category tc ON c.id=tc.category_id WHERE tc.lang_id = $1 AND c.id = $2 AND c.parent_category_id IS NULL AND c.deleted_at IS NULL AND tc.deleted_at IS NULL ORDER BY c.created_at DESC", langID, ID)
 	if err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
 	}
 
-	var result ResultCategory
 	for rows.Next() {
 		if err := rows.Scan(&result.ID, &result.Image, &result.Name); err != nil {
 			helpers.HandleError(c, 400, err.Error())
@@ -357,7 +333,6 @@ func GetCategoryByIDWithChild(c *gin.Context) {
 				resus = append(resus, resu)
 			}
 			resul.ResultCatego = resus
-
 			resuls = append(resuls, resul)
 		}
 		result.ResultCategor = resuls
@@ -367,11 +342,9 @@ func GetCategoryByIDWithChild(c *gin.Context) {
 		"status":   true,
 		"category": result,
 	})
-
 }
 
 func GetAllCategory(c *gin.Context) {
-
 	langID, err := GetLangID("tm")
 	if err != nil {
 		helpers.HandleError(c, 400, err.Error())
@@ -433,11 +406,9 @@ func GetAllCategory(c *gin.Context) {
 				resus = append(resus, resu)
 			}
 			resul.ResultCatego = resus
-
 			resuls = append(resuls, resul)
 		}
 		result.ResultCategor = resuls
-
 		results = append(results, result)
 	}
 
@@ -445,11 +416,9 @@ func GetAllCategory(c *gin.Context) {
 		"status":     true,
 		"categories": results,
 	})
-
 }
 
 func GetDeletedCategories(c *gin.Context) {
-
 	langID, err := GetLangID("tm")
 	if err != nil {
 		helpers.HandleError(c, 400, err.Error())
@@ -511,11 +480,9 @@ func GetDeletedCategories(c *gin.Context) {
 				resus = append(resus, resu)
 			}
 			resul.ResultCatego = resus
-
 			resuls = append(resuls, resul)
 		}
 		result.ResultCategor = resuls
-
 		results = append(results, result)
 	}
 
@@ -523,11 +490,9 @@ func GetDeletedCategories(c *gin.Context) {
 		"status":     true,
 		"categories": results,
 	})
-
 }
 
 func GetCategories(c *gin.Context) {
-
 	langID, err := GetLangID("tm")
 	if err != nil {
 		helpers.HandleError(c, 400, err.Error())
@@ -575,11 +540,9 @@ func GetCategories(c *gin.Context) {
 		"categories": categories,
 		"total":      countOfCatagories,
 	})
-
 }
 
 func GetCategoriesForAdmin(c *gin.Context) {
-
 	langID, err := GetLangID("tm")
 	if err != nil {
 		helpers.HandleError(c, 400, err.Error())
@@ -596,11 +559,9 @@ func GetCategoriesForAdmin(c *gin.Context) {
 		"status":     true,
 		"categories": categories,
 	})
-
 }
 
 func GetAllCategoryForHeader(langID, search, searchStr string, limit, page uint) ([]ResultCategory, uint, error) {
-
 	db, err := config.ConnDB()
 	if err != nil {
 		return []ResultCategory{}, 0, err
@@ -654,7 +615,6 @@ func GetAllCategoryForHeader(langID, search, searchStr string, limit, page uint)
 	}
 
 	var results []ResultCategory
-
 	for rows.Next() {
 		var result ResultCategory
 		if err := rows.Scan(&result.ID, &result.Image, &result.Name); err != nil {
@@ -690,11 +650,9 @@ func GetAllCategoryForHeader(langID, search, searchStr string, limit, page uint)
 				resus = append(resus, resu)
 			}
 			resul.ResultCatego = resus
-
 			resuls = append(resuls, resul)
 		}
 		result.ResultCategor = resuls
-
 		results = append(results, result)
 	}
 
@@ -709,11 +667,9 @@ func GetAllCategoryForHeader(langID, search, searchStr string, limit, page uint)
 	}
 
 	return results, countOfCategories, nil
-
 }
 
 func DeleteCategoryByID(c *gin.Context) {
-
 	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
@@ -726,18 +682,10 @@ func DeleteCategoryByID(c *gin.Context) {
 	ID := c.Param("id")
 
 	// check id
-	rowCategor, err := db.Query(context.Background(), "SELECT id FROM categories WHERE id = $1 AND deleted_at IS NULL", ID)
-	if err != nil {
+	var category_id string
+	if err := db.QueryRow(context.Background(), "SELECT id FROM categories WHERE id = $1 AND deleted_at IS NULL", ID).Scan(&category_id); err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
-	}
-
-	var category_id string
-	for rowCategor.Next() {
-		if err := rowCategor.Scan(&category_id); err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
-		}
 	}
 
 	if category_id == "" {
@@ -761,11 +709,9 @@ func DeleteCategoryByID(c *gin.Context) {
 		"status":  true,
 		"message": "data successfully deleted",
 	})
-
 }
 
 func RestoreCategoryByID(c *gin.Context) {
-
 	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
@@ -778,18 +724,10 @@ func RestoreCategoryByID(c *gin.Context) {
 	ID := c.Param("id")
 
 	// check ids
-	rowCategor, err := db.Query(context.Background(), "SELECT id FROM categories WHERE id = $1 AND deleted_at IS NOT NULL", ID)
-	if err != nil {
+	var category_id string
+	if err := db.QueryRow(context.Background(), "SELECT id FROM categories WHERE id = $1 AND deleted_at IS NOT NULL", ID).Scan(&category_id); err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
-	}
-
-	var category_id string
-	for rowCategor.Next() {
-		if err := rowCategor.Scan(&category_id); err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
-		}
 	}
 
 	if category_id == "" {
@@ -813,11 +751,9 @@ func RestoreCategoryByID(c *gin.Context) {
 		"status":  true,
 		"message": "data successfully restored",
 	})
-
 }
 
 func DeletePermanentlyCategoryByID(c *gin.Context) {
-
 	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
@@ -830,18 +766,10 @@ func DeletePermanentlyCategoryByID(c *gin.Context) {
 	ID := c.Param("id")
 
 	// check id and get image of categories
-	rowCategor, err := db.Query(context.Background(), "SELECT id,image FROM categories WHERE id = $1 AND deleted_at IS NOT NULL", ID)
-	if err != nil {
+	var category_id, image string
+	if err := db.QueryRow(context.Background(), "SELECT id,image FROM categories WHERE id = $1 AND deleted_at IS NOT NULL", ID).Scan(&category_id, &image); err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
-	}
-
-	var category_id, image string
-	for rowCategor.Next() {
-		if err := rowCategor.Scan(&category_id, &image); err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
-		}
 	}
 
 	if category_id == "" {
@@ -865,15 +793,12 @@ func DeletePermanentlyCategoryByID(c *gin.Context) {
 	}
 
 	var mainImages []models.Product
-
 	for rowsMainImageProduct.Next() {
 		var mainImage models.Product
-
 		if err := rowsMainImageProduct.Scan(&mainImage.ID, &mainImage.MainImage); err != nil {
 			helpers.HandleError(c, 400, err.Error())
 			return
 		}
-
 		mainImages = append(mainImages, mainImage)
 	}
 
@@ -895,12 +820,10 @@ func DeletePermanentlyCategoryByID(c *gin.Context) {
 	var images []models.Images
 	for rowsImagesProduct.Next() {
 		var image models.Images
-
 		if err := rowsImagesProduct.Scan(&image.Image); err != nil {
 			helpers.HandleError(c, 400, err.Error())
 			return
 		}
-
 		images = append(images, image)
 	}
 
@@ -967,7 +890,6 @@ func DeletePermanentlyCategoryByID(c *gin.Context) {
 			helpers.HandleError(c, 400, err.Error())
 			return
 		}
-
 		childCategoryIDS = append(childCategoryIDS, childCategoryID)
 	}
 
@@ -982,12 +904,10 @@ func DeletePermanentlyCategoryByID(c *gin.Context) {
 		var childMainImages []models.Product
 		for rowPrdcs.Next() {
 			var childMainImage models.Product
-
 			if err := rowPrdcs.Scan(&childMainImage.ID, &childMainImage.MainImage); err != nil {
 				helpers.HandleError(c, 400, err.Error())
 				return
 			}
-
 			childMainImages = append(childMainImages, childMainImage)
 		}
 
@@ -1007,12 +927,10 @@ func DeletePermanentlyCategoryByID(c *gin.Context) {
 		var childImages []models.Images
 		for rowsChildImagesProduct.Next() {
 			var childImage models.Images
-
 			if err := rowsChildImagesProduct.Scan(&childImage.Image); err != nil {
 				helpers.HandleError(c, 400, err.Error())
 				return
 			}
-
 			childImages = append(childImages, childImage)
 		}
 
@@ -1077,11 +995,9 @@ func DeletePermanentlyCategoryByID(c *gin.Context) {
 		"status":  true,
 		"message": "category successfully deleted",
 	})
-
 }
 
 func GetOneCategoryWithProducts(c *gin.Context) {
-
 	db, err := config.ConnDB()
 	if err != nil {
 		helpers.HandleError(c, 400, err.Error())
@@ -1170,7 +1086,6 @@ func GetOneCategoryWithProducts(c *gin.Context) {
 		var products []Product
 		for productRows.Next() {
 			var product Product
-
 			if err := productRows.Scan(&product.ID, &product.Price, &product.OldPrice, &product.LimitAmount, &product.IsNew, &product.Amount, &product.MainImage, &product.Benefit); err != nil {
 				helpers.HandleError(c, 400, err.Error())
 				return
@@ -1196,17 +1111,14 @@ func GetOneCategoryWithProducts(c *gin.Context) {
 			var languages []models.Language
 			for rowsLang.Next() {
 				var language models.Language
-
 				if err := rowsLang.Scan(&language.ID, &language.NameShort); err != nil {
 					helpers.HandleError(c, 400, err.Error())
 					return
 				}
-
 				languages = append(languages, language)
 			}
 
 			for _, v := range languages {
-
 				rowTrProduct, err := db.Query(context.Background(), "SELECT name,description FROM translation_product WHERE lang_id = $1 AND product_id = $2 AND deleted_at IS NULL", v.ID, product.ID)
 				if err != nil {
 					helpers.HandleError(c, 400, err.Error())
@@ -1215,18 +1127,14 @@ func GetOneCategoryWithProducts(c *gin.Context) {
 
 				var trProduct models.TranslationProduct
 				translation := make(map[string]models.TranslationProduct)
-
 				for rowTrProduct.Next() {
 					if err := rowTrProduct.Scan(&trProduct.Name, &trProduct.Description); err != nil {
 						helpers.HandleError(c, 400, err.Error())
 						return
 					}
 				}
-
 				translation[v.NameShort] = trProduct
-
 				product.Translations = append(product.Translations, translation)
-
 			}
 
 			// get brend where id equal brend_id of product
@@ -1254,11 +1162,9 @@ func GetOneCategoryWithProducts(c *gin.Context) {
 		"category":          category,
 		"count_of_products": countOfProducts,
 	})
-
 }
 
 func GetOneCategoryWithDeletedProducts(c *gin.Context) {
-
 	db, err := config.ConnDB()
 	if err != nil {
 		helpers.HandleError(c, 400, err.Error())
@@ -1300,7 +1206,6 @@ func GetOneCategoryWithDeletedProducts(c *gin.Context) {
 	}
 
 	offset := limit * (page - 1)
-
 	categoryID := c.Param("id")
 
 	// get category where id equal categiryID
@@ -1348,7 +1253,6 @@ func GetOneCategoryWithDeletedProducts(c *gin.Context) {
 		var products []Product
 		for productRows.Next() {
 			var product Product
-
 			if err := productRows.Scan(&product.ID, &product.Price, &product.OldPrice, &product.LimitAmount, &product.IsNew, &product.Amount, &product.MainImage, &product.Benefit); err != nil {
 				helpers.HandleError(c, 400, err.Error())
 				return
@@ -1374,17 +1278,14 @@ func GetOneCategoryWithDeletedProducts(c *gin.Context) {
 			var languages []models.Language
 			for rowsLang.Next() {
 				var language models.Language
-
 				if err := rowsLang.Scan(&language.ID, &language.NameShort); err != nil {
 					helpers.HandleError(c, 400, err.Error())
 					return
 				}
-
 				languages = append(languages, language)
 			}
 
 			for _, v := range languages {
-
 				rowTrProduct, err := db.Query(context.Background(), "SELECT name,description FROM translation_product WHERE lang_id = $1 AND product_id = $2 AND deleted_at IS NULL", v.ID, product.ID)
 				if err != nil {
 					helpers.HandleError(c, 400, err.Error())
@@ -1393,33 +1294,21 @@ func GetOneCategoryWithDeletedProducts(c *gin.Context) {
 
 				var trProduct models.TranslationProduct
 				translation := make(map[string]models.TranslationProduct)
-
 				for rowTrProduct.Next() {
 					if err := rowTrProduct.Scan(&trProduct.Name, &trProduct.Description); err != nil {
 						helpers.HandleError(c, 400, err.Error())
 						return
 					}
 				}
-
 				translation[v.NameShort] = trProduct
-
 				product.Translations = append(product.Translations, translation)
-
 			}
 
 			// get brend where id equal brend_id of product
-			brendRows, err := db.Query(context.Background(), "SELECT b.id,b.name FROM products p LEFT JOIN brends b ON p.brend_id=b.id WHERE p.id = $1 AND p.deleted_at IS NULL AND b.deleted_at IS NULL", product.ID)
-			if err != nil {
+			var brend Brend
+			if err := db.QueryRow(context.Background(), "SELECT b.id,b.name FROM products p LEFT JOIN brends b ON p.brend_id=b.id WHERE p.id = $1 AND p.deleted_at IS NULL AND b.deleted_at IS NULL", product.ID).Scan(&brend.ID, &brend.Name); err != nil {
 				helpers.HandleError(c, 400, err.Error())
 				return
-			}
-
-			var brend Brend
-			for brendRows.Next() {
-				if err := brendRows.Scan(&brend.ID, &brend.Name); err != nil {
-					helpers.HandleError(c, 400, err.Error())
-					return
-				}
 			}
 			product.Brend = brend
 			products = append(products, product)
@@ -1432,11 +1321,9 @@ func GetOneCategoryWithDeletedProducts(c *gin.Context) {
 		"category":          category,
 		"count_of_products": countOfProducts,
 	})
-
 }
 
 func SearchCategory(c *gin.Context) {
-
 	db, err := config.ConnDB()
 	if err != nil {
 		helpers.HandleError(c, 400, err.Error())
@@ -1504,12 +1391,10 @@ func SearchCategory(c *gin.Context) {
 		}
 		category.ResultCategor = resuls
 		categories = append(categories, category)
-
 	}
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":     true,
 		"categories": categories,
 	})
-
 }
