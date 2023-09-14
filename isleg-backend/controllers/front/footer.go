@@ -12,7 +12,6 @@ import (
 // GetFooterData funksiya asakdaky maglumatlary getirip beryar:
 // footer - in terjimesini
 func GetFooterData(c *gin.Context) {
-
 	langID, err := backController.CheckLanguage(c)
 	if err != nil {
 		helpers.HandleError(c, 400, err.Error())
@@ -30,5 +29,4 @@ func GetFooterData(c *gin.Context) {
 		"status":      true,
 		"footer_data": translationFooter,
 	})
-
 }
