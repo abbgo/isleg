@@ -11,7 +11,6 @@ import (
 )
 
 func CreateTranslationHeader(c *gin.Context) {
-
 	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
@@ -21,7 +20,6 @@ func CreateTranslationHeader(c *gin.Context) {
 	defer db.Close()
 
 	var trHeaders []models.TranslationHeader
-
 	if err := c.BindJSON(&trHeaders); err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
@@ -29,26 +27,16 @@ func CreateTranslationHeader(c *gin.Context) {
 
 	// check lang_id
 	for _, v := range trHeaders {
-
-		rowLang, err := db.Query(context.Background(), "SELECT id FROM languages WHERE id = $1 AND deleted_at IS NULL", v.LangID)
-		if err != nil {
+		var langID string
+		if err := db.QueryRow(context.Background(), "SELECT id FROM languages WHERE id = $1 AND deleted_at IS NULL", v.LangID).Scan(&langID); err != nil {
 			helpers.HandleError(c, 400, err.Error())
 			return
-		}
-
-		var langID string
-		for rowLang.Next() {
-			if err := rowLang.Scan(&langID); err != nil {
-				helpers.HandleError(c, 400, err.Error())
-				return
-			}
 		}
 
 		if langID == "" {
 			helpers.HandleError(c, 404, "language not found")
 			return
 		}
-
 	}
 
 	// add data to translation_header table
@@ -64,11 +52,9 @@ func CreateTranslationHeader(c *gin.Context) {
 		"status":  true,
 		"message": "data added successfully",
 	})
-
 }
 
 func UpdateTranslationHeaderByID(c *gin.Context) {
-
 	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
@@ -79,7 +65,6 @@ func UpdateTranslationHeaderByID(c *gin.Context) {
 
 	// get id of translation_header table from request parameter
 	var trHeader models.TranslationHeader
-
 	if err := c.BindJSON(&trHeader); err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
@@ -87,18 +72,10 @@ func UpdateTranslationHeaderByID(c *gin.Context) {
 	// trHead := c.Param("id")
 
 	// check id
-	rowFlag, err := db.Query(context.Background(), "SELECT id FROM translation_header WHERE id = $1 AND deleted_at IS NULL", trHeader.ID)
-	if err != nil {
+	var id string
+	if err := db.QueryRow(context.Background(), "SELECT id FROM translation_header WHERE id = $1 AND deleted_at IS NULL", trHeader.ID).Scan(&id); err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
-	}
-
-	var id string
-	for rowFlag.Next() {
-		if err := rowFlag.Scan(&id); err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
-		}
 	}
 
 	if id == "" {
@@ -117,11 +94,9 @@ func UpdateTranslationHeaderByID(c *gin.Context) {
 		"status":  true,
 		"message": "data successfully updated",
 	})
-
 }
 
 func GetTranslationHeaderByID(c *gin.Context) {
-
 	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
@@ -134,18 +109,10 @@ func GetTranslationHeaderByID(c *gin.Context) {
 	trHead := c.Param("id")
 
 	// check id and get data
-	rowFlag, err := db.Query(context.Background(), "SELECT id,research,phone,password,forgot_password,sign_in,sign_up,name,password_verification,verify_secure,my_information,my_favorites,my_orders,log_out,basket,email,add_to_basket,add_button FROM translation_header WHERE id = $1 AND deleted_at IS NULL", trHead)
-	if err != nil {
+	var t models.TranslationHeader
+	if err := db.QueryRow(context.Background(), "SELECT id,research,phone,password,forgot_password,sign_in,sign_up,name,password_verification,verify_secure,my_information,my_favorites,my_orders,log_out,basket,email,add_to_basket,add_button FROM translation_header WHERE id = $1 AND deleted_at IS NULL", trHead).Scan(&t.ID, &t.Research, &t.Phone, &t.Password, &t.ForgotPassword, &t.SignIn, &t.SignUp, &t.Name, &t.PasswordVerification, &t.VerifySecure, &t.MyInformation, &t.MyFavorites, &t.MyOrders, &t.LogOut, &t.Basket, &t.Email, &t.AddToBasket, &t.AddButton); err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
-	}
-
-	var t models.TranslationHeader
-	for rowFlag.Next() {
-		if err := rowFlag.Scan(&t.ID, &t.Research, &t.Phone, &t.Password, &t.ForgotPassword, &t.SignIn, &t.SignUp, &t.Name, &t.PasswordVerification, &t.VerifySecure, &t.MyInformation, &t.MyFavorites, &t.MyOrders, &t.LogOut, &t.Basket, &t.Email, &t.AddToBasket, &t.AddButton); err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
-		}
 	}
 
 	if t.ID == "" {
@@ -157,31 +124,20 @@ func GetTranslationHeaderByID(c *gin.Context) {
 		"status":             true,
 		"translation_header": t,
 	})
-
 }
 
 func GetTranslationHeaderForHeader(langID string) (models.TranslationHeader, error) {
-
 	db, err := config.ConnDB()
 	if err != nil {
 		return models.TranslationHeader{}, err
 	}
 	defer db.Close()
 
-	var t models.TranslationHeader
-
 	// GET TranslationHeader For Header
-	row, err := db.Query(context.Background(), "SELECT research,phone,password,forgot_password,sign_in,sign_up,name,password_verification,verify_secure,my_information,my_favorites,my_orders,log_out,basket,email,add_to_basket,add_button FROM translation_header WHERE lang_id = $1 AND deleted_at IS NULL", langID)
-	if err != nil {
+	var t models.TranslationHeader
+	if err := db.QueryRow(context.Background(), "SELECT research,phone,password,forgot_password,sign_in,sign_up,name,password_verification,verify_secure,my_information,my_favorites,my_orders,log_out,basket,email,add_to_basket,add_button FROM translation_header WHERE lang_id = $1 AND deleted_at IS NULL", langID).Scan(&t.Research, &t.Phone, &t.Password, &t.ForgotPassword, &t.SignIn, &t.SignUp, &t.Name, &t.PasswordVerification, &t.VerifySecure, &t.MyInformation, &t.MyFavorites, &t.MyOrders, &t.LogOut, &t.Basket, &t.Email, &t.AddToBasket, &t.AddButton); err != nil {
 		return models.TranslationHeader{}, err
 	}
 
-	for row.Next() {
-		if err := row.Scan(&t.Research, &t.Phone, &t.Password, &t.ForgotPassword, &t.SignIn, &t.SignUp, &t.Name, &t.PasswordVerification, &t.VerifySecure, &t.MyInformation, &t.MyFavorites, &t.MyOrders, &t.LogOut, &t.Basket, &t.Email, &t.AddToBasket, &t.AddButton); err != nil {
-			return models.TranslationHeader{}, err
-		}
-	}
-
 	return t, nil
-
 }
