@@ -11,7 +11,6 @@ import (
 )
 
 func CreateTranslationMyInformationPage(c *gin.Context) {
-
 	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
@@ -22,7 +21,6 @@ func CreateTranslationMyInformationPage(c *gin.Context) {
 
 	//get data from request
 	var trMyInforPages []models.TranslationMyInformationPage
-
 	if err := c.BindJSON(&trMyInforPages); err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
@@ -30,26 +28,16 @@ func CreateTranslationMyInformationPage(c *gin.Context) {
 
 	// check lang_id
 	for _, v := range trMyInforPages {
-
-		rowLang, err := db.Query(context.Background(), "SELECT id FROM languages WHERE id = $1 AND deleted_at IS NULL", v.LangID)
-		if err != nil {
+		var langID string
+		if err := db.QueryRow(context.Background(), "SELECT id FROM languages WHERE id = $1 AND deleted_at IS NULL", v.LangID).Scan(&langID); err != nil {
 			helpers.HandleError(c, 400, err.Error())
 			return
-		}
-
-		var langID string
-		for rowLang.Next() {
-			if err := rowLang.Scan(&langID); err != nil {
-				helpers.HandleError(c, 400, err.Error())
-				return
-			}
 		}
 
 		if langID == "" {
 			helpers.HandleError(c, 404, "language not found")
 			return
 		}
-
 	}
 
 	// create translation_my_information_page
@@ -65,11 +53,9 @@ func CreateTranslationMyInformationPage(c *gin.Context) {
 		"status":  true,
 		"message": "data successfully added",
 	})
-
 }
 
 func UpdateTranslationMyInformationPageByID(c *gin.Context) {
-
 	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
@@ -80,25 +66,16 @@ func UpdateTranslationMyInformationPageByID(c *gin.Context) {
 
 	// get id of translation my information page from request parameter
 	var trMyInforPage models.TranslationMyInformationPage
-
 	if err := c.BindJSON(&trMyInforPage); err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
 	}
 
 	// check id
-	rowFlag, err := db.Query(context.Background(), "SELECT id FROM translation_my_information_page WHERE id = $1 AND deleted_at IS NULL", trMyInforPage.ID)
-	if err != nil {
+	var id string
+	if err := db.QueryRow(context.Background(), "SELECT id FROM translation_my_information_page WHERE id = $1 AND deleted_at IS NULL", trMyInforPage.ID).Scan(&id); err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
-	}
-
-	var id string
-	for rowFlag.Next() {
-		if err := rowFlag.Scan(&id); err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
-		}
 	}
 
 	if id == "" {
@@ -116,11 +93,9 @@ func UpdateTranslationMyInformationPageByID(c *gin.Context) {
 		"status":  true,
 		"message": "data successfully updated",
 	})
-
 }
 
 func GetTranslationMyInformationPageByID(c *gin.Context) {
-
 	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
@@ -133,18 +108,10 @@ func GetTranslationMyInformationPageByID(c *gin.Context) {
 	ID := c.Param("id")
 
 	// check id and get data
-	rowFlag, err := db.Query(context.Background(), "SELECT id,address,birthday,update_password,save,gender,male,female FROM translation_my_information_page WHERE id = $1 AND deleted_at IS NULL", ID)
-	if err != nil {
+	var t models.TranslationMyInformationPage
+	if err := db.QueryRow(context.Background(), "SELECT id,address,birthday,update_password,save,gender,male,female FROM translation_my_information_page WHERE id = $1 AND deleted_at IS NULL", ID).Scan(&t.ID, &t.Address, &t.Birthday, &t.UpdatePassword, &t.Save, &t.Gender, &t.Male, &t.Female); err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
-	}
-
-	var t models.TranslationMyInformationPage
-	for rowFlag.Next() {
-		if err := rowFlag.Scan(&t.ID, &t.Address, &t.Birthday, &t.UpdatePassword, &t.Save, &t.Gender, &t.Male, &t.Female); err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
-		}
 	}
 
 	if t.ID == "" {
@@ -156,11 +123,9 @@ func GetTranslationMyInformationPageByID(c *gin.Context) {
 		"status":                          true,
 		"translation_my_information_page": t,
 	})
-
 }
 
 func GetTranslationMyInformationPageByLangID(c *gin.Context) {
-
 	db, err := config.ConnDB()
 	if err != nil {
 		helpers.HandleError(c, 400, err.Error())
@@ -179,18 +144,10 @@ func GetTranslationMyInformationPageByLangID(c *gin.Context) {
 	}
 
 	// get translation-my-information-page where lang_id equal langID
-	aboutRow, err := db.Query(context.Background(), "SELECT address,birthday,update_password,save,gender,male,female FROM translation_my_information_page WHERE lang_id = $1 AND deleted_at IS NULL", langID)
-	if err != nil {
+	var trMyInformationPage models.TranslationMyInformationPage
+	if err := db.QueryRow(context.Background(), "SELECT address,birthday,update_password,save,gender,male,female FROM translation_my_information_page WHERE lang_id = $1 AND deleted_at IS NULL", langID).Scan(&trMyInformationPage.Address, &trMyInformationPage.Birthday, &trMyInformationPage.UpdatePassword, &trMyInformationPage.Save, &trMyInformationPage.Gender, &trMyInformationPage.Male, &trMyInformationPage.Female); err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
-	}
-
-	var trMyInformationPage models.TranslationMyInformationPage
-	for aboutRow.Next() {
-		if err := aboutRow.Scan(&trMyInformationPage.Address, &trMyInformationPage.Birthday, &trMyInformationPage.UpdatePassword, &trMyInformationPage.Save, &trMyInformationPage.Gender, &trMyInformationPage.Male, &trMyInformationPage.Female); err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
-		}
 	}
 
 	if trMyInformationPage.Address == "" {
@@ -202,5 +159,4 @@ func GetTranslationMyInformationPageByLangID(c *gin.Context) {
 		"status":                          true,
 		"translation_my_information_page": trMyInformationPage,
 	})
-
 }
