@@ -35,7 +35,6 @@ type Language struct {
 }
 
 func ValidateLanguage(nameShort, functionType, langID string) (string, error) {
-
 	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
@@ -48,59 +47,35 @@ func ValidateLanguage(nameShort, functionType, langID string) (string, error) {
 			return "", errors.New("short name is required")
 		}
 
-		rowLanguage, err := db.Query(context.Background(), "SELECT name_short FROM languages WHERE name_short = $1 AND deleted_at IS NULL", strings.ToLower(nameShort))
-		if err != nil {
-			return "", err
-		}
-
 		var oldNameShort string
-		for rowLanguage.Next() {
-			if err := rowLanguage.Scan(&oldNameShort); err != nil {
-				return "", err
-			}
+		if err := db.QueryRow(context.Background(), "SELECT name_short FROM languages WHERE name_short = $1 AND deleted_at IS NULL", strings.ToLower(nameShort)).Scan(&oldNameShort); err != nil {
+			return "", err
 		}
 		if oldNameShort != "" {
 			return "", errors.New("short name already exists")
 		}
 	} else if functionType == "update" {
 		// Check if there is a language, id equal to langID
-		rowFlag, err := db.Query(context.Background(), "SELECT id,flag FROM languages WHERE id = $1 AND deleted_at IS NULL", langID)
-		if err != nil {
-			return "", err
-		}
-
 		var id, flag string
-		for rowFlag.Next() {
-			if err := rowFlag.Scan(&id, &flag); err != nil {
-				return "", err
-			}
+		if err := db.QueryRow(context.Background(), "SELECT id,flag FROM languages WHERE id = $1 AND deleted_at IS NULL", langID).Scan(&id, &flag); err != nil {
+			return "", err
 		}
 
 		if flag == "" {
 			return "", errors.New("language not found")
 		}
 
-		rowNameShort, err := db.Query(context.Background(), "SELECT id FROM languages WHERE name_short = $1 AND deleted_at IS NULL", strings.ToLower(nameShort))
-		if err != nil {
-			return "", err
-		}
-
 		var oldID string
-		for rowNameShort.Next() {
-			if err := rowNameShort.Scan(&oldID); err != nil {
-				return "", err
-			}
+		if err := db.QueryRow(context.Background(), "SELECT id FROM languages WHERE name_short = $1 AND deleted_at IS NULL", strings.ToLower(nameShort)).Scan(&oldID); err != nil {
+			return "", err
 		}
 
 		if oldID != "" && id != oldID {
 			return "", errors.New("short name already exists")
 		}
-
 		return flag, nil
-
 	} else {
 		return "", errors.New("invalid function type")
 	}
-
 	return "", nil
 }
