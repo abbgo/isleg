@@ -36,7 +36,6 @@ type Address struct {
 }
 
 func RegisterCustomer(c *gin.Context) {
-
 	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
@@ -46,7 +45,6 @@ func RegisterCustomer(c *gin.Context) {
 	defer db.Close()
 
 	var customer models.Customer
-
 	if err := c.BindJSON(&customer); err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
@@ -77,46 +75,22 @@ func RegisterCustomer(c *gin.Context) {
 	// On registrasiya bolman haryt sargyt eden adamlar is_register false bolyar ,
 	// solar sayta registrasiya boljak bolsa Olaryn taze at familiyasyny telefon belgisini
 	// we parolyny baza yazdyrmak ucin database - den sol customer - leri tapyp update etmeli
-	rowCustomer, err := db.Query(context.Background(), "SELECT phone_number FROM customers WHERE phone_number = $1 AND is_register = false AND deleted_at IS NULL", customer.PhoneNumber)
-	if err != nil {
+	var phone_number string
+	if err := db.QueryRow(context.Background(), "SELECT phone_number FROM customers WHERE phone_number = $1 AND is_register = false AND deleted_at IS NULL", customer.PhoneNumber).Scan(&phone_number); err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
 	}
 
-	var phone_number string
-	for rowCustomer.Next() {
-		if err := rowCustomer.Scan(&phone_number); err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
-		}
-	}
-
 	var customerID string
 	if phone_number != "" {
-		resultCustomer, err := db.Query(context.Background(), "UPDATE customers SET full_name = $1 , password = $2 , email = $3 , is_register = $4 WHERE phone_number = $5 RETURNING id", customer.FullName, hashPassword, customer.Email, true, customer.PhoneNumber)
-		if err != nil {
+		if err := db.QueryRow(context.Background(), "UPDATE customers SET full_name = $1 , password = $2 , email = $3 , is_register = $4 WHERE phone_number = $5 RETURNING id", customer.FullName, hashPassword, customer.Email, true, customer.PhoneNumber).Scan(&customerID); err != nil {
 			helpers.HandleError(c, 400, err.Error())
 			return
-		}
-
-		for resultCustomer.Next() {
-			if err := resultCustomer.Scan(&customerID); err != nil {
-				helpers.HandleError(c, 400, err.Error())
-				return
-			}
 		}
 	} else {
-		resultCustomers, err := db.Query(context.Background(), "INSERT INTO customers (full_name,phone_number,password,email,is_register) VALUES ($1,$2,$3,$4,$5) RETURNING id", customer.FullName, customer.PhoneNumber, hashPassword, customer.Email, true)
-		if err != nil {
+		if err := db.QueryRow(context.Background(), "INSERT INTO customers (full_name,phone_number,password,email,is_register) VALUES ($1,$2,$3,$4,$5) RETURNING id", customer.FullName, customer.PhoneNumber, hashPassword, customer.Email, true).Scan(&customerID); err != nil {
 			helpers.HandleError(c, 400, err.Error())
 			return
-		}
-
-		for resultCustomers.Next() {
-			if err := resultCustomers.Scan(&customerID); err != nil {
-				helpers.HandleError(c, 400, err.Error())
-				return
-			}
 		}
 	}
 
@@ -133,11 +107,9 @@ func RegisterCustomer(c *gin.Context) {
 		"access_token":  accessTokenString,
 		"refresh_token": refreshTokenString,
 	})
-
 }
 
 func LoginCustomer(c *gin.Context) {
-
 	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
@@ -169,18 +141,10 @@ func LoginCustomer(c *gin.Context) {
 	}
 
 	// check if email exists and password is correct
-	row, err := db.Query(context.Background(), "SELECT id,password FROM customers WHERE phone_number = $1 AND is_register = true AND deleted_at IS NULL", customer.PhoneNumber)
-	if err != nil {
+	var customerID, oldPassword string
+	if err := db.QueryRow(context.Background(), "SELECT id,password FROM customers WHERE phone_number = $1 AND is_register = true AND deleted_at IS NULL", customer.PhoneNumber).Scan(&customerID, &oldPassword); err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
-	}
-
-	var customerID, oldPassword string
-	for row.Next() {
-		if err := row.Scan(&customerID, &oldPassword); err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
-		}
 	}
 
 	if customerID == "" {
@@ -204,11 +168,9 @@ func LoginCustomer(c *gin.Context) {
 		"access_token":  accessTokenString,
 		"refresh_token": refreshTokenString,
 	})
-
 }
 
 func GetCustomerInformation(c *gin.Context) {
-
 	db, err := config.ConnDB()
 	if err != nil {
 		helpers.HandleError(c, 400, err.Error())
@@ -228,18 +190,10 @@ func GetCustomerInformation(c *gin.Context) {
 	}
 
 	// bazadan musderinin maglumatlary alynyar
-	rowCustomer, err := db.Query(context.Background(), "SELECT id , full_name , phone_number , birthday , email , gender FROM customers WHERE id = $1 AND is_register = true AND deleted_at IS NULL", customerID)
-	if err != nil {
+	var customer CustomerInformation
+	if err := db.QueryRow(context.Background(), "SELECT id , full_name , phone_number , birthday , email , gender FROM customers WHERE id = $1 AND is_register = true AND deleted_at IS NULL", customerID).Scan(&customer.ID, &customer.FullName, &customer.PhoneNumber, &customer.Birthday, &customer.Email, &customer.Gender); err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
-	}
-
-	var customer CustomerInformation
-	for rowCustomer.Next() {
-		if err := rowCustomer.Scan(&customer.ID, &customer.FullName, &customer.PhoneNumber, &customer.Birthday, &customer.Email, &customer.Gender); err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
-		}
 	}
 
 	if customer.ID == "" {
@@ -270,11 +224,9 @@ func GetCustomerInformation(c *gin.Context) {
 		"status":                true,
 		"customer_informations": customer,
 	})
-
 }
 
 func UpdateCustomerInformation(c *gin.Context) {
-
 	db, err := config.ConnDB()
 	if err != nil {
 		helpers.HandleError(c, 400, err.Error())
@@ -294,7 +246,6 @@ func UpdateCustomerInformation(c *gin.Context) {
 	}
 
 	var customer models.Customer
-
 	if err := c.BindJSON(&customer); err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
@@ -311,11 +262,9 @@ func UpdateCustomerInformation(c *gin.Context) {
 		"status":  true,
 		"message": "data successfully updated",
 	})
-
 }
 
 func UpdateCustomerPassword(c *gin.Context) {
-
 	db, err := config.ConnDB()
 	if err != nil {
 		helpers.HandleError(c, 400, err.Error())
@@ -354,11 +303,9 @@ func UpdateCustomerPassword(c *gin.Context) {
 		"status":  true,
 		"message": "password of customer successfuly updated",
 	})
-
 }
 
 func UpdateCustPassword(c *gin.Context) {
-
 	db, err := config.ConnDB()
 	if err != nil {
 		helpers.HandleError(c, 400, err.Error())
@@ -369,19 +316,12 @@ func UpdateCustPassword(c *gin.Context) {
 	phoneNumber := c.PostForm("phone_number")
 
 	// sonrada musderinin parolyny uytgetyas
-	row, err := db.Query(context.Background(), "SELECT id FROM customers WHERE phone_number =  $1 AND deleted_at IS NULL AND is_register = true", phoneNumber)
-	if err != nil {
+	var customerID string
+	if err := db.QueryRow(context.Background(), "SELECT id FROM customers WHERE phone_number =  $1 AND deleted_at IS NULL AND is_register = true", phoneNumber).Scan(&customerID); err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
 	}
 
-	var customerID string
-	for row.Next() {
-		if err := row.Scan(&customerID); err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
-		}
-	}
 	if customerID == "" {
 		helpers.HandleError(c, 404, "customer not found")
 		return
@@ -406,5 +346,4 @@ func UpdateCustPassword(c *gin.Context) {
 		"status":  true,
 		"message": "password of customer successfuly updated",
 	})
-
 }
