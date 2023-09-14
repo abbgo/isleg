@@ -11,7 +11,6 @@ import (
 )
 
 func CreateNotification(c *gin.Context) {
-
 	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
@@ -21,68 +20,45 @@ func CreateNotification(c *gin.Context) {
 	defer db.Close()
 
 	var notification models.Notification
-
 	if err := c.BindJSON(&notification); err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
 	}
 
 	for _, v := range notification.Translations {
-
-		rowLang, err := db.Query(context.Background(), "SELECT id FROM languages WHERE id = $1 AND deleted_at IS NULL", v.LangID)
-		if err != nil {
+		var lang_id string
+		if err := db.QueryRow(context.Background(), "SELECT id FROM languages WHERE id = $1 AND deleted_at IS NULL", v.LangID).Scan(&lang_id); err != nil {
 			helpers.HandleError(c, 400, err.Error())
 			return
-		}
-
-		var lang_id string
-		for rowLang.Next() {
-			if err := rowLang.Scan(&lang_id); err != nil {
-				helpers.HandleError(c, 400, err.Error())
-				return
-			}
 		}
 
 		if lang_id == "" {
 			helpers.HandleError(c, 404, "langauge not found")
 			return
 		}
-
 	}
 
-	resultNotification, err := db.Query(context.Background(), "INSERT INTO notifications (name) VALUES ($1) RETURNING id", notification.Name)
-	if err != nil {
+	var notification_id string
+	if err := db.QueryRow(context.Background(), "INSERT INTO notifications (name) VALUES ($1) RETURNING id", notification.Name).Scan(&notification_id); err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
 	}
 
-	var notification_id string
-	for resultNotification.Next() {
-		if err := resultNotification.Scan(&notification_id); err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
-		}
-	}
-
 	for _, v := range notification.Translations {
-
 		_, err := db.Exec(context.Background(), "INSERT INTO translation_notification (notification_id,lang_id,translation) VALUES ($1,$2,$3)", notification_id, v.LangID, v.Translation)
 		if err != nil {
 			helpers.HandleError(c, 400, err.Error())
 			return
 		}
-
 	}
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
 		"message": "data successfully added",
 	})
-
 }
 
 func UpdateNotificationByID(c *gin.Context) {
-
 	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
@@ -92,24 +68,15 @@ func UpdateNotificationByID(c *gin.Context) {
 	defer db.Close()
 
 	var notification models.Notification
-
 	if err := c.BindJSON(&notification); err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
 	}
 
-	rowNotification, err := db.Query(context.Background(), "SELECT id FROM notifications WHERE id = $1 AND deleted_at IS NULL", notification.ID)
-	if err != nil {
+	var notification_id string
+	if err := db.QueryRow(context.Background(), "SELECT id FROM notifications WHERE id = $1 AND deleted_at IS NULL", notification.ID).Scan(&notification_id); err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
-	}
-
-	var notification_id string
-	for rowNotification.Next() {
-		if err := rowNotification.Scan(&notification_id); err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
-		}
 	}
 
 	if notification_id == "" {
@@ -124,24 +91,20 @@ func UpdateNotificationByID(c *gin.Context) {
 	}
 
 	for _, v := range notification.Translations {
-
 		_, err := db.Exec(context.Background(), "UPDATE translation_notification SET translation = $1 WHERE lang_id = $2 AND notification_id = $3", v.Translation, v.LangID, notification_id)
 		if err != nil {
 			helpers.HandleError(c, 400, err.Error())
 			return
 		}
-
 	}
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
 		"message": "data successfully updated",
 	})
-
 }
 
 func GetNotificationByID(c *gin.Context) {
-
 	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
@@ -152,13 +115,13 @@ func GetNotificationByID(c *gin.Context) {
 
 	ID := c.Param("id")
 
+	var notification models.Notification
 	rowNotification, err := db.Query(context.Background(), "SELECT id,name FROM notifications WHERE id = $1", ID)
 	if err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
 	}
 
-	var notification models.Notification
 	for rowNotification.Next() {
 		if err := rowNotification.Scan(&notification.ID, &notification.Name); err != nil {
 			helpers.HandleError(c, 400, err.Error())
@@ -179,27 +142,22 @@ func GetNotificationByID(c *gin.Context) {
 		var trNotifications []models.TranslationNotification
 		for rowsTrNotification.Next() {
 			var trNotification models.TranslationNotification
-
 			if err := rowsTrNotification.Scan(&trNotification.Translation); err != nil {
 				helpers.HandleError(c, 400, err.Error())
 				return
 			}
-
 			trNotifications = append(trNotifications, trNotification)
 		}
 		notification.Translations = trNotifications
-
 	}
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":       true,
 		"notification": notification,
 	})
-
 }
 
 func GetNotifications(c *gin.Context) {
-
 	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
@@ -217,7 +175,6 @@ func GetNotifications(c *gin.Context) {
 	var notifications []models.Notification
 	for rowsNotification.Next() {
 		var notification models.Notification
-
 		if err := rowsNotification.Scan(&notification.ID, &notification.Name); err != nil {
 			helpers.HandleError(c, 400, err.Error())
 			return
@@ -232,30 +189,23 @@ func GetNotifications(c *gin.Context) {
 		var trNotifications []models.TranslationNotification
 		for rowsTrNotification.Next() {
 			var trNotification models.TranslationNotification
-
 			if err := rowsTrNotification.Scan(&trNotification.Translation); err != nil {
 				helpers.HandleError(c, 400, err.Error())
 				return
 			}
-
 			trNotifications = append(trNotifications, trNotification)
 		}
-
 		notification.Translations = trNotifications
-
 		notifications = append(notifications, notification)
-
 	}
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":        true,
 		"notifications": notifications,
 	})
-
 }
 
 func DeleteNotificationByID(c *gin.Context) {
-
 	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
@@ -266,18 +216,10 @@ func DeleteNotificationByID(c *gin.Context) {
 
 	ID := c.Param("id")
 
-	rowNotification, err := db.Query(context.Background(), "SELECT id FROM notifications WHERE id = $1 AND deleted_at IS NULL", ID)
-	if err != nil {
+	var notification_id string
+	if err := db.QueryRow(context.Background(), "SELECT id FROM notifications WHERE id = $1 AND deleted_at IS NULL", ID).Scan(&notification_id); err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
-	}
-
-	var notification_id string
-	for rowNotification.Next() {
-		if err := rowNotification.Scan(&notification_id); err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
-		}
 	}
 
 	if notification_id == "" {
@@ -295,11 +237,9 @@ func DeleteNotificationByID(c *gin.Context) {
 		"status":  true,
 		"message": "data successfully deleted",
 	})
-
 }
 
 func RestoreNotificationByID(c *gin.Context) {
-
 	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
@@ -310,18 +250,10 @@ func RestoreNotificationByID(c *gin.Context) {
 
 	ID := c.Param("id")
 
-	rowNotification, err := db.Query(context.Background(), "SELECT id FROM notifications WHERE id = $1 AND deleted_at IS NOT NULL", ID)
-	if err != nil {
+	var notification_id string
+	if err := db.QueryRow(context.Background(), "SELECT id FROM notifications WHERE id = $1 AND deleted_at IS NOT NULL", ID).Scan(&notification_id); err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
-	}
-
-	var notification_id string
-	for rowNotification.Next() {
-		if err := rowNotification.Scan(&notification_id); err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
-		}
 	}
 
 	if notification_id == "" {
@@ -339,11 +271,9 @@ func RestoreNotificationByID(c *gin.Context) {
 		"status":  true,
 		"message": "data successfully restored",
 	})
-
 }
 
 func DeletePermanentlyNotificationByID(c *gin.Context) {
-
 	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
@@ -354,18 +284,10 @@ func DeletePermanentlyNotificationByID(c *gin.Context) {
 
 	ID := c.Param("id")
 
-	rowNotification, err := db.Query(context.Background(), "SELECT id FROM notifications WHERE id = $1 AND deleted_at IS NOT NULL", ID)
-	if err != nil {
+	var notification_id string
+	if err := db.QueryRow(context.Background(), "SELECT id FROM notifications WHERE id = $1 AND deleted_at IS NOT NULL", ID).Scan(&notification_id); err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
-	}
-
-	var notification_id string
-	for rowNotification.Next() {
-		if err := rowNotification.Scan(&notification_id); err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
-		}
 	}
 
 	if notification_id == "" {
@@ -383,11 +305,9 @@ func DeletePermanentlyNotificationByID(c *gin.Context) {
 		"status":  true,
 		"message": "data successfully deleted",
 	})
-
 }
 
 func GetNotificationByLangID(c *gin.Context) {
-
 	db, err := config.ConnDB()
 	if err != nil {
 		helpers.HandleError(c, 400, err.Error())
@@ -414,7 +334,6 @@ func GetNotificationByLangID(c *gin.Context) {
 	var notifications []models.Notification
 	for rowsNotification.Next() {
 		var notification models.Notification
-
 		if err := rowsNotification.Scan(&notification.ID, &notification.Name); err != nil {
 			helpers.HandleError(c, 400, err.Error())
 			return
@@ -429,24 +348,18 @@ func GetNotificationByLangID(c *gin.Context) {
 		var trNotifications []models.TranslationNotification
 		for rowTrNotification.Next() {
 			var trNotification models.TranslationNotification
-
 			if err := rowTrNotification.Scan(&trNotification.Translation); err != nil {
 				helpers.HandleError(c, 400, err.Error())
 				return
 			}
-
 			trNotifications = append(trNotifications, trNotification)
 		}
-
 		notification.Translations = trNotifications
-
 		notifications = append(notifications, notification)
-
 	}
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":        true,
 		"notifications": notifications,
 	})
-
 }
