@@ -11,7 +11,6 @@ import (
 )
 
 func CreatePaymentType(c *gin.Context) {
-
 	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
@@ -29,48 +28,34 @@ func CreatePaymentType(c *gin.Context) {
 
 	// check lang_id
 	for _, v := range paymentTypes {
-
-		rowLang, err := db.Query(context.Background(), "SELECT id FROM languages WHERE id = $1 AND deleted_at IS NULL", v.LangID)
-		if err != nil {
+		var langID string
+		if err := db.QueryRow(context.Background(), "SELECT id FROM languages WHERE id = $1 AND deleted_at IS NULL", v.LangID).Scan(&langID); err != nil {
 			helpers.HandleError(c, 400, err.Error())
 			return
-		}
-
-		var langID string
-		for rowLang.Next() {
-			if err := rowLang.Scan(&langID); err != nil {
-				helpers.HandleError(c, 400, err.Error())
-				return
-			}
 		}
 
 		if langID == "" {
 			helpers.HandleError(c, 404, "language not found")
 			return
 		}
-
 	}
 
 	// create company address
 	for _, v := range paymentTypes {
-
 		_, err := db.Exec(context.Background(), "INSERT INTO payment_types (lang_id,type) VALUES ($1,$2)", v.LangID, v.Type)
 		if err != nil {
 			helpers.HandleError(c, 400, err.Error())
 			return
 		}
-
 	}
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
 		"message": "data successfully added",
 	})
-
 }
 
 func UpdatePaymentTypeByID(c *gin.Context) {
-
 	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
@@ -87,18 +72,10 @@ func UpdatePaymentTypeByID(c *gin.Context) {
 	}
 
 	// check id
-	rowPaymentType, err := db.Query(context.Background(), "SELECT id FROM payment_types WHERE id = $1 AND deleted_at IS NULL", paymentType.ID)
-	if err != nil {
+	var id string
+	if err := db.QueryRow(context.Background(), "SELECT id FROM payment_types WHERE id = $1 AND deleted_at IS NULL", paymentType.ID).Scan(&id); err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
-	}
-
-	var id string
-	for rowPaymentType.Next() {
-		if err := rowPaymentType.Scan(&id); err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
-		}
 	}
 
 	if id == "" {
@@ -116,11 +93,9 @@ func UpdatePaymentTypeByID(c *gin.Context) {
 		"status":  true,
 		"message": "data successfully updated",
 	})
-
 }
 
 func GetPaymentTypeByID(c *gin.Context) {
-
 	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
@@ -133,18 +108,10 @@ func GetPaymentTypeByID(c *gin.Context) {
 	ID := c.Param("id")
 
 	// check id and get data from database
-	rowPaymentType, err := db.Query(context.Background(), "SELECT type FROM payment_types WHERE id = $1 AND deleted_at IS NULL", ID)
-	if err != nil {
+	var paymentType string
+	if err := db.QueryRow(context.Background(), "SELECT type FROM payment_types WHERE id = $1 AND deleted_at IS NULL", ID).Scan(&paymentType); err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
-	}
-
-	var paymentType string
-	for rowPaymentType.Next() {
-		if err := rowPaymentType.Scan(&paymentType); err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
-		}
 	}
 
 	if paymentType == "" {
@@ -156,11 +123,9 @@ func GetPaymentTypeByID(c *gin.Context) {
 		"status":       true,
 		"payment_type": paymentType,
 	})
-
 }
 
 func GetPaymentTypes(c *gin.Context) {
-
 	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
@@ -179,12 +144,10 @@ func GetPaymentTypes(c *gin.Context) {
 	var paymentTypes []models.PaymentTypes
 	for rowsPaymentType.Next() {
 		var paymentType models.PaymentTypes
-
 		if err := rowsPaymentType.Scan(&paymentType.LangID, &paymentType.Type); err != nil {
 			helpers.HandleError(c, 400, err.Error())
 			return
 		}
-
 		paymentTypes = append(paymentTypes, paymentType)
 	}
 
@@ -192,11 +155,9 @@ func GetPaymentTypes(c *gin.Context) {
 		"status":        true,
 		"payment_types": paymentTypes,
 	})
-
 }
 
 func GetPaymentTypesByLangID(c *gin.Context) {
-
 	db, err := config.ConnDB()
 	if err != nil {
 		helpers.HandleError(c, 400, err.Error())
@@ -223,13 +184,10 @@ func GetPaymentTypesByLangID(c *gin.Context) {
 	var paymentTypes []string
 	for rowsPaymentType.Next() {
 		var paymentType string
-
 		if err := rowsPaymentType.Scan(&paymentType); err != nil {
-
 			helpers.HandleError(c, 400, err.Error())
 			return
 		}
-
 		paymentTypes = append(paymentTypes, paymentType)
 	}
 
@@ -237,5 +195,4 @@ func GetPaymentTypesByLangID(c *gin.Context) {
 		"status":        true,
 		"payment_types": paymentTypes,
 	})
-
 }
