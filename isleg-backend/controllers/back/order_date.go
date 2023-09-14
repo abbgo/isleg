@@ -40,7 +40,6 @@ type Wagt struct {
 }
 
 func CreateOrderDate(c *gin.Context) {
-
 	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
@@ -50,7 +49,6 @@ func CreateOrderDate(c *gin.Context) {
 	defer db.Close()
 
 	var orderDate models.OrderDates
-
 	if err := c.BindJSON(&orderDate); err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
@@ -63,60 +61,38 @@ func CreateOrderDate(c *gin.Context) {
 	}
 
 	for _, v := range orderDate.TranslationOrderDates {
-
-		rowLang, err := db.Query(context.Background(), "SELECT id FROM languages WHERE id = $1 AND deleted_at IS NULL", v.LangID)
-		if err != nil {
+		var langID string
+		if err := db.QueryRow(context.Background(), "SELECT id FROM languages WHERE id = $1 AND deleted_at IS NULL", v.LangID).Scan(&langID); err != nil {
 			helpers.HandleError(c, 400, err.Error())
 			return
-		}
-
-		var langID string
-		for rowLang.Next() {
-			if err := rowLang.Scan(&langID); err != nil {
-				helpers.HandleError(c, 400, err.Error())
-
-				return
-			}
 		}
 
 		if langID == "" {
 			helpers.HandleError(c, 404, "language not found")
 			return
 		}
-
 	}
 
 	// add data to order_dates table and return last id
-	resultOrderDates, err := db.Query(context.Background(), "INSERT INTO order_dates (date) VALUES ($1) RETURNING id", orderDate.Date)
-	if err != nil {
+	var orderDateID string
+	if err := db.QueryRow(context.Background(), "INSERT INTO order_dates (date) VALUES ($1) RETURNING id", orderDate.Date).Scan(&orderDateID); err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
 	}
 
-	var orderDateID string
-	for resultOrderDates.Next() {
-		if err := resultOrderDates.Scan(&orderDateID); err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
-		}
-	}
-
 	// add translation order date to database
 	for _, v := range orderDate.TranslationOrderDates {
-
 		_, err := db.Exec(context.Background(), "INSERT INTO translation_order_dates (lang_id,order_date_id,date) VALUES ($1,$2,$3)", v.LangID, orderDateID, v.Date)
 		if err != nil {
 			helpers.HandleError(c, 400, err.Error())
 			return
 		}
-
 	}
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
 		"message": "data successfully added",
 	})
-
 }
 
 // func UpdateOrderDateByID(c *gin.Context) {
@@ -810,7 +786,6 @@ func CreateOrderDate(c *gin.Context) {
 // }
 
 func GetOrderTime(c *gin.Context) {
-
 	db, err := config.ConnDB()
 	if err != nil {
 		helpers.HandleError(c, 400, err.Error())
@@ -825,7 +800,6 @@ func GetOrderTime(c *gin.Context) {
 	}
 
 	currentHour := time.Now().Hour()
-
 	rowsOrderDate, err := db.Query(context.Background(), "select distinct on (ot.time) od.date, tod.date , ot.time from order_dates od inner join translation_order_dates tod on tod.order_date_id = od.id inner join date_hours dh on dh.date_id = od.id inner join date_hour_times dht on dht.date_hour_id = dh.id inner join order_times ot on ot.id = dht.time_id where ot.deleted_at is null and dht.deleted_at is null and dh.deleted_at is null and tod.lang_id = $1 and od.deleted_at is null and tod.deleted_at is null and dh.hour = $2", langID, currentHour)
 	if err != nil {
 		helpers.HandleError(c, 400, err.Error())
@@ -835,7 +809,6 @@ func GetOrderTime(c *gin.Context) {
 	var orderDates []OrderDateAndTime
 	for rowsOrderDate.Next() {
 		var orderDate OrderDateAndTime
-
 		if err := rowsOrderDate.Scan(&orderDate.Date, &orderDate.Translation, &orderDate.Time); err != nil {
 			helpers.HandleError(c, 400, err.Error())
 			return
@@ -908,5 +881,4 @@ func GetOrderTime(c *gin.Context) {
 		"status":      true,
 		"order_times": orderTimes,
 	})
-
 }
