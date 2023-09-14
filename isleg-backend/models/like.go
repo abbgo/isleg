@@ -18,7 +18,6 @@ type Like struct {
 }
 
 func ValidateCustomerLike(customerID string, productIDs []string) error {
-
 	db, err := config.ConnDB()
 	if err != nil {
 		return nil
@@ -29,16 +28,9 @@ func ValidateCustomerLike(customerID string, productIDs []string) error {
 		return errors.New("customer_id is required")
 	}
 
-	rowCustomer, err := db.Query(context.Background(), "SELECT id FROM customers WHERE id = $1 AND deleted_at IS NULL", customerID)
-	if err != nil {
-		return err
-	}
-
 	var customer_id string
-	for rowCustomer.Next() {
-		if err := rowCustomer.Scan(&customer_id); err != nil {
-			return err
-		}
+	if err := db.QueryRow(context.Background(), "SELECT id FROM customers WHERE id = $1 AND deleted_at IS NULL", customerID).Scan(&customer_id); err != nil {
+		return err
 	}
 
 	if customer_id == "" {
@@ -50,28 +42,21 @@ func ValidateCustomerLike(customerID string, productIDs []string) error {
 	}
 
 	for _, productID := range productIDs {
-		rowProduct, err := db.Query(context.Background(), "SELECT id FROM products WHERE id = $1 AND deleted_at IS NULL", productID)
-		if err != nil {
-			return err
-		}
-
 		var product_id string
-		for rowProduct.Next() {
-			if err := rowProduct.Scan(&product_id); err != nil {
-				return err
-			}
+		if err := db.QueryRow(context.Background(), "SELECT id FROM products WHERE id = $1 AND deleted_at IS NULL", productID).Scan(&product_id); err != nil {
+			return err
 		}
 
 		if product_id == "" {
 			return errors.New("product does not exist")
 		}
+
 		rows, err := db.Query(context.Background(), "SELECT product_id FROM likes WHERE customer_id = $1 AND deleted_at IS NULL", customerID)
 		if err != nil {
 			return err
 		}
 
 		var product_ids []string
-
 		for rows.Next() {
 			if err := rows.Scan(&product_id); err != nil {
 				return err
@@ -84,9 +69,7 @@ func ValidateCustomerLike(customerID string, productIDs []string) error {
 				return errors.New("this product already exists in this customer")
 			}
 		}
-
 	}
 
 	return nil
-
 }
