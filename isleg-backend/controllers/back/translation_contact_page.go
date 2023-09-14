@@ -11,7 +11,6 @@ import (
 )
 
 func CreateTranslationContact(c *gin.Context) {
-
 	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
@@ -22,7 +21,6 @@ func CreateTranslationContact(c *gin.Context) {
 
 	// get data from request
 	var trContacts []models.TranslationContact
-
 	if err := c.BindJSON(&trContacts); err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
@@ -30,48 +28,34 @@ func CreateTranslationContact(c *gin.Context) {
 
 	// check lang_id
 	for _, v := range trContacts {
-
-		rowLang, err := db.Query(context.Background(), "SELECT id FROM languages WHERE id = $1 AND deleted_at IS NULL", v.LangID)
-		if err != nil {
+		var langID string
+		if err := db.QueryRow(context.Background(), "SELECT id FROM languages WHERE id = $1 AND deleted_at IS NULL", v.LangID).Scan(&langID); err != nil {
 			helpers.HandleError(c, 400, err.Error())
 			return
-		}
-
-		var langID string
-		for rowLang.Next() {
-			if err := rowLang.Scan(&langID); err != nil {
-				helpers.HandleError(c, 400, err.Error())
-				return
-			}
 		}
 
 		if langID == "" {
 			helpers.HandleError(c, 404, "language not found")
 			return
 		}
-
 	}
 
 	// create translation contact
 	for _, v := range trContacts {
-
 		_, err := db.Exec(context.Background(), "INSERT INTO translation_contact (lang_id,full_name,email,phone,letter,company_phone,imo,company_email,instagram,button_text) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)", v.LangID, v.FullName, v.Email, v.Phone, v.Letter, v.CompanyPhone, v.Imo, v.CompanyEmail, v.Instragram, v.ButtonText)
 		if err != nil {
 			helpers.HandleError(c, 400, err.Error())
 			return
 		}
-
 	}
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
 		"message": "data successfully added",
 	})
-
 }
 
 func UpdateTranslationContactByID(c *gin.Context) {
-
 	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
@@ -82,25 +66,16 @@ func UpdateTranslationContactByID(c *gin.Context) {
 
 	// get id of translation contact from request parameter
 	var trContact models.TranslationContact
-
 	if err := c.BindJSON(&trContact); err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
 	}
 
 	// check id
-	rowFlag, err := db.Query(context.Background(), "SELECT id FROM translation_contact WHERE id = $1 AND deleted_at IS NULL", trContact.ID)
-	if err != nil {
+	var id string
+	if err := db.QueryRow(context.Background(), "SELECT id FROM translation_contact WHERE id = $1 AND deleted_at IS NULL", trContact.ID).Scan(&id); err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
-	}
-
-	var id string
-	for rowFlag.Next() {
-		if err := rowFlag.Scan(&id); err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
-		}
 	}
 
 	if id == "" {
@@ -119,11 +94,9 @@ func UpdateTranslationContactByID(c *gin.Context) {
 		"status":  true,
 		"message": "data successfully updated",
 	})
-
 }
 
 func GetTranslationContactByID(c *gin.Context) {
-
 	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
@@ -135,18 +108,10 @@ func GetTranslationContactByID(c *gin.Context) {
 	ID := c.Param("id")
 
 	// check id and get data from database
-	rowFlag, err := db.Query(context.Background(), "SELECT id,full_name,email,phone,letter,company_phone,imo,company_email,instagram,button_text FROM translation_contact WHERE id = $1 AND deleted_at IS NULL", ID)
-	if err != nil {
+	var t models.TranslationContact
+	if err := db.QueryRow(context.Background(), "SELECT id,full_name,email,phone,letter,company_phone,imo,company_email,instagram,button_text FROM translation_contact WHERE id = $1 AND deleted_at IS NULL", ID).Scan(&t.ID, &t.FullName, &t.Email, &t.Phone, &t.Letter, &t.CompanyPhone, &t.Imo, &t.CompanyEmail, &t.Instragram, &t.ButtonText); err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
-	}
-
-	var t models.TranslationContact
-	for rowFlag.Next() {
-		if err := rowFlag.Scan(&t.ID, &t.FullName, &t.Email, &t.Phone, &t.Letter, &t.CompanyPhone, &t.Imo, &t.CompanyEmail, &t.Instragram, &t.ButtonText); err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
-		}
 	}
 
 	if t.ID == "" {
@@ -158,11 +123,9 @@ func GetTranslationContactByID(c *gin.Context) {
 		"status":              true,
 		"translation_contact": t,
 	})
-
 }
 
 func GetTranslationContactByLangID(c *gin.Context) {
-
 	db, err := config.ConnDB()
 	if err != nil {
 		helpers.HandleError(c, 400, err.Error())
@@ -177,18 +140,10 @@ func GetTranslationContactByLangID(c *gin.Context) {
 	}
 
 	// get translation contact where lang_id equal langID
-	aboutRow, err := db.Query(context.Background(), "SELECT full_name,email,phone,letter,company_phone,imo,company_email,instagram,button_text FROM translation_contact WHERE lang_id = $1 AND deleted_at IS NULL", langID)
-	if err != nil {
+	var translationContact models.TranslationContact
+	if err := db.QueryRow(context.Background(), "SELECT full_name,email,phone,letter,company_phone,imo,company_email,instagram,button_text FROM translation_contact WHERE lang_id = $1 AND deleted_at IS NULL", langID).Scan(&translationContact.FullName, &translationContact.Email, &translationContact.Phone, &translationContact.Letter, &translationContact.CompanyPhone, &translationContact.Imo, &translationContact.CompanyEmail, &translationContact.Instragram, &translationContact.ButtonText); err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
-	}
-
-	var translationContact models.TranslationContact
-	for aboutRow.Next() {
-		if err := aboutRow.Scan(&translationContact.FullName, &translationContact.Email, &translationContact.Phone, &translationContact.Letter, &translationContact.CompanyPhone, &translationContact.Imo, &translationContact.CompanyEmail, &translationContact.Instragram, &translationContact.ButtonText); err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
-		}
 	}
 
 	if translationContact.FullName == "" {
@@ -200,5 +155,4 @@ func GetTranslationContactByLangID(c *gin.Context) {
 		"status":              true,
 		"translation_contact": translationContact,
 	})
-
 }
