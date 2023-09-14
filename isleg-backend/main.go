@@ -27,7 +27,7 @@ func main() {
 	r.Static("/uploads", "./uploads")
 
 	// run routes
-	if err := r.Run(":2406"); err != nil {
+	if err := r.Run(":" + os.Getenv("PORT")); err != nil {
 		log.Fatal(err)
 	}
 }

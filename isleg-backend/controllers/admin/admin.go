@@ -16,7 +16,6 @@ import (
 )
 
 func RegisterAdmin(c *gin.Context) {
-
 	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
@@ -54,11 +53,9 @@ func RegisterAdmin(c *gin.Context) {
 		"password":     admin.Password,
 		"admin_type":   admin.Type,
 	})
-
 }
 
 func LoginAdmin(c *gin.Context) {
-
 	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
@@ -75,19 +72,10 @@ func LoginAdmin(c *gin.Context) {
 	}
 
 	// check if email exists and password is correct
-	row, err := db.Query(context.Background(), "SELECT id,password,type FROM admins WHERE phone_number = $1 AND deleted_at IS NULL", admin.PhoneNumber)
-	if err != nil {
+	var adminID, oldPassword, adminType string
+	if err := db.QueryRow(context.Background(), "SELECT id,password,type FROM admins WHERE phone_number = $1 AND deleted_at IS NULL", admin.PhoneNumber).Scan(&adminID, &oldPassword, &adminType); err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
-	}
-
-	var adminID, oldPassword, adminType string
-
-	for row.Next() {
-		if err := row.Scan(&adminID, &oldPassword, &adminType); err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
-		}
 	}
 
 	if adminID == "" {
@@ -119,11 +107,9 @@ func LoginAdmin(c *gin.Context) {
 		"admin_type":    adminType,
 		"admin":         adm,
 	})
-
 }
 
 func GetAdmin(c *gin.Context) {
-
 	adminID, hasAdminID := c.Get("admin_id")
 	if !hasAdminID {
 		helpers.HandleError(c, 400, "adminID is required")
@@ -146,7 +132,6 @@ func GetAdmin(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"admin": adm,
 	})
-
 }
 
 func GetAdminByID(id string) (models.Admin, error) {
@@ -157,16 +142,8 @@ func GetAdminByID(id string) (models.Admin, error) {
 	defer db.Close()
 
 	var admin models.Admin
-
-	rowsAdmin, err := db.Query(context.Background(), "SELECT full_name,phone_number FROM admins WHERE deleted_at IS NULL AND id = $1", id)
-	if err != nil {
+	if err := db.QueryRow(context.Background(), "SELECT full_name,phone_number FROM admins WHERE deleted_at IS NULL AND id = $1", id).Scan(&admin.FullName, &admin.PhoneNumber); err != nil {
 		return models.Admin{}, err
-	}
-
-	for rowsAdmin.Next() {
-		if err := rowsAdmin.Scan(&admin.FullName, &admin.PhoneNumber); err != nil {
-			return models.Admin{}, err
-		}
 	}
 
 	if admin.PhoneNumber == "" {
@@ -174,11 +151,9 @@ func GetAdminByID(id string) (models.Admin, error) {
 	}
 
 	return admin, nil
-
 }
 
 func UpdateAdminInformation(c *gin.Context) {
-
 	db, err := config.ConnDB()
 	if err != nil {
 		helpers.HandleError(c, 400, err.Error())
@@ -192,19 +167,10 @@ func UpdateAdminInformation(c *gin.Context) {
 		return
 	}
 
-	rowAdmin, err := db.Query(context.Background(), "SELECT id FROM admins WHERE id = $1 AND deleted_at IS NULL", admin.ID)
-	if err != nil {
+	var admin_id string
+	if err := db.QueryRow(context.Background(), "SELECT id FROM admins WHERE id = $1 AND deleted_at IS NULL", admin.ID).Scan(&admin_id); err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
-	}
-
-	var admin_id string
-
-	for rowAdmin.Next() {
-		if err := rowAdmin.Scan(&admin_id); err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
-		}
 	}
 
 	if admin_id == "" {
@@ -222,11 +188,9 @@ func UpdateAdminInformation(c *gin.Context) {
 		"status":  true,
 		"message": "data successfully updated",
 	})
-
 }
 
 func UpdateAdminPassword(c *gin.Context) {
-
 	db, err := config.ConnDB()
 	if err != nil {
 		helpers.HandleError(c, 400, err.Error())
@@ -240,18 +204,10 @@ func UpdateAdminPassword(c *gin.Context) {
 		return
 	}
 
-	rowAdmin, err := db.Query(context.Background(), "SELECT id FROM admins WHERE id = $1 AND deleted_at IS NULL", admin.ID)
-	if err != nil {
+	var admin_id string
+	if err := db.QueryRow(context.Background(), "SELECT id FROM admins WHERE id = $1 AND deleted_at IS NULL", admin.ID).Scan(&admin_id); err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
-	}
-
-	var admin_id string
-	for rowAdmin.Next() {
-		if err := rowAdmin.Scan(&admin_id); err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
-		}
 	}
 
 	if admin_id == "" {
@@ -275,11 +231,9 @@ func UpdateAdminPassword(c *gin.Context) {
 		"status":  true,
 		"message": "password of admin successfuly updated",
 	})
-
 }
 
 func GetAdmins(c *gin.Context) {
-
 	db, err := config.ConnDB()
 	if err != nil {
 		helpers.HandleError(c, 400, err.Error())
@@ -312,23 +266,14 @@ func GetAdmins(c *gin.Context) {
 	}
 
 	offset := limit * (page - 1)
-	countOfAdmins := 0
 
-	countOfAdmin, err := db.Query(context.Background(), "SELECT COUNT(id) FROM admins WHERE deleted_at IS NULL")
-	if err != nil {
+	countOfAdmins := 0
+	if err := db.QueryRow(context.Background(), "SELECT COUNT(id) FROM admins WHERE deleted_at IS NULL").Scan(&countOfAdmins); err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
 	}
 
-	for countOfAdmin.Next() {
-		if err := countOfAdmin.Scan(&countOfAdmins); err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
-		}
-	}
-
 	var admins []models.Admin
-
 	rowsAdmin, err := db.Query(context.Background(), "SELECT full_name,phone_number FROM admins WHERE deleted_at IS NULL LIMIT $1 OFFSET $2", limit, offset)
 	if err != nil {
 		helpers.HandleError(c, 400, err.Error())
@@ -349,5 +294,4 @@ func GetAdmins(c *gin.Context) {
 		"admins":          admins,
 		"count_of_admins": countOfAdmins,
 	})
-
 }
