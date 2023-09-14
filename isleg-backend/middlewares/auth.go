@@ -62,19 +62,10 @@ func Auth() gin.HandlerFunc {
 		}
 		defer db.Close()
 
-		rowCustomer, err := db.Query(ctx.Background(), "SELECT id FROM customers WHERE id = $1 AND deleted_at IS NULL", claims.CustomerID)
-		if err != nil {
+		var customer_id string
+		if err := db.QueryRow(ctx.Background(), "SELECT id FROM customers WHERE id = $1 AND deleted_at IS NULL", claims.CustomerID).Scan(&customer_id); err != nil {
 			context.AbortWithStatusJSON(400, gin.H{"message": err.Error()})
 			return
-		}
-
-		var customer_id string
-
-		for rowCustomer.Next() {
-			if err := rowCustomer.Scan(&customer_id); err != nil {
-				context.AbortWithStatusJSON(400, gin.H{"message": err.Error()})
-				return
-			}
 		}
 
 		if customer_id == "" {
@@ -139,7 +130,6 @@ func IsSuperAdmin() gin.HandlerFunc {
 
 		context.Next()
 	}
-
 }
 
 // CheckAdmin middleware ahli adminlere dostup beryar
@@ -192,18 +182,10 @@ func CheckAdmin() gin.HandlerFunc {
 		}
 		defer db.Close()
 
-		rowAdmin, err := db.Query(ctx.Background(), "SELECT id FROM admins WHERE id = $1 AND deleted_at IS NULL", claims.AdminID)
-		if err != nil {
+		var admin_id string
+		if err := db.QueryRow(ctx.Background(), "SELECT id FROM admins WHERE id = $1 AND deleted_at IS NULL", claims.AdminID).Scan(&admin_id); err != nil {
 			context.AbortWithStatusJSON(400, gin.H{"message": err.Error()})
 			return
-		}
-		var admin_id string
-
-		for rowAdmin.Next() {
-			if err := rowAdmin.Scan(&admin_id); err != nil {
-				context.AbortWithStatusJSON(400, gin.H{"message": err.Error()})
-				return
-			}
 		}
 
 		if admin_id == "" {
@@ -213,7 +195,5 @@ func CheckAdmin() gin.HandlerFunc {
 
 		context.Set("admin_id", claims.AdminID)
 		context.Next()
-
 	}
-
 }
