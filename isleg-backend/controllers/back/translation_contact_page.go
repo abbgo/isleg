@@ -29,10 +29,7 @@ func CreateTranslationContact(c *gin.Context) {
 	// check lang_id
 	for _, v := range trContacts {
 		var langID string
-		if err := db.QueryRow(context.Background(), "SELECT id FROM languages WHERE id = $1 AND deleted_at IS NULL", v.LangID).Scan(&langID); err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
-		}
+		db.QueryRow(context.Background(), "SELECT id FROM languages WHERE id = $1 AND deleted_at IS NULL", v.LangID).Scan(&langID)
 
 		if langID == "" {
 			helpers.HandleError(c, 404, "language not found")
@@ -73,10 +70,7 @@ func UpdateTranslationContactByID(c *gin.Context) {
 
 	// check id
 	var id string
-	if err := db.QueryRow(context.Background(), "SELECT id FROM translation_contact WHERE id = $1 AND deleted_at IS NULL", trContact.ID).Scan(&id); err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
+	db.QueryRow(context.Background(), "SELECT id FROM translation_contact WHERE id = $1 AND deleted_at IS NULL", trContact.ID).Scan(&id)
 
 	if id == "" {
 		helpers.HandleError(c, 404, "record not found")
@@ -109,10 +103,7 @@ func GetTranslationContactByID(c *gin.Context) {
 
 	// check id and get data from database
 	var t models.TranslationContact
-	if err := db.QueryRow(context.Background(), "SELECT id,full_name,email,phone,letter,company_phone,imo,company_email,instagram,button_text FROM translation_contact WHERE id = $1 AND deleted_at IS NULL", ID).Scan(&t.ID, &t.FullName, &t.Email, &t.Phone, &t.Letter, &t.CompanyPhone, &t.Imo, &t.CompanyEmail, &t.Instragram, &t.ButtonText); err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
+	db.QueryRow(context.Background(), "SELECT id,full_name,email,phone,letter,company_phone,imo,company_email,instagram,button_text FROM translation_contact WHERE id = $1 AND deleted_at IS NULL", ID).Scan(&t.ID, &t.FullName, &t.Email, &t.Phone, &t.Letter, &t.CompanyPhone, &t.Imo, &t.CompanyEmail, &t.Instragram, &t.ButtonText)
 
 	if t.ID == "" {
 		helpers.HandleError(c, 404, "record not found")
@@ -141,10 +132,7 @@ func GetTranslationContactByLangID(c *gin.Context) {
 
 	// get translation contact where lang_id equal langID
 	var translationContact models.TranslationContact
-	if err := db.QueryRow(context.Background(), "SELECT full_name,email,phone,letter,company_phone,imo,company_email,instagram,button_text FROM translation_contact WHERE lang_id = $1 AND deleted_at IS NULL", langID).Scan(&translationContact.FullName, &translationContact.Email, &translationContact.Phone, &translationContact.Letter, &translationContact.CompanyPhone, &translationContact.Imo, &translationContact.CompanyEmail, &translationContact.Instragram, &translationContact.ButtonText); err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
+	db.QueryRow(context.Background(), "SELECT full_name,email,phone,letter,company_phone,imo,company_email,instagram,button_text FROM translation_contact WHERE lang_id = $1 AND deleted_at IS NULL", langID).Scan(&translationContact.FullName, &translationContact.Email, &translationContact.Phone, &translationContact.Letter, &translationContact.CompanyPhone, &translationContact.Imo, &translationContact.CompanyEmail, &translationContact.Instragram, &translationContact.ButtonText)
 
 	if translationContact.FullName == "" {
 		helpers.HandleError(c, 404, "record not found")

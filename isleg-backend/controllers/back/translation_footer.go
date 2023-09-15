@@ -28,11 +28,7 @@ func CreateTranslationFooter(c *gin.Context) {
 	// check lang_id
 	for _, v := range trFooters {
 		var langID string
-		if err := db.QueryRow(context.Background(), "SELECT id FROM languages WHERE id = $1 AND deleted_atr IS NULL", v.LangID).Scan(&langID); err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
-		}
-
+		db.QueryRow(context.Background(), "SELECT id FROM languages WHERE id = $1 AND deleted_atr IS NULL", v.LangID).Scan(&langID)
 		if langID == "" {
 			helpers.HandleError(c, 404, "lamguage not found")
 			return
@@ -73,10 +69,7 @@ func UpdateTranslationFooterByID(c *gin.Context) {
 
 	// check id
 	var id string
-	if err := db.QueryRow(context.Background(), "SELECT id FROM translation_footer WHERE id = $1 AND deleted_at IS NULL", trFooter.ID).Scan(&id); err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
+	db.QueryRow(context.Background(), "SELECT id FROM translation_footer WHERE id = $1 AND deleted_at IS NULL", trFooter.ID).Scan(&id)
 
 	if id == "" {
 		helpers.HandleError(c, 404, "record not found")
@@ -110,10 +103,7 @@ func GetTranslationFooterByID(c *gin.Context) {
 
 	//check id and get data from table
 	var t models.TranslationFooter
-	if err := db.QueryRow(context.Background(), "SELECT about,payment,contact,secure,word FROM translation_footer WHERE id = $1 AND deleted_at IS NULL", trFootID).Scan(&t.About, &t.Payment, &t.Contact, &t.Secure, &t.Word); err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
+	db.QueryRow(context.Background(), "SELECT about,payment,contact,secure,word FROM translation_footer WHERE id = $1 AND deleted_at IS NULL", trFootID).Scan(&t.About, &t.Payment, &t.Contact, &t.Secure, &t.Word)
 
 	if t.About == "" {
 		helpers.HandleError(c, 404, "record not found")
@@ -135,9 +125,7 @@ func GetTranslationFooter(langID string) (models.TranslationFooter, error) {
 
 	// get translation footer where lang_id equal langID
 	var t models.TranslationFooter
-	if err := db.QueryRow(context.Background(), "SELECT about,payment,contact,secure,word FROM translation_footer WHERE lang_id = $1 AND deleted_at IS NULL", langID).Scan(&t.About, &t.Payment, &t.Contact, &t.Secure, &t.Word); err != nil {
-		return models.TranslationFooter{}, err
-	}
+	db.QueryRow(context.Background(), "SELECT about,payment,contact,secure,word FROM translation_footer WHERE lang_id = $1 AND deleted_at IS NULL", langID).Scan(&t.About, &t.Payment, &t.Contact, &t.Secure, &t.Word)
 
 	return t, nil
 }

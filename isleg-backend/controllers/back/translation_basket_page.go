@@ -29,10 +29,7 @@ func CreateTranslationBasketPage(c *gin.Context) {
 	//check lsng_id
 	for _, v := range trBasketPages {
 		var langID string
-		if err := db.QueryRow(context.Background(), "SELECT id FROM languages WHERE id = $1 AND deleted_at IS NULL", v.LangID).Scan(&langID); err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
-		}
+		db.QueryRow(context.Background(), "SELECT id FROM languages WHERE id = $1 AND deleted_at IS NULL", v.LangID).Scan(&langID)
 
 		if langID == "" {
 			helpers.HandleError(c, 404, "language not found")
@@ -73,10 +70,7 @@ func UpdateTranslationBasketPageByID(c *gin.Context) {
 
 	// check id
 	var id string
-	if err := db.QueryRow(context.Background(), "SELECT id FROM translation_basket_page WHERE id = $1 AND deleted_at IS NULL", trBasketPage.ID).Scan(&id); err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
+	db.QueryRow(context.Background(), "SELECT id FROM translation_basket_page WHERE id = $1 AND deleted_at IS NULL", trBasketPage.ID).Scan(&id)
 
 	if id == "" {
 		helpers.HandleError(c, 404, "record not found")
@@ -109,10 +103,7 @@ func GetTranslationBasketPageByID(c *gin.Context) {
 
 	// check id and get data from database
 	var t models.TranslationBasketPage
-	if err := db.QueryRow(context.Background(), "SELECT id,quantity_of_goods,total_price,discount,delivery,total,to_order,your_basket,empty_the_basket,empty_the_like_page FROM translation_basket_page WHERE id = $1 AND deleted_at IS NULL", ID).Scan(&t.ID, &t.QuantityOfGoods, &t.TotalPrice, &t.Discount, &t.Delivery, &t.Total, &t.ToOrder, &t.YourBasket, &t.EmptyTheBasket, &t.EmptyTheLikePage); err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
+	db.QueryRow(context.Background(), "SELECT id,quantity_of_goods,total_price,discount,delivery,total,to_order,your_basket,empty_the_basket,empty_the_like_page FROM translation_basket_page WHERE id = $1 AND deleted_at IS NULL", ID).Scan(&t.ID, &t.QuantityOfGoods, &t.TotalPrice, &t.Discount, &t.Delivery, &t.Total, &t.ToOrder, &t.YourBasket, &t.EmptyTheBasket, &t.EmptyTheLikePage)
 
 	if t.ID == "" {
 		helpers.HandleError(c, 404, "record not found")
@@ -145,10 +136,7 @@ func GetTranslationBasketPageByLangID(c *gin.Context) {
 
 	// get translation-basket-page where lang_id equal langID
 	var t models.TranslationBasketPage
-	if err := db.QueryRow(context.Background(), "SELECT quantity_of_goods,total_price,discount,delivery,total,to_order,your_basket,empty_the_basket,empty_the_like_page FROM translation_basket_page WHERE lang_id = $1 AND deleted_at IS NULL", langID).Scan(&t.QuantityOfGoods, &t.TotalPrice, &t.Discount, &t.Delivery, &t.Total, &t.ToOrder, &t.YourBasket, &t.EmptyTheBasket, &t.EmptyTheLikePage); err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
+	db.QueryRow(context.Background(), "SELECT quantity_of_goods,total_price,discount,delivery,total,to_order,your_basket,empty_the_basket,empty_the_like_page FROM translation_basket_page WHERE lang_id = $1 AND deleted_at IS NULL", langID).Scan(&t.QuantityOfGoods, &t.TotalPrice, &t.Discount, &t.Delivery, &t.Total, &t.ToOrder, &t.YourBasket, &t.EmptyTheBasket, &t.EmptyTheLikePage)
 
 	if t.QuantityOfGoods == "" {
 		helpers.HandleError(c, 404, "record not found")

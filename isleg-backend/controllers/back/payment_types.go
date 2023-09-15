@@ -29,10 +29,7 @@ func CreatePaymentType(c *gin.Context) {
 	// check lang_id
 	for _, v := range paymentTypes {
 		var langID string
-		if err := db.QueryRow(context.Background(), "SELECT id FROM languages WHERE id = $1 AND deleted_at IS NULL", v.LangID).Scan(&langID); err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
-		}
+		db.QueryRow(context.Background(), "SELECT id FROM languages WHERE id = $1 AND deleted_at IS NULL", v.LangID).Scan(&langID)
 
 		if langID == "" {
 			helpers.HandleError(c, 404, "language not found")
@@ -73,10 +70,7 @@ func UpdatePaymentTypeByID(c *gin.Context) {
 
 	// check id
 	var id string
-	if err := db.QueryRow(context.Background(), "SELECT id FROM payment_types WHERE id = $1 AND deleted_at IS NULL", paymentType.ID).Scan(&id); err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
+	db.QueryRow(context.Background(), "SELECT id FROM payment_types WHERE id = $1 AND deleted_at IS NULL", paymentType.ID).Scan(&id)
 
 	if id == "" {
 		helpers.HandleError(c, 404, "record not found")
@@ -109,10 +103,7 @@ func GetPaymentTypeByID(c *gin.Context) {
 
 	// check id and get data from database
 	var paymentType string
-	if err := db.QueryRow(context.Background(), "SELECT type FROM payment_types WHERE id = $1 AND deleted_at IS NULL", ID).Scan(&paymentType); err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
+	db.QueryRow(context.Background(), "SELECT type FROM payment_types WHERE id = $1 AND deleted_at IS NULL", ID).Scan(&paymentType)
 
 	if paymentType == "" {
 		helpers.HandleError(c, 404, "record not found")

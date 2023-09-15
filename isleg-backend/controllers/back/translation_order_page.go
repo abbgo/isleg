@@ -29,10 +29,7 @@ func CreateTranslationOrderPage(c *gin.Context) {
 	// check lang_id
 	for _, v := range trOrderPages {
 		var langID string
-		if err := db.QueryRow(context.Background(), "SELECT id FROM languages WHERE id = $1 AND deleted_at IS NULL", v.LangID).Scan(&langID); err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
-		}
+		db.QueryRow(context.Background(), "SELECT id FROM languages WHERE id = $1 AND deleted_at IS NULL", v.LangID).Scan(&langID)
 
 		if langID == "" {
 			helpers.HandleError(c, 404, "language not found")
@@ -73,10 +70,7 @@ func UpdateTranslationOrderPageByID(c *gin.Context) {
 
 	// check id
 	var id string
-	if err := db.QueryRow(context.Background(), "SELECT id FROM translation_order_page WHERE id = $1 AND deleted_at IS NULL", trOrderPage.ID).Scan(&id); err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
+	db.QueryRow(context.Background(), "SELECT id FROM translation_order_page WHERE id = $1 AND deleted_at IS NULL", trOrderPage.ID).Scan(&id)
 
 	if id == "" {
 		helpers.HandleError(c, 404, "record not found")
@@ -109,10 +103,7 @@ func GetTranslationOrderPageByID(c *gin.Context) {
 
 	// check id and get data from database
 	var t models.TranslationOrderPage
-	if err := db.QueryRow(context.Background(), "SELECT id,content,type_of_payment,choose_a_delivery_time,your_address,mark,to_order FROM translation_order_page WHERE id = $1 AND deleted_at IS NULL", ID).Scan(&t.ID, &t.Content, &t.TypeOfPayment, &t.ChooseADeliveryTime, &t.YourAddress, &t.Mark, &t.ToOrder); err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
+	db.QueryRow(context.Background(), "SELECT id,content,type_of_payment,choose_a_delivery_time,your_address,mark,to_order FROM translation_order_page WHERE id = $1 AND deleted_at IS NULL", ID).Scan(&t.ID, &t.Content, &t.TypeOfPayment, &t.ChooseADeliveryTime, &t.YourAddress, &t.Mark, &t.ToOrder)
 
 	if t.ID == "" {
 		helpers.HandleError(c, 404, "record not found")
@@ -145,10 +136,7 @@ func GetTranslationOrderPageByLangID(c *gin.Context) {
 
 	// get translation-basket-page where lang_id equal langID
 	var t models.TranslationOrderPage
-	if err := db.QueryRow(context.Background(), "SELECT content,type_of_payment,choose_a_delivery_time,your_address,mark,to_order FROM translation_order_page WHERE lang_id = $1 AND deleted_at IS NULL", langID).Scan(&t.Content, &t.TypeOfPayment, &t.ChooseADeliveryTime, &t.YourAddress, &t.Mark, &t.ToOrder); err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
+	db.QueryRow(context.Background(), "SELECT content,type_of_payment,choose_a_delivery_time,your_address,mark,to_order FROM translation_order_page WHERE lang_id = $1 AND deleted_at IS NULL", langID).Scan(&t.Content, &t.TypeOfPayment, &t.ChooseADeliveryTime, &t.YourAddress, &t.Mark, &t.ToOrder)
 
 	if t.Content == "" {
 		helpers.HandleError(c, 404, "record not found")

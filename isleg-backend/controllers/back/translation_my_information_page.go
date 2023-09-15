@@ -29,10 +29,7 @@ func CreateTranslationMyInformationPage(c *gin.Context) {
 	// check lang_id
 	for _, v := range trMyInforPages {
 		var langID string
-		if err := db.QueryRow(context.Background(), "SELECT id FROM languages WHERE id = $1 AND deleted_at IS NULL", v.LangID).Scan(&langID); err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
-		}
+		db.QueryRow(context.Background(), "SELECT id FROM languages WHERE id = $1 AND deleted_at IS NULL", v.LangID).Scan(&langID)
 
 		if langID == "" {
 			helpers.HandleError(c, 404, "language not found")
@@ -73,10 +70,7 @@ func UpdateTranslationMyInformationPageByID(c *gin.Context) {
 
 	// check id
 	var id string
-	if err := db.QueryRow(context.Background(), "SELECT id FROM translation_my_information_page WHERE id = $1 AND deleted_at IS NULL", trMyInforPage.ID).Scan(&id); err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
+	db.QueryRow(context.Background(), "SELECT id FROM translation_my_information_page WHERE id = $1 AND deleted_at IS NULL", trMyInforPage.ID).Scan(&id)
 
 	if id == "" {
 		helpers.HandleError(c, 404, "record not found")
@@ -109,10 +103,7 @@ func GetTranslationMyInformationPageByID(c *gin.Context) {
 
 	// check id and get data
 	var t models.TranslationMyInformationPage
-	if err := db.QueryRow(context.Background(), "SELECT id,address,birthday,update_password,save,gender,male,female FROM translation_my_information_page WHERE id = $1 AND deleted_at IS NULL", ID).Scan(&t.ID, &t.Address, &t.Birthday, &t.UpdatePassword, &t.Save, &t.Gender, &t.Male, &t.Female); err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
+	db.QueryRow(context.Background(), "SELECT id,address,birthday,update_password,save,gender,male,female FROM translation_my_information_page WHERE id = $1 AND deleted_at IS NULL", ID).Scan(&t.ID, &t.Address, &t.Birthday, &t.UpdatePassword, &t.Save, &t.Gender, &t.Male, &t.Female)
 
 	if t.ID == "" {
 		helpers.HandleError(c, 404, "record not found")
@@ -145,10 +136,7 @@ func GetTranslationMyInformationPageByLangID(c *gin.Context) {
 
 	// get translation-my-information-page where lang_id equal langID
 	var trMyInformationPage models.TranslationMyInformationPage
-	if err := db.QueryRow(context.Background(), "SELECT address,birthday,update_password,save,gender,male,female FROM translation_my_information_page WHERE lang_id = $1 AND deleted_at IS NULL", langID).Scan(&trMyInformationPage.Address, &trMyInformationPage.Birthday, &trMyInformationPage.UpdatePassword, &trMyInformationPage.Save, &trMyInformationPage.Gender, &trMyInformationPage.Male, &trMyInformationPage.Female); err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
+	db.QueryRow(context.Background(), "SELECT address,birthday,update_password,save,gender,male,female FROM translation_my_information_page WHERE lang_id = $1 AND deleted_at IS NULL", langID).Scan(&trMyInformationPage.Address, &trMyInformationPage.Birthday, &trMyInformationPage.UpdatePassword, &trMyInformationPage.Save, &trMyInformationPage.Gender, &trMyInformationPage.Male, &trMyInformationPage.Female)
 
 	if trMyInformationPage.Address == "" {
 		helpers.HandleError(c, 404, "record not found")

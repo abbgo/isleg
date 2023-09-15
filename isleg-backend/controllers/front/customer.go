@@ -76,22 +76,13 @@ func RegisterCustomer(c *gin.Context) {
 	// solar sayta registrasiya boljak bolsa Olaryn taze at familiyasyny telefon belgisini
 	// we parolyny baza yazdyrmak ucin database - den sol customer - leri tapyp update etmeli
 	var phone_number string
-	if err := db.QueryRow(context.Background(), "SELECT phone_number FROM customers WHERE phone_number = $1 AND is_register = false AND deleted_at IS NULL", customer.PhoneNumber).Scan(&phone_number); err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
+	db.QueryRow(context.Background(), "SELECT phone_number FROM customers WHERE phone_number = $1 AND is_register = false AND deleted_at IS NULL", customer.PhoneNumber).Scan(&phone_number)
 
 	var customerID string
 	if phone_number != "" {
-		if err := db.QueryRow(context.Background(), "UPDATE customers SET full_name = $1 , password = $2 , email = $3 , is_register = $4 WHERE phone_number = $5 RETURNING id", customer.FullName, hashPassword, customer.Email, true, customer.PhoneNumber).Scan(&customerID); err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
-		}
+		db.QueryRow(context.Background(), "UPDATE customers SET full_name = $1 , password = $2 , email = $3 , is_register = $4 WHERE phone_number = $5 RETURNING id", customer.FullName, hashPassword, customer.Email, true, customer.PhoneNumber).Scan(&customerID)
 	} else {
-		if err := db.QueryRow(context.Background(), "INSERT INTO customers (full_name,phone_number,password,email,is_register) VALUES ($1,$2,$3,$4,$5) RETURNING id", customer.FullName, customer.PhoneNumber, hashPassword, customer.Email, true).Scan(&customerID); err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
-		}
+		db.QueryRow(context.Background(), "INSERT INTO customers (full_name,phone_number,password,email,is_register) VALUES ($1,$2,$3,$4,$5) RETURNING id", customer.FullName, customer.PhoneNumber, hashPassword, customer.Email, true).Scan(&customerID)
 	}
 
 	accessTokenString, refreshTokenString, err := auth.GenerateTokenForCustomer(customer.PhoneNumber, customerID)
@@ -142,10 +133,7 @@ func LoginCustomer(c *gin.Context) {
 
 	// check if email exists and password is correct
 	var customerID, oldPassword string
-	if err := db.QueryRow(context.Background(), "SELECT id,password FROM customers WHERE phone_number = $1 AND is_register = true AND deleted_at IS NULL", customer.PhoneNumber).Scan(&customerID, &oldPassword); err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
+	db.QueryRow(context.Background(), "SELECT id,password FROM customers WHERE phone_number = $1 AND is_register = true AND deleted_at IS NULL", customer.PhoneNumber).Scan(&customerID, &oldPassword)
 
 	if customerID == "" {
 		helpers.HandleError(c, 404, "this client does not exist")
@@ -191,10 +179,7 @@ func GetCustomerInformation(c *gin.Context) {
 
 	// bazadan musderinin maglumatlary alynyar
 	var customer CustomerInformation
-	if err := db.QueryRow(context.Background(), "SELECT id , full_name , phone_number , birthday , email , gender FROM customers WHERE id = $1 AND is_register = true AND deleted_at IS NULL", customerID).Scan(&customer.ID, &customer.FullName, &customer.PhoneNumber, &customer.Birthday, &customer.Email, &customer.Gender); err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
+	db.QueryRow(context.Background(), "SELECT id , full_name , phone_number , birthday , email , gender FROM customers WHERE id = $1 AND is_register = true AND deleted_at IS NULL", customerID).Scan(&customer.ID, &customer.FullName, &customer.PhoneNumber, &customer.Birthday, &customer.Email, &customer.Gender)
 
 	if customer.ID == "" {
 		helpers.HandleError(c, 404, "customer not found")
@@ -317,10 +302,7 @@ func UpdateCustPassword(c *gin.Context) {
 
 	// sonrada musderinin parolyny uytgetyas
 	var customerID string
-	if err := db.QueryRow(context.Background(), "SELECT id FROM customers WHERE phone_number =  $1 AND deleted_at IS NULL AND is_register = true", phoneNumber).Scan(&customerID); err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
+	db.QueryRow(context.Background(), "SELECT id FROM customers WHERE phone_number =  $1 AND deleted_at IS NULL AND is_register = true", phoneNumber).Scan(&customerID)
 
 	if customerID == "" {
 		helpers.HandleError(c, 404, "customer not found")

@@ -96,11 +96,7 @@ func CreateCategory(c *gin.Context) {
 	}
 
 	// add data to categories table
-	if err := db.QueryRow(context.Background(), "INSERT INTO categories (parent_category_id,image,is_home_category) VALUES ($1,$2,$3) RETURNING id", parent_category_id, category.Image, category.IsHomeCategory).Scan(&categoryID); err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
-
+	db.QueryRow(context.Background(), "INSERT INTO categories (parent_category_id,image,is_home_category) VALUES ($1,$2,$3) RETURNING id", parent_category_id, category.Image, category.IsHomeCategory).Scan(&categoryID)
 	langID, err := GetLangID("tm")
 	if err != nil {
 		helpers.HandleError(c, 400, err.Error())
@@ -236,11 +232,7 @@ func GetCategoryByID(c *gin.Context) {
 
 	// check id and get data from daabase
 	var category models.Category
-	if err := db.QueryRow(context.Background(), "SELECT id,parent_category_id,image,is_home_category FROM categories WHERE id = $1 AND deleted_at IS NULL", ID).Scan(&category.ID, &category.ParentCategoryID, &category.Image, &category.IsHomeCategory); err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
-
+	db.QueryRow(context.Background(), "SELECT id,parent_category_id,image,is_home_category FROM categories WHERE id = $1 AND deleted_at IS NULL", ID).Scan(&category.ID, &category.ParentCategoryID, &category.Image, &category.IsHomeCategory)
 	if category.ID == "" {
 		helpers.HandleError(c, 404, "category not found")
 		return
@@ -683,11 +675,7 @@ func DeleteCategoryByID(c *gin.Context) {
 
 	// check id
 	var category_id string
-	if err := db.QueryRow(context.Background(), "SELECT id FROM categories WHERE id = $1 AND deleted_at IS NULL", ID).Scan(&category_id); err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
-
+	db.QueryRow(context.Background(), "SELECT id FROM categories WHERE id = $1 AND deleted_at IS NULL", ID).Scan(&category_id)
 	if category_id == "" {
 		helpers.HandleError(c, 404, "category not found")
 		return
@@ -725,11 +713,7 @@ func RestoreCategoryByID(c *gin.Context) {
 
 	// check ids
 	var category_id string
-	if err := db.QueryRow(context.Background(), "SELECT id FROM categories WHERE id = $1 AND deleted_at IS NOT NULL", ID).Scan(&category_id); err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
-
+	db.QueryRow(context.Background(), "SELECT id FROM categories WHERE id = $1 AND deleted_at IS NOT NULL", ID).Scan(&category_id)
 	if category_id == "" {
 		helpers.HandleError(c, 404, "category not found")
 		return
@@ -767,11 +751,7 @@ func DeletePermanentlyCategoryByID(c *gin.Context) {
 
 	// check id and get image of categories
 	var category_id, image string
-	if err := db.QueryRow(context.Background(), "SELECT id,image FROM categories WHERE id = $1 AND deleted_at IS NOT NULL", ID).Scan(&category_id, &image); err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
-
+	db.QueryRow(context.Background(), "SELECT id,image FROM categories WHERE id = $1 AND deleted_at IS NOT NULL", ID).Scan(&category_id, &image)
 	if category_id == "" {
 		helpers.HandleError(c, 404, "category not found")
 		return
@@ -1306,10 +1286,7 @@ func GetOneCategoryWithDeletedProducts(c *gin.Context) {
 
 			// get brend where id equal brend_id of product
 			var brend Brend
-			if err := db.QueryRow(context.Background(), "SELECT b.id,b.name FROM products p LEFT JOIN brends b ON p.brend_id=b.id WHERE p.id = $1 AND p.deleted_at IS NULL AND b.deleted_at IS NULL", product.ID).Scan(&brend.ID, &brend.Name); err != nil {
-				helpers.HandleError(c, 400, err.Error())
-				return
-			}
+			db.QueryRow(context.Background(), "SELECT b.id,b.name FROM products p LEFT JOIN brends b ON p.brend_id=b.id WHERE p.id = $1 AND p.deleted_at IS NULL AND b.deleted_at IS NULL", product.ID).Scan(&brend.ID, &brend.Name)
 			product.Brend = brend
 			products = append(products, product)
 

@@ -77,11 +77,7 @@ func UpdateCompanySetting(c *gin.Context) {
 
 	// Check if there is a company_setting and get logo and favicon
 	var logo, favicon string
-	if err := db.QueryRow(context.Background(), "SELECT logo,favicon FROM company_setting WHERE deleted_at IS NULL ORDER BY created_at ASC LIMIT 1").Scan(&logo, &favicon); err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
-
+	db.QueryRow(context.Background(), "SELECT logo,favicon FROM company_setting WHERE deleted_at IS NULL ORDER BY created_at ASC LIMIT 1").Scan(&logo, &favicon)
 	if logo == "" || favicon == "" {
 		c.JSON(http.StatusNotFound, gin.H{
 			"status":  false,
@@ -135,11 +131,7 @@ func GetCompanySetting(c *gin.Context) {
 
 	// get data from database
 	var comSet models.CompanySetting
-	if err := db.QueryRow(context.Background(), "SELECT id,logo,favicon,email,instagram,imo FROM company_setting WHERE deleted_at IS NULL ORDER BY created_at ASC LIMIT 1").Scan(&comSet.ID, &comSet.Logo, &comSet.Favicon, &comSet.Email, &comSet.Instagram, &comSet.Imo); err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
-
+	db.QueryRow(context.Background(), "SELECT id,logo,favicon,email,instagram,imo FROM company_setting WHERE deleted_at IS NULL ORDER BY created_at ASC LIMIT 1").Scan(&comSet.ID, &comSet.Logo, &comSet.Favicon, &comSet.Email, &comSet.Instagram, &comSet.Imo)
 	if comSet.ID == "" {
 		helpers.HandleError(c, 404, "record not found")
 		return
@@ -161,9 +153,6 @@ func GetCompanySettingForHeader() (models.CompanySetting, error) {
 	var logoFavicon models.CompanySetting
 
 	// GET LOGO AND FAVICON
-	if err := db.QueryRow(context.Background(), "SELECT logo,favicon FROM company_setting WHERE deleted_at IS NULL ORDER BY created_at ASC LIMIT 1").Scan(&logoFavicon.Logo, &logoFavicon.Favicon); err != nil {
-		return models.CompanySetting{}, err
-	}
-
+	db.QueryRow(context.Background(), "SELECT logo,favicon FROM company_setting WHERE deleted_at IS NULL ORDER BY created_at ASC LIMIT 1").Scan(&logoFavicon.Logo, &logoFavicon.Favicon)
 	return logoFavicon, nil
 }

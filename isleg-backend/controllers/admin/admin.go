@@ -73,11 +73,7 @@ func LoginAdmin(c *gin.Context) {
 
 	// check if email exists and password is correct
 	var adminID, oldPassword, adminType string
-	if err := db.QueryRow(context.Background(), "SELECT id,password,type FROM admins WHERE phone_number = $1 AND deleted_at IS NULL", admin.PhoneNumber).Scan(&adminID, &oldPassword, &adminType); err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
-
+	db.QueryRow(context.Background(), "SELECT id,password,type FROM admins WHERE phone_number = $1 AND deleted_at IS NULL", admin.PhoneNumber).Scan(&adminID, &oldPassword, &adminType)
 	if adminID == "" {
 		helpers.HandleError(c, 400, "this admin does not exist")
 		return
@@ -142,10 +138,7 @@ func GetAdminByID(id string) (models.Admin, error) {
 	defer db.Close()
 
 	var admin models.Admin
-	if err := db.QueryRow(context.Background(), "SELECT full_name,phone_number FROM admins WHERE deleted_at IS NULL AND id = $1", id).Scan(&admin.FullName, &admin.PhoneNumber); err != nil {
-		return models.Admin{}, err
-	}
-
+	db.QueryRow(context.Background(), "SELECT full_name,phone_number FROM admins WHERE deleted_at IS NULL AND id = $1", id).Scan(&admin.FullName, &admin.PhoneNumber)
 	if admin.PhoneNumber == "" {
 		return models.Admin{}, errors.New("admin not found")
 	}
@@ -168,11 +161,7 @@ func UpdateAdminInformation(c *gin.Context) {
 	}
 
 	var admin_id string
-	if err := db.QueryRow(context.Background(), "SELECT id FROM admins WHERE id = $1 AND deleted_at IS NULL", admin.ID).Scan(&admin_id); err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
-
+	db.QueryRow(context.Background(), "SELECT id FROM admins WHERE id = $1 AND deleted_at IS NULL", admin.ID).Scan(&admin_id)
 	if admin_id == "" {
 		helpers.HandleError(c, 404, "admin not found")
 		return
@@ -205,11 +194,7 @@ func UpdateAdminPassword(c *gin.Context) {
 	}
 
 	var admin_id string
-	if err := db.QueryRow(context.Background(), "SELECT id FROM admins WHERE id = $1 AND deleted_at IS NULL", admin.ID).Scan(&admin_id); err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
-
+	db.QueryRow(context.Background(), "SELECT id FROM admins WHERE id = $1 AND deleted_at IS NULL", admin.ID).Scan(&admin_id)
 	if admin_id == "" {
 		helpers.HandleError(c, 404, "admin not found")
 		return
@@ -268,11 +253,7 @@ func GetAdmins(c *gin.Context) {
 	offset := limit * (page - 1)
 
 	countOfAdmins := 0
-	if err := db.QueryRow(context.Background(), "SELECT COUNT(id) FROM admins WHERE deleted_at IS NULL").Scan(&countOfAdmins); err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
-
+	db.QueryRow(context.Background(), "SELECT COUNT(id) FROM admins WHERE deleted_at IS NULL").Scan(&countOfAdmins)
 	var admins []models.Admin
 	rowsAdmin, err := db.Query(context.Background(), "SELECT full_name,phone_number FROM admins WHERE deleted_at IS NULL LIMIT $1 OFFSET $2", limit, offset)
 	if err != nil {

@@ -29,9 +29,7 @@ func ValidateCustomerLike(customerID string, productIDs []string) error {
 	}
 
 	var customer_id string
-	if err := db.QueryRow(context.Background(), "SELECT id FROM customers WHERE id = $1 AND deleted_at IS NULL", customerID).Scan(&customer_id); err != nil {
-		return err
-	}
+	db.QueryRow(context.Background(), "SELECT id FROM customers WHERE id = $1 AND deleted_at IS NULL", customerID).Scan(&customer_id)
 
 	if customer_id == "" {
 		return errors.New("customer does not exist")
@@ -43,9 +41,7 @@ func ValidateCustomerLike(customerID string, productIDs []string) error {
 
 	for _, productID := range productIDs {
 		var product_id string
-		if err := db.QueryRow(context.Background(), "SELECT id FROM products WHERE id = $1 AND deleted_at IS NULL", productID).Scan(&product_id); err != nil {
-			return err
-		}
+		db.QueryRow(context.Background(), "SELECT id FROM products WHERE id = $1 AND deleted_at IS NULL", productID).Scan(&product_id)
 
 		if product_id == "" {
 			return errors.New("product does not exist")

@@ -63,10 +63,7 @@ func Auth() gin.HandlerFunc {
 		defer db.Close()
 
 		var customer_id string
-		if err := db.QueryRow(ctx.Background(), "SELECT id FROM customers WHERE id = $1 AND deleted_at IS NULL", claims.CustomerID).Scan(&customer_id); err != nil {
-			context.AbortWithStatusJSON(400, gin.H{"message": err.Error()})
-			return
-		}
+		db.QueryRow(ctx.Background(), "SELECT id FROM customers WHERE id = $1 AND deleted_at IS NULL", claims.CustomerID).Scan(&customer_id)
 
 		if customer_id == "" {
 			context.AbortWithStatusJSON(404, gin.H{"message": "customer not found"})
@@ -183,10 +180,7 @@ func CheckAdmin() gin.HandlerFunc {
 		defer db.Close()
 
 		var admin_id string
-		if err := db.QueryRow(ctx.Background(), "SELECT id FROM admins WHERE id = $1 AND deleted_at IS NULL", claims.AdminID).Scan(&admin_id); err != nil {
-			context.AbortWithStatusJSON(400, gin.H{"message": err.Error()})
-			return
-		}
+		db.QueryRow(ctx.Background(), "SELECT id FROM admins WHERE id = $1 AND deleted_at IS NULL", claims.AdminID).Scan(&admin_id)
 
 		if admin_id == "" {
 			context.AbortWithStatusJSON(404, gin.H{"message": "admin not found"})

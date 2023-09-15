@@ -32,10 +32,7 @@ func CreateShop(c *gin.Context) {
 	}
 
 	var phoneNumber string
-	if err := db.QueryRow(context.Background(), "SELECT id FROM shops WHERE phone_number = $1 AND deleted_at IS NULL", shop.PhoneNumber).Scan(&phoneNumber); err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
+	db.QueryRow(context.Background(), "SELECT id FROM shops WHERE phone_number = $1 AND deleted_at IS NULL", shop.PhoneNumber).Scan(&phoneNumber)
 
 	if phoneNumber != "" {
 		helpers.HandleError(c, 400, "this shop already exists")
@@ -74,10 +71,7 @@ func UpdateShopByID(c *gin.Context) {
 
 	// check id
 	var shopID string
-	if err := db.QueryRow(context.Background(), "SELECT id FROM shops WHERE id = $1 AND deleted_at IS NULL", shop_id).Scan(&shopID); err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
+	db.QueryRow(context.Background(), "SELECT id FROM shops WHERE id = $1 AND deleted_at IS NULL", shop_id).Scan(&shopID)
 
 	if shopID == "" {
 		helpers.HandleError(c, 404, "record not found")
@@ -110,10 +104,7 @@ func GetShopByID(c *gin.Context) {
 
 	// check id and get data from database
 	var shop models.Shop
-	if err := db.QueryRow(context.Background(), "SELECT id,owner_name,address,phone_number,running_time FROM shops WHERE id = $1 AND deleted_at IS NULL", ID).Scan(&shop.ID, &shop.OwnerName, &shop.Address, &shop.PhoneNumber, &shop.RunningTime); err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
+	db.QueryRow(context.Background(), "SELECT id,owner_name,address,phone_number,running_time FROM shops WHERE id = $1 AND deleted_at IS NULL", ID).Scan(&shop.ID, &shop.OwnerName, &shop.Address, &shop.PhoneNumber, &shop.RunningTime)
 
 	if shop.ID == "" {
 		helpers.HandleError(c, 404, "record not found")
@@ -175,27 +166,15 @@ func GetShops(c *gin.Context) {
 	var rowsShop pgx.Rows
 	if !status {
 		if searchQuery == "" {
-			if err = db.QueryRow(context.Background(), "SELECT COUNT(id) FROM shops WHERE deleted_at IS NULL").Scan(&countOfShops); err != nil {
-				helpers.HandleError(c, 400, err.Error())
-				return
-			}
+			db.QueryRow(context.Background(), "SELECT COUNT(id) FROM shops WHERE deleted_at IS NULL").Scan(&countOfShops)
 		} else {
-			if err = db.QueryRow(context.Background(), "SELECT COUNT(id) FROM shops WHERE deleted_at IS NULL AND phone_number LIKE $1", search).Scan(&countOfShops); err != nil {
-				helpers.HandleError(c, 400, err.Error())
-				return
-			}
+			db.QueryRow(context.Background(), "SELECT COUNT(id) FROM shops WHERE deleted_at IS NULL AND phone_number LIKE $1", search).Scan(&countOfShops)
 		}
 	} else {
 		if searchQuery == "" {
-			if err = db.QueryRow(context.Background(), "SELECT COUNT(id) FROM shops WHERE deleted_at IS NOT NULL").Scan(&countOfShops); err != nil {
-				helpers.HandleError(c, 400, err.Error())
-				return
-			}
+			db.QueryRow(context.Background(), "SELECT COUNT(id) FROM shops WHERE deleted_at IS NOT NULL").Scan(&countOfShops)
 		} else {
-			if err = db.QueryRow(context.Background(), "SELECT COUNT(id) FROM shops WHERE deleted_at IS NOT NULL AND phone_number LIKE $1", search).Scan(&countOfShops); err != nil {
-				helpers.HandleError(c, 400, err.Error())
-				return
-			}
+			db.QueryRow(context.Background(), "SELECT COUNT(id) FROM shops WHERE deleted_at IS NOT NULL AND phone_number LIKE $1", search).Scan(&countOfShops)
 		}
 	}
 
@@ -260,10 +239,7 @@ func DeleteShopByID(c *gin.Context) {
 
 	// check id
 	var shopID string
-	if err := db.QueryRow(context.Background(), "SELECT id FROM shops WHERE id = $1 AND deleted_at IS NULL", ID).Scan(&shopID); err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
+	db.QueryRow(context.Background(), "SELECT id FROM shops WHERE id = $1 AND deleted_at IS NULL", ID).Scan(&shopID)
 
 	if shopID == "" {
 		helpers.HandleError(c, 404, "record not found")
@@ -296,10 +272,7 @@ func RestoreShopByID(c *gin.Context) {
 
 	// check id
 	var shopID string
-	if err := db.QueryRow(context.Background(), "SELECT id FROM shops WHERE id = $1 AND deleted_at IS NOT NULL", ID).Scan(&shopID); err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
+	db.QueryRow(context.Background(), "SELECT id FROM shops WHERE id = $1 AND deleted_at IS NOT NULL", ID).Scan(&shopID)
 
 	if shopID == "" {
 		helpers.HandleError(c, 404, "record not found")
@@ -332,10 +305,7 @@ func DeletePermanentlyShopByID(c *gin.Context) {
 
 	// check id
 	var shopID string
-	if err := db.QueryRow(context.Background(), "SELECT id FROM shops WHERE id = $1 AND deleted_at IS NOT NULL", ID).Scan(&shopID); err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
+	db.QueryRow(context.Background(), "SELECT id FROM shops WHERE id = $1 AND deleted_at IS NOT NULL", ID).Scan(&shopID)
 
 	if shopID == "" {
 		helpers.HandleError(c, 404, "record not found")

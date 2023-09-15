@@ -77,9 +77,7 @@ func ValidateProductModel(mainPhoto string, benefit float64, productID string, p
 	// check catrgory id
 	for _, v := range categories {
 		var categoryID string
-		if err := db.QueryRow(context.Background(), "SELECT id FROM categories WHERE id = $1 AND deleted_at IS NULL", v).Scan(&categoryID); err != nil {
-			return 0, "", 0, 0, 0, 0, false, err
-		}
+		db.QueryRow(context.Background(), "SELECT id FROM categories WHERE id = $1 AND deleted_at IS NULL", v).Scan(&categoryID)
 
 		if categoryID == "" {
 			return 0, "", 0, 0, 0, 0, false, errors.New("category not found")
@@ -109,9 +107,7 @@ func ValidateProductModel(mainPhoto string, benefit float64, productID string, p
 
 	if productID != "" {
 		var mainImage string
-		if err := db.QueryRow(context.Background(), "SELECT main_image FROM products WHERE deleted_at IS NULL AND id = $1", productID).Scan(&mainImage); err != nil {
-			return 0, "", 0, 0, 0, 0, false, err
-		}
+		db.QueryRow(context.Background(), "SELECT main_image FROM products WHERE deleted_at IS NULL AND id = $1", productID).Scan(&mainImage)
 
 		if mainImage == "" {
 			return 0, "", 0, 0, 0, 0, false, errors.New("main image of product not found")

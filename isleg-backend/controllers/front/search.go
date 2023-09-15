@@ -67,10 +67,7 @@ func Search(c *gin.Context) {
 	search := strings.ReplaceAll(incomingsSarch, "-", " | ")
 	searchStr := fmt.Sprintf("%%%s%%", search)
 
-	if err := db.QueryRow(context.Background(), "SELECT COUNT(DISTINCT p.id) FROM products p inner join translation_product tp on tp.product_id = p.id WHERE to_tsvector(tp.slug) @@ to_tsquery($1) OR tp.slug LIKE $3 AND tp.lang_id = $2 AND tp.deleted_at IS NULL AND p.amount > 0 AND p.limit_amount > 0 AND p.deleted_at IS NULL", search, langID, searchStr).Scan(&countOfProduct); err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
+	db.QueryRow(context.Background(), "SELECT COUNT(DISTINCT p.id) FROM products p inner join translation_product tp on tp.product_id = p.id WHERE to_tsvector(tp.slug) @@ to_tsquery($1) OR tp.slug LIKE $3 AND tp.lang_id = $2 AND tp.deleted_at IS NULL AND p.amount > 0 AND p.limit_amount > 0 AND p.deleted_at IS NULL", search, langID, searchStr).Scan(&countOfProduct)
 
 	rowsProduct, err := db.Query(context.Background(), "SELECT DISTINCT ON (p.created_at) p.id,p.brend_id,p.price,p.old_price,p.amount,p.limit_amount,p.is_new,p.main_image,p.benefit FROM products p inner join translation_product tp on tp.product_id = p.id WHERE to_tsvector(tp.slug) @@ to_tsquery($1) OR tp.slug LIKE $5 AND tp.lang_id = $2 AND tp.deleted_at IS NULL AND p.amount > 0 AND p.limit_amount > 0 AND p.deleted_at IS NULL ORDER BY p.created_at ASC LIMIT $3 OFFSET $4", search, langID, limit, offset, searchStr)
 	if err != nil {
@@ -116,10 +113,7 @@ func Search(c *gin.Context) {
 		for _, v := range languages {
 			var trProduct models.TranslationProduct
 			translation := make(map[string]models.TranslationProduct)
-			if err := db.QueryRow(context.Background(), "SELECT lang_id,name,description FROM translation_product WHERE product_id = $1 AND lang_id = $2 AND deleted_at IS NULL", product.ID, v.ID).Scan(&trProduct.LangID, &trProduct.Name, &trProduct.Description); err != nil {
-				helpers.HandleError(c, 400, err.Error())
-				return
-			}
+			db.QueryRow(context.Background(), "SELECT lang_id,name,description FROM translation_product WHERE product_id = $1 AND lang_id = $2 AND deleted_at IS NULL", product.ID, v.ID).Scan(&trProduct.LangID, &trProduct.Name, &trProduct.Description)
 			translation[v.NameShort] = trProduct
 			product.Translations = append(product.Translations, translation)
 		}
@@ -159,10 +153,7 @@ func FilterAndSort(c *gin.Context) {
 	}
 
 	var category_id string
-	if err := db.QueryRow(context.Background(), "SELECT id FROM categories WHERE id = $1 AND deleted_at IS NULL", categoryID).Scan(&category_id); err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
+	db.QueryRow(context.Background(), "SELECT id FROM categories WHERE id = $1 AND deleted_at IS NULL", categoryID).Scan(&category_id)
 
 	if category_id == "" {
 		helpers.HandleError(c, 404, "category not found")
@@ -256,10 +247,7 @@ func FilterAndSort(c *gin.Context) {
 	if len(brendIDs) != 0 {
 		for _, v := range brendIDs {
 			var brend_id string
-			if err := db.QueryRow(context.Background(), "SELECT id FROM brends WHERE id = $1 AND deleted_at IS NULL", v).Scan(&brend_id); err != nil {
-				helpers.HandleError(c, 400, err.Error())
-				return
-			}
+			db.QueryRow(context.Background(), "SELECT id FROM brends WHERE id = $1 AND deleted_at IS NULL", v).Scan(&brend_id)
 
 			if brend_id == "" {
 				helpers.HandleError(c, 404, "brend not found")
@@ -268,10 +256,7 @@ func FilterAndSort(c *gin.Context) {
 		}
 	}
 
-	if err := db.QueryRow(context.Background(), "SELECT COUNT(*) FROM products p LEFT JOIN category_product c ON p.id=c.product_id INNER JOIN translation_product tp ON tp.product_id = p.id WHERE p.brend_id = ANY($1) AND tp.lang_id = $2 AND c.category_id = $3 AND tp.deleted_at IS NULL AND p.amount > 0 AND p.limit_amount > 0 AND p.deleted_at IS NULL AND p.price >= $4 AND p.price <= $5 AND p.old_price > $6", pq.Array(brendIDs), langID, categoryID, minPrice, maxPrice, discount).Scan(&countOfProduct); err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
+	db.QueryRow(context.Background(), "SELECT COUNT(*) FROM products p LEFT JOIN category_product c ON p.id=c.product_id INNER JOIN translation_product tp ON tp.product_id = p.id WHERE p.brend_id = ANY($1) AND tp.lang_id = $2 AND c.category_id = $3 AND tp.deleted_at IS NULL AND p.amount > 0 AND p.limit_amount > 0 AND p.deleted_at IS NULL AND p.price >= $4 AND p.price <= $5 AND p.old_price > $6", pq.Array(brendIDs), langID, categoryID, minPrice, maxPrice, discount).Scan(&countOfProduct)
 
 	rowQuery := "SELECT p.id,p.brend_id,p.price,p.old_price,p.amount,p.limit_amount,p.is_new,p.main_image,benefit FROM products p LEFT JOIN category_product c ON p.id=c.product_id INNER JOIN translation_product tp ON tp.product_id = p.id WHERE p.brend_id = ANY($1) AND tp.lang_id = $2 AND c.category_id = $3 AND tp.deleted_at IS NULL AND p.amount > 0 AND p.limit_amount > 0 AND p.deleted_at IS NULL AND p.price >= $4 AND p.price <= $5 AND p.old_price > $6 ORDER BY p.price ASC LIMIT $7 OFFSET $8"
 	if priceSort == "DESC" {
@@ -321,10 +306,7 @@ func FilterAndSort(c *gin.Context) {
 		for _, v := range languages {
 			var trProduct models.TranslationProduct
 			translation := make(map[string]models.TranslationProduct)
-			if err := db.QueryRow(context.Background(), "SELECT lang_id,name,description FROM translation_product WHERE product_id = $1 AND lang_id = $2 AND deleted_at IS NULL", product.ID, v.ID).Scan(&trProduct.LangID, &trProduct.Name, &trProduct.Description); err != nil {
-				helpers.HandleError(c, 400, err.Error())
-				return
-			}
+			db.QueryRow(context.Background(), "SELECT lang_id,name,description FROM translation_product WHERE product_id = $1 AND lang_id = $2 AND deleted_at IS NULL", product.ID, v.ID).Scan(&trProduct.LangID, &trProduct.Name, &trProduct.Description)
 			translation[v.NameShort] = trProduct
 			product.Translations = append(product.Translations, translation)
 		}

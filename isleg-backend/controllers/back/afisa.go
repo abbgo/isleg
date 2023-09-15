@@ -40,10 +40,7 @@ func CreateAfisa(c *gin.Context) {
 
 	// create afisa
 	var afisaID string
-	if err := db.QueryRow(context.Background(), "INSERT INTO afisa (image) VALUES ($1) RETURNING id", afisa.Image).Scan(&afisaID); err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
+	db.QueryRow(context.Background(), "INSERT INTO afisa (image) VALUES ($1) RETURNING id", afisa.Image).Scan(&afisaID)
 
 	// create translation afisa
 	for _, v := range afisa.TranslationAfisa {
@@ -74,11 +71,7 @@ func UpdateAfisaByID(c *gin.Context) {
 
 	// check id and get image of afisa
 	var afisaID, image string
-	if err := db.QueryRow(context.Background(), "SELECT id,image FROM afisa WHERE id = $1 AND deleted_at IS NULL", ID).Scan(&afisaID, &image); err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
-
+	db.QueryRow(context.Background(), "SELECT id,image FROM afisa WHERE id = $1 AND deleted_at IS NULL", ID).Scan(&afisaID, &image)
 	if afisaID == "" {
 		helpers.HandleError(c, 404, "record not found")
 		return
@@ -131,11 +124,7 @@ func GetAfisaByID(c *gin.Context) {
 
 	// check id and get data
 	var afisa OneAfisa
-	if err := db.QueryRow(context.Background(), "SELECT id,image FROM afisa WHERE id = $1 AND deleted_at IS NULL", ID).Scan(&afisa.ID, &afisa.Image); err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
-
+	db.QueryRow(context.Background(), "SELECT id,image FROM afisa WHERE id = $1 AND deleted_at IS NULL", ID).Scan(&afisa.ID, &afisa.Image)
 	if afisa.ID == "" {
 		helpers.HandleError(c, 404, "record not found")
 		return
@@ -226,30 +215,18 @@ func GetAfisas(c *gin.Context) {
 	if !status {
 		if search == "" {
 			countAfisasQuery = `SELECT COUNT(id) FROM afisa WHERE deleted_at IS NULL`
-			if err = db.QueryRow(context.Background(), countAfisasQuery).Scan(&countOfAfisas); err != nil {
-				helpers.HandleError(c, 400, err.Error())
-				return
-			}
+			db.QueryRow(context.Background(), countAfisasQuery).Scan(&countOfAfisas)
 		} else {
 			countAfisasQuery = `SELECT COUNT(af.id) FROM afisa af INNER JOIN translation_afisa ta ON ta.afisa_id=af.id WHERE af.deleted_at IS NULL AND ta.deleted_at IS NULL AND ta.lang_id = $3 AND (to_tsvector(ta.slug) @@ to_tsquery($1) OR ta.slug LIKE $2)`
-			if err = db.QueryRow(context.Background(), countAfisasQuery, search, searchStr, langID).Scan(&countOfAfisas); err != nil {
-				helpers.HandleError(c, 400, err.Error())
-				return
-			}
+			db.QueryRow(context.Background(), countAfisasQuery, search, searchStr, langID).Scan(&countOfAfisas)
 		}
 	} else {
 		if search == "" {
 			countAfisasQuery = `SELECT COUNT(id) FROM brends WHERE deleted_at IS NOT NULL`
-			if err = db.QueryRow(context.Background(), countAfisasQuery).Scan(&countOfAfisas); err != nil {
-				helpers.HandleError(c, 400, err.Error())
-				return
-			}
+			db.QueryRow(context.Background(), countAfisasQuery).Scan(&countOfAfisas)
 		} else {
 			countAfisasQuery = `SELECT COUNT(af.id) FROM afisa af INNER JOIN translation_afisa ta ON ta.afisa_id=af.id WHERE af.deleted_at IS NOT NULL AND ta.deleted_at IS NOT NULL AND ta.lang_id = $3 AND (to_tsvector(ta.slug) @@ to_tsquery($1) OR ta.slug LIKE $2)`
-			if err = db.QueryRow(context.Background(), countAfisasQuery, search, searchStr, langID).Scan(&countOfAfisas); err != nil {
-				helpers.HandleError(c, 400, err.Error())
-				return
-			}
+			db.QueryRow(context.Background(), countAfisasQuery, search, searchStr, langID).Scan(&countOfAfisas)
 		}
 	}
 
@@ -341,11 +318,7 @@ func DeleteAfisaByID(c *gin.Context) {
 
 	// check id
 	var afisaID string
-	if err := db.QueryRow(context.Background(), "SELECT id FROM afisa WHERE id = $1 AND deleted_at IS NULL", ID).Scan(&afisaID); err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
-
+	db.QueryRow(context.Background(), "SELECT id FROM afisa WHERE id = $1 AND deleted_at IS NULL", ID).Scan(&afisaID)
 	if afisaID == "" {
 		helpers.HandleError(c, 404, "record not found")
 		return
@@ -377,11 +350,7 @@ func RestoreAfisaByID(c *gin.Context) {
 
 	// check id
 	var afisaID string
-	if err := db.QueryRow(context.Background(), "SELECT id FROM afisa WHERE id = $1 AND deleted_at IS NOT NULL", ID).Scan(&afisaID); err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
-
+	db.QueryRow(context.Background(), "SELECT id FROM afisa WHERE id = $1 AND deleted_at IS NOT NULL", ID).Scan(&afisaID)
 	if afisaID == "" {
 		helpers.HandleError(c, 404, "record not found")
 		return
@@ -413,11 +382,7 @@ func DeletePermanentlyAfisaByID(c *gin.Context) {
 
 	// check id and get image of afisa
 	var afisaID, image string
-	if err := db.QueryRow(context.Background(), "SELECT id,image FROM afisa WHERE id = $1 AND deleted_at IS NOT NULL", ID).Scan(&afisaID, &image); err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
-
+	db.QueryRow(context.Background(), "SELECT id,image FROM afisa WHERE id = $1 AND deleted_at IS NOT NULL", ID).Scan(&afisaID, &image)
 	if afisaID == "" {
 		helpers.HandleError(c, 404, "record not found")
 		return

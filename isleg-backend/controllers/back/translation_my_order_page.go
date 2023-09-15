@@ -30,10 +30,7 @@ func CreateTranslationMyOrderPage(c *gin.Context) {
 	// check lang_id
 	for _, v := range trMyOrderPages {
 		var langID string
-		if err := db.QueryRow(context.Background(), "SELECT id FROM languages WHERE id = $1 AND deleted_at IS NULL", v.LangID).Scan(&langID); err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
-		}
+		db.QueryRow(context.Background(), "SELECT id FROM languages WHERE id = $1 AND deleted_at IS NULL", v.LangID).Scan(&langID)
 
 		if langID == "" {
 			helpers.HandleError(c, 404, "language not found")
@@ -74,10 +71,7 @@ func UpdateTranslationMyOrderPageByID(c *gin.Context) {
 
 	// check id
 	var id string
-	if err := db.QueryRow(context.Background(), "SELECT id FROM translation_my_order_page WHERE id = $1 AND deleted_at IS NULL", trMyOrderPage.ID).Scan(&id); err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
+	db.QueryRow(context.Background(), "SELECT id FROM translation_my_order_page WHERE id = $1 AND deleted_at IS NULL", trMyOrderPage.ID).Scan(&id)
 
 	if id == "" {
 		helpers.HandleError(c, 404, "record not found")
@@ -111,10 +105,7 @@ func GetTranslationMyOrderPageByID(c *gin.Context) {
 
 	// check id and get data from database
 	var t models.TranslationMyOrderPage
-	if err := db.QueryRow(context.Background(), "SELECT id,orders,date,price,image,name,brend,product_price,amount,total_price FROM translation_my_order_page WHERE id = $1 AND deleted_at IS NULL", ID).Scan(&t.ID, &t.Orders, &t.Date, &t.Price, &t.Image, &t.Name, &t.Brend, &t.ProcuctPrice, &t.Amount, &t.TotalPrice); err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
+	db.QueryRow(context.Background(), "SELECT id,orders,date,price,image,name,brend,product_price,amount,total_price FROM translation_my_order_page WHERE id = $1 AND deleted_at IS NULL", ID).Scan(&t.ID, &t.Orders, &t.Date, &t.Price, &t.Image, &t.Name, &t.Brend, &t.ProcuctPrice, &t.Amount, &t.TotalPrice)
 
 	if t.ID == "" {
 		helpers.HandleError(c, 404, "record not found")
@@ -147,10 +138,7 @@ func GetTranslationMyOrderPageByLangID(c *gin.Context) {
 
 	// get translation-basket-page where lang_id equal langID
 	var t models.TranslationMyOrderPage
-	if err := db.QueryRow(context.Background(), "SELECT orders,date,price,image,name,brend,product_price,amount,total_price FROM translation_my_order_page WHERE lang_id = $1 AND deleted_at IS NULL", langID).Scan(&t.Orders, &t.Date, &t.Price, &t.Image, &t.Name, &t.Brend, &t.ProcuctPrice, &t.Amount, &t.TotalPrice); err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
+	db.QueryRow(context.Background(), "SELECT orders,date,price,image,name,brend,product_price,amount,total_price FROM translation_my_order_page WHERE lang_id = $1 AND deleted_at IS NULL", langID).Scan(&t.Orders, &t.Date, &t.Price, &t.Image, &t.Name, &t.Brend, &t.ProcuctPrice, &t.Amount, &t.TotalPrice)
 
 	if t.Orders == "" {
 		helpers.HandleError(c, 404, "record not found")

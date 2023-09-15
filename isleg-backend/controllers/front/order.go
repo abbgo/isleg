@@ -107,18 +107,12 @@ func ToOrder(c *gin.Context) {
 	// haryt sargyt etyan musderi on bazada barmy ya-da yokmy sony bilmek ucin order.PhoneNumber telefon belgi boyunca sol musderini
 	// bazadan gozletyas
 	var customerPhoneNumber, customerID string
-	if err := db.QueryRow(context.Background(), "SELECT id,phone_number FROM customers WHERE phone_number = $1 AND deleted_at IS NULL", order.PhoneNumber).Scan(&customerID, &customerPhoneNumber); err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
+	db.QueryRow(context.Background(), "SELECT id,phone_number FROM customers WHERE phone_number = $1 AND deleted_at IS NULL", order.PhoneNumber).Scan(&customerID, &customerPhoneNumber)
 
 	if customerPhoneNumber != "" { // eger musderi on bazada bar bolsa onda , yene-de frontdan gelen order.Address musderinin
 		// adresi on bazada barmy ya-da yokmy sony barlayas
 		var customerAddress string
-		if err := db.QueryRow(context.Background(), "SELECT address FROM customer_address WHERE customer_id = $1 AND address = $2 AND deleted_at IS NULL", customerID, order.Address).Scan(&customerAddress); err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
-		}
+		db.QueryRow(context.Background(), "SELECT address FROM customer_address WHERE customer_id = $1 AND address = $2 AND deleted_at IS NULL", customerID, order.Address).Scan(&customerAddress)
 
 		if customerAddress == "" { // eger musderinin adresi bazada yok bolsa onda gelen order.Address adresi sol musdera
 			// taze adres hokmunde baza yazdyryas
@@ -130,10 +124,7 @@ func ToOrder(c *gin.Context) {
 		}
 	} else { // bu yerde bolsa eger musderi bazada yok bolsa , onda musderini baza gosyas
 		var customer_id string
-		if err := db.QueryRow(context.Background(), "INSERT INTO customers (full_name,phone_number,is_register) VALUES ($1,$2,$3) RETURNING id", order.FullName, order.PhoneNumber, false).Scan(&customer_id); err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
-		}
+		db.QueryRow(context.Background(), "INSERT INTO customers (full_name,phone_number,is_register) VALUES ($1,$2,$3) RETURNING id", order.FullName, order.PhoneNumber, false).Scan(&customer_id)
 
 		// musderi baza gosulandan son bolsa sol musderinin adresini baza gosyas
 		_, err = db.Exec(context.Background(), "INSERT INTO customer_address (customer_id,address,is_active) VALUES ($1,$2,$3)", customer_id, order.Address, false)
@@ -148,10 +139,7 @@ func ToOrder(c *gin.Context) {
 	// gosulan sargydyn id - sini alyarys, ordered_prodcuts tablisa ucin
 	var order_id, createdAt string
 	var orderNumber uint
-	if err := db.QueryRow(context.Background(), "INSERT INTO orders (customer_id,customer_mark,order_time,payment_type,total_price,shipping_price,address) VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING id,TO_CHAR(created_at,'DD.MM.YYYY HH24:MI'),order_number", customerID, order.CustomerMark, order.OrderTime, order.PaymentType, order.TotalPrice, order.ShippingPrice, order.Address).Scan(&order_id, &createdAt, &orderNumber); err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
+	db.QueryRow(context.Background(), "INSERT INTO orders (customer_id,customer_mark,order_time,payment_type,total_price,shipping_price,address) VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING id,TO_CHAR(created_at,'DD.MM.YYYY HH24:MI'),order_number", customerID, order.CustomerMark, order.OrderTime, order.PaymentType, order.TotalPrice, order.ShippingPrice, order.Address).Scan(&order_id, &createdAt, &orderNumber)
 
 	// edilen sargyt baza gosulandan son sol sargyda degisli harytlary baza gosyas
 	for _, v := range order.Products {
@@ -187,31 +175,19 @@ func ToOrder(c *gin.Context) {
 
 	// excel fayly doldurmak ucin bazadan firmanyn telefon belgisini almaly
 	var companyPhone string
-	if err := db.QueryRow(context.Background(), "SELECT phone FROM company_phone ORDER BY created_at DESC LIMIT 1").Scan(&companyPhone); err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
+	db.QueryRow(context.Background(), "SELECT phone FROM company_phone ORDER BY created_at DESC LIMIT 1").Scan(&companyPhone)
 
 	// excel fayly doldurmak ucin firmanyn email adresini we instagram sahypasyny bazadan almaly
 	var email, instagram string
-	if err := db.QueryRow(context.Background(), "SELECT email,instagram FROM company_setting ORDER BY created_at DESC LIMIT 1").Scan(&email, &instagram); err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
+	db.QueryRow(context.Background(), "SELECT email,instagram FROM company_setting ORDER BY created_at DESC LIMIT 1").Scan(&email, &instagram)
 
 	var products []OrderedProduct
 	for _, v := range order.Products {
 		var product OrderedProduct
 		product.Amount = v.QuantityOfProduct
-		if err := db.QueryRow(context.Background(), "SELECT price FROM products WHERE id= $1 AND deleted_at IS NULL", v.ProductID).Scan(&product.Price); err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
-		}
+		db.QueryRow(context.Background(), "SELECT price FROM products WHERE id= $1 AND deleted_at IS NULL", v.ProductID).Scan(&product.Price)
 
-		if err := db.QueryRow(context.Background(), "SELECT name FROM translation_product WHERE product_id = $1 AND lang_id = $2 AND deleted_at IS NULL", v.ProductID, langID).Scan(&product.Name); err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
-		}
+		db.QueryRow(context.Background(), "SELECT name FROM translation_product WHERE product_id = $1 AND lang_id = $2 AND deleted_at IS NULL", v.ProductID, langID).Scan(&product.Name)
 		products = append(products, product)
 	}
 
@@ -614,10 +590,7 @@ func GetOrders(c *gin.Context) {
 				return
 			}
 
-			if err := db.QueryRow(context.Background(), "SELECT brend_id,price,old_price,amount,limit_amount,is_new,main_image,benefit FROM products WHERE id = $1 AND deleted_at IS NULL", product.ID).Scan(&product.BrendID, &product.Price, &product.OldPrice, &product.Amount, &product.LimitAmount, &product.IsNew, &product.MainImage, &product.Benefit); err != nil {
-				helpers.HandleError(c, 400, err.Error())
-				return
-			}
+			db.QueryRow(context.Background(), "SELECT brend_id,price,old_price,amount,limit_amount,is_new,main_image,benefit FROM products WHERE id = $1 AND deleted_at IS NULL", product.ID).Scan(&product.BrendID, &product.Price, &product.OldPrice, &product.Amount, &product.LimitAmount, &product.IsNew, &product.MainImage, &product.Benefit)
 
 			if product.Benefit.Float64 != 0 {
 				product.Price = product.Price + (product.Price*product.Benefit.Float64)/100
@@ -631,10 +604,7 @@ func GetOrders(c *gin.Context) {
 			}
 
 			var trProduct models.TranslationProduct
-			if err := db.QueryRow(context.Background(), "SELECT name,description FROM translation_product WHERE product_id = $1 AND lang_id = $2 AND deleted_at IS NULL", product.ID, langID).Scan(&trProduct.Name, &trProduct.Description); err != nil {
-				helpers.HandleError(c, 400, err.Error())
-				return
-			}
+			db.QueryRow(context.Background(), "SELECT name,description FROM translation_product WHERE product_id = $1 AND lang_id = $2 AND deleted_at IS NULL", product.ID, langID).Scan(&trProduct.Name, &trProduct.Description)
 			product.Translations = trProduct
 			products = append(products, product)
 		}
@@ -672,15 +642,9 @@ func OrderConfirmation(c *gin.Context) {
 	// check orderID
 	var order_id string
 	if status {
-		if err := db.QueryRow(context.Background(), "SELECT id FROM orders WHERE id = $1 AND deleted_at IS NOT NULL", orderID).Scan(&order_id); err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
-		}
+		db.QueryRow(context.Background(), "SELECT id FROM orders WHERE id = $1 AND deleted_at IS NOT NULL", orderID).Scan(&order_id)
 	} else {
-		if err := db.QueryRow(context.Background(), "SELECT id FROM orders WHERE id = $1 AND deleted_at IS NULL", orderID).Scan(&order_id); err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
-		}
+		db.QueryRow(context.Background(), "SELECT id FROM orders WHERE id = $1 AND deleted_at IS NULL", orderID).Scan(&order_id)
 	}
 
 	if order_id == "" {
@@ -763,10 +727,7 @@ func GetCustomerOrders(c *gin.Context) {
 
 	// programmany ulanyp otyran musderinin sargytlarynyn sanyny alyas frontda pagination ucin
 	var countOfOrders uint
-	if err := db.QueryRow(context.Background(), "SELECT COUNT(id) FROM orders WHERE customer_id = $1", customerID).Scan(&countOfOrders); err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
+	db.QueryRow(context.Background(), "SELECT COUNT(id) FROM orders WHERE customer_id = $1", customerID).Scan(&countOfOrders)
 
 	// musderinin sargytlaryny alyas bazadan
 	rowsOrders, err := db.Query(context.Background(), "SELECT id,TO_CHAR(created_at, 'DD.MM.YYYY'),total_price FROM orders WHERE customer_id = $1 ORDER BY created_at ASC LIMIT $2 OFFSET $3", customerID, limit, offset)
@@ -840,10 +801,7 @@ func GetCustomerOrders(c *gin.Context) {
 			for _, v := range languages {
 				var trProduct models.TranslationProduct
 				translation := make(map[string]models.TranslationProduct)
-				if err := db.QueryRow(context.Background(), "SELECT name,description FROM translation_product WHERE product_id = $1 AND lang_id = $2 AND deleted_at IS NULL", product.ID, v.ID).Scan(&trProduct.Name, &trProduct.Description); err != nil {
-					helpers.HandleError(c, 400, err.Error())
-					return
-				}
+				db.QueryRow(context.Background(), "SELECT name,description FROM translation_product WHERE product_id = $1 AND lang_id = $2 AND deleted_at IS NULL", product.ID, v.ID).Scan(&trProduct.Name, &trProduct.Description)
 				translation[v.NameShort] = trProduct
 				product.Translations = append(product.Translations, translation)
 			}
@@ -1135,10 +1093,7 @@ func ReturnOrder(c *gin.Context) {
 	orderID := c.Param("id")
 
 	var order_id, excel string
-	if err := db.QueryRow(context.Background(), "SELECT id,excel FROM orders WHERE id = $1", orderID).Scan(&order_id, &excel); err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
+	db.QueryRow(context.Background(), "SELECT id,excel FROM orders WHERE id = $1", orderID).Scan(&order_id, &excel)
 
 	if order_id == "" {
 		helpers.HandleError(c, 404, "order not found")

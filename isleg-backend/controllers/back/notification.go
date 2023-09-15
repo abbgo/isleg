@@ -27,10 +27,7 @@ func CreateNotification(c *gin.Context) {
 
 	for _, v := range notification.Translations {
 		var lang_id string
-		if err := db.QueryRow(context.Background(), "SELECT id FROM languages WHERE id = $1 AND deleted_at IS NULL", v.LangID).Scan(&lang_id); err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
-		}
+		db.QueryRow(context.Background(), "SELECT id FROM languages WHERE id = $1 AND deleted_at IS NULL", v.LangID).Scan(&lang_id)
 
 		if lang_id == "" {
 			helpers.HandleError(c, 404, "langauge not found")
@@ -39,10 +36,7 @@ func CreateNotification(c *gin.Context) {
 	}
 
 	var notification_id string
-	if err := db.QueryRow(context.Background(), "INSERT INTO notifications (name) VALUES ($1) RETURNING id", notification.Name).Scan(&notification_id); err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
+	db.QueryRow(context.Background(), "INSERT INTO notifications (name) VALUES ($1) RETURNING id", notification.Name).Scan(&notification_id)
 
 	for _, v := range notification.Translations {
 		_, err := db.Exec(context.Background(), "INSERT INTO translation_notification (notification_id,lang_id,translation) VALUES ($1,$2,$3)", notification_id, v.LangID, v.Translation)
@@ -74,10 +68,7 @@ func UpdateNotificationByID(c *gin.Context) {
 	}
 
 	var notification_id string
-	if err := db.QueryRow(context.Background(), "SELECT id FROM notifications WHERE id = $1 AND deleted_at IS NULL", notification.ID).Scan(&notification_id); err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
+	db.QueryRow(context.Background(), "SELECT id FROM notifications WHERE id = $1 AND deleted_at IS NULL", notification.ID).Scan(&notification_id)
 
 	if notification_id == "" {
 		helpers.HandleError(c, 404, "notification not found")
@@ -217,10 +208,7 @@ func DeleteNotificationByID(c *gin.Context) {
 	ID := c.Param("id")
 
 	var notification_id string
-	if err := db.QueryRow(context.Background(), "SELECT id FROM notifications WHERE id = $1 AND deleted_at IS NULL", ID).Scan(&notification_id); err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
+	db.QueryRow(context.Background(), "SELECT id FROM notifications WHERE id = $1 AND deleted_at IS NULL", ID).Scan(&notification_id)
 
 	if notification_id == "" {
 		helpers.HandleError(c, 404, "notification not found")
@@ -251,10 +239,7 @@ func RestoreNotificationByID(c *gin.Context) {
 	ID := c.Param("id")
 
 	var notification_id string
-	if err := db.QueryRow(context.Background(), "SELECT id FROM notifications WHERE id = $1 AND deleted_at IS NOT NULL", ID).Scan(&notification_id); err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
+	db.QueryRow(context.Background(), "SELECT id FROM notifications WHERE id = $1 AND deleted_at IS NOT NULL", ID).Scan(&notification_id)
 
 	if notification_id == "" {
 		helpers.HandleError(c, 404, "notification not found")
@@ -285,10 +270,7 @@ func DeletePermanentlyNotificationByID(c *gin.Context) {
 	ID := c.Param("id")
 
 	var notification_id string
-	if err := db.QueryRow(context.Background(), "SELECT id FROM notifications WHERE id = $1 AND deleted_at IS NOT NULL", ID).Scan(&notification_id); err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
+	db.QueryRow(context.Background(), "SELECT id FROM notifications WHERE id = $1 AND deleted_at IS NOT NULL", ID).Scan(&notification_id)
 
 	if notification_id == "" {
 		helpers.HandleError(c, 404, "notification not found")

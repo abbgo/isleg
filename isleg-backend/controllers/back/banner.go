@@ -28,7 +28,6 @@ func CreateBanner(c *gin.Context) {
 		helpers.HandleError(c, 400, err.Error())
 		return
 	}
-
 	// VALIDATE DATA
 	if banner.Url == "" {
 		helpers.HandleError(c, 400, "url is required")
@@ -71,13 +70,10 @@ func UpdateBannerByID(c *gin.Context) {
 		helpers.HandleError(c, 400, err.Error())
 		return
 	}
+
 	// check id and get image of banner
 	var image, bannerID string
-	if err := db.QueryRow(context.Background(), "SELECT id,image FROM banner WHERE id = $1 AND deleted_at IS NULL", ID).Scan(&bannerID, &image); err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
-
+	db.QueryRow(context.Background(), "SELECT id,image FROM banner WHERE id = $1 AND deleted_at IS NULL", ID).Scan(&bannerID, &image)
 	if bannerID == "" {
 		helpers.HandleError(c, 404, "record not found")
 		return
@@ -129,11 +125,7 @@ func GetBannerByID(c *gin.Context) {
 
 	// check id and get data from database
 	var banner models.Banner
-	if err := db.QueryRow(context.Background(), "SELECT id,url,image FROM banner WHERE id = $1 AND deleted_at IS NULL", ID).Scan(&banner.ID, &banner.Url, &banner.Image); err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
-
+	db.QueryRow(context.Background(), "SELECT id,url,image FROM banner WHERE id = $1 AND deleted_at IS NULL", ID).Scan(&banner.ID, &banner.Url, &banner.Image)
 	if banner.ID == "" {
 		helpers.HandleError(c, 404, "record not found")
 		return
@@ -196,11 +188,7 @@ func GetBanners(c *gin.Context) {
 	}
 
 	// get data from database
-	if err := db.QueryRow(context.Background(), countBannerssQuery).Scan(&countOfBanners); err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
-
+	db.QueryRow(context.Background(), countBannerssQuery).Scan(&countOfBanners)
 	if !status {
 		rowBannersQuery = `SELECT id,url,image FROM banner WHERE deleted_at IS NULL ORDER BY created_at DESC LIMIT $1 OFFSET $2`
 	} else {
@@ -277,11 +265,7 @@ func DeleteBannerByID(c *gin.Context) {
 
 	// check id and get image of brend
 	var id string
-	if err := db.QueryRow(context.Background(), "SELECT id FROM banner WHERE id = $1 AND deleted_at IS NULL", ID).Scan(&id); err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
-
+	db.QueryRow(context.Background(), "SELECT id FROM banner WHERE id = $1 AND deleted_at IS NULL", ID).Scan(&id)
 	if id == "" {
 		helpers.HandleError(c, 404, "record not found")
 		return
@@ -313,11 +297,7 @@ func RestoreBannerByID(c *gin.Context) {
 
 	// check id and get image of brend
 	var id string
-	if err := db.QueryRow(context.Background(), "SELECT id FROM banner WHERE id = $1 AND deleted_at IS NOT NULL", ID).Scan(&id); err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
-
+	db.QueryRow(context.Background(), "SELECT id FROM banner WHERE id = $1 AND deleted_at IS NOT NULL", ID).Scan(&id)
 	if id == "" {
 		helpers.HandleError(c, 404, "record not found")
 		return
@@ -349,11 +329,7 @@ func DeletePermanentlyBannerByID(c *gin.Context) {
 
 	// check id and get image of brend
 	var image string
-	if err := db.QueryRow(context.Background(), "SELECT image FROM banner WHERE id = $1 AND deleted_at IS NOT NULL", ID).Scan(&image); err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
-
+	db.QueryRow(context.Background(), "SELECT image FROM banner WHERE id = $1 AND deleted_at IS NOT NULL", ID).Scan(&image)
 	if image == "" {
 		helpers.HandleError(c, 404, "record not found")
 		return

@@ -29,10 +29,7 @@ func CreateTranslationAbout(c *gin.Context) {
 	// check lang_id
 	for _, v := range trAbouts {
 		var langID string
-		if err := db.QueryRow(context.Background(), "SELECT id FROM languages WHERE id = $1 AND deleted_at IS NULL", v.LangID).Scan(&langID); err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
-		}
+		db.QueryRow(context.Background(), "SELECT id FROM languages WHERE id = $1 AND deleted_at IS NULL", v.LangID).Scan(&langID)
 
 		if langID == "" {
 			helpers.HandleError(c, 404, "language not found")
@@ -74,10 +71,7 @@ func UpdateTranslationAboutByID(c *gin.Context) {
 
 	// check id
 	var id string
-	if err := db.QueryRow(context.Background(), "SELECT id FROM translation_about WHERE id = $1 AND deleted_at IS NULL", trAbout.ID).Scan(&id); err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
+	db.QueryRow(context.Background(), "SELECT id FROM translation_about WHERE id = $1 AND deleted_at IS NULL", trAbout.ID).Scan(&id)
 
 	if id == "" {
 		helpers.HandleError(c, 404, "record not found")
@@ -111,10 +105,7 @@ func GetTranslationAboutByID(c *gin.Context) {
 
 	// check id and get data from database
 	var t models.TranslationAbout
-	if err := db.QueryRow(context.Background(), "SELECT id,title,content FROM translation_about WHERE id = $1 AND deleted_at IS NULL", ID).Scan(&t.ID, &t.Title, &t.Content); err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
+	db.QueryRow(context.Background(), "SELECT id,title,content FROM translation_about WHERE id = $1 AND deleted_at IS NULL", ID).Scan(&t.ID, &t.Title, &t.Content)
 
 	if t.ID == "" {
 		helpers.HandleError(c, 404, "record not found")
@@ -143,10 +134,7 @@ func GetTranslationAboutByLangID(c *gin.Context) {
 
 	// get translation about where lang_id equal langID
 	var translationAbout models.TranslationAbout
-	if err := db.QueryRow(context.Background(), "SELECT title,content FROM translation_about WHERE lang_id = $1 AND deleted_at IS NULL", langID).Scan(&translationAbout.Title, &translationAbout.Content); err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
+	db.QueryRow(context.Background(), "SELECT title,content FROM translation_about WHERE lang_id = $1 AND deleted_at IS NULL", langID).Scan(&translationAbout.Title, &translationAbout.Content)
 
 	if translationAbout.Title == "" {
 		helpers.HandleError(c, 404, "record not found")

@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"context"
-	"fmt"
 	"github/abbgo/isleg/isleg-backend/config"
 	"github/abbgo/isleg/isleg-backend/helpers"
 	"github/abbgo/isleg/isleg-backend/models"
@@ -76,10 +75,7 @@ func DeleteProductImages(c *gin.Context) {
 	}
 
 	var helperImageID string
-	if err := db.QueryRow(context.Background(), "SELECT id FROM helper_images WHERE image = $1 AND deleted_at IS NULL", image.Image).Scan(&helperImageID); err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
+	db.QueryRow(context.Background(), "SELECT id FROM helper_images WHERE image = $1 AND deleted_at IS NULL", image.Image).Scan(&helperImageID)
 	if helperImageID != "" {
 		_, err := db.Exec(context.Background(), "DELETE FROM helper_images WHERE id = $1", helperImageID)
 		if err != nil {
@@ -211,10 +207,7 @@ func CreateProduct(c *gin.Context) {
 
 	// create product
 	var productID string
-	if err := db.QueryRow(context.Background(), "INSERT INTO products (brend_id,price,old_price,amount,limit_amount,is_new,shop_id,main_image,benefit) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9) RETURNING id", brendID, price, oldPrice, amount, limitAmount, isNew, shopID, product.MainImage, benefit).Scan(&productID); err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
+	db.QueryRow(context.Background(), "INSERT INTO products (brend_id,price,old_price,amount,limit_amount,is_new,shop_id,main_image,benefit) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9) RETURNING id", brendID, price, oldPrice, amount, limitAmount, isNew, shopID, product.MainImage, benefit).Scan(&productID)
 
 	if len(product.Images) != 0 {
 		// create images of product
@@ -317,7 +310,6 @@ func CreateProductsByExcelFile(c *gin.Context) {
 
 	for i := 3; i < countOfRows+3; i++ {
 
-		fmt.Println("------------------------------ ", i)
 		countOfErr := 0
 		errString := ""
 		var product ProductForAdmin
@@ -401,8 +393,6 @@ func CreateProductsByExcelFile(c *gin.Context) {
 				v = strings.TrimLeft(v, " ")
 				v = strings.TrimRight(v, " ")
 			}
-
-			fmt.Println(v)
 
 			var categoryID string
 			db.QueryRow(context.Background(), "SELECT c.id FROM categories c INNER JOIN translation_category tc ON tc.category_id=c.id INNER JOIN languages l ON l.id=tc.lang_id WHERE l.name_short = $1 AND tc.name = $2 AND c.deleted_at IS NULL AND l.deleted_at IS NULL AND tc.deleted_at IS NULL", "tm", v).Scan(&categoryID)
@@ -872,10 +862,7 @@ func GetProductByID(c *gin.Context) {
 	ID := c.Param("id")
 
 	var product ProductForAdmin
-	if err := db.QueryRow(context.Background(), "SELECT id,brend_id,price,old_price,amount,limit_amount,is_new,main_image,benefit FROM products WHERE id = $1 AND deleted_at IS NULL", ID).Scan(&product.ID, &product.BrendID, &product.Price, &product.OldPrice, &product.Amount, &product.LimitAmount, &product.IsNew, &product.MainImage, &product.Benefit); err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
+	db.QueryRow(context.Background(), "SELECT id,brend_id,price,old_price,amount,limit_amount,is_new,main_image,benefit FROM products WHERE id = $1 AND deleted_at IS NULL", ID).Scan(&product.ID, &product.BrendID, &product.Price, &product.OldPrice, &product.Amount, &product.LimitAmount, &product.IsNew, &product.MainImage, &product.Benefit)
 
 	if product.ID == "" {
 		helpers.HandleError(c, 404, "record not found")
@@ -1061,10 +1048,7 @@ func DeleteProductByID(c *gin.Context) {
 
 	// check id
 	var productID string
-	if err := db.QueryRow(context.Background(), "SELECT id FROM products WHERE id = $1 AND deleted_at IS NULL", ID).Scan(&productID); err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
+	db.QueryRow(context.Background(), "SELECT id FROM products WHERE id = $1 AND deleted_at IS NULL", ID).Scan(&productID)
 
 	if productID == "" {
 		helpers.HandleError(c, 404, "record not found")
@@ -1097,10 +1081,7 @@ func RestoreProductByID(c *gin.Context) {
 
 	// check id
 	var productID string
-	if err := db.QueryRow(context.Background(), "SELECT id FROM products WHERE id = $1 AND deleted_at IS NOT NULL", ID).Scan(&productID); err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
+	db.QueryRow(context.Background(), "SELECT id FROM products WHERE id = $1 AND deleted_at IS NOT NULL", ID).Scan(&productID)
 
 	if productID == "" {
 		helpers.HandleError(c, 404, "record not found")
@@ -1133,10 +1114,7 @@ func DeletePermanentlyProductByID(c *gin.Context) {
 
 	// check id
 	var productID, mainImage string
-	if err := db.QueryRow(context.Background(), "SELECT id,main_image FROM products WHERE id = $1 AND deleted_at IS NOT NULL", ID).Scan(&productID, &mainImage); err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
+	db.QueryRow(context.Background(), "SELECT id,main_image FROM products WHERE id = $1 AND deleted_at IS NOT NULL", ID).Scan(&productID, &mainImage)
 
 	if productID == "" {
 		helpers.HandleError(c, 404, "product not found")
@@ -1219,10 +1197,7 @@ func GetProductByIDForFront(c *gin.Context) {
 	ID := c.Param("id")
 
 	var product ProductForFront
-	if err := db.QueryRow(context.Background(), "SELECT id,price,old_price,amount,limit_amount,is_new,main_image,benefit FROM products WHERE id = $1 AND deleted_at IS NULL", ID).Scan(&product.ID, &product.Price, &product.OldPrice, &product.Amount, &product.LimitAmount, &product.IsNew, &product.MainImage, &product.Benefit); err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
+	db.QueryRow(context.Background(), "SELECT id,price,old_price,amount,limit_amount,is_new,main_image,benefit FROM products WHERE id = $1 AND deleted_at IS NULL", ID).Scan(&product.ID, &product.Price, &product.OldPrice, &product.Amount, &product.LimitAmount, &product.IsNew, &product.MainImage, &product.Benefit)
 
 	if product.Benefit.Float64 != 0 {
 		product.Price = product.Price + (product.Price*product.Benefit.Float64)/100
@@ -1296,10 +1271,7 @@ func GetProductByIDForFront(c *gin.Context) {
 
 	// get brend where id equal brend_id of product
 	var brend Brend
-	if err := db.QueryRow(context.Background(), "SELECT b.id,b.name FROM products p LEFT JOIN brends b ON p.brend_id=b.id WHERE p.id = $1 AND p.deleted_at IS NULL AND b.deleted_at IS NULL", product.ID).Scan(&brend.ID, &brend.Name); err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
+	db.QueryRow(context.Background(), "SELECT b.id,b.name FROM products p LEFT JOIN brends b ON p.brend_id=b.id WHERE p.id = $1 AND p.deleted_at IS NULL AND b.deleted_at IS NULL", product.ID).Scan(&brend.ID, &brend.Name)
 	product.Brend = brend
 
 	c.JSON(http.StatusOK, gin.H{

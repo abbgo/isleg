@@ -29,10 +29,7 @@ func CreateTranslationUpdatePasswordPage(c *gin.Context) {
 	// check lang_id
 	for _, v := range trUpdPassPages {
 		var langID string
-		if err := db.QueryRow(context.Background(), "SELECT id FROM languages WHERE id = $1 AND deleted_at IS NULL", v.LangID).Scan(&langID); err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
-		}
+		db.QueryRow(context.Background(), "SELECT id FROM languages WHERE id = $1 AND deleted_at IS NULL", v.LangID).Scan(&langID)
 
 		if langID == "" {
 			helpers.HandleError(c, 404, "language not found")
@@ -73,10 +70,7 @@ func UpdateTranslationUpdatePasswordPageByID(c *gin.Context) {
 
 	// check id
 	var id string
-	if err := db.QueryRow(context.Background(), "SELECT id FROM translation_update_password_page WHERE id = $1 AND deleted_at IS NULL", trUpdPassPage.ID).Scan(&id); err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
+	db.QueryRow(context.Background(), "SELECT id FROM translation_update_password_page WHERE id = $1 AND deleted_at IS NULL", trUpdPassPage.ID).Scan(&id)
 
 	if id == "" {
 		helpers.HandleError(c, 404, "record not found")
@@ -109,10 +103,7 @@ func GetTranslationUpdatePasswordPageByID(c *gin.Context) {
 
 	// check id and get data
 	var t models.TranslationUpdatePasswordPage
-	if err := db.QueryRow(context.Background(), "SELECT id,title,verify_password,explanation,save,password FROM translation_update_password_page WHERE id = $1 AND deleted_at IS NULL", ID).Scan(&t.ID, &t.Title, &t.VerifyPassword, &t.Explanation, &t.Save, &t.Password); err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
+	db.QueryRow(context.Background(), "SELECT id,title,verify_password,explanation,save,password FROM translation_update_password_page WHERE id = $1 AND deleted_at IS NULL", ID).Scan(&t.ID, &t.Title, &t.VerifyPassword, &t.Explanation, &t.Save, &t.Password)
 
 	if t.ID == "" {
 		helpers.HandleError(c, 404, "record not found")
@@ -141,10 +132,7 @@ func GetTranslationUpdatePasswordPageByLangID(c *gin.Context) {
 
 	// get translation-update-password-page where lang_id equal langID
 	var trUpdatePasswordPage models.TranslationUpdatePasswordPage
-	if err := db.QueryRow(context.Background(), "SELECT title,password,verify_password,explanation,save FROM translation_update_password_page WHERE lang_id = $1 AND deleted_at IS NULL", langID).Scan(&trUpdatePasswordPage.Title, &trUpdatePasswordPage.Password, &trUpdatePasswordPage.VerifyPassword, &trUpdatePasswordPage.Explanation, &trUpdatePasswordPage.Save); err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
+	db.QueryRow(context.Background(), "SELECT title,password,verify_password,explanation,save FROM translation_update_password_page WHERE lang_id = $1 AND deleted_at IS NULL", langID).Scan(&trUpdatePasswordPage.Title, &trUpdatePasswordPage.Password, &trUpdatePasswordPage.VerifyPassword, &trUpdatePasswordPage.Explanation, &trUpdatePasswordPage.Save)
 
 	if trUpdatePasswordPage.Title == "" {
 		helpers.HandleError(c, 404, "record not found")

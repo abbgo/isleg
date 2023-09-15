@@ -75,18 +75,12 @@ func AddOrRemoveLike(c *gin.Context) {
 			for _, v := range productIds.IDS {
 				// front - dan gelen id - lere den gelyan bazada haryt barmy yokmy sol barlanyar
 				var product_id string
-				if err := db.QueryRow(context.Background(), "SELECT id FROM products WHERE id = $1 AND deleted_at IS NULL", v).Scan(&product_id); err != nil {
-					helpers.HandleError(c, 400, err.Error())
-					return
-				}
+				db.QueryRow(context.Background(), "SELECT id FROM products WHERE id = $1 AND deleted_at IS NULL", v).Scan(&product_id)
 
 				if product_id != "" { // eger haryt products tablida bar bolsa onda sol haryt on gelen musderinin
 					// halanlarynyn arasynda barmy ya-da yokmy sol barlanyar
 					var product string
-					if err := db.QueryRow(context.Background(), "SELECT product_id FROM likes WHERE customer_id = $1 AND product_id = $2 AND deleted_at IS NULL", customerID, v).Scan(&product); err != nil {
-						helpers.HandleError(c, 400, err.Error())
-						return
-					}
+					db.QueryRow(context.Background(), "SELECT product_id FROM likes WHERE customer_id = $1 AND product_id = $2 AND deleted_at IS NULL", customerID, v).Scan(&product)
 
 					if product == "" { // eger haryt musderinin halanlarym harytlarynyn arasynda yok bolsa
 						// onda haryt sol musderinin halanlarym tablisasyna gosulyar
@@ -135,10 +129,7 @@ func AddOrRemoveLike(c *gin.Context) {
 		if len(productIds.IDS) != 0 { // front - dan maglumat gelyarmi ya-da gelenokmy sony barlayas
 			// front - dan gelen id - ler halanlarym tablisada barmy ya-da yokmy sony barlayas
 			var product_id string
-			if err := db.QueryRow(context.Background(), "SELECT product_id FROM likes WHERE customer_id = $1 AND product_id = $2 AND deleted_at IS NULL", customerID, productIds.IDS[0]).Scan(&product_id); err != nil {
-				helpers.HandleError(c, 400, err.Error())
-				return
-			}
+			db.QueryRow(context.Background(), "SELECT product_id FROM likes WHERE customer_id = $1 AND product_id = $2 AND deleted_at IS NULL", customerID, productIds.IDS[0]).Scan(&product_id)
 
 			// eger haryt halanlarym tablisada yok bolsa
 			// yzyna yalnyslyk goyberyas
@@ -349,9 +340,7 @@ func GetLikes(customerID string) ([]LikeProduct, error) {
 		for _, v := range languages {
 			var trProduct models.TranslationProduct
 			translation := make(map[string]models.TranslationProduct)
-			if err := db.QueryRow(context.Background(), "SELECT name,description FROM translation_product WHERE lang_id = $1 AND product_id = $2", v.ID, product.ID).Scan(&trProduct.Name, &trProduct.Description); err != nil {
-				return []LikeProduct{}, err
-			}
+			db.QueryRow(context.Background(), "SELECT name,description FROM translation_product WHERE lang_id = $1 AND product_id = $2", v.ID, product.ID).Scan(&trProduct.Name, &trProduct.Description)
 
 			translation[v.NameShort] = trProduct
 			product.Translations = append(product.Translations, translation)
@@ -714,10 +703,7 @@ func GetLikedOrOrderedProductsWithoutCustomer(c *gin.Context) {
 		for _, v := range languages {
 			var trProduct models.TranslationProduct
 			translation := make(map[string]models.TranslationProduct)
-			if err := db.QueryRow(context.Background(), "SELECT name,description FROM translation_product WHERE product_id = $1 AND lang_id = $2 AND deleted_at IS NULL", product.ID, v.ID).Scan(&trProduct.Name, &trProduct.Description); err != nil {
-				helpers.HandleError(c, 400, err.Error())
-				return
-			}
+			db.QueryRow(context.Background(), "SELECT name,description FROM translation_product WHERE product_id = $1 AND lang_id = $2 AND deleted_at IS NULL", product.ID, v.ID).Scan(&trProduct.Name, &trProduct.Description)
 			translation[v.NameShort] = trProduct
 			product.Translations = append(product.Translations, translation)
 		}

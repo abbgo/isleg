@@ -130,20 +130,14 @@ func GetHomePageCategories(c *gin.Context) {
 			for _, v := range languages {
 				var trProduct models.TranslationProduct
 				translation := make(map[string]models.TranslationProduct)
-				if err := db.QueryRow(context.Background(), "SELECT name,description FROM translation_product WHERE lang_id = $1 AND product_id = $2 AND deleted_at IS NULL", v.ID, product.ID).Scan(&trProduct.Name, &trProduct.Description); err != nil {
-					helpers.HandleError(c, 400, err.Error())
-					return
-				}
+				db.QueryRow(context.Background(), "SELECT name,description FROM translation_product WHERE lang_id = $1 AND product_id = $2 AND deleted_at IS NULL", v.ID, product.ID).Scan(&trProduct.Name, &trProduct.Description)
 				translation[v.NameShort] = trProduct
 				product.Translations = append(product.Translations, translation)
 			}
 
 			// get brend where id of product brend_id
 			var brend Brend
-			if err := db.QueryRow(context.Background(), "SELECT b.id,b.name FROM products p LEFT JOIN brends b ON p.brend_id=b.id WHERE p.id = $1 AND p.deleted_at IS NULL AND b.deleted_at IS NULL", product.ID).Scan(&brend.ID, &brend.Name); err != nil {
-				helpers.HandleError(c, 400, err.Error())
-				return
-			}
+			db.QueryRow(context.Background(), "SELECT b.id,b.name FROM products p LEFT JOIN brends b ON p.brend_id=b.id WHERE p.id = $1 AND p.deleted_at IS NULL AND b.deleted_at IS NULL", product.ID).Scan(&brend.ID, &brend.Name)
 			product.Brend = brend
 			products = append(products, product)
 		}

@@ -48,27 +48,21 @@ func ValidateLanguage(nameShort, functionType, langID string) (string, error) {
 		}
 
 		var oldNameShort string
-		if err := db.QueryRow(context.Background(), "SELECT name_short FROM languages WHERE name_short = $1 AND deleted_at IS NULL", strings.ToLower(nameShort)).Scan(&oldNameShort); err != nil {
-			return "", err
-		}
+		db.QueryRow(context.Background(), "SELECT name_short FROM languages WHERE name_short = $1 AND deleted_at IS NULL", strings.ToLower(nameShort)).Scan(&oldNameShort)
 		if oldNameShort != "" {
 			return "", errors.New("short name already exists")
 		}
 	} else if functionType == "update" {
 		// Check if there is a language, id equal to langID
 		var id, flag string
-		if err := db.QueryRow(context.Background(), "SELECT id,flag FROM languages WHERE id = $1 AND deleted_at IS NULL", langID).Scan(&id, &flag); err != nil {
-			return "", err
-		}
+		db.QueryRow(context.Background(), "SELECT id,flag FROM languages WHERE id = $1 AND deleted_at IS NULL", langID).Scan(&id, &flag)
 
 		if flag == "" {
 			return "", errors.New("language not found")
 		}
 
 		var oldID string
-		if err := db.QueryRow(context.Background(), "SELECT id FROM languages WHERE name_short = $1 AND deleted_at IS NULL", strings.ToLower(nameShort)).Scan(&oldID); err != nil {
-			return "", err
-		}
+		db.QueryRow(context.Background(), "SELECT id FROM languages WHERE name_short = $1 AND deleted_at IS NULL", strings.ToLower(nameShort)).Scan(&oldID)
 
 		if oldID != "" && id != oldID {
 			return "", errors.New("short name already exists")

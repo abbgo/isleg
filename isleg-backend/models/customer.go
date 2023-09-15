@@ -64,9 +64,7 @@ func ValidateCustomerRegister(phoneNumber, email string) error {
 		}
 
 		var phone_number string
-		if err := db.QueryRow(context.Background(), "SELECT phone_number FROM customers WHERE phone_number = $1 AND is_register = true AND deleted_at IS NULL", phoneNumber).Scan(&phone_number); err != nil {
-			return err
-		}
+		db.QueryRow(context.Background(), "SELECT phone_number FROM customers WHERE phone_number = $1 AND is_register = true AND deleted_at IS NULL", phoneNumber).Scan(&phone_number)
 
 		if phone_number != "" {
 			return errors.New("this customer already exists")
@@ -75,9 +73,7 @@ func ValidateCustomerRegister(phoneNumber, email string) error {
 
 	if email != "" {
 		var email_address string
-		if err := db.QueryRow(context.Background(), "SELECT email FROM customers WHERE email = $1 AND is_register = true AND deleted_at IS NULL", email).Scan(&email_address); err != nil {
-			return err
-		}
+		db.QueryRow(context.Background(), "SELECT email FROM customers WHERE email = $1 AND is_register = true AND deleted_at IS NULL", email).Scan(&email_address)
 
 		if email_address != "" {
 			return errors.New("this customer already exists")

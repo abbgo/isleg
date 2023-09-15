@@ -29,11 +29,7 @@ func CreateCompanyAddress(c *gin.Context) {
 	// check lans_id
 	for _, v := range companyAddresses {
 		var langID string
-		if err := db.QueryRow(context.Background(), "SELECT id FROM languages WHERE id = $1 AND deleted_at IS NULL", v.LangID).Scan(&langID); err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
-		}
-
+		db.QueryRow(context.Background(), "SELECT id FROM languages WHERE id = $1 AND deleted_at IS NULL", v.LangID).Scan(&langID)
 		if langID == "" {
 			helpers.HandleError(c, 404, "language not found")
 			return
@@ -69,11 +65,7 @@ func UpdateCompanyAddressByID(c *gin.Context) {
 
 	//check id
 	var id string
-	if err := db.QueryRow(context.Background(), "SELECT id FROM company_address WHERE id = $1 AND deleted_at IS NULL", companyAddress.ID).Scan(&id); err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
-
+	db.QueryRow(context.Background(), "SELECT id FROM company_address WHERE id = $1 AND deleted_at IS NULL", companyAddress.ID).Scan(&id)
 	if id == "" {
 		helpers.HandleError(c, 404, "record not found")
 		return
@@ -105,11 +97,7 @@ func GetCompanyAddressByID(c *gin.Context) {
 
 	// check id and get data from database
 	var adress string
-	if err := db.QueryRow(context.Background(), "SELECT address FROM company_address WHERE id = $1 AND deleted_at IS NULL", ID).Scan(&adress); err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
-
+	db.QueryRow(context.Background(), "SELECT address FROM company_address WHERE id = $1 AND deleted_at IS NULL", ID).Scan(&adress)
 	if adress == "" {
 		helpers.HandleError(c, 404, "record not found")
 		return
@@ -138,11 +126,7 @@ func GetCompanyAddress(c *gin.Context) {
 
 	// get company address where lang_id equal langID
 	var address string
-	if err := db.QueryRow(context.Background(), "SELECT address FROM company_address WHERE lang_id = $1 AND deleted_at IS NULL", langID).Scan(&address); err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
-
+	db.QueryRow(context.Background(), "SELECT address FROM company_address WHERE lang_id = $1 AND deleted_at IS NULL", langID).Scan(&address)
 	c.JSON(http.StatusOK, gin.H{
 		"status":          true,
 		"company_address": address,

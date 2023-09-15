@@ -29,10 +29,7 @@ func CreateTranslationPayment(c *gin.Context) {
 	// check lang_id
 	for _, v := range trPaymentPages {
 		var langID string
-		if err := db.QueryRow(context.Background(), "SELECT id FROM languages WHERE id = $1 AND deleted_at IS NULL", v.LangID).Scan(&langID); err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
-		}
+		db.QueryRow(context.Background(), "SELECT id FROM languages WHERE id = $1 AND deleted_at IS NULL", v.LangID).Scan(&langID)
 
 		if langID == "" {
 			helpers.HandleError(c, 404, "language not found")
@@ -73,10 +70,7 @@ func UpdateTranslationPaymentByID(c *gin.Context) {
 
 	// check id
 	var id string
-	if err := db.QueryRow(context.Background(), "SELECT id FROM translation_payment WHERE id = $1 AND deleted_at IS NULL", trPaymentPage.ID).Scan(&id); err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
+	db.QueryRow(context.Background(), "SELECT id FROM translation_payment WHERE id = $1 AND deleted_at IS NULL", trPaymentPage.ID).Scan(&id)
 
 	if id == "" {
 		helpers.HandleError(c, 404, "record not found")
@@ -110,10 +104,7 @@ func GetTranslationPaymentByID(c *gin.Context) {
 
 	// check id and get data from database
 	var t models.TranslationPayment
-	if err := db.QueryRow(context.Background(), "SELECT id,title,content FROM translation_payment WHERE id = $1 AND deleted_at IS NULL", ID).Scan(&t.ID, &t.Title, &t.Content); err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
+	db.QueryRow(context.Background(), "SELECT id,title,content FROM translation_payment WHERE id = $1 AND deleted_at IS NULL", ID).Scan(&t.ID, &t.Title, &t.Content)
 
 	if t.ID == "" {
 		helpers.HandleError(c, 404, "record not found")
@@ -142,10 +133,7 @@ func GetTranslationPaymentByLangID(c *gin.Context) {
 
 	// get translation payment where lang_id equal langID
 	var translationPayment models.TranslationPayment
-	if err := db.QueryRow(context.Background(), "SELECT title,content FROM translation_payment WHERE lang_id = $1 AND deleted_at IS NULL", langID).Scan(&translationPayment.Title, &translationPayment.Content); err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
+	db.QueryRow(context.Background(), "SELECT title,content FROM translation_payment WHERE lang_id = $1 AND deleted_at IS NULL", langID).Scan(&translationPayment.Title, &translationPayment.Content)
 
 	if translationPayment.Title == "" {
 		helpers.HandleError(c, 404, "record not found")

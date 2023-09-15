@@ -89,19 +89,13 @@ func AddCart(c *gin.Context) {
 
 			// bu yerde frontdan gelen haryt bazada barmy ya-da yokmy sol barlanyar
 			var product_id string
-			if err := db.QueryRow(context.Background(), "SELECT id FROM products WHERE id = $1 AND deleted_at IS NULL", v.ProductID).Scan(&product_id); err != nil {
-				helpers.HandleError(c, 400, err.Error())
-				return
-			}
+			db.QueryRow(context.Background(), "SELECT id FROM products WHERE id = $1 AND deleted_at IS NULL", v.ProductID).Scan(&product_id)
 
 			if product_id != "" {
 				// eger haryt bazada bar bolsa onda sol haryt programmany ulanyp otyran musderinin sebedinde barmy ya-da yok
 				// sony barlayas
 				var productId string
-				if err := db.QueryRow(context.Background(), "SELECT product_id FROM cart WHERE customer_id = $1 AND product_id = $2 AND deleted_at IS NULL", customerID, v.ProductID).Scan(&productId); err != nil {
-					helpers.HandleError(c, 400, err.Error())
-					return
-				}
+				db.QueryRow(context.Background(), "SELECT product_id FROM cart WHERE customer_id = $1 AND product_id = $2 AND deleted_at IS NULL", customerID, v.ProductID).Scan(&productId)
 
 				if productId == "" {
 					// eger sol haryt programmany ulanyp otyran musderinin sebedinde yok bolsa
@@ -208,9 +202,7 @@ func GetCartProducts(customerID string) ([]ProductOfCart, error) {
 		for _, v := range languages {
 			var trProduct models.TranslationProduct
 			translation := make(map[string]models.TranslationProduct)
-			if err := db.QueryRow(context.Background(), "SELECT name,description FROM translation_product WHERE lang_id = $1 AND product_id = $2 AND deleted_at IS NULL", v.ID, product.ID).Scan(&trProduct.Name, &trProduct.Description); err != nil {
-				return []ProductOfCart{}, err
-			}
+			db.QueryRow(context.Background(), "SELECT name,description FROM translation_product WHERE lang_id = $1 AND product_id = $2 AND deleted_at IS NULL", v.ID, product.ID).Scan(&trProduct.Name, &trProduct.Description)
 			if err != nil {
 				return []ProductOfCart{}, err
 			}
@@ -283,9 +275,7 @@ func DeleteCart(customerID, productID string) error {
 
 	if productID != "" {
 		var product_id string
-		if err := db.QueryRow(context.Background(), "SELECT product_id FROM cart WHERE customer_id = $1 AND product_id = $2 AND deleted_at IS NULL", customerID, productID).Scan(&product_id); err != nil {
-			return err
-		}
+		db.QueryRow(context.Background(), "SELECT product_id FROM cart WHERE customer_id = $1 AND product_id = $2 AND deleted_at IS NULL", customerID, productID).Scan(&product_id)
 
 		if product_id == "" {
 			return errors.New("this product not found in this customer")

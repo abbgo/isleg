@@ -66,10 +66,7 @@ func UpdateBrendByID(c *gin.Context) {
 
 	// check id and get image of brend
 	var image, brendID string
-	if err := db.QueryRow(context.Background(), "SELECT id,image FROM brends WHERE id = $1 AND deleted_at IS NULL", ID).Scan(&brendID, &image); err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
+	db.QueryRow(context.Background(), "SELECT id,image FROM brends WHERE id = $1 AND deleted_at IS NULL", ID).Scan(&brendID, &image)
 	if brendID == "" {
 		helpers.HandleError(c, 404, "record not found")
 		return
@@ -109,11 +106,7 @@ func GetBrendByID(c *gin.Context) {
 
 	// check id and get data from database
 	var brend models.Brend
-	if err := db.QueryRow(context.Background(), "SELECT id,name,image FROM brends WHERE id = $1 AND deleted_at IS NULL", ID).Scan(&brend.ID, &brend.Name, &brend.Image); err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
-
+	db.QueryRow(context.Background(), "SELECT id,name,image FROM brends WHERE id = $1 AND deleted_at IS NULL", ID).Scan(&brend.ID, &brend.Name, &brend.Image)
 	if brend.ID == "" {
 		helpers.HandleError(c, 404, "record not found")
 		return
@@ -178,27 +171,15 @@ func GetBrends(c *gin.Context) {
 
 	if !status {
 		if search == "" {
-			if err = db.QueryRow(context.Background(), "SELECT COUNT(id) FROM brends WHERE deleted_at IS NULL").Scan(&countOfBrends); err != nil {
-				helpers.HandleError(c, 400, err.Error())
-				return
-			}
+			db.QueryRow(context.Background(), "SELECT COUNT(id) FROM brends WHERE deleted_at IS NULL").Scan(&countOfBrends)
 		} else {
-			if err = db.QueryRow(context.Background(), "SELECT COUNT(id) FROM brends WHERE deleted_at IS NULL AND (to_tsvector(slug) @@ to_tsquery($1) OR slug LIKE $2)", search, searchStr).Scan(&countOfBrends); err != nil {
-				helpers.HandleError(c, 400, err.Error())
-				return
-			}
+			db.QueryRow(context.Background(), "SELECT COUNT(id) FROM brends WHERE deleted_at IS NULL AND (to_tsvector(slug) @@ to_tsquery($1) OR slug LIKE $2)", search, searchStr).Scan(&countOfBrends)
 		}
 	} else {
 		if search == "" {
-			if err = db.QueryRow(context.Background(), "SELECT COUNT(id) FROM brends WHERE deleted_at IS NOT NULL").Scan(&countOfBrends); err != nil {
-				helpers.HandleError(c, 400, err.Error())
-				return
-			}
+			db.QueryRow(context.Background(), "SELECT COUNT(id) FROM brends WHERE deleted_at IS NOT NULL").Scan(&countOfBrends)
 		} else {
-			if err = db.QueryRow(context.Background(), "SELECT COUNT(id) FROM brends WHERE deleted_at IS NOT NULL AND (to_tsvector(slug) @@ to_tsquery($1) OR slug LIKE $2)", search, searchStr).Scan(&countOfBrends); err != nil {
-				helpers.HandleError(c, 400, err.Error())
-				return
-			}
+			db.QueryRow(context.Background(), "SELECT COUNT(id) FROM brends WHERE deleted_at IS NOT NULL AND (to_tsvector(slug) @@ to_tsquery($1) OR slug LIKE $2)", search, searchStr).Scan(&countOfBrends)
 		}
 	}
 
@@ -298,11 +279,7 @@ func DeleteBrendByID(c *gin.Context) {
 
 	// check id and get image of brend
 	var id string
-	if err := db.QueryRow(context.Background(), "SELECT id FROM brends WHERE id = $1 AND deleted_at IS NULL", ID).Scan(&id); err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
-
+	db.QueryRow(context.Background(), "SELECT id FROM brends WHERE id = $1 AND deleted_at IS NULL", ID).Scan(&id)
 	if id == "" {
 		helpers.HandleError(c, 404, "record not found")
 		return
@@ -334,11 +311,7 @@ func RestoreBrendByID(c *gin.Context) {
 
 	// check id
 	var id string
-	if err := db.QueryRow(context.Background(), "SELECT id FROM brends WHERE id = $1 AND deleted_at IS NOT NULL", ID).Scan(&id); err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
-
+	db.QueryRow(context.Background(), "SELECT id FROM brends WHERE id = $1 AND deleted_at IS NOT NULL", ID).Scan(&id)
 	if id == "" {
 		helpers.HandleError(c, 404, "record not found")
 		return
@@ -370,11 +343,7 @@ func DeletePermanentlyBrendByID(c *gin.Context) {
 
 	// check id and get image of brend
 	var image string
-	if err := db.QueryRow(context.Background(), "SELECT image FROM brends WHERE id = $1 AND deleted_at IS NOT NULL", ID).Scan(&image); err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
-
+	db.QueryRow(context.Background(), "SELECT image FROM brends WHERE id = $1 AND deleted_at IS NOT NULL", ID).Scan(&image)
 	if image == "" {
 		helpers.HandleError(c, 404, "record not found")
 		return
@@ -607,10 +576,7 @@ func GetOneBrendWithProducts(c *gin.Context) {
 
 			// get brend where id equal brend_id of product
 			var brend Brend
-			if err := db.QueryRow(context.Background(), "SELECT b.id,b.name FROM products p LEFT JOIN brends b ON p.brend_id=b.id WHERE p.id = $1 AND p.deleted_at IS NULL AND b.deleted_at IS NULL", product.ID).Scan(&brend.ID, &brend.Name); err != nil {
-				helpers.HandleError(c, 400, err.Error())
-				return
-			}
+			db.QueryRow(context.Background(), "SELECT b.id,b.name FROM products p LEFT JOIN brends b ON p.brend_id=b.id WHERE p.id = $1 AND p.deleted_at IS NULL AND b.deleted_at IS NULL", product.ID).Scan(&brend.ID, &brend.Name)
 			product.Brend = brend
 			products = append(products, product)
 		}

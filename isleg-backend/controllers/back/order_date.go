@@ -62,10 +62,7 @@ func CreateOrderDate(c *gin.Context) {
 
 	for _, v := range orderDate.TranslationOrderDates {
 		var langID string
-		if err := db.QueryRow(context.Background(), "SELECT id FROM languages WHERE id = $1 AND deleted_at IS NULL", v.LangID).Scan(&langID); err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
-		}
+		db.QueryRow(context.Background(), "SELECT id FROM languages WHERE id = $1 AND deleted_at IS NULL", v.LangID).Scan(&langID)
 
 		if langID == "" {
 			helpers.HandleError(c, 404, "language not found")
@@ -75,10 +72,7 @@ func CreateOrderDate(c *gin.Context) {
 
 	// add data to order_dates table and return last id
 	var orderDateID string
-	if err := db.QueryRow(context.Background(), "INSERT INTO order_dates (date) VALUES ($1) RETURNING id", orderDate.Date).Scan(&orderDateID); err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
+	db.QueryRow(context.Background(), "INSERT INTO order_dates (date) VALUES ($1) RETURNING id", orderDate.Date).Scan(&orderDateID)
 
 	// add translation order date to database
 	for _, v := range orderDate.TranslationOrderDates {

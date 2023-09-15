@@ -80,10 +80,7 @@ func UpdateCustomerAddressStatus(c *gin.Context) {
 
 	// musderide frontdan gelen id - li salgy barmy ya-da yokmy sony barlayas
 	var address_id string
-	if err := db.QueryRow(context.Background(), "SELECT id FROM customer_address WHERE id = $1 AND deleted_at IS NULL", addressID).Scan(&address_id); err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
+	db.QueryRow(context.Background(), "SELECT id FROM customer_address WHERE id = $1 AND deleted_at IS NULL", addressID).Scan(&address_id)
 
 	// eger salgy yok bolsa yzyna yalnyslyk goyberyas
 	if address_id == "" {
@@ -138,10 +135,7 @@ func AddAddressToCustomer(c *gin.Context) {
 
 	// gosuljak bolyan salgy sol musderide on barmy ya-da yokmy sony barlayas
 	var address_id string
-	if err := db.QueryRow(context.Background(), "SELECT id FROM customer_address WHERE address = $1 AND customer_id = $2 AND deleted_at IS NULL", address, customerID).Scan(&address_id); err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
+	db.QueryRow(context.Background(), "SELECT id FROM customer_address WHERE address = $1 AND customer_id = $2 AND deleted_at IS NULL", address, customerID).Scan(&address_id)
 
 	// eger salgy on bar bolsa onda yzyna musdera duydurys goyberyas
 	if address_id != "" {
@@ -151,10 +145,7 @@ func AddAddressToCustomer(c *gin.Context) {
 
 	// eger salgy on sol musderide yok bolsa , onda sol musderinin salgylarynyn arasyna gosyas
 	var addresID string
-	if err := db.QueryRow(context.Background(), "INSERT INTO customer_address (customer_id,address,is_active) VALUES ($1,$2,true) RETURNING id", customerID, address).Scan(&addresID); err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
+	db.QueryRow(context.Background(), "INSERT INTO customer_address (customer_id,address,is_active) VALUES ($1,$2,true) RETURNING id", customerID, address).Scan(&addresID)
 
 	// gosulan salgyny aktiwe edip musdera degisli beyleki ahli salgylaryn statusynyn false etyas
 	_, err = db.Exec(context.Background(), "UPDATE customer_address SET is_active = false WHERE address != $1 AND customer_id = $2", address, customerID)
@@ -192,10 +183,7 @@ func DeleteCustomerAddress(c *gin.Context) {
 	addressID := c.Param("id")
 
 	var address_id string
-	if err := db.QueryRow(context.Background(), "SELECT id FROM customer_address WHERE id = $1 AND customer_id = $2 AND deleted_at IS NULL", addressID, customerID).Scan(&address_id); err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
+	db.QueryRow(context.Background(), "SELECT id FROM customer_address WHERE id = $1 AND customer_id = $2 AND deleted_at IS NULL", addressID, customerID).Scan(&address_id)
 
 	if address_id == "" {
 		helpers.HandleError(c, 404, "address not found in this customer")

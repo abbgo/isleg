@@ -57,11 +57,7 @@ func UpdateCompanyPhoneByID(c *gin.Context) {
 
 	// check id
 	var comPhoneID string
-	if err := db.QueryRow(context.Background(), "SELECT id FROM company_phone WHERE id = $1 AND deleted_at IS NULL", companyPhone.ID).Scan(&comPhoneID); err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
-
+	db.QueryRow(context.Background(), "SELECT id FROM company_phone WHERE id = $1 AND deleted_at IS NULL", companyPhone.ID).Scan(&comPhoneID)
 	if comPhoneID == "" {
 		c.JSON(http.StatusNotFound, gin.H{
 			"status":  false,
@@ -96,11 +92,7 @@ func GetCompanyPhoneByID(c *gin.Context) {
 
 	// check id and get data from database
 	var phoneNumber string
-	if err := db.QueryRow(context.Background(), "SELECT phone FROM company_phone WHERE id = $1 AND deleted_at IS NULL", ID).Scan(&phoneNumber); err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
-
+	db.QueryRow(context.Background(), "SELECT phone FROM company_phone WHERE id = $1 AND deleted_at IS NULL", ID).Scan(&phoneNumber)
 	if phoneNumber == "" {
 		helpers.HandleError(c, 404, "record not found")
 		return
@@ -174,11 +166,7 @@ func DeleteCompanyPhoneByID(c *gin.Context) {
 
 	// check id
 	var comPhoneID string
-	if err := db.QueryRow(context.Background(), "SELECT id FROM company_phone WHERE id = $1 AND deleted_at IS NULL", ID).Scan(&comPhoneID); err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
-
+	db.QueryRow(context.Background(), "SELECT id FROM company_phone WHERE id = $1 AND deleted_at IS NULL", ID).Scan(&comPhoneID)
 	if comPhoneID == "" {
 		helpers.HandleError(c, 404, "record not found")
 		return
@@ -210,11 +198,7 @@ func RestoreCompanyPhoneByID(c *gin.Context) {
 
 	// check id
 	var comPhoneID string
-	if err := db.QueryRow(context.Background(), "SELECT id FROM company_phone WHERE id = $1 AND deleted_at IS NOT NULL", ID).Scan(&comPhoneID); err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
-
+	db.QueryRow(context.Background(), "SELECT id FROM company_phone WHERE id = $1 AND deleted_at IS NOT NULL", ID).Scan(&comPhoneID)
 	if comPhoneID == "" {
 		helpers.HandleError(c, 404, "record not found")
 		return
@@ -246,11 +230,7 @@ func DeletePermanentlyCompanyPhoneByID(c *gin.Context) {
 
 	//check id
 	var comPhoneID string
-	if err := db.QueryRow(context.Background(), "SELECT id FROM company_phone WHERE id = $1 AND deleted_at IS NOT NULL", ID).Scan(&comPhoneID); err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
-
+	db.QueryRow(context.Background(), "SELECT id FROM company_phone WHERE id = $1 AND deleted_at IS NOT NULL", ID).Scan(&comPhoneID)
 	if comPhoneID == "" {
 		helpers.HandleError(c, 404, "record not found")
 		return

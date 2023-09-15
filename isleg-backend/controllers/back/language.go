@@ -107,11 +107,7 @@ func GetLanguageByID(c *gin.Context) {
 
 	// get  name_short and flag of language from database
 	var lang models.Language
-	if err := db.QueryRow(context.Background(), "SELECT id,name_short,flag FROM languages WHERE id = $1 AND deleted_at IS NULL", langID).Scan(&lang.ID, &lang.NameShort, &lang.Flag); err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
-
+	db.QueryRow(context.Background(), "SELECT id,name_short,flag FROM languages WHERE id = $1 AND deleted_at IS NULL", langID).Scan(&lang.ID, &lang.NameShort, &lang.Flag)
 	if lang.ID == "" {
 		helpers.HandleError(c, 404, "language not found")
 		return
@@ -189,11 +185,7 @@ func DeleteLanguageByID(c *gin.Context) {
 
 	// Check if there is a language, id equal to langID
 	var id, name_short string
-	if err := db.QueryRow(context.Background(), "SELECT id,name_short FROM languages WHERE id = $1 AND deleted_at IS NULL", langID).Scan(&id, &name_short); err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
-
+	db.QueryRow(context.Background(), "SELECT id,name_short FROM languages WHERE id = $1 AND deleted_at IS NULL", langID).Scan(&id, &name_short)
 	if id == "" {
 		helpers.HandleError(c, 404, "language not found")
 		return
@@ -231,11 +223,7 @@ func RestoreLanguageByID(c *gin.Context) {
 
 	// Check if there is a language, id equal to langID
 	var id string
-	if err := db.QueryRow(context.Background(), "SELECT id FROM languages WHERE id = $1 AND deleted_at IS NOT NULL", langID).Scan(&id); err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
-
+	db.QueryRow(context.Background(), "SELECT id FROM languages WHERE id = $1 AND deleted_at IS NOT NULL", langID).Scan(&id)
 	if id == "" {
 		helpers.HandleError(c, 404, "language not found")
 		return
@@ -268,11 +256,7 @@ func DeletePermanentlyLanguageByID(c *gin.Context) {
 
 	// Check if there is a language, id equal to langID and get image of language from database
 	var flag, name_short string
-	if err := db.QueryRow(context.Background(), "SELECT flag,name_short FROM languages WHERE id = $1 AND deleted_at IS NOT NULL", langID).Scan(&flag, &name_short); err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
-
+	db.QueryRow(context.Background(), "SELECT flag,name_short FROM languages WHERE id = $1 AND deleted_at IS NOT NULL", langID).Scan(&flag, &name_short)
 	if flag == "" {
 		helpers.HandleError(c, 404, "language not found")
 		return
@@ -362,10 +346,7 @@ func GetLangID(langShortName string) (string, error) {
 	defer db.Close()
 
 	var langID string
-	if err := db.QueryRow(context.Background(), "SELECT id FROM languages WHERE name_short = $1 AND deleted_at IS NULL", langShortName).Scan(&langID); err != nil {
-		return "", err
-	}
-
+	db.QueryRow(context.Background(), "SELECT id FROM languages WHERE name_short = $1 AND deleted_at IS NULL", langShortName).Scan(&langID)
 	return langID, nil
 }
 
