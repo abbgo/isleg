@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"context"
+	"fmt"
 	"github/abbgo/isleg/isleg-backend/config"
 	"github/abbgo/isleg/isleg-backend/helpers"
 	"github/abbgo/isleg/isleg-backend/models"
@@ -315,6 +316,8 @@ func CreateProductsByExcelFile(c *gin.Context) {
 	}
 
 	for i := 3; i < countOfRows+3; i++ {
+
+		fmt.Println("------------------------------ ", i)
 		countOfErr := 0
 		errString := ""
 		var product ProductForAdmin
@@ -395,20 +398,20 @@ func CreateProductsByExcelFile(c *gin.Context) {
 		names_of_categories := strings.Split(namesOfCategories, " | ")
 		for _, v := range names_of_categories {
 			if strings.Contains(v, " ") {
-				strs := strings.Split(v, " ")
-				for _, str := range strs {
-					if str != "" {
-						v = str
-					}
-				}
+				v = strings.TrimLeft(v, " ")
+				v = strings.TrimRight(v, " ")
 			}
 
+			fmt.Println(v)
+
 			var categoryID string
-			if err := db.QueryRow(context.Background(), "SELECT c.id FROM categories c INNER JOIN translation_category tc ON tc.category_id=c.id INNER JOIN languages l ON l.id=tc.lang_id WHERE l.name_short = $1 AND tc.name = $2 AND c.deleted_at IS NULL AND l.deleted_at IS NULL AND tc.deleted_at IS NULL", "tm", v).Scan(&categoryID); err != nil {
-				helpers.HandleError(c, 400, err.Error())
-				return
+			db.QueryRow(context.Background(), "SELECT c.id FROM categories c INNER JOIN translation_category tc ON tc.category_id=c.id INNER JOIN languages l ON l.id=tc.lang_id WHERE l.name_short = $1 AND tc.name = $2 AND c.deleted_at IS NULL AND l.deleted_at IS NULL AND tc.deleted_at IS NULL", "tm", v).Scan(&categoryID)
+			if categoryID == "" {
+				countOfErr++
+				errString = errString + v + " atly kategoriya yok | "
+			} else {
+				product.Categories = append(product.Categories, categoryID)
 			}
-			product.Categories = append(product.Categories, categoryID)
 		}
 
 		// //////////////////////      GET BREND FROM EXCEL FILE ----------------------------------------
@@ -420,15 +423,10 @@ func CreateProductsByExcelFile(c *gin.Context) {
 
 		var shopID, brendID interface{}
 		if nameOfBrend != "" {
-			if err := db.QueryRow(context.Background(), "SELECT id FROM brends WHERE name = $1 AND deleted_at IS NULL", nameOfBrend).Scan(&product.BrendID); err != nil {
-				helpers.HandleError(c, 400, err.Error())
-				return
-			}
-
+			db.QueryRow(context.Background(), "SELECT id FROM brends WHERE name = $1 AND deleted_at IS NULL", nameOfBrend).Scan(&product.BrendID)
 			if product.BrendID.String == "" {
 				countOfErr++
 				errString = errString + nameOfBrend + " atly brend yok | "
-
 			}
 		}
 
@@ -563,11 +561,8 @@ func CreateProductsByExcelFile(c *gin.Context) {
 			helpers.HandleError(c, 400, err.Error())
 			return
 		}
-		product.IsNew, err = strconv.ParseBool(isNewStr)
-		if err != nil {
-			countOfErr++
-			errString = errString + "harydyn tazeligine hokman true ya-da false yazylan bolmaly | "
-
+		if isNewStr == "1" {
+			product.IsNew = true
 		}
 
 		benefit, _, price, oldPrice, amount, limitAmount, isNew, err := models.ValidateProductModel("", product.Benefit.Float64, "", product.Price, product.OldPrice, product.Amount, product.LimitAmount, product.IsNew, product.Categories)
