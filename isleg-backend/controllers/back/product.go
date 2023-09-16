@@ -187,7 +187,7 @@ func CreateProduct(c *gin.Context) {
 		return
 	}
 
-	benefit, _, price, oldPrice, amount, limitAmount, isNew, err := models.ValidateProductModel("", product.Benefit.Float64, "", product.Price, product.OldPrice, product.Amount, product.LimitAmount, product.IsNew, product.Categories)
+	benefit, _, price, oldPrice, amount, limitAmount, isNew, productCode, err := models.ValidateProductModel("", product.Benefit.Float64, "", product.Price, product.OldPrice, product.Amount, product.LimitAmount, product.IsNew, product.Categories)
 	if err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
@@ -207,7 +207,7 @@ func CreateProduct(c *gin.Context) {
 
 	// create product
 	var productID string
-	db.QueryRow(context.Background(), "INSERT INTO products (brend_id,price,old_price,amount,limit_amount,is_new,shop_id,main_image,benefit) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9) RETURNING id", brendID, price, oldPrice, amount, limitAmount, isNew, shopID, product.MainImage, benefit).Scan(&productID)
+	db.QueryRow(context.Background(), "INSERT INTO products (brend_id,price,old_price,amount,limit_amount,is_new,shop_id,main_image,benefit,code) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) RETURNING id", brendID, price, oldPrice, amount, limitAmount, isNew, shopID, product.MainImage, benefit, productCode).Scan(&productID)
 
 	if len(product.Images) != 0 {
 		// create images of product
@@ -555,7 +555,7 @@ func CreateProductsByExcelFile(c *gin.Context) {
 			product.IsNew = true
 		}
 
-		benefit, _, price, oldPrice, amount, limitAmount, isNew, err := models.ValidateProductModel("", product.Benefit.Float64, "", product.Price, product.OldPrice, product.Amount, product.LimitAmount, product.IsNew, product.Categories)
+		benefit, _, price, oldPrice, amount, limitAmount, isNew, productCode, err := models.ValidateProductModel("", product.Benefit.Float64, "", product.Price, product.OldPrice, product.Amount, product.LimitAmount, product.IsNew, product.Categories)
 		if err != nil {
 			countOfErr++
 			errString = errString + err.Error() + " | "
@@ -633,7 +633,7 @@ func CreateProductsByExcelFile(c *gin.Context) {
 
 		if countOfErr == 0 {
 			// create product
-			resultProducts, err := db.Query(context.Background(), "INSERT INTO products (brend_id,price,old_price,amount,limit_amount,is_new,shop_id,main_image,benefit) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9) RETURNING id", brendID, price, oldPrice, amount, limitAmount, isNew, shopID, product.MainImage, benefit)
+			resultProducts, err := db.Query(context.Background(), "INSERT INTO products (brend_id,price,old_price,amount,limit_amount,is_new,shop_id,main_image,benefit,code) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) RETURNING id", brendID, price, oldPrice, amount, limitAmount, isNew, shopID, product.MainImage, benefit, productCode)
 			if err != nil {
 				helpers.HandleError(c, 400, err.Error())
 				return
@@ -776,7 +776,7 @@ func UpdateProductByID(c *gin.Context) {
 	ID := c.Param("id")
 
 	// validate data
-	benefit, mainImage, price, oldPrice, amount, limitAmount, isNew, err := models.ValidateProductModel(product.MainImage, product.Benefit.Float64, ID, product.Price, product.OldPrice, product.Amount, product.LimitAmount, product.IsNew, product.Categories)
+	benefit, mainImage, price, oldPrice, amount, limitAmount, isNew, _, err := models.ValidateProductModel(product.MainImage, product.Benefit.Float64, ID, product.Price, product.OldPrice, product.Amount, product.LimitAmount, product.IsNew, product.Categories)
 	if err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return

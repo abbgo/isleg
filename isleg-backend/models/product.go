@@ -2,8 +2,11 @@ package models
 
 import (
 	"context"
+	"database/sql"
 	"errors"
 	"github/abbgo/isleg/isleg-backend/config"
+	"github/abbgo/isleg/isleg-backend/helpers"
+	"strings"
 
 	"github.com/google/uuid"
 	"gopkg.in/guregu/null.v4"
@@ -62,47 +65,55 @@ type CategoryProduct struct {
 	DeletedAt  string `json:"-"`
 }
 
-func ValidateProductModel(mainPhoto string, benefit float64, productID string, price float64, oldprice float64, amount, limitamount uint, isNew bool, categories []string) (float64, string, float64, float64, uint, uint, bool, error) {
+func ValidateProductModel(mainPhoto string, benefit float64, productID string, price float64, oldprice float64, amount, limitamount uint, isNew bool, categories []string) (float64, string, float64, float64, uint, uint, bool, string, error) {
+	var productCode string
+
 	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
-		return 0, "", 0, 0, 0, 0, false, err
+		return 0, "", 0, 0, 0, 0, false, "", err
 	}
 	defer db.Close()
 
 	// validate categies
 	if len(categories) == 0 {
-		return 0, "", 0, 0, 0, 0, false, errors.New("product category is required")
+		return 0, "", 0, 0, 0, 0, false, "", errors.New("product category is required")
 	}
 
 	// check catrgory id
 	for _, v := range categories {
-		var categoryID string
-		db.QueryRow(context.Background(), "SELECT id FROM categories WHERE id = $1 AND deleted_at IS NULL", v).Scan(&categoryID)
+		var nameOfCatagory string
+		var parentCategoryID sql.NullString
+		if err := db.QueryRow(context.Background(), "SELECT c.parent_category_id,t.name FROM categories c INNER JOIN translation_category t ON t.category_id = c.id INNER JOIN languages l ON l.id = t.lang_id WHERE c.id = $1 AND l.deleted_at IS NULL AND t.deleted_at IS NULL AND c.deleted_at IS NULL AND l.name_short = 'tm'", v).Scan(&parentCategoryID, &nameOfCatagory); err != nil {
+			return 0, "", 0, 0, 0, 0, false, "", err
+		}
+		if nameOfCatagory == "" {
+			return 0, "", 0, 0, 0, 0, false, "", errors.New("category not found")
+		}
 
-		if categoryID == "" {
-			return 0, "", 0, 0, 0, 0, false, errors.New("category not found")
+		if parentCategoryID.String == "" {
+			productCode = strings.ToUpper(nameOfCatagory[:2]) + "-" + helpers.GenerateRandomCode()
 		}
 	}
 
 	if limitamount > amount {
-		return 0, "", 0, 0, 0, 0, false, errors.New("cannot be less than limit_amount amount")
+		return 0, "", 0, 0, 0, 0, false, "", errors.New("cannot be less than limit_amount amount")
 	}
 	if price < 0 {
-		return 0, "", 0, 0, 0, 0, false, errors.New("price cannot be less than zero")
+		return 0, "", 0, 0, 0, 0, false, "", errors.New("price cannot be less than zero")
 	}
 
 	if benefit < 0 {
-		return 0, "", 0, 0, 0, 0, false, errors.New("benefit cannot be less than zero")
+		return 0, "", 0, 0, 0, 0, false, "", errors.New("benefit cannot be less than zero")
 	}
 
 	// validate old_price
 	if oldprice != 0 {
 		if oldprice < 0 {
-			return 0, "", 0, 0, 0, 0, false, errors.New("old price cannot be less than zero")
+			return 0, "", 0, 0, 0, 0, false, "", errors.New("old price cannot be less than zero")
 		}
 		if oldprice < price {
-			return 0, "", 0, 0, 0, 0, false, errors.New("cannot be less than oldPrice Price")
+			return 0, "", 0, 0, 0, 0, false, "", errors.New("cannot be less than oldPrice Price")
 		}
 	}
 
@@ -111,17 +122,17 @@ func ValidateProductModel(mainPhoto string, benefit float64, productID string, p
 		db.QueryRow(context.Background(), "SELECT main_image FROM products WHERE deleted_at IS NULL AND id = $1", productID).Scan(&mainImage)
 
 		if mainImage == "" {
-			return 0, "", 0, 0, 0, 0, false, errors.New("main image of product not found")
+			return 0, "", 0, 0, 0, 0, false, "", errors.New("main image of product not found")
 		}
 
 		if mainPhoto != "" {
 			mainImage = mainPhoto
 			_, err := db.Exec(context.Background(), "DELETE FROM helper_images WHERE image = $1", mainImage)
 			if err != nil {
-				return 0, "", 0, 0, 0, 0, false, err
+				return 0, "", 0, 0, 0, 0, false, "", err
 			}
 		}
-		return benefit, mainImage, price, oldprice, amount, limitamount, isNew, nil
+		return benefit, mainImage, price, oldprice, amount, limitamount, isNew, "", nil
 	}
-	return benefit, "", price, oldprice, amount, limitamount, isNew, nil
+	return benefit, "", price, oldprice, amount, limitamount, isNew, productCode, nil
 }
