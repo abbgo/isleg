@@ -29,6 +29,7 @@ type Product struct {
 	Categories         []string             `json:"categories,omitempty"`
 	Brend              Brend                `json:"brend,omitempty"`
 	Shop               Shop                 `json:"shop,omitempty"`
+	Code               string               `json:"code,omitempty"`
 }
 
 type Images struct {
