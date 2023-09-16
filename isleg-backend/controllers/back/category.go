@@ -351,7 +351,7 @@ func GetAllCategory(c *gin.Context) {
 	defer db.Close()
 
 	// get all category where parent category id is null
-	rows, err := db.Query(context.Background(), "SELECT c.id,c.image,tc.name FROM categories c LEFT JOIN translation_category tc ON c.id=tc.category_id INNER JOIN category_product cp ON c.id=cp.category_id WHERE tc.lang_id = $1 AND c.parent_category_id IS NULL AND cp.deleted_at IS NOT NULL ORDER BY c.created_at DESC", langID)
+	rows, err := db.Query(context.Background(), "SELECT DISTINCT ON (c.id,c.created_at) c.id,c.image,tc.name FROM categories c LEFT JOIN translation_category tc ON c.id=tc.category_id INNER JOIN category_product cp ON c.id=cp.category_id WHERE tc.lang_id = $1 AND c.parent_category_id IS NULL AND cp.deleted_at IS NOT NULL ORDER BY c.created_at DESC", langID)
 	if err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
@@ -366,7 +366,7 @@ func GetAllCategory(c *gin.Context) {
 		}
 
 		// get all category where parent category id equal category id
-		rowss, err := db.Query(context.Background(), "SELECT c.id,tc.name FROM categories c LEFT JOIN translation_category tc ON c.id=tc.category_id INNER JOIN category_product cp ON cp.category_id=c.id WHERE tc.lang_id = $1 AND c.parent_category_id = $2 AND cp.deleted_at IS NOT NULL ORDER BY c.created_at DESC", langID, result.ID)
+		rowss, err := db.Query(context.Background(), "SELECT DISTINCT ON (c.id,c.created_at) c.id,tc.name FROM categories c LEFT JOIN translation_category tc ON c.id=tc.category_id INNER JOIN category_product cp ON cp.category_id=c.id WHERE tc.lang_id = $1 AND c.parent_category_id = $2 AND cp.deleted_at IS NOT NULL ORDER BY c.created_at DESC", langID, result.ID)
 		if err != nil {
 			helpers.HandleError(c, 400, err.Error())
 			return
