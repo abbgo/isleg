@@ -261,7 +261,7 @@ func UpdateProductsCode(c *gin.Context) {
 	}
 	defer db.Close()
 
-	rows, err := db.Query(context.Background(), "SELECT id FROM products ORDER BY created_at DESC LIMIT 1")
+	rows, err := db.Query(context.Background(), "SELECT id FROM products")
 	if err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
@@ -277,15 +277,13 @@ func UpdateProductsCode(c *gin.Context) {
 
 		var nameOfCategory sql.NullString
 		db.QueryRow(context.Background(), "SELECT t.name FROM translation_category t INNER JOIN categories c ON c.id = t.category_id INNER JOIN category_product cp ON cp.category_id = c.id INNER JOIN languages l ON l.id = t.lang_id WHERE l.name_short = 'tm' AND c.parent_category_id IS NULL AND cp.product_id = $1 AND cp.deleted_at IS NULL AND c.deleted_at IS NULL AND t.deleted_at IS NULL AND l.deleted_at IS NULL", id).Scan(&nameOfCategory)
-		if nameOfCategory.String == "" {
-			helpers.HandleError(c, 404, "category not found")
-			return
-		}
 
-		_, err := db.Exec(context.Background(), "UPDATE products SET code = $1 WHERE id = $2", strings.ToUpper(slug.MakeLang(nameOfCategory.String, "en")[:2])+"-"+helpers.GenerateRandomCode(), id)
-		if err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
+		if nameOfCategory.String != "" {
+			_, err := db.Exec(context.Background(), "UPDATE products SET code = $1 WHERE id = $2", strings.ToUpper(slug.MakeLang(nameOfCategory.String, "en")[:2])+"-"+helpers.GenerateRandomCode(), id)
+			if err != nil {
+				helpers.HandleError(c, 400, err.Error())
+				return
+			}
 		}
 	}
 
