@@ -615,7 +615,6 @@ func GetAllCategoryForHeader(langID, search, searchStr string, limit, page uint)
 			}
 		}
 	}
-	defer rowsCount.Close()
 	defer rows.Close()
 
 	var results []ResultCategory
