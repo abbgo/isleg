@@ -163,6 +163,7 @@ func BackRoutes(back *gin.RouterGroup) {
 		// Baslayar --- haryt ucin CRUD
 
 		securedAdmin.POST("product", backController.CreateProduct)
+		securedAdmin.POST("product-code", backController.UpdateProductsCode)
 		securedAdmin.POST("product-in-excel", backController.CreateProductsByExcelFile)
 		securedAdmin.PUT("product/:id", backController.UpdateProductByID)
 		securedAdmin.GET("product/:id", backController.GetProductByID)
@@ -172,7 +173,7 @@ func BackRoutes(back *gin.RouterGroup) {
 		securedAdmin.DELETE("delete-product/:id", backController.DeletePermanentlyProductByID)
 		// Gutaryar --- haryt ucin CRUD
 
-		// Baslayar --- firmanyn telefon belgisi ucin CRUD
+		// Baslayar --- firmanyn telefon belgisi ucin CRUDf
 		securedAdmin.POST("company-phone", backController.CreateCompanyPhone)
 		securedAdmin.PUT("company-phone", backController.UpdateCompanyPhoneByID)
 		securedAdmin.GET("company-phone/:id", backController.GetCompanyPhoneByID)

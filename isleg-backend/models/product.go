@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/google/uuid"
+	"github.com/gosimple/slug"
 	"gopkg.in/guregu/null.v4"
 )
 
@@ -92,7 +93,7 @@ func ValidateProductModel(mainPhoto string, benefit float64, productID string, p
 		}
 
 		if parentCategoryID.String == "" {
-			productCode = strings.ToUpper(nameOfCatagory[:2]) + "-" + helpers.GenerateRandomCode()
+			productCode = strings.ToUpper(slug.MakeLang(nameOfCatagory, "en")[:2]) + "-" + helpers.GenerateRandomCode()
 		}
 	}
 

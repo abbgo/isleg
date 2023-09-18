@@ -153,6 +153,7 @@ func GetLanguages(c *gin.Context) {
 			return
 		}
 	}
+	defer rows.Close()
 
 	for rows.Next() {
 		var l models.Language
@@ -300,6 +301,7 @@ func GetAllLanguageForHeader() ([]models.Language, error) {
 	if err != nil {
 		return nil, err
 	}
+	defer rows.Close()
 
 	for rows.Next() {
 		var l models.Language
@@ -323,6 +325,7 @@ func GetAllLanguageWithIDAndNameShort() ([]models.Language, error) {
 	if err != nil {
 		return []models.Language{}, err
 	}
+	defer languageRows.Close()
 
 	var languages []models.Language
 	for languageRows.Next() {

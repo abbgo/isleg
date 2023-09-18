@@ -76,6 +76,7 @@ func GetHomePageCategories(c *gin.Context) {
 		helpers.HandleError(c, 400, err.Error())
 		return
 	}
+	defer categoryRows.Close()
 
 	var homePageCategories []HomePageCategory
 	for categoryRows.Next() {
@@ -91,6 +92,7 @@ func GetHomePageCategories(c *gin.Context) {
 			helpers.HandleError(c, 400, err.Error())
 			return
 		}
+		defer productRows.Close()
 
 		var products []Product
 		for productRows.Next() {
@@ -116,6 +118,7 @@ func GetHomePageCategories(c *gin.Context) {
 				helpers.HandleError(c, 400, err.Error())
 				return
 			}
+			defer rowsLang.Close()
 
 			var languages []models.Language
 			for rowsLang.Next() {

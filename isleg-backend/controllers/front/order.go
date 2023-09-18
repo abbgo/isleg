@@ -498,6 +498,7 @@ func GetOrders(c *gin.Context) {
 			}
 		}
 	}
+	defer countAllCustomer.Close()
 
 	for countAllCustomer.Next() {
 		countOfOrders++
@@ -532,6 +533,7 @@ func GetOrders(c *gin.Context) {
 			}
 		}
 	}
+	defer rowsCustomerID.Close()
 
 	var customerIDs []string
 	for rowsCustomerID.Next() {
@@ -555,6 +557,7 @@ func GetOrders(c *gin.Context) {
 		helpers.HandleError(c, 400, err.Error())
 		return
 	}
+	defer rowsOrder.Close()
 
 	for rowsOrder.Next() {
 		var order OrderForAdmin
@@ -568,6 +571,7 @@ func GetOrders(c *gin.Context) {
 			helpers.HandleError(c, 400, err.Error())
 			return
 		}
+		defer rowCustomer.Close()
 
 		for rowCustomer.Next() {
 			if err := rowCustomer.Scan(&order.FullName, &order.PhoneNumber); err != nil {
@@ -581,6 +585,7 @@ func GetOrders(c *gin.Context) {
 			helpers.HandleError(c, 400, err.Error())
 			return
 		}
+		defer rowsOrderedProducts.Close()
 
 		var products []ProductForAdmin
 		for rowsOrderedProducts.Next() {
@@ -735,6 +740,7 @@ func GetCustomerOrders(c *gin.Context) {
 		helpers.HandleError(c, 400, err.Error())
 		return
 	}
+	defer rowsOrders.Close()
 
 	var orders []GetOrder
 	for rowsOrders.Next() {
@@ -749,6 +755,7 @@ func GetCustomerOrders(c *gin.Context) {
 			helpers.HandleError(c, 400, err.Error())
 			return
 		}
+		defer rowsOrderedProducts.Close()
 
 		var products []ProductOfCart
 		for rowsOrderedProducts.Next() {
@@ -763,6 +770,7 @@ func GetCustomerOrders(c *gin.Context) {
 				helpers.HandleError(c, 400, err.Error())
 				return
 			}
+			defer rowProduct.Close()
 
 			for rowProduct.Next() {
 				if err := rowProduct.Scan(&product.BrendID, &product.Price, &product.OldPrice, &product.Amount, &product.LimitAmount, &product.IsNew, &product.MainImage, &product.Benefit); err != nil {
@@ -787,6 +795,7 @@ func GetCustomerOrders(c *gin.Context) {
 				helpers.HandleError(c, 400, err.Error())
 				return
 			}
+			defer rowsLang.Close()
 
 			var languages []models.Language
 			for rowsLang.Next() {
@@ -1110,6 +1119,7 @@ func ReturnOrder(c *gin.Context) {
 		helpers.HandleError(c, 400, err.Error())
 		return
 	}
+	defer rowsOrderedProduct.Close()
 
 	var orderedProducts []models.OrderedProducts
 	for rowsOrderedProduct.Next() {

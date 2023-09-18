@@ -201,6 +201,7 @@ func GetBanners(c *gin.Context) {
 		helpers.HandleError(c, 400, err.Error())
 		return
 	}
+	defer rowBanners.Close()
 
 	var banners []models.Banner
 	for rowBanners.Next() {
@@ -234,6 +235,7 @@ func GetBannersForFront(c *gin.Context) {
 		helpers.HandleError(c, 400, err.Error())
 		return
 	}
+	defer rowBanners.Close()
 
 	var banners []models.Banner
 	for rowBanners.Next() {

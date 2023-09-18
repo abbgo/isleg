@@ -799,6 +799,7 @@ func GetOrderTime(c *gin.Context) {
 		helpers.HandleError(c, 400, err.Error())
 		return
 	}
+	defer rowsOrderDate.Close()
 
 	var orderDates []OrderDateAndTime
 	for rowsOrderDate.Next() {

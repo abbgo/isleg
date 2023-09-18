@@ -135,6 +135,7 @@ func GetAfisaByID(c *gin.Context) {
 		helpers.HandleError(c, 400, err.Error())
 		return
 	}
+	defer rowsTrAfisa.Close()
 
 	var translations []models.TranslationAfisa
 	for rowsTrAfisa.Next() {
@@ -265,6 +266,7 @@ func GetAfisas(c *gin.Context) {
 			}
 		}
 	}
+	defer rowAfisas.Close()
 
 	var afisas []OneAfisa
 	for rowAfisas.Next() {
@@ -279,9 +281,9 @@ func GetAfisas(c *gin.Context) {
 			helpers.HandleError(c, 400, err.Error())
 			return
 		}
+		defer rowsTrAfisa.Close()
 
 		var translations []models.TranslationAfisa
-
 		for rowsTrAfisa.Next() {
 			var translation models.TranslationAfisa
 			if err := rowsTrAfisa.Scan(&translation.LangID, &translation.Title, &translation.Description); err != nil {

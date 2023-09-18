@@ -47,7 +47,7 @@ func CreateCompanySetting(c *gin.Context) {
 	}
 
 	// add data to database
-	_, err = db.Query(context.Background(), "INSERT INTO company_setting (logo,favicon,email,instagram,imo) VALUES ($1,$2,$3,$4,$5)", "uploads/setting/"+newFileNameLogo, "uploads/setting/"+newFileNameFavicon, email, instagram, imo)
+	_, err = db.Exec(context.Background(), "INSERT INTO company_setting (logo,favicon,email,instagram,imo) VALUES ($1,$2,$3,$4,$5)", "uploads/setting/"+newFileNameLogo, "uploads/setting/"+newFileNameFavicon, email, instagram, imo)
 	if err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return

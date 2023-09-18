@@ -243,6 +243,7 @@ func GetCategoryByID(c *gin.Context) {
 		helpers.HandleError(c, 400, err.Error())
 		return
 	}
+	defer rowsTrCategory.Close()
 
 	var translations []models.TranslationCategory
 	for rowsTrCategory.Next() {
@@ -285,6 +286,7 @@ func GetCategoryByIDWithChild(c *gin.Context) {
 		helpers.HandleError(c, 400, err.Error())
 		return
 	}
+	defer rows.Close()
 
 	for rows.Next() {
 		if err := rows.Scan(&result.ID, &result.Image, &result.Name); err != nil {
@@ -298,6 +300,7 @@ func GetCategoryByIDWithChild(c *gin.Context) {
 			helpers.HandleError(c, 400, err.Error())
 			return
 		}
+		defer rowss.Close()
 
 		var resuls []ResultCategor
 		for rowss.Next() {
@@ -313,6 +316,7 @@ func GetCategoryByIDWithChild(c *gin.Context) {
 				helpers.HandleError(c, 400, err.Error())
 				return
 			}
+			defer rowsss.Close()
 
 			var resus []ResultCatego
 			for rowsss.Next() {
@@ -356,6 +360,7 @@ func GetAllCategory(c *gin.Context) {
 		helpers.HandleError(c, 400, err.Error())
 		return
 	}
+	defer rows.Close()
 
 	var results []ResultCategory
 	for rows.Next() {
@@ -371,6 +376,7 @@ func GetAllCategory(c *gin.Context) {
 			helpers.HandleError(c, 400, err.Error())
 			return
 		}
+		defer rowss.Close()
 
 		var resuls []ResultCategor
 		for rowss.Next() {
@@ -386,6 +392,7 @@ func GetAllCategory(c *gin.Context) {
 				helpers.HandleError(c, 400, err.Error())
 				return
 			}
+			defer rowsss.Close()
 
 			var resus []ResultCatego
 			for rowsss.Next() {
@@ -430,6 +437,7 @@ func GetDeletedCategories(c *gin.Context) {
 		helpers.HandleError(c, 400, err.Error())
 		return
 	}
+	defer rows.Close()
 
 	var results []ResultCategory
 	for rows.Next() {
@@ -445,6 +453,7 @@ func GetDeletedCategories(c *gin.Context) {
 			helpers.HandleError(c, 400, err.Error())
 			return
 		}
+		defer rowss.Close()
 
 		var resuls []ResultCategor
 		for rowss.Next() {
@@ -460,6 +469,7 @@ func GetDeletedCategories(c *gin.Context) {
 				helpers.HandleError(c, 400, err.Error())
 				return
 			}
+			defer rowsss.Close()
 
 			var resus []ResultCatego
 			for rowsss.Next() {
@@ -605,6 +615,8 @@ func GetAllCategoryForHeader(langID, search, searchStr string, limit, page uint)
 			}
 		}
 	}
+	defer rowsCount.Close()
+	defer rows.Close()
 
 	var results []ResultCategory
 	for rows.Next() {
@@ -618,6 +630,7 @@ func GetAllCategoryForHeader(langID, search, searchStr string, limit, page uint)
 		if err != nil {
 			return []ResultCategory{}, 0, err
 		}
+		defer rowss.Close()
 
 		var resuls []ResultCategor
 		for rowss.Next() {
@@ -631,6 +644,7 @@ func GetAllCategoryForHeader(langID, search, searchStr string, limit, page uint)
 			if err != nil {
 				return []ResultCategory{}, 0, err
 			}
+			defer rowsss.Close()
 
 			var resus []ResultCatego
 			for rowsss.Next() {
@@ -771,6 +785,7 @@ func DeletePermanentlyCategoryByID(c *gin.Context) {
 		helpers.HandleError(c, 400, err.Error())
 		return
 	}
+	defer rowsMainImageProduct.Close()
 
 	var mainImages []models.Product
 	for rowsMainImageProduct.Next() {
@@ -796,6 +811,7 @@ func DeletePermanentlyCategoryByID(c *gin.Context) {
 		helpers.HandleError(c, 400, err.Error())
 		return
 	}
+	defer rowsImagesProduct.Close()
 
 	var images []models.Images
 	for rowsImagesProduct.Next() {
@@ -862,6 +878,7 @@ func DeletePermanentlyCategoryByID(c *gin.Context) {
 		helpers.HandleError(c, 400, err.Error())
 		return
 	}
+	defer rowChildCategory.Close()
 
 	var childCategoryIDS []string
 	for rowChildCategory.Next() {
@@ -880,6 +897,7 @@ func DeletePermanentlyCategoryByID(c *gin.Context) {
 			helpers.HandleError(c, 400, err.Error())
 			return
 		}
+		defer rowPrdcs.Close()
 
 		var childMainImages []models.Product
 		for rowPrdcs.Next() {
@@ -903,6 +921,7 @@ func DeletePermanentlyCategoryByID(c *gin.Context) {
 			helpers.HandleError(c, 400, err.Error())
 			return
 		}
+		defer rowsChildImagesProduct.Close()
 
 		var childImages []models.Images
 		for rowsChildImagesProduct.Next() {
@@ -1027,6 +1046,7 @@ func GetOneCategoryWithProducts(c *gin.Context) {
 		helpers.HandleError(c, 400, err.Error())
 		return
 	}
+	defer categoryRow.Close()
 
 	var category Category
 	for categoryRow.Next() {
@@ -1046,6 +1066,7 @@ func GetOneCategoryWithProducts(c *gin.Context) {
 			helpers.HandleError(c, 400, err.Error())
 			return
 		}
+		defer productCount.Close()
 
 		for productCount.Next() {
 			if err := productCount.Scan(&countOfProducts); err != nil {
@@ -1062,6 +1083,7 @@ func GetOneCategoryWithProducts(c *gin.Context) {
 			helpers.HandleError(c, 400, err.Error())
 			return
 		}
+		defer productRows.Close()
 
 		var products []Product
 		for productRows.Next() {
@@ -1087,6 +1109,7 @@ func GetOneCategoryWithProducts(c *gin.Context) {
 				helpers.HandleError(c, 400, err.Error())
 				return
 			}
+			defer rowsLang.Close()
 
 			var languages []models.Language
 			for rowsLang.Next() {
@@ -1104,6 +1127,7 @@ func GetOneCategoryWithProducts(c *gin.Context) {
 					helpers.HandleError(c, 400, err.Error())
 					return
 				}
+				defer rowTrProduct.Close()
 
 				var trProduct models.TranslationProduct
 				translation := make(map[string]models.TranslationProduct)
@@ -1123,6 +1147,7 @@ func GetOneCategoryWithProducts(c *gin.Context) {
 				helpers.HandleError(c, 400, err.Error())
 				return
 			}
+			defer brendRows.Close()
 
 			var brend Brend
 			for brendRows.Next() {
@@ -1194,6 +1219,7 @@ func GetOneCategoryWithDeletedProducts(c *gin.Context) {
 		helpers.HandleError(c, 400, err.Error())
 		return
 	}
+	defer categoryRow.Close()
 
 	var category Category
 	for categoryRow.Next() {
@@ -1213,6 +1239,7 @@ func GetOneCategoryWithDeletedProducts(c *gin.Context) {
 			helpers.HandleError(c, 400, err.Error())
 			return
 		}
+		defer productCount.Close()
 
 		for productCount.Next() {
 			if err := productCount.Scan(&countOfProducts); err != nil {
@@ -1229,6 +1256,7 @@ func GetOneCategoryWithDeletedProducts(c *gin.Context) {
 			helpers.HandleError(c, 400, err.Error())
 			return
 		}
+		defer productRows.Close()
 
 		var products []Product
 		for productRows.Next() {
@@ -1254,6 +1282,7 @@ func GetOneCategoryWithDeletedProducts(c *gin.Context) {
 				helpers.HandleError(c, 400, err.Error())
 				return
 			}
+			defer rowsLang.Close()
 
 			var languages []models.Language
 			for rowsLang.Next() {
@@ -1271,6 +1300,7 @@ func GetOneCategoryWithDeletedProducts(c *gin.Context) {
 					helpers.HandleError(c, 400, err.Error())
 					return
 				}
+				defer rowTrProduct.Close()
 
 				var trProduct models.TranslationProduct
 				translation := make(map[string]models.TranslationProduct)
@@ -1324,6 +1354,7 @@ func SearchCategory(c *gin.Context) {
 		helpers.HandleError(c, 400, err.Error())
 		return
 	}
+	defer rowsCategory.Close()
 
 	var categories []ResultCategory
 	for rowsCategory.Next() {
@@ -1338,6 +1369,7 @@ func SearchCategory(c *gin.Context) {
 			helpers.HandleError(c, 400, err.Error())
 			return
 		}
+		defer rowss.Close()
 
 		var resuls []ResultCategor
 		for rowss.Next() {
@@ -1352,6 +1384,7 @@ func SearchCategory(c *gin.Context) {
 				helpers.HandleError(c, 400, err.Error())
 				return
 			}
+			defer rowsss.Close()
 
 			var resus []ResultCatego
 			for rowsss.Next() {

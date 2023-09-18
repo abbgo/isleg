@@ -260,6 +260,7 @@ func GetAdmins(c *gin.Context) {
 		helpers.HandleError(c, 400, err.Error())
 		return
 	}
+	defer rowsAdmin.Close()
 
 	var admin models.Admin
 	for rowsAdmin.Next() {

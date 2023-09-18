@@ -74,6 +74,7 @@ func Search(c *gin.Context) {
 		helpers.HandleError(c, 400, err.Error())
 		return
 	}
+	defer rowsProduct.Close()
 
 	var products []LikeProduct
 	for rowsProduct.Next() {
@@ -99,6 +100,7 @@ func Search(c *gin.Context) {
 			helpers.HandleError(c, 400, err.Error())
 			return
 		}
+		defer rowsLang.Close()
 
 		var languages []models.Language
 		for rowsLang.Next() {
@@ -267,6 +269,7 @@ func FilterAndSort(c *gin.Context) {
 		helpers.HandleError(c, 400, err.Error())
 		return
 	}
+	defer rowsProduct.Close()
 
 	var products []LikeProduct
 	for rowsProduct.Next() {
@@ -292,6 +295,7 @@ func FilterAndSort(c *gin.Context) {
 			helpers.HandleError(c, 400, err.Error())
 			return
 		}
+		defer rowsLang.Close()
 
 		var languages []models.Language
 		for rowsLang.Next() {

@@ -207,6 +207,7 @@ func GetShops(c *gin.Context) {
 			}
 		}
 	}
+	defer rowsShop.Close()
 
 	var shops []models.Shop
 	for rowsShop.Next() {
@@ -317,6 +318,7 @@ func DeletePermanentlyShopByID(c *gin.Context) {
 		helpers.HandleError(c, 400, err.Error())
 		return
 	}
+	defer rowsMainImage.Close()
 
 	var mainImages []string
 	for rowsMainImage.Next() {
@@ -340,6 +342,7 @@ func DeletePermanentlyShopByID(c *gin.Context) {
 		helpers.HandleError(c, 400, err.Error())
 		return
 	}
+	defer rowsImages.Close()
 
 	var images []models.Images
 	for rowsImages.Next() {

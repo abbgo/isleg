@@ -213,6 +213,7 @@ func GetBrends(c *gin.Context) {
 			}
 		}
 	}
+	defer rowBrends.Close()
 
 	// get data from database
 
@@ -248,6 +249,7 @@ func GetDeletedBrends(c *gin.Context) {
 		helpers.HandleError(c, 400, err.Error())
 		return
 	}
+	defer rowBrends.Close()
 
 	var brends []models.Brend
 	for rowBrends.Next() {
@@ -359,6 +361,7 @@ func DeletePermanentlyBrendByID(c *gin.Context) {
 		helpers.HandleError(c, 400, err.Error())
 		return
 	}
+	defer rowsMainImage.Close()
 
 	var mainImages []string
 	for rowsMainImage.Next() {
@@ -382,6 +385,7 @@ func DeletePermanentlyBrendByID(c *gin.Context) {
 		helpers.HandleError(c, 400, err.Error())
 		return
 	}
+	defer rowsImages.Close()
 
 	var images []models.Images
 	for rowsImages.Next() {
@@ -427,6 +431,7 @@ func GetAllBrendForHomePage() ([]models.Brend, error) {
 	if err != nil {
 		return []models.Brend{}, err
 	}
+	defer rows.Close()
 
 	for rows.Next() {
 		var brend models.Brend
@@ -484,6 +489,7 @@ func GetOneBrendWithProducts(c *gin.Context) {
 		helpers.HandleError(c, 400, err.Error())
 		return
 	}
+	defer brendRow.Close()
 
 	for brendRow.Next() {
 		if err := brendRow.Scan(&brend.ID, &brend.Image, &brend.Name); err != nil {
@@ -502,6 +508,7 @@ func GetOneBrendWithProducts(c *gin.Context) {
 			helpers.HandleError(c, 400, err.Error())
 			return
 		}
+		defer brendCount.Close()
 
 		for brendCount.Next() {
 			if err := brendCount.Scan(&countOfProducts); err != nil {
@@ -518,6 +525,7 @@ func GetOneBrendWithProducts(c *gin.Context) {
 			helpers.HandleError(c, 400, err.Error())
 			return
 		}
+		defer productRows.Close()
 
 		var products []Product
 		for productRows.Next() {
@@ -543,6 +551,7 @@ func GetOneBrendWithProducts(c *gin.Context) {
 				helpers.HandleError(c, 400, err.Error())
 				return
 			}
+			defer rowsLang.Close()
 
 			var languages []models.Language
 			for rowsLang.Next() {
@@ -560,6 +569,7 @@ func GetOneBrendWithProducts(c *gin.Context) {
 					helpers.HandleError(c, 400, err.Error())
 					return
 				}
+				defer rowTrProduct.Close()
 
 				var trProduct models.TranslationProduct
 				translation := make(map[string]models.TranslationProduct)

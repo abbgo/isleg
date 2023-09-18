@@ -664,6 +664,7 @@ func GetLikedOrOrderedProductsWithoutCustomer(c *gin.Context) {
 		helpers.HandleError(c, 400, err.Error())
 		return
 	}
+	defer rowLikes.Close()
 
 	var products []LikeProduct
 	for rowLikes.Next() {
@@ -689,6 +690,7 @@ func GetLikedOrOrderedProductsWithoutCustomer(c *gin.Context) {
 			helpers.HandleError(c, 400, err.Error())
 			return
 		}
+		defer rowsLang.Close()
 
 		var languages []models.Language
 		for rowsLang.Next() {

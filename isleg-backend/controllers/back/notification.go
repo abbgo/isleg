@@ -112,6 +112,7 @@ func GetNotificationByID(c *gin.Context) {
 		helpers.HandleError(c, 400, err.Error())
 		return
 	}
+	defer rowNotification.Close()
 
 	for rowNotification.Next() {
 		if err := rowNotification.Scan(&notification.ID, &notification.Name); err != nil {
@@ -129,6 +130,7 @@ func GetNotificationByID(c *gin.Context) {
 			helpers.HandleError(c, 400, err.Error())
 			return
 		}
+		defer rowsTrNotification.Close()
 
 		var trNotifications []models.TranslationNotification
 		for rowsTrNotification.Next() {
@@ -162,6 +164,7 @@ func GetNotifications(c *gin.Context) {
 		helpers.HandleError(c, 400, err.Error())
 		return
 	}
+	defer rowsNotification.Close()
 
 	var notifications []models.Notification
 	for rowsNotification.Next() {
@@ -176,6 +179,7 @@ func GetNotifications(c *gin.Context) {
 			helpers.HandleError(c, 400, err.Error())
 			return
 		}
+		defer rowsTrNotification.Close()
 
 		var trNotifications []models.TranslationNotification
 		for rowsTrNotification.Next() {
@@ -312,6 +316,7 @@ func GetNotificationByLangID(c *gin.Context) {
 		helpers.HandleError(c, 400, err.Error())
 		return
 	}
+	defer rowsNotification.Close()
 
 	var notifications []models.Notification
 	for rowsNotification.Next() {
@@ -326,6 +331,7 @@ func GetNotificationByLangID(c *gin.Context) {
 			helpers.HandleError(c, 400, err.Error())
 			return
 		}
+		defer rowTrNotification.Close()
 
 		var trNotifications []models.TranslationNotification
 		for rowTrNotification.Next() {

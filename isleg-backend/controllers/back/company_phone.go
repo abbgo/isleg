@@ -121,6 +121,7 @@ func GetCompanyPhones(c *gin.Context) {
 		helpers.HandleError(c, 400, err.Error())
 		return
 	}
+	defer rows.Close()
 
 	for rows.Next() {
 		var companyPhone string
@@ -136,6 +137,7 @@ func GetCompanyPhones(c *gin.Context) {
 		helpers.HandleError(c, 400, err.Error())
 		return
 	}
+	defer rowCompanySetting.Close()
 
 	var companySetting models.CompanySetting
 	for rowCompanySetting.Next() {

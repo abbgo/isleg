@@ -40,6 +40,7 @@ func GetCustomerAddresses(c *gin.Context) {
 		helpers.HandleError(c, 400, err.Error())
 		return
 	}
+	defer rowsAddress.Close()
 
 	var addresses []CustomerAddress
 	for rowsAddress.Next() {

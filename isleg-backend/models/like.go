@@ -51,6 +51,7 @@ func ValidateCustomerLike(customerID string, productIDs []string) error {
 		if err != nil {
 			return err
 		}
+		defer rows.Close()
 
 		var product_ids []string
 		for rows.Next() {

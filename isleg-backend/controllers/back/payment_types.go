@@ -131,6 +131,7 @@ func GetPaymentTypes(c *gin.Context) {
 		helpers.HandleError(c, 400, err.Error())
 		return
 	}
+	defer rowsPaymentType.Close()
 
 	var paymentTypes []models.PaymentTypes
 	for rowsPaymentType.Next() {
@@ -171,6 +172,7 @@ func GetPaymentTypesByLangID(c *gin.Context) {
 		helpers.HandleError(c, 400, err.Error())
 		return
 	}
+	defer rowsPaymentType.Close()
 
 	var paymentTypes []string
 	for rowsPaymentType.Next() {

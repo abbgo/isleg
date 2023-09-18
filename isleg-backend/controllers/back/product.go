@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"context"
+	"database/sql"
 	"github/abbgo/isleg/isleg-backend/config"
 	"github/abbgo/isleg/isleg-backend/helpers"
 	"github/abbgo/isleg/isleg-backend/models"
@@ -249,6 +250,48 @@ func CreateProduct(c *gin.Context) {
 		"status":     true,
 		"message":    "data successfully added",
 		"product_id": productID,
+	})
+}
+
+func UpdateProductsCode(c *gin.Context) {
+	db, err := config.ConnDB()
+	if err != nil {
+		helpers.HandleError(c, 400, err.Error())
+		return
+	}
+	defer db.Close()
+
+	rows, err := db.Query(context.Background(), "SELECT id FROM products ORDER BY created_at DESC LIMIT 1")
+	if err != nil {
+		helpers.HandleError(c, 400, err.Error())
+		return
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var id string
+		if err := rows.Scan(&id); err != nil {
+			helpers.HandleError(c, 400, err.Error())
+			return
+		}
+
+		var nameOfCategory sql.NullString
+		db.QueryRow(context.Background(), "SELECT t.name FROM translation_category t INNER JOIN categories c ON c.id = t.category_id INNER JOIN category_product cp ON cp.category_id = c.id INNER JOIN languages l ON l.id = t.lang_id WHERE l.name_short = 'tm' AND c.parent_category_id IS NULL AND cp.product_id = $1 AND cp.deleted_at IS NULL AND c.deleted_at IS NULL AND t.deleted_at IS NULL AND l.deleted_at IS NULL", id).Scan(&nameOfCategory)
+		if nameOfCategory.String == "" {
+			helpers.HandleError(c, 404, "category not found")
+			return
+		}
+
+		_, err := db.Exec(context.Background(), "UPDATE products SET code = $1 WHERE id = $2", strings.ToUpper(slug.MakeLang(nameOfCategory.String, "en")[:2])+"-"+helpers.GenerateRandomCode(), id)
+		if err != nil {
+			helpers.HandleError(c, 400, err.Error())
+			return
+		}
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":  true,
+		"message": " successfully",
 	})
 }
 
@@ -588,6 +631,7 @@ func CreateProductsByExcelFile(c *gin.Context) {
 			helpers.HandleError(c, 400, err.Error())
 			return
 		}
+		defer rowLang.Close()
 
 		for rowLang.Next() {
 			if err := rowLang.Scan(&tr.LangID); err != nil {
@@ -622,6 +666,7 @@ func CreateProductsByExcelFile(c *gin.Context) {
 			helpers.HandleError(c, 400, err.Error())
 			return
 		}
+		defer rowLang.Close()
 
 		for rowLang.Next() {
 			if err := rowLang.Scan(&tr.LangID); err != nil {
@@ -638,6 +683,7 @@ func CreateProductsByExcelFile(c *gin.Context) {
 				helpers.HandleError(c, 400, err.Error())
 				return
 			}
+			defer resultProducts.Close()
 
 			var productID string
 			for resultProducts.Next() {
@@ -874,6 +920,7 @@ func GetProductByID(c *gin.Context) {
 		helpers.HandleError(c, 400, err.Error())
 		return
 	}
+	defer rowsImages.Close()
 
 	var images []string
 	for rowsImages.Next() {
@@ -891,6 +938,7 @@ func GetProductByID(c *gin.Context) {
 		helpers.HandleError(c, 400, err.Error())
 		return
 	}
+	defer rowsCategoryProduct.Close()
 
 	var categories []string
 	for rowsCategoryProduct.Next() {
@@ -914,6 +962,7 @@ func GetProductByID(c *gin.Context) {
 		helpers.HandleError(c, 400, err.Error())
 		return
 	}
+	defer rowTranslationProduct.Close()
 
 	var translations []models.TranslationProduct
 	for rowTranslationProduct.Next() {
@@ -951,6 +1000,7 @@ func GetProducts(c *gin.Context) {
 		helpers.HandleError(c, 400, err.Error())
 		return
 	}
+	defer rowsProduct.Close()
 
 	var products []models.Product
 	// var ids []string
@@ -977,6 +1027,7 @@ func GetProducts(c *gin.Context) {
 			helpers.HandleError(c, 400, err.Error())
 			return
 		}
+		defer rowsImages.Close()
 
 		var images []string
 		for rowsImages.Next() {
@@ -995,6 +1046,7 @@ func GetProducts(c *gin.Context) {
 			helpers.HandleError(c, 400, err.Error())
 			return
 		}
+		defer rowsCategoryProduct.Close()
 
 		var categories []string
 		for rowsCategoryProduct.Next() {
@@ -1013,6 +1065,7 @@ func GetProducts(c *gin.Context) {
 			helpers.HandleError(c, 400, err.Error())
 			return
 		}
+		defer rowTranslationProduct.Close()
 
 		var translations []models.TranslationProduct
 		for rowTranslationProduct.Next() {
@@ -1133,6 +1186,7 @@ func DeletePermanentlyProductByID(c *gin.Context) {
 		helpers.HandleError(c, 400, err.Error())
 		return
 	}
+	defer rowsImages.Close()
 
 	var images []models.Images
 	for rowsImages.Next() {
@@ -1220,6 +1274,7 @@ func GetProductByIDForFront(c *gin.Context) {
 		helpers.HandleError(c, 400, err.Error())
 		return
 	}
+	defer rowsImages.Close()
 
 	var images []string
 	for rowsImages.Next() {
@@ -1238,6 +1293,7 @@ func GetProductByIDForFront(c *gin.Context) {
 		helpers.HandleError(c, 400, err.Error())
 		return
 	}
+	defer rowsLang.Close()
 
 	var languages []models.Language
 	for rowsLang.Next() {
@@ -1255,6 +1311,7 @@ func GetProductByIDForFront(c *gin.Context) {
 			helpers.HandleError(c, 400, err.Error())
 			return
 		}
+		defer rowTrProduct.Close()
 
 		var trProduct models.TranslationProduct
 		translation := make(map[string]models.TranslationProduct)
