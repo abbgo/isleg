@@ -27,6 +27,7 @@ type LikeProduct struct {
 	Benefit      null.Float                             `json:"-"`
 	MainImage    string                                 `json:"main_image"`
 	Translations []map[string]models.TranslationProduct `json:"translations"`
+	Code         null.String                            `json:"code"`
 }
 
 type ProductID struct {
@@ -659,7 +660,7 @@ func GetLikedOrOrderedProductsWithoutCustomer(c *gin.Context) {
 	}
 
 	// front - dan gelen id - ler boyunca id - si gelen id den bolan harytlar yzyna ugradylyar
-	rowLikes, err := db.Query(context.Background(), "SELECT id,brend_id,price,old_price,amount,limit_amount,is_new,main_image,benefit FROM products WHERE id = ANY($1) AND amount > 0 AND limit_amount > 0 AND deleted_at IS NULL", pq.Array(productIds.IDS))
+	rowLikes, err := db.Query(context.Background(), "SELECT id,brend_id,price,old_price,amount,limit_amount,is_new,main_image,benefit,code FROM products WHERE id = ANY($1) AND amount > 0 AND limit_amount > 0 AND deleted_at IS NULL", pq.Array(productIds.IDS))
 	if err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
@@ -669,7 +670,7 @@ func GetLikedOrOrderedProductsWithoutCustomer(c *gin.Context) {
 	var products []LikeProduct
 	for rowLikes.Next() {
 		var product LikeProduct
-		if err := rowLikes.Scan(&product.ID, &product.BrendID, &product.Price, &product.OldPrice, &product.Amount, &product.LimitAmount, &product.IsNew, &product.MainImage, &product.Benefit); err != nil {
+		if err := rowLikes.Scan(&product.ID, &product.BrendID, &product.Price, &product.OldPrice, &product.Amount, &product.LimitAmount, &product.IsNew, &product.MainImage, &product.Benefit, &product.Code); err != nil {
 			helpers.HandleError(c, 400, err.Error())
 			return
 		}
