@@ -35,7 +35,7 @@ type ProductForFront struct {
 	Benefit      null.Float                             `json:"-"`
 	Images       []string                               `json:"images,omitempty"`
 	Translations []map[string]models.TranslationProduct `json:"translations"`
-	Code         string                                 `json:"code,omitempty"`
+	Code         null.String                            `json:"code,omitempty"`
 }
 
 type DeleteImage struct {
