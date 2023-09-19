@@ -53,6 +53,7 @@ type ProductForAdmin struct {
 	QuantityOfProduct int                       `json:"quantity_of_product"`
 	MainImage         string                    `json:"main_image"`
 	Translations      models.TranslationProduct `json:"translations"`
+	Code              null.String               `json:"code,omitempty"`
 }
 
 type Order struct {
@@ -595,7 +596,7 @@ func GetOrders(c *gin.Context) {
 				return
 			}
 
-			db.QueryRow(context.Background(), "SELECT brend_id,price,old_price,amount,limit_amount,is_new,main_image,benefit FROM products WHERE id = $1 AND deleted_at IS NULL", product.ID).Scan(&product.BrendID, &product.Price, &product.OldPrice, &product.Amount, &product.LimitAmount, &product.IsNew, &product.MainImage, &product.Benefit)
+			db.QueryRow(context.Background(), "SELECT brend_id,price,old_price,amount,limit_amount,is_new,main_image,benefit,code FROM products WHERE id = $1 AND deleted_at IS NULL", product.ID).Scan(&product.BrendID, &product.Price, &product.OldPrice, &product.Amount, &product.LimitAmount, &product.IsNew, &product.MainImage, &product.Benefit, &product.Code)
 
 			if product.Benefit.Float64 != 0 {
 				product.Price = product.Price + (product.Price*product.Benefit.Float64)/100
