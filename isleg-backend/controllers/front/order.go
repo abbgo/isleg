@@ -76,9 +76,10 @@ type GetOrder struct {
 }
 
 type OrderedProduct struct {
-	Name   string  `json:"name"`
-	Price  float64 `json:"price"`
-	Amount uint    `json:"amount"`
+	Name   string      `json:"name"`
+	Price  float64     `json:"price"`
+	Amount uint        `json:"amount"`
+	Code   null.String `json:"code"`
 }
 
 func ToOrder(c *gin.Context) {
@@ -186,7 +187,7 @@ func ToOrder(c *gin.Context) {
 	for _, v := range order.Products {
 		var product OrderedProduct
 		product.Amount = v.QuantityOfProduct
-		db.QueryRow(context.Background(), "SELECT price FROM products WHERE id= $1 AND deleted_at IS NULL", v.ProductID).Scan(&product.Price)
+		db.QueryRow(context.Background(), "SELECT price,code FROM products WHERE id= $1 AND deleted_at IS NULL", v.ProductID).Scan(&product.Price, &product.Code)
 
 		db.QueryRow(context.Background(), "SELECT name FROM translation_product WHERE product_id = $1 AND lang_id = $2 AND deleted_at IS NULL", v.ProductID, langID).Scan(&product.Name)
 		products = append(products, product)
@@ -280,6 +281,7 @@ func ToOrder(c *gin.Context) {
 		f.SetCellStyle("Sheet1", "f16", "f16", style)
 		f.SetCellStyle("Sheet1", "g16", "g16", style)
 		f.SetCellStyle("Sheet1", "h16", "h16", style)
+		f.SetCellStyle("Sheet1", "i16", "h16", style)
 	}
 
 	var totalPrice float64 = 0
@@ -287,8 +289,9 @@ func ToOrder(c *gin.Context) {
 	for k, v2 := range products {
 		f.SetCellValue("Sheet1", "a"+strconv.Itoa(16+k), v2.Name)
 		f.SetCellValue("Sheet1", "f"+strconv.Itoa(16+k), v2.Amount)
-		f.SetCellValue("Sheet1", "g"+strconv.Itoa(16+k), v2.Price)
-		f.SetCellValue("Sheet1", "h"+strconv.Itoa(16+k), float64(v2.Amount)*v2.Price)
+		f.SetCellValue("Sheet1", "g"+strconv.Itoa(16+k), v2.Code.String)
+		f.SetCellValue("Sheet1", "h"+strconv.Itoa(16+k), v2.Price)
+		f.SetCellValue("Sheet1", "i"+strconv.Itoa(16+k), float64(v2.Amount)*v2.Price)
 
 		totalPrice = totalPrice + float64(v2.Amount)*v2.Price
 	}
@@ -305,10 +308,10 @@ func ToOrder(c *gin.Context) {
 		if err := f.AddPicture("Sheet1", "b"+strconv.Itoa(lenProductsArr+count+21), pkg.ServerPath+"uploads/orders/isleg.png", &excelize.GraphicOptions{
 			ScaleX:  0.5,
 			ScaleY:  0.65,
-			OffsetX: 40,
+			OffsetX: 50,
 			OffsetY: 7,
 		}); err != nil {
-			fmt.Println(err)
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
 
@@ -338,24 +341,26 @@ func ToOrder(c *gin.Context) {
 			f.SetCellStyle("Sheet1", "f"+strconv.Itoa(lenProductsArr+count+37), "f"+strconv.Itoa(lenProductsArr+count+37), style)
 			f.SetCellStyle("Sheet1", "g"+strconv.Itoa(lenProductsArr+count+37), "g"+strconv.Itoa(lenProductsArr+count+37), style)
 			f.SetCellStyle("Sheet1", "h"+strconv.Itoa(lenProductsArr+count+37), "h"+strconv.Itoa(lenProductsArr+count+37), style)
+			f.SetCellStyle("Sheet1", "i"+strconv.Itoa(lenProductsArr+count+37), "h"+strconv.Itoa(lenProductsArr+count+37), style)
 		}
 
 		for k, v2 := range products {
 			f.SetCellValue("Sheet1", "a"+strconv.Itoa(37+k+lenProductsArr+count), v2.Name)
 			f.SetCellValue("Sheet1", "f"+strconv.Itoa(37+k+lenProductsArr+count), v2.Amount)
-			f.SetCellValue("Sheet1", "g"+strconv.Itoa(37+k+lenProductsArr+count), v2.Price)
-			f.SetCellValue("Sheet1", "h"+strconv.Itoa(37+k+lenProductsArr+count), float64(v2.Amount)*v2.Price)
+			f.SetCellValue("Sheet1", "g"+strconv.Itoa(37+k+lenProductsArr+count), v2.Code.String)
+			f.SetCellValue("Sheet1", "h"+strconv.Itoa(37+k+lenProductsArr+count), v2.Price)
+			f.SetCellValue("Sheet1", "i"+strconv.Itoa(37+k+lenProductsArr+count), float64(v2.Amount)*v2.Price)
 		}
 
 		f.SetCellValue("Sheet1", "g"+strconv.Itoa(38+2*lenProductsArr+count), strconv.FormatFloat(totalPrice, 'f', -1, 64)+" TMT")
 	} else {
 		if err := f.AddPicture("Sheet1", "b"+strconv.Itoa(lenProductsArr+21), pkg.ServerPath+"uploads/orders/isleg.png", &excelize.GraphicOptions{
-			ScaleX:  0.5,
-			ScaleY:  0.65,
-			OffsetX: 40,
+			ScaleX:  0.7,
+			ScaleY:  0.6,
+			OffsetX: 50,
 			OffsetY: 7,
 		}); err != nil {
-			fmt.Println(err)
+			helpers.HandleError(c, 400, err.Error())
 			return
 		}
 
@@ -385,13 +390,15 @@ func ToOrder(c *gin.Context) {
 			f.SetCellStyle("Sheet1", "f"+strconv.Itoa(lenProductsArr+37), "f"+strconv.Itoa(lenProductsArr+37), style)
 			f.SetCellStyle("Sheet1", "g"+strconv.Itoa(lenProductsArr+37), "g"+strconv.Itoa(lenProductsArr+37), style)
 			f.SetCellStyle("Sheet1", "h"+strconv.Itoa(lenProductsArr+37), "h"+strconv.Itoa(lenProductsArr+37), style)
+			f.SetCellStyle("Sheet1", "i"+strconv.Itoa(lenProductsArr+37), "h"+strconv.Itoa(lenProductsArr+37), style)
 		}
 
 		for k, v2 := range products {
 			f.SetCellValue("Sheet1", "a"+strconv.Itoa(37+k+lenProductsArr), v2.Name)
 			f.SetCellValue("Sheet1", "f"+strconv.Itoa(37+k+lenProductsArr), v2.Amount)
-			f.SetCellValue("Sheet1", "g"+strconv.Itoa(37+k+lenProductsArr), v2.Price)
-			f.SetCellValue("Sheet1", "h"+strconv.Itoa(37+k+lenProductsArr), float64(v2.Amount)*v2.Price)
+			f.SetCellValue("Sheet1", "g"+strconv.Itoa(37+k+lenProductsArr), v2.Code.String)
+			f.SetCellValue("Sheet1", "h"+strconv.Itoa(37+k+lenProductsArr), v2.Price)
+			f.SetCellValue("Sheet1", "i"+strconv.Itoa(37+k+lenProductsArr), float64(v2.Amount)*v2.Price)
 		}
 
 		f.SetCellValue("Sheet1", "g"+strconv.Itoa(38+2*lenProductsArr), strconv.FormatFloat(totalPrice, 'f', -1, 64)+" TMT")
