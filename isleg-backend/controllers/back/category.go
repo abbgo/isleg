@@ -17,6 +17,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/gosimple/slug"
 	"github.com/jackc/pgx/v5"
+	"github.com/lib/pq"
 	"gopkg.in/guregu/null.v4"
 )
 
@@ -1049,6 +1050,7 @@ func GetOneCategoryWithProducts(c *gin.Context) {
 	defer categoryRow.Close()
 
 	var category Category
+	var productIDS []string
 	for categoryRow.Next() {
 		if err := categoryRow.Scan(&category.ID, &category.Image, &category.Name); err != nil {
 			helpers.HandleError(c, 400, err.Error())
@@ -1092,6 +1094,8 @@ func GetOneCategoryWithProducts(c *gin.Context) {
 				helpers.HandleError(c, 400, err.Error())
 				return
 			}
+
+			productIDS = append(productIDS, product.ID)
 
 			if product.Benefit.Float64 != 0 {
 				product.Price = product.Price + (product.Price*product.Benefit.Float64)/100
@@ -1162,10 +1166,29 @@ func GetOneCategoryWithProducts(c *gin.Context) {
 		}
 		category.Products = products
 	}
+
+	rowsBrend, err := db.Query(context.Background(), "SELECT DISTINCT(b.id),b.name FROM brends b INNER JOIN products p ON p.brend_id = b.id WHERE p.id = ANY($1) AND b.deleted_at IS NULL AND p.deleted_at IS NULL", pq.Array(productIDS))
+	if err != nil {
+		helpers.HandleError(c, 400, err.Error())
+		return
+	}
+	defer rowsBrend.Close()
+
+	var brends []Brend
+	for rowsBrend.Next() {
+		var brend Brend
+		if err := rowsBrend.Scan(&brend.ID, &brend.Name); err != nil {
+			helpers.HandleError(c, 400, err.Error())
+			return
+		}
+		brends = append(brends, brend)
+	}
+
 	c.JSON(http.StatusOK, gin.H{
 		"status":            true,
 		"category":          category,
 		"count_of_products": countOfProducts,
+		"brends":            brends,
 	})
 }
 
