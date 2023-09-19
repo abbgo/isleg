@@ -36,6 +36,7 @@ type ProductOfCart struct {
 	QuantityOfProduct int                                    `json:"quantity_of_product"`
 	MainImage         string                                 `json:"main_image"`
 	Translations      []map[string]models.TranslationProduct `json:"translations"`
+	Code              null.String                            `json:"code,omitempty"`
 }
 
 func AddCart(c *gin.Context) {

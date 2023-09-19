@@ -766,7 +766,7 @@ func GetCustomerOrders(c *gin.Context) {
 				return
 			}
 
-			rowProduct, err := db.Query(context.Background(), "SELECT brend_id,price,old_price,amount,limit_amount,is_new,main_image,benefit FROM products WHERE id = $1 AND deleted_at IS NULL", product.ID)
+			rowProduct, err := db.Query(context.Background(), "SELECT brend_id,price,old_price,amount,limit_amount,is_new,main_image,benefit,code FROM products WHERE id = $1 AND deleted_at IS NULL", product.ID)
 			if err != nil {
 				helpers.HandleError(c, 400, err.Error())
 				return
@@ -774,7 +774,7 @@ func GetCustomerOrders(c *gin.Context) {
 			defer rowProduct.Close()
 
 			for rowProduct.Next() {
-				if err := rowProduct.Scan(&product.BrendID, &product.Price, &product.OldPrice, &product.Amount, &product.LimitAmount, &product.IsNew, &product.MainImage, &product.Benefit); err != nil {
+				if err := rowProduct.Scan(&product.BrendID, &product.Price, &product.OldPrice, &product.Amount, &product.LimitAmount, &product.IsNew, &product.MainImage, &product.Benefit, &product.Code); err != nil {
 					helpers.HandleError(c, 400, err.Error())
 					return
 				}
