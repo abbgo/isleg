@@ -75,20 +75,20 @@ func ValidateCategory(categoryID, parentCategoryID, fileName, metod string, orde
 
 			if orderNumber != 0 {
 				var category_id string
-				db.QueryRow(context.Background(), "SELECT id FROM categories WHERE order_number = $1 AND deleted_at IS NULL", orderNumber).Scan(&category_id)
+				db.QueryRow(context.Background(), "SELECT id FROM categories WHERE order_number = $1 AND deleted_at IS NULL AND parent_category_id IS NULL", orderNumber).Scan(&category_id)
 				if category_id != "" {
 					return errors.New("this order_number already exists")
 				}
 			}
-		} else {
+		} /*else {
 			if orderNumber != 0 {
 				var category_id string
-				db.QueryRow(context.Background(), "SELECT id FROM categories WHERE order_number = $1 AND deleted_at IS NULL", orderNumber).Scan(&category_id)
+				db.QueryRow(context.Background(), "SELECT id FROM categories WHERE order_number = $1 AND deleted_at IS NULL AND parent_category_id IS NULL", orderNumber).Scan(&category_id)
 				if category_id != "" && category_id != categoryID {
 					return errors.New("this order_number already exists")
 				}
 			}
-		}
+		}*/
 	}
 
 	return nil
