@@ -136,8 +136,8 @@ func BackRoutes(back *gin.RouterGroup) {
 
 		// Baslayar --- kategoriya ucin CRUD
 		securedAdmin.POST("category", backController.CreateCategory)
-		securedAdmin.POST("category-order-numer", backController.UpdateParentCategoriesOrderNumber)
-		securedAdmin.POST("category-order-numer-in-home-page", backController.UpdateHomePageCategoriesOrderNumber)
+		// securedAdmin.POST("category-order-numer", backController.UpdateParentCategoriesOrderNumber)
+		// securedAdmin.POST("category-order-numer-in-home-page", backController.UpdateHomePageCategoriesOrderNumber)
 		securedAdmin.PUT("category/:id", backController.UpdateCategoryByID)
 		securedAdmin.GET("category/:id", backController.GetCategoryByID)
 		// GetCategoryByIDWithChild funksiya bir kategoriyany cagalary bilen bile almak ucin ulanylyar
