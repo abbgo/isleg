@@ -657,12 +657,12 @@ func GetAllCategoryForHeader(langID, search, searchStr string, limit, page uint)
 				return []ResultCategory{}, 0, err
 			}
 
-			rows, err = db.Query(context.Background(), "SELECT c.id,c.image,tc.name FROM categories c LEFT JOIN translation_category tc ON c.id=tc.category_id WHERE tc.lang_id = $1 AND c.parent_category_id IS NULL AND tc.deleted_at IS NULL AND c.deleted_at IS NULL ORDER BY c.created_at DESC LIMIT $2 OFFSET $3", langID, limit, offset)
+			rows, err = db.Query(context.Background(), "SELECT c.id,c.image,tc.name FROM categories c LEFT JOIN translation_category tc ON c.id=tc.category_id WHERE tc.lang_id = $1 AND c.parent_category_id IS NULL AND tc.deleted_at IS NULL AND c.deleted_at IS NULL ORDER BY c.order_number  ASC LIMIT $2 OFFSET $3", langID, limit, offset)
 			if err != nil {
 				return []ResultCategory{}, 0, err
 			}
 		} else {
-			rows, err = db.Query(context.Background(), "SELECT c.id,c.image,tc.name FROM categories c LEFT JOIN translation_category tc ON c.id=tc.category_id WHERE tc.lang_id = $1 AND c.parent_category_id IS NULL AND tc.deleted_at IS NULL AND c.deleted_at IS NULL ORDER BY c.created_at DESC", langID)
+			rows, err = db.Query(context.Background(), "SELECT c.id,c.image,tc.name FROM categories c LEFT JOIN translation_category tc ON c.id=tc.category_id WHERE tc.lang_id = $1 AND c.parent_category_id IS NULL AND tc.deleted_at IS NULL AND c.deleted_at IS NULL ORDER BY c.order_number ASC", langID)
 			if err != nil {
 				return []ResultCategory{}, 0, err
 			}
@@ -674,12 +674,12 @@ func GetAllCategoryForHeader(langID, search, searchStr string, limit, page uint)
 				return []ResultCategory{}, 0, err
 			}
 
-			rows, err = db.Query(context.Background(), "SELECT DISTINCT ON (c.id,c.created_at) c.id,c.image,tc.name FROM categories c LEFT JOIN translation_category tc ON c.id=tc.category_id WHERE to_tsvector(tc.slug) @@ to_tsquery($2) OR tc.slug LIKE $3 AND tc.lang_id = $1 AND c.parent_category_id IS NULL AND tc.deleted_at IS NULL AND c.deleted_at IS NULL ORDER BY c.created_at DESC LIMIT $4 OFFSET $5", langID, search, searchStr, limit, offset)
+			rows, err = db.Query(context.Background(), "SELECT DISTINCT ON (c.id,c.created_at) c.id,c.image,tc.name FROM categories c LEFT JOIN translation_category tc ON c.id=tc.category_id WHERE to_tsvector(tc.slug) @@ to_tsquery($2) OR tc.slug LIKE $3 AND tc.lang_id = $1 AND c.parent_category_id IS NULL AND tc.deleted_at IS NULL AND c.deleted_at IS NULL ORDER BY c.order_number ASC LIMIT $4 OFFSET $5", langID, search, searchStr, limit, offset)
 			if err != nil {
 				return []ResultCategory{}, 0, err
 			}
 		} else {
-			rows, err = db.Query(context.Background(), "SELECT DISTINCT ON (c.id,c.created_at) c.id,c.image,tc.name FROM categories c LEFT JOIN translation_category tc ON c.id=tc.category_id WHERE to_tsvector(tc.slug) @@ to_tsquery($2) OR tc.slug LIKE $3 AND tc.lang_id = $1 AND c.parent_category_id IS NULL AND tc.deleted_at IS NULL AND c.deleted_at IS NULL ORDER BY c.created_at DESC", langID, search, searchStr)
+			rows, err = db.Query(context.Background(), "SELECT DISTINCT ON (c.id,c.created_at) c.id,c.image,tc.name FROM categories c LEFT JOIN translation_category tc ON c.id=tc.category_id WHERE to_tsvector(tc.slug) @@ to_tsquery($2) OR tc.slug LIKE $3 AND tc.lang_id = $1 AND c.parent_category_id IS NULL AND tc.deleted_at IS NULL AND c.deleted_at IS NULL ORDER BY c.order_number ASC", langID, search, searchStr)
 			if err != nil {
 				return []ResultCategory{}, 0, err
 			}
