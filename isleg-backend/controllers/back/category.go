@@ -133,6 +133,40 @@ func CreateCategory(c *gin.Context) {
 	})
 }
 
+func UpdateParentCategoriesOrderNumber(c *gin.Context) {
+	// initialize database connection
+	db, err := config.ConnDB()
+	if err != nil {
+		helpers.HandleError(c, 400, err.Error())
+		return
+	}
+	defer db.Close()
+
+	rowsCategories, err := db.Query(context.Background(), "SELECT id FROM categories WHERE parent_category_id IS NULL")
+	if err != nil {
+		helpers.HandleError(c, 400, err.Error())
+		return
+	}
+	defer rowsCategories.Close()
+
+	var countOfCategory uint
+	for rowsCategories.Next() {
+		countOfCategory++
+
+		var categoryID string
+		if err := rowsCategories.Scan(&categoryID); err != nil {
+			helpers.HandleError(c, 400, err.Error())
+			return
+		}
+
+		_, err = db.Exec(context.Background(), "UPDATE categories SET order_number = $1 WHERE id = $2", countOfCategory, categoryID)
+		if err != nil {
+			helpers.HandleError(c, 400, err.Error())
+			return
+		}
+	}
+}
+
 func UpdateCategoryByID(c *gin.Context) {
 	// initialize database connection
 	db, err := config.ConnDB()
