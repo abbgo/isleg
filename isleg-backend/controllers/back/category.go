@@ -104,7 +104,7 @@ func CreateCategory(c *gin.Context) {
 	}
 
 	// add data to categories table
-	db.QueryRow(context.Background(), "INSERT INTO categories (parent_category_id,image,is_home_category,order_number) VALUES ($1,$2,$3,$4) RETURNING id", parent_category_id, category.Image, category.IsHomeCategory, category.OrderNumber).Scan(&categoryID)
+	db.QueryRow(context.Background(), "INSERT INTO categories (parent_category_id,image,is_home_category,order_number,is_visible) VALUES ($1,$2,$3,$4,$5) RETURNING id", parent_category_id, category.Image, category.IsHomeCategory, category.OrderNumber, category.IsVisible).Scan(&categoryID)
 	langID, err := GetLangID("tm")
 	if err != nil {
 		helpers.HandleError(c, 400, err.Error())
@@ -139,73 +139,73 @@ func CreateCategory(c *gin.Context) {
 	})
 }
 
-func UpdateParentCategoriesOrderNumber(c *gin.Context) {
-	// initialize database connection
-	db, err := config.ConnDB()
-	if err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
-	defer db.Close()
+// func UpdateParentCategoriesOrderNumber(c *gin.Context) {
+// 	// initialize database connection
+// 	db, err := config.ConnDB()
+// 	if err != nil {
+// 		helpers.HandleError(c, 400, err.Error())
+// 		return
+// 	}
+// 	defer db.Close()
 
-	rowsCategories, err := db.Query(context.Background(), "SELECT id FROM categories WHERE parent_category_id IS NULL")
-	if err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
-	defer rowsCategories.Close()
+// 	rowsCategories, err := db.Query(context.Background(), "SELECT id FROM categories WHERE parent_category_id IS NULL")
+// 	if err != nil {
+// 		helpers.HandleError(c, 400, err.Error())
+// 		return
+// 	}
+// 	defer rowsCategories.Close()
 
-	var countOfCategory uint
-	for rowsCategories.Next() {
-		countOfCategory++
+// 	var countOfCategory uint
+// 	for rowsCategories.Next() {
+// 		countOfCategory++
 
-		var categoryID string
-		if err := rowsCategories.Scan(&categoryID); err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
-		}
+// 		var categoryID string
+// 		if err := rowsCategories.Scan(&categoryID); err != nil {
+// 			helpers.HandleError(c, 400, err.Error())
+// 			return
+// 		}
 
-		_, err = db.Exec(context.Background(), "UPDATE categories SET order_number = $1 WHERE id = $2", countOfCategory, categoryID)
-		if err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
-		}
-	}
-}
+// 		_, err = db.Exec(context.Background(), "UPDATE categories SET order_number = $1 WHERE id = $2", countOfCategory, categoryID)
+// 		if err != nil {
+// 			helpers.HandleError(c, 400, err.Error())
+// 			return
+// 		}
+// 	}
+// }
 
-func UpdateHomePageCategoriesOrderNumber(c *gin.Context) {
-	// initialize database connection
-	db, err := config.ConnDB()
-	if err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
-	defer db.Close()
+// func UpdateHomePageCategoriesOrderNumber(c *gin.Context) {
+// 	// initialize database connection
+// 	db, err := config.ConnDB()
+// 	if err != nil {
+// 		helpers.HandleError(c, 400, err.Error())
+// 		return
+// 	}
+// 	defer db.Close()
 
-	rowsCategories, err := db.Query(context.Background(), "SELECT id FROM categories WHERE is_home_category = true")
-	if err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
-	defer rowsCategories.Close()
+// 	rowsCategories, err := db.Query(context.Background(), "SELECT id FROM categories WHERE is_home_category = true")
+// 	if err != nil {
+// 		helpers.HandleError(c, 400, err.Error())
+// 		return
+// 	}
+// 	defer rowsCategories.Close()
 
-	var countOfCategory uint
-	for rowsCategories.Next() {
-		countOfCategory++
+// 	var countOfCategory uint
+// 	for rowsCategories.Next() {
+// 		countOfCategory++
 
-		var categoryID string
-		if err := rowsCategories.Scan(&categoryID); err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
-		}
+// 		var categoryID string
+// 		if err := rowsCategories.Scan(&categoryID); err != nil {
+// 			helpers.HandleError(c, 400, err.Error())
+// 			return
+// 		}
 
-		_, err = db.Exec(context.Background(), "UPDATE categories SET order_number_in_home_page = $1 WHERE id = $2", countOfCategory, categoryID)
-		if err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
-		}
-	}
-}
+// 		_, err = db.Exec(context.Background(), "UPDATE categories SET order_number_in_home_page = $1 WHERE id = $2", countOfCategory, categoryID)
+// 		if err != nil {
+// 			helpers.HandleError(c, 400, err.Error())
+// 			return
+// 		}
+// 	}
+// }
 
 func UpdateCategoryByID(c *gin.Context) {
 	// initialize database connection
@@ -247,13 +247,13 @@ func UpdateCategoryByID(c *gin.Context) {
 	}
 
 	if category.Image != "" {
-		_, err := db.Exec(context.Background(), "UPDATE categories SET parent_category_id = $1, image = $2, is_home_category = $3 , order_number = $5 WHERE id = $4", parent_category_id, category.Image, category.IsHomeCategory, ID, category.OrderNumber)
+		_, err := db.Exec(context.Background(), "UPDATE categories SET parent_category_id = $1, image = $2, is_home_category = $3 , order_number = $5 , is_visible = $6 WHERE id = $4", parent_category_id, category.Image, category.IsHomeCategory, ID, category.OrderNumber, category.IsVisible)
 		if err != nil {
 			helpers.HandleError(c, 400, err.Error())
 			return
 		}
 	} else {
-		_, err := db.Exec(context.Background(), "UPDATE categories SET parent_category_id = $1, is_home_category = $2 , order_number = $4 WHERE id = $3", parent_category_id, category.IsHomeCategory, ID, category.OrderNumber)
+		_, err := db.Exec(context.Background(), "UPDATE categories SET parent_category_id = $1, is_home_category = $2 , order_number = $4 , is_visible = $5 WHERE id = $3", parent_category_id, category.IsHomeCategory, ID, category.OrderNumber, category.IsVisible)
 		if err != nil {
 			helpers.HandleError(c, 400, err.Error())
 			return
