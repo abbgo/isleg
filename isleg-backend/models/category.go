@@ -10,15 +10,16 @@ import (
 )
 
 type Category struct {
-	ID                  string                `json:"id,omitempty"`
-	ParentCategoryID    null.String           `json:"parent_category_id,omitempty"`
-	Image               string                `json:"image,omitempty"`
-	IsHomeCategory      bool                  `json:"is_home_category,omitempty"`
-	CreatedAt           string                `json:"-"`
-	UpdatedAt           string                `json:"-"`
-	DeletedAt           string                `json:"-"`
-	OrderNumber         uint                  `json:"order_number,omitempty"`
-	TranslationCategory []TranslationCategory `json:"translation_category,omitempty" binding:"required"` // one to many
+	ID                    string                `json:"id,omitempty"`
+	ParentCategoryID      null.String           `json:"parent_category_id,omitempty"`
+	Image                 string                `json:"image,omitempty"`
+	IsHomeCategory        bool                  `json:"is_home_category,omitempty"`
+	CreatedAt             string                `json:"-"`
+	UpdatedAt             string                `json:"-"`
+	DeletedAt             string                `json:"-"`
+	OrderNumber           uint                  `json:"order_number,omitempty"`
+	OrderNumberInHomePage uint                  `json:"order_number_in_home_page,omitempty"`
+	TranslationCategory   []TranslationCategory `json:"translation_category,omitempty" binding:"required"` // one to many
 }
 
 type TranslationCategory struct {
