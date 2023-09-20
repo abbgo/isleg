@@ -85,7 +85,7 @@ func CreateCategory(c *gin.Context) {
 	var parent_category_id interface{}
 
 	// validate other data of category
-	if err := models.ValidateCategory("", category.ParentCategoryID.String, category.Image, "create", category.OrderNumber); err != nil {
+	if err := models.ValidateCategory("", category.ParentCategoryID.String, category.Image, "create", category.OrderNumber, category.OrderNumberInHomePage, category.IsHomeCategory); err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
 	}
@@ -187,7 +187,7 @@ func UpdateCategoryByID(c *gin.Context) {
 
 	// var fileName string
 	var parent_category_id interface{}
-	if err := models.ValidateCategory(ID, category.ParentCategoryID.String, "", "update", category.OrderNumber); err != nil {
+	if err := models.ValidateCategory(ID, category.ParentCategoryID.String, "", "update", category.OrderNumber, category.OrderNumberInHomePage, category.IsHomeCategory); err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
 	}

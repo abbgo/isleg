@@ -33,7 +33,7 @@ type TranslationCategory struct {
 	DeletedAt  string        `json:"-"`
 }
 
-func ValidateCategory(categoryID, parentCategoryID, fileName, metod string, orderNumber uint) error {
+func ValidateCategory(categoryID, parentCategoryID, fileName, metod string, orderNumber, orderNumberInHomePage uint, isHomeCategory bool) error {
 
 	// initialize database connection
 	db, err := config.ConnDB()
@@ -89,6 +89,16 @@ func ValidateCategory(categoryID, parentCategoryID, fileName, metod string, orde
 				}
 			}
 		}*/
+	}
+
+	if isHomeCategory {
+		if orderNumberInHomePage != 0 {
+			var category_id string
+			db.QueryRow(context.Background(), "SELECT id FROM categories WHERE is_home_category = true AND order_number_in_home_page = $1", orderNumberInHomePage).Scan(&category_id)
+			if category_id != "" {
+				return errors.New("this order_number already exists")
+			}
+		}
 	}
 
 	return nil
