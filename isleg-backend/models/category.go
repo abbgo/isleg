@@ -17,6 +17,7 @@ type Category struct {
 	CreatedAt           string                `json:"-"`
 	UpdatedAt           string                `json:"-"`
 	DeletedAt           string                `json:"-"`
+	Order               uint                  `json:"order,omitempty"`
 	TranslationCategory []TranslationCategory `json:"translation_category,omitempty" binding:"required"` // one to many
 }
 
