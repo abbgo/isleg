@@ -173,13 +173,13 @@ func UpdateCategoryByID(c *gin.Context) {
 	}
 
 	if category.Image != "" {
-		_, err := db.Exec(context.Background(), "UPDATE categories SET parent_category_id = $1, image = $2, is_home_category = $3 WHERE id = $4", parent_category_id, category.Image, category.IsHomeCategory, ID)
+		_, err := db.Exec(context.Background(), "UPDATE categories SET parent_category_id = $1, image = $2, is_home_category = $3 , order_number = $5 WHERE id = $4", parent_category_id, category.Image, category.IsHomeCategory, ID, category.OrderNumber)
 		if err != nil {
 			helpers.HandleError(c, 400, err.Error())
 			return
 		}
 	} else {
-		_, err := db.Exec(context.Background(), "UPDATE categories SET parent_category_id = $1, is_home_category = $2 WHERE id = $3", parent_category_id, category.IsHomeCategory, ID)
+		_, err := db.Exec(context.Background(), "UPDATE categories SET parent_category_id = $1, is_home_category = $2 , order_number = $4 WHERE id = $3", parent_category_id, category.IsHomeCategory, ID, category.OrderNumber)
 		if err != nil {
 			helpers.HandleError(c, 400, err.Error())
 			return
