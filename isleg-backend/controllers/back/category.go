@@ -85,7 +85,7 @@ func CreateCategory(c *gin.Context) {
 	var parent_category_id interface{}
 
 	// validate other data of category
-	if err := models.ValidateCategory("", category.ParentCategoryID.String, category.Image, "create"); err != nil {
+	if err := models.ValidateCategory("", category.ParentCategoryID.String, category.Image, "create", category.OrderNumber); err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
 	}
@@ -98,7 +98,7 @@ func CreateCategory(c *gin.Context) {
 	}
 
 	// add data to categories table
-	db.QueryRow(context.Background(), "INSERT INTO categories (parent_category_id,image,is_home_category) VALUES ($1,$2,$3) RETURNING id", parent_category_id, category.Image, category.IsHomeCategory).Scan(&categoryID)
+	db.QueryRow(context.Background(), "INSERT INTO categories (parent_category_id,image,is_home_category,order_number) VALUES ($1,$2,$3,$4) RETURNING id", parent_category_id, category.Image, category.IsHomeCategory, category.OrderNumber).Scan(&categoryID)
 	langID, err := GetLangID("tm")
 	if err != nil {
 		helpers.HandleError(c, 400, err.Error())
@@ -153,7 +153,7 @@ func UpdateCategoryByID(c *gin.Context) {
 
 	// var fileName string
 	var parent_category_id interface{}
-	if err := models.ValidateCategory(ID, category.ParentCategoryID.String, "", "update"); err != nil {
+	if err := models.ValidateCategory(ID, category.ParentCategoryID.String, "", "update", category.OrderNumber); err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
 	}

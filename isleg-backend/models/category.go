@@ -32,7 +32,7 @@ type TranslationCategory struct {
 	DeletedAt  string        `json:"-"`
 }
 
-func ValidateCategory(categoryID, parentCategoryID, fileName, metod string) error {
+func ValidateCategory(categoryID, parentCategoryID, fileName, metod string, orderNumber uint) error {
 
 	// initialize database connection
 	db, err := config.ConnDB()
@@ -52,7 +52,6 @@ func ValidateCategory(categoryID, parentCategoryID, fileName, metod string) erro
 
 	// validate parentCategoryID
 	if parentCategoryID != "" {
-
 		if metod == "create" {
 			if fileName != "" {
 				return errors.New("child cannot be an image of the category")
@@ -71,6 +70,22 @@ func ValidateCategory(categoryID, parentCategoryID, fileName, metod string) erro
 		if metod == "create" {
 			if fileName == "" {
 				return errors.New("parent category image is required")
+			}
+
+			if orderNumber != 0 {
+				var category_id string
+				db.QueryRow(context.Background(), "SELECT id FROM categories WHERE order_number = $1 AND deleted_at IS NULL", orderNumber).Scan(&category_id)
+				if category_id != "" {
+					return errors.New("this order_number already exists")
+				}
+			}
+		} else {
+			if orderNumber != 0 {
+				var category_id string
+				db.QueryRow(context.Background(), "SELECT id FROM categories WHERE order_number = $1 AND deleted_at IS NULL", orderNumber).Scan(&category_id)
+				if category_id != "" && category_id != categoryID {
+					return errors.New("this order_number already exists")
+				}
 			}
 		}
 	}
