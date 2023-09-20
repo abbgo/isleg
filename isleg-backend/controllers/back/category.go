@@ -607,7 +607,7 @@ func GetCategories(c *gin.Context) {
 	}
 
 	// get all category from category controller
-	categories, countOfCatagories, err := GetAllCategoryForHeader(langID, search, searchStr, uint(limit), uint(page))
+	categories, countOfCatagories, err := GetAllCategoryForHeader(langID, search, searchStr, uint(limit), uint(page), false)
 	if err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
@@ -627,7 +627,7 @@ func GetCategoriesForAdmin(c *gin.Context) {
 		return
 	}
 
-	categories, _, err := GetAllCategoryForHeader(langID, "", "", 0, 0)
+	categories, _, err := GetAllCategoryForHeader(langID, "", "", 0, 0, false)
 	if err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
@@ -639,7 +639,7 @@ func GetCategoriesForAdmin(c *gin.Context) {
 	})
 }
 
-func GetAllCategoryForHeader(langID, search, searchStr string, limit, page uint) ([]ResultCategory, uint, error) {
+func GetAllCategoryForHeader(langID, search, searchStr string, limit, page uint, isVisible bool) ([]ResultCategory, uint, error) {
 	db, err := config.ConnDB()
 	if err != nil {
 		return []ResultCategory{}, 0, err
@@ -656,36 +656,45 @@ func GetAllCategoryForHeader(langID, search, searchStr string, limit, page uint)
 
 	// get all category where parent category id is null
 	var rows, rowsCount pgx.Rows
+	var is_visible_1, is_visible_2 bool
+	if isVisible {
+		is_visible_1 = true
+		is_visible_2 = true
+	} else {
+		is_visible_1 = true
+		is_visible_2 = false
+	}
+
 	if search == "" {
 		if offset != nil {
-			rowsCount, err = db.Query(context.Background(), "SELECT COUNT(*) FROM categories c LEFT JOIN translation_category tc ON c.id=tc.category_id WHERE tc.lang_id = $1 AND c.parent_category_id IS NULL AND tc.deleted_at IS NULL AND c.deleted_at IS NULL", langID)
+			rowsCount, err = db.Query(context.Background(), "SELECT COUNT(*) FROM categories c LEFT JOIN translation_category tc ON c.id=tc.category_id WHERE (c.is_visible = $2 OR c.is_visible = $3) AND tc.lang_id = $1 AND c.parent_category_id IS NULL AND tc.deleted_at IS NULL AND c.deleted_at IS NULL", langID, is_visible_1, is_visible_2)
 			if err != nil {
 				return []ResultCategory{}, 0, err
 			}
 
-			rows, err = db.Query(context.Background(), "SELECT c.id,c.image,tc.name,c.order_number,c.order_number_in_home_page FROM categories c LEFT JOIN translation_category tc ON c.id=tc.category_id WHERE tc.lang_id = $1 AND c.parent_category_id IS NULL AND tc.deleted_at IS NULL AND c.deleted_at IS NULL ORDER BY c.order_number  ASC LIMIT $2 OFFSET $3", langID, limit, offset)
+			rows, err = db.Query(context.Background(), "SELECT c.id,c.image,tc.name,c.order_number,c.order_number_in_home_page FROM categories c LEFT JOIN translation_category tc ON c.id=tc.category_id WHERE (c.is_visible = $4 OR c.is_visible = $5) AND tc.lang_id = $1 AND c.parent_category_id IS NULL AND tc.deleted_at IS NULL AND c.deleted_at IS NULL ORDER BY c.order_number  ASC LIMIT $2 OFFSET $3", langID, limit, offset, is_visible_1, is_visible_2)
 			if err != nil {
 				return []ResultCategory{}, 0, err
 			}
 		} else {
-			rows, err = db.Query(context.Background(), "SELECT c.id,c.image,tc.name,c.order_number,c.order_number_in_home_page FROM categories c LEFT JOIN translation_category tc ON c.id=tc.category_id WHERE tc.lang_id = $1 AND c.parent_category_id IS NULL AND tc.deleted_at IS NULL AND c.deleted_at IS NULL ORDER BY c.order_number ASC", langID)
+			rows, err = db.Query(context.Background(), "SELECT c.id,c.image,tc.name,c.order_number,c.order_number_in_home_page FROM categories c LEFT JOIN translation_category tc ON c.id=tc.category_id WHERE (c.is_visible = $2 OR c.is_visible = $3) AND tc.lang_id = $1 AND c.parent_category_id IS NULL AND tc.deleted_at IS NULL AND c.deleted_at IS NULL ORDER BY c.order_number ASC", langID, is_visible_1, is_visible_2)
 			if err != nil {
 				return []ResultCategory{}, 0, err
 			}
 		}
 	} else {
 		if offset != nil {
-			rowsCount, err = db.Query(context.Background(), "SELECT COUNT(DISTINCT(c.id)) FROM categories c LEFT JOIN translation_category tc ON c.id=tc.category_id WHERE to_tsvector(tc.slug) @@ to_tsquery($2) OR tc.slug LIKE $3 AND tc.lang_id = $1 AND c.parent_category_id IS NULL AND tc.deleted_at IS NULL AND c.deleted_at IS NULL", langID, search, searchStr)
+			rowsCount, err = db.Query(context.Background(), "SELECT COUNT(DISTINCT(c.id)) FROM categories c LEFT JOIN translation_category tc ON c.id=tc.category_id WHERE (c.is_visible = $4 OR c.is_visible = $5) AND to_tsvector(tc.slug) @@ to_tsquery($2) OR tc.slug LIKE $3 AND tc.lang_id = $1 AND c.parent_category_id IS NULL AND tc.deleted_at IS NULL AND c.deleted_at IS NULL", langID, search, searchStr, is_visible_1, is_visible_2)
 			if err != nil {
 				return []ResultCategory{}, 0, err
 			}
 
-			rows, err = db.Query(context.Background(), "SELECT DISTINCT ON (c.id,c.created_at) c.id,c.image,tc.name,c.order_number,c.order_number_in_home_page FROM categories c LEFT JOIN translation_category tc ON c.id=tc.category_id WHERE to_tsvector(tc.slug) @@ to_tsquery($2) OR tc.slug LIKE $3 AND tc.lang_id = $1 AND c.parent_category_id IS NULL AND tc.deleted_at IS NULL AND c.deleted_at IS NULL ORDER BY c.order_number ASC LIMIT $4 OFFSET $5", langID, search, searchStr, limit, offset)
+			rows, err = db.Query(context.Background(), "SELECT DISTINCT ON (c.id,c.created_at) c.id,c.image,tc.name,c.order_number,c.order_number_in_home_page FROM categories c LEFT JOIN translation_category tc ON c.id=tc.category_id WHERE (c.is_visible = $6 OR c.is_visible = $7) AND to_tsvector(tc.slug) @@ to_tsquery($2) OR tc.slug LIKE $3 AND tc.lang_id = $1 AND c.parent_category_id IS NULL AND tc.deleted_at IS NULL AND c.deleted_at IS NULL ORDER BY c.order_number ASC LIMIT $4 OFFSET $5", langID, search, searchStr, limit, offset, is_visible_1, is_visible_2)
 			if err != nil {
 				return []ResultCategory{}, 0, err
 			}
 		} else {
-			rows, err = db.Query(context.Background(), "SELECT DISTINCT ON (c.id,c.created_at) c.id,c.image,tc.name,c.order_number,c.order_number_in_home_page FROM categories c LEFT JOIN translation_category tc ON c.id=tc.category_id WHERE to_tsvector(tc.slug) @@ to_tsquery($2) OR tc.slug LIKE $3 AND tc.lang_id = $1 AND c.parent_category_id IS NULL AND tc.deleted_at IS NULL AND c.deleted_at IS NULL ORDER BY c.order_number ASC", langID, search, searchStr)
+			rows, err = db.Query(context.Background(), "SELECT DISTINCT ON (c.id,c.created_at) c.id,c.image,tc.name,c.order_number,c.order_number_in_home_page FROM categories c LEFT JOIN translation_category tc ON c.id=tc.category_id WHERE (c.is_visible = $4 OR c.is_visible = $5) AND to_tsvector(tc.slug) @@ to_tsquery($2) OR tc.slug LIKE $3 AND tc.lang_id = $1 AND c.parent_category_id IS NULL AND tc.deleted_at IS NULL AND c.deleted_at IS NULL ORDER BY c.order_number ASC", langID, search, searchStr, is_visible_1, is_visible_2)
 			if err != nil {
 				return []ResultCategory{}, 0, err
 			}
@@ -701,7 +710,7 @@ func GetAllCategoryForHeader(langID, search, searchStr string, limit, page uint)
 		}
 
 		// get all category where parent category id equal category id
-		rowss, err := db.Query(context.Background(), "SELECT c.id,tc.name,c.order_number,c.order_number_in_home_page FROM categories c LEFT JOIN translation_category tc ON c.id=tc.category_id WHERE tc.lang_id = $1 AND c.parent_category_id = $2 AND tc.deleted_at IS NULL AND c.deleted_at IS NULL ORDER BY tc.slug ASC", langID, result.ID)
+		rowss, err := db.Query(context.Background(), "SELECT c.id,tc.name,c.order_number,c.order_number_in_home_page FROM categories c LEFT JOIN translation_category tc ON c.id=tc.category_id WHERE (c.is_visible = $3 OR c.is_visible = $4) AND tc.lang_id = $1 AND c.parent_category_id = $2 AND tc.deleted_at IS NULL AND c.deleted_at IS NULL ORDER BY tc.slug ASC", langID, result.ID, is_visible_1, is_visible_2)
 		if err != nil {
 			return []ResultCategory{}, 0, err
 		}
@@ -715,7 +724,7 @@ func GetAllCategoryForHeader(langID, search, searchStr string, limit, page uint)
 			}
 
 			// get all category where parent category id equal category id
-			rowsss, err := db.Query(context.Background(), "SELECT c.id,tc.name,c.order_number,c.order_number_in_home_page FROM categories c LEFT JOIN translation_category tc ON c.id=tc.category_id WHERE tc.lang_id = $1 AND c.parent_category_id =$2 AND tc.deleted_at IS NULL AND c.deleted_at IS NULL ORDER BY tc.slug ASC", langID, resul.ID)
+			rowsss, err := db.Query(context.Background(), "SELECT c.id,tc.name,c.order_number,c.order_number_in_home_page FROM categories c LEFT JOIN translation_category tc ON c.id=tc.category_id WHERE (c.is_visible = $3 OR c.is_visible = $4) AND tc.lang_id = $1 AND c.parent_category_id =$2 AND tc.deleted_at IS NULL AND c.deleted_at IS NULL ORDER BY tc.slug ASC", langID, resul.ID, is_visible_1, is_visible_2)
 			if err != nil {
 				return []ResultCategory{}, 0, err
 			}

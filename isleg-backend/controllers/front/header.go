@@ -50,7 +50,7 @@ func GetHeaderData(c *gin.Context) {
 	}
 
 	// get all category from category controller
-	categories, _, err := backController.GetAllCategoryForHeader(langID, "", "", 0, 0)
+	categories, _, err := backController.GetAllCategoryForHeader(langID, "", "", 0, 0, true)
 	if err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
