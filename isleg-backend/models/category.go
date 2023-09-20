@@ -19,6 +19,7 @@ type Category struct {
 	DeletedAt             string                `json:"-"`
 	OrderNumber           uint                  `json:"order_number,omitempty"`
 	OrderNumberInHomePage uint                  `json:"order_number_in_home_page,omitempty"`
+	IsVisible             bool                  `json:"is_visible,omitempty"`
 	TranslationCategory   []TranslationCategory `json:"translation_category,omitempty" binding:"required"` // one to many
 }
 
