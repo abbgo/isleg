@@ -95,7 +95,7 @@ func CreateCategory(c *gin.Context) {
 	var parent_category_id interface{}
 
 	// validate other data of category
-	orderNumber, err := models.ValidateCategory("", category.ParentCategoryID.String, category.Image, "create", category.OrderNumber, category.OrderNumberInHomePage, category.IsHomeCategory)
+	orderNumberInHomePage, orderNumber, err := models.ValidateCategory("", category.ParentCategoryID.String, category.Image, "create", category.OrderNumber, category.OrderNumberInHomePage, category.IsHomeCategory)
 	if err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
@@ -103,6 +103,9 @@ func CreateCategory(c *gin.Context) {
 
 	if orderNumber == 0 {
 		orderNumber = category.OrderNumber
+	}
+	if orderNumberInHomePage == 0 {
+		orderNumberInHomePage = category.OrderNumberInHomePage
 	}
 
 	// CREATE CATEGORY
@@ -113,7 +116,7 @@ func CreateCategory(c *gin.Context) {
 	}
 
 	// add data to categories table
-	db.QueryRow(context.Background(), "INSERT INTO categories (parent_category_id,image,is_home_category,order_number,is_visible) VALUES ($1,$2,$3,$4,$5) RETURNING id", parent_category_id, category.Image, category.IsHomeCategory, orderNumber, category.IsVisible).Scan(&categoryID)
+	db.QueryRow(context.Background(), "INSERT INTO categories (parent_category_id,image,is_home_category,order_number,is_visible,order_number_in_home_page) VALUES ($1,$2,$3,$4,$5,$6) RETURNING id", parent_category_id, category.Image, category.IsHomeCategory, orderNumber, category.IsVisible, orderNumberInHomePage).Scan(&categoryID)
 	langID, err := GetLangID("tm")
 	if err != nil {
 		helpers.HandleError(c, 400, err.Error())
@@ -236,7 +239,7 @@ func UpdateCategoryByID(c *gin.Context) {
 
 	// var fileName string
 	var parent_category_id interface{}
-	orderNumber, err := models.ValidateCategory(ID, category.ParentCategoryID.String, "", "update", category.OrderNumber, category.OrderNumberInHomePage, category.IsHomeCategory)
+	orderNumberInHomePage, orderNumber, err := models.ValidateCategory(ID, category.ParentCategoryID.String, "", "update", category.OrderNumber, category.OrderNumberInHomePage, category.IsHomeCategory)
 	if err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
@@ -244,6 +247,10 @@ func UpdateCategoryByID(c *gin.Context) {
 
 	if orderNumber == 0 {
 		orderNumber = category.OrderNumber
+	}
+
+	if orderNumberInHomePage == 0 {
+		orderNumberInHomePage = category.OrderNumberInHomePage
 	}
 
 	if category.ParentCategoryID.String != "" && category.Image != "" {
@@ -261,13 +268,13 @@ func UpdateCategoryByID(c *gin.Context) {
 	}
 
 	if category.Image != "" {
-		_, err := db.Exec(context.Background(), "UPDATE categories SET parent_category_id = $1, image = $2, is_home_category = $3 , order_number = $5 , is_visible = $6 WHERE id = $4", parent_category_id, category.Image, category.IsHomeCategory, ID, orderNumber, category.IsVisible)
+		_, err := db.Exec(context.Background(), "UPDATE categories SET parent_category_id = $1, image = $2, is_home_category = $3 , order_number = $5 , is_visible = $6 , order_number_in_home_page = $7 WHERE id = $4", parent_category_id, category.Image, category.IsHomeCategory, ID, orderNumber, category.IsVisible, orderNumberInHomePage)
 		if err != nil {
 			helpers.HandleError(c, 400, err.Error())
 			return
 		}
 	} else {
-		_, err := db.Exec(context.Background(), "UPDATE categories SET parent_category_id = $1, is_home_category = $2 , order_number = $4 , is_visible = $5 WHERE id = $3", parent_category_id, category.IsHomeCategory, ID, orderNumber, category.IsVisible)
+		_, err := db.Exec(context.Background(), "UPDATE categories SET parent_category_id = $1, is_home_category = $2 , order_number = $4 , is_visible = $5 , order_number_in_home_page = $6 WHERE id = $3", parent_category_id, category.IsHomeCategory, ID, orderNumber, category.IsVisible, orderNumberInHomePage)
 		if err != nil {
 			helpers.HandleError(c, 400, err.Error())
 			return
