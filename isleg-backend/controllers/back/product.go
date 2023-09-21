@@ -247,6 +247,12 @@ func CreateProduct(c *gin.Context) {
 		return
 	}
 
+	_, err = db.Exec(context.Background(), "UPDATE categories SET is_visible = true WHERE id = ANY($1)", pq.Array(product.Categories))
+	if err != nil {
+		helpers.HandleError(c, 400, err.Error())
+		return
+	}
+
 	c.JSON(http.StatusOK, gin.H{
 		"status":     true,
 		"message":    "data successfully added",
