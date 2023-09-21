@@ -733,6 +733,12 @@ func CreateProductsByExcelFile(c *gin.Context) {
 				return
 			}
 
+			_, err = db.Exec(context.Background(), "UPDATE categories SET is_visible = true WHERE id = ANY($1)", pq.Array(product.Categories))
+			if err != nil {
+				helpers.HandleError(c, 400, err.Error())
+				return
+			}
+
 			if err := f.RemoveRow(sheetName, i); err != nil {
 				helpers.HandleError(c, 400, err.Error())
 				return
