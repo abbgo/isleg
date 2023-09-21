@@ -34,12 +34,12 @@ type TranslationCategory struct {
 	DeletedAt  string        `json:"-"`
 }
 
-func ValidateCategory(categoryID, parentCategoryID, fileName, metod string, orderNumber, orderNumberInHomePage uint, isHomeCategory bool) error {
+func ValidateCategory(categoryID, parentCategoryID, fileName, metod string, orderNumber, orderNumberInHomePage uint, isHomeCategory bool) (uint, error) {
 
 	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
-		return err
+		return 0, err
 	}
 	defer db.Close()
 
@@ -48,7 +48,7 @@ func ValidateCategory(categoryID, parentCategoryID, fileName, metod string, orde
 		db.QueryRow(context.Background(), "SELECT id FROM categories WHERE id = $1 AND deleted_at IS NULL", categoryID).Scan(&category_id)
 
 		if category_id == "" {
-			return errors.New("category not found")
+			return 0, errors.New("category not found")
 		}
 	}
 
@@ -56,7 +56,7 @@ func ValidateCategory(categoryID, parentCategoryID, fileName, metod string, orde
 	if parentCategoryID != "" {
 		if metod == "create" {
 			if fileName != "" {
-				return errors.New("child cannot be an image of the category")
+				return 0, errors.New("child cannot be an image of the category")
 			}
 		}
 
@@ -64,22 +64,27 @@ func ValidateCategory(categoryID, parentCategoryID, fileName, metod string, orde
 		db.QueryRow(context.Background(), "SELECT id FROM categories WHERE id = $1 AND deleted_at IS NULL", parentCategoryID).Scan(&parentCategory)
 
 		if parentCategory == "" {
-			return errors.New("parent category not found")
+			return 0, errors.New("parent category not found")
 		}
 
-		return nil
+		return 0, nil
 	} else {
 		if metod == "create" {
 			if fileName == "" {
-				return errors.New("parent category image is required")
+				return 0, errors.New("parent category image is required")
 			}
 
 			if orderNumber != 0 {
 				var category_id string
 				db.QueryRow(context.Background(), "SELECT id FROM categories WHERE order_number = $1 AND deleted_at IS NULL AND parent_category_id IS NULL", orderNumber).Scan(&category_id)
 				if category_id != "" {
-					return errors.New("this order_number already exists")
+					return 0, errors.New("this order_number already exists")
 				}
+			} else {
+				if err := db.QueryRow(context.Background(), "SELECT MAX(order_number) FROM categories WHERE deleted_at IS NULL AND parent_category_id IS NULL").Scan(&orderNumber); err != nil {
+					return 0, err
+				}
+				orderNumber = orderNumber + 1
 			}
 		} /*else {
 			if orderNumber != 0 {
@@ -97,10 +102,10 @@ func ValidateCategory(categoryID, parentCategoryID, fileName, metod string, orde
 			var category_id string
 			db.QueryRow(context.Background(), "SELECT id FROM categories WHERE is_home_category = true AND order_number_in_home_page = $1", orderNumberInHomePage).Scan(&category_id)
 			if category_id != "" {
-				return errors.New("this order_number already exists")
+				return 0, errors.New("this order_number already exists")
 			}
 		}
 	}
 
-	return nil
+	return orderNumber, nil
 }
