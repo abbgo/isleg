@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"context"
-	"database/sql"
 	"github/abbgo/isleg/isleg-backend/config"
 	"github/abbgo/isleg/isleg-backend/helpers"
 	"github/abbgo/isleg/isleg-backend/models"
@@ -260,45 +259,45 @@ func CreateProduct(c *gin.Context) {
 	})
 }
 
-func UpdateProductsCode(c *gin.Context) {
-	db, err := config.ConnDB()
-	if err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
-	defer db.Close()
+// func UpdateProductsCode(c *gin.Context) {
+// 	db, err := config.ConnDB()
+// 	if err != nil {
+// 		helpers.HandleError(c, 400, err.Error())
+// 		return
+// 	}
+// 	defer db.Close()
 
-	rows, err := db.Query(context.Background(), "SELECT id FROM products")
-	if err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
-	defer rows.Close()
+// 	rows, err := db.Query(context.Background(), "SELECT id FROM products")
+// 	if err != nil {
+// 		helpers.HandleError(c, 400, err.Error())
+// 		return
+// 	}
+// 	defer rows.Close()
 
-	for rows.Next() {
-		var id string
-		if err := rows.Scan(&id); err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
-		}
+// 	for rows.Next() {
+// 		var id string
+// 		if err := rows.Scan(&id); err != nil {
+// 			helpers.HandleError(c, 400, err.Error())
+// 			return
+// 		}
 
-		var nameOfCategory sql.NullString
-		db.QueryRow(context.Background(), "SELECT t.name FROM translation_category t INNER JOIN categories c ON c.id = t.category_id INNER JOIN category_product cp ON cp.category_id = c.id INNER JOIN languages l ON l.id = t.lang_id WHERE l.name_short = 'tm' AND c.parent_category_id IS NULL AND cp.product_id = $1 AND cp.deleted_at IS NULL AND c.deleted_at IS NULL AND t.deleted_at IS NULL AND l.deleted_at IS NULL", id).Scan(&nameOfCategory)
+// 		var nameOfCategory sql.NullString
+// 		db.QueryRow(context.Background(), "SELECT t.name FROM translation_category t INNER JOIN categories c ON c.id = t.category_id INNER JOIN category_product cp ON cp.category_id = c.id INNER JOIN languages l ON l.id = t.lang_id WHERE l.name_short = 'tm' AND c.parent_category_id IS NULL AND cp.product_id = $1 AND cp.deleted_at IS NULL AND c.deleted_at IS NULL AND t.deleted_at IS NULL AND l.deleted_at IS NULL", id).Scan(&nameOfCategory)
 
-		if nameOfCategory.String != "" {
-			_, err := db.Exec(context.Background(), "UPDATE products SET code = $1 WHERE id = $2", strings.ToUpper(slug.MakeLang(nameOfCategory.String, "en")[:2])+"-"+helpers.GenerateRandomCode(), id)
-			if err != nil {
-				helpers.HandleError(c, 400, err.Error())
-				return
-			}
-		}
-	}
+// 		if nameOfCategory.String != "" {
+// 			_, err := db.Exec(context.Background(), "UPDATE products SET code = $1 WHERE id = $2", strings.ToUpper(slug.MakeLang(nameOfCategory.String, "en")[:2])+"-"+helpers.GenerateRandomCode(), id)
+// 			if err != nil {
+// 				helpers.HandleError(c, 400, err.Error())
+// 				return
+// 			}
+// 		}
+// 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"status":  true,
-		"message": " successfully",
-	})
-}
+// 	c.JSON(http.StatusOK, gin.H{
+// 		"status":  true,
+// 		"message": " successfully",
+// 	})
+// }
 
 func CreateProductsByExcelFile(c *gin.Context) {
 	countOfRows := 0
@@ -888,6 +887,12 @@ func UpdateProductByID(c *gin.Context) {
 	}
 
 	_, err = db.Exec(context.Background(), "INSERT INTO category_product (category_id,product_id) VALUES (unnest($1::uuid[]),$2)", pq.Array(product.Categories), ID)
+	if err != nil {
+		helpers.HandleError(c, 400, err.Error())
+		return
+	}
+
+	_, err = db.Exec(context.Background(), "UPDATE categories SET is_visible = true WHERE id = ANY($1)", pq.Array(product.Categories))
 	if err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
