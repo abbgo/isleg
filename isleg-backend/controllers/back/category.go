@@ -68,6 +68,7 @@ type Product struct {
 	Benefit      null.Float                             `json:"-"`
 	Translations []map[string]models.TranslationProduct `json:"translations"`
 	Code         null.String                            `json:"code,omitempty"`
+	IsVisible    bool                                   `json:"is_visible"`
 }
 
 type CategoryVisible struct {
@@ -1223,7 +1224,7 @@ func GetOneCategoryWithProducts(c *gin.Context) {
 		}
 
 		// get all product where category id equal categoryID
-		productRows, err := db.Query(context.Background(), "SELECT DISTINCT ON (p.created_at) p.id,p.price,p.old_price,p.limit_amount,p.is_new,p.amount,p.main_image,p.benefit,p.code FROM products p LEFT JOIN category_product c ON p.id=c.product_id WHERE p.is_visible = true AND c.category_id = $1 AND p.amount > 0 AND p.limit_amount > 0 AND p.deleted_at IS NULL AND c.deleted_at IS NULL ORDER BY p.created_at ASC LIMIT $2 OFFSET $3", categoryID, limit, offset)
+		productRows, err := db.Query(context.Background(), "SELECT DISTINCT ON (p.created_at) p.id,p.price,p.old_price,p.limit_amount,p.is_new,p.amount,p.main_image,p.benefit,p.code,p.is_visible FROM products p LEFT JOIN category_product c ON p.id=c.product_id WHERE p.is_visible = true AND c.category_id = $1 AND p.amount > 0 AND p.limit_amount > 0 AND p.deleted_at IS NULL AND c.deleted_at IS NULL ORDER BY p.created_at ASC LIMIT $2 OFFSET $3", categoryID, limit, offset)
 		if err != nil {
 			helpers.HandleError(c, 400, err.Error())
 			return
@@ -1233,7 +1234,7 @@ func GetOneCategoryWithProducts(c *gin.Context) {
 		var products []Product
 		for productRows.Next() {
 			var product Product
-			if err := productRows.Scan(&product.ID, &product.Price, &product.OldPrice, &product.LimitAmount, &product.IsNew, &product.Amount, &product.MainImage, &product.Benefit, &product.Code); err != nil {
+			if err := productRows.Scan(&product.ID, &product.Price, &product.OldPrice, &product.LimitAmount, &product.IsNew, &product.Amount, &product.MainImage, &product.Benefit, &product.Code, &product.IsVisible); err != nil {
 				helpers.HandleError(c, 400, err.Error())
 				return
 			}
