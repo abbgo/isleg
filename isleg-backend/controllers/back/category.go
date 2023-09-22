@@ -183,6 +183,11 @@ func ChangeCreateVisible(c *gin.Context) {
 		helpers.HandleError(c, 400, err.Error())
 		return
 	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":  true,
+		"message": "category visible change successfully",
+	})
 }
 
 // func UpdateParentCategoriesOrderNumber(c *gin.Context) {
