@@ -34,6 +34,7 @@ type Product struct {
 	Brend              Brend                `json:"brend,omitempty"`
 	Shop               Shop                 `json:"shop,omitempty"`
 	Code               string               `json:"code,omitempty"`
+	IsVisible          bool                 `json:"is_visible,omitempty"`
 }
 
 type Images struct {
