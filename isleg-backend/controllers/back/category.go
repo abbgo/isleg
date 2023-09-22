@@ -1167,10 +1167,10 @@ func GetOneCategoryWithProducts(c *gin.Context) {
 	var is_visible_1, is_visible_2 bool
 	if status {
 		is_visible_1 = true
-		is_visible_2 = true
+		is_visible_2 = false
 	} else {
 		is_visible_1 = true
-		is_visible_2 = false
+		is_visible_2 = true
 	}
 
 	// get limit from param
