@@ -10,18 +10,19 @@ import (
 )
 
 type Category struct {
-	ID                    string                `json:"id,omitempty"`
-	ParentCategoryID      null.String           `json:"parent_category_id,omitempty"`
-	Image                 string                `json:"image,omitempty"`
-	IsHomeCategory        bool                  `json:"is_home_category,omitempty"`
-	CreatedAt             string                `json:"-"`
-	UpdatedAt             string                `json:"-"`
-	DeletedAt             string                `json:"-"`
-	OrderNumber           uint                  `json:"order_number,omitempty"`
-	OldOrderNumber        uint                  `json:"old_order_number,omitempty"`
-	OrderNumberInHomePage uint                  `json:"order_number_in_home_page,omitempty"`
-	IsVisible             bool                  `json:"is_visible,omitempty"`
-	TranslationCategory   []TranslationCategory `json:"translation_category,omitempty" binding:"required"` // one to many
+	ID                       string                `json:"id,omitempty"`
+	ParentCategoryID         null.String           `json:"parent_category_id,omitempty"`
+	Image                    string                `json:"image,omitempty"`
+	IsHomeCategory           bool                  `json:"is_home_category,omitempty"`
+	CreatedAt                string                `json:"-"`
+	UpdatedAt                string                `json:"-"`
+	DeletedAt                string                `json:"-"`
+	OrderNumber              uint                  `json:"order_number,omitempty"`
+	OldOrderNumber           uint                  `json:"old_order_number,omitempty"`
+	OrderNumberInHomePage    uint                  `json:"order_number_in_home_page,omitempty"`
+	OldOrderNumberInHomePage uint                  `json:"old_order_number_in_home_page,omitempty"`
+	IsVisible                bool                  `json:"is_visible,omitempty"`
+	TranslationCategory      []TranslationCategory `json:"translation_category,omitempty" binding:"required"` // one to many
 }
 
 type TranslationCategory struct {
@@ -35,7 +36,7 @@ type TranslationCategory struct {
 	DeletedAt  string        `json:"-"`
 }
 
-func ValidateCategory(categoryID, parentCategoryID, fileName, metod string, orderNumber, OldOrderNumber, orderNumberInHomePage uint, isHomeCategory bool) (uint, uint, error) {
+func ValidateCategory(categoryID, parentCategoryID, fileName, metod string, orderNumber, OldOrderNumber, orderNumberInHomePage, oldOrderNumberInHomePage uint, isHomeCategory bool) (uint, uint, error) {
 
 	// initialize database connection
 	db, err := config.ConnDB()
@@ -104,64 +105,86 @@ func ValidateCategory(categoryID, parentCategoryID, fileName, metod string, orde
 				}
 
 				if orderNumber < OldOrderNumber {
-					rowsCategory, err := db.Query(context.Background(), "SELECT id FROM categories WHERE parent_category_id IS NULL AND deleted_at IS NULL AND order_number >= $1 AND order_number < $2", orderNumber, OldOrderNumber)
+					_, err = db.Exec(context.Background(), "UPDATE categories SET order_number = order_number + 1 WHERE parent_category_id IS NULL AND deleted_at IS NULL AND order_number >= $1 AND order_number < $2", orderNumber, OldOrderNumber)
 					if err != nil {
 						return 0, 0, err
-					}
-					defer rowsCategory.Close()
-
-					for rowsCategory.Next() {
-						var category_id string
-						if err := rowsCategory.Scan(&category_id); err != nil {
-							return 0, 0, err
-						}
-
-						_, err = db.Exec(context.Background(), "UPDATE categories SET order_number = order_number + 1 WHERE id = $1", category_id)
-						if err != nil {
-							return 0, 0, err
-						}
 					}
 				} else if orderNumber > OldOrderNumber {
-					rowsCategory, err := db.Query(context.Background(), "SELECT id FROM categories WHERE parent_category_id IS NULL AND deleted_at IS NULL AND order_number > $1 AND order_number <= $2", OldOrderNumber, orderNumber)
+					_, err = db.Exec(context.Background(), "UPDATE categories SET order_number = order_number - 1 WHERE parent_category_id IS NULL AND deleted_at IS NULL AND order_number > $1 AND order_number <= $2", OldOrderNumber, orderNumber)
 					if err != nil {
 						return 0, 0, err
 					}
-					defer rowsCategory.Close()
-
-					for rowsCategory.Next() {
-						var category_id string
-						if err := rowsCategory.Scan(&category_id); err != nil {
-							return 0, 0, err
-						}
-
-						_, err = db.Exec(context.Background(), "UPDATE categories SET order_number = order_number - 1 WHERE id = $1", category_id)
-						if err != nil {
-							return 0, 0, err
-						}
-					}
 				}
-
-				_, err = db.Exec(context.Background(), "UPADTE categories SET order_number = $1 WHERE id = $2", orderNumber, categoryID)
-				if err != nil {
-					return 0, 0, err
-				}
-
 			}
 		}
 	}
 
 	if isHomeCategory {
-		if orderNumberInHomePage != 0 {
-			var category_id string
-			db.QueryRow(context.Background(), "SELECT id FROM categories WHERE is_home_category = true AND order_number_in_home_page = $1 AND deleted_at IS NULL", orderNumberInHomePage).Scan(&category_id)
-			if category_id != "" {
-				return 0, 0, errors.New("this order_number already exists")
+		if metod == "create" {
+			if orderNumberInHomePage != 0 {
+				var category_id string
+				db.QueryRow(context.Background(), "SELECT id FROM categories WHERE is_home_category = true AND order_number_in_home_page = $1 AND deleted_at IS NULL", orderNumberInHomePage).Scan(&category_id)
+				if category_id != "" {
+					return 0, 0, errors.New("this order_number already exists")
+				}
+			} else {
+				if err := db.QueryRow(context.Background(), "SELECT MAX(order_number_in_home_page) FROM categories WHERE deleted_at IS NLL AND is_home_category = true").Scan(&orderNumberInHomePage); err != nil {
+					return 0, 0, err
+				}
+				orderNumberInHomePage = orderNumberInHomePage + 1
 			}
 		} else {
-			if err := db.QueryRow(context.Background(), "SELECT MAX(order_number_in_home_page) FROM categories WHERE deleted_at IS NLL AND is_home_category = true").Scan(&orderNumberInHomePage); err != nil {
-				return 0, 0, err
+			var old_is_home_category bool
+			db.QueryRow(context.Background(), "SELECT is_home_category FROM categories WHERE id = $1 AND deleted_at IS NULL", categoryID).Scan(&old_is_home_category)
+			if old_is_home_category {
+				if orderNumberInHomePage == 0 {
+					return 0, 0, errors.New("order_number_in_home_page is required")
+				}
+
+				var order_number_in_home_page uint
+				db.QueryRow(context.Background(), "SELECT order_number FROM categories WHERE deleted_at IS NULL AND id = $1 AND is_home_category = true", categoryID).Scan(&order_number_in_home_page)
+				if order_number_in_home_page == 0 {
+					return 0, 0, errors.New("order_number_in_home_page not found")
+				}
+
+				if order_number_in_home_page != orderNumberInHomePage {
+					if orderNumberInHomePage == oldOrderNumberInHomePage {
+						return 0, 0, errors.New("order_number_in_home_page don't equal old_order_number_in_home_page")
+					}
+
+					if orderNumberInHomePage < oldOrderNumberInHomePage {
+						_, err = db.Exec(context.Background(), "UPDATE categories SET order_number_in_home_page = order_number_in_home_page + 1 WHERE is_home_category = true AND deleted_at IS NULL AND order_number_in_home_page >= $1 AND order_number_in_home_page < $2", orderNumberInHomePage, oldOrderNumberInHomePage)
+						if err != nil {
+							return 0, 0, err
+						}
+					} else if orderNumberInHomePage > oldOrderNumberInHomePage {
+						_, err = db.Exec(context.Background(), "UPDATE categories SET order_number_in_home_page = order_number_in_home_page - 1 WHERE is_home_category = true IS NULL AND deleted_at IS NULL AND order_number_in_home_page > $1 AND order_number_in_home_page <= $2", oldOrderNumberInHomePage, orderNumberInHomePage)
+						if err != nil {
+							return 0, 0, err
+						}
+					}
+				}
+			} else {
+				var minOrderNumber, maxOrderNumber uint
+				db.QueryRow(context.Background(), "SELECT MIN(order_number_in_home_page),MAX(order_number_in_home_page) FROM categories WHERE is_home_category = true AND deleted_at IS NULL").Scan(&minOrderNumber, &maxOrderNumber)
+
+				if orderNumberInHomePage == minOrderNumber {
+					_, err = db.Exec(context.Background(), "UPDATE categories SET order_number_in_home_page = order_number_in_home_page + 1 WHERE is_home_category = true AND deleted_at IS NULL AND order_number_in_home_page >= $1", orderNumberInHomePage)
+					if err != nil {
+						return 0, 0, err
+					}
+				} else if orderNumberInHomePage == maxOrderNumber {
+					_, err = db.Exec(context.Background(), "UPDATE categories SET order_number_in_home_page = order_number_in_home_page + 1 WHERE order_number_in_home_page = $1", maxOrderNumber)
+					if err != nil {
+						return 0, 0, err
+					}
+				} else if minOrderNumber < orderNumberInHomePage && orderNumberInHomePage < maxOrderNumber {
+					_, err = db.Exec(context.Background(), "UPDATE categories SET order_number_in_home_page = order_number_in_home_page + 1 WHERE is_home_category = true AND deleted_at IS NULL AND order_number_in_home_page >= $1", orderNumberInHomePage)
+					if err != nil {
+						return 0, 0, err
+					}
+				}
 			}
-			orderNumberInHomePage = orderNumberInHomePage + 1
 		}
 	}
 
