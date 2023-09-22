@@ -136,6 +136,7 @@ func BackRoutes(back *gin.RouterGroup) {
 
 		// Baslayar --- kategoriya ucin CRUD
 		securedAdmin.POST("category", backController.CreateCategory)
+		securedAdmin.PUT("category-visible", backController.ChangeCreateVisible)
 		// securedAdmin.POST("category-order-numer", backController.UpdateParentCategoriesOrderNumber)
 		// securedAdmin.POST("category-order-numer-in-home-page", backController.UpdateHomePageCategoriesOrderNumber)
 		securedAdmin.PUT("category/:id", backController.UpdateCategoryByID)

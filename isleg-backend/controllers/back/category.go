@@ -27,7 +27,7 @@ type ResultCategory struct {
 	Name                  string          `json:"name,omitempty"`
 	OrderNumber           uint            `json:"order_number,omitempty"`
 	OrderNumberInHomePage uint            `json:"order_number_in_home_page,omitempty"`
-	IsVisible             bool            `json:"is_visible,omitempty"`
+	IsVisible             bool            `json:"is_visible"`
 	ResultCategor         []ResultCategor `json:"child_category,omitempty"`
 }
 
@@ -36,7 +36,7 @@ type ResultCategor struct {
 	Name                  string         `json:"name,omitempty"`
 	OrderNumber           uint           `json:"order_number,omitempty"`
 	OrderNumberInHomePage uint           `json:"order_number_in_home_page,omitempty"`
-	IsVisible             bool           `json:"is_visible,omitempty"`
+	IsVisible             bool           `json:"is_visible"`
 	ResultCatego          []ResultCatego `json:"child_category,omitempty"`
 }
 
@@ -45,7 +45,7 @@ type ResultCatego struct {
 	Name                  string `json:"name,omitempty"`
 	OrderNumber           uint   `json:"order_number,omitempty"`
 	OrderNumberInHomePage uint   `json:"order_number_in_home_page,omitempty"`
-	IsVisible             bool   `json:"is_visible,omitempty"`
+	IsVisible             bool   `json:"is_visible"`
 }
 
 type Category struct {
@@ -68,6 +68,11 @@ type Product struct {
 	Benefit      null.Float                             `json:"-"`
 	Translations []map[string]models.TranslationProduct `json:"translations"`
 	Code         null.String                            `json:"code,omitempty"`
+}
+
+type CategoryVisible struct {
+	ID        string `json:"id" binding:"required"`
+	IsVisible bool   `json:"is_visible"`
 }
 
 type Brend struct {
@@ -149,6 +154,35 @@ func CreateCategory(c *gin.Context) {
 		"status":  true,
 		"message": "data successfully added",
 	})
+}
+
+func ChangeCreateVisible(c *gin.Context) {
+	// initialize database connection
+	db, err := config.ConnDB()
+	if err != nil {
+		helpers.HandleError(c, 400, err.Error())
+		return
+	}
+	defer db.Close()
+
+	var category CategoryVisible
+	if err := c.BindJSON(&category); err != nil {
+		helpers.HandleError(c, 400, err.Error())
+		return
+	}
+
+	var categoryID string
+	db.QueryRow(context.Background(), "SELECT id FROM categories WHERE id = $1 AND deleted_at IS NULL", category.ID).Scan(&categoryID)
+	if categoryID == "" {
+		helpers.HandleError(c, 404, "category not found")
+		return
+	}
+
+	_, err = db.Exec(context.Background(), "UPDATE categories SET is_visible = $1 WHERE id = $2", category.IsVisible, category.ID)
+	if err != nil {
+		helpers.HandleError(c, 400, err.Error())
+		return
+	}
 }
 
 // func UpdateParentCategoriesOrderNumber(c *gin.Context) {
