@@ -167,6 +167,7 @@ func BackRoutes(back *gin.RouterGroup) {
 
 		securedAdmin.POST("product", backController.CreateProduct)
 		// securedAdmin.POST("product-code", backController.UpdateProductsCode)
+		securedAdmin.PUT("product-visible", backController.ChangeProductVisible)
 		securedAdmin.POST("product-in-excel", backController.CreateProductsByExcelFile)
 		securedAdmin.PUT("product/:id", backController.UpdateProductByID)
 		securedAdmin.GET("product/:id", backController.GetProductByID)

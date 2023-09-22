@@ -208,7 +208,7 @@ func CreateProduct(c *gin.Context) {
 
 	// create product
 	var productID string
-	db.QueryRow(context.Background(), "INSERT INTO products (brend_id,price,old_price,amount,limit_amount,is_new,shop_id,main_image,benefit,code) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) RETURNING id", brendID, price, oldPrice, amount, limitAmount, isNew, shopID, product.MainImage, benefit, productCode).Scan(&productID)
+	db.QueryRow(context.Background(), "INSERT INTO products (brend_id,price,old_price,amount,limit_amount,is_new,shop_id,main_image,benefit,code,is_visible) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) RETURNING id", brendID, price, oldPrice, amount, limitAmount, isNew, shopID, product.MainImage, benefit, productCode, true).Scan(&productID)
 
 	if len(product.Images) != 0 {
 		// create images of product
@@ -256,6 +256,40 @@ func CreateProduct(c *gin.Context) {
 		"status":     true,
 		"message":    "data successfully added",
 		"product_id": productID,
+	})
+}
+
+func ChangeProductVisible(c *gin.Context) {
+	// initialize database connection
+	db, err := config.ConnDB()
+	if err != nil {
+		helpers.HandleError(c, 400, err.Error())
+		return
+	}
+	defer db.Close()
+
+	var product CategoryVisible
+	if err := c.BindJSON(&product); err != nil {
+		helpers.HandleError(c, 400, err.Error())
+		return
+	}
+
+	var productID string
+	db.QueryRow(context.Background(), "SELECT id FROM products WHERE id = $1 AND deleted_at IS NULL", product.ID).Scan(&productID)
+	if productID == "" {
+		helpers.HandleError(c, 404, "product not found")
+		return
+	}
+
+	_, err = db.Exec(context.Background(), "UPDATE products SET is_visible = $1 WHERE id = $2", product.IsVisible, product.ID)
+	if err != nil {
+		helpers.HandleError(c, 400, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":  true,
+		"message": "product visible change successfully",
 	})
 }
 
@@ -682,7 +716,7 @@ func CreateProductsByExcelFile(c *gin.Context) {
 
 		if countOfErr == 0 {
 			// create product
-			resultProducts, err := db.Query(context.Background(), "INSERT INTO products (brend_id,price,old_price,amount,limit_amount,is_new,shop_id,main_image,benefit,code) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) RETURNING id", brendID, price, oldPrice, amount, limitAmount, isNew, shopID, product.MainImage, benefit, productCode)
+			resultProducts, err := db.Query(context.Background(), "INSERT INTO products (brend_id,price,old_price,amount,limit_amount,is_new,shop_id,main_image,benefit,code,is_visible) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) RETURNING id", brendID, price, oldPrice, amount, limitAmount, isNew, shopID, product.MainImage, benefit, productCode, true)
 			if err != nil {
 				helpers.HandleError(c, 400, err.Error())
 				return
