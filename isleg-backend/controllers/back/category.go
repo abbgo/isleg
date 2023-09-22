@@ -1157,6 +1157,22 @@ func GetOneCategoryWithProducts(c *gin.Context) {
 		return
 	}
 
+	statusStr := c.DefaultQuery("status", "true")
+	status, err := strconv.ParseBool(statusStr)
+	if err != nil {
+		helpers.HandleError(c, 400, err.Error())
+		return
+	}
+
+	var is_visible_1, is_visible_2 bool
+	if status {
+		is_visible_1 = true
+		is_visible_2 = true
+	} else {
+		is_visible_1 = true
+		is_visible_2 = false
+	}
+
 	// get limit from param
 	limitStr := c.Param("limit")
 	if limitStr == "" {
@@ -1207,7 +1223,7 @@ func GetOneCategoryWithProducts(c *gin.Context) {
 		}
 
 		// get count product where product_id equal categoryID
-		productCount, err := db.Query(context.Background(), "SELECT COUNT(DISTINCT p.id) FROM products p LEFT JOIN category_product c ON p.id=c.product_id WHERE p.is_visible = true AND c.category_id = $1 AND p.amount > 0 AND p.limit_amount > 0 AND p.deleted_at IS NULL AND c.deleted_at IS NULL", categoryID)
+		productCount, err := db.Query(context.Background(), "SELECT COUNT(DISTINCT p.id) FROM products p LEFT JOIN category_product c ON p.id=c.product_id WHERE (p.is_visible = $2 OR p.is_visible = $3) AND c.category_id = $1 AND p.amount > 0 AND p.limit_amount > 0 AND p.deleted_at IS NULL AND c.deleted_at IS NULL", categoryID, is_visible_1, is_visible_2)
 		if err != nil {
 			helpers.HandleError(c, 400, err.Error())
 			return
@@ -1224,7 +1240,7 @@ func GetOneCategoryWithProducts(c *gin.Context) {
 		}
 
 		// get all product where category id equal categoryID
-		productRows, err := db.Query(context.Background(), "SELECT DISTINCT ON (p.created_at) p.id,p.price,p.old_price,p.limit_amount,p.is_new,p.amount,p.main_image,p.benefit,p.code,p.is_visible FROM products p LEFT JOIN category_product c ON p.id=c.product_id WHERE p.is_visible = true AND c.category_id = $1 AND p.amount > 0 AND p.limit_amount > 0 AND p.deleted_at IS NULL AND c.deleted_at IS NULL ORDER BY p.created_at ASC LIMIT $2 OFFSET $3", categoryID, limit, offset)
+		productRows, err := db.Query(context.Background(), "SELECT DISTINCT ON (p.created_at) p.id,p.price,p.old_price,p.limit_amount,p.is_new,p.amount,p.main_image,p.benefit,p.code,p.is_visible FROM products p LEFT JOIN category_product c ON p.id=c.product_id WHERE (p.is_visible = $4 OR p.is_visible = $5) AND c.category_id = $1 AND p.amount > 0 AND p.limit_amount > 0 AND p.deleted_at IS NULL AND c.deleted_at IS NULL ORDER BY p.created_at ASC LIMIT $2 OFFSET $3", categoryID, limit, offset, is_visible_1, is_visible_2)
 		if err != nil {
 			helpers.HandleError(c, 400, err.Error())
 			return
