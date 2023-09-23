@@ -104,6 +104,8 @@ func FrontRoutes(front *gin.RouterGroup) {
 		// SendMail funksiya musderi habarlasmak sahypa girip hat yazanda firma hat ugratyar
 		frontRoutes.POST("send-mail", frontController.SendMail)
 
+		frontRoutes.POST("send-sms/:phone", frontController.SendSms)
+
 		// get like products without customer by product id ->
 		// Eger musderi like - a haryt gosup sonam sol haryt bazadan ayrylan bolsa
 		// sony bildirmek ucin front - dan mana cookie - daki product_id - leri

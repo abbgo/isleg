@@ -369,7 +369,7 @@ func GetCategoryByID(c *gin.Context) {
 
 	// check id and get data from daabase
 	var category models.Category
-	db.QueryRow(context.Background(), "SELECT id,parent_category_id,image,is_home_category FROM categories WHERE id = $1 AND deleted_at IS NULL", ID).Scan(&category.ID, &category.ParentCategoryID, &category.Image, &category.IsHomeCategory)
+	db.QueryRow(context.Background(), "SELECT id,parent_category_id,image,is_home_category,order_number,order_number_in_home_page FROM categories WHERE id = $1 AND deleted_at IS NULL", ID).Scan(&category.ID, &category.ParentCategoryID, &category.Image, &category.IsHomeCategory, &category.OrderNumber, &category.OrderNumberInHomePage)
 	if category.ID == "" {
 		helpers.HandleError(c, 404, "category not found")
 		return
