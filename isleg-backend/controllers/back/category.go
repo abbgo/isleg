@@ -96,7 +96,7 @@ func CreateCategory(c *gin.Context) {
 		helpers.HandleError(c, 400, err.Error())
 		return
 	}
-	category.IsVisible = true
+	category.IsVisible = false
 
 	var categoryID string
 	var parent_category_id interface{}
