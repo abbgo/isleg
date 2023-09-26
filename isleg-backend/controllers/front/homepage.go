@@ -71,7 +71,7 @@ func GetHomePageCategories(c *gin.Context) {
 	}
 
 	// get all homepage category where translation category id equal langID
-	categoryRows, err := db.Query(context.Background(), "SELECT c.id,t.name FROM categories c INNER JOIN translation_category t ON c.id=t.category_id WHERE c.is_visible = true AND t.lang_id = $1 AND c.is_home_category = true AND t.deleted_at IS NULL AND c.deleted_at IS NULl ORDER BY c.order_number_in_home_page ASC", langID)
+	categoryRows, err := db.Query(context.Background(), "SELECT c.id,t.name FROM categories c INNER JOIN translation_category t ON c.id=t.category_id WHERE c.order_number_in_home_page > 0 AND c.is_visible = true AND t.lang_id = $1 AND c.is_home_category = true AND t.deleted_at IS NULL AND c.deleted_at IS NULL ORDER BY c.order_number_in_home_page ASC", langID)
 	if err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
