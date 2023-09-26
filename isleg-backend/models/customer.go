@@ -23,6 +23,7 @@ type Customer struct {
 	UpdatedAt       string            `json:"-"`
 	DeletedAt       string            `json:"-"`
 	CustomerAddress []CustomerAddress `json:"customer_address,omitempty"` // one to many
+	OtpSecretKey    string            `json:"-"`
 }
 
 func HashPassword(password string) (string, error) {

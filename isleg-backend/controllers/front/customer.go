@@ -44,23 +44,13 @@ func RegisterCustomer(c *gin.Context) {
 	}
 	defer db.Close()
 
-	var customer models.Customer
+	var customer Login
 	if err := c.BindJSON(&customer); err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
 	}
 
-	if customer.Password == "" {
-		helpers.HandleError(c, 400, "customer password is required")
-		return
-	}
-
-	if len(customer.Password) < 5 || len(customer.Password) > 25 {
-		helpers.HandleError(c, 400, "password length should be between 5 and 25")
-		return
-	}
-
-	err = models.ValidateCustomerRegister(customer.PhoneNumber, customer.Email)
+	err = models.ValidateCustomerLogin(customer.PhoneNumber)
 	if err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
@@ -112,16 +102,6 @@ func LoginCustomer(c *gin.Context) {
 	var customer Login
 	if err := c.BindJSON(&customer); err != nil {
 		helpers.HandleError(c, 400, err.Error())
-		return
-	}
-
-	if customer.Password == "" {
-		helpers.HandleError(c, 400, "customer password is required")
-		return
-	}
-
-	if len(customer.Password) < 5 || len(customer.Password) > 25 {
-		helpers.HandleError(c, 400, "password length should be between 5 and 25")
 		return
 	}
 
