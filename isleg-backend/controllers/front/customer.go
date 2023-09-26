@@ -5,6 +5,7 @@ import (
 	"github/abbgo/isleg/isleg-backend/auth"
 	"github/abbgo/isleg/isleg-backend/config"
 	"github/abbgo/isleg/isleg-backend/helpers"
+	"github/abbgo/isleg/isleg-backend/pkg"
 
 	"github/abbgo/isleg/isleg-backend/models"
 	"net/http"
@@ -16,6 +17,11 @@ import (
 type Login struct {
 	PhoneNumber string `json:"phone_number" binding:"required,e164,len=12"`
 	Password    string `json:"password" binding:"required,min=3,max=25"`
+}
+
+type OTP struct {
+	PhoneNumber string `json:"phone_number" binding:"required,e164,len=12"`
+	Code        string `json:"code" binding:"required,len=6"`
 }
 
 type CustomerInformation struct {
@@ -35,7 +41,7 @@ type Address struct {
 	IsActive bool   `json:"is_active"`
 }
 
-func RegisterCustomer(c *gin.Context) {
+func SendSmsToCustomer(c *gin.Context) {
 	// initialize database connection
 	db, err := config.ConnDB()
 	if err != nil {
@@ -50,8 +56,7 @@ func RegisterCustomer(c *gin.Context) {
 		return
 	}
 
-	err = models.ValidateCustomerLogin(customer.PhoneNumber)
-	if err != nil {
+	if err := models.ValidateCustomer(customer.PhoneNumber, "create", ""); err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
 	}
@@ -67,15 +72,72 @@ func RegisterCustomer(c *gin.Context) {
 	// we parolyny baza yazdyrmak ucin database - den sol customer - leri tapyp update etmeli
 	var phone_number string
 	db.QueryRow(context.Background(), "SELECT phone_number FROM customers WHERE phone_number = $1 AND is_register = false AND deleted_at IS NULL", customer.PhoneNumber).Scan(&phone_number)
-
-	var customerID string
-	if phone_number != "" {
-		db.QueryRow(context.Background(), "UPDATE customers SET full_name = $1 , password = $2 , email = $3 , is_register = $4 WHERE phone_number = $5 RETURNING id", customer.FullName, hashPassword, customer.Email, true, customer.PhoneNumber).Scan(&customerID)
-	} else {
-		db.QueryRow(context.Background(), "INSERT INTO customers (full_name,phone_number,password,email,is_register) VALUES ($1,$2,$3,$4,$5) RETURNING id", customer.FullName, customer.PhoneNumber, hashPassword, customer.Email, true).Scan(&customerID)
+	if phone_number == "" {
+		_, err = db.Exec(context.Background(), "INSERT INTO customers (phone_number,password,is_register) VALUES ($1,$2,$3)", customer.PhoneNumber, hashPassword, false)
+		if err != nil {
+			helpers.HandleError(c, 400, err.Error())
+			return
+		}
 	}
 
-	accessTokenString, refreshTokenString, err := auth.GenerateTokenForCustomer(customer.PhoneNumber, customerID)
+	seckretKey, err := pkg.SendOTPSmsCode(customer.PhoneNumber)
+	if err != nil {
+		helpers.HandleError(c, 400, err.Error())
+		return
+	}
+
+	_, err = db.Exec(context.Background(), "UPDATE customers SET otp_secret_key = $1 , password = $3 WHERE phone_number = $2", seckretKey, customer.PhoneNumber, hashPassword)
+	if err != nil {
+		helpers.HandleError(c, 400, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":       true,
+		"phone_number": customer.PhoneNumber,
+	})
+}
+
+func RegisterCustomer(c *gin.Context) {
+	// initialize database connection
+	db, err := config.ConnDB()
+	if err != nil {
+		helpers.HandleError(c, 400, err.Error())
+		return
+	}
+	defer db.Close()
+
+	var otp OTP
+	if err := c.BindJSON(&otp); err != nil {
+		helpers.HandleError(c, 400, err.Error())
+		return
+	}
+
+	if err := models.ValidateCustomer(otp.PhoneNumber, "create", ""); err != nil {
+		helpers.HandleError(c, 400, err.Error())
+		return
+	}
+
+	var otpSeckretKey null.String
+	if err := db.QueryRow(context.Background(), "SELECT otp_secret_key FROM customers WHERE is_register = false AND phone_number = $1 AND deleted_at IS NULL", otp.PhoneNumber).Scan(&otpSeckretKey); err != nil {
+		helpers.HandleError(c, 400, err.Error())
+		return
+	}
+
+	if otpSeckretKey.String == "" {
+		helpers.HandleError(c, 404, "customer not found")
+		return
+	}
+
+	if !pkg.ValidateOTPCode(otp.Code, otpSeckretKey.String) {
+		helpers.HandleError(c, 400, "invalid credentials")
+		return
+	}
+
+	var customerID string
+	db.QueryRow(context.Background(), "UPDATE customers SET is_register = $1 WHERE phone_number = $2 RETURNING id", true, otp.PhoneNumber).Scan(&customerID)
+
+	accessTokenString, refreshTokenString, err := auth.GenerateTokenForCustomer(otp.PhoneNumber, customerID)
 	if err != nil {
 		helpers.HandleError(c, 500, err.Error())
 		c.Abort()
@@ -105,7 +167,7 @@ func LoginCustomer(c *gin.Context) {
 		return
 	}
 
-	err = models.ValidateCustomerLogin(customer.PhoneNumber)
+	err = models.ValidateCustomer(customer.PhoneNumber, "update", "")
 	if err != nil {
 		c.AbortWithStatusJSON(500, gin.H{"message": err.Error()})
 		return

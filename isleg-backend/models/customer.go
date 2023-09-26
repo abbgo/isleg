@@ -43,77 +43,95 @@ func CheckPassword(providedPassword, oldPassword string) error {
 	return nil
 }
 
-func ValidateCustomerRegister(phoneNumber, email string) error {
+// func ValidateCustomerRegister(phoneNumber, email string) error {
+// 	db, err := config.ConnDB()
+// 	if err != nil {
+// 		return err
+// 	}
+// 	defer db.Close()
+
+// 	if phoneNumber != "" {
+// 		if !strings.HasPrefix(phoneNumber, "+993") {
+// 			return errors.New("phone number must start with +993")
+// 		}
+
+// 		_, err := strconv.Atoi(strings.Trim(phoneNumber, "+"))
+// 		if err != nil {
+// 			return err
+// 		}
+
+// 		if len(phoneNumber) != 12 {
+// 			return errors.New("phone number must be 12 in length")
+// 		}
+
+// 	}
+
+// 	if email != "" {
+// 		var email_address string
+// 		db.QueryRow(context.Background(), "SELECT email FROM customers WHERE email = $1 AND is_register = true AND deleted_at IS NULL", email).Scan(&email_address)
+
+// 		if email_address != "" {
+// 			return errors.New("this customer already exists")
+// 		}
+// 	}
+
+// 	// if gender != "" {
+// 	// 	if gender != "1" && gender != "0" {
+// 	// 		return errors.New("gender must be 0 or 1")
+// 	// 	}
+// 	// }
+
+// 	// if len(addresses) == 0 {
+// 	// 	return errors.New("address is required")
+// 	// }
+
+// 	// if len(addresses) != 0 {
+// 	// 	for _, v := range addresses {
+// 	// 		if v == "" {
+// 	// 			return errors.New("address is required")
+// 	// 		}
+// 	// 	}
+// 	// }
+
+// 	return nil
+// }
+
+func ValidateCustomer(phoneNumber, method, email string) error {
 	db, err := config.ConnDB()
 	if err != nil {
 		return err
 	}
 	defer db.Close()
 
-	if phoneNumber != "" {
-		if !strings.HasPrefix(phoneNumber, "+993") {
-			return errors.New("phone number must start with +993")
-		}
-
-		_, err := strconv.Atoi(strings.Trim(phoneNumber, "+"))
-		if err != nil {
-			return err
-		}
-
-		if len(phoneNumber) != 12 {
-			return errors.New("phone number must be 12 in length")
-		}
-
-		var phone_number string
-		db.QueryRow(context.Background(), "SELECT phone_number FROM customers WHERE phone_number = $1 AND is_register = true AND deleted_at IS NULL", phoneNumber).Scan(&phone_number)
-
-		if phone_number != "" {
-			return errors.New("this customer already exists")
-		}
-	}
-
-	if email != "" {
-		var email_address string
-		db.QueryRow(context.Background(), "SELECT email FROM customers WHERE email = $1 AND is_register = true AND deleted_at IS NULL", email).Scan(&email_address)
-
-		if email_address != "" {
-			return errors.New("this customer already exists")
-		}
-	}
-
-	// if gender != "" {
-	// 	if gender != "1" && gender != "0" {
-	// 		return errors.New("gender must be 0 or 1")
-	// 	}
-	// }
-
-	// if len(addresses) == 0 {
-	// 	return errors.New("address is required")
-	// }
-
-	// if len(addresses) != 0 {
-	// 	for _, v := range addresses {
-	// 		if v == "" {
-	// 			return errors.New("address is required")
-	// 		}
-	// 	}
-	// }
-
-	return nil
-}
-
-func ValidateCustomerLogin(phoneNumber string) error {
 	if !strings.HasPrefix(phoneNumber, "+993") {
 		return errors.New("phone number must start with +993")
 	}
 
-	_, err := strconv.Atoi(strings.Trim(phoneNumber, "+"))
+	_, err = strconv.Atoi(strings.Trim(phoneNumber, "+"))
 	if err != nil {
 		return err
 	}
 
 	if len(phoneNumber) != 12 {
 		return errors.New("phone number must be 12 in length")
+	}
+
+	if method == "create" {
+		var phone_number string
+		db.QueryRow(context.Background(), "SELECT phone_number FROM customers WHERE phone_number = $1 AND is_register = true AND deleted_at IS NULL", phoneNumber).Scan(&phone_number)
+
+		if phone_number != "" {
+			return errors.New("this customer already exists")
+		}
+
+		if email != "" {
+			var email_address string
+			db.QueryRow(context.Background(), "SELECT email FROM customers WHERE email = $1 AND is_register = true AND deleted_at IS NULL", email).Scan(&email_address)
+
+			if email_address != "" {
+				return errors.New("this customer already exists")
+			}
+		}
 	}
 
 	return nil

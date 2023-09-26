@@ -14,6 +14,8 @@ func CustomerRoutes(front *gin.RouterGroup) {
 		// RegisterCustomer funksiyada musderi ulgama registrasiya bolyar
 		customer.POST("register", frontController.RegisterCustomer)
 
+		customer.POST("send-sms", frontController.SendSmsToCustomer)
+
 		// LoginCustomer funksiyada musderi ulgama login bolyar
 		customer.POST("login", frontController.LoginCustomer)
 
