@@ -57,6 +57,7 @@ type Category struct {
 
 type Product struct {
 	ID           string                                 `json:"id,omitempty"`
+	BrendID      uuid.NullUUID                          `json:"brend_id,omitempty"`
 	Price        float64                                `json:"price,omitempty"`
 	OldPrice     float64                                `json:"old_price,omitempty"`
 	Percentage   float64                                `json:"percentage,omitempty"`
@@ -1201,6 +1202,88 @@ func GetOneCategoryWithProducts(c *gin.Context) {
 
 	categoryID := c.Param("id")
 
+	priceSort := c.Query("price_sort")
+	if priceSort != "" {
+		if priceSort != "ASC" && priceSort != "DESC" {
+			helpers.HandleError(c, 400, "price_sort is invalid")
+			return
+		}
+	}
+
+	var minPrice float32
+	minPriceStr := c.Query("min_price")
+	if minPriceStr == "" {
+		minPrice = 0
+	} else {
+		min_price, err := strconv.ParseFloat(minPriceStr, 32)
+		if err != nil {
+			helpers.HandleError(c, 400, err.Error())
+			return
+		}
+		if min_price < 0 {
+			helpers.HandleError(c, 400, "min_price cannot be less than zero")
+			return
+		}
+		minPrice = float32(min_price)
+	}
+
+	var maxPrice float32
+	maxPriceStr := c.Query("max_price")
+	if maxPriceStr == "" {
+		maxPrice = 5000
+	} else {
+		max_price, err := strconv.ParseFloat(maxPriceStr, 32)
+		if err != nil {
+			helpers.HandleError(c, 400, err.Error())
+			return
+		}
+		if max_price < 0 {
+			helpers.HandleError(c, 400, "max_price cannot be less than zero")
+			return
+		}
+		maxPrice = float32(max_price)
+	}
+
+	isDiscountStr := c.Query("is_discount")
+	discount := -1
+	isDiscount, err := strconv.ParseBool(isDiscountStr)
+	if err != nil {
+		helpers.HandleError(c, 400, err.Error())
+		return
+	}
+	if isDiscount {
+		discount = 0
+	}
+
+	brendIDs := c.QueryArray("brend_ids")
+	if len(brendIDs) != 0 {
+		for _, v := range brendIDs {
+			var brend_id string
+			db.QueryRow(context.Background(), "SELECT id FROM brends WHERE id = $1 AND deleted_at IS NULL", v).Scan(&brend_id)
+
+			if brend_id == "" {
+				helpers.HandleError(c, 404, "brend not found")
+				return
+			}
+		}
+	} else {
+		rowsBrend, err := db.Query(context.Background(), "SELECT id FROM brends WHERE deleted_at IS NULL")
+		if err != nil {
+			helpers.HandleError(c, 400, err.Error())
+			return
+		}
+		defer rowsBrend.Close()
+
+		for rowsBrend.Next() {
+			var brendID string
+			if err := rowsBrend.Scan(&brendID); err != nil {
+				helpers.HandleError(c, 400, err.Error())
+				return
+			}
+			brendIDs = append(brendIDs, brendID)
+		}
+	}
+
 	// get category where id equal categiryID
 	categoryRow, err := db.Query(context.Background(), "SELECT c.id,c.image,t.name FROM categories c LEFT JOIN translation_category t ON c.id=t.category_id WHERE t.lang_id = $1 AND c.id = $2 AND c.deleted_at IS NULL AND t.deleted_at IS NULL", langID, categoryID)
 	if err != nil {
@@ -1223,34 +1306,31 @@ func GetOneCategoryWithProducts(c *gin.Context) {
 		}
 
 		// get count product where product_id equal categoryID
-		productCount, err := db.Query(context.Background(), "SELECT COUNT(DISTINCT p.id) FROM products p LEFT JOIN category_product c ON p.id=c.product_id WHERE (p.is_visible = $2 OR p.is_visible = $3) AND c.category_id = $1 AND p.amount > 0 AND p.limit_amount > 0 AND p.deleted_at IS NULL AND c.deleted_at IS NULL", categoryID, is_visible_1, is_visible_2)
-		if err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
-		}
-		defer productCount.Close()
+		db.QueryRow(context.Background(), "SELECT COUNT(DISTINCT(p.id)) FROM products p LEFT JOIN category_product c ON p.id=c.product_id INNER JOIN translation_product tp ON tp.product_id = p.id WHERE (p.is_visible = $7 OR p.is_visible = $8) AND p.brend_id = ANY($1) AND tp.lang_id = $2 AND c.category_id = $3 AND tp.deleted_at IS NULL AND p.amount > 0 AND p.limit_amount > 0 AND p.deleted_at IS NULL AND p.price >= $4 AND p.price <= $5 AND p.old_price > $6", pq.Array(brendIDs), langID, categoryID, minPrice, maxPrice, discount, is_visible_1, is_visible_2).Scan(&countOfProducts)
 
-		for productCount.Next() {
-			if err := productCount.Scan(&countOfProducts); err != nil {
-				if err != nil {
-					helpers.HandleError(c, 400, err.Error())
-					return
-				}
+		// get all product where category id equal categoryID
+		var rowQuery string
+		if priceSort == "" {
+			rowQuery = "SELECT DISTINCT p.id,p.brend_id,p.price,p.old_price,p.amount,p.limit_amount,p.is_new,p.main_image,p.benefit,p.code,p.is_visible FROM products p LEFT JOIN category_product c ON p.id=c.product_id INNER JOIN translation_product tp ON tp.product_id = p.id WHERE (p.is_visible = $9 OR p.is_visible = $10) AND p.brend_id = ANY($1) AND tp.lang_id = $2 AND c.category_id = $3 AND tp.deleted_at IS NULL AND p.amount > 0 AND p.limit_amount > 0 AND p.deleted_at IS NULL AND p.price >= $4 AND p.price <= $5 AND p.old_price > $6 LIMIT $7 OFFSET $8"
+		} else {
+			if priceSort == "DESC" {
+				rowQuery = "SELECT DISTINCT p.id,p.brend_id,p.price,p.old_price,p.amount,p.limit_amount,p.is_new,p.main_image,p.benefit,p.code,p.is_visible FROM products p LEFT JOIN category_product c ON p.id=c.product_id INNER JOIN translation_product tp ON tp.product_id = p.id WHERE (p.is_visible = $9 OR p.is_visible = $10) AND p.brend_id = ANY($1) AND tp.lang_id = $2 AND c.category_id = $3 AND tp.deleted_at IS NULL AND p.amount > 0 AND p.limit_amount > 0 AND p.deleted_at IS NULL AND p.price >= $4 AND p.price <= $5 AND p.old_price > $6 ORDER BY p.price DESC LIMIT $7 OFFSET $8"
+			} else {
+				rowQuery = "SELECT DISTINCT p.id,p.brend_id,p.price,p.old_price,p.amount,p.limit_amount,p.is_new,p.main_image,p.benefit,p.code,p.is_visible FROM products p LEFT JOIN category_product c ON p.id=c.product_id INNER JOIN translation_product tp ON tp.product_id = p.id WHERE (p.is_visible = $9 OR p.is_visible = $10) AND p.brend_id = ANY($1) AND tp.lang_id = $2 AND c.category_id = $3 AND tp.deleted_at IS NULL AND p.amount > 0 AND p.limit_amount > 0 AND p.deleted_at IS NULL AND p.price >= $4 AND p.price <= $5 AND p.old_price > $6 ORDER BY p.price ASC LIMIT $7 OFFSET $8"
 			}
 		}
 
-		// get all product where category id equal categoryID
-		productRows, err := db.Query(context.Background(), "SELECT DISTINCT ON (p.created_at) p.id,p.price,p.old_price,p.limit_amount,p.is_new,p.amount,p.main_image,p.benefit,p.code,p.is_visible FROM products p LEFT JOIN category_product c ON p.id=c.product_id WHERE (p.is_visible = $4 OR p.is_visible = $5) AND c.category_id = $1 AND p.amount > 0 AND p.limit_amount > 0 AND p.deleted_at IS NULL AND c.deleted_at IS NULL ORDER BY p.created_at ASC LIMIT $2 OFFSET $3", categoryID, limit, offset, is_visible_1, is_visible_2)
+		rowsProduct, err := db.Query(context.Background(), rowQuery, pq.Array(brendIDs), langID, categoryID, minPrice, maxPrice, discount, limit, offset, is_visible_1, is_visible_2)
 		if err != nil {
 			helpers.HandleError(c, 400, err.Error())
 			return
 		}
-		defer productRows.Close()
+		defer rowsProduct.Close()
 
 		var products []Product
-		for productRows.Next() {
+		for rowsProduct.Next() {
 			var product Product
-			if err := productRows.Scan(&product.ID, &product.Price, &product.OldPrice, &product.LimitAmount, &product.IsNew, &product.Amount, &product.MainImage, &product.Benefit, &product.Code, &product.IsVisible); err != nil {
+			if err := rowsProduct.Scan(&product.ID, &product.BrendID, &product.Price, &product.OldPrice, &product.Amount, &product.LimitAmount, &product.IsNew, &product.MainImage, &product.Benefit, &product.Code, &product.IsVisible); err != nil {
 				helpers.HandleError(c, 400, err.Error())
 				return
 			}

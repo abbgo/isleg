@@ -70,10 +70,6 @@ func FrontRoutes(front *gin.RouterGroup) {
 		// 4 sany harydy bilen bilelikde getiryar
 		frontRoutes.GET("homepage-categories", frontController.GetHomePageCategories)
 
-		// GetOneCategoryWithProducts funksiya dil boyunca dine bir kategoriyany
-		// ahli harytlary bilen pagination edip getiryar
-		frontRoutes.GET("category/:id/:limit/:page", backController.GetOneCategoryWithProducts)
-
 		// GetOneCategoryWithDeletedProducts funksiya dil boyunca dine bir kategoriyany
 		// ahli pozulan harytlary bilen pagination edip getiryar
 		frontRoutes.GET("category-with-deleted-products/:id/:limit/:page", backController.GetOneCategoryWithDeletedProducts)
@@ -92,7 +88,11 @@ func FrontRoutes(front *gin.RouterGroup) {
 
 		// FilterAndSort funksiya dil boyunca tertiplenen we filter edilen harytlary pagination edip
 		// getirip beryar
-		frontRoutes.GET("category/:id/filter-and-sort/:limit/:page", frontController.FilterAndSort)
+		// frontRoutes.GET("category/:id/filter-and-sort/:limit/:page", frontController.FilterAndSort)
+
+		// GetOneCategoryWithProducts funksiya dil boyunca dine bir kategoriyany
+		// ahli harytlary bilen pagination edip getiryar
+		frontRoutes.GET("category/:id/:limit/:page", backController.GetOneCategoryWithProducts)
 
 		// GetTranslationMyInformationPageByLangID funksiya dil boyunca musderinin maglumatlarym
 		// sahypasynyn terjimesinin   getirip beryar
