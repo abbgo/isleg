@@ -2,15 +2,11 @@ package controllers
 
 import (
 	"bytes"
-	"fmt"
 	"github/abbgo/isleg/isleg-backend/helpers"
 	"html/template"
 	"net/http"
 	"net/smtp"
-	"net/url"
 	"os"
-	"strconv"
-	"strings"
 
 	"github.com/gin-gonic/gin"
 )
@@ -114,48 +110,4 @@ func (r *Request) ParseTemplate(templateFileName string, data interface{}) error
 	}
 	r.body = buf.String()
 	return nil
-}
-
-func SendSms(c *gin.Context) {
-	phoneStr := c.Param("phone")
-	if helpers.ValidatePhoneNumber(phoneStr) {
-		phoneStr = strings.Split(phoneStr, "+")[1]
-	}
-
-	message := fmt.Sprintf("isleg.com.tm - kot: %v", strconv.Itoa(000256))
-	phone := phoneStr
-	username := os.Getenv("SMS_USERNAME")
-	password := os.Getenv("SMS_PASSWORD")
-	address := os.Getenv("SMS_ADDRESS")
-	port := os.Getenv("SMS_PORT")
-
-	// Create a URL-encoded query string
-	values := url.Values{}
-	values.Set("username", username)
-	values.Set("password", password)
-	values.Set("phone", phone)
-	values.Set("message", message)
-
-	// Construct the full URL
-	fullURL := address + ":" + port + "/SendSMS?" + values.Encode()
-
-	// Make the HTTP POST request
-	resp, err := http.Post(fullURL, "text/plain", nil)
-	if err != nil {
-		fmt.Println(err)
-	}
-	defer resp.Body.Close()
-
-	// body := strings.NewReader(message)
-
-	// resp, err := http.Post(address+":"+port+"/SendSMS?username="+username+"&password="+password+"&phone="+phone+"&message="+message, "text/plain", nil)
-	// if err != nil {
-	// 	fmt.Println(err)
-	// }
-	// defer resp.Body.Close()
-
-	c.JSON(http.StatusOK, gin.H{
-		"status":  true,
-		"message": "sms send successfully",
-	})
 }
