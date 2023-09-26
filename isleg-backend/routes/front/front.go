@@ -128,6 +128,8 @@ func FrontRoutes(front *gin.RouterGroup) {
 
 		frontRoutes.PUT("update-customer-password", frontController.UpdateCustPassword)
 
+		frontRoutes.POST("check-otp", frontController.CheckOTP)
+
 		SecuredCustomerRoutes(frontRoutes)
 	}
 

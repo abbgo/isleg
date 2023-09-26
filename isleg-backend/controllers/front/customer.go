@@ -6,6 +6,7 @@ import (
 	"github/abbgo/isleg/isleg-backend/config"
 	"github/abbgo/isleg/isleg-backend/helpers"
 	"github/abbgo/isleg/isleg-backend/pkg"
+	"strconv"
 
 	"github/abbgo/isleg/isleg-backend/models"
 	"net/http"
@@ -16,7 +17,8 @@ import (
 
 type Login struct {
 	PhoneNumber string `json:"phone_number" binding:"required,e164,len=12"`
-	Password    string `json:"password" binding:"required,min=3,max=25"`
+	// Password    string `json:"password" binding:"required,min=3,max=25"`
+	Password string `json:"password"`
 }
 
 type OTP struct {
@@ -56,40 +58,66 @@ func SendSmsToCustomer(c *gin.Context) {
 		return
 	}
 
-	if err := models.ValidateCustomer(customer.PhoneNumber, "create", ""); err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
-
-	hashPassword, err := models.HashPassword(customer.Password)
+	forRegister := c.DefaultQuery("for_register", "true")
+	for_register, err := strconv.ParseBool(forRegister)
 	if err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
 	}
 
-	// On registrasiya bolman haryt sargyt eden adamlar is_register false bolyar ,
-	// solar sayta registrasiya boljak bolsa Olaryn taze at familiyasyny telefon belgisini
-	// we parolyny baza yazdyrmak ucin database - den sol customer - leri tapyp update etmeli
-	var phone_number string
-	db.QueryRow(context.Background(), "SELECT phone_number FROM customers WHERE phone_number = $1 AND is_register = false AND deleted_at IS NULL", customer.PhoneNumber).Scan(&phone_number)
-	if phone_number == "" {
-		_, err = db.Exec(context.Background(), "INSERT INTO customers (phone_number,password,is_register) VALUES ($1,$2,$3)", customer.PhoneNumber, hashPassword, false)
+	if for_register {
+		if customer.Password == "" || len(customer.Password) < 3 || len(customer.Password) > 25 {
+			helpers.HandleError(c, 400, "customer password is required and 3 <= length <= 25")
+			return
+		}
+
+		if err := models.ValidateCustomer(customer.PhoneNumber, "create", ""); err != nil {
+			helpers.HandleError(c, 400, err.Error())
+			return
+		}
+
+		hashPassword, err := models.HashPassword(customer.Password)
 		if err != nil {
 			helpers.HandleError(c, 400, err.Error())
 			return
 		}
-	}
 
-	seckretKey, err := pkg.SendOTPSmsCode(customer.PhoneNumber)
-	if err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
+		// On registrasiya bolman haryt sargyt eden adamlar is_register false bolyar ,
+		// solar sayta registrasiya boljak bolsa Olaryn taze at familiyasyny telefon belgisini
+		// we parolyny baza yazdyrmak ucin database - den sol customer - leri tapyp update etmeli
+		var phone_number string
+		db.QueryRow(context.Background(), "SELECT phone_number FROM customers WHERE phone_number = $1 AND is_register = false AND deleted_at IS NULL", customer.PhoneNumber).Scan(&phone_number)
+		if phone_number == "" {
+			_, err = db.Exec(context.Background(), "INSERT INTO customers (phone_number,password,is_register) VALUES ($1,$2,$3)", customer.PhoneNumber, hashPassword, false)
+			if err != nil {
+				helpers.HandleError(c, 400, err.Error())
+				return
+			}
+		}
 
-	_, err = db.Exec(context.Background(), "UPDATE customers SET otp_secret_key = $1 , password = $3 WHERE phone_number = $2", seckretKey, customer.PhoneNumber, hashPassword)
-	if err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
+		seckretKey, err := pkg.SendOTPSmsCode(customer.PhoneNumber)
+		if err != nil {
+			helpers.HandleError(c, 400, err.Error())
+			return
+		}
+
+		_, err = db.Exec(context.Background(), "UPDATE customers SET otp_secret_key = $1 , password = $3 WHERE phone_number = $2", seckretKey, customer.PhoneNumber, hashPassword)
+		if err != nil {
+			helpers.HandleError(c, 400, err.Error())
+			return
+		}
+	} else {
+		seckretKey, err := pkg.SendOTPSmsCode(customer.PhoneNumber)
+		if err != nil {
+			helpers.HandleError(c, 400, err.Error())
+			return
+		}
+
+		_, err = db.Exec(context.Background(), "UPDATE customers SET otp_secret_key = $1 WHERE phone_number = $2", seckretKey, customer.PhoneNumber)
+		if err != nil {
+			helpers.HandleError(c, 400, err.Error())
+			return
+		}
 	}
 
 	c.JSON(http.StatusOK, gin.H{
@@ -333,6 +361,40 @@ func UpdateCustomerPassword(c *gin.Context) {
 	})
 }
 
+func CheckOTP(c *gin.Context) {
+	db, err := config.ConnDB()
+	if err != nil {
+		helpers.HandleError(c, 400, err.Error())
+		return
+	}
+	defer db.Close()
+
+	var otp OTP
+	if err := c.BindJSON(&otp); err != nil {
+		helpers.HandleError(c, 400, err.Error())
+		return
+	}
+
+	// sonrada musderinin parolyny uytgetyas
+	var customerID string
+	var otpSeckretKey null.String
+	db.QueryRow(context.Background(), "SELECT id,otp_secret_key FROM customers WHERE phone_number =  $1 AND deleted_at IS NULL AND is_register = true", otp.PhoneNumber).Scan(&customerID, &otpSeckretKey)
+	if customerID == "" {
+		helpers.HandleError(c, 404, "customer not found")
+		return
+	}
+
+	if !pkg.ValidateOTPCode(otp.Code, otpSeckretKey.String) {
+		helpers.HandleError(c, 400, "invalid credentials")
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":  true,
+		"message": "success",
+	})
+}
+
 func UpdateCustPassword(c *gin.Context) {
 	db, err := config.ConnDB()
 	if err != nil {
@@ -346,7 +408,6 @@ func UpdateCustPassword(c *gin.Context) {
 	// sonrada musderinin parolyny uytgetyas
 	var customerID string
 	db.QueryRow(context.Background(), "SELECT id FROM customers WHERE phone_number =  $1 AND deleted_at IS NULL AND is_register = true", phoneNumber).Scan(&customerID)
-
 	if customerID == "" {
 		helpers.HandleError(c, 404, "customer not found")
 		return
