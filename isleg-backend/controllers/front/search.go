@@ -14,6 +14,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/gosimple/slug"
+	"github.com/lib/pq"
 )
 
 func Search(c *gin.Context) {
@@ -66,9 +67,27 @@ func Search(c *gin.Context) {
 	search := strings.ReplaceAll(incomingsSarch, "-", " | ")
 	searchStr := fmt.Sprintf("%%%s%%", search)
 
-	db.QueryRow(context.Background(), "SELECT COUNT(DISTINCT p.id) FROM products p INNER JOIN translation_product tp ON tp.product_id = p.id WHERE p.is_visible = true AND to_tsvector(tp.slug) @@ to_tsquery($1) OR tp.slug LIKE $3 AND tp.lang_id = $2 AND tp.deleted_at IS NULL AND p.amount > 0 AND p.limit_amount > 0 AND p.deleted_at IS NULL", search, langID, searchStr).Scan(&countOfProduct)
+	rowsProductID, err := db.Query(context.Background(), "SELECT DISTINCT ON (p.id) p.id FROM products p INNER JOIN translation_product tp ON tp.product_id = p.id WHERE p.is_visible = true AND to_tsvector(tp.slug) @@ to_tsquery($1) OR tp.slug LIKE $2 AND tp.deleted_at IS NULL AND p.amount > 0 AND p.limit_amount > 0 AND p.deleted_at IS NULL ORDER BY p.id ASC", search, searchStr)
+	if err != nil {
+		helpers.HandleError(c, 400, err.Error())
+		return
+	}
+	defer rowsProductID.Close()
 
-	rowsProduct, err := db.Query(context.Background(), "SELECT DISTINCT ON (p.created_at) p.id,p.brend_id,p.price,p.old_price,p.amount,p.limit_amount,p.is_new,p.main_image,p.benefit FROM products p INNER JOIN translation_product tp ON tp.product_id = p.id WHERE p.is_visible = true AND to_tsvector(tp.slug) @@ to_tsquery($1) OR tp.slug LIKE $5 AND tp.lang_id = $2 AND tp.deleted_at IS NULL AND p.amount > 0 AND p.limit_amount > 0 AND p.deleted_at IS NULL ORDER BY p.created_at ASC LIMIT $3 OFFSET $4", search, langID, limit, offset, searchStr)
+	var productIDS []string
+	for rowsProductID.Next() {
+		var productID string
+		if err := rowsProductID.Scan(&productID); err != nil {
+			helpers.HandleError(c, 400, err.Error())
+			return
+		}
+		productIDS = append(productIDS, productID)
+	}
+
+	// db.QueryRow(context.Background(), "SELECT COUNT(DISTINCT p.id) FROM products p INNER JOIN translation_product tp ON tp.product_id = p.id WHERE p.is_visible = true AND to_tsvector(tp.slug) @@ to_tsquery($1) OR tp.slug LIKE $3 AND tp.lang_id = $2 AND tp.deleted_at IS NULL AND p.amount > 0 AND p.limit_amount > 0 AND p.deleted_at IS NULL", search, langID, searchStr).Scan(&countOfProduct)
+	db.QueryRow(context.Background(), "SELECT COUNT(DISTINCT p.id) FROM products p INNER JOIN translation_product tp ON tp.product_id = p.id WHERE p.id = ANY($1) AND p.is_visible = true AND tp.lang_id = $2 AND tp.deleted_at IS NULL AND p.amount > 0 AND p.limit_amount > 0 AND p.deleted_at IS NULL", pq.Array(productIDS), langID).Scan(&countOfProduct)
+
+	rowsProduct, err := db.Query(context.Background(), "SELECT DISTINCT ON (p.created_at) p.id,p.brend_id,p.price,p.old_price,p.amount,p.limit_amount,p.is_new,p.main_image,p.benefit FROM products p INNER JOIN translation_product tp ON tp.product_id = p.id WHERE p.id = ANY($1) AND p.is_visible = true AND tp.lang_id = $2 AND tp.deleted_at IS NULL AND p.amount > 0 AND p.limit_amount > 0 AND p.deleted_at IS NULL ORDER BY p.created_at ASC LIMIT $3 OFFSET $4", pq.Array(productIDS), langID, limit, offset)
 	if err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
