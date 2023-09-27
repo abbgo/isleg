@@ -16,9 +16,7 @@ import (
 // Auth middleware gelen tokenin musdera degislimi ya-da dalmi sony barlayar
 // eger gelen token dogry bolsa indi api gelen tokende musderinin id - sini alyp beryar
 func Auth() gin.HandlerFunc {
-
 	return func(context *gin.Context) {
-
 		tokenStr := context.GetHeader("Authorization")
 		if tokenStr == "" {
 			context.AbortWithStatusJSON(http.StatusUnauthorized, "Token is required")
@@ -72,17 +70,13 @@ func Auth() gin.HandlerFunc {
 
 		context.Set("customer_id", claims.CustomerID)
 		context.Next()
-
 	}
-
 }
 
 // IsSuperAdmin middleware dine super adminlere dostup beryar
 // adminleri gecirmeyar
 func IsSuperAdmin() gin.HandlerFunc {
-
 	return func(context *gin.Context) {
-
 		tokenStr := context.GetHeader("Authorization")
 		if tokenStr == "" {
 			context.AbortWithStatusJSON(http.StatusUnauthorized, "Token is required")
@@ -133,9 +127,7 @@ func IsSuperAdmin() gin.HandlerFunc {
 // gelen request - in admin tarapyndan gelip gelmedigini barlayar
 // we admin bolmasa gecirmeyar
 func CheckAdmin() gin.HandlerFunc {
-
 	return func(context *gin.Context) {
-
 		tokenStr := context.GetHeader("Authorization")
 		if tokenStr == "" {
 			context.AbortWithStatusJSON(http.StatusUnauthorized, "Token is required")
