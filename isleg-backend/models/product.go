@@ -68,7 +68,7 @@ type CategoryProduct struct {
 	DeletedAt     string `json:"-"`
 }
 
-func ValidateProductModel(mainPhoto string, benefit float64, productID string, price float64, oldprice float64, amount, limitamount uint, isNew bool, categories []string) (float64, string, float64, float64, uint, uint, bool, string, error) {
+func ValidateProductModel(mainPhoto string, benefit float64, productID string, price float64, oldprice float64, amount, limitamount uint, isNew bool, categories []CategoryProduct) (float64, string, float64, float64, uint, uint, bool, string, error) {
 	var productCode string
 
 	// initialize database connection
@@ -87,7 +87,7 @@ func ValidateProductModel(mainPhoto string, benefit float64, productID string, p
 	for _, v := range categories {
 		var nameOfCatagory string
 		var parentCategoryID sql.NullString
-		if err := db.QueryRow(context.Background(), "SELECT c.parent_category_id,t.name FROM categories c INNER JOIN translation_category t ON t.category_id = c.id INNER JOIN languages l ON l.id = t.lang_id WHERE c.id = $1 AND l.deleted_at IS NULL AND t.deleted_at IS NULL AND c.deleted_at IS NULL AND l.name_short = 'tm'", v).Scan(&parentCategoryID, &nameOfCatagory); err != nil {
+		if err := db.QueryRow(context.Background(), "SELECT c.parent_category_id,t.name FROM categories c INNER JOIN translation_category t ON t.category_id = c.id INNER JOIN languages l ON l.id = t.lang_id WHERE c.id = $1 AND l.deleted_at IS NULL AND t.deleted_at IS NULL AND c.deleted_at IS NULL AND l.name_short = 'tm'", v.CategoryID).Scan(&parentCategoryID, &nameOfCatagory); err != nil {
 			return 0, "", 0, 0, 0, 0, false, "", err
 		}
 		if nameOfCatagory == "" {

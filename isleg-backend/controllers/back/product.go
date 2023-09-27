@@ -54,7 +54,8 @@ type ProductForAdmin struct {
 	MainImage          string                      `json:"main_image,omitempty"`
 	Images             []string                    `json:"images,omitempty"`                                 // one to many
 	TranslationProduct []models.TranslationProduct `json:"translation_product,omitempty" binding:"required"` // one to many
-	Categories         []string                    `json:"categories,omitempty" binding:"required"`
+	Categories         []models.CategoryProduct    `json:"categories,omitempty" binding:"required"`
+	OrderHomePage      uint                        `json:"order_home_page,omitempty"`
 }
 
 func DeleteProductImages(c *gin.Context) {
@@ -233,20 +234,22 @@ func CreateProduct(c *gin.Context) {
 		}
 	}
 
-	// create category product
-	_, err = db.Exec(context.Background(), "INSERT INTO category_product (category_id,product_id) VALUES (unnest($1::uuid[]),$2)", pq.Array(product.Categories), productID)
-	if err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
+	for _, v := range product.Categories {
+		// create category product
+		_, err = db.Exec(context.Background(), "INSERT INTO category_product (category_id,product_id,order_home_page) VALUES ($1,$2,$3)", v.CategoryID, productID, v.OrderHomePage)
+		if err != nil {
+			helpers.HandleError(c, 400, err.Error())
+			return
+		}
+
+		_, err = db.Exec(context.Background(), "UPDATE categories SET is_visible = true WHERE id = $1", v.CategoryID)
+		if err != nil {
+			helpers.HandleError(c, 400, err.Error())
+			return
+		}
 	}
 
 	_, err = db.Exec(context.Background(), "DELETE FROM helper_images WHERE image = $1", product.MainImage)
-	if err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
-
-	_, err = db.Exec(context.Background(), "UPDATE categories SET is_visible = true WHERE id = ANY($1)", pq.Array(product.Categories))
 	if err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
@@ -481,7 +484,11 @@ func CreateProductsByExcelFile(c *gin.Context) {
 				countOfErr++
 				errString = errString + v + " atly kategoriya yok | "
 			} else {
-				product.Categories = append(product.Categories, categoryID)
+				var category models.CategoryProduct
+				category.CategoryID = categoryID
+				category.OrderHomePage = 0
+
+				product.Categories = append(product.Categories, category)
 			}
 		}
 
@@ -754,20 +761,22 @@ func CreateProductsByExcelFile(c *gin.Context) {
 				}
 			}
 
-			// create category product
-			_, err = db.Exec(context.Background(), "INSERT INTO category_product (category_id,product_id) VALUES (unnest($1::uuid[]),$2)", pq.Array(product.Categories), productID)
-			if err != nil {
-				helpers.HandleError(c, 400, err.Error())
-				return
+			for _, v := range product.Categories {
+				// create category product
+				_, err = db.Exec(context.Background(), "INSERT INTO category_product (category_id,product_id,order_home_page) VALUES ($1,$2,$3)", v.CategoryID, productID, v.OrderHomePage)
+				if err != nil {
+					helpers.HandleError(c, 400, err.Error())
+					return
+				}
+
+				_, err = db.Exec(context.Background(), "UPDATE categories SET is_visible = true WHERE id = $1", v.CategoryID)
+				if err != nil {
+					helpers.HandleError(c, 400, err.Error())
+					return
+				}
 			}
 
 			_, err = db.Exec(context.Background(), "DELETE FROM helper_images WHERE image = $1", product.MainImage)
-			if err != nil {
-				helpers.HandleError(c, 400, err.Error())
-				return
-			}
-
-			_, err = db.Exec(context.Background(), "UPDATE categories SET is_visible = true WHERE id = ANY($1)", pq.Array(product.Categories))
 			if err != nil {
 				helpers.HandleError(c, 400, err.Error())
 				return
