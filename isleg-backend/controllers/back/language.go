@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"context"
+	"errors"
 	"github/abbgo/isleg/isleg-backend/config"
 	"github/abbgo/isleg/isleg-backend/helpers"
 	"github/abbgo/isleg/isleg-backend/models"
@@ -350,6 +351,9 @@ func GetLangID(langShortName string) (string, error) {
 
 	var langID string
 	db.QueryRow(context.Background(), "SELECT id FROM languages WHERE name_short = $1 AND deleted_at IS NULL", langShortName).Scan(&langID)
+	if langID == "" {
+		return "", errors.New("language not found")
+	}
 	return langID, nil
 }
 
