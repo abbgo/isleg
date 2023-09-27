@@ -62,8 +62,15 @@ func Search(c *gin.Context) {
 	offset := limit * (page - 1)
 
 	var countOfProduct uint
+	querySearch := c.Query("search")
 
-	incomingsSarch := slug.MakeLang(c.Query("search"), "en")
+	_, err = db.Exec(context.Background(), "INSERT INTO searchs_of_customers (search) VALUES ($1)", querySearch)
+	if err != nil {
+		helpers.HandleError(c, 400, err.Error())
+		return
+	}
+
+	incomingsSarch := slug.MakeLang(querySearch, "en")
 	search := strings.ReplaceAll(incomingsSarch, "-", " | ")
 	searchStr := fmt.Sprintf("%%%s%%", search)
 
