@@ -935,16 +935,18 @@ func UpdateProductByID(c *gin.Context) {
 		return
 	}
 
-	_, err = db.Exec(context.Background(), "INSERT INTO category_product (category_id,product_id) VALUES (unnest($1::uuid[]),$2)", pq.Array(product.Categories), ID)
-	if err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
+	for _, v := range product.Categories {
+		_, err = db.Exec(context.Background(), "INSERT INTO category_product (category_id,product_id,order_home_page) VALUES ($1,$2,$3)", v.CategoryID, ID, v.OrderHomePage)
+		if err != nil {
+			helpers.HandleError(c, 400, err.Error())
+			return
+		}
 
-	_, err = db.Exec(context.Background(), "UPDATE categories SET is_visible = true WHERE id = ANY($1)", pq.Array(product.Categories))
-	if err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
+		_, err = db.Exec(context.Background(), "UPDATE categories SET is_visible = true WHERE id = $1", v.CategoryID)
+		if err != nil {
+			helpers.HandleError(c, 400, err.Error())
+			return
+		}
 	}
 
 	c.JSON(http.StatusOK, gin.H{
