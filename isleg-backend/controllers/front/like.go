@@ -5,6 +5,7 @@ import (
 	"github/abbgo/isleg/isleg-backend/config"
 	"github/abbgo/isleg/isleg-backend/helpers"
 	"github/abbgo/isleg/isleg-backend/models"
+	"github/abbgo/isleg/isleg-backend/pkg"
 	"math"
 	"net/http"
 	"strconv"
@@ -52,15 +53,9 @@ func AddOrRemoveLike(c *gin.Context) {
 		return
 	}
 
-	// bu yerde middleware - den gelen musderinin id - si alynyar
-	custID, hasCustomer := c.Get("customer_id")
-	if !hasCustomer {
-		helpers.HandleError(c, 400, "customer_id is required")
-		return
-	}
-	customerID, ok := custID.(string)
-	if !ok {
-		helpers.HandleError(c, 400, "customer_id must be string")
+	customerID, err := pkg.ValidateMiddlewareData(c, "customer_id")
+	if err != nil {
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
 
@@ -353,14 +348,9 @@ func GetLikes(customerID string) ([]LikeProduct, error) {
 }
 
 func GetCustomerLikes(c *gin.Context) {
-	custID, hasCustomer := c.Get("customer_id")
-	if !hasCustomer {
-		helpers.HandleError(c, http.StatusBadRequest, "customer_id is required")
-		return
-	}
-	customerID, ok := custID.(string)
-	if !ok {
-		helpers.HandleError(c, http.StatusBadRequest, "customer_id must be string")
+	customerID, err := pkg.ValidateMiddlewareData(c, "customer_id")
+	if err != nil {
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
 

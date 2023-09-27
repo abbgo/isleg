@@ -4,6 +4,7 @@ import (
 	"context"
 	"github/abbgo/isleg/isleg-backend/config"
 	"github/abbgo/isleg/isleg-backend/helpers"
+	"github/abbgo/isleg/isleg-backend/pkg"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -23,14 +24,9 @@ func GetCustomerAddresses(c *gin.Context) {
 	}
 	defer db.Close()
 
-	custID, hasCustomer := c.Get("customer_id")
-	if !hasCustomer {
-		helpers.HandleError(c, 400, "customer_id is required")
-		return
-	}
-	customerID, ok := custID.(string)
-	if !ok {
-		helpers.HandleError(c, 400, "customer_id must be string")
+	customerID, err := pkg.ValidateMiddlewareData(c, "customer_id")
+	if err != nil {
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
 
@@ -68,14 +64,9 @@ func UpdateCustomerAddressStatus(c *gin.Context) {
 
 	addressID := c.Param("id")
 
-	custID, hasCustomer := c.Get("customer_id")
-	if !hasCustomer {
-		helpers.HandleError(c, 400, "customer_id is required")
-		return
-	}
-	customerID, ok := custID.(string)
-	if !ok {
-		helpers.HandleError(c, 400, "customer_id must be string")
+	customerID, err := pkg.ValidateMiddlewareData(c, "customer_id")
+	if err != nil {
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
 
@@ -117,14 +108,9 @@ func AddAddressToCustomer(c *gin.Context) {
 	}
 	defer db.Close()
 
-	custID, hasCustomer := c.Get("customer_id")
-	if !hasCustomer {
-		helpers.HandleError(c, 400, "customer_id is required")
-		return
-	}
-	customerID, ok := custID.(string)
-	if !ok {
-		helpers.HandleError(c, 400, "customer_id must be string")
+	customerID, err := pkg.ValidateMiddlewareData(c, "customer_id")
+	if err != nil {
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
 
@@ -170,14 +156,9 @@ func DeleteCustomerAddress(c *gin.Context) {
 	}
 	defer db.Close()
 
-	custID, hasCustomer := c.Get("customer_id")
-	if !hasCustomer {
-		helpers.HandleError(c, 400, "customer_id is required")
-		return
-	}
-	customerID, ok := custID.(string)
-	if !ok {
-		helpers.HandleError(c, 400, "customer_id must be string")
+	customerID, err := pkg.ValidateMiddlewareData(c, "customer_id")
+	if err != nil {
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
 

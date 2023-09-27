@@ -236,14 +236,9 @@ func GetCustomerInformation(c *gin.Context) {
 	}
 	defer db.Close()
 
-	custID, hasCustomer := c.Get("customer_id")
-	if !hasCustomer {
-		helpers.HandleError(c, 400, "customer_id is required")
-		return
-	}
-	customerID, ok := custID.(string)
-	if !ok {
-		helpers.HandleError(c, 400, "customer_id must be string")
+	customerID, err := pkg.ValidateMiddlewareData(c, "customer_id")
+	if err != nil {
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
 
@@ -290,14 +285,9 @@ func UpdateCustomerInformation(c *gin.Context) {
 	}
 	defer db.Close()
 
-	custID, hasCustomer := c.Get("customer_id")
-	if !hasCustomer {
-		helpers.HandleError(c, 400, "customer_id is required")
-		return
-	}
-	customerID, ok := custID.(string)
-	if !ok {
-		helpers.HandleError(c, 400, "customer_id must be string")
+	customerID, err := pkg.ValidateMiddlewareData(c, "customer_id")
+	if err != nil {
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
 
@@ -328,14 +318,9 @@ func UpdateCustomerPassword(c *gin.Context) {
 	}
 	defer db.Close()
 
-	custID, hasCustomer := c.Get("customer_id")
-	if !hasCustomer {
-		helpers.HandleError(c, 400, "customer_id is required")
-		return
-	}
-	customerID, ok := custID.(string)
-	if !ok {
-		helpers.HandleError(c, 400, "customer_id must be string")
+	customerID, err := pkg.ValidateMiddlewareData(c, "customer_id")
+	if err != nil {
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
 

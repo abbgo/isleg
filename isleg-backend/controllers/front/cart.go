@@ -6,6 +6,7 @@ import (
 	"github/abbgo/isleg/isleg-backend/config"
 	"github/abbgo/isleg/isleg-backend/helpers"
 	"github/abbgo/isleg/isleg-backend/models"
+	"github/abbgo/isleg/isleg-backend/pkg"
 	"math"
 	"net/http"
 
@@ -46,15 +47,9 @@ func AddCart(c *gin.Context) {
 		return
 	}
 	defer db.Close()
-
-	custID, hasCustomer := c.Get("customer_id")
-	if !hasCustomer {
-		helpers.HandleError(c, 400, "customer_id is required")
-		return
-	}
-	customerID, ok := custID.(string)
-	if !ok {
-		helpers.HandleError(c, 400, "customer_id must be string")
+	customerID, err := pkg.ValidateMiddlewareData(c, "customer_id")
+	if err != nil {
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
 
@@ -218,14 +213,9 @@ func GetCartProducts(customerID string) ([]ProductOfCart, error) {
 }
 
 func GetCustomerCartProducts(c *gin.Context) {
-	custID, hasCustomer := c.Get("customer_id")
-	if !hasCustomer {
-		helpers.HandleError(c, 400, "customer_id is required")
-		return
-	}
-	customerID, ok := custID.(string)
-	if !ok {
-		helpers.HandleError(c, 400, "customer_id must be string")
+	customerID, err := pkg.ValidateMiddlewareData(c, "customer_id")
+	if err != nil {
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
 
@@ -242,14 +232,9 @@ func GetCustomerCartProducts(c *gin.Context) {
 }
 
 func RemoveCart(c *gin.Context) {
-	custID, hasCustomer := c.Get("customer_id")
-	if !hasCustomer {
-		helpers.HandleError(c, 400, "customer_id is required")
-		return
-	}
-	customerID, ok := custID.(string)
-	if !ok {
-		helpers.HandleError(c, 400, "customer_id must be string")
+	customerID, err := pkg.ValidateMiddlewareData(c, "customer_id")
+	if err != nil {
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
 

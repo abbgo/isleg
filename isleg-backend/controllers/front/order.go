@@ -697,14 +697,9 @@ func GetCustomerOrders(c *gin.Context) {
 	}
 	defer db.Close()
 
-	custID, hasCustomer := c.Get("customer_id")
-	if !hasCustomer {
-		helpers.HandleError(c, 400, "customer_id is required")
-		return
-	}
-	customerID, ok := custID.(string)
-	if !ok {
-		helpers.HandleError(c, http.StatusBadRequest, "customer_id must be string")
+	customerID, err := pkg.ValidateMiddlewareData(c, "customer_id")
+	if err != nil {
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
 
