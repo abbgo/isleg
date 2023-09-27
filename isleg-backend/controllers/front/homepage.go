@@ -87,7 +87,7 @@ func GetHomePageCategories(c *gin.Context) {
 		}
 
 		// get all product where category id equal homePageCategory.ID and lang_id equal langID
-		productRows, err := db.Query(context.Background(), "SELECT p.id,p.price,p.old_price,p.limit_amount,p.is_new,p.amount,p.main_image,p.benefit FROM products p LEFT JOIN category_product c ON p.id=c.product_id WHERE p.is_visible = true AND c.category_id = $1 AND p.deleted_at IS NULL AND c.deleted_at IS NULL AND p.amount > 0 AND p.limit_amount > 0 ORDER BY p.created_at DESC LIMIT 4", homePageCategory.ID)
+		productRows, err := db.Query(context.Background(), "SELECT p.id,p.price,p.old_price,p.limit_amount,p.is_new,p.amount,p.main_image,p.benefit FROM products p LEFT JOIN category_product c ON p.id=c.product_id WHERE p.is_visible = true AND c.category_id = $1 AND p.deleted_at IS NULL AND c.deleted_at IS NULL AND p.amount > 0 AND p.limit_amount > 0 ORDER BY c.order_home_page ASC LIMIT 4", homePageCategory.ID)
 		if err != nil {
 			helpers.HandleError(c, 400, err.Error())
 			return
