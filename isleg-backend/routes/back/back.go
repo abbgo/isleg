@@ -238,6 +238,8 @@ func BackRoutes(back *gin.RouterGroup) {
 		securedAdmin.GET("error-excel", backController.DownloadErrExcelFile)
 		securedAdmin.DELETE("excel", backController.RemoveExcelFile)
 
+		securedAdmin.GET("searchs-of-customers", backController.GetSearchsOfCustomers)
+
 	}
 
 }
