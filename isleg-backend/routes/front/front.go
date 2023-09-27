@@ -3,6 +3,7 @@ package frontApi
 import (
 	backController "github/abbgo/isleg/isleg-backend/controllers/back"
 	frontController "github/abbgo/isleg/isleg-backend/controllers/front"
+	"github/abbgo/isleg/isleg-backend/middlewares"
 
 	"github.com/gin-gonic/gin"
 )
@@ -12,7 +13,7 @@ func FrontRoutes(front *gin.RouterGroup) {
 	frontRoutes := front.Group("/:lang")
 	{
 		// GetHeaderData header - e degisli ahli maglumatlary alyar
-		frontRoutes.GET("header", frontController.GetHeaderData)
+		frontRoutes.GET("header", middlewares.CheckLang(), frontController.GetHeaderData)
 
 		// GetFooterData funksiya footer - a degisli maglumnatlary alyar
 		frontRoutes.GET("footer", frontController.GetFooterData)
