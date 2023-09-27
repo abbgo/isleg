@@ -64,12 +64,6 @@ func Search(c *gin.Context) {
 	var countOfProduct uint
 	querySearch := c.Query("search")
 
-	_, err = db.Exec(context.Background(), "INSERT INTO searchs_of_customers (search) VALUES ($1)", querySearch)
-	if err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
-
 	incomingsSarch := slug.MakeLang(querySearch, "en")
 	search := strings.ReplaceAll(incomingsSarch, "-", " | ")
 	searchStr := fmt.Sprintf("%%%s%%", search)
@@ -145,6 +139,29 @@ func Search(c *gin.Context) {
 			product.Translations = append(product.Translations, translation)
 		}
 		products = append(products, product)
+	}
+
+	var hasProduct bool
+	if countOfProduct == 0 {
+		hasProduct = false
+	} else {
+		hasProduct = true
+	}
+
+	var searchID string
+	if err := db.QueryRow(context.Background(), "SELECT id FROM searchs_of_customers WHERE deleted_at IS NULL AND slug = $1", incomingsSarch).Scan(&searchID); err != nil {
+		helpers.HandleError(c, 400, err.Error())
+		return
+	}
+	if searchID != "" {
+		_, err = db.Exec(context.Background(), "UPDATE searchs_of_customers SET count = count + 1 , has_products = $1 WHERE id = $2", hasProduct, searchID)
+
+	} else {
+		_, err = db.Exec(context.Background(), "INSERT INTO searchs_of_customers (search,has_products,slug) VALUES ($1,$2,$3)", querySearch, hasProduct, incomingsSarch)
+	}
+	if err != nil {
+		helpers.HandleError(c, 400, err.Error())
+		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{
