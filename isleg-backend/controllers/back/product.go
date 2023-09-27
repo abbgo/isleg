@@ -235,6 +235,10 @@ func CreateProduct(c *gin.Context) {
 	}
 
 	for _, v := range product.Categories {
+		if v.OrderHomePage != 0 {
+			db.Exec(context.Background(), "UPDATE category_product SET order_home_page = 0 WHERE category_id = $1 AND order_home_page = $2 AND deleted_at IS NULL", v.CategoryID, v.OrderHomePage)
+		}
+
 		// create category product
 		_, err = db.Exec(context.Background(), "INSERT INTO category_product (category_id,product_id,order_home_page) VALUES ($1,$2,$3)", v.CategoryID, productID, v.OrderHomePage)
 		if err != nil {
@@ -762,6 +766,9 @@ func CreateProductsByExcelFile(c *gin.Context) {
 			}
 
 			for _, v := range product.Categories {
+				if v.OrderHomePage != 0 {
+					db.Exec(context.Background(), "UPDATE category_product SET order_home_page = 0 WHERE category_id = $1 AND order_home_page = $2 AND deleted_at IS NULL", v.CategoryID, v.OrderHomePage)
+				}
 				// create category product
 				_, err = db.Exec(context.Background(), "INSERT INTO category_product (category_id,product_id,order_home_page) VALUES ($1,$2,$3)", v.CategoryID, productID, v.OrderHomePage)
 				if err != nil {
@@ -936,6 +943,10 @@ func UpdateProductByID(c *gin.Context) {
 	}
 
 	for _, v := range product.Categories {
+		if v.OrderHomePage != 0 {
+			db.Exec(context.Background(), "UPDATE category_product SET order_home_page = 0 WHERE category_id = $1 AND order_home_page = $2 AND deleted_at IS NULL", v.CategoryID, v.OrderHomePage)
+		}
+
 		_, err = db.Exec(context.Background(), "INSERT INTO category_product (category_id,product_id,order_home_page) VALUES ($1,$2,$3)", v.CategoryID, ID, v.OrderHomePage)
 		if err != nil {
 			helpers.HandleError(c, 400, err.Error())
