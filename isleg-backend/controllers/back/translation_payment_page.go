@@ -5,6 +5,7 @@ import (
 	"github/abbgo/isleg/isleg-backend/config"
 	"github/abbgo/isleg/isleg-backend/helpers"
 	"github/abbgo/isleg/isleg-backend/models"
+	"github/abbgo/isleg/isleg-backend/pkg"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
