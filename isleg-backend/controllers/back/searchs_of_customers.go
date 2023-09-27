@@ -6,6 +6,7 @@ import (
 	"github/abbgo/isleg/isleg-backend/helpers"
 	"github/abbgo/isleg/isleg-backend/models"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -18,7 +19,14 @@ func GetSearchsOfCustomers(c *gin.Context) {
 	}
 	defer db.Close()
 
-	rowsSearchs, err := db.Query(context.Background(), "SELECT search FROM searchs_of_customers WHRE deleted_at IS NULL")
+	hasProducts := c.DefaultQuery("has_products", "true")
+	has_products, err := strconv.ParseBool(hasProducts)
+	if err != nil {
+		helpers.HandleError(c, 400, err.Error())
+		return
+	}
+
+	rowsSearchs, err := db.Query(context.Background(), "SELECT search,count FROM searchs_of_customers WHRE deleted_at IS NULL AND has_products = $1", has_products)
 	if err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
@@ -28,7 +36,7 @@ func GetSearchsOfCustomers(c *gin.Context) {
 	var searchs []models.SearchsOfCustomers
 	for rowsSearchs.Next() {
 		var search models.SearchsOfCustomers
-		if err := rowsSearchs.Scan(&search.Search); err != nil {
+		if err := rowsSearchs.Scan(&search.Search, &search.Count); err != nil {
 			helpers.HandleError(c, 400, err.Error())
 			return
 		}
