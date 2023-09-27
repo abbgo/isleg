@@ -149,10 +149,7 @@ func Search(c *gin.Context) {
 	}
 
 	var searchID string
-	if err := db.QueryRow(context.Background(), "SELECT id FROM searchs_of_customers WHERE deleted_at IS NULL AND slug = $1", incomingsSarch).Scan(&searchID); err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
+	db.QueryRow(context.Background(), "SELECT id FROM searchs_of_customers WHERE deleted_at IS NULL AND slug = $1", incomingsSarch).Scan(&searchID)
 	if searchID != "" {
 		_, err = db.Exec(context.Background(), "UPDATE searchs_of_customers SET count = count + 1 , has_products = $1 WHERE id = $2", hasProduct, searchID)
 

@@ -26,7 +26,7 @@ func GetSearchsOfCustomers(c *gin.Context) {
 		return
 	}
 
-	rowsSearchs, err := db.Query(context.Background(), "SELECT search,count FROM searchs_of_customers WHRE deleted_at IS NULL AND has_products = $1", has_products)
+	rowsSearchs, err := db.Query(context.Background(), "SELECT search,count FROM searchs_of_customers WHERE deleted_at IS NULL AND has_products = $1", has_products)
 	if err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
