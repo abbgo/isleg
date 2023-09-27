@@ -9,6 +9,7 @@ import (
 	backController "github/abbgo/isleg/isleg-backend/controllers/back"
 	"github/abbgo/isleg/isleg-backend/helpers"
 	"github/abbgo/isleg/isleg-backend/models"
+	"github/abbgo/isleg/isleg-backend/pkg"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -57,18 +58,18 @@ func GetBrends(c *gin.Context) {
 }
 
 func GetHomePageCategories(c *gin.Context) {
+	langID, err := pkg.ValidateMiddlewareData(c, "lang_id")
+	if err != nil {
+		helpers.HandleError(c, 400, err.Error())
+		return
+	}
+
 	db, err := config.ConnDB()
 	if err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
 	}
 	defer db.Close()
-
-	langID, err := backController.CheckLanguage(c)
-	if err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
 
 	// get all homepage category where translation category id equal langID
 	categoryRows, err := db.Query(context.Background(), "SELECT c.id,t.name FROM categories c INNER JOIN translation_category t ON c.id=t.category_id WHERE c.order_number_in_home_page > 0 AND c.is_visible = true AND t.lang_id = $1 AND c.is_home_category = true AND t.deleted_at IS NULL AND c.deleted_at IS NULL ORDER BY c.order_number_in_home_page ASC", langID)

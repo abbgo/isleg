@@ -118,18 +118,18 @@ func GetTranslationSecureByID(c *gin.Context) {
 }
 
 func GetTranslationSecureByLangID(c *gin.Context) {
+	langID, err := pkg.ValidateMiddlewareData(c, "lang_id")
+	if err != nil {
+		helpers.HandleError(c, 400, err.Error())
+		return
+	}
+
 	db, err := config.ConnDB()
 	if err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
 	}
 	defer db.Close()
-
-	langID, err := CheckLanguage(c)
-	if err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
 
 	// get translation secure where lang_id equal langID
 	var translationSecure models.TranslationSecure

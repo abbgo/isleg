@@ -1143,6 +1143,12 @@ func DeletePermanentlyCategoryByID(c *gin.Context) {
 }
 
 func GetOneCategoryWithProducts(c *gin.Context) {
+	langID, err := pkg.ValidateMiddlewareData(c, "lang_id")
+	if err != nil {
+		helpers.HandleError(c, 400, err.Error())
+		return
+	}
+
 	db, err := config.ConnDB()
 	if err != nil {
 		helpers.HandleError(c, 400, err.Error())
@@ -1151,12 +1157,6 @@ func GetOneCategoryWithProducts(c *gin.Context) {
 	defer db.Close()
 
 	var countOfProducts uint64
-
-	langID, err := CheckLanguage(c)
-	if err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
 
 	statusStr := c.DefaultQuery("status", "true")
 	status, err := strconv.ParseBool(statusStr)
@@ -1433,6 +1433,12 @@ func GetOneCategoryWithProducts(c *gin.Context) {
 }
 
 func GetOneCategoryWithDeletedProducts(c *gin.Context) {
+	langID, err := pkg.ValidateMiddlewareData(c, "lang_id")
+	if err != nil {
+		helpers.HandleError(c, 400, err.Error())
+		return
+	}
+
 	db, err := config.ConnDB()
 	if err != nil {
 		helpers.HandleError(c, 400, err.Error())
@@ -1441,12 +1447,6 @@ func GetOneCategoryWithDeletedProducts(c *gin.Context) {
 	defer db.Close()
 
 	var countOfProducts uint64
-
-	langID, err := CheckLanguage(c)
-	if err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
 
 	// get limit from param
 	limitStr := c.Param("limit")

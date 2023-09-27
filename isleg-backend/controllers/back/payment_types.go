@@ -5,6 +5,7 @@ import (
 	"github/abbgo/isleg/isleg-backend/config"
 	"github/abbgo/isleg/isleg-backend/helpers"
 	"github/abbgo/isleg/isleg-backend/models"
+	"github/abbgo/isleg/isleg-backend/pkg"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -150,22 +151,18 @@ func GetPaymentTypes(c *gin.Context) {
 }
 
 func GetPaymentTypesByLangID(c *gin.Context) {
+	langID, err := pkg.ValidateMiddlewareData(c, "lang_id")
+	if err != nil {
+		helpers.HandleError(c, 400, err.Error())
+		return
+	}
+
 	db, err := config.ConnDB()
 	if err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
 	}
 	defer db.Close()
-
-	// GET DATA FROM ROUTE PARAMETER
-	langShortName := c.Param("lang")
-
-	// GET language id
-	langID, err := GetLangID(langShortName)
-	if err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
 
 	rowsPaymentType, err := db.Query(context.Background(), "SELECT type FROM payment_types WHERE lang_id = $1 AND deleted_at IS NULL", langID)
 	if err != nil {

@@ -5,6 +5,7 @@ import (
 	"github/abbgo/isleg/isleg-backend/config"
 	"github/abbgo/isleg/isleg-backend/helpers"
 	"github/abbgo/isleg/isleg-backend/models"
+	"github/abbgo/isleg/isleg-backend/pkg"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -119,18 +120,18 @@ func GetTranslationAboutByID(c *gin.Context) {
 }
 
 func GetTranslationAboutByLangID(c *gin.Context) {
+	langID, err := pkg.ValidateMiddlewareData(c, "lang_id")
+	if err != nil {
+		helpers.HandleError(c, 400, err.Error())
+		return
+	}
+
 	db, err := config.ConnDB()
 	if err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
 	}
 	defer db.Close()
-
-	langID, err := CheckLanguage(c)
-	if err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
 
 	// get translation about where lang_id equal langID
 	var translationAbout models.TranslationAbout

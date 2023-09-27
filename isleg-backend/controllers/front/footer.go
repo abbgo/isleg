@@ -5,6 +5,7 @@ import (
 
 	backController "github/abbgo/isleg/isleg-backend/controllers/back"
 	"github/abbgo/isleg/isleg-backend/helpers"
+	"github/abbgo/isleg/isleg-backend/pkg"
 
 	"github.com/gin-gonic/gin"
 )
@@ -12,7 +13,7 @@ import (
 // GetFooterData funksiya asakdaky maglumatlary getirip beryar:
 // footer - in terjimesini
 func GetFooterData(c *gin.Context) {
-	langID, err := backController.CheckLanguage(c)
+	langID, err := pkg.ValidateMiddlewareData(c, "lang_id")
 	if err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
