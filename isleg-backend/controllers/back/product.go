@@ -992,17 +992,17 @@ func GetProductByID(c *gin.Context) {
 	}
 
 	product.Images = images
-	rowsCategoryProduct, err := db.Query(context.Background(), "SELECT category_id FROM category_product WHERE product_id = $1 AND deleted_at IS NULL", ID)
+	rowsCategoryProduct, err := db.Query(context.Background(), "SELECT category_id,order_home_page FROM category_product WHERE product_id = $1 AND deleted_at IS NULL", ID)
 	if err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
 	}
 	defer rowsCategoryProduct.Close()
 
-	var categories []string
+	var categories []models.CategoryProduct
 	for rowsCategoryProduct.Next() {
-		var category string
-		if err := rowsCategoryProduct.Scan(&category); err != nil {
+		var category models.CategoryProduct
+		if err := rowsCategoryProduct.Scan(&category.CategoryID, category.OrderHomePage); err != nil {
 			helpers.HandleError(c, 400, err.Error())
 			return
 		}
