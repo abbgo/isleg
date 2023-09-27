@@ -59,12 +59,13 @@ type TranslationProduct struct {
 }
 
 type CategoryProduct struct {
-	ID         string `json:"id,omitempty"`
-	CategoryID string `json:"category_id,omitempty"`
-	ProductID  string `json:"product_id,omitempty"`
-	CreatedAt  string `json:"-"`
-	UpdatedAt  string `json:"-"`
-	DeletedAt  string `json:"-"`
+	ID            string `json:"id,omitempty"`
+	CategoryID    string `json:"category_id,omitempty"`
+	ProductID     string `json:"product_id,omitempty"`
+	OrderHomePage uint   `json:"order_home_page,omitempty"`
+	CreatedAt     string `json:"-"`
+	UpdatedAt     string `json:"-"`
+	DeletedAt     string `json:"-"`
 }
 
 func ValidateProductModel(mainPhoto string, benefit float64, productID string, price float64, oldprice float64, amount, limitamount uint, isNew bool, categories []string) (float64, string, float64, float64, uint, uint, bool, string, error) {
