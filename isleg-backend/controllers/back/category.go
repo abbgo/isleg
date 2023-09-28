@@ -1407,7 +1407,12 @@ func GetOneCategoryWithProducts(c *gin.Context) {
 		category.Products = products
 	}
 
-	rowsBrend, err := db.Query(context.Background(), "SELECT DISTINCT(b.id),b.name FROM brends b INNER JOIN products p ON p.brend_id = b.id WHERE p.id = ANY($1) AND b.deleted_at IS NULL AND p.deleted_at IS NULL", pq.Array(productIDS))
+	var rowsBrend pgx.Rows
+	if countOfProducts == 0 {
+		rowsBrend, err = db.Query(context.Background(), "SELECT DISTINCT(b.id),b.name FROM brends b INNER JOIN products p ON p.brend_id = b.id INNER JOIN category_product cp ON cp.product_id = p.id WHERE cp.category_id = $1 AND cp.deleted_at IS NULL AND b.deleted_at IS NULL AND p.deleted_at IS NULL", categoryID)
+	} else {
+		rowsBrend, err = db.Query(context.Background(), "SELECT DISTINCT(b.id),b.name FROM brends b INNER JOIN products p ON p.brend_id = b.id WHERE p.id = ANY($1) AND b.deleted_at IS NULL AND p.deleted_at IS NULL", pq.Array(productIDS))
+	}
 	if err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
