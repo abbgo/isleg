@@ -37,6 +37,7 @@ type OrderForAdmin struct {
 	ShippingPrice float64           `json:"shipping_price"`
 	CreatedAt     string            `json:"created_at"`
 	Excel         null.String       `json:"excel,omitempty"`
+	OrderNumber   int               `json:"order_number,omitempty"`
 	Products      []ProductForAdmin `json:"products"`
 }
 
@@ -551,9 +552,9 @@ func GetOrders(c *gin.Context) {
 
 	var orders []OrderForAdmin
 	if status {
-		rowsOrderQuery = `SELECT customer_id,id,customer_mark,order_time,payment_type,total_price,shipping_price,excel,address,TO_CHAR(created_at, 'DD.MM.YYYY') FROM orders WHERE customer_id = ANY($1) AND deleted_at IS NOT NULL LIMIT $2 OFFSET $3`
+		rowsOrderQuery = `SELECT customer_id,id,customer_mark,order_time,payment_type,total_price,shipping_price,excel,address,TO_CHAR(created_at, 'DD.MM.YYYY'),order_number  FROM orders WHERE customer_id = ANY($1) AND deleted_at IS NOT NULL LIMIT $2 OFFSET $3`
 	} else {
-		rowsOrderQuery = `SELECT customer_id,id,customer_mark,order_time,payment_type,total_price,shipping_price,excel,address,TO_CHAR(created_at, 'DD.MM.YYYY') FROM orders WHERE customer_id = ANY($1) AND deleted_at IS NULL LIMIT $2 OFFSET $3`
+		rowsOrderQuery = `SELECT customer_id,id,customer_mark,order_time,payment_type,total_price,shipping_price,excel,address,TO_CHAR(created_at, 'DD.MM.YYYY'),order_number  FROM orders WHERE customer_id = ANY($1) AND deleted_at IS NULL LIMIT $2 OFFSET $3`
 	}
 
 	rowsOrder, err := db.Query(context.Background(), rowsOrderQuery, pq.Array(customerIDs), limit, offset)
@@ -565,7 +566,7 @@ func GetOrders(c *gin.Context) {
 
 	for rowsOrder.Next() {
 		var order OrderForAdmin
-		if err := rowsOrder.Scan(&order.CustomerID, &order.ID, &order.CustomerMark, &order.OrderTime, &order.PaymentType, &order.TotalPrice, &order.ShippingPrice, &order.Excel, &order.Address, &order.CreatedAt); err != nil {
+		if err := rowsOrder.Scan(&order.CustomerID, &order.ID, &order.CustomerMark, &order.OrderTime, &order.PaymentType, &order.TotalPrice, &order.ShippingPrice, &order.Excel, &order.Address, &order.CreatedAt, &order.OrderNumber); err != nil {
 			helpers.HandleError(c, 400, err.Error())
 			return
 		}
