@@ -579,10 +579,13 @@ func GetOrders(c *gin.Context) {
 		defer rowCustomer.Close()
 
 		for rowCustomer.Next() {
-			if err := rowCustomer.Scan(&order.FullName, &order.PhoneNumber); err != nil {
+			var customerFullName null.String
+			if err := rowCustomer.Scan(&customerFullName, &order.PhoneNumber); err != nil {
 				helpers.HandleError(c, 400, err.Error())
 				return
 			}
+
+			order.FullName = customerFullName.String
 		}
 
 		rowsOrderedProducts, err := db.Query(context.Background(), "SELECT product_id,quantity_of_product FROM ordered_products WHERE order_id = $1 AND deleted_at IS NULL", order.ID)
