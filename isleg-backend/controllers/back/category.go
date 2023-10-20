@@ -1266,26 +1266,10 @@ func GetOneCategoryWithProducts(c *gin.Context) {
 				return
 			}
 		}
-	} else {
-		rowsBrend, err := db.Query(context.Background(), "SELECT id FROM brends WHERE deleted_at IS NULL")
-		if err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
-		}
-		defer rowsBrend.Close()
-
-		for rowsBrend.Next() {
-			var brendID string
-			if err := rowsBrend.Scan(&brendID); err != nil {
-				helpers.HandleError(c, 400, err.Error())
-				return
-			}
-			brendIDs = append(brendIDs, brendID)
-		}
 	}
 
 	// get category where id equal categiryID
-	categoryRow, err := db.Query(context.Background(), "SELECT c.id,c.image,t.name FROM categories c LEFT JOIN translation_category t ON c.id=t.category_id WHERE t.lang_id = $1 AND c.id = $2 AND c.deleted_at IS NULL AND t.deleted_at IS NULL", langID, categoryID)
+	categoryRow, err := db.Query(context.Background(), "SELECT c.id,c.image,t.name FROM categories c INNER JOIN translation_category t ON c.id=t.category_id WHERE t.lang_id = $1 AND c.id = $2 AND c.deleted_at IS NULL AND t.deleted_at IS NULL", langID, categoryID)
 	if err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
@@ -1306,21 +1290,38 @@ func GetOneCategoryWithProducts(c *gin.Context) {
 		}
 
 		// get count product where product_id equal categoryID
-		db.QueryRow(context.Background(), "SELECT COUNT(DISTINCT(p.id)) FROM products p LEFT JOIN category_product c ON p.id=c.product_id INNER JOIN translation_product tp ON tp.product_id = p.id WHERE (p.is_visible = $7 OR p.is_visible = $8) AND p.brend_id = ANY($1) AND tp.lang_id = $2 AND c.category_id = $3 AND tp.deleted_at IS NULL AND p.amount > 0 AND p.limit_amount > 0 AND p.deleted_at IS NULL AND p.price >= $4 AND p.price <= $5 AND p.old_price > $6", pq.Array(brendIDs), langID, categoryID, minPrice, maxPrice, discount, is_visible_1, is_visible_2).Scan(&countOfProducts)
+		db.QueryRow(context.Background(), "SELECT COUNT(DISTINCT(p.id)) FROM products p INNER JOIN category_product c ON p.id=c.product_id INNER JOIN translation_product tp ON tp.product_id = p.id WHERE (p.is_visible = $6 OR p.is_visible = $7) AND tp.lang_id = $1 AND c.category_id = $2 AND tp.deleted_at IS NULL AND p.amount > 0 AND p.limit_amount > 0 AND p.deleted_at IS NULL AND p.price >= $3 AND p.price <= $4 AND p.old_price > $5", langID, categoryID, minPrice, maxPrice, discount, is_visible_1, is_visible_2).Scan(&countOfProducts)
+		if len(brendIDs) != 0 {
+			db.QueryRow(context.Background(), "SELECT COUNT(DISTINCT(p.id)) FROM products p INNER JOIN category_product c ON p.id=c.product_id INNER JOIN translation_product tp ON tp.product_id = p.id WHERE (p.is_visible = $7 OR p.is_visible = $8) AND p.brend_id = ANY($1) AND tp.lang_id = $2 AND c.category_id = $3 AND tp.deleted_at IS NULL AND p.amount > 0 AND p.limit_amount > 0 AND p.deleted_at IS NULL AND p.price >= $4 AND p.price <= $5 AND p.old_price > $6", pq.Array(brendIDs), langID, categoryID, minPrice, maxPrice, discount, is_visible_1, is_visible_2).Scan(&countOfProducts)
+		}
 
 		// get all product where category id equal categoryID
 		var rowQuery string
 		if priceSort == "" {
-			rowQuery = "SELECT DISTINCT ON (p.id,p.created_at) p.id,p.brend_id,p.price,p.old_price,p.amount,p.limit_amount,p.is_new,p.main_image,p.benefit,p.code,p.is_visible FROM products p LEFT JOIN category_product c ON p.id=c.product_id INNER JOIN translation_product tp ON tp.product_id = p.id WHERE (p.is_visible = $9 OR p.is_visible = $10) AND p.brend_id = ANY($1) AND tp.lang_id = $2 AND c.category_id = $3 AND tp.deleted_at IS NULL AND p.amount > 0 AND p.limit_amount > 0 AND p.deleted_at IS NULL AND p.price >= $4 AND p.price <= $5 AND p.old_price > $6 ORDER BY p.created_at DESC LIMIT $7 OFFSET $8"
+			rowQuery = "SELECT DISTINCT ON (p.id,p.created_at) p.id,p.brend_id,p.price,p.old_price,p.amount,p.limit_amount,p.is_new,p.main_image,p.benefit,p.code,p.is_visible FROM products p INNER JOIN category_product c ON p.id=c.product_id INNER JOIN translation_product tp ON tp.product_id = p.id WHERE (p.is_visible = $8 OR p.is_visible = $9) AND tp.lang_id = $1 AND c.category_id = $2 AND tp.deleted_at IS NULL AND p.amount > 0 AND p.limit_amount > 0 AND p.deleted_at IS NULL AND p.price >= $3 AND p.price <= $4 AND p.old_price > $5 ORDER BY p.created_at DESC LIMIT $6 OFFSET $7"
+			if len(brendIDs) != 0 {
+				rowQuery = "SELECT DISTINCT ON (p.id,p.created_at) p.id,p.brend_id,p.price,p.old_price,p.amount,p.limit_amount,p.is_new,p.main_image,p.benefit,p.code,p.is_visible FROM products p INNER JOIN category_product c ON p.id=c.product_id INNER JOIN translation_product tp ON tp.product_id = p.id WHERE (p.is_visible = $9 OR p.is_visible = $10) AND p.brend_id = ANY($1) AND tp.lang_id = $2 AND c.category_id = $3 AND tp.deleted_at IS NULL AND p.amount > 0 AND p.limit_amount > 0 AND p.deleted_at IS NULL AND p.price >= $4 AND p.price <= $5 AND p.old_price > $6 ORDER BY p.created_at DESC LIMIT $7 OFFSET $8"
+			}
 		} else {
 			if priceSort == "DESC" {
-				rowQuery = "SELECT DISTINCT(p.id),p.brend_id,p.price,p.old_price,p.amount,p.limit_amount,p.is_new,p.main_image,p.benefit,p.code,p.is_visible FROM products p LEFT JOIN category_product c ON p.id=c.product_id INNER JOIN translation_product tp ON tp.product_id = p.id WHERE (p.is_visible = $9 OR p.is_visible = $10) AND p.brend_id = ANY($1) AND tp.lang_id = $2 AND c.category_id = $3 AND tp.deleted_at IS NULL AND p.amount > 0 AND p.limit_amount > 0 AND p.deleted_at IS NULL AND p.price >= $4 AND p.price <= $5 AND p.old_price > $6 ORDER BY p.price DESC LIMIT $7 OFFSET $8"
+				rowQuery = "SELECT DISTINCT(p.id),p.brend_id,p.price,p.old_price,p.amount,p.limit_amount,p.is_new,p.main_image,p.benefit,p.code,p.is_visible FROM products p INNER JOIN category_product c ON p.id=c.product_id INNER JOIN translation_product tp ON tp.product_id = p.id WHERE (p.is_visible = $8 OR p.is_visible = $9) AND tp.lang_id = $1 AND c.category_id = $2 AND tp.deleted_at IS NULL AND p.amount > 0 AND p.limit_amount > 0 AND p.deleted_at IS NULL AND p.price >= $3 AND p.price <= $4 AND p.old_price > $5 ORDER BY p.price DESC LIMIT $6 OFFSET $7"
+				if len(brendIDs) != 0 {
+					rowQuery = "SELECT DISTINCT(p.id),p.brend_id,p.price,p.old_price,p.amount,p.limit_amount,p.is_new,p.main_image,p.benefit,p.code,p.is_visible FROM products p INNER JOIN category_product c ON p.id=c.product_id INNER JOIN translation_product tp ON tp.product_id = p.id WHERE (p.is_visible = $9 OR p.is_visible = $10) AND p.brend_id = ANY($1) AND tp.lang_id = $2 AND c.category_id = $3 AND tp.deleted_at IS NULL AND p.amount > 0 AND p.limit_amount > 0 AND p.deleted_at IS NULL AND p.price >= $4 AND p.price <= $5 AND p.old_price > $6 ORDER BY p.price DESC LIMIT $7 OFFSET $8"
+				}
 			} else {
-				rowQuery = "SELECT DISTINCT(p.id),p.brend_id,p.price,p.old_price,p.amount,p.limit_amount,p.is_new,p.main_image,p.benefit,p.code,p.is_visible FROM products p LEFT JOIN category_product c ON p.id=c.product_id INNER JOIN translation_product tp ON tp.product_id = p.id WHERE (p.is_visible = $9 OR p.is_visible = $10) AND p.brend_id = ANY($1) AND tp.lang_id = $2 AND c.category_id = $3 AND tp.deleted_at IS NULL AND p.amount > 0 AND p.limit_amount > 0 AND p.deleted_at IS NULL AND p.price >= $4 AND p.price <= $5 AND p.old_price > $6 ORDER BY p.price ASC LIMIT $7 OFFSET $8"
+				rowQuery = "SELECT DISTINCT(p.id),p.brend_id,p.price,p.old_price,p.amount,p.limit_amount,p.is_new,p.main_image,p.benefit,p.code,p.is_visible FROM products p INNER JOIN category_product c ON p.id=c.product_id INNER JOIN translation_product tp ON tp.product_id = p.id WHERE (p.is_visible = $8 OR p.is_visible = $9) AND tp.lang_id = $1 AND c.category_id = $2 AND tp.deleted_at IS NULL AND p.amount > 0 AND p.limit_amount > 0 AND p.deleted_at IS NULL AND p.price >= $3 AND p.price <= $4 AND p.old_price > $5 ORDER BY p.price ASC LIMIT $6 OFFSET $7"
+				if len(brendIDs) != 0 {
+					rowQuery = "SELECT DISTINCT(p.id),p.brend_id,p.price,p.old_price,p.amount,p.limit_amount,p.is_new,p.main_image,p.benefit,p.code,p.is_visible FROM products p INNER JOIN category_product c ON p.id=c.product_id INNER JOIN translation_product tp ON tp.product_id = p.id WHERE (p.is_visible = $9 OR p.is_visible = $10) AND p.brend_id = ANY($1) AND tp.lang_id = $2 AND c.category_id = $3 AND tp.deleted_at IS NULL AND p.amount > 0 AND p.limit_amount > 0 AND p.deleted_at IS NULL AND p.price >= $4 AND p.price <= $5 AND p.old_price > $6 ORDER BY p.price ASC LIMIT $7 OFFSET $8"
+				}
 			}
 		}
 
-		rowsProduct, err := db.Query(context.Background(), rowQuery, pq.Array(brendIDs), langID, categoryID, minPrice, maxPrice, discount, limit, offset, is_visible_1, is_visible_2)
+		var rowsProduct pgx.Rows
+		rowsProduct, err = db.Query(context.Background(), rowQuery, langID, categoryID, minPrice, maxPrice, discount, limit, offset, is_visible_1, is_visible_2)
+		if len(brendIDs) != 0 {
+			rowsProduct, err = db.Query(context.Background(), rowQuery, pq.Array(brendIDs), langID, categoryID, minPrice, maxPrice, discount, limit, offset, is_visible_1, is_visible_2)
+		}
+
 		if err != nil {
 			helpers.HandleError(c, 400, err.Error())
 			return
