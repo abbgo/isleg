@@ -40,7 +40,7 @@ func CreatePaymentType(c *gin.Context) {
 
 	// create company address
 	for _, v := range paymentTypes {
-		_, err := db.Exec(context.Background(), "INSERT INTO payment_types (lang_id,name) VALUES ($1,$2)", v.LangID, v.Name)
+		_, err := db.Exec(context.Background(), "INSERT INTO payment_types (lang_id,name,value) VALUES ($1,$2,$3)", v.LangID, v.Name, v.Value)
 		if err != nil {
 			helpers.HandleError(c, 400, err.Error())
 			return
@@ -78,7 +78,7 @@ func UpdatePaymentTypeByID(c *gin.Context) {
 		return
 	}
 
-	_, err = db.Exec(context.Background(), "UPDATE payment_types SET name = $1, lang_id = $3 WHERE id = $2", paymentType.Name, paymentType.ID, paymentType.LangID)
+	_, err = db.Exec(context.Background(), "UPDATE payment_types SET name = $1, lang_id = $3 , value = $4 WHERE id = $2", paymentType.Name, paymentType.ID, paymentType.LangID, paymentType.Value)
 	if err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
@@ -103,10 +103,10 @@ func GetPaymentTypeByID(c *gin.Context) {
 	ID := c.Param("id")
 
 	// check id and get data from database
-	var paymentType string
-	db.QueryRow(context.Background(), "SELECT name FROM payment_types WHERE id = $1 AND deleted_at IS NULL", ID).Scan(&paymentType)
+	var paymentType models.PaymentTypes
+	db.QueryRow(context.Background(), "SELECT name,value FROM payment_types WHERE id = $1 AND deleted_at IS NULL", ID).Scan(&paymentType.Name, &paymentType.Value)
 
-	if paymentType == "" {
+	if paymentType.Name == "" {
 		helpers.HandleError(c, 404, "record not found")
 		return
 	}
@@ -127,7 +127,7 @@ func GetPaymentTypes(c *gin.Context) {
 	defer db.Close()
 
 	// get data from database
-	rowsPaymentType, err := db.Query(context.Background(), "SELECT lang_id,name FROM payment_types WHERE deleted_at IS NULL")
+	rowsPaymentType, err := db.Query(context.Background(), "SELECT lang_id,name,value FROM payment_types WHERE deleted_at IS NULL")
 	if err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
@@ -137,7 +137,7 @@ func GetPaymentTypes(c *gin.Context) {
 	var paymentTypes []models.PaymentTypes
 	for rowsPaymentType.Next() {
 		var paymentType models.PaymentTypes
-		if err := rowsPaymentType.Scan(&paymentType.LangID, &paymentType.Name); err != nil {
+		if err := rowsPaymentType.Scan(&paymentType.LangID, &paymentType.Name, &paymentType.Value); err != nil {
 			helpers.HandleError(c, 400, err.Error())
 			return
 		}
@@ -164,17 +164,17 @@ func GetPaymentTypesByLangID(c *gin.Context) {
 	}
 	defer db.Close()
 
-	rowsPaymentType, err := db.Query(context.Background(), "SELECT name FROM payment_types WHERE lang_id = $1 AND deleted_at IS NULL", langID)
+	rowsPaymentType, err := db.Query(context.Background(), "SELECT name,value FROM payment_types WHERE lang_id = $1 AND deleted_at IS NULL", langID)
 	if err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
 	}
 	defer rowsPaymentType.Close()
 
-	var paymentTypes []string
+	var paymentTypes []models.PaymentTypes
 	for rowsPaymentType.Next() {
-		var paymentType string
-		if err := rowsPaymentType.Scan(&paymentType); err != nil {
+		var paymentType models.PaymentTypes
+		if err := rowsPaymentType.Scan(&paymentType.Name, &paymentType.Value); err != nil {
 			helpers.HandleError(c, 400, err.Error())
 			return
 		}
