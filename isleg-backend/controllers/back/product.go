@@ -55,7 +55,7 @@ type ProductForAdmin struct {
 	Images             []string                    `json:"images,omitempty"`                                 // one to many
 	TranslationProduct []models.TranslationProduct `json:"translation_product,omitempty" binding:"required"` // one to many
 	Categories         []models.CategoryProduct    `json:"categories,omitempty" binding:"required"`
-	OrderHomePage      uint                        `json:"order_home_page,omitempty"`
+	OrderHomePage      int8                        `json:"order_home_page,omitempty"`
 }
 
 func DeleteProductImages(c *gin.Context) {
@@ -237,7 +237,7 @@ func CreateProduct(c *gin.Context) {
 	for _, v := range product.Categories {
 		if v.OrderHomePage != 0 {
 			db.Exec(context.Background(), "UPDATE category_product SET order_home_page = 0 WHERE category_id = $1 AND order_home_page = $2 AND deleted_at IS NULL", v.CategoryID, v.OrderHomePage)
-			if v.OrderHomePage > 4 {
+			if v.OrderHomePage > 4 || v.OrderHomePage < 0 {
 				v.OrderHomePage = 4
 			}
 		}
@@ -771,7 +771,7 @@ func CreateProductsByExcelFile(c *gin.Context) {
 			for _, v := range product.Categories {
 				if v.OrderHomePage != 0 {
 					db.Exec(context.Background(), "UPDATE category_product SET order_home_page = 0 WHERE category_id = $1 AND order_home_page = $2 AND deleted_at IS NULL", v.CategoryID, v.OrderHomePage)
-					if v.OrderHomePage > 4 {
+					if v.OrderHomePage > 4 || v.OrderHomePage < 0 {
 						v.OrderHomePage = 4
 					}
 				}
@@ -951,7 +951,7 @@ func UpdateProductByID(c *gin.Context) {
 	for _, v := range product.Categories {
 		if v.OrderHomePage != 0 {
 			db.Exec(context.Background(), "UPDATE category_product SET order_home_page = 0 WHERE category_id = $1 AND order_home_page = $2 AND deleted_at IS NULL", v.CategoryID, v.OrderHomePage)
-			if v.OrderHomePage > 4 {
+			if v.OrderHomePage > 4 || v.OrderHomePage < 0 {
 				v.OrderHomePage = 4
 			}
 		}
