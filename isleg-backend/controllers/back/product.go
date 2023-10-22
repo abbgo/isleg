@@ -237,7 +237,7 @@ func CreateProduct(c *gin.Context) {
 	for _, v := range product.Categories {
 		if v.OrderHomePage != 0 {
 			db.Exec(context.Background(), "UPDATE category_product SET order_home_page = 0 WHERE category_id = $1 AND order_home_page = $2 AND deleted_at IS NULL", v.CategoryID, v.OrderHomePage)
-			if v.OrderHomePage > 4 || v.OrderHomePage < 0 {
+			if v.OrderHomePage > 4 {
 				v.OrderHomePage = 4
 			}
 		}
@@ -771,7 +771,7 @@ func CreateProductsByExcelFile(c *gin.Context) {
 			for _, v := range product.Categories {
 				if v.OrderHomePage != 0 {
 					db.Exec(context.Background(), "UPDATE category_product SET order_home_page = 0 WHERE category_id = $1 AND order_home_page = $2 AND deleted_at IS NULL", v.CategoryID, v.OrderHomePage)
-					if v.OrderHomePage > 4 || v.OrderHomePage < 0 {
+					if v.OrderHomePage > 4 {
 						v.OrderHomePage = 4
 					}
 				}
@@ -951,7 +951,7 @@ func UpdateProductByID(c *gin.Context) {
 	for _, v := range product.Categories {
 		if v.OrderHomePage != 0 {
 			db.Exec(context.Background(), "UPDATE category_product SET order_home_page = 0 WHERE category_id = $1 AND order_home_page = $2 AND deleted_at IS NULL", v.CategoryID, v.OrderHomePage)
-			if v.OrderHomePage > 4 || v.OrderHomePage < 0 {
+			if v.OrderHomePage > 4 {
 				v.OrderHomePage = 4
 			}
 		}
