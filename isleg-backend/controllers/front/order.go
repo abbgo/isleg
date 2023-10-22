@@ -63,7 +63,7 @@ type Order struct {
 	Address       string        `json:"address" binding:"required,min=3"`
 	CustomerMark  string        `json:"customer_mark"`
 	OrderTime     string        `json:"order_time" binding:"required"`
-	PaymentType   string        `json:"payment_type" binding:"required"`
+	PaymentType   uint8         `json:"payment_type" binding:"required"`
 	TotalPrice    float64       `json:"total_price" binding:"required"`
 	ShippingPrice float64       `json:"shipping_price,omitempty"`
 	Products      []CartProduct `json:"products" binding:"required"`
@@ -103,6 +103,13 @@ func ToOrder(c *gin.Context) {
 		return
 	}
 
+	var paymentType string
+	db.QueryRow(context.Background(), "SELECT name FROM payment_types WHERE deleted_at IS NULL AND lang_id = $1 AND vwlue = $2", langID, order.PaymentType).Scan(&paymentType)
+	if paymentType == "" {
+		helpers.HandleError(c, 404, "payment type not found")
+		return
+	}
+
 	// haryt sargyt etyan musderi on bazada barmy ya-da yokmy sony bilmek ucin order.PhoneNumber telefon belgi boyunca sol musderini
 	// bazadan gozletyas
 	var customerPhoneNumber, customerID string
@@ -138,7 +145,7 @@ func ToOrder(c *gin.Context) {
 	// gosulan sargydyn id - sini alyarys, ordered_prodcuts tablisa ucin
 	var order_id, createdAt string
 	var orderNumber uint
-	db.QueryRow(context.Background(), "INSERT INTO orders (customer_id,customer_mark,order_time,payment_type,total_price,shipping_price,address) VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING id,TO_CHAR(created_at,'DD.MM.YYYY HH24:MI'),order_number", customerID, order.CustomerMark, order.OrderTime, order.PaymentType, order.TotalPrice, order.ShippingPrice, order.Address).Scan(&order_id, &createdAt, &orderNumber)
+	db.QueryRow(context.Background(), "INSERT INTO orders (customer_id,customer_mark,order_time,payment_type,total_price,shipping_price,address) VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING id,TO_CHAR(created_at,'DD.MM.YYYY HH24:MI'),order_number", customerID, order.CustomerMark, order.OrderTime, paymentType, order.TotalPrice, order.ShippingPrice, order.Address).Scan(&order_id, &createdAt, &orderNumber)
 
 	// edilen sargyt baza gosulandan son sol sargyda degisli harytlary baza gosyas
 	for _, v := range order.Products {
@@ -215,7 +222,7 @@ func ToOrder(c *gin.Context) {
 	f.SetCellValue("Sheet1", "a12", "Bellik: "+order.CustomerMark)
 	f.SetCellValue("Sheet1", "e9", "Sargyt edilen senesi: "+createdAt)
 	f.SetCellValue("Sheet1", "e10", "Eltip bermeli wagty: "+order.OrderTime)
-	f.SetCellValue("Sheet1", "e11", "Toleg sekili: "+order.PaymentType)
+	f.SetCellValue("Sheet1", "e11", "Toleg sekili: "+paymentType)
 	f.SetCellValue("Sheet1", "e12", "Eltip bermek hyzmaty: "+strconv.FormatFloat(pkg.RoundFloat(order.ShippingPrice, 2), 'f', -1, 64)+" TMT")
 	f.SetCellValue("Sheet1", "e13", "Jemi: "+strconv.FormatFloat(pkg.RoundFloat(order.TotalPrice, 2), 'f', -1, 64)+" TMT")
 
@@ -323,7 +330,7 @@ func ToOrder(c *gin.Context) {
 		f.SetCellValue("Sheet1", "a"+strconv.Itoa(lenProductsArr+count+32), "Bellik: "+order.CustomerMark)
 		f.SetCellValue("Sheet1", "e"+strconv.Itoa(lenProductsArr+count+29), "Sargyt edilen senesi: "+createdAt)
 		f.SetCellValue("Sheet1", "e"+strconv.Itoa(lenProductsArr+count+30), "Eltip bermeli wagty: "+order.OrderTime)
-		f.SetCellValue("Sheet1", "e"+strconv.Itoa(lenProductsArr+count+31), "Toleg sekili: "+order.PaymentType)
+		f.SetCellValue("Sheet1", "e"+strconv.Itoa(lenProductsArr+count+31), "Toleg sekili: "+paymentType)
 		f.SetCellValue("Sheet1", "e"+strconv.Itoa(lenProductsArr+count+32), "Eltip bermek hyzmaty: "+strconv.FormatFloat(pkg.RoundFloat(order.ShippingPrice, 2), 'f', -1, 64)+" TMT")
 		f.SetCellValue("Sheet1", "e"+strconv.Itoa(lenProductsArr+count+33), "Jemi: "+strconv.FormatFloat(pkg.RoundFloat(order.TotalPrice, 2), 'f', -1, 64)+" TMT")
 
@@ -372,7 +379,7 @@ func ToOrder(c *gin.Context) {
 		f.SetCellValue("Sheet1", "a"+strconv.Itoa(lenProductsArr+32), "Bellik: "+order.CustomerMark)
 		f.SetCellValue("Sheet1", "e"+strconv.Itoa(lenProductsArr+29), "Sargyt edilen senesi: "+createdAt)
 		f.SetCellValue("Sheet1", "e"+strconv.Itoa(lenProductsArr+30), "Eltip bermeli wagty: "+order.OrderTime)
-		f.SetCellValue("Sheet1", "e"+strconv.Itoa(lenProductsArr+31), "Toleg sekili: "+order.PaymentType)
+		f.SetCellValue("Sheet1", "e"+strconv.Itoa(lenProductsArr+31), "Toleg sekili: "+paymentType)
 		f.SetCellValue("Sheet1", "e"+strconv.Itoa(lenProductsArr+32), "Eltip bermek hyzmaty: "+strconv.FormatFloat(pkg.RoundFloat(order.ShippingPrice, 2), 'f', -1, 64)+" TMT")
 		f.SetCellValue("Sheet1", "e"+strconv.Itoa(lenProductsArr+33), "Jemi: "+strconv.FormatFloat(pkg.RoundFloat(order.TotalPrice, 2), 'f', -1, 64)+" TMT")
 
