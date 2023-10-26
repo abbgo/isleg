@@ -62,7 +62,7 @@ type CategoryProduct struct {
 	ID            string `json:"id,omitempty"`
 	CategoryID    string `json:"category_id,omitempty"`
 	ProductID     string `json:"product_id,omitempty"`
-	OrderHomePage int8   `json:"order_home_page,omitempty"`
+	OrderHomePage int    `json:"order_home_page,omitempty"`
 	CreatedAt     string `json:"-"`
 	UpdatedAt     string `json:"-"`
 	DeletedAt     string `json:"-"`

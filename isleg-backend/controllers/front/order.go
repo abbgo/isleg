@@ -145,7 +145,7 @@ func ToOrder(c *gin.Context) {
 	// gosulan sargydyn id - sini alyarys, ordered_prodcuts tablisa ucin
 	var order_id, createdAt string
 	var orderNumber uint
-	db.QueryRow(context.Background(), "INSERT INTO orders (customer_id,customer_mark,order_time,payment_type,total_price,shipping_price,address) VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING id,TO_CHAR(created_at,'DD.MM.YYYY HH24:MI'),order_number", customerID, order.CustomerMark, order.OrderTime, paymentType, order.TotalPrice, order.ShippingPrice, order.Address).Scan(&order_id, &createdAt, &orderNumber)
+	db.QueryRow(context.Background(), "INSERT INTO orders (customer_id,customer_mark,order_time,payment_type,total_price,shipping_price,address) VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING id,TO_CHAR(created_at,'DD.MM.YYYY HH24:MI'),order_number", customerID, order.CustomerMark, order.OrderTime, order.PaymentType, order.TotalPrice, order.ShippingPrice, order.Address).Scan(&order_id, &createdAt, &orderNumber)
 
 	// edilen sargyt baza gosulandan son sol sargyda degisli harytlary baza gosyas
 	for _, v := range order.Products {
@@ -559,9 +559,9 @@ func GetOrders(c *gin.Context) {
 
 	var orders []OrderForAdmin
 	if status {
-		rowsOrderQuery = `SELECT customer_id,id,customer_mark,order_time,payment_type,total_price,shipping_price,excel,address,TO_CHAR(created_at, 'DD.MM.YYYY'),order_number  FROM orders WHERE customer_id = ANY($1) AND deleted_at IS NOT NULL LIMIT $2 OFFSET $3`
+		rowsOrderQuery = `SELECT customer_id,id,customer_mark,order_time,payment_type,total_price,shipping_price,excel,address,TO_CHAR(created_at, 'DD.MM.YYYY'),order_number FROM orders WHERE customer_id = ANY($1) AND deleted_at IS NOT NULL LIMIT $2 OFFSET $3`
 	} else {
-		rowsOrderQuery = `SELECT customer_id,id,customer_mark,order_time,payment_type,total_price,shipping_price,excel,address,TO_CHAR(created_at, 'DD.MM.YYYY'),order_number  FROM orders WHERE customer_id = ANY($1) AND deleted_at IS NULL LIMIT $2 OFFSET $3`
+		rowsOrderQuery = `SELECT customer_id,id,customer_mark,order_time,payment_type,total_price,shipping_price,excel,address,TO_CHAR(created_at, 'DD.MM.YYYY'),order_number FROM orders WHERE customer_id = ANY($1) AND deleted_at IS NULL LIMIT $2 OFFSET $3`
 	}
 
 	rowsOrder, err := db.Query(context.Background(), rowsOrderQuery, pq.Array(customerIDs), limit, offset)
@@ -573,8 +573,15 @@ func GetOrders(c *gin.Context) {
 
 	for rowsOrder.Next() {
 		var order OrderForAdmin
-		if err := rowsOrder.Scan(&order.CustomerID, &order.ID, &order.CustomerMark, &order.OrderTime, &order.PaymentType, &order.TotalPrice, &order.ShippingPrice, &order.Excel, &order.Address, &order.CreatedAt, &order.OrderNumber); err != nil {
+		var paymentType uint8
+		if err := rowsOrder.Scan(&order.CustomerID, &order.ID, &order.CustomerMark, &order.OrderTime, &paymentType, &order.TotalPrice, &order.ShippingPrice, &order.Excel, &order.Address, &order.CreatedAt, &order.OrderNumber); err != nil {
 			helpers.HandleError(c, 400, err.Error())
+			return
+		}
+
+		db.QueryRow(context.Background(), "SELECT name FROM payment_types pt INNER JOIN languages l ON l.id=pt.lang_id WHERE pt.value = $1 AND l.name_short = 'tm' AND pt.deleted_at IS NULL", paymentType).Scan(&order.PaymentType)
+		if order.PaymentType == "" {
+			helpers.HandleError(c, 404, "payment type not found")
 			return
 		}
 

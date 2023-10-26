@@ -55,7 +55,7 @@ type ProductForAdmin struct {
 	Images             []string                    `json:"images,omitempty"`                                 // one to many
 	TranslationProduct []models.TranslationProduct `json:"translation_product,omitempty" binding:"required"` // one to many
 	Categories         []models.CategoryProduct    `json:"categories,omitempty" binding:"required"`
-	OrderHomePage      int8                        `json:"order_home_page,omitempty"`
+	OrderHomePage      int                         `json:"order_home_page,omitempty"`
 }
 
 func DeleteProductImages(c *gin.Context) {
@@ -1024,7 +1024,7 @@ func GetProductByID(c *gin.Context) {
 	var categories []models.CategoryProduct
 	for rowsCategoryProduct.Next() {
 		var category models.CategoryProduct
-		if err := rowsCategoryProduct.Scan(&category.CategoryID, category.OrderHomePage); err != nil {
+		if err := rowsCategoryProduct.Scan(&category.CategoryID, &category.OrderHomePage); err != nil {
 			helpers.HandleError(c, 400, err.Error())
 			return
 		}
