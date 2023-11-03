@@ -82,6 +82,15 @@ type Brend struct {
 	Name null.String   `json:"name,omitempty"`
 }
 
+type FilterJson struct {
+	Status     bool     `json:"status" default:"true"`
+	PriceSort  string   `json:"price_sort"`
+	MinPrice   float32  `json:"min_price"`
+	MaxPrice   float32  `json:"max_price" default:"5000"`
+	IsDiscount bool     `json:"is_discount"`
+	BrendIDs   []string `json:"brend_ids"`
+}
+
 func CreateCategory(c *gin.Context) {
 	// initialize database connection
 	db, err := config.ConnDB()
@@ -1158,15 +1167,21 @@ func GetOneCategoryWithProducts(c *gin.Context) {
 
 	var countOfProducts uint64
 
-	statusStr := c.DefaultQuery("status", "true")
-	status, err := strconv.ParseBool(statusStr)
-	if err != nil {
+	var filterJson FilterJson
+	if err := c.BindJSON(&filterJson); err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
 	}
 
+	// statusStr := c.DefaultQuery("status", "true")
+	// status, err := strconv.ParseBool(statusStr)
+	// if err != nil {
+	// 	helpers.HandleError(c, 400, err.Error())
+	// 	return
+	// }
+
 	var is_visible_1, is_visible_2 bool
-	if status {
+	if filterJson.Status {
 		is_visible_1 = true
 		is_visible_2 = false
 	} else {
@@ -1202,62 +1217,62 @@ func GetOneCategoryWithProducts(c *gin.Context) {
 
 	categoryID := c.Param("id")
 
-	priceSort := c.Query("price_sort")
-	if priceSort != "" {
-		if priceSort != "ASC" && priceSort != "DESC" {
+	// priceSort := c.Query("price_sort")
+	if filterJson.PriceSort != "" {
+		if filterJson.PriceSort != "ASC" && filterJson.PriceSort != "DESC" {
 			helpers.HandleError(c, 400, "price_sort is invalid")
 			return
 		}
 	}
 
-	var minPrice float32
-	minPriceStr := c.Query("min_price")
-	if minPriceStr == "" {
-		minPrice = 0
-	} else {
-		min_price, err := strconv.ParseFloat(minPriceStr, 32)
-		if err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
-		}
-		if min_price < 0 {
-			helpers.HandleError(c, 400, "min_price cannot be less than zero")
-			return
-		}
-		minPrice = float32(min_price)
-	}
-
-	var maxPrice float32
-	maxPriceStr := c.Query("max_price")
-	if maxPriceStr == "" {
-		maxPrice = 5000
-	} else {
-		max_price, err := strconv.ParseFloat(maxPriceStr, 32)
-		if err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
-		}
-		if max_price < 0 {
-			helpers.HandleError(c, 400, "max_price cannot be less than zero")
-			return
-		}
-		maxPrice = float32(max_price)
-	}
-
-	isDiscountStr := c.Query("is_discount")
-	discount := -1
-	isDiscount, err := strconv.ParseBool(isDiscountStr)
-	if err != nil {
-		helpers.HandleError(c, 400, err.Error())
+	// var minPrice float32
+	// minPriceStr := c.Query("min_price")
+	/*	if minPriceStr == "" {
+			minPrice = 0
+		} else {
+			min_price, err := strconv.ParseFloat(minPriceStr, 32)
+			if err != nil {
+				helpers.HandleError(c, 400, err.Error())
+				return
+			} */
+	if filterJson.MinPrice < 0 {
+		helpers.HandleError(c, 400, "min_price cannot be less than zero")
 		return
 	}
-	if isDiscount {
+	// minPrice = float32(min_price)
+	// }
+
+	// var maxPrice float32
+	// maxPriceStr := c.Query("max_price")
+	/*	if maxPriceStr == "" {
+			maxPrice = 5000
+		} else {
+			max_price, err := strconv.ParseFloat(maxPriceStr, 32)
+			if err != nil {
+				helpers.HandleError(c, 400, err.Error())
+				return
+			} */
+	if filterJson.MaxPrice < 0 {
+		helpers.HandleError(c, 400, "max_price cannot be less than zero")
+		return
+	}
+	// 	maxPrice = float32(max_price)
+	// }
+
+	// isDiscountStr := c.Query("is_discount")
+	discount := -1
+	// isDiscount, err := strconv.ParseBool(isDiscountStr)
+	// if err != nil {
+	// 	helpers.HandleError(c, 400, err.Error())
+	// 	return
+	// }
+	if filterJson.IsDiscount {
 		discount = 0
 	}
 
-	brendIDs := c.QueryArray("brend_ids")
-	if len(brendIDs) != 0 {
-		for _, v := range brendIDs {
+	// brendIDs := c.QueryArray("brend_ids")
+	if len(filterJson.BrendIDs) != 0 {
+		for _, v := range filterJson.BrendIDs {
 			var brend_id string
 			db.QueryRow(context.Background(), "SELECT id FROM brends WHERE id = $1 AND deleted_at IS NULL", v).Scan(&brend_id)
 
@@ -1290,36 +1305,36 @@ func GetOneCategoryWithProducts(c *gin.Context) {
 		}
 
 		// get count product where product_id equal categoryID
-		db.QueryRow(context.Background(), "SELECT COUNT(DISTINCT(p.id)) FROM products p INNER JOIN category_product c ON p.id=c.product_id INNER JOIN translation_product tp ON tp.product_id = p.id WHERE (p.is_visible = $6 OR p.is_visible = $7) AND tp.lang_id = $1 AND c.category_id = $2 AND tp.deleted_at IS NULL AND p.amount > 0 AND p.limit_amount > 0 AND p.deleted_at IS NULL AND p.price >= $3 AND p.price <= $4 AND p.old_price > $5", langID, categoryID, minPrice, maxPrice, discount, is_visible_1, is_visible_2).Scan(&countOfProducts)
-		if len(brendIDs) != 0 {
-			db.QueryRow(context.Background(), "SELECT COUNT(DISTINCT(p.id)) FROM products p INNER JOIN category_product c ON p.id=c.product_id INNER JOIN translation_product tp ON tp.product_id = p.id WHERE (p.is_visible = $7 OR p.is_visible = $8) AND p.brend_id = ANY($1) AND tp.lang_id = $2 AND c.category_id = $3 AND tp.deleted_at IS NULL AND p.amount > 0 AND p.limit_amount > 0 AND p.deleted_at IS NULL AND p.price >= $4 AND p.price <= $5 AND p.old_price > $6", pq.Array(brendIDs), langID, categoryID, minPrice, maxPrice, discount, is_visible_1, is_visible_2).Scan(&countOfProducts)
+		db.QueryRow(context.Background(), "SELECT COUNT(DISTINCT(p.id)) FROM products p INNER JOIN category_product c ON p.id=c.product_id INNER JOIN translation_product tp ON tp.product_id = p.id WHERE (p.is_visible = $6 OR p.is_visible = $7) AND tp.lang_id = $1 AND c.category_id = $2 AND tp.deleted_at IS NULL AND p.amount > 0 AND p.limit_amount > 0 AND p.deleted_at IS NULL AND p.price >= $3 AND p.price <= $4 AND p.old_price > $5", langID, categoryID, filterJson.MinPrice, filterJson.MaxPrice, discount, is_visible_1, is_visible_2).Scan(&countOfProducts)
+		if len(filterJson.BrendIDs) != 0 {
+			db.QueryRow(context.Background(), "SELECT COUNT(DISTINCT(p.id)) FROM products p INNER JOIN category_product c ON p.id=c.product_id INNER JOIN translation_product tp ON tp.product_id = p.id WHERE (p.is_visible = $7 OR p.is_visible = $8) AND p.brend_id = ANY($1) AND tp.lang_id = $2 AND c.category_id = $3 AND tp.deleted_at IS NULL AND p.amount > 0 AND p.limit_amount > 0 AND p.deleted_at IS NULL AND p.price >= $4 AND p.price <= $5 AND p.old_price > $6", pq.Array(filterJson.BrendIDs), langID, categoryID, filterJson.MinPrice, filterJson.MaxPrice, discount, is_visible_1, is_visible_2).Scan(&countOfProducts)
 		}
 
 		// get all product where category id equal categoryID
 		var rowQuery string
-		if priceSort == "" {
+		if filterJson.PriceSort == "" {
 			rowQuery = "SELECT DISTINCT ON (p.id,p.created_at) p.id,p.brend_id,p.price,p.old_price,p.amount,p.limit_amount,p.is_new,p.main_image,p.benefit,p.code,p.is_visible FROM products p INNER JOIN category_product c ON p.id=c.product_id INNER JOIN translation_product tp ON tp.product_id = p.id WHERE (p.is_visible = $8 OR p.is_visible = $9) AND tp.lang_id = $1 AND c.category_id = $2 AND tp.deleted_at IS NULL AND p.amount > 0 AND p.limit_amount > 0 AND p.deleted_at IS NULL AND p.price >= $3 AND p.price <= $4 AND p.old_price > $5 ORDER BY p.created_at DESC LIMIT $6 OFFSET $7"
-			if len(brendIDs) != 0 {
+			if len(filterJson.BrendIDs) != 0 {
 				rowQuery = "SELECT DISTINCT ON (p.id,p.created_at) p.id,p.brend_id,p.price,p.old_price,p.amount,p.limit_amount,p.is_new,p.main_image,p.benefit,p.code,p.is_visible FROM products p INNER JOIN category_product c ON p.id=c.product_id INNER JOIN translation_product tp ON tp.product_id = p.id WHERE (p.is_visible = $9 OR p.is_visible = $10) AND p.brend_id = ANY($1) AND tp.lang_id = $2 AND c.category_id = $3 AND tp.deleted_at IS NULL AND p.amount > 0 AND p.limit_amount > 0 AND p.deleted_at IS NULL AND p.price >= $4 AND p.price <= $5 AND p.old_price > $6 ORDER BY p.created_at DESC LIMIT $7 OFFSET $8"
 			}
 		} else {
-			if priceSort == "DESC" {
+			if filterJson.PriceSort == "DESC" {
 				rowQuery = "SELECT DISTINCT(p.id),p.brend_id,p.price,p.old_price,p.amount,p.limit_amount,p.is_new,p.main_image,p.benefit,p.code,p.is_visible FROM products p INNER JOIN category_product c ON p.id=c.product_id INNER JOIN translation_product tp ON tp.product_id = p.id WHERE (p.is_visible = $8 OR p.is_visible = $9) AND tp.lang_id = $1 AND c.category_id = $2 AND tp.deleted_at IS NULL AND p.amount > 0 AND p.limit_amount > 0 AND p.deleted_at IS NULL AND p.price >= $3 AND p.price <= $4 AND p.old_price > $5 ORDER BY p.price DESC LIMIT $6 OFFSET $7"
-				if len(brendIDs) != 0 {
+				if len(filterJson.BrendIDs) != 0 {
 					rowQuery = "SELECT DISTINCT(p.id),p.brend_id,p.price,p.old_price,p.amount,p.limit_amount,p.is_new,p.main_image,p.benefit,p.code,p.is_visible FROM products p INNER JOIN category_product c ON p.id=c.product_id INNER JOIN translation_product tp ON tp.product_id = p.id WHERE (p.is_visible = $9 OR p.is_visible = $10) AND p.brend_id = ANY($1) AND tp.lang_id = $2 AND c.category_id = $3 AND tp.deleted_at IS NULL AND p.amount > 0 AND p.limit_amount > 0 AND p.deleted_at IS NULL AND p.price >= $4 AND p.price <= $5 AND p.old_price > $6 ORDER BY p.price DESC LIMIT $7 OFFSET $8"
 				}
 			} else {
 				rowQuery = "SELECT DISTINCT(p.id),p.brend_id,p.price,p.old_price,p.amount,p.limit_amount,p.is_new,p.main_image,p.benefit,p.code,p.is_visible FROM products p INNER JOIN category_product c ON p.id=c.product_id INNER JOIN translation_product tp ON tp.product_id = p.id WHERE (p.is_visible = $8 OR p.is_visible = $9) AND tp.lang_id = $1 AND c.category_id = $2 AND tp.deleted_at IS NULL AND p.amount > 0 AND p.limit_amount > 0 AND p.deleted_at IS NULL AND p.price >= $3 AND p.price <= $4 AND p.old_price > $5 ORDER BY p.price ASC LIMIT $6 OFFSET $7"
-				if len(brendIDs) != 0 {
+				if len(filterJson.BrendIDs) != 0 {
 					rowQuery = "SELECT DISTINCT(p.id),p.brend_id,p.price,p.old_price,p.amount,p.limit_amount,p.is_new,p.main_image,p.benefit,p.code,p.is_visible FROM products p INNER JOIN category_product c ON p.id=c.product_id INNER JOIN translation_product tp ON tp.product_id = p.id WHERE (p.is_visible = $9 OR p.is_visible = $10) AND p.brend_id = ANY($1) AND tp.lang_id = $2 AND c.category_id = $3 AND tp.deleted_at IS NULL AND p.amount > 0 AND p.limit_amount > 0 AND p.deleted_at IS NULL AND p.price >= $4 AND p.price <= $5 AND p.old_price > $6 ORDER BY p.price ASC LIMIT $7 OFFSET $8"
 				}
 			}
 		}
 
 		var rowsProduct pgx.Rows
-		rowsProduct, err = db.Query(context.Background(), rowQuery, langID, categoryID, minPrice, maxPrice, discount, limit, offset, is_visible_1, is_visible_2)
-		if len(brendIDs) != 0 {
-			rowsProduct, err = db.Query(context.Background(), rowQuery, pq.Array(brendIDs), langID, categoryID, minPrice, maxPrice, discount, limit, offset, is_visible_1, is_visible_2)
+		rowsProduct, err = db.Query(context.Background(), rowQuery, langID, categoryID, filterJson.MinPrice, filterJson.MaxPrice, discount, limit, offset, is_visible_1, is_visible_2)
+		if len(filterJson.BrendIDs) != 0 {
+			rowsProduct, err = db.Query(context.Background(), rowQuery, pq.Array(filterJson.BrendIDs), langID, categoryID, filterJson.MinPrice, filterJson.MaxPrice, discount, limit, offset, is_visible_1, is_visible_2)
 		}
 
 		if err != nil {

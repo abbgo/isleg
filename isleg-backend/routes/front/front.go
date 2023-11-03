@@ -93,7 +93,7 @@ func FrontRoutes(front *gin.RouterGroup) {
 
 		// GetOneCategoryWithProducts funksiya dil boyunca dine bir kategoriyany
 		// ahli harytlary bilen pagination edip getiryar
-		frontRoutes.GET("category/:id/:limit/:page", middlewares.CheckLang(), backController.GetOneCategoryWithProducts)
+		frontRoutes.POST("category/:id/:limit/:page", middlewares.CheckLang(), backController.GetOneCategoryWithProducts)
 
 		// GetTranslationMyInformationPageByLangID funksiya dil boyunca musderinin maglumatlarym
 		// sahypasynyn terjimesinin   getirip beryar
