@@ -1173,13 +1173,6 @@ func GetOneCategoryWithProducts(c *gin.Context) {
 		return
 	}
 
-	// statusStr := c.DefaultQuery("status", "true")
-	// status, err := strconv.ParseBool(statusStr)
-	// if err != nil {
-	// 	helpers.HandleError(c, 400, err.Error())
-	// 	return
-	// }
-
 	var is_visible_1, is_visible_2 bool
 	if filterJson.Status {
 		is_visible_1 = true
@@ -1217,7 +1210,6 @@ func GetOneCategoryWithProducts(c *gin.Context) {
 
 	categoryID := c.Param("id")
 
-	// priceSort := c.Query("price_sort")
 	if filterJson.PriceSort != "" {
 		if filterJson.PriceSort != "ASC" && filterJson.PriceSort != "DESC" {
 			helpers.HandleError(c, 400, "price_sort is invalid")
@@ -1225,52 +1217,22 @@ func GetOneCategoryWithProducts(c *gin.Context) {
 		}
 	}
 
-	// var minPrice float32
-	// minPriceStr := c.Query("min_price")
-	/*	if minPriceStr == "" {
-			minPrice = 0
-		} else {
-			min_price, err := strconv.ParseFloat(minPriceStr, 32)
-			if err != nil {
-				helpers.HandleError(c, 400, err.Error())
-				return
-			} */
 	if filterJson.MinPrice < 0 {
 		helpers.HandleError(c, 400, "min_price cannot be less than zero")
 		return
 	}
-	// minPrice = float32(min_price)
-	// }
 
-	// var maxPrice float32
-	// maxPriceStr := c.Query("max_price")
-	/*	if maxPriceStr == "" {
-			maxPrice = 5000
-		} else {
-			max_price, err := strconv.ParseFloat(maxPriceStr, 32)
-			if err != nil {
-				helpers.HandleError(c, 400, err.Error())
-				return
-			} */
 	if filterJson.MaxPrice < 0 {
 		helpers.HandleError(c, 400, "max_price cannot be less than zero")
 		return
 	}
-	// 	maxPrice = float32(max_price)
-	// }
 
-	// isDiscountStr := c.Query("is_discount")
 	discount := -1
-	// isDiscount, err := strconv.ParseBool(isDiscountStr)
-	// if err != nil {
-	// 	helpers.HandleError(c, 400, err.Error())
-	// 	return
-	// }
+
 	if filterJson.IsDiscount {
 		discount = 0
 	}
 
-	// brendIDs := c.QueryArray("brend_ids")
 	if len(filterJson.BrendIDs) != 0 {
 		for _, v := range filterJson.BrendIDs {
 			var brend_id string
@@ -1292,7 +1254,6 @@ func GetOneCategoryWithProducts(c *gin.Context) {
 	defer categoryRow.Close()
 
 	var category Category
-	var productIDS []string
 	for categoryRow.Next() {
 		if err := categoryRow.Scan(&category.ID, &category.Image, &category.Name); err != nil {
 			helpers.HandleError(c, 400, err.Error())
@@ -1350,8 +1311,6 @@ func GetOneCategoryWithProducts(c *gin.Context) {
 				helpers.HandleError(c, 400, err.Error())
 				return
 			}
-
-			productIDS = append(productIDS, product.ID)
 
 			if product.Benefit.Float64 != 0 {
 				product.Price = product.Price + (product.Price*product.Benefit.Float64)/100
@@ -1423,12 +1382,7 @@ func GetOneCategoryWithProducts(c *gin.Context) {
 		category.Products = products
 	}
 
-	var rowsBrend pgx.Rows
-	if countOfProducts == 0 {
-		rowsBrend, err = db.Query(context.Background(), "SELECT DISTINCT(b.id),b.name FROM brends b INNER JOIN products p ON p.brend_id = b.id INNER JOIN category_product cp ON cp.product_id = p.id WHERE cp.category_id = $1 AND cp.deleted_at IS NULL AND b.deleted_at IS NULL AND p.deleted_at IS NULL", categoryID)
-	} else {
-		rowsBrend, err = db.Query(context.Background(), "SELECT DISTINCT(b.id),b.name FROM brends b INNER JOIN products p ON p.brend_id = b.id WHERE p.id = ANY($1) AND b.deleted_at IS NULL AND p.deleted_at IS NULL", pq.Array(productIDS))
-	}
+	rowsBrend, err := db.Query(context.Background(), "SELECT DISTINCT(b.id),b.name FROM brends b INNER JOIN products p ON p.brend_id = b.id INNER JOIN category_product cp ON cp.product_id = p.id WHERE cp.category_id = $1 AND cp.deleted_at IS NULL AND b.deleted_at IS NULL AND p.deleted_at IS NULL", categoryID)
 	if err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
