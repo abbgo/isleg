@@ -84,6 +84,7 @@ type OrderedProduct struct {
 }
 
 func ToOrder(c *gin.Context) {
+
 	langID, err := pkg.ValidateMiddlewareData(c, "lang_id")
 	if err != nil {
 		helpers.HandleError(c, 400, err.Error())
@@ -104,7 +105,7 @@ func ToOrder(c *gin.Context) {
 	}
 
 	var paymentType string
-	db.QueryRow(context.Background(), "SELECT name FROM payment_types WHERE deleted_at IS NULL AND lang_id = $1 AND vwlue = $2", langID, order.PaymentType).Scan(&paymentType)
+	db.QueryRow(context.Background(), "SELECT name FROM payment_types WHERE deleted_at IS NULL AND lang_id = $1 AND value = $2", langID, order.PaymentType).Scan(&paymentType)
 	if paymentType == "" {
 		helpers.HandleError(c, 404, "payment type not found")
 		return
