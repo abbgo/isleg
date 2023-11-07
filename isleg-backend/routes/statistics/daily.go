@@ -1,0 +1,17 @@
+package dailyStatisticsApi
+
+import (
+	dailyStatisticController "github/abbgo/isleg/isleg-backend/controllers/statistics"
+
+	"github.com/gin-gonic/gin"
+)
+
+func DailyStatisticsRoutes(back *gin.RouterGroup) {
+
+	dailyStatistics := back.Group("/daily")
+	{
+		// GetDailyStatistics - gunlik statistika ucin
+		dailyStatistics.GET("", dailyStatisticController.GetDailyStatistics)
+	}
+
+}

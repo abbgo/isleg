@@ -3,6 +3,7 @@ package routes
 import (
 	backApi "github/abbgo/isleg/isleg-backend/routes/back"
 	frontApi "github/abbgo/isleg/isleg-backend/routes/front"
+	statisticApi "github/abbgo/isleg/isleg-backend/routes/statistics"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-contrib/gzip"
@@ -46,6 +47,13 @@ func Routes() *gin.Engine {
 		// bu group - a degisli api - lerden maglumat alynanda ( :lang ) paramter boyunca uytgedilip
 		// terjime alynyar
 		frontApi.FrontRoutes(front)
+	}
+
+	statistics := routes.Group("/api/statistics")
+	{
+		// customer routes
+		statisticApi.DailyStatisticsRoutes(statistics)
+
 	}
 
 	return routes
