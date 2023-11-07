@@ -51,7 +51,7 @@ func Routes() *gin.Engine {
 
 	statistics := routes.Group("/api/statistics")
 	{
-		// customer routes
+		// statistics routes
 		statisticApi.DailyStatisticsRoutes(statistics)
 
 	}
