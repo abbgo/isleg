@@ -560,9 +560,9 @@ func GetOrders(c *gin.Context) {
 
 	var orders []OrderForAdmin
 	if status {
-		rowsOrderQuery = `SELECT customer_id,id,customer_mark,order_time,payment_type,total_price,shipping_price,excel,address,TO_CHAR(created_at, 'DD.MM.YYYY'),order_number FROM orders WHERE customer_id = ANY($1) AND deleted_at IS NOT NULL LIMIT $2 OFFSET $3`
+		rowsOrderQuery = `SELECT customer_id,id,customer_mark,order_time,payment_type,total_price,shipping_price,excel,address,TO_CHAR(created_at, 'DD.MM.YYYY'),order_number FROM orders WHERE customer_id = ANY($1) AND deleted_at IS NOT NULL ORDER BY updated_at DESC LIMIT $2 OFFSET $3`
 	} else {
-		rowsOrderQuery = `SELECT customer_id,id,customer_mark,order_time,payment_type,total_price,shipping_price,excel,address,TO_CHAR(created_at, 'DD.MM.YYYY'),order_number FROM orders WHERE customer_id = ANY($1) AND deleted_at IS NULL LIMIT $2 OFFSET $3`
+		rowsOrderQuery = `SELECT customer_id,id,customer_mark,order_time,payment_type,total_price,shipping_price,excel,address,TO_CHAR(created_at, 'DD.MM.YYYY'),order_number FROM orders WHERE customer_id = ANY($1) AND deleted_at IS NULL ORDER BY updated_at DESC LIMIT $2 OFFSET $3`
 	}
 
 	rowsOrder, err := db.Query(context.Background(), rowsOrderQuery, pq.Array(customerIDs), limit, offset)
