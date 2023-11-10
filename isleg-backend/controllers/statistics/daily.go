@@ -13,8 +13,12 @@ import (
 )
 
 type DailyStatistic struct {
-	PaymentType string      `json:"payment_type"`
-	Statistics  []Statistic `json:"statistics"`
+	PaymentType        string      `json:"payment_type"`
+	TotalDebit         float32     `json:"total_debit"`
+	TotalCredit        float32     `json:"total_credit"`
+	TotalShippingPrice float32     `json:"total_shipping_price"`
+	TotalLeftover      float32     `json:"total_leftover"`
+	Statistics         []Statistic `json:"statistics"`
 }
 
 type Statistic struct {
@@ -82,6 +86,10 @@ func GetDailyStatistics(c *gin.Context) {
 			statistic.Leftover = statistic.Credit - statistic.Debit
 			statistics = append(statistics, statistic)
 			dailyStatistic.Statistics = statistics
+			dailyStatistic.TotalCredit += statistic.Credit
+			dailyStatistic.TotalDebit += statistic.Debit
+			dailyStatistic.TotalLeftover += statistic.Leftover
+			dailyStatistic.TotalShippingPrice += statistic.ShippingPrice
 		}
 		dailyStatistics = append(dailyStatistics, dailyStatistic)
 	}
