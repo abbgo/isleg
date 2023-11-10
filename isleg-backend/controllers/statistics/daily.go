@@ -30,6 +30,13 @@ type Statistic struct {
 }
 
 func GetDailyStatistics(c *gin.Context) {
+	var (
+		dailyStatistics       []DailyStatistic
+		TotalDayDebit         float64
+		TotalDayCredit        float64
+		TotalDayShippingPrice float64
+		TotalDayLeftover      float64
+	)
 	db, err := config.ConnDB()
 	if err != nil {
 		helpers.HandleError(c, 400, err.Error())
@@ -54,7 +61,6 @@ func GetDailyStatistics(c *gin.Context) {
 	}
 	defer rowsPaymentTypes.Close()
 
-	var dailyStatistics []DailyStatistic
 	for rowsPaymentTypes.Next() {
 		var value uint8
 		var dailyStatistic DailyStatistic
@@ -85,18 +91,29 @@ func GetDailyStatistics(c *gin.Context) {
 			}
 			statistic.Leftover = statistic.Credit - statistic.Debit
 			statistics = append(statistics, statistic)
+
 			dailyStatistic.Statistics = statistics
 			dailyStatistic.TotalCredit += statistic.Credit
 			dailyStatistic.TotalDebit += statistic.Debit
 			dailyStatistic.TotalLeftover += statistic.Leftover
 			dailyStatistic.TotalShippingPrice += statistic.ShippingPrice
 		}
+
+		TotalDayDebit += float64(dailyStatistic.TotalDebit)
+		TotalDayCredit += float64(dailyStatistic.TotalCredit)
+		TotalDayShippingPrice += float64(dailyStatistic.TotalShippingPrice)
+		TotalDayLeftover += float64(dailyStatistic.TotalLeftover)
+
 		dailyStatistics = append(dailyStatistics, dailyStatistic)
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"status": true,
-		"daily":  dailyStatistics,
+		"status":                   true,
+		"daily":                    dailyStatistics,
+		"total_day_debit":          TotalDayDebit,
+		"total_day_credit":         TotalDayCredit,
+		"total_day_shipping_price": TotalDayShippingPrice,
+		"total_leftover":           TotalDayLeftover,
 	})
 
 }
