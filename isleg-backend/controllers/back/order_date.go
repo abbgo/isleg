@@ -873,6 +873,21 @@ func GetOrderTime(c *gin.Context) {
 		orderTimes = append(orderTimes, orderTime)
 	}
 
+	var mkr OrderTimes
+	if langID == "8723c1c7-aa6d-429f-b8af-ee9ace61f0d7" {
+		var wagt Wagt
+		mkr.Translation = "Diňe 11 mikraýonyň çägine degişli"
+		wagt.Time = "11 mkr (Eltip berme 30 minutda mugt)"
+		mkr.Times = append(mkr.Times, wagt)
+	} else if langID == "aea98b93-7bdf-455b-9ad4-a259d69dc76e" {
+		var wagt Wagt
+		mkr.Translation = "Он покрывает всего 11 микрон."
+		wagt.Time = "11 мкр (Бесплатная доставка за 30 минут)"
+		mkr.Times = append(mkr.Times, wagt)
+	}
+
+	orderTimes = append(orderTimes, mkr)
+
 	c.JSON(http.StatusOK, gin.H{
 		"status":      true,
 		"order_times": orderTimes,

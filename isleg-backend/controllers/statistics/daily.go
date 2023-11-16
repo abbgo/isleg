@@ -113,7 +113,7 @@ func GetDailyStatistics(c *gin.Context) {
 		"total_day_debit":          TotalDayDebit,
 		"total_day_credit":         TotalDayCredit,
 		"total_day_shipping_price": TotalDayShippingPrice,
-		"total_leftover":           TotalDayLeftover,
+		"total_day_leftover":       TotalDayLeftover,
 	})
 
 }
