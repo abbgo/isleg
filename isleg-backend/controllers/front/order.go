@@ -304,8 +304,10 @@ func ToOrder(c *gin.Context) {
 	// sargyt edilen harytlaryn jemi bahasy we sargydyn jemi bahasy excel fayla yazdyrylyar
 	f.SetCellValue("Sheet1", "g"+strconv.Itoa(17+lenProductsArr), strconv.FormatFloat(totalPrice, 'f', -1, 64)+" TMT")
 
-	if 2*(20+lenProductsArr) > 54 {
-		count := 54 - (20 + lenProductsArr)
+	// if 2*(20+lenProductsArr) > 54 {
+	if 2*(20+lenProductsArr) > 60 {
+		// count := 54 - (20 + lenProductsArr)
+		count := 60 - (20 + lenProductsArr)
 		for i := 0; i < count; i++ {
 			f.InsertRows("Sheet1", 20+lenProductsArr, 1)
 		}
