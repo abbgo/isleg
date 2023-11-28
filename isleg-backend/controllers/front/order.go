@@ -192,7 +192,11 @@ func ToOrder(c *gin.Context) {
 	for _, v := range order.Products {
 		var product OrderedProduct
 		product.Amount = v.QuantityOfProduct
-		db.QueryRow(context.Background(), "SELECT price,code FROM products WHERE id= $1 AND deleted_at IS NULL", v.ProductID).Scan(&product.Price, &product.Code)
+		var benefit null.Float
+		db.QueryRow(context.Background(), "SELECT price,code,benefit FROM products WHERE id= $1 AND deleted_at IS NULL", v.ProductID).Scan(&product.Price, &product.Code, &benefit)
+		if benefit.Float64 != 0 {
+			product.Price = product.Price + (product.Price*benefit.Float64)/100
+		}
 
 		db.QueryRow(context.Background(), "SELECT name FROM translation_product WHERE product_id = $1 AND lang_id = $2 AND deleted_at IS NULL", v.ProductID, langID).Scan(&product.Name)
 		products = append(products, product)
