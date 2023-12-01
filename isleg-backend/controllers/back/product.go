@@ -16,6 +16,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/gosimple/slug"
+	"github.com/jackc/pgx/v5"
 	"github.com/lib/pq"
 	"github.com/xuri/excelize/v2"
 	"gopkg.in/guregu/null.v4"
@@ -479,14 +480,37 @@ func CreateProductsByExcelFile(c *gin.Context) {
 		}
 
 		names_of_categories := strings.Split(namesOfCategories, " | ")
+		var childCategories []string
+
 		for _, v := range names_of_categories {
 			if strings.Contains(v, " ") {
 				v = strings.TrimLeft(v, " ")
 				v = strings.TrimRight(v, " ")
 			}
 
+			var rows pgx.Rows
+
+			if len(childCategories) == 0 {
+				rows, err = db.Query(context.Background(), "SELECT c.id,ch.id FROM categories c INNER JOIN translation_category tc ON tc.category_id=c.id INNER JOIN languages l ON l.id=tc.lang_id INNER JOIN categories ch ON ch.parent_category_id = c.id WHERE ch.deleted_at IS NULL AND l.name_short = $1 AND tc.name = $2 AND c.deleted_at IS NULL AND l.deleted_at IS NULL AND tc.deleted_at IS NULL", "tm", v)
+			} else {
+				rows, err = db.Query(context.Background(), "SELECT c.id,ch.id FROM categories c INNER JOIN translation_category tc ON tc.category_id=c.id INNER JOIN languages l ON l.id=tc.lang_id INNER JOIN categories ch ON ch.parent_category_id = c.id WHERE ch.deleted_at IS NULL AND l.name_short = $1 AND tc.name = $2 AND c.deleted_at IS NULL AND l.deleted_at IS NULL AND tc.deleted_at IS NULL AND c.id = ANY($3)", "tm", v, pq.Array(childCategories))
+			}
+			if err != nil {
+				errString = errString + " " + err.Error()
+			}
+			defer rows.Close()
+
 			var categoryID string
-			db.QueryRow(context.Background(), "SELECT c.id FROM categories c INNER JOIN translation_category tc ON tc.category_id=c.id INNER JOIN languages l ON l.id=tc.lang_id WHERE l.name_short = $1 AND tc.name = $2 AND c.deleted_at IS NULL AND l.deleted_at IS NULL AND tc.deleted_at IS NULL", "tm", v).Scan(&categoryID)
+			for rows.Next() {
+				var child null.String
+				if err := rows.Scan(&categoryID, &child); err != nil {
+					errString = errString + " " + err.Error()
+				}
+				if child.String != "" {
+					childCategories = append(childCategories, child.String)
+				}
+			}
+
 			if categoryID == "" {
 				countOfErr++
 				errString = errString + v + " atly kategoriya yok | "
