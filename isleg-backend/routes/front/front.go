@@ -131,6 +131,8 @@ func FrontRoutes(front *gin.RouterGroup) {
 
 		frontRoutes.POST("check-otp", frontController.CheckOTP)
 
+		frontRoutes.POST("count-of-customers", frontController.SetCountOfCustomers)
+
 		SecuredCustomerRoutes(frontRoutes)
 	}
 

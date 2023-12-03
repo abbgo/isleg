@@ -11,11 +11,14 @@ func DailyStatisticsRoutes(back *gin.RouterGroup) {
 
 	dailyStatistics := back.Group("/daily")
 	{
-		// GetDailyStatistics - gunlik statistika ucin
+		// GetDailyStatistics - gunlik edilen sowdalar barada maglumat
 		dailyStatistics.GET("", middlewares.IsSuperAdmin(), dailyStatisticController.GetDailyStatistics)
 
-		// GetDailyStatistics - gunlik statistika ucin
+		// GetDailyCountOfCustomers - gunlik musderilerin giren sany
 		dailyStatistics.GET("count-of-customers", middlewares.IsSuperAdmin(), dailyStatisticController.GetDailyCountOfCustomers)
+
+		// GetDailySearchOfCustomers - gunlik musderilerin gozleg eden harylary
+		dailyStatistics.GET("search-of-customers", middlewares.IsSuperAdmin(), dailyStatisticController.GetDailySearchOfCustomers)
 	}
 
 }

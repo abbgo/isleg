@@ -127,22 +127,6 @@ func GetDailyCountOfCustomers(c *gin.Context) {
 	}
 	defer db.Close()
 
-	var count uint
-	db.QueryRow(context.Background(), "SELECT count FROM count_of_customers WHERE day = CURRENT_DATE").Scan(&count)
-	if count == 0 {
-		_, err := db.Exec(context.Background(), "INSERT INTO count_of_customers (count,day) VALUES (1,CURRENT_DATE)")
-		if err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
-		}
-	} else {
-		_, err := db.Exec(context.Background(), "UPDATE count_of_customers SET count = count + 1 WHERE day = CURRENT_DATE")
-		if err != nil {
-			helpers.HandleError(c, 400, err.Error())
-			return
-		}
-	}
-
 	rows, err := db.Query(context.Background(), "SELECT count,day FROM count_of_customers")
 	if err != nil {
 		helpers.HandleError(c, 400, err.Error())
@@ -163,8 +147,64 @@ func GetDailyCountOfCustomers(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"status":               true,
-		"daily_cutomers_count": counts,
+		"status":                true,
+		"daily_customers_count": counts,
+	})
+
+}
+
+type SearchOfCustomers struct {
+	Date  string   `json:"date"`
+	Texts []string `json:"texts"`
+}
+
+func GetDailySearchOfCustomers(c *gin.Context) {
+	db, err := config.ConnDB()
+	if err != nil {
+		helpers.HandleError(c, 400, err.Error())
+		return
+	}
+	defer db.Close()
+
+	rowsGroupBy, err := db.Query(context.Background(), "SELECT day FROM search_of_customers GROUP BY day")
+	if err != nil {
+		helpers.HandleError(c, 400, err.Error())
+		return
+	}
+	defer rowsGroupBy.Close()
+
+	var searchs []SearchOfCustomers
+	for rowsGroupBy.Next() {
+		var search SearchOfCustomers
+		var day time.Time
+		if err := rowsGroupBy.Scan(&day); err != nil {
+			helpers.HandleError(c, 400, err.Error())
+			return
+		}
+
+		search.Date = day.Format("02.01.2006")
+
+		rows, err := db.Query(context.Background(), "SELECT search_text FROM search_of_customers WHERE day = $1", day.Format("2006-01-02"))
+		if err != nil {
+			helpers.HandleError(c, 400, err.Error())
+			return
+		}
+		defer rows.Close()
+
+		for rows.Next() {
+			var text string
+			if err := rows.Scan(&text); err != nil {
+				helpers.HandleError(c, 400, err.Error())
+				return
+			}
+			search.Texts = append(search.Texts, text)
+		}
+		searchs = append(searchs, search)
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":                 true,
+		"daily_customers_search": searchs,
 	})
 
 }
