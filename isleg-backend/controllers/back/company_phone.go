@@ -174,7 +174,7 @@ func DeleteCompanyPhoneByID(c *gin.Context) {
 		return
 	}
 
-	_, err = db.Exec(context.Background(), "UPDATE company_phone SET deleted_at = now() WHERE id = $2", ID)
+	_, err = db.Exec(context.Background(), "UPDATE company_phone SET deleted_at = now() WHERE id = $1", ID)
 	if err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
