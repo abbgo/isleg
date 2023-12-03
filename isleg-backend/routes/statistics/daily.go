@@ -13,6 +13,9 @@ func DailyStatisticsRoutes(back *gin.RouterGroup) {
 	{
 		// GetDailyStatistics - gunlik statistika ucin
 		dailyStatistics.GET("", middlewares.IsSuperAdmin(), dailyStatisticController.GetDailyStatistics)
+
+		// GetDailyStatistics - gunlik statistika ucin
+		dailyStatistics.GET("count-of-customers", middlewares.IsSuperAdmin(), dailyStatisticController.GetDailyCountOfCustomers)
 	}
 
 }

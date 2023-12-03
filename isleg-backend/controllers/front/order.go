@@ -293,7 +293,7 @@ func ToOrder(c *gin.Context) {
 		f.SetCellStyle("Sheet1", "i16", "h16", style)
 	}
 
-	var totalPrice float64 = 0
+	// var totalPrice float64 = 0
 
 	for k, v2 := range products {
 		f.SetCellValue("Sheet1", "a"+strconv.Itoa(16+k), v2.Name)
@@ -302,11 +302,11 @@ func ToOrder(c *gin.Context) {
 		f.SetCellValue("Sheet1", "h"+strconv.Itoa(16+k), v2.Price)
 		f.SetCellValue("Sheet1", "i"+strconv.Itoa(16+k), float64(v2.Amount)*v2.Price)
 
-		totalPrice = totalPrice + float64(v2.Amount)*v2.Price
+		// totalPrice = totalPrice + float64(v2.Amount)*v2.Price
 	}
 
 	// sargyt edilen harytlaryn jemi bahasy we sargydyn jemi bahasy excel fayla yazdyrylyar
-	f.SetCellValue("Sheet1", "g"+strconv.Itoa(17+lenProductsArr), strconv.FormatFloat(totalPrice, 'f', -1, 64)+" TMT")
+	f.SetCellValue("Sheet1", "g"+strconv.Itoa(17+lenProductsArr), strconv.FormatFloat((order.TotalPrice-order.ShippingPrice), 'f', -1, 64)+" TMT")
 
 	// if 2*(20+lenProductsArr) > 54 {
 	if 2*(20+lenProductsArr) > 60 {
@@ -363,7 +363,7 @@ func ToOrder(c *gin.Context) {
 			f.SetCellValue("Sheet1", "i"+strconv.Itoa(37+k+lenProductsArr+count), float64(v2.Amount)*v2.Price)
 		}
 
-		f.SetCellValue("Sheet1", "g"+strconv.Itoa(38+2*lenProductsArr+count), strconv.FormatFloat(totalPrice, 'f', -1, 64)+" TMT")
+		f.SetCellValue("Sheet1", "g"+strconv.Itoa(38+2*lenProductsArr+count), strconv.FormatFloat((order.TotalPrice-order.ShippingPrice), 'f', -1, 64)+" TMT")
 	} else {
 		if err := f.AddPicture("Sheet1", "b"+strconv.Itoa(lenProductsArr+21), pkg.ServerPath+"uploads/orders/isleg.png", &excelize.GraphicOptions{
 			ScaleX:  0.7,
@@ -412,7 +412,7 @@ func ToOrder(c *gin.Context) {
 			f.SetCellValue("Sheet1", "i"+strconv.Itoa(37+k+lenProductsArr), float64(v2.Amount)*v2.Price)
 		}
 
-		f.SetCellValue("Sheet1", "g"+strconv.Itoa(38+2*lenProductsArr), strconv.FormatFloat(totalPrice, 'f', -1, 64)+" TMT")
+		f.SetCellValue("Sheet1", "g"+strconv.Itoa(38+2*lenProductsArr), strconv.FormatFloat((order.TotalPrice-order.ShippingPrice), 'f', -1, 64)+" TMT")
 	}
 
 	// tayyar bolan excel fayl uploads papka yazdyrylyar
