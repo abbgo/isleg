@@ -166,7 +166,7 @@ func GetDailySearchOfCustomers(c *gin.Context) {
 	}
 	defer db.Close()
 
-	rowsGroupBy, err := db.Query(context.Background(), "SELECT day FROM search_of_customers GROUP BY day")
+	rowsGroupBy, err := db.Query(context.Background(), "SELECT day FROM search_of_customers GROUP BY day ORDER BY day ASC")
 	if err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
