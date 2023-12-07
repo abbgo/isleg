@@ -195,6 +195,27 @@ func ChangeCreateVisible(c *gin.Context) {
 		return
 	}
 
+	rows, err := db.Query(context.Background(), "UPDATE categories SET is_visible = $1 WHERE parent_category_id = $2 RETURNING id", category.IsVisible, category.ID)
+	if err != nil {
+		helpers.HandleError(c, 400, err.Error())
+		return
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var id string
+		if err := rows.Scan(&id); err != nil {
+			helpers.HandleError(c, 400, err.Error())
+			return
+		}
+
+		_, err = db.Exec(context.Background(), "UPDATE categories SET is_visible = $1 WHERE parent_category_id = $2", category.IsVisible, id)
+		if err != nil {
+			helpers.HandleError(c, 400, err.Error())
+			return
+		}
+	}
+
 	c.JSON(http.StatusOK, gin.H{
 		"status":  true,
 		"message": "category visible change successfully",
