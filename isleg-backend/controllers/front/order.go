@@ -215,13 +215,13 @@ func ToOrder(c *gin.Context) {
 		}
 	}()
 
-	totalPriceFloat, err := strconv.ParseFloat(order.TotalPrice, 32)
+	totalPriceFloat, err := strconv.ParseFloat(order.TotalPrice, 64)
 	if err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
 	}
 
-	shippinPriceFloat, err := strconv.ParseFloat(order.ShippingPrice, 32)
+	shippinPriceFloat, err := strconv.ParseFloat(order.ShippingPrice, 64)
 	if err != nil {
 		helpers.HandleError(c, 400, err.Error())
 		return
