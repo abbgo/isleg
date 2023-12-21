@@ -2,6 +2,8 @@ package helpers
 
 import (
 	"regexp"
+
+	"github.com/go-playground/validator/v10"
 )
 
 // Verify e-mail address
@@ -14,4 +16,12 @@ func ValidatePhoneNumber(regPersonalNumber string) bool {
 	regexpPersonalNumber := regexp.MustCompile(`^(\+9936)[1-5][0-9]{6}$`)
 	isMatchPersonalNumber := regexpPersonalNumber.MatchString(regPersonalNumber)
 	return isMatchPersonalNumber
+}
+
+func ValidateStructData(s interface{}) error {
+	validate := validator.New()
+	if err := validate.Struct(s); err != nil {
+		return err
+	}
+	return nil
 }

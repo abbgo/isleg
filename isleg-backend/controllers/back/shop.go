@@ -31,14 +31,15 @@ func CreateShop(c *gin.Context) {
 		return
 	}
 
-	var phoneNumber string
-	db.QueryRow(context.Background(), "SELECT id FROM shops WHERE phone_number = $1 AND deleted_at IS NULL", shop.PhoneNumber).Scan(&phoneNumber)
-
-	if phoneNumber != "" {
-		helpers.HandleError(c, 400, "this shop already exists")
+	if err := helpers.ValidateStructData(&shop); err != nil {
+		helpers.HandleError(c, 400, err.Error())
 		return
 	}
 
+	if err := models.ValidateShop(shop.Name); err != nil {
+		helpers.HandleError(c, 400, err.Error())
+		return
+	}
 	_, err = db.Exec(context.Background(), "INSERT INTO shops (owner_name,address,phone_number,running_time) VALUES ($1,$2,$3,$4)", shop.OwnerName, shop.Address, shop.PhoneNumber, shop.RunningTime)
 	if err != nil {
 		helpers.HandleError(c, 400, err.Error())
