@@ -140,7 +140,7 @@ func CreateCategory(c *gin.Context) {
 	}
 	var nameTm string
 
-	// CREATE TRANSLATION CATEGORY
+	// ADD DATA TO TRANSLATION CATEGORY TABLE
 	for _, v := range category.TranslationCategory {
 		if langID == v.LangID.UUID.String() {
 			nameTm = v.Name
