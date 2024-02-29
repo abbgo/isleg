@@ -147,10 +147,7 @@ func RegisterCustomer(c *gin.Context) {
 	}
 
 	var otpSeckretKey null.String
-	if err := db.QueryRow(context.Background(), "SELECT otp_secret_key FROM customers WHERE is_register = false AND phone_number = $1 AND deleted_at IS NULL", otp.PhoneNumber).Scan(&otpSeckretKey); err != nil {
-		helpers.HandleError(c, 400, err.Error())
-		return
-	}
+	db.QueryRow(context.Background(), "SELECT otp_secret_key FROM customers WHERE is_register = false AND phone_number = $1 AND deleted_at IS NULL", otp.PhoneNumber).Scan(&otpSeckretKey)
 
 	if otpSeckretKey.String == "" {
 		helpers.HandleError(c, 404, "customer not found")

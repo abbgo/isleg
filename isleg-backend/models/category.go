@@ -83,10 +83,11 @@ func ValidateCategory(categoryID, parentCategoryID, fileName, metod string, orde
 					return 0, 0, errors.New("this order_number already exists")
 				}
 			} else {
-				if err := db.QueryRow(context.Background(), "SELECT MAX(order_number) FROM categories WHERE deleted_at IS NULL AND parent_category_id IS NULL").Scan(&orderNumber); err != nil {
+				var order_umber null.Int
+				if err := db.QueryRow(context.Background(), "SELECT MAX(order_number) FROM categories WHERE deleted_at IS NULL AND parent_category_id IS NULL").Scan(&order_umber); err != nil {
 					return 0, 0, err
 				}
-				orderNumber = orderNumber + 1
+				orderNumber = uint(order_umber.Int64) + 1
 			}
 		} else {
 			if orderNumber == 0 {
@@ -128,10 +129,11 @@ func ValidateCategory(categoryID, parentCategoryID, fileName, metod string, orde
 					return 0, 0, errors.New("this order_number already exists")
 				}
 			} else {
-				if err := db.QueryRow(context.Background(), "SELECT MAX(order_number_in_home_page) FROM categories WHERE deleted_at IS NLL AND is_home_category = true").Scan(&orderNumberInHomePage); err != nil {
+				var order_number_in_home_page null.Int
+				if err := db.QueryRow(context.Background(), "SELECT MAX(order_number_in_home_page) FROM categories WHERE deleted_at IS NULL AND is_home_category = true").Scan(&order_number_in_home_page); err != nil {
 					return 0, 0, err
 				}
-				orderNumberInHomePage = orderNumberInHomePage + 1
+				orderNumberInHomePage = uint(order_number_in_home_page.Int64) + 1
 			}
 		} else {
 			var old_is_home_category bool
